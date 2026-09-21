@@ -1,0 +1,95 @@
+# docker-compose propio de rag-extractivo (Etapa 1, tarea 2).
+#
+# Objetivo de esta tanda: levantar Qdrant como SERVICIO real (no el modo
+# on-disk local del cliente Python), porque en modo local
+# `create_payload_index` no tiene efecto (el propio cliente lo advierte:
+# "Payload indexes have no effect in the local Qdrant"). Contra un servidor
+# real los índices de payload de la sección 3.2 del molde sí se aplican.
+#
+# No se toca el docker-compose del monorepo (tiene Postgres y mailpit de
+# otro proyecto): este archivo vive dentro de rag-extractivo/ y solo conoce
+# los servicios de este microservicio.
+#
+# Uso (ver también README.md):
+#   docker compose up -d qdrant
+#   docker compose down            # detiene, conserva el volumen (.cache/qdrant_storage)
+#   docker compose down -v         # detiene y borra también los datos indexados
+
+services:
+  qdrant:
+    # Pineado a la misma versión MAYOR.MENOR que qdrant-client==1.19.1 de
+    # requirements.txt (el cliente advierte de incompatibilidad si difieren
+    # en más de una versión menor -- verificado en esta máquina).
+    image: qdrant/qdrant:v1.19.1
+    container_name: rag-extractivo-qdrant
+    ports:
+      - "6333:6333"   # API HTTP/REST
+      - "6334:6334"   # API gRPC (más rápida para el volumen de la ingesta)
+    volumes:
+      - ./.cache/qdrant_storage:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__HTTP_PORT: "6333"
+      QDRANT__SERVICE__GRPC_PORT: "6334"
+      QDRANT__LOG_LEVEL: "INFO"
+    restart: unless-stopped
+    # Sin healthcheck de contenedor: la imagen oficial `qdrant/qdrant` no trae
+    # curl/wget/python (verificado con `docker exec ... which curl|wget|python3`
+    # -> ninguno existe) ni soporta `/dev/tcp` (su `sh` no es bash). Se probó
+    # primero con un healthcheck de ese estilo y quedó "unhealthy" para
+    # siempre pese a que el servidor respondía bien -- falso negativo, se
+    # retiró en vez de dejarlo mintiendo. La forma real de esperar a que esté
+    # listo es desde el HOST: `curl http://localhost:6333/readyz` (ver README.md).
+
+  # Ingesta de UNA SOLA CORRIDA (Etapa B, corrige el defecto bloqueante que
+  # encontró el coordinador: el servicio ya NO necesita `documentos/` en
+  # runtime). Es el ÚNICO contenedor que monta el corpus -- indexa contra el
+  # Qdrant del propio compose y persiste el vocabulario BM25 como artefacto
+  # compartido (`.cache/vocab_bm25/`, mismo volumen que monta
+  # `rag-extractivo` más abajo, de solo lectura). Termina y sale (no queda
+  # sirviendo nada); `rag-extractivo` espera a que termine BIEN
+  # (`service_completed_successfully`) antes de arrancar.
+  ingesta:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-extractivo-ingesta
+    depends_on:
+      qdrant:
+        condition: service_started   # ver nota sobre healthcheck en el servicio qdrant de arriba
+    environment:
+      QDRANT_URL: "http://qdrant:6333"
+      QDRANT_MODO: "servidor"
+    volumes:
+      - ./documentos:/app/documentos:ro
+      - ./.cache/vocab_bm25:/app/.cache/vocab_bm25
+    command: ["python", "-m", "rag.cli", "indexar"]
+    restart: "no"
+    profiles: ["servicio"]
+
+  # Microservicio Python (rag-extractivo). Desde la Etapa A, `/consultar` ya
+  # responde de verdad (ver rag/servicio/api.py, rag/servicio/pipeline.py) -- sigue
+  # sin levantarse con `docker compose up` a secas, se pide explícito con
+  # `--profile servicio`, para no obligar a reconstruir la imagen (torch +
+  # transformers, pesada) en cada `up` de Qdrant solo.
+  rag-extractivo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-extractivo-servicio
+    depends_on:
+      ingesta:
+        condition: service_completed_successfully
+    environment:
+      QDRANT_URL: "http://qdrant:6333"
+      QDRANT_MODO: "servidor"
+    volumes:
+      # SOLO el vocabulario BM25 (un JSON chico), de solo lectura -- NO el
+      # corpus (corrección de la Etapa B: el corpus institucional ya no
+      # vive en el entorno de ejecución del servicio, solo en el de
+      # `ingesta` de arriba). El resto de lo que necesita un fragmento
+      # (texto, offsets, sección, doc_titulo) viaja en el payload que
+      # Qdrant ya devuelve con cada resultado de búsqueda.
+      - ./.cache/vocab_bm25:/app/.cache/vocab_bm25:ro
+    ports:
+      - "8000:8000"
+    profiles: ["servicio"]   # no se levanta con `docker compose up` a secas; requiere --profile servicio

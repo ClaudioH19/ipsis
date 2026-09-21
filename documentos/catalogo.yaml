@@ -1,0 +1,4 @@
+# Catálogo de documentos del corpus.
+# Agregado con 'rag cargar <archivo|carpeta>' -- no se edita a mano salvo
+# para corregir 'doc_titulo', 'version' o 'vigente' de una entrada existente.
+documentos:

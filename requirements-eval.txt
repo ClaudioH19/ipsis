@@ -1,0 +1,22 @@
+# Dependencias SOLO de pruebas y medición -- NUNCA se instalan en la imagen
+# Docker del servicio (el Dockerfile usa solo requirements.txt).
+#
+#   .venv/Scripts/python.exe -m pip install -r requirements.txt
+#   .venv/Scripts/python.exe -m pip install -r requirements-eval.txt
+#
+# Qué trae:
+#   - pytest (+ iniconfig, pluggy): correr `tests/`.
+#   - psutil: permite medir RAM residente durante pruebas de rendimiento.
+#
+# Nota: hasta la limpieza del 2026-09-20 este archivo traía además
+# onnx/onnxruntime/optimum/optimum-onnx, el backend cuantizado del re-ranker
+# cross-encoder. Ese componente fue evaluado, descartado por latencia
+# (ver README, sección 1.2) y su código se eliminó del repositorio, así que
+# esas dependencias ya no hacen falta. Con ellas se va también el conflicto
+# de versiones que obligaba a instalar este archivo con `--no-deps`:
+# `optimum-onnx` exigía `transformers<4.58` mientras `sentence-transformers`
+# exige `>=5.0`, cotas mutuamente excluyentes.
+iniconfig==2.3.0
+pluggy==1.6.0
+psutil==7.2.2
+pytest==9.1.1
