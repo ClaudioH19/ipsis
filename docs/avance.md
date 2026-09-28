@@ -19,7 +19,16 @@ Convenciones:
 
 ## Siguiente paso
 
-F0.5: `CHANGELOG.md` y CI en GitHub Actions. La licencia queda pendiente de decisión del autor.
+A.0: pruebas de caracterización de `/consultar` antes de refactorizar.
+
+## Decisiones pendientes del autor
+
+- **Licencia** (bloquea publicar, no bloquea trabajar). Opciones habituales:
+  MIT o Apache-2.0 (permisivas; Apache añade concesión de patentes) o
+  AGPL-3.0 (obliga a publicar cambios incluso si se ofrece como servicio).
+  Las dependencias actuales son permisivas; PyMuPDF se descartó por AGPL.
+- **Publicar la rama**: `git push -u origin v2/ruta` activa la CI. No se ha
+  hecho push; todo el avance está solo en este equipo.
 
 ## Fase 0: higiene
 
@@ -32,8 +41,9 @@ La columna Commit se completa en el commit siguiente; mientras tanto,
 | F0.2 Suite ejecutable y línea base anotada | ✅ | `90ce53e` | Temporal de pytest en `%LOCALAPPDATA%`. |
 | F0.3 Retirar referencias internas ("molde", "Etapa C/D") | ✅ | `52795c8` | Hecho fuera de `api.py`, `pipeline.py`, `corpus.py`, `indice.py`, `test_pipeline.py` y `test_api_seguridad.py` (≈70 referencias): se limpian dentro de la Fase A, que reescribe esos archivos. Las etiquetas E1–E6/P1–P7 de `metricas.py` y `evaluacion.py` quedan para la Fase C. |
 | F0.4 Entidades académicas fuera del dominio genérico | ✅ | `d25fac8` | `nota` (escala 1,0–7,0) pasa a ser `decimal` genérico; la escala se declara en el perfil (ejemplo en la plantilla, cubierto por una prueba). `plazo`, `fecha`, `porcentaje` y `articulo` se quedan: son genéricos. |
-| F0.4b Porcentajes con decimales | ✅ | | Hallado durante F0.4: "12,5%" daba "5_pct" y respaldaba en falso una pregunta por el 5%. |
-| F0.5 `LICENSE`, `CHANGELOG.md`, CI en GitHub Actions | ⬜ | | La licencia la elige el autor. |
+| F0.4b Porcentajes con decimales | ✅ | `a4b6b03` | Hallado durante F0.4: "12,5%" daba "5_pct" y respaldaba en falso una pregunta por el 5%. |
+| F0.5 `CHANGELOG.md` y CI en GitHub Actions | ✅ | | CI sin ejecutar todavía (requiere push). Validado localmente: YAML, contenido del wheel y `rag init` en carpeta vacía. |
+| F0.6 `LICENSE` | ⏸ | | Decisión del autor, ver arriba. |
 
 ## Fase A: registry conectado (Trabajo 1)
 
@@ -92,3 +102,6 @@ sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
   ("12,5%" → `12.5_pct`). Error de fidelidad: la verificación de premisa
   aceptaba "5%" contra un texto con 12,5%. También requiere reindexar.
   227 rápidas en verde.
+- **2026-09-27** F0.5: `CHANGELOG.md` y `.github/workflows/pruebas.yml`
+  (rápidas en Linux/Windows × py3.11/3.12, integración con modelo real, wheel
+  en entorno limpio). torch se instala desde el índice CPU en CI.
