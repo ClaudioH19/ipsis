@@ -19,7 +19,9 @@ Convenciones:
 
 ## Siguiente paso
 
-A.0: pruebas de caracterización de `/consultar` antes de refactorizar.
+A.1: contrato de recuperación con filtro por entidad y señales de confianza
+(`rag/componentes.py`, `rag/esquemas.py`), y el retriever Qdrant que lo cumple
+envolviendo `rag/indice.py`. Aún sin conectarlo a `api.py`.
 
 ## Decisiones pendientes del autor
 
@@ -42,14 +44,14 @@ La columna Commit se completa en el commit siguiente; mientras tanto,
 | F0.3 Retirar referencias internas ("molde", "Etapa C/D") | ✅ | `52795c8` | Hecho fuera de `api.py`, `pipeline.py`, `corpus.py`, `indice.py`, `test_pipeline.py` y `test_api_seguridad.py` (≈70 referencias): se limpian dentro de la Fase A, que reescribe esos archivos. Las etiquetas E1–E6/P1–P7 de `metricas.py` y `evaluacion.py` quedan para la Fase C. |
 | F0.4 Entidades académicas fuera del dominio genérico | ✅ | `d25fac8` | `nota` (escala 1,0–7,0) pasa a ser `decimal` genérico; la escala se declara en el perfil (ejemplo en la plantilla, cubierto por una prueba). `plazo`, `fecha`, `porcentaje` y `articulo` se quedan: son genéricos. |
 | F0.4b Porcentajes con decimales | ✅ | `a4b6b03` | Hallado durante F0.4: "12,5%" daba "5_pct" y respaldaba en falso una pregunta por el 5%. |
-| F0.5 `CHANGELOG.md` y CI en GitHub Actions | ✅ | | CI sin ejecutar todavía (requiere push). Validado localmente: YAML, contenido del wheel y `rag init` en carpeta vacía. |
+| F0.5 `CHANGELOG.md` y CI en GitHub Actions | ✅ | `a668f8d` | CI sin ejecutar todavía (requiere push). Validado localmente: YAML, contenido del wheel y `rag init` en carpeta vacía. |
 | F0.6 `LICENSE` | ⏸ | | Decisión del autor, ver arriba. |
 
 ## Fase A: registry conectado (Trabajo 1)
 
 | Paso | Estado | Commit | Notas |
 |---|---|---|---|
-| A.0 Pruebas de caracterización de `/consultar` | ⬜ | | |
+| A.0 Pruebas de caracterización de `/consultar` | ✅ | | `tests/test_caracterizacion_consultar.py` (marcada `slow`, ~100 s): 16 preguntas sobre un corpus sintético, servidor real en subproceso. Cubre `ok`, `relacionado`, `sin_respuesta` (fuera de dominio y premisa) y `conversacional`. |
 | A.1 Contrato de recuperación con filtro y señales | ⬜ | | |
 | A.2 Protocolo `AbstentionPolicy` (`layered_v1`) | ⬜ | | |
 | A.3 Frontera de tipos `ChunkRecord`/`EvidenceSpan` | ⬜ | | Decisión abierta 1 de ruta.md. |
@@ -80,6 +82,31 @@ Subconjunto rápido (`-m "not slow"`): **217 pasan**, 3 deseleccionadas, 57 s.
 Advertencias conocidas (5 en el rápido, 7 en la completa): `get_sentence_embedding_dimension` renombrado en
 sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
 
+## Hallazgos de calidad (para la Fase C)
+
+Observados al construir la caracterización (A.0) sobre
+`tests/caracterizacion/corpus` (dos documentos cortos). Quedan congelados en
+`consultar_esperado.json` a propósito: la Fase A no debe cambiarlos; se
+corrigen después, midiendo.
+
+1. **Respuesta falsa con estado `ok`.** "¿Cuánto cuesta el purificador?"
+   devuelve `ok` con texto de instalación y filtros; el corpus no menciona
+   precios. Es el peor tipo de error para este proyecto.
+2. **Respuestas demasiado largas.** Las respuestas `ok` miden ~1.100
+   caracteres cuando el dato cabe en una oración. Con documentos cortos,
+   `CH-F256` produce chunks que abarcan varias secciones, y el recorte de
+   `seleccion_fragmento.py` no basta.
+3. **`relacionado` en exceso.** 6 de 12 preguntas del dominio caen en
+   `relacionado` aunque el dato exacto está en el texto mostrado. Los cosenos
+   de e5-small quedan comprimidos entre 0,78 y 0,87, justo alrededor de los
+   umbrales 0,80/0,85, que no están calibrados.
+4. "¿Cuánto dura la garantía?" dio `relacionado` mostrando el párrafo de
+   presión en lugar del de garantía (no está en la caracterización por quedar
+   a 0,001 del umbral).
+
+Conclusión provisional: el ruido de fondo del núcleo es alto; la Fase C debe
+medir chunking y umbrales antes de añadir técnicas.
+
 ## Registro
 
 - **2026-09-27** Se crea la rama `v2/ruta` desde `main` (`41ce65a`) y se
@@ -105,3 +132,5 @@ sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
 - **2026-09-27** F0.5: `CHANGELOG.md` y `.github/workflows/pruebas.yml`
   (rápidas en Linux/Windows × py3.11/3.12, integración con modelo real, wheel
   en entorno limpio). torch se instala desde el índice CPU en CI.
+- **2026-09-27** A.0: caracterización de `/consultar` generada y verificada
+  dos veces con índices nuevos (18/18). Ver "Hallazgos de calidad".
