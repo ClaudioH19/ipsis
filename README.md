@@ -62,6 +62,16 @@ rag doctor
 rag servir
 ```
 
+Para inspeccionar los defaults y la selección efectiva de componentes:
+
+```bash
+rag snapshot-config
+```
+
+El snapshot queda en `.cache/configuracion-efectiva.yaml`. La sección
+`componentes` de `configuracion/motor.yaml` usa nombres estables y permite
+seleccionar las implementaciones registradas sin cambiar el pipeline.
+
 Prueba la API desde otra terminal:
 
 ```bash
@@ -172,6 +182,20 @@ pip install dist/rag_extractivo-*.whl
 
 La prueba decisiva es ejecutar `rag init` desde una carpeta vacía usando una
 instalación normal, no el checkout del repositorio.
+
+## Documentación de la V2
+
+- [Arquitectura y contratos](docs/arquitectura.md)
+- [Referencia de configuración](docs/referencia/configuracion.md)
+- [Metodologías implementadas](docs/metodologias/README.md)
+- [Metodología de recuperación actual](docs/metodologias/recuperacion.md)
+- [Instalación en sitios web](docs/referencia/instalacion-web.md)
+- [Plan de evolución V2](PLAN_V2.md)
+
+Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 1` y
+se validan estrictamente al cargarse. Esto permite detectar errores de nombre
+o tipos inválidos antes de indexar o iniciar la API, y prepara migraciones
+explícitas cuando cambie el formato.
 
 ## Límites actuales
 
