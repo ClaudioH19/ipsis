@@ -1,11 +1,9 @@
-"""Tests de las utilidades de indexación Qdrant agregadas en la revisión
-2026-09-18 (cierre de la brecha Qdrant): vocabulario BM25 disperso y
-nombrado versionado de colecciones (sección 3.2 del molde).
+"""Tests de las utilidades de indexación Qdrant: vocabulario BM25 disperso y
+nombrado versionado de colecciones.
 
-No requieren un servidor Qdrant: son funciones puras de Python. El test de
-integración real (indexar + consultar) se ejerce ejecutando
-``eval/e2_recuperacion.py``/``eval/e3_metadata_impacto.py``, fuera de la
-suite rápida de pytest por su costo (descarga y carga de modelos).
+No requieren un servidor Qdrant: son funciones puras de Python. La
+integración real (indexar + consultar) la cubren las pruebas marcadas
+``slow`` de ``tests/test_cli.py`` y ``tests/test_portabilidad.py``.
 """
 import pytest
 
@@ -19,7 +17,7 @@ from rag.corpus import (
 
 
 # ---------------------------------------------------------------------------
-# crear_cliente_qdrant (Etapa 1, tarea 2): la elección local/servidor es
+# crear_cliente_qdrant: la elección local/servidor es
 # configuración (parámetro > variable de entorno > default), nunca dos
 # implementaciones distintas. Se testea la lógica de selección sin requerir
 # un servidor Qdrant real levantado (el cliente de la rama "servidor" no

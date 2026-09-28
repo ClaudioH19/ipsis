@@ -3,7 +3,7 @@
 Incluye:
   - el evaluador factual determinista (comparación por ``valor_norm``,
     nunca similitud semántica) usado para validar P1–P7 y, más adelante,
-    en E6 sobre respuestas reales del sistema (Fase 4).
+    en E6 sobre respuestas reales del sistema.
   - recall@k, MRR, nDCG@k, cobertura de evidencia y de hechos (para E2/E3).
   - bootstrap de percentiles para IC 95% (sección 5, E2).
 """
@@ -49,7 +49,7 @@ _RE_ORGANISMO_GENERICO = re.compile(
     r"\b[A-ZÁÉÍÓÚÑ][\wáéíóúñ]*(?:\s+(?:de|del|la|las|los|y)?\s*[A-ZÁÉÍÓÚÑ][\wáéíóúñ]*)+\b"
 )
 
-# Bug de E6/precisión de hechos (Etapa 2, tarea 1), reportado por el revisor:
+# Bug corregido de E6/precisión de hechos:
 # _RE_ORGANISMO_GENERICO captura el artículo determinante inicial ("La",
 # "El", "Los", "Las") cuando queda en mayúscula por ir al comienzo de una
 # oración ("La Dirección de Escuela resuelve..."), pero no cuando el mismo
@@ -332,15 +332,13 @@ def cobertura_evidencia(chunks_top_k: list[tuple[int, int]], evidencias: list[tu
 def hecho_presente_en_texto(hecho: dict, texto: str) -> bool:
     """Verifica si un ``hecho_clave``/``hecho_prohibido`` está presente en
     ``texto``, con el MISMO criterio que ya usan ``cobertura_hechos`` y
-    ``evaluar_exactitud_factual`` (no se reimplementa la lógica, sección
-    "no reintroduzcas duplicación" del encargo): por entidad determinista
+    ``evaluar_exactitud_factual`` (no se reimplementa la lógica): por entidad determinista
     (``rag/reglas_extraccion.py``), por subcadena laxa normalizada, o -- para
     ``tipo: "proposicion"`` (Defecto 4, hechos que son oraciones comprimidas)
     -- por cobertura de palabras con tolerancia de prefijo.
 
     Expuesta como función pública (las de arriba usan un helper privado
-    equivalente) para que otros módulos, en particular
-    ``rag/deteccion_evidencia.py`` (Etapa 2b, tarea A), puedan reutilizarla
+    equivalente) para que otros módulos puedan reutilizarla
     sin duplicar la normalización.
     """
     vn = hecho["valor_norm"]

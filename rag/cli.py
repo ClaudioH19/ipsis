@@ -46,7 +46,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     idioma = args.idioma or "es"
     perfil = args.perfil or "_generico"
 
-    # Corrección tras revisión independiente: un directorio de trabajo VACÍO
+    # Un directorio de trabajo VACÍO
     # (el caso de uso real de un plugin, fuera de una copia de este repo) no
     # trae 'configuracion/dominios/_generico/perfil.yaml' ni 'configuracion/dominios/idiomas/es.yaml' --
     # 'rag init' debe ESCRIBIRLOS (desde plantillas embebidas en Python, no
@@ -421,7 +421,7 @@ def _construir_parser() -> argparse.ArgumentParser:
 
 
 def _asegurar_salida_no_crashea() -> None:
-    """Corrección tras revisión independiente (Etapa Plugin): la consola de
+    """La consola de
     Windows suele usar cp1252 (o cp437), que no puede codificar caracteres
     fuera de esa página -- un solo símbolo decorativo en un `print()`
     (encontrado con '⚠' en una advertencia de `rag cargar`) bastaba para

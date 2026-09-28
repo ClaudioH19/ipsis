@@ -1,4 +1,4 @@
-"""Diagnóstico del plugin instalado (Etapa Plugin, Tarea A: ``rag doctor``).
+"""Diagnóstico del plugin instalado (``rag doctor``).
 
 Cada chequeo es independiente y, si falla, dice **qué comando correr** para
 arreglarlo -- es el comando que ahorra soporte a quien adopta el plugin en un
@@ -194,7 +194,7 @@ def verificar_estilos() -> ResultadoChequeo:
 
 
 def verificar_cors() -> ResultadoChequeo:
-    """``configuracion/asistente.yaml::cors_origenes`` (Etapa Plugin, Tarea A): vacía
+    """``configuracion/asistente.yaml::cors_origenes``: vacía
     por defecto a propósito (nunca ``"*"`` de fábrica, ver
     ``rag/configuracion.py``). Solo se marca como FALLA -- algo accionable,
     no una advertencia genérica -- cuando la lista está vacía Y ya hay

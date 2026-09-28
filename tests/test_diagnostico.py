@@ -1,5 +1,4 @@
-"""Tests de ``rag/diagnostico.py`` -- los chequeos nuevos de la Etapa Plugin,
-Tarea C: CORS vacío con claves de widget configuradas, y
+"""Tests de ``rag/diagnostico.py`` -- chequeos de CORS vacío con claves de widget configuradas, y
 ``configuracion/textos.yaml`` faltante. No existían tests directos de este
 módulo antes de esta tanda (se probaba solo indirectamente vía
 ``rag doctor`` en ``tests/test_cli.py``); estos son unitarios sobre las
@@ -45,7 +44,7 @@ def test_cors_vacio_sin_claves_widget_es_informativo_no_falla(directorio_dominio
 
 
 def test_cors_vacio_con_claves_widget_configuradas_es_falla(directorio_dominio: Path):
-    """El caso concreto que pidió el encargo: alguien preparó el widget
+    """Caso concreto: alguien preparó el widget
     (configuró una clave) pero se olvidó de abrir CORS -- el navegador
     bloqueará las peticiones aunque la clave sea válida."""
     from rag.diagnostico import verificar_cors

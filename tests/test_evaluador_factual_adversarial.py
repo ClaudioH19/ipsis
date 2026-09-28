@@ -3,7 +3,7 @@
 Los casos se escriben a mano y no dependen de un generador de perturbaciones,
 para evitar una validación circular del evaluador.
 
-Casos exigidos por el encargo:
+Casos cubiertos:
   - cifra inventada agregada                      -> debe RECHAZAR
   - organismo inventado agregado                   -> debe RECHAZAR
   - plazo inventado agregado                       -> debe RECHAZAR
@@ -164,8 +164,7 @@ def test_control_parafrasis_fiel_se_acepta():
 
 
 def test_organismo_generico_mismo_valor_norm_con_y_sin_articulo_inicial_mayuscula():
-    """Etapa 2, tarea 1 (bug reportado por el revisor sobre
-    ``_RE_ORGANISMO_GENERICO``): el mismo organismo debe normalizar al mismo
+    """Regresión de ``_RE_ORGANISMO_GENERICO``: el mismo organismo debe normalizar al mismo
     ``valor_norm`` tanto si el artículo queda en mayúscula por ir al inicio
     de la oración, como si va en minúscula a mitad de frase. Antes de la
     reparación, "La Dirección de Escuela" -> "la_direccion_de_escuela" (el

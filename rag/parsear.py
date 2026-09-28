@@ -1,5 +1,5 @@
-"""Parser determinista de documentos a texto plano + estructura + offsets (Fase 1,
-ampliado en la Etapa Plugin, Tarea B: despacho por extensión).
+"""Parser determinista de documentos a texto plano + estructura + offsets,
+con despacho por extensión.
 
 Produce, para cada documento, sea cual sea su formato de origen:
   - ``texto_completo``: concatenación de todos los bloques de contenido, en el
@@ -52,7 +52,7 @@ from docx.text.paragraph import Paragraph
 
 SEPARADOR_BLOQUE = "\n"
 
-# Formatos que reconoce el despacho de `parsear_documento` (Etapa Plugin, Tarea B).
+# Formatos que reconoce el despacho de `parsear_documento`.
 EXTENSIONES_SOPORTADAS = {".docx", ".pdf", ".md", ".markdown", ".txt"}
 
 
@@ -60,8 +60,7 @@ class DocumentoEscaneadoError(ValueError):
     """Un PDF sin capa de texto (escaneado): la extracción devolvió casi nada
     de texto por página. El OCR NO está soportado por este proyecto (offline,
     sin dependencias pesadas nuevas) -- se rechaza el documento explícitamente
-    en vez de indexarlo vacío en silencio, que es el error que el encargo
-    pidió evitar a propósito."""
+    en vez de indexarlo vacío en silencio."""
 
 
 @dataclass
@@ -84,7 +83,7 @@ class DocumentoParseado:
     texto_completo: str
     bloques: list[Bloque] = field(default_factory=list)
     hash_documento: str = ""
-    # Advertencias accionables de la ingesta (Etapa Plugin, Tarea B): p.ej.
+    # Advertencias accionables de la ingesta: p.ej.
     # "este documento no tiene estructura de secciones" -- degrada los
     # filtros por seccion_path pero no impide indexar. `rag indexar` las
     # junta e imprime al final (ver rag/corpus.py::ejecutar_ingesta).
@@ -210,7 +209,7 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
 
 
 # ---------------------------------------------------------------------------
-# Motor compartido para los formatos nuevos (Etapa Plugin, Tarea B): Markdown,
+# Motor compartido para los formatos nuevos: Markdown,
 # texto plano y PDF (para el texto que no viene organizado en tablas) arman
 # su documento como una secuencia de "eventos" -- (texto, nivel_heading) con
 # nivel_heading=None para contenido narrativo -- y este motor les da la misma
@@ -360,12 +359,12 @@ def parsear_texto_plano(ruta: str, doc_id: str, doc_titulo: str, version: str) -
 # ---------------------------------------------------------------------------
 # PDF con capa de texto: `pypdf` (BSD-3-Clause, licencia permisiva).
 #
-# Decisión de licencia (pedida explícitamente por el encargo): se descartó
+# Decisión de licencia: se descartó
 # PyMuPDF a propósito -- es AGPL-3.0, lo que obligaría a liberar bajo esa
 # misma licencia (copyleft fuerte) a cualquiera que distribuya este plugin
 # como parte de un producto propio. `pypdf` (antes PyPDF2) es BSD-3-Clause,
 # compatible con un plugin que alguien más empaquete y distribuya sin heredar
-# una licencia. `pdfplumber` (la otra opción sugerida por el encargo) es
+# una licencia. `pdfplumber` (la otra opción considerada) es
 # también viable (MIT) pero depende de `pdfminer.six` con una superficie más
 # grande; `pypdf` ya estaba disponible en este entorno (verificado antes de
 # elegir, no asumido) y es más liviano.
@@ -417,7 +416,7 @@ def _mapear_outline_a_paginas(reader) -> dict[int, list[tuple[int, str]]]:
 def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
     """Parsea un ``.pdf`` con capa de texto real. Secciones desde el
     outline/marcadores del PDF si existen (:func:`_mapear_outline_a_paginas`);
-    si no, se indexa sin ``seccion_path`` y se advierte -- el encargo permite
+    si no, se indexa sin ``seccion_path`` y se advierte -- se acepta
     esto como "peor caso" ("heurística por tamaño de letra; en el peor caso,
     indexar sin secciones y advertir"). **Decisión de alcance de esta tanda**:
     no se implementó además la heurística intermedia por tamaño de letra
@@ -478,7 +477,7 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
 
 
 # ---------------------------------------------------------------------------
-# Despacho por extensión (Etapa Plugin, Tarea B): punto de entrada único que
+# Despacho por extensión: punto de entrada único que
 # el resto del proyecto (rag/corpus.py::parsear_corpus, la CLI) debe usar en
 # vez de llamar a un parser de formato concreto.
 # ---------------------------------------------------------------------------
