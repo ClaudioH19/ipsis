@@ -1,48 +1,46 @@
-# Dockerfile del microservicio Python (rag-extractivo).
-#
-# Etapa A/B: `/consultar` ya responde de verdad. UNA sola imagen sirve DOS
-# roles distintos según el `command:` que le dé docker-compose.yml: el
-# servicio (`rag.servicio.api:app`, el CMD por defecto) y la ingesta de una sola
-# corrida (`rag indexar`, contenedor `ingesta` en
-# docker-compose.yml) -- así ambos comparten exactamente el mismo código de
-# `rag/` sin duplicar la imagen.
-#
-# Solo instala `requirements.txt` (runtime: servicio + ingesta), NUNCA
-# `requirements-eval.txt` (optimum/onnx/scikit-learn-extra/pytest -- ver ese
-# archivo) -- la imagen de despliegue no necesita evaluar nada.
-#
-# El corpus (`documentos/`) NO se copia a la imagen ni se necesita en el
-# contenedor del servicio: solo el contenedor `ingesta` lo monta como
-# volumen de solo lectura (docker-compose.yml) y persiste lo que el
-# servicio sí necesita (el vocabulario BM25, `.cache/vocab_bm25/`)
-# como artefacto compartido -- ver `rag/corpus.py::guardar_vocabulario_bm25`/
-# `cargar_vocabulario_bm25`.
-#
-# CPU only, sin GPU (restricción dura del proyecto, configuracion/motor.yaml).
-FROM python:3.12-slim
+# syntax=docker/dockerfile:1
+# Construye e instala el mismo wheel que se distribuye a usuarios. El corpus,
+# secretos, tests e índices quedan fuera de la imagen mediante .dockerignore.
+
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+COPY pyproject.toml README.md ./
+COPY rag/ ./rag/
+RUN python -m pip wheel --no-cache-dir --no-deps --wheel-dir /wheels .
+
+
+FROM python:3.12-slim AS runtime
+
+ARG APP_UID=10001
+ARG APP_GID=10001
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid ${APP_GID} rag \
+    && useradd --uid ${APP_UID} --gid ${APP_GID} --create-home --shell /usr/sbin/nologin rag
 
 WORKDIR /app
+COPY --from=builder /wheels/ /wheels/
+RUN python -m pip install --no-cache-dir /wheels/rag_extractivo-*.whl \
+    && rm -rf /wheels
 
-# Dependencias del sistema mínimas para compilar ruedas de torch/lxml si
-# hiciera falta (la mayoría de las dependencias de requirements.txt ya
-# traen wheels manylinux para este intérprete, pero se dejan por si acaso).
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY rag/ ./rag/
-COPY rag/servicio/ ./servicio/
-COPY config/ ./config/
+# Configuración genérica de arranque. En producción puede montarse otra
+# carpeta sobre /app/configuracion sin reconstruir la imagen.
+COPY --chown=rag:rag configuracion/ ./configuracion/
+RUN mkdir -p /app/.cache/vocab_bm25 /app/.cache/huggingface \
+    && chown -R rag:rag /app/.cache
 
 ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    HF_HOME=/app/.cache/huggingface \
     QDRANT_URL=http://qdrant:6333
 
+USER rag
 EXPOSE 8000
 
-# Rol por defecto: el servicio. El contenedor `ingesta` de
-# docker-compose.yml sobreescribe este `command` con
-# `python -m rag.cli indexar` y termina (no queda sirviendo nada).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)" || exit 1
+
 CMD ["python", "-m", "uvicorn", "rag.servicio.api:app", "--host", "0.0.0.0", "--port", "8000"]

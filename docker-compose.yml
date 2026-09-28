@@ -61,7 +61,9 @@ services:
       QDRANT_MODO: "servidor"
     volumes:
       - ./documentos:/app/documentos:ro
-      - ./.cache/vocab_bm25:/app/.cache/vocab_bm25
+      - ./configuracion:/app/configuracion:ro
+      - vocab_bm25:/app/.cache/vocab_bm25
+      - modelos:/app/.cache/huggingface
     command: ["python", "-m", "rag.cli", "indexar"]
     restart: "no"
     profiles: ["servicio"]
@@ -89,7 +91,15 @@ services:
       # `ingesta` de arriba). El resto de lo que necesita un fragmento
       # (texto, offsets, sección, doc_titulo) viaja en el payload que
       # Qdrant ya devuelve con cada resultado de búsqueda.
-      - ./.cache/vocab_bm25:/app/.cache/vocab_bm25:ro
+      - ./configuracion:/app/configuracion:ro
+      - vocab_bm25:/app/.cache/vocab_bm25:ro
+      - modelos:/app/.cache/huggingface
     ports:
       - "8000:8000"
     profiles: ["servicio"]   # no se levanta con `docker compose up` a secas; requiere --profile servicio
+
+volumes:
+  # Volúmenes con nombre: evitan problemas de permisos al ejecutar la imagen
+  # con un usuario sin privilegios y conservan los artefactos entre reinicios.
+  vocab_bm25:
+  modelos:
