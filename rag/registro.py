@@ -136,6 +136,12 @@ class RulesIntentClassifier:
         )
 
 
+def _crear_retriever_qdrant(*args: Any, **kwargs: Any):
+    from rag.recuperacion_qdrant import RetrieverQdrant
+
+    return RetrieverQdrant.desde_configuracion(*args, **kwargs)
+
+
 def registrar_componentes_base(
     registro: RegistroComponentes | None = None,
 ) -> RegistroComponentes:
@@ -145,6 +151,7 @@ def registrar_componentes_base(
     destino.registrar("chunker", "builtin", ChunkerBuiltin, reemplazar=True)
     destino.registrar("dense_encoder", "sentence_transformers", DenseEncoderSentenceTransformers, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
+    destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
     destino.registrar("fusion", "rrf", FusionRRF, reemplazar=True)
     destino.registrar("answer_extractor", "sentence_selector", SentenceSelectorExtractor, reemplazar=True)
     destino.registrar("evidence_verifier", "literal_offsets", LiteralOffsetsVerifier, reemplazar=True)

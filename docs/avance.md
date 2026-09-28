@@ -19,9 +19,9 @@ Convenciones:
 
 ## Siguiente paso
 
-A.1: contrato de recuperación con filtro por entidad y señales de confianza
-(`rag/componentes.py`, `rag/esquemas.py`), y el retriever Qdrant que lo cumple
-envolviendo `rag/indice.py`. Aún sin conectarlo a `api.py`.
+A.2: protocolo `AbstentionPolicy` con la implementación `layered_v1`, moviendo
+(no reescribiendo) la decisión en capas de `rag/servicio/pipeline.py` y
+`consultar()`. Entrada: `SenalesRecuperacion`, candidatos y pregunta.
 
 ## Decisiones pendientes del autor
 
@@ -51,10 +51,10 @@ La columna Commit se completa en el commit siguiente; mientras tanto,
 
 | Paso | Estado | Commit | Notas |
 |---|---|---|---|
-| A.0 Pruebas de caracterización de `/consultar` | ✅ | | `tests/test_caracterizacion_consultar.py` (marcada `slow`, ~100 s): 16 preguntas sobre un corpus sintético, servidor real en subproceso. Cubre `ok`, `relacionado`, `sin_respuesta` (fuera de dominio y premisa) y `conversacional`. |
-| A.1 Contrato de recuperación con filtro y señales | ⬜ | | |
+| A.0 Pruebas de caracterización de `/consultar` | ✅ | `1176878`, `9007a2d` | `tests/test_caracterizacion_consultar.py` (marcada `slow`, ~100 s): 16 preguntas sobre un corpus sintético, servidor real en subproceso. Cubre `ok`, `relacionado`, `sin_respuesta` (fuera de dominio y premisa) y `conversacional`. |
+| A.1 Contrato de recuperación con filtro y señales | ✅ | | `Retriever` separa `estimar_confianza` de `recuperar(filtro=...)` y expone inventarios. `RetrieverQdrant` en `rag/recuperacion_qdrant.py`, registrado como `retriever/qdrant`; caché LRU del vector de la pregunta. Probado con Qdrant en memoria y codificador falso. |
 | A.2 Protocolo `AbstentionPolicy` (`layered_v1`) | ⬜ | | |
-| A.3 Frontera de tipos `ChunkRecord`/`EvidenceSpan` | ⬜ | | Decisión abierta 1 de ruta.md. |
+| A.3 Frontera de tipos `ChunkRecord`/`EvidenceSpan` | 🔶 | | Adelantado en A.1: decisión abierta 1 resuelta con la opción recomendada (campos tipados `doc_titulo`, `version`, `tiene_excepcion`, `tiene_condicion`, `entidades`) y adaptador exacto `rag/payload.py`. Falta usar los tipos dentro del pipeline. |
 | A.4 `Motor` orquestador | ⬜ | | |
 | A.5 `crear_app(motor)` sin estado global | ⬜ | | |
 | A.6 Pruebas de contrato e intercambio | ⬜ | | |
@@ -134,3 +134,6 @@ medir chunking y umbrales antes de añadir técnicas.
   en entorno limpio). torch se instala desde el índice CPU en CI.
 - **2026-09-27** A.0: caracterización de `/consultar` generada y verificada
   dos veces con índices nuevos (18/18). Ver "Hallazgos de calidad".
+- **2026-09-27** A.1: contrato `Retriever` nuevo, `FiltroEntidad`,
+  `SenalesRecuperacion`, `RetrievalCandidate.score`, `RetrieverQdrant` y
+  adaptador de payload. `api.py` todavía no los usa. 239 rápidas en verde.

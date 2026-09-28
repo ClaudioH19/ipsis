@@ -14,8 +14,10 @@ from rag.esquemas import (
     ChunkRecord,
     DocumentRecord,
     EvidenceSpan,
+    FiltroEntidad,
     QueryAnalysis,
     RetrievalCandidate,
+    SenalesRecuperacion,
 )
 
 
@@ -43,7 +45,21 @@ class SparseEncoder(Protocol):
 
 @runtime_checkable
 class Retriever(Protocol):
-    def recuperar(self, consulta: QueryAnalysis, limite: int) -> list[RetrievalCandidate]: ...
+    """Dueño de un índice ya construido.
+
+    ``estimar_confianza`` va separado de ``recuperar`` porque el servicio
+    decide si la pregunta pertenece al dominio antes de pagar la recuperación
+    completa. Los inventarios alimentan la verificación de premisa y el
+    grounding léxico sin que el servicio conozca dónde se persisten.
+    """
+
+    def estimar_confianza(self, consulta: QueryAnalysis, limite: int) -> SenalesRecuperacion: ...
+    def recuperar(self, consulta: QueryAnalysis, limite: int,
+                  filtro: FiltroEntidad | None = None) -> list[RetrievalCandidate]: ...
+    def n_chunks(self) -> int: ...
+    def inventario_entidades(self) -> set[str]: ...
+    def estadisticas_lexico(self) -> dict[str, float]: ...
+    def calentar(self) -> None: ...
 
 
 @runtime_checkable

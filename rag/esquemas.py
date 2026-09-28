@@ -54,6 +54,13 @@ class ChunkRecord(EsquemaEstricto):
     prev_id: str | None = None
     next_id: str | None = None
     pagina: int | None = Field(default=None, ge=1)
+    # Campos que la cita, los conectores y la verificación de premisa leen en
+    # cada consulta; por eso son tipados y no viven en ``metadata``.
+    doc_titulo: str = ""
+    version: str = "1"
+    tiene_excepcion: bool = False
+    tiene_condicion: bool = False
+    entidades: list[dict[str, Any]] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
@@ -88,6 +95,33 @@ class RetrievalSignals(BaseModel):
 class RetrievalCandidate(EsquemaEstricto):
     chunk: ChunkRecord
     signals: RetrievalSignals = Field(default_factory=RetrievalSignals)
+
+    @property
+    def score(self) -> float:
+        """Puntaje del orden final: el de la etapa más tardía que lo asignó."""
+        for valor in (self.signals.reranker_score, self.signals.fusion_score,
+                      self.signals.dense_score, self.signals.sparse_score):
+            if valor is not None:
+                return valor
+        return 0.0
+
+
+class FiltroEntidad(EsquemaEstricto):
+    """Restringe la recuperación a chunks que contienen esta entidad exacta.
+
+    Es propio del contrato, no de un motor: cada retriever lo traduce (un
+    ``Filter`` en Qdrant, un ``JOIN`` en SQLite)."""
+    valor_norm: str = Field(min_length=1)
+
+
+class SenalesRecuperacion(EsquemaEstricto):
+    """Qué tan bien cubre el índice una pregunta, antes de recuperar.
+
+    Cada retriever define cómo calcula ``confianza_top1`` (en Qdrant, el coseno
+    denso del mejor chunk). No son comparables entre retrievers: los umbrales
+    de abstención se configuran por retriever."""
+    confianza_top1: float
+    margen_top1_top2: float
 
 
 class EvidenceSpan(EsquemaEstricto):
@@ -137,6 +171,6 @@ class AssistantResult(EsquemaEstricto):
 
 __all__ = [
     "SCHEMA_VERSION", "AssistantResult", "AssistantState", "ChunkRecord",
-    "DocumentRecord", "ElementRecord", "EvidenceSpan", "QueryAnalysis",
-    "RetrievalCandidate", "RetrievalSignals",
+    "DocumentRecord", "ElementRecord", "EvidenceSpan", "FiltroEntidad",
+    "QueryAnalysis", "RetrievalCandidate", "RetrievalSignals", "SenalesRecuperacion",
 ]
