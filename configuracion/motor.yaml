@@ -61,7 +61,7 @@ abstencion:
     activa: true
     recuperacion_dirigida: true
     max_fragmentos_adicionales: 2
-    tipos_entidad_cerrada: [nota, porcentaje, plazo, fecha, articulo]
+    tipos_entidad_cerrada: [decimal, porcentaje, plazo, fecha, articulo]
   zona_gris:
     modo: "relacionado"
 

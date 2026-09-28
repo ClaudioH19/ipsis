@@ -57,16 +57,20 @@ def _num_o_texto_a_int(token: str) -> int | None:
 
 
 # ---------------------------------------------------------------------------
-# NOTA (escala 1,0 a 7,0)
+# DECIMAL: "3,9", "2.5". Coma y punto normalizan igual ("3.9"), de modo que la
+# pregunta y el documento coinciden aunque usen convenciones distintas. Los
+# números con varios separadores ("1.000.000", "12.03.2024") no se toman
+# como decimales: los lookarounds impiden recortar un trozo de ellos.
+# Una escala propia (p.ej. notas de 1,0 a 7,0) se declara en el perfil.
 # ---------------------------------------------------------------------------
-_RE_NOTA = re.compile(r"\b([1-7],\d)\b")
+_RE_DECIMAL = re.compile(r"(?<![\d.,])(\d{1,6})[,.](\d{1,3})(?![.,]?\d)")
 
 
-def extraer_notas(texto: str) -> list[Entidad]:
+def extraer_decimales(texto: str) -> list[Entidad]:
     out = []
-    for m in _RE_NOTA.finditer(texto):
-        valor = m.group(1).replace(",", ".")
-        out.append(Entidad("nota", m.group(1), valor, m.start(1)))
+    for m in _RE_DECIMAL.finditer(texto):
+        valor = f"{m.group(1)}.{m.group(2)}"
+        out.append(Entidad("decimal", m.group(0), valor, m.start(0)))
     return out
 
 
@@ -177,7 +181,7 @@ def extraer_articulos(texto: str) -> list[Entidad]:
 
 # ---------------------------------------------------------------------------
 EXTRACTORES = [
-    extraer_notas,
+    extraer_decimales,
     extraer_porcentajes,
     extraer_plazos,
     extraer_fechas,
@@ -187,7 +191,7 @@ EXTRACTORES = [
 # Nombres de tipo que produce cada extractor GENERICO de arriba (mismo orden
 # conceptual que EXTRACTORES, pero como nombres -- lo usa tipos_con_regla()
 # para no hardcodear en ningun otro modulo cuales tipos vienen del nucleo).
-TIPOS_GENERICOS = {"nota", "porcentaje", "plazo", "fecha", "articulo"}
+TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "articulo"}
 
 
 # ---------------------------------------------------------------------------
