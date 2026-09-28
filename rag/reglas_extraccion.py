@@ -77,13 +77,16 @@ def extraer_decimales(texto: str) -> list[Entidad]:
 # ---------------------------------------------------------------------------
 # PORCENTAJE
 # ---------------------------------------------------------------------------
-_RE_PORCENTAJE = re.compile(r"\b(\d{1,3})\s?%")
+# El lookbehind impide que "12,5%" se lea como "5%": un porcentaje parcial
+# respaldaría en falso una pregunta por otra cifra.
+_RE_PORCENTAJE = re.compile(r"(?<![\d.,])(\d{1,3})(?:[,.](\d{1,3}))?\s?%")
 
 
 def extraer_porcentajes(texto: str) -> list[Entidad]:
     out = []
     for m in _RE_PORCENTAJE.finditer(texto):
-        out.append(Entidad("porcentaje", m.group(0), f"{m.group(1)}_pct", m.start(0)))
+        numero = m.group(1) if m.group(2) is None else f"{m.group(1)}.{m.group(2)}"
+        out.append(Entidad("porcentaje", m.group(0), f"{numero}_pct", m.start(0)))
     return out
 
 

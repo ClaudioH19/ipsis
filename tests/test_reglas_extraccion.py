@@ -36,6 +36,18 @@ def test_porcentaje_se_normaliza():
     assert extraer_porcentajes("cubre al menos el 20% del total")[0].valor_norm == "20_pct"
 
 
+@pytest.mark.parametrize("texto", ["cubre el 12,5% del total", "cubre el 12.5 % del total"])
+def test_porcentaje_con_decimales_no_se_recorta(texto):
+    assert [e.valor_norm for e in extraer_porcentajes(texto)] == ["12.5_pct"]
+
+
+def test_porcentaje_parcial_no_respalda_otra_cifra():
+    """Una pregunta por el 5% no debe encontrar respaldo en un texto con 12,5%."""
+    fuente = {e["valor_norm"] for e in extraer_entidades("cubre el 12,5% del total")}
+    pregunta = {e["valor_norm"] for e in extraer_entidades("¿cubre el 5%?")}
+    assert not pregunta <= fuente
+
+
 def test_plazo_dias_habiles():
     valores = {e.valor_norm for e in extraer_plazos("dentro de cinco días hábiles siguientes")}
     assert any(v.startswith("5_dia") for v in valores)
