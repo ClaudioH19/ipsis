@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from rag.dominio import cargar_perfil, cargar_perfil_generico
-from rag.reglas_extraccion import extraer_notas, extraer_porcentajes
+from rag.reglas_extraccion import extraer_decimales, extraer_porcentajes
 
 
 @pytest.fixture()
@@ -70,9 +70,29 @@ def test_perfil_generico_no_aporta_entidades():
     assert cargar_perfil_generico().tipos_aportados() == set()
 
 
+def test_ejemplo_comentado_del_perfil_generico_funciona(tmp_path: Path):
+    """El ejemplo de regla documentado en la plantilla debe seguir siendo válido."""
+    from rag.recursos import leer_plantilla
+
+    lineas = leer_plantilla("dominios/_generico/perfil.yaml").splitlines()
+    inicio = lineas.index("# extractores_regex:")
+    ejemplo = []
+    for linea in lineas[inicio:]:
+        if not linea.startswith("#"):
+            break
+        ejemplo.append(linea[2:])
+    ruta = tmp_path / "dominios" / "notas" / "perfil.yaml"
+    ruta.parent.mkdir(parents=True)
+    ruta.write_text("\n".join(ejemplo) + "\n", encoding="utf-8")
+
+    perfil = cargar_perfil("notas", str(tmp_path / "dominios"))
+    valores = [e.valor_norm for e in perfil.extraer_entidades_extra("con nota 3,9 reprueba")]
+    assert valores == ["nota_3.9"]
+
+
 def test_entidades_del_nucleo_no_dependen_del_perfil():
     texto = "la nota final es 3,9 y cubre el 20%"
-    assert [e.valor_norm for e in extraer_notas(texto)] == ["3.9"]
+    assert [e.valor_norm for e in extraer_decimales(texto)] == ["3.9"]
     assert [e.valor_norm for e in extraer_porcentajes(texto)] == ["20_pct"]
 
 

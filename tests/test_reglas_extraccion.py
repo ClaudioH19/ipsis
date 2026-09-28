@@ -1,18 +1,35 @@
 """Pruebas de extractores genéricos, independientes de cualquier dominio."""
+import pytest
+
 from rag.reglas_extraccion import (
     extraer_articulos,
+    extraer_decimales,
     extraer_entidades,
     extraer_fechas,
-    extraer_notas,
     extraer_plazos,
     extraer_porcentajes,
     tiene_marcador,
 )
 
 
-def test_nota_se_normaliza_con_punto():
-    valores = {e.valor_norm for e in extraer_notas("la nota final es 3,9 en la escala de 1,0 a 7,0")}
+def test_decimal_coma_y_punto_normalizan_igual():
+    valores = {e.valor_norm for e in extraer_decimales("la nota final es 3,9 en la escala de 1,0 a 7,0")}
     assert {"3.9", "1.0", "7.0"} <= valores
+    assert [e.valor_norm for e in extraer_decimales("pesa 2.5 kg")] == ["2.5"]
+    assert [e.valor_norm for e in extraer_decimales("pesa 2,5 kg")] == ["2.5"]
+
+
+def test_decimal_fuera_de_la_escala_de_notas():
+    assert [e.valor_norm for e in extraer_decimales("soporta 12,75 bar")] == ["12.75"]
+
+
+@pytest.mark.parametrize("texto", ["1.000.000 de usuarios", "el 12.03.2024", "versión 1.2.3", "3, 20 y 4"])
+def test_decimal_no_recorta_numeros_con_varios_separadores(texto):
+    assert extraer_decimales(texto) == []
+
+
+def test_decimal_al_final_de_oracion():
+    assert [e.texto for e in extraer_decimales("La nota mínima es 4,0.")] == ["4,0"]
 
 
 def test_porcentaje_se_normaliza():

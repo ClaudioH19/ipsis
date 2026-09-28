@@ -18,7 +18,7 @@ motor genérico:
 
 El núcleo sigue extrayendo, sin depender de ningún perfil, las entidades
 GENÉRICAS de un documento normativo/técnico cualquiera: números, porcentajes,
-fechas, plazos, notas, artículos y numerales (``rag/reglas_extraccion.py``).
+fechas, plazos, decimales, artículos y numerales (``rag/reglas_extraccion.py``).
 """
 from __future__ import annotations
 
@@ -185,15 +185,10 @@ def cargar_perfil_generico(base: str = RUTA_DOMINIOS) -> PerfilDominio:
 
 
 # ---------------------------------------------------------------------------
-# Semilla EMBEBIDA para `rag init`: un directorio de trabajo VACÍO no tiene
-# `configuracion/dominios/_generico/perfil.yaml` -- antes, `rag init` (vía
-# `rag/configuracion.py::actualizar_dominio`) asumía que ya existía para
-# poder validar el perfil por defecto, lo que en la práctica solo
-# funcionaba DENTRO de una copia de este repo. El contenido es idéntico al
-# de `configuracion/dominios/_generico/perfil.yaml` de este proyecto (que sigue existiendo
-# tal cual, usado por las pruebas de este mismo repo) -- pero
-# embebido en Python, no leído del árbol del proyecto en tiempo de
-# ejecución, para que `rag init` funcione en cualquier directorio.
+# Semilla para `rag init`: un directorio de trabajo VACÍO no tiene
+# `configuracion/dominios/_generico/perfil.yaml`. Se copia desde la plantilla
+# incluida en el paquete, no desde el árbol del proyecto, para que `rag init`
+# funcione en cualquier directorio.
 # ---------------------------------------------------------------------------
 def escribir_perfil_generico_si_falta(base: str = RUTA_DOMINIOS) -> bool:
     """Escribe el perfil global incluido en el paquete si todavía no existe."""
