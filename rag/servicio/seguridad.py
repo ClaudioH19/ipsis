@@ -1,5 +1,5 @@
-"""Lo que el servicio necesita para sostener un frontend externo (Etapa
-Plugin, Tarea A): autenticación de widget por clave pública y límite de
+"""Lo que el servicio necesita para sostener un frontend externo:
+autenticación de widget por clave pública y límite de
 peticiones. CORS se configura directamente con ``CORSMiddleware`` de FastAPI
 en ``rag/servicio/api.py`` (no necesita lógica propia); este módulo cubre las
 otras dos piezas, ambas deterministas y sin dependencias nuevas.

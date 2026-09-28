@@ -1,14 +1,14 @@
-"""Reglas deterministas de extracción de entidades (sección 3.1/3.4 del molde).
+"""Reglas deterministas de extracción de entidades.
 
 Cada función de extracción recibe el texto de un chunk (o de una pregunta) y
 devuelve una lista de entidades con offset **relativo al texto recibido**,
 de modo que la validación "toda entidad debe encontrarse literalmente en
-texto" (sección 3.4) sea directa: ``texto[offset:offset+len(texto_entidad)]``
+texto" sea directa: ``texto[offset:offset+len(texto_entidad)]``
 debe ser igual a ``texto_entidad``.
 
 Ninguna de estas reglas usa modelos: son regex + normalización de superficie.
 El campo `valor_norm` es la forma canónica usada para comparar hechos_clave
-en el evaluador factual (sección 4.4 / E6) — por eso es intencionalmente
+en el evaluador factual (``rag/metricas.py``) — por eso es intencionalmente
 literal y no requiere NLU.
 """
 from __future__ import annotations
@@ -145,7 +145,7 @@ def extraer_fechas(texto: str) -> list[Entidad]:
 # ---------------------------------------------------------------------------
 # ARTICULO / ANEXO
 #
-# Defecto (Etapa 1, tarea 1b): "artículos 13 y 14" normalizaba como
+# Defecto: "artículos 13 y 14" normalizaba como
 # "articulo_13" -- el segundo número del rango/lista se descartaba
 # silenciosamente porque el patrón original solo capturaba un dígito. Se
 # agrega un segundo número opcional unido por "y" (lista) o "a" (rango),
@@ -191,7 +191,7 @@ TIPOS_GENERICOS = {"nota", "porcentaje", "plazo", "fecha", "articulo"}
 
 
 # ---------------------------------------------------------------------------
-# Perfil de dominio activo (Etapa Plugin, Tarea C): las entidades
+# Perfil de dominio activo: las entidades
 # ESPECIFICAS de un dominio (saberes, organismos, practicas, semanas
 # relativas... lo que antes eran extraer_saberes/extraer_semanas/
 # extraer_organismos/extraer_practicas en este mismo modulo) ya NO viven
@@ -227,10 +227,8 @@ def tipos_con_regla() -> set[str]:
     los que aporta el perfil de dominio activo, si hay uno configurado (ver
     rag/dominio.py::PerfilDominio.tipos_aportados). Sin perfil activo,
     devuelve solo los genericos -- nunca falla por falta de perfil, mismo
-    criterio que extraer_entidades. Reemplaza el set hardcodeado que antes
-    vivia en rag/medicion_normalizacion.py (Etapa Plugin, Tarea 2a): ese
-    modulo de evaluacion no debe conocer los tipos de NINGUN perfil en
-    particular."""
+    criterio que extraer_entidades. Asi ningun modulo de evaluacion
+    necesita conocer los tipos de un perfil en particular."""
     tipos = set(TIPOS_GENERICOS)
     if _perfil_activo is not None:
         tipos |= _perfil_activo.tipos_aportados()
@@ -242,7 +240,7 @@ def extraer_entidades(texto: str) -> list[dict]:
     activo (si hay uno configurado, ver configurar_perfil), y devuelve
     entidades como dicts, ordenadas por offset.
 
-    Garantiza la invariante de validacion de ingesta (seccion 3.4):
+    Garantiza la invariante de validacion de ingesta:
     texto[offset:offset+len(texto_ent)] == texto_ent para cada entidad.
     """
     entidades: list[Entidad] = []

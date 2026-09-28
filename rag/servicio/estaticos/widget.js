@@ -1,5 +1,5 @@
 /*
- * Widget de chat embebible (Etapa Plugin, Tarea B) -- rag-extractivo.
+ * Widget de chat embebible -- rag-extractivo.
  *
  * Un único archivo, sin frameworks ni dependencias externas. Se integra con
  * una línea:

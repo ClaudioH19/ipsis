@@ -101,7 +101,7 @@ def test_init_crea_configuracion_minima(proyecto_temporal: Path):
 
 
 def test_init_cors_y_claves_widget_vacios_por_defecto(proyecto_temporal: Path):
-    """Corrección de seguridad de esta tanda (Etapa Plugin, Tarea A): un
+    """Corrección de seguridad de esta tanda: un
     dominio recién creado NUNCA trae 'cors_origenes: [\"*\"]' -- eso
     expondría el servicio a cualquier sitio que copie la plantilla. Ambas
     listas empiezan vacías; se abren a mano con 'rag configurar'."""
@@ -198,7 +198,7 @@ def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path):
 
 
 def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temporal: Path, capsys):
-    """Tarea A: 'rag doctor' debe avisar cuando cors_origenes está vacío Y ya
+    """'rag doctor' debe avisar cuando cors_origenes está vacío Y ya
     hay claves de widget configuradas -- la señal concreta de que alguien
     preparó el widget para un sitio real y se olvidó de abrirle CORS."""
     main(["init"])
@@ -211,7 +211,7 @@ def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temp
 
 
 def test_doctor_reporta_plantillas_faltantes(proyecto_temporal: Path, capsys):
-    """Tarea C, punto 3: si 'configuracion/textos.yaml' se borra, 'rag doctor'
+    """Si 'configuracion/textos.yaml' se borra, 'rag doctor'
     debe decirlo -- antes de esta corrección, el primer síntoma era un 500
     en '/consultar' en vez de un diagnóstico claro."""
     main(["init"])
@@ -235,7 +235,7 @@ def test_indexar_dominio_sintetico_multiformato(proyecto_temporal: Path):
     dominio SINTÉTICO y aislado -- usa el modelo de
     embeddings real (ya en caché) y un índice
     Qdrant local real en el directorio temporal. Es la prueba de que el
-    despacho multiformato (Tarea B) y la CLI (Tarea A) funcionan juntas de
+    despacho multiformato y la CLI funcionan juntas de
     punta a punta, no solo por separado."""
     main(["init"])
     main(["cargar", str(_doc_prueba_md(proyecto_temporal))])
@@ -249,7 +249,7 @@ def test_indexar_dominio_sintetico_multiformato(proyecto_temporal: Path):
 
 
 # ---------------------------------------------------------------------------
-# rag preguntar -- código de salida (Etapa Plugin, Tarea C, defecto 1):
+# rag preguntar -- código de salida:
 # cualquier fallo de conexión o de HTTP debe devolver código ≠ 0, o un
 # script que use la CLI no se entera de que la pregunta no se respondió.
 # Se monkeypatchea 'httpx.post' en vez de levantar un servicio real: más
@@ -302,7 +302,7 @@ def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
 
 
 # ---------------------------------------------------------------------------
-# Ayuda de la CLI (Etapa Plugin, Tarea C, defecto 2): cada opción de cada
+# Ayuda de la CLI: cada opción de cada
 # subcomando debe traer 'help=' en castellano -- antes 'rag servir --help'
 # mostraba '--host HOST'/'--port PORT' sin ninguna explicación.
 # ---------------------------------------------------------------------------

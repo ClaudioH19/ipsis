@@ -1,14 +1,9 @@
-# docker-compose propio de rag-extractivo (Etapa 1, tarea 2).
+# docker-compose propio de rag-extractivo.
 #
-# Objetivo de esta tanda: levantar Qdrant como SERVICIO real (no el modo
-# on-disk local del cliente Python), porque en modo local
-# `create_payload_index` no tiene efecto (el propio cliente lo advierte:
-# "Payload indexes have no effect in the local Qdrant"). Contra un servidor
-# real los índices de payload de la sección 3.2 del molde sí se aplican.
-#
-# No se toca el docker-compose del monorepo (tiene Postgres y mailpit de
-# otro proyecto): este archivo vive dentro de rag-extractivo/ y solo conoce
-# los servicios de este microservicio.
+# Levanta Qdrant como SERVICIO real (no el modo on-disk local del cliente
+# Python), porque en modo local `create_payload_index` no tiene efecto (el
+# propio cliente lo advierte: "Payload indexes have no effect in the local
+# Qdrant"). Contra un servidor real los índices de payload sí se aplican.
 #
 # Uso (ver también README.md):
 #   docker compose up -d qdrant
@@ -40,8 +35,7 @@ services:
     # retiró en vez de dejarlo mintiendo. La forma real de esperar a que esté
     # listo es desde el HOST: `curl http://localhost:6333/readyz` (ver README.md).
 
-  # Ingesta de UNA SOLA CORRIDA (Etapa B, corrige el defecto bloqueante que
-  # encontró el coordinador: el servicio ya NO necesita `documentos/` en
+  # Ingesta de UNA SOLA CORRIDA (el servicio NO necesita `documentos/` en
   # runtime). Es el ÚNICO contenedor que monta el corpus -- indexa contra el
   # Qdrant del propio compose y persiste el vocabulario BM25 como artefacto
   # compartido (`.cache/vocab_bm25/`, mismo volumen que monta
@@ -68,8 +62,8 @@ services:
     restart: "no"
     profiles: ["servicio"]
 
-  # Microservicio Python (rag-extractivo). Desde la Etapa A, `/consultar` ya
-  # responde de verdad (ver rag/servicio/api.py, rag/servicio/pipeline.py) -- sigue
+  # Microservicio Python (rag-extractivo). `/consultar` responde con
+  # recuperación real (ver rag/servicio/api.py, rag/servicio/pipeline.py) -- sigue
   # sin levantarse con `docker compose up` a secas, se pide explícito con
   # `--profile servicio`, para no obligar a reconstruir la imagen (torch +
   # transformers, pesada) en cada `up` de Qdrant solo.
@@ -86,9 +80,7 @@ services:
       QDRANT_MODO: "servidor"
     volumes:
       # SOLO el vocabulario BM25 (un JSON chico), de solo lectura -- NO el
-      # corpus (corrección de la Etapa B: el corpus institucional ya no
-      # vive en el entorno de ejecución del servicio, solo en el de
-      # `ingesta` de arriba). El resto de lo que necesita un fragmento
+      # corpus, que solo vive en el entorno de `ingesta` de arriba. El resto de lo que necesita un fragmento
       # (texto, offsets, sección, doc_titulo) viaja en el payload que
       # Qdrant ya devuelve con cada resultado de búsqueda.
       - ./configuracion:/app/configuracion:ro

@@ -43,7 +43,7 @@ def cargar_taxonomia(ruta: str = "configuracion/categorias.yaml") -> dict:
 
 # `id: otro` es obligatorio (no una convención): `clasificar_categoria`
 # degrada a esa categoría cuando ningún gatillo/descripción matchea, y
-# `validar_chunk` (sección 3.4) rechaza cualquier chunk cuya categoría no
+# `validar_chunk` rechaza cualquier chunk cuya categoría no
 # esté en `categorias[].id` -- sin "otro" declarado, un documento genérico
 # sin vocabulario específico fallaría la validación de ingesta completa.
 def inicializar_taxonomia_si_falta(descripcion_dominio: str, ruta: str = "configuracion/categorias.yaml") -> bool:
@@ -130,7 +130,7 @@ class ErrorValidacion:
 
 
 def validar_chunk(chunk_payload: dict, taxonomia: dict) -> list[ErrorValidacion]:
-    """Reglas de validación de ingesta (sección 3.4). Devuelve lista de errores
+    """Reglas de validación de ingesta. Devuelve lista de errores
     (vacía si el chunk es válido)."""
     errores: list[ErrorValidacion] = []
     texto = chunk_payload["texto"]

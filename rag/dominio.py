@@ -66,9 +66,8 @@ class ReglaEntidad:
     transform: dict[str, str] = field(default_factory=dict)
     glosa: str | None = None
     """Descripción legible del tipo (p.ej. "saber o competencia evaluada"),
-    opcional en el YAML del perfil. La usa
-    ``rag/paquete_revision_externa.py::tipos_hecho_legible`` para mostrarle al
-    revisor externo un texto legible en vez del nombre crudo del tipo; si el
+    opcional en el YAML del perfil. Las herramientas de evaluación la usan
+    para mostrar un texto legible en vez del nombre crudo del tipo; si el
     perfil no la declara, el llamador usa un texto de repuesto genérico."""
 
     def extraer(self, texto: str) -> list[tuple[str, str, str, int]]:
@@ -123,9 +122,8 @@ class PerfilDominio:
         """Nombres de tipo de entidad que este perfil agrega por encima de
         los genéricos del núcleo: el ``tipo`` de cada regla declarada, más
         ``"organismo"`` si el perfil trae una lista cerrada de organismos.
-        La usa ``rag/reglas_extraccion.py::tipos_con_regla`` (Etapa Plugin,
-        Tarea 2a) para que ningún módulo de evaluación tenga que hardcodear
-        los tipos de UN perfil en particular."""
+        La usa ``rag/reglas_extraccion.py::tipos_con_regla`` para que ningún
+        módulo de evaluación tenga que hardcodear los tipos de UN perfil en particular."""
         tipos = {r.tipo for r in self.reglas}
         if self.organismos:
             tipos.add("organismo")
@@ -134,8 +132,7 @@ class PerfilDominio:
     def glosas_extra(self) -> dict[str, str]:
         """``{tipo: glosa}`` para las reglas de este perfil que declaran una
         ``glosa`` explícita en su YAML. Un tipo sin ``glosa`` no aparece aquí
-        -- el llamador (``rag/paquete_revision_externa.py::tipos_hecho_legible``)
-        decide el texto de repuesto, genérico y sin depender de este
+        -- el llamador decide el texto de repuesto, genérico y sin depender de este
         dominio."""
         return {r.tipo: r.glosa for r in self.reglas if r.glosa}
 
@@ -188,8 +185,7 @@ def cargar_perfil_generico(base: str = RUTA_DOMINIOS) -> PerfilDominio:
 
 
 # ---------------------------------------------------------------------------
-# Semilla EMBEBIDA para `rag init` (corrección tras revisión independiente,
-# Etapa Plugin): un directorio de trabajo VACÍO no tiene
+# Semilla EMBEBIDA para `rag init`: un directorio de trabajo VACÍO no tiene
 # `configuracion/dominios/_generico/perfil.yaml` -- antes, `rag init` (vía
 # `rag/configuracion.py::actualizar_dominio`) asumía que ya existía para
 # poder validar el perfil por defecto, lo que en la práctica solo

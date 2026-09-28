@@ -1,5 +1,5 @@
 """Selección de las oraciones (o filas de tabla) más pertinentes dentro de
-un fragmento recuperado — Etapa B, punto 2 del encargo del coordinador: la
+un fragmento recuperado. Motivo: la
 respuesta concatenaba los 3 chunks completos (~1.700 caracteres cada uno,
 CH-F256) y la oración que respondía la pregunta podía quedar enterrada bajo
 texto irrelevante del mismo chunk.
@@ -7,8 +7,8 @@ texto irrelevante del mismo chunk.
 Determinista por diseño, dos métodos elegibles por configuración
 (``configuracion/motor.yaml::redaccion.metodo_seleccion``):
   - ``"lexico"``: solapamiento léxico pregunta-unidad
-    (``rag/texto_util.py::solapamiento_lexico``, ya usado y probado en la
-    Etapa 2b — no se reimplementa).
+    (``rag/texto_util.py::solapamiento_lexico``, ya probado — no se
+    reimplementa).
   - ``"denso"``: coseno entre el embedding de la pregunta y el de cada
     unidad, con el modelo YA CARGADO por el servicio (``e5-small``) — no se
     descarga ni instancia un modelo nuevo, solo se reusa el encoder de
@@ -87,8 +87,8 @@ def dividir_en_unidades(texto_chunk: str) -> list[Unidad]:
 def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]) -> list[int]:
     """Índices de las unidades que contienen, LITERALMENTE (mismo criterio
     determinista de ``rag/reglas_extraccion.py``, no substring ingenuo), al
-    menos una de las entidades de la pregunta. Caso real que motivó esto
-    (Etapa D, punto 2): "¿Qué pasa si saco un 3,9?" -- "3,9" tokeniza a
+    menos una de las entidades de la pregunta. Caso real que motivó esto:
+    "¿Qué pasa si saco un 3,9?" -- "3,9" tokeniza a
     fragmentos de 1 carácter para el solapamiento léxico
     (``rag/texto_util.py::palabras_contenido`` exige largo >= 4), así que
     NINGÚN método de score (léxico o denso) prioriza de forma confiable la
@@ -128,8 +128,8 @@ class ResultadoSeleccion:
     offset_inicio: int  # ABSOLUTO (documento) — ya sumado al offset del chunk
     offset_fin: int
     recortado: bool  # False si el chunk completo ya entraba en el límite
-    score_ancla: float  # score de la unidad más pertinente del tramo -- para ORDENAR entre fragmentos (Etapa C, punto 3)
-    tiene_entidad_pregunta: bool = False  # True si el ancla se forzó por contener una entidad literal de la pregunta (Etapa D, punto 2)
+    score_ancla: float  # score de la unidad más pertinente del tramo -- para ORDENAR entre fragmentos
+    tiene_entidad_pregunta: bool = False  # True si el ancla se forzó por contener una entidad literal de la pregunta
 
 
 def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_inicio: int,
@@ -143,7 +143,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     se calcula ``score_ancla`` (máximo de sus unidades) para poder comparar
     fragmentos entre sí más adelante.
 
-    Algoritmo del ancla, en orden de prioridad (Etapa D, punto 2 -- antes
+    Algoritmo del ancla, en orden de prioridad (antes
     solo existía el paso 2, el score de similitud, que es ciego a
     entidades cortas como "3,9"):
       1. Si ``entidades_pregunta`` no es vacío y alguna unidad contiene
@@ -194,10 +194,10 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     largo = len(unidades[idx_ancla].texto)
     while True:
         opciones = []
-        # Si el ancla se forzó por una entidad literal (Etapa D, punto 2),
+        # Si el ancla se forzó por una entidad literal,
         # esa oración debe quedar PRIMERA en el texto mostrado -- no se
-        # expande hacia atrás (el coordinador pidió explícitamente que la
-        # oración con la entidad sea la primera, no "una de las primeras").
+        # expande hacia atrás: la oración con la entidad debe ser la
+        # primera, no "una de las primeras".
         # Sin esta restricción, el contexto previo podía anteponerse y
         # dejar la oración con "3,9" al final del fragmento.
         if lo - 1 >= 0 and not tiene_entidad:
@@ -243,7 +243,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     se conservan intactos para que la cita y los conectores de
     ``rag/servicio/pipeline.py::redactar`` sigan funcionando igual.
 
-    ``entidades_pregunta`` (Etapa D, punto 2): si se entrega, prioriza la
+    ``entidades_pregunta``: si se entrega, prioriza la
     oración que contiene LITERALMENTE una de esas entidades como ancla,
     por sobre el score de similitud (ver ``seleccionar_texto_pertinente``)."""
     resultado = seleccionar_texto_pertinente(
@@ -256,7 +256,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     nuevo["offset_inicio"] = resultado.offset_inicio
     nuevo["offset_fin"] = resultado.offset_fin
     # score_ancla/tiene_entidad_pregunta NO son parte del esquema de
-    # payload del chunk (sección 3.3 del molde): son información de trabajo
+    # payload del chunk: son información de trabajo
     # interna para ordenar fragmentos por pertinencia global (ver
     # `ordenar_por_pertinencia_global`), nunca se exponen en el contrato
     # HTTP (rag/servicio/api.py arma `Fragmento` con campos explícitos, estas
@@ -267,20 +267,20 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
 
 
 def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recuperacion: list[float]) -> tuple[list[dict], list[float]]:
-    """Etapa C, punto 3 (+ Etapa D, punto 2): reordena los fragmentos ya
+    """Reordena los fragmentos ya
     recortados por dos claves, en este orden de prioridad:
 
-      1. ``_tiene_entidad_pregunta`` (Etapa D): un fragmento cuya oración
+      1. ``_tiene_entidad_pregunta``: un fragmento cuya oración
          ancla contiene LITERALMENTE una entidad de la pregunta va PRIMERO,
          sin importar el score -- una coincidencia exacta ("3,9", "Práctica
          II", un artículo) es más fuerte que cualquier similitud léxica o
          densa. Caso real que motivó esto: "¿Qué pasa si saco un 3,9?"
          mostraba primero la Tabla 6 (ponderaciones, score de similitud más
          alto) en vez del Artículo 20 (que contiene "3,9" literal).
-      2. ``_score_ancla`` (Etapa C): entre fragmentos empatados en el
+      2. ``_score_ancla``: entre fragmentos empatados en el
          criterio anterior, el de mayor score de su propia oración ancla.
 
-    Caso real que motivó el criterio 2 (Etapa C): a "¿Cuántas semanas dura
+    Caso real que motivó el criterio 2: a "¿Cuántas semanas dura
     el modelo X100?" el fragmento con mejor score de
     RECUPERACIÓN traía como oración más relevante una mención lateral
     ("los artículos 13 y 14 describen las etapas..."), mientras que un

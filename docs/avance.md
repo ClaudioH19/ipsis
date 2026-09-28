@@ -19,15 +19,18 @@ Convenciones:
 
 ## Siguiente paso
 
-F0.3: retirar referencias internas ("molde", "Etapa C/D", "sección 6.1") del código y los docs.
+F0.4: sacar del dominio genérico los tipos de entidad académicos.
 
 ## Fase 0: higiene
+
+La columna Commit se completa en el commit siguiente; mientras tanto,
+`git log --grep "^F0.3"` encuentra el commit de un paso.
 
 | Paso | Estado | Commit | Notas |
 |---|---|---|---|
 | F0.1 Commitear el trabajo previo en commits con sentido | ✅ | `bd863fd`, `148044f`, `75a7b05` | Empaquetado, contratos V2 y documentación, por separado. |
-| F0.2 Suite ejecutable y línea base anotada | ✅ | (este) | Temporal de pytest en `%LOCALAPPDATA%`. |
-| F0.3 Retirar referencias internas ("molde", "Etapa C/D") | 🔶 | | |
+| F0.2 Suite ejecutable y línea base anotada | ✅ | `90ce53e` | Temporal de pytest en `%LOCALAPPDATA%`. |
+| F0.3 Retirar referencias internas ("molde", "Etapa C/D") | ✅ | | Hecho fuera de `api.py`, `pipeline.py`, `corpus.py`, `indice.py`, `test_pipeline.py` y `test_api_seguridad.py` (≈70 referencias): se limpian dentro de la Fase A, que reescribe esos archivos. Las etiquetas E1–E6/P1–P7 de `metricas.py` y `evaluacion.py` quedan para la Fase C. |
 | F0.4 Entidades académicas fuera del dominio genérico | ⬜ | | `nota`, `plazo`, `articulo` en `rag/reglas_extraccion.py`. |
 | F0.5 `LICENSE`, `CHANGELOG.md`, CI en GitHub Actions | ⬜ | | La licencia la elige el autor. |
 
@@ -63,7 +66,7 @@ máquina, por eso `pytest.ini` usaba una carpeta local. No son fallos de código
 
 **2026-09-27, tras F0.2**: suite completa **220 pasan**, 0 fallos, 232 s.
 Subconjunto rápido (`-m "not slow"`): **217 pasan**, 3 deseleccionadas, 57 s.
-Cinco advertencias conocidas: `get_sentence_embedding_dimension` renombrado en
+Advertencias conocidas (5 en el rápido, 7 en la completa): `get_sentence_embedding_dimension` renombrado en
 sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
 
 ## Registro
@@ -71,5 +74,10 @@ sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
 - **2026-09-27** Se crea la rama `v2/ruta` desde `main` (`41ce65a`) y se
   commitea el trabajo previo sin cambios de contenido.
 - **2026-09-27** F0.2: `tests/conftest.py` elige el temporal de pytest
-  (`RAG_PYTEST_BASETEMP`, o `%LOCALAPPDATA%ag-extractivo\pytest` en Windows).
+  (`RAG_PYTEST_BASETEMP`, o `%LOCALAPPDATA%\rag-extractivo\pytest` en Windows).
   `pytest.ini` deja de fijar `--basetemp`. Suite en verde.
+- **2026-09-27** F0.3: se quitan las etiquetas de proceso de comentarios y
+  docstrings en 19 archivos, y las menciones a módulos que ya no existen
+  (`rag/paquete_revision_externa.py`, `rag/deteccion_evidencia.py`,
+  `rag/medicion_normalizacion.py`, `eval/*.py`). Solo cambian comentarios;
+  217 pruebas rápidas en verde.

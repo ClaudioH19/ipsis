@@ -1,4 +1,4 @@
-"""Tests unitarios de ``rag/servicio/seguridad.py`` (Etapa Plugin, Tarea A):
+"""Tests unitarios de ``rag/servicio/seguridad.py``:
 clave de widget y *token bucket* del límite de peticiones. Sin FastAPI, sin
 red, sin índice -- solo la lógica determinista, para que corran siempre
 (no dependen del corpus real ni de Qdrant)."""

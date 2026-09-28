@@ -39,7 +39,7 @@ def etiqueta_version_golden(ruta: str = GOLDEN_PATH) -> str:
 def etiqueta_motor_qdrant() -> str:
     """"local" o "servidor", según QDRANT_MODO (ver
     ``rag/corpus.py::crear_cliente_qdrant``). Se usa para que el nombre del
-    reporte distinga sobre qué motor se midió (Etapa 1, tarea 1c/2): los
+    reporte distinga sobre qué motor se midió: los
     índices de payload solo tienen efecto en modo servidor, así que E2/E3
     corridas en cada modo NO son comparables sin decirlo en el nombre."""
     import os
@@ -59,8 +59,8 @@ def sufijo_reporte(incluir_motor_qdrant: bool = False, ruta_golden: str = GOLDEN
 def cargar_golden_dev_respondible(ruta: str = GOLDEN_PATH) -> list[dict]:
     """Ítems del golden set que son respondibles y están en el split `dev`.
 
-    El split `test` queda bloqueado hasta la decisión final (sección 4.1 del
-    molde), así que ninguna evaluación de ajuste debe tocarlo.
+    El split `test` queda bloqueado hasta la decisión final del golden set,
+    así que ninguna evaluación de ajuste debe tocarlo.
     """
     items = []
     with open(ruta, encoding="utf-8") as f:
@@ -74,7 +74,7 @@ def cargar_golden_dev_respondible(ruta: str = GOLDEN_PATH) -> list[dict]:
 def aciertos_del_pool(payloads, ids_pool, item, k) -> list[bool]:
     """Para cada uno de los primeros `k` chunks recuperados, si contiene al
     menos la mitad de los caracteres de alguna evidencia del ítem (criterio de
-    acierto de la sección 5 del molde)."""
+    acierto)."""
     aciertos = []
     for idx in ids_pool[:k]:
         p = payloads[idx]
@@ -115,7 +115,7 @@ def aciertos_en_topk(payloads_topk: list[dict], evidencias: list[dict]) -> list[
     """Igual que ``aciertos_del_pool``, pero sobre los payloads que devuelve
     DIRECTAMENTE una consulta real a Qdrant (``rag/indice.py::buscar``), no
     sobre índices dentro de un array de payloads en memoria. La usa
-    ``evaluar_indice_produccion`` (Etapa Plugin, Tarea A: ``rag evaluar``),
+    ``evaluar_indice_produccion`` (``rag evaluar``),
     que consulta el índice YA indexado en vez de reconstruirlo en memoria
     como hacen los scripts E2/E3 sobre un grid completo."""
     aciertos = []

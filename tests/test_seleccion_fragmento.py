@@ -1,5 +1,5 @@
-"""Tests de ``rag/seleccion_fragmento.py`` (Etapa B, punto 2 del encargo del
-coordinador: respuestas demasiado largas). Funciones puras, sin modelos ni
+"""Tests de ``rag/seleccion_fragmento.py`` (evita respuestas demasiado
+largas). Funciones puras, sin modelos ni
 red -- el método "denso" se prueba aparte solo donde hace falta un
 ``modelo_st`` real (ninguno de estos tests lo necesita: `metodo="lexico"`
 por defecto cubre todo el algoritmo de selección/expansión)."""
@@ -50,7 +50,7 @@ def test_seleccionar_texto_pertinente_devuelve_completo_si_ya_entra_en_el_limite
 
 
 def test_seleccionar_texto_pertinente_elige_la_oracion_mas_relevante():
-    """Caso real reportado por el coordinador (parafraseado): el chunk trae
+    """Caso real (parafraseado): el chunk trae
     varias oraciones, solo una responde la pregunta directamente -- debe
     quedar dentro del recorte."""
     texto = (
@@ -138,7 +138,7 @@ def test_ordenar_por_pertinencia_global_no_pierde_fragmentos():
 
 
 def test_seleccionar_texto_pertinente_prioriza_oracion_con_entidad_literal():
-    """Etapa D, punto 2, caso real: "3,9" tokeniza a fragmentos de 1
+    """Caso real: "3,9" tokeniza a fragmentos de 1
     carácter para el solapamiento léxico (ambos números son < 4 caracteres,
     el mínimo de rag/texto_util.py::palabras_contenido), así que el score de
     similitud NUNCA prioriza de forma confiable la oración con "3,9" -- hace
@@ -168,7 +168,7 @@ def test_seleccionar_texto_pertinente_sin_entidades_pregunta_usa_score():
 
 
 def test_ordenar_por_pertinencia_global_prioriza_fragmento_con_entidad_sobre_score_alto():
-    """Etapa D, punto 2: un fragmento con score de recuperación MÁS ALTO
+    """Un fragmento con score de recuperación MÁS ALTO
     pero SIN la entidad literal debe quedar DESPUÉS del fragmento que sí la
     contiene, aunque su propio score_ancla sea más bajo."""
     con_entidad = {"chunk_id": "c1", "_score_ancla": 0.1, "_tiene_entidad_pregunta": True}

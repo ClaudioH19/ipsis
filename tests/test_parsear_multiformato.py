@@ -1,6 +1,5 @@
-"""Tests del despacho por extensión de `rag/parsear.py` (Etapa Plugin, Tarea
-B): PDF, Markdown y texto plano. Cada documento de prueba lo construye el
-propio test, en un directorio temporal, sin material institucional -- nunca
+"""Tests del despacho por extensión de `rag/parsear.py`: PDF, Markdown y texto
+plano. Cada documento de prueba lo construye el propio test, en un directorio temporal, sin material institucional -- nunca
 se toca `documentos/`.
 
 La propiedad que se verifica en TODOS los formatos es la misma que ya prueba
