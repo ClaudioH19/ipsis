@@ -1,8 +1,10 @@
 # Configuración global inicial. Los umbrales de abstención son valores de
 # partida sin calibrar; ajústalos con preguntas representativas de tu corpus.
+config_version: 1
 recuperacion:
   modelo: "intfloat/multilingual-e5-small"
   prefijo_query: "query: "
+  prefijo_documento: "passage: "
   estrategia_chunking: "CH-F256"
   con_header: false
   modo: "hibrida"
@@ -11,6 +13,19 @@ recuperacion:
   coleccion_base: "asistente_documental"
   qdrant_path: ".cache/qdrant_local"
   version_coleccion: 1
+
+componentes:
+  parser: "builtin"
+  chunker: "builtin"
+  dense_encoder: "sentence_transformers"
+  sparse_encoder: "bm25"
+  retriever: "qdrant"
+  fusion: "rrf"
+  reranker: null
+  intent_classifier: "rules"
+  answer_extractor: "sentence_selector"
+  evidence_verifier: "literal_offsets"
+  response_renderer: "templates"
 
 qdrant:
   modo: "local"
