@@ -40,6 +40,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from rag import __version__
+
 from rag.configuracion import (
     cargar_proyecto, cargar_dominio, config_recuperacion, config_abstencion, config_servicio,
     config_redaccion, config_seguridad,
@@ -66,7 +68,7 @@ from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones, identificador_limitador, verificar_clave_widget,
 )
 
-app = FastAPI(title="rag-extractivo", version="0.6.0")
+app = FastAPI(title="rag-extractivo", version=__version__)
 
 _DIR_ESTATICOS = Path(__file__).resolve().parent / "estaticos"
 
