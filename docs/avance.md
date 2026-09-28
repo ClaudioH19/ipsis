@@ -19,7 +19,7 @@ Convenciones:
 
 ## Siguiente paso
 
-F0.4b: el extractor de porcentajes corta los decimales ("12,5%" produce "5_pct").
+F0.5: `CHANGELOG.md` y CI en GitHub Actions. La licencia queda pendiente de decisión del autor.
 
 ## Fase 0: higiene
 
@@ -31,8 +31,8 @@ La columna Commit se completa en el commit siguiente; mientras tanto,
 | F0.1 Commitear el trabajo previo en commits con sentido | ✅ | `bd863fd`, `148044f`, `75a7b05` | Empaquetado, contratos V2 y documentación, por separado. |
 | F0.2 Suite ejecutable y línea base anotada | ✅ | `90ce53e` | Temporal de pytest en `%LOCALAPPDATA%`. |
 | F0.3 Retirar referencias internas ("molde", "Etapa C/D") | ✅ | `52795c8` | Hecho fuera de `api.py`, `pipeline.py`, `corpus.py`, `indice.py`, `test_pipeline.py` y `test_api_seguridad.py` (≈70 referencias): se limpian dentro de la Fase A, que reescribe esos archivos. Las etiquetas E1–E6/P1–P7 de `metricas.py` y `evaluacion.py` quedan para la Fase C. |
-| F0.4 Entidades académicas fuera del dominio genérico | ✅ | | `nota` (escala 1,0–7,0) pasa a ser `decimal` genérico; la escala se declara en el perfil (ejemplo en la plantilla, cubierto por una prueba). `plazo`, `fecha`, `porcentaje` y `articulo` se quedan: son genéricos. |
-| F0.4b Porcentajes con decimales | 🔶 | | Hallado durante F0.4. |
+| F0.4 Entidades académicas fuera del dominio genérico | ✅ | `d25fac8` | `nota` (escala 1,0–7,0) pasa a ser `decimal` genérico; la escala se declara en el perfil (ejemplo en la plantilla, cubierto por una prueba). `plazo`, `fecha`, `porcentaje` y `articulo` se quedan: son genéricos. |
+| F0.4b Porcentajes con decimales | ✅ | | Hallado durante F0.4: "12,5%" daba "5_pct" y respaldaba en falso una pregunta por el 5%. |
 | F0.5 `LICENSE`, `CHANGELOG.md`, CI en GitHub Actions | ⬜ | | La licencia la elige el autor. |
 
 ## Fase A: registry conectado (Trabajo 1)
@@ -88,3 +88,7 @@ sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
   decimal, no solo 1,0–7,0. **Los índices existentes deben reindexarse** para
   que su inventario de entidades use el tipo nuevo. 224 rápidas y 3 lentas en
   verde.
+- **2026-09-27** F0.4b: `extraer_porcentajes` no recorta decimales
+  ("12,5%" → `12.5_pct`). Error de fidelidad: la verificación de premisa
+  aceptaba "5%" contra un texto con 12,5%. También requiere reindexar.
+  227 rápidas en verde.
