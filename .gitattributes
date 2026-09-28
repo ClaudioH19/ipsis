@@ -1,0 +1,4 @@
+# Los corpus de prueba se comparan por offsets de caracteres: un cambio de
+# fin de línea al hacer checkout en Windows los desplazaría.
+tests/caracterizacion/corpus/** text eol=lf
+tests/caracterizacion/*.json text eol=lf
