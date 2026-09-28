@@ -19,15 +19,15 @@ Convenciones:
 
 ## Siguiente paso
 
-F0.2: aislar el directorio temporal de pytest fuera de OneDrive y fijar la línea base.
+F0.3: retirar referencias internas ("molde", "Etapa C/D", "sección 6.1") del código y los docs.
 
 ## Fase 0: higiene
 
 | Paso | Estado | Commit | Notas |
 |---|---|---|---|
 | F0.1 Commitear el trabajo previo en commits con sentido | ✅ | `bd863fd`, `148044f`, `75a7b05` | Empaquetado, contratos V2 y documentación, por separado. |
-| F0.2 Suite ejecutable y línea base anotada | 🔶 | | Ver "Línea base" abajo. |
-| F0.3 Retirar referencias internas ("molde", "Etapa C/D") | ⬜ | | |
+| F0.2 Suite ejecutable y línea base anotada | ✅ | (este) | Temporal de pytest en `%LOCALAPPDATA%`. |
+| F0.3 Retirar referencias internas ("molde", "Etapa C/D") | 🔶 | | |
 | F0.4 Entidades académicas fuera del dominio genérico | ⬜ | | `nota`, `plazo`, `articulo` en `rag/reglas_extraccion.py`. |
 | F0.5 `LICENSE`, `CHANGELOG.md`, CI en GitHub Actions | ⬜ | | La licencia la elige el autor. |
 
@@ -61,7 +61,15 @@ limpiar `--basetemp=.cache/pytest_tmp`: OneDrive bloquea esa carpeta (queda vac�
 pero no se puede borrar). El temporal del sistema también está denegado en esta
 máquina, por eso `pytest.ini` usaba una carpeta local. No son fallos de código.
 
+**2026-09-27, tras F0.2**: suite completa **220 pasan**, 0 fallos, 232 s.
+Subconjunto rápido (`-m "not slow"`): **217 pasan**, 3 deseleccionadas, 57 s.
+Cinco advertencias conocidas: `get_sentence_embedding_dimension` renombrado en
+sentence-transformers 6, e índices de payload sin efecto en Qdrant local.
+
 ## Registro
 
 - **2026-09-27** Se crea la rama `v2/ruta` desde `main` (`41ce65a`) y se
   commitea el trabajo previo sin cambios de contenido.
+- **2026-09-27** F0.2: `tests/conftest.py` elige el temporal de pytest
+  (`RAG_PYTEST_BASETEMP`, o `%LOCALAPPDATA%ag-extractivo\pytest` en Windows).
+  `pytest.ini` deja de fijar `--basetemp`. Suite en verde.
