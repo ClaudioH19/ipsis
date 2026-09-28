@@ -4,15 +4,22 @@ from __future__ import annotations
 from pathlib import Path
 import re
 import unicodedata
+from copy import deepcopy
 
 import yaml
 
 from rag.recursos import leer_plantilla
+from rag.esquemas_configuracion import (
+    CONFIG_VERSION,
+    validar_asistente,
+    validar_motor,
+)
 
 RUTA_PROYECTO = "configuracion/motor.yaml"
 RUTA_DOMINIO = "configuracion/asistente.yaml"
 
 _DOMINIO_POR_DEFECTO = {
+    "config_version": CONFIG_VERSION,
     "nombre_asistente": "Asistente documental",
     "descripcion_dominio": "los documentos cargados",
     "idioma": "es",
@@ -35,7 +42,8 @@ def slug_coleccion(valor: str) -> str:
 
 
 def cargar_proyecto(ruta: str = RUTA_PROYECTO) -> dict:
-    return yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
+    datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8")) or {}
+    return validar_motor(datos)
 
 
 def cargar_dominio(ruta: str = RUTA_DOMINIO) -> dict:
@@ -47,7 +55,45 @@ def cargar_dominio(ruta: str = RUTA_DOMINIO) -> dict:
     for clave, por_defecto in _DOMINIO_POR_DEFECTO.items():
         if salida.get(clave) is None:
             salida[clave] = list(por_defecto) if isinstance(por_defecto, list) else por_defecto
-    return salida
+    return validar_asistente(salida)
+
+
+def configuracion_efectiva(
+    *, ruta_motor: str = RUTA_PROYECTO, ruta_dominio: str = RUTA_DOMINIO
+) -> dict:
+    """Devuelve el snapshot serializable de configuración resuelta.
+
+    La salida contiene defaults aplicados y separa configuración del motor y
+    del dominio. No incluye secretos derivados ni muta los objetos cargados.
+    """
+    motor = deepcopy(cargar_proyecto(ruta_motor))
+    dominio = deepcopy(cargar_dominio(ruta_dominio))
+    return {
+        "snapshot_version": 1,
+        "config_version": CONFIG_VERSION,
+        "motor": motor,
+        "dominio": dominio,
+    }
+
+
+def guardar_snapshot_configuracion(
+    ruta: str = ".cache/configuracion-efectiva.yaml",
+    *,
+    ruta_motor: str = RUTA_PROYECTO,
+    ruta_dominio: str = RUTA_DOMINIO,
+) -> str:
+    """Persiste un snapshot reproducible y devuelve su ruta."""
+    destino = Path(ruta)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(
+        yaml.safe_dump(
+            configuracion_efectiva(ruta_motor=ruta_motor, ruta_dominio=ruta_dominio),
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    return str(destino)
 
 
 def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:

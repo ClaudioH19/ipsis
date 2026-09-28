@@ -94,7 +94,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f"Corpus vacío listo en documentos/ (catálogo en {CATALOGO_PATH}).")
     if creo_proyecto:
         print("configuracion/motor.yaml creado con umbrales genéricos de partida. "
-              "Valídalos con un golden set representativo de tus documentos ('rag evaluar').")
+              "La calibración se realiza al final, después de estabilizar la infraestructura.")
     else:
         print("configuracion/motor.yaml ya existía -- no se tocó.")
     if creo_taxonomia:
@@ -300,6 +300,18 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
     return 1 if hay_fallas else 0
 
 
+def cmd_snapshot_config(args: argparse.Namespace) -> int:
+    from rag.configuracion import guardar_snapshot_configuracion
+
+    try:
+        ruta = guardar_snapshot_configuracion(args.salida)
+    except Exception as e:  # noqa: BLE001 -- CLI debe dar un error accionable
+        print(f"Error generando snapshot de configuración: {e}")
+        return 1
+    print(f"Snapshot de configuración efectiva escrito en {ruta}")
+    return 0
+
+
 # ---------------------------------------------------------------------------
 # rag evaluar
 # ---------------------------------------------------------------------------
@@ -390,6 +402,17 @@ def _construir_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("doctor", help="Diagnóstico: configuración, índice, modelos, Qdrant.")
     p.set_defaults(func=cmd_doctor)
+
+    p = sub.add_parser(
+        "snapshot-config",
+        help="Escribe la configuración efectiva con defaults resueltos.",
+    )
+    p.add_argument(
+        "--salida",
+        default=".cache/configuracion-efectiva.yaml",
+        help="Ruta del snapshot (por defecto: .cache/configuracion-efectiva.yaml).",
+    )
+    p.set_defaults(func=cmd_snapshot_config)
 
     p = sub.add_parser("evaluar", help="Corre una evaluación rápida si hay golden set.")
     p.set_defaults(func=cmd_evaluar)
