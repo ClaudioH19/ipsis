@@ -377,3 +377,14 @@ def test_perfil_con_etapa_desconocida_falla_al_construir(monkeypatch):
     cfg["ajustes_perfil"] = {"etapas": ["conversacional", "no_existe"]}
     with pytest.raises(ValueError, match="no_existe"):
         construir_motor(cfg, cfg_dominio=cargar_dominio())
+
+
+def test_diagnostico_v2_incluye_perfil_senales_lexicas_y_regla():
+    motor, _ = _motor_con_etapa_de_modelo()
+    resultado = motor.consultar("¿Qué filtro incluye?", "s1")
+    diagnostico = _validar_diagnostico(resultado)
+    assert diagnostico.schema_version == 2
+    assert diagnostico.senales_lexicas["terminos_foco"]
+    assert diagnostico.regla
+    assert diagnostico.salto_modelos is False
+    assert "modelo_falso_ms" in diagnostico.etapas

@@ -183,14 +183,20 @@ class DiagnosticCandidate(EsquemaEstricto):
 class QueryDiagnostic(EsquemaEstricto):
     """Traza interna estable de una consulta; nunca se publica por defecto."""
 
-    schema_version: Literal[1] = 1
+    schema_version: Literal[2] = 2
     backend: str = Field(min_length=1)
+    perfil: str | None = None
     etapas: dict[str, int] = Field(default_factory=dict)
     candidatos: list[DiagnosticCandidate] = Field(default_factory=list)
     senales: dict[str, Any] = Field(default_factory=dict)
     decision: dict[str, Any] | None = None
     evidencias: list[EvidenceSpan] = Field(default_factory=list)
     advertencias: list[str] = Field(default_factory=list)
+    senales_lexicas: dict[str, Any] | None = None
+    puntajes_rerank: list[float] | None = None
+    lecturas: list[dict[str, Any]] | None = None
+    regla: str | None = None
+    salto_modelos: bool = False
 
 
 class AssistantResult(EsquemaEstricto):

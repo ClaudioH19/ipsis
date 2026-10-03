@@ -87,6 +87,8 @@ class Motor:
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         valores.setdefault("backend", self.backend)
+        perfil = getattr(self, "perfil_instalacion", None)
+        valores.setdefault("perfil", perfil.perfil if perfil is not None else None)
         return QueryDiagnostic(**valores).model_dump(mode="python")
 
     def _validar_listo(self) -> None:

@@ -234,6 +234,7 @@ class EtapaPolitica(_Etapa):
         decision = m.politica_abstencion.decidir(ctx.consulta, ctx.senales, ctx.candidatos)
         ctx.decision = decision
         ctx.diagnostico["decision"] = decision.__dict__
+        ctx.diagnostico["regla"] = decision.capa_decisora or decision.motivo
         if decision.abstiene:
             motivo = "premisa" if decision.motivo == "premisa" else "generico"
             ctx.resultado = m._abstener(

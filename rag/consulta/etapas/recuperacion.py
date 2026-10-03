@@ -175,6 +175,7 @@ class EtapaRecuperacion(_Etapa):
             for candidato in ctx.candidatos:
                 presentes.update(terminos(candidato.chunk.texto_fuente, m.idioma))
             ctx.saltar_modelos = not any(t in presentes for t in ctx.terminos_foco)
+            ctx.diagnostico["salto_modelos"] = ctx.saltar_modelos
 
 
 __all__ = ["EtapaRecuperacion", "EtapaSenales", "RetrieverQdrant"]

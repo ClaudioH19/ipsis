@@ -36,6 +36,11 @@ def _senales_lexicas(motor, ctx) -> None:
         terminos_foco=[est.superficie.get(t, t) for t in ctx.terminos_foco],
         s_oov=s_oov(tq, est),
     )
+    ctx.diagnostico["senales_lexicas"] = {
+        **ctx.lexicas.model_dump(mode="python"),
+        "terminos": {est.superficie.get(t, t): round(est.idf(t), 4) for t in tq},
+        "ausentes_del_corpus": [t for t in tq if est.df.get(t, 0) == 0],
+    }
 
 
 __all__ = ["EtapaFiltros"]
