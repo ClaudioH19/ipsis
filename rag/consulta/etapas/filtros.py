@@ -31,6 +31,7 @@ def _senales_lexicas(motor, ctx) -> None:
     perfil = getattr(motor, "perfil_instalacion", None)
     k = perfil.lexico.max_terminos_foco if perfil is not None else 2
     tq = terminos_pregunta(ctx.pregunta, motor.idioma)
+    ctx.terminos_pregunta = tq
     ctx.terminos_foco = terminos_foco(tq, est, k)
     ctx.lexicas = SenalesLexicas(
         terminos_foco=[est.superficie.get(t, t) for t in ctx.terminos_foco],

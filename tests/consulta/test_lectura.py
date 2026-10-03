@@ -59,3 +59,35 @@ def test_oracion_que_contiene_un_tramo_que_cruza_oraciones():
     fin = TEXTO.index("2 años") + len("2 años")
     a, b = oracion_que_contiene(TEXTO, ini, fin)
     assert TEXTO[a:b] == "El filtro se cambia cada 6 meses. Garantía de 2 años."
+
+
+def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
+    """«6 meses» sale de la oración del filtro: no responde «¿Cuánto dura la garantía?»."""
+    from rag.consulta.etapas.seleccion import EtapaEvidencia
+    from rag.indice.estadisticas import EstadisticasLexicas
+    from rag.lenguaje.lexico import terminos_foco, terminos_pregunta
+    from rag.lenguaje.paquete import cargar_paquete
+    from rag.nucleo.esquemas import SenalesLexicas
+
+    es = cargar_paquete("es")
+    est = EstadisticasLexicas.construir([TEXTO, "La garantía cubre 24 meses."], es)
+
+    class _Retriever:
+        def estadisticas_lexico(self):
+            return est
+
+    class _Verificador:
+        def verificar(self, evidencias, candidatos):
+            return LiteralOffsetsVerifier().verificar(evidencias, candidatos)
+
+    motor = _Motor(_LectorFalso("6 meses"))
+    motor.retriever, motor.idioma, motor.verificador = _Retriever(), es, _Verificador()
+    ctx = ContextoConsulta(pregunta="¿Cuánto dura la garantía?", id_sesion="s")
+    ctx.terminos_pregunta = terminos_pregunta(ctx.pregunta, es)
+    ctx.terminos_foco = terminos_foco(ctx.terminos_pregunta, est)
+    ctx.lexicas = SenalesLexicas(terminos_foco=ctx.terminos_foco)
+    ctx.candidatos = [_candidato()]
+    EtapaLectura(motor).ejecutar(ctx)
+    EtapaEvidencia(motor).ejecutar(ctx)
+    assert ctx.evidencias[0].texto == "El filtro se cambia cada 6 meses."
+    assert ctx.lexicas.s_foco == 0.0

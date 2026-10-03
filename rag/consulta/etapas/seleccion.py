@@ -279,6 +279,29 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     return payloads_ordenados, scores_ordenados
 
 
+def _proximidad_del_foco(motor, ctx) -> None:
+    """``s_foco`` y ``s_cov`` sobre la oración que se mostrará como respuesta.
+
+    Un tramo correcto debe estar cerca de lo que se pregunta: «6 meses» en una
+    oración sobre el filtro no responde «¿Cuánto dura la garantía?».
+    """
+    if ctx.lexicas is None or not ctx.evidencias:
+        return
+    from rag.lenguaje.lexico import s_cov, s_foco
+
+    obtener = getattr(motor.retriever, "estadisticas_lexico", None)
+    est = obtener() if callable(obtener) else None
+    if est is None or not hasattr(est, "idf"):
+        return
+    terminos_oracion = terminos(ctx.evidencias[0].texto, motor.idioma)
+    ctx.lexicas = ctx.lexicas.model_copy(update={
+        "s_foco": s_foco(ctx.terminos_foco, terminos_oracion),
+        "s_cov": s_cov(ctx.terminos_pregunta, terminos_oracion, est),
+    })
+    if isinstance(ctx.diagnostico.get("senales_lexicas"), dict):
+        ctx.diagnostico["senales_lexicas"].update(s_foco=ctx.lexicas.s_foco, s_cov=ctx.lexicas.s_cov)
+
+
 class EtapaEvidencia(_Etapa):
     """Selecciona el tramo literal de cada candidato y verifica sus offsets."""
 
@@ -300,5 +323,6 @@ class EtapaEvidencia(_Etapa):
             return
         ctx.evidencias = evidencias
         ctx.diagnostico["evidencias"] = [e.model_dump(mode="python") for e in evidencias]
+        _proximidad_del_foco(m, ctx)
         por_chunk = {c.chunk.chunk_id: c for c in ctx.candidatos}
         ctx.payloads = [payload_desde_evidencia(e, por_chunk[e.chunk_id].chunk) for e in evidencias]
