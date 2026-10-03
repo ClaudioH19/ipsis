@@ -7,6 +7,7 @@ from typing import Any
 from rag.consulta.etapas.redaccion import cargar_plantillas
 from rag.consulta.motor import Motor
 from rag.lenguaje.paquete import cargar_paquete
+from rag.configuracion.perfiles import perfil_efectivo
 from rag.nucleo.registro import RegistroComponentes
 
 
@@ -43,6 +44,15 @@ def construir_motor(
             registro.obtener(tipo, nombre)
 
     cfg_dominio = cfg_dominio or cargar_dominio()
+    perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"))
+    for nombre_etapa in perfil_instalacion.etapas:
+        try:
+            registro.obtener("etapa", nombre_etapa)
+        except KeyError as exc:
+            raise ValueError(
+                f"el perfil {perfil_instalacion.perfil!r} declara la etapa desconocida {nombre_etapa!r}. "
+                f"Revisa ajustes_perfil.etapas en configuracion/motor.yaml. {exc}"
+            ) from exc
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
     plantillas = cargar_plantillas(idioma, cfg_dominio)
@@ -78,7 +88,7 @@ def construir_motor(
         "evidence_verifier", componentes["evidence_verifier"]
     )
     renderer = registro.crear("response_renderer", componentes["response_renderer"])
-    return Motor(
+    motor = Motor(
         retriever=retriever,
         analizador=analizador,
         politica_abstencion=politica,
@@ -104,3 +114,6 @@ def construir_motor(
             and "sin_calibrar" not in str(cfg_abs.get("version", ""))
         ),
     )
+    motor.perfil_instalacion = perfil_instalacion
+    motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
+    return motor

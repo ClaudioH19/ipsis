@@ -27,6 +27,7 @@ class ContextoConsulta:
     senales: SenalesRecuperacion | None = None
     confianza: dict[str, Any] = field(default_factory=lambda: {"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None})
     lexicas: SenalesLexicas | None = None
+    terminos_foco: list[str] = field(default_factory=list)  # stems
     candidatos: list[RetrievalCandidate] = field(default_factory=list)
     puntajes_rerank: list[float] | None = None
     lecturas: list[Any] | None = None

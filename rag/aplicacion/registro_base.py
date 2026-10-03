@@ -196,6 +196,20 @@ def _crear_codificador_onnx(modelo: str = "intfloat/multilingual-e5-small", **op
     return CodificadorDenso(obtener(modelo), **opciones)
 
 
+def _clases_etapa() -> list:
+    from rag.consulta.etapas.analisis import EtapaAnalisis
+    from rag.consulta.etapas.conversacional import EtapaConversacional
+    from rag.consulta.etapas.filtros import EtapaFiltros
+    from rag.consulta.etapas.politica import EtapaPolitica
+    from rag.consulta.etapas.recuperacion import EtapaRecuperacion, EtapaSenales
+    from rag.consulta.etapas.redaccion import EtapaRedaccion
+    from rag.consulta.etapas.seleccion import EtapaEvidencia
+    from rag.consulta.etapas.verificacion import EtapaVerificacion
+
+    return [EtapaConversacional, EtapaAnalisis, EtapaSenales, EtapaFiltros, EtapaRecuperacion,
+            EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
+
+
 def registrar_componentes_base(
     registro: RegistroComponentes | None = None,
 ) -> RegistroComponentes:
@@ -205,6 +219,8 @@ def registrar_componentes_base(
     destino.registrar("chunker", "builtin", ChunkerBuiltin, reemplazar=True)
     destino.registrar("dense_encoder", "onnx", _crear_codificador_onnx, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
+    for clase in _clases_etapa():
+        destino.registrar("etapa", clase.nombre, clase, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
     from rag.consulta.etapas.politica import LayeredV1
 

@@ -83,6 +83,7 @@ class Motor:
             else abstencion_calibrada
         )
         self.etapas = etapas if etapas is not None else etapas_por_defecto(self)
+        self.perfil_instalacion = None
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         valores.setdefault("backend", self.backend)
@@ -286,6 +287,8 @@ class Motor:
         ctx.diagnostico = {**self._diagnostico(), "etapas": dict(ctx.diagnostico.get("etapas", {}))}
         try:
             for etapa in pendientes:
+                if ctx.saltar_modelos and getattr(etapa, "usa_modelos", False):
+                    continue  # salida temprana: ningún candidato menciona lo que se pregunta
                 self._ejecutar_etapa(etapa, ctx)
                 if ctx.resultado is not None:
                     return ctx.resultado
