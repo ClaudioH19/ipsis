@@ -129,6 +129,22 @@ class SenalesRecuperacion(EsquemaEstricto):
     terminos_ausentes: list[str] = Field(default_factory=list)
 
 
+class LecturaQA(EsquemaEstricto):
+    """Resultado del lector QA sobre un pasaje (estilo SQuAD 2.0)."""
+
+    indice_pasaje: int = Field(ge=0)
+    inicio: int = Field(ge=0)  # offset de carácter dentro del pasaje
+    fin: int = Field(ge=0)
+    texto: str  # == pasaje[inicio:fin]; vacío si ganó «sin respuesta»
+    prob_respuesta: float = Field(ge=0.0, le=1.0)
+    prob_sin_respuesta: float = Field(ge=0.0, le=1.0)
+
+    @property
+    def s_qa(self) -> float:
+        """Señal de la política: probabilidad del tramo menos la de «sin respuesta», en [0, 1]."""
+        return max(0.0, self.prob_respuesta - self.prob_sin_respuesta)
+
+
 class SenalesLexicas(EsquemaEstricto):
     """Señales léxicas de una consulta, todas en [0, 1] (ver ``rag.lenguaje.lexico``)."""
 
