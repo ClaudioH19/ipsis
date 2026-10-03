@@ -21,6 +21,7 @@ etapas:
 - confianza
 - filtros
 - recuperacion
+- reranking
 - politica
 - evidencia
 - redaccion

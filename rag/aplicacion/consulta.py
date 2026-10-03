@@ -115,5 +115,7 @@ def construir_motor(
         ),
     )
     motor.perfil_instalacion = perfil_instalacion
+    if perfil_instalacion.modelos.reranker and "reranking" in perfil_instalacion.etapas:
+        motor.reranker = registro.crear("reranker", "onnx", modelo=perfil_instalacion.modelos.reranker)
     motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
     return motor
