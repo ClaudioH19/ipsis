@@ -8,6 +8,31 @@ sea 0.x, un cambio menor puede romper compatibilidad y se indica como tal.
 
 ### Cambiado
 
+- **Requiere reindexar.** Estructura de proyecto v3 (`config_version: 3`):
+  `configuracion/dominio.yaml` reemplaza a `dominios/<perfil>/perfil.yaml` y
+  `categorias.yaml`; los textos pasan al paquete de idioma (sobrescribibles en
+  `configuracion/idioma.yaml`); el índice vive en `.rag/indice/` y el golden en
+  `golden/`. Cualquier comando `rag` migra un proyecto v2 automáticamente.
+- **Requiere reindexar.** Multilenguaje: paquetes de idioma `es`, `en` y `pt`
+  con palabras, patrones conversacionales, mensajes y textos del widget. Las
+  entidades con palabras (plazos, fechas, referencias) se generan desde el
+  paquete y su `valor_norm` ya no depende del idioma (`2024-03-15`,
+  `2_dow5_m01`, `6_mes`). Nuevas entidades universales: fechas numéricas y
+  montos con moneda.
+- Código reorganizado por capas (`rag/nucleo`, `configuracion`, `lenguaje`,
+  `ingesta`, `indice`, `consulta`, `evaluacion`, `aplicacion`, `servicio`) con
+  una prueba que impide dependencias hacia capas superiores.
+
+### Corregido
+
+- La selección de oraciones perdía el texto anterior a un punto no seguido de
+  espacio (por ejemplo, «1.5»).
+- La palabra «no» se leía como booleano en la lista de palabras generales.
+- `cargar_dominio` aplicaba la versión vigente antes de migrar un archivo
+  antiguo sin `config_version`.
+- Las palabras generales del idioma dependían del directorio actual al
+  importarse.
+
 - **Requiere reindexar.** El tipo de entidad `nota` (escala 1,0–7,0) se
   reemplaza por `decimal`, que reconoce cualquier número con coma o punto
   decimal y lo normaliza a punto. Una escala propia se declara en el perfil;

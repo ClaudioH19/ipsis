@@ -1,0 +1,302 @@
+# Paquete de idioma: inglés. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en configuracion/idioma.yaml.
+codigo: en
+nombre: English
+stemmer: english
+stopwords:
+- a
+- about
+- all
+- also
+- an
+- and
+- any
+- are
+- as
+- at
+- be
+- been
+- being
+- but
+- by
+- can
+- could
+- did
+- do
+- does
+- each
+- for
+- from
+- he
+- her
+- here
+- his
+- how
+- i
+- if
+- in
+- into
+- is
+- it
+- its
+- may
+- me
+- might
+- must
+- my
+- 'no'
+- not
+- of
+- 'on'
+- or
+- our
+- she
+- should
+- so
+- some
+- than
+- that
+- the
+- their
+- them
+- then
+- there
+- these
+- they
+- this
+- those
+- to
+- us
+- was
+- we
+- were
+- what
+- when
+- where
+- which
+- who
+- whom
+- why
+- will
+- with
+- would
+- you
+- your
+palabras_generales:
+- about
+- need
+- make
+- know
+- tell
+- want
+- please
+- thing
+- something
+- anything
+- information
+- question
+- help
+- does
+- work
+- used
+- using
+numeros:
+  a: 1
+  an: 1
+  one: 1
+  two: 2
+  three: 3
+  four: 4
+  five: 5
+  six: 6
+  seven: 7
+  eight: 8
+  nine: 9
+  ten: 10
+  eleven: 11
+  twelve: 12
+  fourteen: 14
+  fifteen: 15
+  twenty: 20
+  thirty: 30
+ordinales:
+  first: 1
+  second: 2
+  third: 3
+  fourth: 4
+  fifth: 5
+  last: 5
+meses:
+- january
+- february
+- march
+- april
+- may
+- june
+- july
+- august
+- september
+- october
+- november
+- december
+dias_semana:
+  '1':
+  - monday
+  '2':
+  - tuesday
+  '3':
+  - wednesday
+  '4':
+  - thursday
+  '5':
+  - friday
+  '6':
+  - saturday
+  '7':
+  - sunday
+unidades_tiempo:
+  dia:
+  - day
+  - days
+  semana:
+  - week
+  - weeks
+  hora:
+  - hour
+  - hours
+  minuto:
+  - minute
+  - minutes
+  mes:
+  - month
+  - months
+calificadores_plazo:
+  habiles:
+  - business
+  - working
+  corridos:
+  - calendar
+referencias_documento:
+  articulo:
+  - article
+  - articles
+  anexo:
+  - annex
+  - annexes
+  - appendix
+  - appendices
+  capitulo:
+  - chapter
+  - chapters
+conectores_rango:
+  y:
+  - and
+  a:
+  - to
+  - through
+conectores_fecha:
+- of
+conectores_fecha_relativa:
+- of
+- in
+marcadores:
+  excepcion:
+  - except
+  - unless
+  - other than
+  - excluding
+  condicion:
+  - provided that
+  - as long as
+  - in case of
+  - if
+  - when
+conversacional:
+  categorias:
+  - saludo
+  - agradecimiento
+  - despedida
+  - capacidad
+  patrones:
+    saludo:
+    - ^\s*hi\b
+    - ^\s*hello\b
+    - ^\s*hey\b
+    - ^\s*good (morning|afternoon|evening)\b
+    agradecimiento:
+    - \bthanks?\b
+    - \bthank you\b
+    despedida:
+    - ^\s*bye\b
+    - ^\s*goodbye\b
+    - ^\s*see you\b
+    capacidad:
+    - what can you do
+    - who are you
+    - what are you
+    - how do you work
+  respuestas:
+    saludo:
+    - Hi! I'm {nombre_asistente}. I answer questions about {descripcion_dominio} quoting the exact text
+      of the document. What do you need to know?
+    - 'Hi! Ask me anything about {descripcion_dominio}: I look for the answer in the document and show
+      you where I found it.'
+    agradecimiento:
+    - You're welcome. If you have another question about {descripcion_dominio}, I'm here.
+    - Glad to help. Any other question about {descripcion_dominio}, just ask.
+    despedida:
+    - Goodbye.
+    - See you. Come back whenever you need to check the document.
+    capacidad:
+    - I'm {nombre_asistente}. I answer questions about {descripcion_dominio} quoting the exact text of
+      the document. If the information is not there, I tell you instead of making up an answer.
+    - I search {descripcion_dominio} and give you literal text with its source.
+mensajes:
+  sin_respuesta: I couldn't find that information in the available documents.
+  premisa_no_encontrada: I couldn't find information about "{entidad}" in the available documents. It
+    may not exist or be outside what your documents cover.
+  relacionado_intro: 'I couldn''t find a direct answer. This is what the documents say about the topic:'
+  relacionado_foco_ausente: 'I couldn''t find specific information about «{termino}». This is the closest:'
+  conectores:
+    apertura:
+    - 'This is what the document says:'
+    - 'I found this in the document:'
+    - 'The document puts it this way:'
+    - 'According to the loaded text:'
+    complemento:
+    - 'It also adds:'
+    - 'In another section, the document adds:'
+    - 'It also says:'
+    - 'And it continues:'
+    condicion:
+    - 'This applies under a condition:'
+    - 'There is an associated condition:'
+    - 'The document makes it conditional:'
+    excepcion:
+    - 'With one exception:'
+    - 'There is a caveat:'
+    - 'The document includes an exception:'
+    secuencia:
+    - First
+    - Then
+    - Finally
+    contraste_version:
+    - In version {v1}…; in version {v2}…
+  sin_seccion: (no section)
+interfaz:
+  titulo: Assistant
+  saludo: Hi, how can I help you?
+  subtitulo: Answers quoting the document
+  abrir: Open chat with {titulo}
+  cerrar: Close chat
+  etiqueta_pregunta: Type your question
+  placeholder: Type your question...
+  enviar: Send question
+  no_directa: Not a direct answer
+  esperando: Searching the document
+  error_limite: Too many questions in a row. Wait a few seconds and try again.
+  error_origen: This site is not authorized to use the assistant.
+  error_http: The service could not answer (HTTP {estado}).
+  error_red: Could not reach the assistant. Check your connection and try again.
+contracciones: {}

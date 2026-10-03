@@ -164,11 +164,12 @@ class Motor:
             "acuerdo_bm25": None,
         }
 
-    @staticmethod
     def _fragmentos_http(
+        self,
         evidencias: list[EvidenceSpan],
         candidatos: list[RetrievalCandidate],
     ) -> list[dict[str, Any]]:
+        sin_seccion = self.idioma.mensajes.sin_seccion if self.idioma is not None else ""
         por_chunk = {candidato.chunk.chunk_id: candidato for candidato in candidatos}
         salida = []
         for evidencia in evidencias:
@@ -176,7 +177,7 @@ class Motor:
             salida.append({
                 "chunk_id": evidencia.chunk_id,
                 "doc_titulo": chunk.doc_titulo,
-                "seccion": " > ".join(evidencia.seccion_path) or "(sin sección)",
+                "seccion": " > ".join(evidencia.seccion_path) or sin_seccion,
                 "version": chunk.version,
                 "pagina": chunk.pagina,
                 "offset_inicio": evidencia.offset_inicio,
