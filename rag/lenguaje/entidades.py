@@ -13,31 +13,13 @@ intencionalmente literal y no requiere NLU.
 """
 from __future__ import annotations
 
+import functools
+import json
 import re
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, asdict
 from typing import Iterable
-
-NUMEROS_TEXTO = {
-    "un": 1, "una": 1, "uno": 1,
-    "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5,
-    "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10,
-    "once": 11, "doce": 12, "catorce": 14, "quince": 15,
-    "veinte": 20, "veinticuatro": 24, "treinta": 30,
-}
-
-MESES = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-]
-
-ORDINALES = {
-    "primer": 1, "primera": 1, "segundo": 2, "segunda": 2,
-    "tercer": 3, "tercera": 3, "cuarto": 4, "cuarta": 4,
-    "quinto": 5, "quinta": 5,
-}
-
 
 @dataclass(frozen=True)
 class Entidad:
@@ -48,14 +30,6 @@ class Entidad:
 
     def to_dict(self) -> dict:
         return asdict(self)
-
-
-def _num_o_texto_a_int(token: str) -> int | None:
-    token = token.strip().lower()
-    if token.isdigit():
-        return int(token)
-    token_norm = token.replace(",", "").replace(".", "")
-    return NUMEROS_TEXTO.get(token_norm)
 
 
 # ---------------------------------------------------------------------------
@@ -89,98 +63,6 @@ def extraer_porcentajes(texto: str) -> list[Entidad]:
     for m in _RE_PORCENTAJE.finditer(texto):
         numero = m.group(1) if m.group(2) is None else f"{m.group(1)}.{m.group(2)}"
         out.append(Entidad("porcentaje", m.group(0), f"{numero}_pct", m.start(0)))
-    return out
-
-
-# ---------------------------------------------------------------------------
-# PLAZO: "<numero|texto> día(s)/semana(s)/hora(s) [hábiles|corridos]"
-# ---------------------------------------------------------------------------
-_UNIDADES_PLAZO = r"(d[ií]as?|semanas?|horas?|minutos?|meses?)"
-_RE_PLAZO = re.compile(
-    rf"\b(\d{{1,3}}|{'|'.join(NUMEROS_TEXTO.keys())})\s+{_UNIDADES_PLAZO}"
-    rf"(\s+(h[aá]biles|corridos))?",
-    re.IGNORECASE,
-)
-
-
-def extraer_plazos(texto: str) -> list[Entidad]:
-    out = []
-    for m in _RE_PLAZO.finditer(texto):
-        num = _num_o_texto_a_int(m.group(1))
-        if num is None:
-            continue
-        unidad = m.group(2).lower()
-        # normaliza plural/singular de la unidad a su forma singular
-        unidad_norm = re.sub(r"s$", "", unidad).replace("í", "i").replace("á", "a")
-        calif = m.group(4)
-        valor = f"{num}_{unidad_norm}"
-        if calif:
-            valor += f"_{calif.lower().replace('á', 'a')}"
-        out.append(Entidad("plazo", m.group(0), valor, m.start(0)))
-    return out
-
-
-# ---------------------------------------------------------------------------
-# FECHA relativa: "<ordinal> <día semana> de <mes>" (patrón real del corpus:
-# "segundo viernes de enero"); también fechas explícitas dd/mm/yyyy o "dd de mes".
-# ---------------------------------------------------------------------------
-_DIAS_SEMANA = ["lunes", "martes", "mi[eé]rcoles", "jueves", "viernes", "s[aá]bado", "domingo"]
-_RE_FECHA_RELATIVA = re.compile(
-    rf"\b({'|'.join(ORDINALES.keys())})\s+({'|'.join(_DIAS_SEMANA)})\s+de\s+({'|'.join(MESES)})\b",
-    re.IGNORECASE,
-)
-_RE_FECHA_EXPLICITA = re.compile(
-    rf"\b(\d{{1,2}})\s+de\s+({'|'.join(MESES)})(\s+de\s+(\d{{4}}))?\b",
-    re.IGNORECASE,
-)
-
-
-def extraer_fechas(texto: str) -> list[Entidad]:
-    out = []
-    for m in _RE_FECHA_RELATIVA.finditer(texto):
-        ordinal = ORDINALES.get(m.group(1).lower(), m.group(1).lower())
-        dia = re.sub(r"[íÍ]", "i", m.group(2).lower()).replace("á", "a")
-        mes = m.group(3).lower()
-        out.append(Entidad("fecha", m.group(0), f"{ordinal}_{dia}_de_{mes}", m.start(0)))
-    for m in _RE_FECHA_EXPLICITA.finditer(texto):
-        dia = m.group(1)
-        mes = m.group(2).lower()
-        anio = m.group(4) or ""
-        valor = f"{dia}_de_{mes}" + (f"_{anio}" if anio else "")
-        out.append(Entidad("fecha", m.group(0), valor, m.start(0)))
-    return out
-
-
-# ---------------------------------------------------------------------------
-# ARTICULO / ANEXO
-#
-# Defecto: "artículos 13 y 14" normalizaba como
-# "articulo_13" -- el segundo número del rango/lista se descartaba
-# silenciosamente porque el patrón original solo capturaba un dígito. Se
-# agrega un segundo número opcional unido por "y" (lista) o "a" (rango),
-# mismo precedente que ``_RE_SABER_RANGO``: el rango/lista completo queda en
-# un único ``valor_norm`` (p.ej. "articulo_13_y_14", "articulo_13_a_15"), en
-# vez de truncarse al primer elemento.
-# ---------------------------------------------------------------------------
-_RE_ARTICULO = re.compile(
-    r"\b([Aa]rt[ií]culo)s?\s+(\d{1,3})(\s+(y|a)\s+(\d{1,3}))?\b"
-)
-_RE_ANEXO = re.compile(r"\b([Aa]nexo)\s+(\d{1,2})\b")
-_RE_CAPITULO = re.compile(r"\b(CAP[IÍ]TULO)\s+([IVX]+)\b")
-
-
-def extraer_articulos(texto: str) -> list[Entidad]:
-    out = []
-    for m in _RE_ARTICULO.finditer(texto):
-        n1 = m.group(2)
-        conector = m.group(4)
-        n2 = m.group(5)
-        valor = f"articulo_{n1}" if not n2 else f"articulo_{n1}_{conector}_{n2}"
-        out.append(Entidad("articulo", m.group(0), valor, m.start(0)))
-    for m in _RE_ANEXO.finditer(texto):
-        out.append(Entidad("articulo", m.group(0), f"anexo_{m.group(2)}", m.start(0)))
-    for m in _RE_CAPITULO.finditer(texto):
-        out.append(Entidad("articulo", m.group(0), f"capitulo_{m.group(2).lower()}", m.start(0)))
     return out
 
 
@@ -250,13 +132,222 @@ def extraer_montos(texto: str) -> list[Entidad]:
 
 
 # ---------------------------------------------------------------------------
+# REGLAS DEL IDIOMA: plazos, fechas con nombres y referencias a partes del
+# documento. La ESTRUCTURA es común (número + unidad, día + mes + año, palabra
+# + número); las PALABRAS vienen del paquete de idioma. Así un idioma nuevo
+# solo agrega listas al YAML, no código.
+#
+# valor_norm no depende del idioma:
+#   plazo      30_dia, 5_dia_habiles, 2_semana
+#   fecha      2024-03-15, --03-15 (sin año), 2_dow5_m01 (2.º viernes de enero)
+#   referencia articulo_13, articulo_13_y_14 (lista), articulo_20_a_23 (rango)
+# ---------------------------------------------------------------------------
+
+_ROMANOS = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
+
+
+def _romano_a_entero(texto: str) -> int | None:
+    total, previo = 0, 0
+    for c in reversed(texto.upper()):
+        valor = _ROMANOS.get(c)
+        if valor is None:
+            return None
+        total = total - valor if valor < previo else total + valor
+        previo = max(previo, valor)
+    return total or None
+
+
+def _alternativas(palabras) -> str:
+    """Alternancia regex, de la más larga a la más corta (para no recortar)."""
+    unicas = sorted({p for p in palabras if p}, key=len, reverse=True)
+    return "|".join(re.escape(p) for p in unicas) or r"(?!x)x"
+
+
+def _inverso(mapa: dict[str, list[str]]) -> dict[str, str]:
+    return {forma.casefold(): canon for canon, formas in mapa.items() for forma in formas}
+
+
+@dataclass(frozen=True)
+class _ReglasIdioma:
+    numeros: dict[str, int]
+    ordinales: dict[str, int]
+    meses: dict[str, int]
+    dias: dict[str, str]
+    unidades: dict[str, str]
+    calificadores: dict[str, str]
+    referencias: dict[str, str]
+    conectores_rango: dict[str, str]
+    plazo: re.Pattern
+    fecha_relativa: re.Pattern
+    fecha_dia_mes: re.Pattern
+    fecha_mes_dia: re.Pattern
+    referencia: re.Pattern
+
+
+@functools.lru_cache(maxsize=32)
+def _compilar(clave: str) -> _ReglasIdioma:
+    datos = json.loads(clave)
+    numeros = {k.casefold(): v for k, v in datos["numeros"].items()}
+    ordinales = {k.casefold(): v for k, v in datos["ordinales"].items()}
+    meses = {m.casefold(): i for i, m in enumerate(datos["meses"], start=1)}
+    dias = _inverso(datos["dias_semana"])
+    unidades = _inverso(datos["unidades_tiempo"])
+    calificadores = _inverso(datos["calificadores_plazo"])
+    referencias = _inverso(datos["referencias_documento"])
+    conectores_rango = _inverso(datos["conectores_rango"])
+    con_fecha = _alternativas(datos["conectores_fecha"])
+    con_relativa = _alternativas(datos["conectores_fecha_relativa"])
+
+    numero = rf"(\d{{1,3}}|{_alternativas(numeros)})"
+    calif = _alternativas(calificadores)
+    mes = _alternativas(meses)
+    anio = r"(\d{4})"
+    dia = r"(\d{1,2})"
+    flags = re.IGNORECASE
+    return _ReglasIdioma(
+        numeros=numeros, ordinales=ordinales, meses=meses, dias=dias, unidades=unidades,
+        calificadores=calificadores, referencias=referencias, conectores_rango=conectores_rango,
+        plazo=re.compile(
+            rf"\b{numero}\s+(?:({calif})\s+)?({_alternativas(unidades)})(?:\s+({calif}))?\b", flags
+        ),
+        fecha_relativa=re.compile(
+            rf"\b({_alternativas(ordinales)})\s+({_alternativas(dias)})\s+(?:(?:{con_relativa})\s+)?({mes})\b",
+            flags,
+        ),
+        fecha_dia_mes=re.compile(
+            rf"\b{dia}\s+(?:(?:{con_fecha})\s+)?({mes})(?:,?\s+(?:(?:{con_fecha})\s+)?{anio})?\b", flags
+        ),
+        fecha_mes_dia=re.compile(
+            rf"\b({mes})\s+{dia}(?:st|nd|rd|th)?(?:,?\s+{anio})?\b", flags
+        ),
+        referencia=re.compile(
+            rf"\b({_alternativas(referencias)})\s+(\d{{1,3}}|[IVXLC]+\b)"
+            rf"(?:\s+({_alternativas(conectores_rango)})\s+(\d{{1,3}}))?\b",
+            flags,
+        ),
+    )
+
+
+def _reglas(paquete) -> _ReglasIdioma | None:
+    if paquete is None:
+        return None
+    clave = json.dumps({
+        "numeros": paquete.numeros, "ordinales": paquete.ordinales, "meses": paquete.meses,
+        "dias_semana": paquete.dias_semana, "unidades_tiempo": paquete.unidades_tiempo,
+        "calificadores_plazo": paquete.calificadores_plazo,
+        "referencias_documento": paquete.referencias_documento,
+        "conectores_rango": paquete.conectores_rango, "conectores_fecha": paquete.conectores_fecha,
+        "conectores_fecha_relativa": paquete.conectores_fecha_relativa,
+    }, sort_keys=True, ensure_ascii=False)
+    return _compilar(clave)
+
+
+def _numero(token: str, reglas: _ReglasIdioma) -> int | None:
+    return int(token) if token.isdigit() else reglas.numeros.get(token.casefold())
+
+
+def extraer_plazos(texto: str, paquete=None) -> list[Entidad]:
+    reglas = _reglas(paquete if paquete is not None else idioma_activo())
+    if reglas is None:
+        return []
+    out = []
+    for m in reglas.plazo.finditer(texto):
+        num = _numero(m.group(1), reglas)
+        if num is None:
+            continue
+        valor = f"{num}_{reglas.unidades[m.group(3).casefold()]}"
+        calif = m.group(2) or m.group(4)
+        if calif:
+            valor += f"_{reglas.calificadores[calif.casefold()]}"
+        out.append(Entidad("plazo", m.group(0), valor, m.start(0)))
+    return out
+
+
+def extraer_fechas(texto: str, paquete=None) -> list[Entidad]:
+    reglas = _reglas(paquete if paquete is not None else idioma_activo())
+    if reglas is None:
+        return []
+    out = []
+    for m in reglas.fecha_relativa.finditer(texto):
+        ordinal = reglas.ordinales[m.group(1).casefold()]
+        dia = reglas.dias[m.group(2).casefold()]
+        mes = reglas.meses[m.group(3).casefold()]
+        out.append(Entidad("fecha", m.group(0), f"{ordinal}_dow{dia}_m{mes:02d}", m.start(0)))
+    ocupados = {e.offset for e in out}
+    for patron, g_dia, g_mes, g_anio in ((reglas.fecha_dia_mes, 1, 2, 3), (reglas.fecha_mes_dia, 2, 1, 3)):
+        for m in patron.finditer(texto):
+            if m.start(0) in ocupados:
+                continue
+            dia, mes = int(m.group(g_dia)), reglas.meses[m.group(g_mes).casefold()]
+            if not 1 <= dia <= 31:
+                continue
+            valor = f"{m.group(g_anio)}-{mes:02d}-{dia:02d}" if m.group(g_anio) else f"--{mes:02d}-{dia:02d}"
+            out.append(Entidad("fecha", m.group(0), valor, m.start(0)))
+            ocupados.add(m.start(0))
+    return out
+
+
+def extraer_articulos(texto: str, paquete=None) -> list[Entidad]:
+    """Referencias a partes del documento: artículo, anexo, capítulo, etc."""
+    reglas = _reglas(paquete if paquete is not None else idioma_activo())
+    if reglas is None:
+        return []
+    out = []
+    for m in reglas.referencia.finditer(texto):
+        canon = reglas.referencias[m.group(1).casefold()]
+        n1 = m.group(2)
+        if not n1.isdigit():
+            if _romano_a_entero(n1) is None or not n1.isupper():
+                continue
+            n1 = n1.lower()
+        valor = f"{canon}_{n1}"
+        if m.group(3) and m.group(4):
+            valor += f"_{reglas.conectores_rango[m.group(3).casefold()]}_{m.group(4)}"
+        out.append(Entidad("articulo", m.group(0), valor, m.start(0)))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Idioma activo: igual que el perfil de dominio, se fija al arrancar
+# (configurar_idioma) o por consulta (usar_idioma). Sin idioma activo solo
+# corren las reglas universales.
+# ---------------------------------------------------------------------------
+_idioma_activo = None
+_SIN_IDIOMA_CONTEXTUAL = object()
+_idioma_contextual: ContextVar = ContextVar("rag_idioma_contextual", default=_SIN_IDIOMA_CONTEXTUAL)
+
+
+def configurar_idioma(paquete) -> None:
+    global _idioma_activo
+    _idioma_activo = paquete
+
+
+def idioma_activo():
+    contextual = _idioma_contextual.get()
+    return _idioma_activo if contextual is _SIN_IDIOMA_CONTEXTUAL else contextual
+
+
+@contextmanager
+def usar_idioma(paquete):
+    token = _idioma_contextual.set(paquete)
+    try:
+        yield
+    finally:
+        _idioma_contextual.reset(token)
+
+
+# ---------------------------------------------------------------------------
+# Universales: no dependen del idioma.
 EXTRACTORES = [
     extraer_decimales,
     extraer_porcentajes,
-    extraer_plazos,
-    extraer_fechas,
     extraer_fechas_numericas,
     extraer_montos,
+]
+# Dependen del paquete de idioma activo.
+EXTRACTORES_IDIOMA = [
+    extraer_plazos,
+    extraer_fechas,
     extraer_articulos,
 ]
 
@@ -339,6 +430,10 @@ def extraer_entidades(texto: str) -> list[dict]:
     entidades: list[Entidad] = []
     for extractor in EXTRACTORES:
         entidades.extend(extractor(texto))
+    paquete = idioma_activo()
+    if paquete is not None:
+        for extractor in EXTRACTORES_IDIOMA:
+            entidades.extend(extractor(texto, paquete))
     perfil = perfil_activo()
     if perfil is not None:
         entidades.extend(perfil.extraer_entidades_extra(texto))

@@ -50,10 +50,13 @@ class PaqueteIdioma(_Estricto):
     numeros: dict[str, int] = Field(default_factory=dict)
     ordinales: dict[str, int] = Field(default_factory=dict)
     meses: list[str] = Field(default_factory=list)
-    dias_semana: list[str] = Field(default_factory=list)
+    dias_semana: dict[str, list[str]] = Field(default_factory=dict)  # ISO: 1=lunes … 7=domingo
     unidades_tiempo: dict[str, list[str]] = Field(default_factory=dict)
     calificadores_plazo: dict[str, list[str]] = Field(default_factory=dict)
     referencias_documento: dict[str, list[str]] = Field(default_factory=dict)
+    conectores_rango: dict[str, list[str]] = Field(default_factory=dict)  # claves: y (lista), a (rango)
+    conectores_fecha: list[str] = Field(default_factory=list)
+    conectores_fecha_relativa: list[str] = Field(default_factory=list)
     marcadores: Marcadores = Field(default_factory=Marcadores)
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes

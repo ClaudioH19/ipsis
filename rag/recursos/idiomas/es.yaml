@@ -184,15 +184,22 @@ meses:
 - noviembre
 - diciembre
 dias_semana:
-- lunes
-- martes
-- miércoles
-- miercoles
-- jueves
-- viernes
-- sábado
-- sabado
-- domingo
+  '1':
+  - lunes
+  '2':
+  - martes
+  '3':
+  - miércoles
+  - miercoles
+  '4':
+  - jueves
+  '5':
+  - viernes
+  '6':
+  - sábado
+  - sabado
+  '7':
+  - domingo
 unidades_tiempo:
   dia:
   - día
@@ -228,6 +235,17 @@ referencias_documento:
   capitulo:
   - capítulo
   - capitulo
+conectores_rango:
+  y:
+  - y
+  a:
+  - a
+conectores_fecha:
+- de
+- del
+conectores_fecha_relativa:
+- de
+- del
 marcadores:
   excepcion:
   - salvo

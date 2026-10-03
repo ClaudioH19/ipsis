@@ -22,6 +22,4 @@ taxonomia:
       palabras_gatillo: []
     - id: otro
       descripcion: "No encaja en ninguna categoría anterior."
-  marcadores_excepcion: ["salvo", "excepto", "a menos que", "sin perjuicio de"]
-  marcadores_condicion: ["siempre que", "en caso de", "cuando", "si"]
   umbral_categoria_filtro_duro: 0.95

@@ -54,6 +54,7 @@ class Motor:
         control_admision: Any = None,
         backend: str | None = None,
         perfil: Any = None,
+        idioma: Any = None,
         plantillas: dict[str, Any] | None = None,
         configuracion_redaccion: dict[str, Any] | None = None,
         top_k: int = 3,
@@ -75,6 +76,7 @@ class Motor:
             type(retriever).__name__ if retriever is not None else "sin_configurar"
         )
         self.perfil = perfil
+        self.idioma = idioma
         self.plantillas = plantillas
         self.configuracion_redaccion = configuracion_redaccion
         self.top_k = top_k
@@ -250,11 +252,15 @@ class Motor:
         return respuesta_conversacional(categoria, pregunta, self.plantillas)
 
     def consultar(self, pregunta: str, id_sesion: str) -> AssistantResult:
-        if self.perfil is None:
-            return self._consultar_en_contexto(pregunta, id_sesion)
-        from rag.lenguaje.entidades import usar_perfil
+        from contextlib import ExitStack
 
-        with usar_perfil(self.perfil):
+        from rag.lenguaje.entidades import usar_idioma, usar_perfil
+
+        with ExitStack() as contexto:
+            if self.perfil is not None:
+                contexto.enter_context(usar_perfil(self.perfil))
+            if self.idioma is not None:
+                contexto.enter_context(usar_idioma(self.idioma))
             return self._consultar_en_contexto(pregunta, id_sesion)
 
     def _consultar_en_contexto(self, pregunta: str, id_sesion: str) -> AssistantResult:

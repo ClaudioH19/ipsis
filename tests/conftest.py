@@ -8,7 +8,8 @@ import pytest
 from docx import Document
 
 from rag.lenguaje.dominio import cargar_perfil
-from rag.lenguaje.entidades import configurar_perfil
+from rag.lenguaje.entidades import configurar_idioma, configurar_perfil
+from rag.lenguaje.paquete import cargar_paquete
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -85,8 +86,10 @@ def _en_proyecto_suite(proyecto_suite: Path, monkeypatch: pytest.MonkeyPatch) ->
 @pytest.fixture(scope="session", autouse=True)
 def _perfil_generico_de_la_suite(proyecto_suite: Path):
     configurar_perfil(cargar_perfil(str(proyecto_suite / "configuracion" / "dominio.yaml")))
+    configurar_idioma(cargar_paquete("es"))
     yield
     configurar_perfil(None)
+    configurar_idioma(None)
 
 
 @pytest.fixture(scope="session")

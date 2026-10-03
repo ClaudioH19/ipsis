@@ -7,6 +7,7 @@ from typing import Any
 from rag.configuracion import rutas
 from rag.consulta.etapas.redaccion import cargar_plantillas
 from rag.consulta.motor import Motor
+from rag.lenguaje.paquete import cargar_paquete
 from rag.nucleo.registro import RegistroComponentes
 
 
@@ -46,6 +47,7 @@ def construir_motor(
 
     cfg_dominio = cfg_dominio or cargar_dominio()
     perfil = cargar_perfil()
+    idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
     ruta_textos = Path(ruta_plantillas or rutas.TEXTOS).resolve()
     plantillas = cargar_plantillas(ruta_textos, cfg_dominio)
     palabras_generales = cargar_palabras_generales(cfg_dominio.get("idioma", "es"))
@@ -95,6 +97,7 @@ def construir_motor(
         ),
         backend=componentes["retriever"],
         perfil=perfil,
+        idioma=idioma,
         plantillas=plantillas,
         configuracion_redaccion=cfg_red,
         top_k=cfg_rec["top_k"],

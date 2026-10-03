@@ -182,11 +182,13 @@ def cmd_indexar(args: argparse.Namespace) -> int:
     from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_recuperacion
     from rag.ingesta.ingesta import ejecutar_ingesta
     from rag.lenguaje.dominio import cargar_perfil
-    from rag.lenguaje.entidades import configurar_perfil
+    from rag.lenguaje.entidades import configurar_idioma, configurar_perfil
+    from rag.lenguaje.paquete import cargar_paquete
 
     try:
-        cargar_dominio()
+        dominio = cargar_dominio()
         configurar_perfil(cargar_perfil())
+        configurar_idioma(cargar_paquete(dominio.get("idioma", "es"), proyecto=Path.cwd()))
         cfg = cargar_proyecto()
         cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
