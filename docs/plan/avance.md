@@ -30,8 +30,8 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P3.5 | ✅ | 2026-10-03 | 352 (suite completa) | cargar_plantillas(paquete, dominio) arma el mismo diccionario que antes leía de textos.yaml, así redaccion y conversacional casi no cambian. Las contracciones («de el» -> «del») pasan al paquete. 'rag doctor' valida los textos del idioma en lugar de exigir textos.yaml. La migración conserva en idioma.yaml solo lo que el proyecto había cambiado. La migración lee el YAML del paquete desde los recursos para no subir de capa. |
 | P3.6 | ✅ | 2026-10-03 | 331 | /config publica 'interfaz' del paquete (con idioma.yaml). widget.js usa TEXTOS con respaldo en español y los reemplaza al recibir /config. Sintaxis JS verificada con node --check. La prueba de navegador se omite: Playwright no está instalado en este entorno. |
 | P3.7 | ✅ | 2026-10-03 | 404 (suite completa) | en.yaml y pt.yaml completos; 52 pruebas parametrizadas (≥3 casos por regla e idioma) confirman el mismo valor_norm en los tres idiomas. Además: stopwords de palabras clave y la etiqueta «(sin sección)» pasan al paquete. Criterio de P3 precisado: los mensajes al operador quedan en español. |
-| P4.1 | ⬜ | | | |
-| P4.2 | ⬜ | | | |
+| P4.1 | ✅ | 2026-10-03 | 11 nuevas | EstadisticasLexicas con df, largo medio y forma de superficie; escritura atómica. |
+| P4.2 | ✅ | 2026-10-03 | (mismo commit) | lexico.py puro: id por crc32, BM25 doc/consulta/puntaje, TF-IDF, coseno y MMR. Recibe las estadísticas por Protocol para no depender de la capa indice. |
 | P4.3 | ⬜ | | | |
 | P4.4 | ⬜ | | | |
 | P4.5 | ⬜ | | | |
