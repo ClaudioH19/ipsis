@@ -176,9 +176,9 @@ Reglas, en orden (la primera que se cumple decide):
 tramo del lector **nunca** se presenta como respuesta: no hay
 `respuesta_exacta` y el texto muestra los pasajes bajo el encabezado de
 «no encontré una respuesta directa». En `ok`, la oración que responde va
-**primero**. El contexto va después, a la derecha, y a la izquierda solo si
-queda presupuesto: la presentación nunca debe hacer parecer que otra cifra es
-la respuesta.
+**primero** y el contexto va solo después: la presentación nunca debe hacer
+parecer que otra cifra es la respuesta. El lector QA, en cambio, lee una
+ventana centrada en la ancla, que no se muestra.
 5. Si no → `sin_respuesta`.
 
 Todos los `τ` vienen de `configuracion/calibracion.yaml` (`rag calibrar`).

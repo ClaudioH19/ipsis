@@ -36,7 +36,7 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int) -> tuple[
 
     obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
-    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est)
+    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est, centrada=True)
     return resultado.offset_inicio, resultado.offset_fin
 
 

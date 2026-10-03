@@ -119,13 +119,12 @@ class ResultadoSeleccion:
 
 def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_inicio: int,
                                    limite_caracteres: int, estadisticas=None,
-                                   entidades_pregunta: list[dict] | None = None) -> ResultadoSeleccion:
+                                   entidades_pregunta: list[dict] | None = None,
+                                   centrada: bool = False) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
-    hasta ``limite_caracteres``. Si el chunk completo ya entra en el
-    límite, se devuelve completo (no hay nada que recortar) -- pero IGUAL
-    se calcula ``score_ancla`` (máximo de sus unidades) para poder comparar
-    fragmentos entre sí más adelante.
+    hasta ``limite_caracteres``. ``score_ancla`` (máximo de sus unidades)
+    permite comparar fragmentos entre sí más adelante.
 
     Algoritmo del ancla, en orden de prioridad (antes
     solo existía el paso 2, el score de similitud, que es ciego a
@@ -136,10 +135,13 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
          la coincidencia exacta de una entidad manda sobre cualquier score
          de similitud, léxica o densa.
       2. Si no, ancla en la unidad de mayor ``s_lex``.
-    Desde el ancla, se expande hacia los vecinos (antes/después) en orden
-    de score decreciente mientras quepan en el presupuesto de caracteres --
-    da contexto alrededor de la oración más pertinente en vez de
-    devolverla aislada, sin salirse del límite."""
+    El tramo empieza en el ancla y suma las unidades siguientes mientras
+    quepan en ``limite_caracteres``: la oración que responde va primero y el
+    contexto después, nunca antes (ver arquitectura.md §2.1).
+
+    ``centrada=True`` es para el lector QA, no para mostrar: agrega vecinos a
+    ambos lados (primero el de mayor score; en empate, el de la izquierda),
+    porque el modelo lee mejor con el contexto previo."""
     unidades_completas = dividir_en_unidades(texto_chunk)
     scores_completos = _puntuar(pregunta, unidades_completas, estadisticas)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
@@ -147,67 +149,41 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     valores_norm_entidad = {e["valor_norm"] for e in entidades_pregunta} if entidades_pregunta else set()
     indices_con_entidad_global = _unidades_con_entidad(unidades_completas, valores_norm_entidad) if unidades_completas else []
 
-    if len(texto_chunk) <= limite_caracteres:
-        return ResultadoSeleccion(texto=texto_chunk, offset_inicio=offset_chunk_inicio,
-                                   offset_fin=offset_chunk_inicio + len(texto_chunk), recortado=False,
-                                   score_ancla=score_ancla_global,
-                                   tiene_entidad_pregunta=bool(indices_con_entidad_global))
-
     unidades = unidades_completas
     if not unidades:
         recorte = texto_chunk[:limite_caracteres]
         return ResultadoSeleccion(texto=recorte, offset_inicio=offset_chunk_inicio,
-                                   offset_fin=offset_chunk_inicio + len(recorte), recortado=True,
-                                   score_ancla=0.0)
+                                   offset_fin=offset_chunk_inicio + len(recorte),
+                                   recortado=len(recorte) < len(texto_chunk), score_ancla=0.0)
 
     scores = scores_completos
-    indices_con_entidad = indices_con_entidad_global
-    tiene_entidad = bool(indices_con_entidad)
-
+    tiene_entidad = bool(indices_con_entidad_global)
     if tiene_entidad:
         # entre las unidades con coincidencia exacta, ancla en la de mejor
         # score (desempate determinista, no arbitrario).
-        idx_ancla = max(indices_con_entidad, key=lambda i: scores[i])
+        idx_ancla = max(indices_con_entidad_global, key=lambda i: scores[i])
     else:
         idx_ancla = max(range(len(unidades)), key=lambda i: scores[i])
-    lo, hi = idx_ancla, idx_ancla
-    largo = len(unidades[idx_ancla].texto)
+    # La oración ancla va PRIMERA y el contexto solo se agrega a la derecha:
+    # si se antepusiera contexto, otra cifra («5 días hábiles») podría parecer
+    # la respuesta a «¿En cuántos días hábiles se paga el reembolso?».
+    lo = hi = idx_ancla
     while True:
-        opciones = []
-        # Si el ancla se forzó por una entidad literal,
-        # esa oración debe quedar PRIMERA en el texto mostrado -- no se
-        # expande hacia atrás: la oración con la entidad debe ser la
-        # primera, no "una de las primeras".
-        # Sin esta restricción, el contexto previo podía anteponerse y
-        # dejar la oración con "3,9" al final del fragmento.
-        if lo - 1 >= 0 and not tiene_entidad:
-            candidato = lo - 1
-            nuevo_largo = largo + 1 + len(unidades[candidato].texto)
-            opciones.append(("izq", candidato, nuevo_largo, scores[candidato]))
-        if hi + 1 < len(unidades):
-            candidato = hi + 1
-            nuevo_largo = largo + 1 + len(unidades[candidato].texto)
-            opciones.append(("der", candidato, nuevo_largo, scores[candidato]))
-        opciones = [o for o in opciones if o[2] <= limite_caracteres]
-        if not opciones:
+        vecinos = [i for i in ((lo - 1) if centrada else -1, hi + 1) if 0 <= i < len(unidades)]
+        vecinos = [i for i in vecinos
+                   if unidades[max(hi, i)].offset_fin - unidades[min(lo, i)].offset_inicio <= limite_caracteres]
+        if not vecinos:
             break
-        # agrega primero el vecino con mejor score propio (más pertinente);
-        # empate: prioriza el de la izquierda (contexto previo).
-        opciones.sort(key=lambda o: -o[3])
-        lado, idx, nuevo_largo, _ = opciones[0]
-        if lado == "izq":
-            lo = idx
-        else:
-            hi = idx
-        largo = nuevo_largo
+        elegido = max(vecinos, key=lambda i: (scores[i], i < lo))
+        lo, hi = min(lo, elegido), max(hi, elegido)
 
-    texto_sel = texto_chunk[unidades[lo].offset_inicio:unidades[hi].offset_fin]
+    inicio, fin = unidades[lo].offset_inicio, unidades[hi].offset_fin
     return ResultadoSeleccion(
-        texto=texto_sel,
-        offset_inicio=offset_chunk_inicio + unidades[lo].offset_inicio,
-        offset_fin=offset_chunk_inicio + unidades[hi].offset_fin,
-        recortado=True,
-        score_ancla=scores[idx_ancla],
+        texto=texto_chunk[inicio:fin],
+        offset_inicio=offset_chunk_inicio + inicio,
+        offset_fin=offset_chunk_inicio + fin,
+        recortado=(inicio, fin) != (0, len(texto_chunk)),
+        score_ancla=score_ancla_global,
         tiene_entidad_pregunta=tiene_entidad,
     )
 
