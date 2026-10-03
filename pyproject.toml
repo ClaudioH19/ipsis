@@ -37,6 +37,9 @@ exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 # El directorio temporal se elige en tests/conftest.py::pytest_configure.
+addopts = "--import-mode=importlib"
+pythonpath = ["tests"]
+testpaths = ["tests"]
 markers = [
   "slow: prueba de integración de más de 5 s (procesos reales, índices o servidores)",
   "modelos(id_hf, ...): necesita esos modelos ONNX en la caché local (rag modelos descargar)",

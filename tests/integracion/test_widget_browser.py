@@ -17,7 +17,7 @@ if __name__ != "__main__":
     sync_playwright = playwright.sync_playwright
 
 
-RAIZ = Path(__file__).resolve().parents[1]
+RAIZ = Path(__file__).resolve().parents[2]
 WIDGET = RAIZ / "rag/servicio/estaticos/widget.js"
 
 

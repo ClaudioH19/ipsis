@@ -21,8 +21,8 @@ from rag.ingesta.metadata import construir_payload
 from rag.ingesta.parsear import parsear_markdown
 from rag.indice.payload import chunk_desde_payload, payload_desde_chunk
 from rag.recursos import leer_plantilla
+from apoyo import CORPUS
 
-CORPUS = Path(__file__).parent / "caracterizacion" / "corpus"
 DIM = 64
 
 

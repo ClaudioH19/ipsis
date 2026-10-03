@@ -13,7 +13,7 @@ Esta separación permite que ``chunking.py`` agrupe bloques en chunks sin volver
 a tocar el archivo de origen, y que toda evidencia del golden set se ancle a
 offsets de caracteres estables mientras el parser no cambie -- **la propiedad
 de la que depende todo el sistema de citas**, verificada con ``assert`` en cada
-parser y con tests adversariales por formato (``tests/test_parsear.py``).
+parser y con tests adversariales por formato (``tests/ingesta/test_parsear_docx.py``).
 
 Formatos soportados y punto de entrada único: :func:`parsear_documento`,
 que despacha por extensión a uno de los cuatro parsers de abajo. Ningún otro

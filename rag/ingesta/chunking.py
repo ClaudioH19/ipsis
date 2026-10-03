@@ -5,7 +5,7 @@ de un :class:`~ingesta.parsear.DocumentoParseado` y devuelven una lista de
 :class:`Chunk`, cada uno con offsets ``[offset_inicio, offset_fin)`` **exactos**
 dentro de ``texto_completo`` del documento.
 
-Invariante verificada por los tests (``tests/test_chunking.py``): para cada
+Invariante verificada por los tests (``tests/ingesta/test_chunking.py``): para cada
 estrategia, concatenar los chunks en orden y comparar contra el texto de los
 bloques de origen no debe perder ni duplicar caracteres del contenido
 original (se permite colapsar separadores de bloque, nunca contenido).

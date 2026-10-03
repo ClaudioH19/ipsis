@@ -13,7 +13,7 @@ Python (`rag/lenguaje/dominio.py::escribir_perfil_generico_si_falta`,
 NO los copia a mano -- si algún test de este archivo fallara por su
 ausencia, sería una señal real de que la corrección se rompió. La prueba
 DEFINITIVA de portabilidad, por subprocesos y fuera del árbol de este
-proyecto, vive en `tests/test_portabilidad.py`.
+proyecto, vive en `tests/integracion/test_portabilidad.py`.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ import yaml
 
 from rag.cli import main
 
-RAIZ = Path(__file__).resolve().parent.parent
+RAIZ = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(autouse=True)

@@ -3,7 +3,7 @@ nombrado versionado de colecciones.
 
 No requieren un servidor Qdrant: son funciones puras de Python. La
 integración real (indexar + consultar) la cubren las pruebas marcadas
-``slow`` de ``tests/test_cli.py`` y ``tests/test_portabilidad.py``.
+``slow`` de ``tests/cli/test_cli.py`` y ``tests/integracion/test_portabilidad.py``.
 """
 import pytest
 
