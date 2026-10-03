@@ -1,6 +1,6 @@
 # Configuración global inicial. Los umbrales de abstención son valores de
 # partida sin calibrar; ajústalos con preguntas representativas de tu corpus.
-config_version: 1
+config_version: 2
 recuperacion:
   modelo: "intfloat/multilingual-e5-small"
   prefijo_query: "query: "
@@ -9,7 +9,6 @@ recuperacion:
   con_header: false
   modo: "hibrida"
   top_k: 3
-  reranker: null
   coleccion_base: "asistente_documental"
   qdrant_path: ".cache/qdrant_local"
   version_coleccion: 1
@@ -26,6 +25,7 @@ componentes:
   answer_extractor: "sentence_selector"
   evidence_verifier: "literal_offsets"
   response_renderer: "templates"
+  abstention_policy: "layered_v1"
 
 qdrant:
   modo: "local"
@@ -64,7 +64,6 @@ abstencion:
     tipos_entidad_cerrada: [decimal, porcentaje, plazo, fecha, articulo]
   zona_gris:
     modo: "relacionado"
-
 criterios_aceptacion:
   E2_embeddings_chunking_recuperacion:
     recall_at_3_min: 0.85

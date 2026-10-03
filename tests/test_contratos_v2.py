@@ -52,8 +52,8 @@ def test_configuracion_agrega_version_y_prefijo_documento_compatibles():
             "coleccion_base": "demo",
         }
     })
-    assert asistente["config_version"] == 1
-    assert motor["config_version"] == 1
+    assert asistente["config_version"] == 2
+    assert motor["config_version"] == 2
     assert motor["recuperacion"]["prefijo_documento"] == "passage: "
 
 
@@ -73,12 +73,63 @@ def test_configuracion_migra_version_cero_de_forma_idempotente():
     primero = validar_motor(datos)
     segundo = validar_motor(primero)
     assert primero == segundo
-    assert primero["config_version"] == 1
+    assert primero["config_version"] == 2
+
+
+def test_configuracion_v1_unifica_reranker_en_componentes():
+    datos = {
+        "config_version": 1,
+        "recuperacion": {
+            "modelo": "modelo",
+            "estrategia_chunking": "chunks",
+            "coleccion_base": "demo",
+            "reranker": "cross_encoder",
+        },
+    }
+
+    migrado = validar_motor(datos)
+
+    assert migrado["config_version"] == 2
+    assert "reranker" not in migrado["recuperacion"]
+    assert migrado["componentes"]["reranker"] == "cross_encoder"
 
 
 def test_configuracion_rechaza_version_futura():
     with pytest.raises(ValueError, match="solo soporta"):
         validar_asistente({"config_version": 99})
+
+
+def test_abstencion_selecciona_umbrales_propios_del_retriever_sin_mutar_base():
+    from rag.configuracion import config_abstencion
+
+    cfg = {
+        "abstencion": {
+            "version": "densa_sin_calibrar",
+            "capa_a_fuera_dominio": {
+                "senal": "score_top1_denso",
+                "umbral": 0.8,
+                "grounding_lexico": {"df_fraccion_max": 0.8},
+            },
+            "confianza_alta": {"senal": "score_top1_denso", "umbral": 0.85},
+            "perfiles_retriever": {
+                "alternativo": {
+                    "version": "alternativa_sin_calibrar",
+                    "senal": "senal_alternativa",
+                    "umbral_fuera_dominio": 0.25,
+                    "umbral_confianza_alta": 0.7,
+                }
+            },
+        }
+    }
+
+    densa = config_abstencion(cfg, retriever="qdrant")
+    alternativa = config_abstencion(cfg, retriever="alternativo")
+
+    assert densa["capa_a_fuera_dominio"]["umbral"] == 0.8
+    assert alternativa["capa_a_fuera_dominio"]["umbral"] == 0.25
+    assert alternativa["confianza_alta"]["umbral"] == 0.7
+    assert alternativa["confianza_alta"]["senal"] == "senal_alternativa"
+    assert "perfiles_retriever" in cfg["abstencion"]
 
 
 def test_registry_resuelve_nombre_y_opciones():

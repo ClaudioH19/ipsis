@@ -1,4 +1,9 @@
 # Tema global del widget. `rag init` crea una copia editable en cada proyecto.
+preset: "clasico"
+presentacion:
+  densidad: "comoda"
+  citas: "acordeon"
+  mostrar_etiqueta_estado: true
 colores:
   acento: "#2563eb"
   acento_texto: "#ffffff"

@@ -78,13 +78,43 @@ def verificar_config_recuperacion() -> ResultadoChequeo:
     return ResultadoChequeo("configuración de recuperación", True, "configuracion/motor.yaml::recuperacion presente")
 
 
+def verificar_politica_abstencion() -> ResultadoChequeo:
+    """La política configurada existe y acepta las opciones de abstención."""
+    from rag.componentes import RegistroComponentes
+    from rag.configuracion import cargar_proyecto, config_abstencion
+    from rag.registro import registrar_componentes_base
+
+    try:
+        cfg = cargar_proyecto()
+        nombre = cfg["componentes"]["abstention_policy"]
+        registro = registrar_componentes_base(RegistroComponentes())
+        factory = registro.obtener("abstention_policy", nombre)
+        retriever = cfg["componentes"]["retriever"]
+        cfg_abs = config_abstencion(cfg, retriever=retriever)
+        if cfg_abs is not None:
+            factory(configuracion=cfg_abs)
+    except Exception as e:  # noqa: BLE001 -- diagnóstico accionable
+        return ResultadoChequeo(
+            "política de abstención",
+            False,
+            f"no se pudo resolver componentes.abstention_policy: {e}",
+            "revisa componentes.abstention_policy y abstencion en configuracion/motor.yaml",
+        )
+    return ResultadoChequeo(
+        "política de abstención",
+        True,
+        f"abstention_policy/{nombre} disponible y configurada",
+    )
+
+
 def verificar_modelo_descargado() -> ResultadoChequeo:
     """El modelo de embeddings de ``recuperacion.modelo`` está en la caché
     local de HuggingFace -- chequeo de solo lectura, nunca descarga nada."""
-    from rag.configuracion import config_recuperacion
+    from rag.configuracion import cargar_proyecto, config_recuperacion
 
     try:
-        cfg_rec = config_recuperacion()
+        cfg = cargar_proyecto()
+        cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
         return ResultadoChequeo("modelo de embeddings", False, f"no se pudo leer la configuración: {e}", "rag init")
 
@@ -121,6 +151,15 @@ def verificar_indice() -> ResultadoChequeo:
         cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
         return ResultadoChequeo("índice Qdrant", False, f"no se pudo leer la configuración: {e}", "rag init")
+
+    backend = cfg["componentes"]["retriever"]
+    if backend != "qdrant":
+        return ResultadoChequeo(
+            "índice de recuperación",
+            False,
+            f"retriever desconocido: {backend!r}",
+            "revisa componentes.retriever en configuracion/motor.yaml",
+        )
 
     modo = os.environ.get("QDRANT_MODO") or cfg.get("qdrant", {}).get("modo", "local")
     url_servidor = os.environ.get("QDRANT_URL") or cfg.get("qdrant", {}).get("url_servidor")
@@ -182,8 +221,12 @@ def verificar_estilos() -> ResultadoChequeo:
             "rag init  # lo crea con todas las claves comentadas; no pisa el resto de tu configuracion",
         )
     try:
-        from rag.servicio.estilos import render_css
-        render_css()
+        from rag.servicio.estilos import cargar_estilos, render_css
+        from rag.temas_widget import validar_tema
+
+        tema = cargar_estilos()
+        validar_tema(tema)
+        render_css(tema=tema)
     except Exception as e:  # YAML mal formado, sobre todo
         return ResultadoChequeo(
             "estilos del widget", False,
@@ -239,6 +282,7 @@ def ejecutar_diagnostico() -> list[ResultadoChequeo]:
     return [
         verificar_config_dominio(),
         verificar_config_recuperacion(),
+        verificar_politica_abstencion(),
         verificar_plantillas(),
         verificar_estilos(),
         verificar_cors(),

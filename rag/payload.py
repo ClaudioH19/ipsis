@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from rag.esquemas import ChunkRecord
+from rag.esquemas import ChunkRecord, EvidenceSpan
 
 # Campos del payload que ChunkRecord tipa con otro nombre.
 _RENOMBRADOS = {"texto": "texto_fuente", "texto_embebido": "texto_embedding"}
@@ -46,4 +46,16 @@ def payload_desde_chunk(chunk: ChunkRecord) -> dict[str, Any]:
     return payload
 
 
-__all__ = ["chunk_desde_payload", "payload_desde_chunk"]
+def payload_desde_evidencia(evidencia: EvidenceSpan, chunk: ChunkRecord) -> dict[str, Any]:
+    """Adapta una evidencia seleccionada al diccionario de redacción legado."""
+    if evidencia.chunk_id != chunk.chunk_id or evidencia.doc_id != chunk.doc_id:
+        raise ValueError("la evidencia no pertenece al chunk indicado")
+    payload = payload_desde_chunk(chunk)
+    payload["texto"] = evidencia.texto
+    payload["offset_inicio"] = evidencia.offset_inicio
+    payload["offset_fin"] = evidencia.offset_fin
+    payload["seccion_path"] = list(evidencia.seccion_path)
+    return payload
+
+
+__all__ = ["chunk_desde_payload", "payload_desde_chunk", "payload_desde_evidencia"]

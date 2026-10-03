@@ -15,6 +15,7 @@ nuevas para la CLI, el plugin ya arrastra modelos pesados.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -115,7 +116,12 @@ def _archivos_de_ruta(ruta: Path) -> list[Path]:
     if ruta.is_file():
         return [ruta]
     if ruta.is_dir():
-        return sorted(p for p in ruta.rglob("*") if p.is_file() and p.suffix.lower() in EXTENSIONES_SOPORTADAS)
+        return sorted(
+            p for p in ruta.rglob("*")
+            if p.is_file()
+            and p.suffix.lower() in EXTENSIONES_SOPORTADAS
+            and ".rag-extractivo" not in p.relative_to(ruta).parts
+        )
     raise FileNotFoundError(f"no existe {ruta}")
 
 
@@ -183,7 +189,7 @@ def cmd_configurar(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def cmd_indexar(args: argparse.Namespace) -> int:
-    from rag.configuracion import cargar_dominio, config_recuperacion
+    from rag.configuracion import cargar_dominio, cargar_proyecto, config_recuperacion
     from rag.corpus import ejecutar_ingesta
     from rag.dominio import cargar_perfil
     from rag.reglas_extraccion import configurar_perfil
@@ -191,14 +197,18 @@ def cmd_indexar(args: argparse.Namespace) -> int:
     try:
         cfg_dominio = cargar_dominio()
         configurar_perfil(cargar_perfil(cfg_dominio["perfil"]))
-        cfg_rec = config_recuperacion()
+        cfg = cargar_proyecto()
+        cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
         print(f"Error de configuración: {e}")
         print("Corré 'rag doctor' para un diagnóstico completo.")
         return 1
 
     try:
-        resumen = ejecutar_ingesta(carpeta_corpus=args.corpus, cfg_rec=cfg_rec)
+        resumen = ejecutar_ingesta(
+            carpeta_corpus=args.corpus,
+            cfg_rec=cfg_rec,
+        )
     except Exception as e:  # noqa: BLE001 -- se reporta con contexto, no se oculta
         print(f"Error indexando: {e}")
         return 1
@@ -226,11 +236,109 @@ def cmd_indexar(args: argparse.Namespace) -> int:
 # rag servir
 # ---------------------------------------------------------------------------
 
+def _argumentos_init_automatico() -> argparse.Namespace:
+    return argparse.Namespace(
+        nombre_asistente=None,
+        descripcion_dominio=None,
+        idioma=None,
+        perfil=None,
+        force=False,
+    )
+
+
+def _completar_proyecto_existente() -> None:
+    """Añade archivos faltantes usando defaults sin sobrescribir personalizaciones."""
+    from rag.configuracion import (
+        cargar_dominio,
+        inicializar_estilos_si_falta,
+        inicializar_plantillas_si_falta,
+        inicializar_proyecto_si_falta,
+        slug_coleccion,
+    )
+    from rag.corpus import CATALOGO_PATH, plantilla_catalogo_vacio
+    from rag.dominio import escribir_perfil_generico_si_falta
+    from rag.metadata import inicializar_taxonomia_si_falta
+    from rag.texto_util import escribir_idioma_es_si_falta
+
+    dominio = cargar_dominio()
+    if dominio.get("perfil", "_generico") == "_generico":
+        escribir_perfil_generico_si_falta()
+    if dominio.get("idioma", "es") == "es":
+        escribir_idioma_es_si_falta()
+    inicializar_proyecto_si_falta(
+        coleccion_base=slug_coleccion(dominio.get("nombre_asistente", "Asistente documental"))
+    )
+    inicializar_taxonomia_si_falta(
+        descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados")
+    )
+    inicializar_plantillas_si_falta()
+    inicializar_estilos_si_falta()
+    ruta_catalogo = Path(CATALOGO_PATH)
+    if not ruta_catalogo.is_file():
+        ruta_catalogo.parent.mkdir(parents=True, exist_ok=True)
+        ruta_catalogo.write_text(plantilla_catalogo_vacio(), encoding="utf-8")
+
+
+def _preparar_carpeta_para_servir(carpeta: str, *, reindexar: bool = False) -> Path:
+    """Completa un proyecto o crea uno privado junto a una carpeta documental."""
+    fuente = Path(carpeta).resolve()
+    if not fuente.is_dir():
+        raise ValueError(f"no existe la carpeta {fuente}")
+
+    es_proyecto = (
+        (fuente / "configuracion" / "asistente.yaml").is_file()
+        or (fuente / "documentos" / "catalogo.yaml").is_file()
+    )
+    if not es_proyecto and not _archivos_de_ruta(fuente):
+        raise ValueError(f"no hay documentos compatibles en {fuente}")
+    proyecto = fuente if es_proyecto else fuente / ".rag-extractivo"
+    proyecto.mkdir(parents=True, exist_ok=True)
+    os.chdir(proyecto)
+
+    if not Path("configuracion/asistente.yaml").is_file():
+        if cmd_init(_argumentos_init_automatico()) != 0:
+            raise RuntimeError("no se pudo inicializar el proyecto automático")
+    else:
+        _completar_proyecto_existente()
+
+    catalogo = Path("documentos/catalogo.yaml")
+    catalogo_antes = catalogo.read_bytes() if catalogo.is_file() else b""
+    if not es_proyecto:
+        if cmd_cargar(argparse.Namespace(ruta=str(fuente))) != 0:
+            raise RuntimeError("no se pudieron cargar los documentos")
+    catalogo_despues = catalogo.read_bytes() if catalogo.is_file() else b""
+
+    from rag.diagnostico import verificar_indice
+
+    indice = verificar_indice()
+    if reindexar or catalogo_antes != catalogo_despues or not indice.ok:
+        print("Preparando el índice antes de iniciar el servicio...")
+        if cmd_indexar(argparse.Namespace(corpus="documentos")) != 0:
+            raise RuntimeError("no se pudo construir el índice")
+    else:
+        print("El índice existente está vigente; se reutiliza.")
+    return proyecto
+
+
 def cmd_servir(args: argparse.Namespace) -> int:
     import uvicorn
-    print(f"Sirviendo en http://{args.host}:{args.port} (Ctrl+C para detener)...")
-    uvicorn.run("rag.servicio.api:app", host=args.host, port=args.port, log_level="info")
-    return 0
+
+    anterior = Path.cwd()
+    try:
+        if args.carpeta:
+            proyecto = _preparar_carpeta_para_servir(
+                args.carpeta,
+                reindexar=args.reindexar,
+            )
+            print(f"Proyecto activo: {proyecto}")
+        print(f"Sirviendo en http://{args.host}:{args.port} (Ctrl+C para detener)...")
+        uvicorn.run("rag.servicio.api:app", host=args.host, port=args.port, log_level="info")
+        return 0
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"No se pudo preparar el servicio: {exc}")
+        return 1
+    finally:
+        os.chdir(anterior)
 
 
 # ---------------------------------------------------------------------------
@@ -316,34 +424,130 @@ def cmd_snapshot_config(args: argparse.Namespace) -> int:
 # rag evaluar
 # ---------------------------------------------------------------------------
 
-_CANDIDATOS_GOLDEN = ["data/golden/golden.jsonl"]
+_MANIFIESTO_GOLDEN = "data/golden/manifiesto.json"
 
 
-def cmd_evaluar(_args: argparse.Namespace) -> int:
-    from rag.evaluacion import evaluar_indice_produccion
+def cmd_evaluar(args: argparse.Namespace) -> int:
+    import json
 
-    ruta = next((c for c in _CANDIDATOS_GOLDEN if Path(c).exists()), None)
-    if ruta is None:
+    from rag.metricas_banco import evaluar_backend_activo
+
+    ruta = Path(args.banco)
+    if not ruta.exists():
         print("No hay golden set en data/golden/ todavía -- no se puede evaluar.")
-        print("Un golden set es un .jsonl con una pregunta por linea: 'pregunta', "
-              "'respondible', 'evidencia' (texto literal del documento) y 'hechos_clave'.")
+        print("El formato versionado usa manifiesto.json + golden.jsonl con pregunta, "
+              "categoría, split, estado esperado y evidencia literal con offsets.")
         print("Consulta README.md para el formato y las recomendaciones de evaluación.")
         return 0
 
-    print(f"Evaluando el índice de producción contra {ruta} (split dev, respondibles)...")
+    print(f"Evaluando el backend activo contra {ruta}...")
     try:
-        r = evaluar_indice_produccion(ruta)
-    except RuntimeError as e:
+        artefacto = evaluar_backend_activo(str(ruta))
+    except Exception as e:  # noqa: BLE001 -- CLI convierte el fallo en mensaje
         print(f"No se pudo evaluar: {e}")
         return 1
+    reporte = artefacto.reporte
+    print(f"N={reporte.n_casos} Recall@{reporte.k}={reporte.recall_at_k:.3f} "
+          f"MRR={reporte.mrr:.3f} exactitud_estado={reporte.exactitud_estado:.3f}")
+    print(f"falsos_ok={reporte.tasa_falsos_ok:.3f} "
+          f"precision_abstencion={reporte.precision_abstencion:.3f} "
+          f"literalidad={reporte.exactitud_literal:.3f} offsets={reporte.exactitud_offsets:.3f}")
+    print(f"respuestas_excesivas={reporte.tasa_respuestas_excesivas:.3f} "
+          f"latencia_media={reporte.latencia_media_ms:.1f}ms p95={reporte.latencia_p95_ms:.1f}ms")
+    if args.salida:
+        salida = Path(args.salida)
+        salida.parent.mkdir(parents=True, exist_ok=True)
+        salida.write_text(artefacto.model_dump_json(indent=2), encoding="utf-8")
+        print(f"Reporte escrito en {salida}")
+    veredicto = "CUMPLE" if reporte.guardia_falsos_ok else "BLOQUEADO"
+    print(f"Guardia de falsos ok (debe ser 0): {veredicto}")
+    return 0 if reporte.guardia_falsos_ok else 1
 
-    print(f"N={r.n_items}  Recall@3={r.recall_at_3:.3f} [IC95% {r.ic_lo:.2f},{r.ic_hi:.2f}]  "
-          f"cobertura_hechos={r.cobertura_hechos:.3f}")
-    veredicto = "CUMPLE" if r.cumple else "NO CUMPLE"
-    print(f"Criterio (configuracion/motor.yaml::criterios_aceptacion): "
-          f"Recall@3 >= {r.recall_at_3_min_requerido} -> {veredicto}")
-    print("Nota: esta es una comprobación rápida sobre la configuración activa; no reindexa el corpus.")
-    return 0 if r.cumple else 1
+
+def cmd_comparar(args: argparse.Namespace) -> int:
+    from rag.comparacion import cargar_artefacto, comparar_artefactos
+
+    try:
+        informe = comparar_artefactos([cargar_artefacto(ruta) for ruta in args.artefactos])
+    except Exception as e:  # noqa: BLE001
+        print(f"No se pudo comparar: {e}")
+        return 1
+    print(f"Dataset {informe.dataset_id}@{informe.dataset_version}, k={informe.k}")
+    for fila in informe.filas:
+        print(
+            f"{fila.backend}: Recall={fila.recall_at_k:.3f} MRR={fila.mrr:.3f} "
+            f"falsos_ok={fila.tasa_falsos_ok:.3f} estado={fila.exactitud_estado:.3f} "
+            f"latencia_p95={fila.latencia_p95_ms:.1f}ms "
+            f"umbral_dev={fila.calibracion_dev.umbral:.5f}"
+        )
+    salida = Path(args.salida)
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    salida.write_text(informe.model_dump_json(indent=2), encoding="utf-8")
+    print(f"Informe comparativo escrito en {salida}")
+    return 0
+
+
+def cmd_benchmark(args: argparse.Namespace) -> int:
+    from rag.benchmark import ejecutar_benchmark
+
+    try:
+        ruta = ejecutar_benchmark(args.banco, args.salida)
+    except Exception as e:  # noqa: BLE001
+        print(f"No se pudo ejecutar el benchmark: {e}")
+        return 1
+    print(f"Benchmark reproducible escrito en {ruta}")
+    print("El informe no toma decisiones; revísalo antes de cambiar defaults o umbrales.")
+    return 0
+
+
+def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
+    from rag.temas_widget import listar_presets
+
+    for nombre, descripcion in listar_presets().items():
+        print(f"{nombre}: {descripcion}")
+    return 0
+
+
+def cmd_widget_tema_aplicar(args: argparse.Namespace) -> int:
+    import yaml
+
+    from rag.temas_widget import aplicar_preset
+
+    try:
+        aplicar_preset(args.preset, args.ruta)
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        print(f"No se pudo aplicar el preset: {exc}")
+        return 1
+    print(f"Preset {args.preset!r} aplicado en {args.ruta}")
+    print("Vista activa: inicia el servicio y abre /widget/demo.html")
+    return 0
+
+
+def cmd_widget_tema_vista_previa(args: argparse.Namespace) -> int:
+    import yaml
+
+    from rag.temas_widget import generar_vista_previa
+
+    try:
+        salida = generar_vista_previa(args.salida, args.ruta)
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        print(f"No se pudo generar la vista previa: {exc}")
+        return 1
+    print(f"Vista previa escrita en {salida.resolve()}")
+    return 0
+
+
+def cmd_widget_exportar(args: argparse.Namespace) -> int:
+    from rag.exportar_widget import exportar_widget
+
+    try:
+        salida = exportar_widget(args.carpeta, api=args.api, posicion=args.posicion)
+    except (OSError, ValueError) as exc:
+        print(f"No se pudo exportar el widget: {exc}")
+        return 1
+    print(f"Widget exportado en {salida}")
+    print(f"Snippet listo en {salida / 'snippet.html'}")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -385,11 +589,21 @@ def _construir_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_indexar)
 
     p = sub.add_parser("servir", help="Levanta la API del servicio.")
+    p.add_argument(
+        "carpeta",
+        nargs="?",
+        help="Carpeta de documentos o proyecto existente; se prepara automáticamente.",
+    )
     p.add_argument("--host", default="127.0.0.1",
                     help="Dirección donde escucha el servicio (por defecto: '127.0.0.1', solo local; "
                          "usa '0.0.0.0' para aceptar conexiones externas).")
     p.add_argument("--port", type=int, default=8000,
                     help="Puerto donde escucha el servicio (por defecto: 8000).")
+    p.add_argument(
+        "--reindexar",
+        action="store_true",
+        help="Reconstruye el índice aunque el catálogo no haya cambiado.",
+    )
     p.set_defaults(func=cmd_servir)
 
     p = sub.add_parser("preguntar", help="Consulta el servicio desde la terminal.")
@@ -415,7 +629,66 @@ def _construir_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_snapshot_config)
 
     p = sub.add_parser("evaluar", help="Corre una evaluación rápida si hay golden set.")
+    p.add_argument("--banco", default=_MANIFIESTO_GOLDEN,
+                   help="Manifiesto versionado del banco (por defecto: data/golden/manifiesto.json).")
+    p.add_argument("--salida", default=None,
+                   help="Ruta opcional para guardar el reporte JSON.")
     p.set_defaults(func=cmd_evaluar)
+
+    p = sub.add_parser("comparar", help="Compara artefactos producidos por 'rag evaluar'.")
+    p.add_argument("artefactos", nargs="+", help="Dos o más reportes JSON comparables.")
+    p.add_argument("--salida", default="data/reportes/comparacion.json",
+                   help="Ruta del informe consolidado.")
+    p.set_defaults(func=cmd_comparar)
+
+    p = sub.add_parser("benchmark", help="Compara Qdrant vectorial e híbrido.")
+    p.add_argument("--banco", required=True, help="Manifiesto versionado a evaluar.")
+    p.add_argument("--salida", default="data/reportes/benchmark",
+                   help="Directorio para artefactos e informe comparativo.")
+    p.set_defaults(func=cmd_benchmark)
+
+    p_widget = sub.add_parser("widget", help="Configura y exporta el widget embebible.")
+    sub_widget = p_widget.add_subparsers(
+        dest="widget_comando", required=True, help="Operación sobre el widget.",
+    )
+    p_tema = sub_widget.add_parser("tema", help="Administra presets visuales.")
+    sub_tema = p_tema.add_subparsers(
+        dest="tema_comando", required=True, help="Operación sobre el tema visual.",
+    )
+    p_listar = sub_tema.add_parser("listar", help="Muestra los presets disponibles.")
+    p_listar.set_defaults(func=cmd_widget_tema_listar)
+    p_aplicar = sub_tema.add_parser("aplicar", help="Aplica un preset a estilos.yaml.")
+    p_aplicar.add_argument("preset", help="Nombre del preset visual.")
+    p_aplicar.add_argument(
+        "--ruta", default="configuracion/estilos.yaml",
+        help="Archivo de estilos a modificar.",
+    )
+    p_aplicar.set_defaults(func=cmd_widget_tema_aplicar)
+    p_preview = sub_tema.add_parser(
+        "vista-previa", help="Genera un mockup HTML sin iniciar la API.",
+    )
+    p_preview.add_argument(
+        "--ruta", default="configuracion/estilos.yaml",
+        help="Archivo de estilos que se desea previsualizar.",
+    )
+    p_preview.add_argument(
+        "--salida", default=".cache/widget-vista-previa.html",
+        help="Archivo HTML de salida.",
+    )
+    p_preview.set_defaults(func=cmd_widget_tema_vista_previa)
+    p_exportar = sub_widget.add_parser(
+        "exportar", help="Copia widget.js y genera un snippet de integración.",
+    )
+    p_exportar.add_argument("carpeta", help="Directorio donde escribir los archivos.")
+    p_exportar.add_argument(
+        "--api", default="http://127.0.0.1:8000",
+        help="URL pública de la API que consultará el widget.",
+    )
+    p_exportar.add_argument(
+        "--posicion", choices=["abajo-derecha", "abajo-izquierda"],
+        default="abajo-derecha", help="Esquina donde se mostrará el botón.",
+    )
+    p_exportar.set_defaults(func=cmd_widget_exportar)
 
     return ap
 

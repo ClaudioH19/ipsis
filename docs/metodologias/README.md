@@ -23,3 +23,7 @@ La ficha acompaña al código y debe actualizarse cuando cambie su algoritmo.
 Los valores aún no contrastados contra un golden set deben identificarse como
 `pendiente de calibración`; nunca como una garantía de precisión.
 
+Fichas actuales:
+
+- [Recuperación híbrida Qdrant](recuperacion.md).
+- [Banco de evaluación](evaluacion.md).

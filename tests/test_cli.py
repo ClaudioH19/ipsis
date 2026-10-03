@@ -156,6 +156,26 @@ def test_cargar_mismo_contenido_dos_veces_no_duplica(proyecto_temporal: Path):
     assert len(catalogo) == 1
 
 
+def test_cargar_archivo_modificado_no_sobrescribe_la_version_anterior(
+    proyecto_temporal: Path,
+):
+    main(["init"])
+    md = _doc_prueba_md(proyecto_temporal)
+    assert main(["cargar", str(md)]) == 0
+    md.write_text(md.read_text(encoding="utf-8") + "\nVersión nueva.\n", encoding="utf-8")
+
+    assert main(["cargar", str(md)]) == 0
+
+    catalogo = yaml.safe_load(
+        (proyecto_temporal / "documentos" / "catalogo.yaml").read_text(encoding="utf-8")
+    )["documentos"]
+    assert len(catalogo) == 2
+    assert catalogo[0]["archivo"] == "manual_x100.md"
+    assert catalogo[1]["archivo"].startswith("manual_x100-")
+    assert (proyecto_temporal / "documentos" / catalogo[0]["archivo"]).is_file()
+    assert (proyecto_temporal / "documentos" / catalogo[1]["archivo"]).is_file()
+
+
 def test_cargar_formato_no_soportado_falla_sin_tocar_catalogo(proyecto_temporal: Path):
     main(["init"])
     ruta = proyecto_temporal / "archivo.rtf"
@@ -224,6 +244,25 @@ def test_doctor_reporta_plantillas_faltantes(proyecto_temporal: Path, capsys):
     assert "FALLA" in salida
 
 
+def test_doctor_reporta_politica_abstencion_desconocida(proyecto_temporal: Path, capsys):
+    main(["init"])
+    ruta_motor = proyecto_temporal / "configuracion" / "motor.yaml"
+    motor = yaml.safe_load(ruta_motor.read_text(encoding="utf-8"))
+    motor["componentes"]["abstention_policy"] = "inexistente"
+    ruta_motor.write_text(
+        yaml.safe_dump(motor, allow_unicode=True, sort_keys=False),
+        encoding="utf-8",
+    )
+    capsys.readouterr()
+
+    codigo = main(["doctor"])
+    salida = capsys.readouterr().out
+
+    assert codigo == 1
+    assert "política de abstención" in salida
+    assert "inexistente" in salida
+
+
 def test_evaluar_sin_golden_set_no_falla(proyecto_temporal: Path):
     main(["init"])
     assert main(["evaluar"]) == 0
@@ -246,6 +285,99 @@ def test_indexar_dominio_sintetico_multiformato(proyecto_temporal: Path):
 
     # el índice quedó donde 'rag doctor' y el servicio lo esperan
     assert main(["doctor"]) == 0
+
+
+def test_servir_sin_carpeta_conserva_el_modo_actual(monkeypatch, proyecto_temporal):
+    llamadas = []
+    monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append((args, kwargs)))
+
+    assert main(["servir", "--port", "8123"]) == 0
+
+    assert llamadas[0][0] == ("rag.servicio.api:app",)
+    assert llamadas[0][1]["port"] == 8123
+    assert Path.cwd() == proyecto_temporal
+
+
+def test_servir_carpeta_crea_proyecto_privado_y_carga_documentos(
+    monkeypatch, proyecto_temporal
+):
+    fuente = proyecto_temporal / "fuente"
+    fuente.mkdir()
+    _doc_prueba_md(fuente)
+    llamadas = []
+    monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append(Path.cwd()))
+    monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
+    monkeypatch.setattr(
+        "rag.diagnostico.verificar_indice",
+        lambda: type("Chequeo", (), {"ok": False})(),
+    )
+
+    assert main(["servir", str(fuente)]) == 0
+
+    proyecto = fuente / ".rag-extractivo"
+    assert llamadas == [proyecto]
+    assert (proyecto / "configuracion" / "asistente.yaml").is_file()
+    catalogo = yaml.safe_load(
+        (proyecto / "documentos" / "catalogo.yaml").read_text(encoding="utf-8")
+    )
+    assert [entrada["doc_id"] for entrada in catalogo["documentos"]] == ["manual-x100"]
+    assert Path.cwd() == proyecto_temporal
+
+
+def test_servir_carpeta_reutiliza_indice_vigente(monkeypatch, proyecto_temporal):
+    assert main(["init"]) == 0
+    indexaciones = []
+    servidores = []
+    monkeypatch.setattr("rag.cli.cmd_indexar", lambda args: indexaciones.append(args) or 0)
+    monkeypatch.setattr(
+        "rag.diagnostico.verificar_indice",
+        lambda: type("Chequeo", (), {"ok": True})(),
+    )
+    monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: servidores.append(Path.cwd()))
+
+    assert main(["servir", str(proyecto_temporal)]) == 0
+
+    assert indexaciones == []
+    assert servidores == [proyecto_temporal]
+
+
+def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
+    monkeypatch, proyecto_temporal
+):
+    configuracion = proyecto_temporal / "configuracion"
+    configuracion.mkdir()
+    asistente = configuracion / "asistente.yaml"
+    asistente.write_text(
+        "config_version: 2\n"
+        "nombre_asistente: Parcial\n"
+        "descripcion_dominio: documentación parcial\n"
+        "idioma: es\nperfil: _generico\ncors_origenes: []\nclaves_widget: []\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
+    monkeypatch.setattr(
+        "rag.diagnostico.verificar_indice",
+        lambda: type("Chequeo", (), {"ok": False})(),
+    )
+    monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: None)
+
+    assert main(["servir", str(proyecto_temporal)]) == 0
+
+    assert yaml.safe_load(asistente.read_text(encoding="utf-8"))["nombre_asistente"] == "Parcial"
+    assert (configuracion / "motor.yaml").is_file()
+    assert (configuracion / "textos.yaml").is_file()
+    assert (configuracion / "estilos.yaml").is_file()
+    assert (proyecto_temporal / "documentos" / "catalogo.yaml").is_file()
+
+
+def test_servir_rechaza_carpeta_sin_documentos(monkeypatch, proyecto_temporal):
+    fuente = proyecto_temporal / "vacia"
+    fuente.mkdir()
+    monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: pytest.fail("no debe servir"))
+
+    assert main(["servir", str(fuente)]) == 1
+    assert not (fuente / ".rag-extractivo").exists()
+    assert Path.cwd() == proyecto_temporal
 
 
 # ---------------------------------------------------------------------------

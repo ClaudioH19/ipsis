@@ -122,6 +122,10 @@ class SenalesRecuperacion(EsquemaEstricto):
     de abstención se configuran por retriever."""
     confianza_top1: float
     margen_top1_top2: float
+    metodo_confianza: str | None = None
+    estado_calibracion: Literal["sin_calibrar", "calibrado"] | None = None
+    terminos_encontrados: list[str] = Field(default_factory=list)
+    terminos_ausentes: list[str] = Field(default_factory=list)
 
 
 class EvidenceSpan(EsquemaEstricto):
@@ -158,6 +162,25 @@ class AssistantState(str, Enum):
     ERROR_TEMPORAL = "error_temporal"
 
 
+class DiagnosticCandidate(EsquemaEstricto):
+    chunk_id: str = Field(min_length=1)
+    score: float
+    signals: dict[str, Any] = Field(default_factory=dict)
+
+
+class QueryDiagnostic(EsquemaEstricto):
+    """Traza interna estable de una consulta; nunca se publica por defecto."""
+
+    schema_version: Literal[1] = 1
+    backend: str = Field(min_length=1)
+    etapas: dict[str, int] = Field(default_factory=dict)
+    candidatos: list[DiagnosticCandidate] = Field(default_factory=list)
+    senales: dict[str, Any] = Field(default_factory=dict)
+    decision: dict[str, Any] | None = None
+    evidencias: list[EvidenceSpan] = Field(default_factory=list)
+    advertencias: list[str] = Field(default_factory=list)
+
+
 class AssistantResult(EsquemaEstricto):
     estado: AssistantState
     motivo: str
@@ -171,6 +194,7 @@ class AssistantResult(EsquemaEstricto):
 
 __all__ = [
     "SCHEMA_VERSION", "AssistantResult", "AssistantState", "ChunkRecord",
-    "DocumentRecord", "ElementRecord", "EvidenceSpan", "FiltroEntidad",
-    "QueryAnalysis", "RetrievalCandidate", "RetrievalSignals", "SenalesRecuperacion",
+    "DiagnosticCandidate", "DocumentRecord", "ElementRecord", "EvidenceSpan",
+    "FiltroEntidad", "QueryAnalysis", "QueryDiagnostic", "RetrievalCandidate",
+    "RetrievalSignals", "SenalesRecuperacion",
 ]

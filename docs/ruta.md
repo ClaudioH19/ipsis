@@ -1,330 +1,499 @@
 # Ruta de trabajo
 
-Este documento reemplaza el orden de las fases 3 a 7 de [PLAN_V2.md](../PLAN_V2.md).
-La visión, las restricciones (respuestas literales, sin LLM) y los ADR no cambian.
+Este documento reemplaza el orden de las fases 3 a 7 de
+[PLAN_V2.md](../PLAN_V2.md). La visión, las restricciones (respuestas
+literales, sin LLM) y los ADR no cambian.
 
-Principio rector: **primero algo que funcione bien, después optimizar**. No se
-definen perfiles de instalación ni extras todavía; se decidirán con números.
+Principio rector: **primero un flujo correcto, intercambiable y observable;
+después medir; solo entonces optimizar**. Los perfiles de instalación, extras y
+umbrales definitivos se decidirán con evidencia. C.3 ya resolvió una decisión:
+Qdrant es el único backend soportado para el lanzamiento.
+
+El estado de ejecución, los commits y el siguiente paso se registran en
+[avance.md](avance.md). Este documento describe el orden y los criterios de
+cierre, no duplica la bitácora.
 
 ## Estado de partida
 
-- El registry y los contratos de [rag/componentes.py](../rag/componentes.py) existen,
-  pero **ningún código de ejecución los consume**. `consultar()` en
-  [rag/servicio/api.py](../rag/servicio/api.py) es un flujo de unas 200 líneas que
-  llama directamente a Qdrant y a SentenceTransformers.
-- La sección `componentes:` de `motor.yaml` es decorativa: el comportamiento real
-  lo deciden `recuperacion.modo` y el código.
-- Los esquemas V2 (`ChunkRecord`, `EvidenceSpan`...) no se usan; el pipeline
-  trabaja con diccionarios de payload.
-- La abstención, que es la lógica más valiosa del proyecto, no tiene contrato.
-- Las importaciones de `qdrant_client` y `sentence_transformers` ya son diferidas
-  en `rag/corpus.py` e `rag/indice.py`, lo que facilita el trabajo de abajo.
+- El registry y los contratos de [rag/componentes.py](../rag/componentes.py)
+  existen, pero el flujo de ejecución todavía no los consume por completo.
+- `consultar()` en [rag/servicio/api.py](../rag/servicio/api.py) concentra
+  orquestación y conoce implementaciones concretas.
+- La recuperación ya tiene un contrato con filtros, señales e inventarios,
+  pero falta conectarlo de punta a punta.
+- `ChunkRecord` ya ganó los campos tipados necesarios y existen adaptadores de
+  payload; falta usar esos tipos dentro del pipeline.
+- La abstención, que es la lógica de seguridad más importante, sigue sin un
+  contrato propio.
+- Las pruebas de caracterización congelan el comportamiento actual y revelan
+  problemas de calidad que deben medirse antes de optimizar.
 
 ---
 
-## Trabajo 1: conectar el registry al pipeline
+## Fase 0: higiene y línea base
 
-**Objetivo.** Que cambiar un componente sea cambiar una línea de `motor.yaml`, y
-que el flujo de `/consultar` no conozca Qdrant ni ningún modelo concreto.
-**El comportamiento observable no cambia**: mismas respuestas, mismo contrato HTTP.
+Esta fase deja el repositorio en condiciones de cambiar la arquitectura sin
+confundir defectos previos con regresiones.
 
-### 1.0 Red de seguridad (antes de tocar nada)
+- Separar el trabajo previo en commits con sentido.
+- Mantener una línea base reproducible de `pytest`.
+- Retirar referencias internas que un colaborador externo no puede seguir.
+- Mantener el dominio genérico libre de entidades académicas heredadas.
+- Disponer de `CHANGELOG.md` y CI en Linux y Windows.
+- Registrar cualquier cambio que obligue a reindexar.
 
-- Dejar la suite corriendo en el entorno de desarrollo (`.venv`); hoy no se
-  verificó su estado.
-- Añadir pruebas de caracterización sobre un corpus sintético pequeño: para un
-  conjunto fijo de preguntas (con respuesta, relacionada, fuera de dominio,
-  premisa falsa, saludo), congelar `estado`, `plan`, texto y offsets de la
-  respuesta actual. Son la definición de "no cambió nada".
-
-### 1.1 Rediseñar el contrato de recuperación
-
-El protocolo actual, `recuperar(consulta, limite) -> list[RetrievalCandidate]`,
-no alcanza para lo que `consultar()` hace de verdad:
-
-1. una consulta densa solo para obtener la **señal de abstención** (`s1`, `s2`);
-2. la recuperación de producción (híbrida);
-3. recuperaciones dirigidas por **filtro de entidad**.
-
-Cambios propuestos:
-
-- `Retriever.recuperar(consulta, limite, filtro: FiltroEntidad | None = None) -> ResultadoRecuperacion`.
-- `ResultadoRecuperacion` contiene los candidatos y `SenalesRecuperacion`
-  (`confianza_top1`, `margen_top1_top2`, y opcionalmente `cobertura_lexica`).
-  La abstención deja de leer "score denso" y lee una **señal de confianza
-  normalizada** que cada retriever sabe producir. Para el retriever Qdrant es el
-  coseno denso de siempre (sin cambio); para el del Trabajo 2 será otra cosa.
-- `FiltroEntidad` es un tipo propio (`valor_norm`), no `models.Filter` de Qdrant.
-- El retriever es dueño de su índice: expone `n_chunks()`, `warmup()`,
-  `inventario_entidades()` y `estadisticas_lexico()`. Hoy esos tres datos se
-  cargan aparte con rutas de `.cache/vocab_bm25` acopladas al nombre de la
-  colección.
-
-### 1.2 Nuevo protocolo `AbstentionPolicy`
-
-Extraer de [rag/servicio/pipeline.py](../rag/servicio/pipeline.py) la decisión en
-capas (fuera de dominio, premisa, zona gris, confianza alta) detrás de un
-contrato: entrada `SenalesRecuperacion` + candidatos + `QueryAnalysis`, salida
-`DecisionAbstencion`. La implementación actual se registra como
-`layered_v1`. Las funciones existentes se mueven, no se reescriben.
-
-### 1.3 Frontera de tipos
-
-- Adaptadores únicos `chunk_desde_payload()` / `payload_desde_chunk()`.
-- `ChunkRecord` no tiene hoy `doc_titulo`, `version` ni las banderas
-  `tiene_excepcion` / `tiene_condicion` / `entidades` que el pipeline consume.
-  **Decisión abierta:** añadirlos como campos tipados (recomendado, `schema_version`
-  se mantiene en 1 porque `ChunkRecord` aún no se persiste) o dejarlos en `metadata`.
-- En este trabajo los tipos se aplican **en la frontera**: retriever, extractor y
-  verificador hablan `ChunkRecord`/`EvidenceSpan`. Las funciones internas de
-  redacción pueden seguir usando diccionarios; se migran cuando se toquen.
-
-### 1.4 Un `Motor` que orquesta
-
-Crear `rag/servicio/motor.py`:
-
-- `Motor.desde_configuracion(cfg)` resuelve cada componente por nombre con el
-  registry y **falla al arrancar** (y en `rag doctor`) si un nombre no existe o
-  sus opciones son inválidas.
-- `Motor.consultar(pregunta, id_sesion) -> AssistantResult`, con el flujo actual
-  partido en pasos pequeños y con un `diagnostico` por etapa (latencias,
-  candidatos, decisión y motivo). Esa observabilidad sale gratis al hacer el corte.
-- `api.py` queda con seguridad, admisión, mapeo `AssistantResult` ->
-  `RespuestaConsulta` (contrato V1 intacto) y endpoints estáticos.
-
-### 1.5 Estado global y arranque
-
-- Reemplazar `estado` global y `@app.on_event("startup")` por
-  `crear_app(motor) -> FastAPI`. Es lo que permite probar sin Qdrant y, más
-  adelante, servir varios corpus en un proceso.
-- `_cargar_plantillas` usa `lru_cache` con la ruta relativa `configuracion/textos.yaml`,
-  que depende del directorio de trabajo, y `configurar_perfil` es global. Inyectar
-  ambos en el `Motor`.
-- Eliminar la duplicación entre `recuperacion.modo`/`recuperacion.reranker` y
-  `componentes.*`: una sola fuente de verdad, con migración idempotente de
-  `config_version`.
-
-### 1.6 Pruebas
-
-- Pruebas de contrato parametrizadas por tipo de componente: cualquier
-  implementación registrada debe cumplir orden determinista y offsets exactos.
-- Prueba de intercambio: registrar un `Retriever` falso en memoria y ejecutar
-  `Motor.consultar` de punta a punta **sin Qdrant ni torch**.
-- Las pruebas de caracterización de 1.0 siguen verdes.
+La elección de licencia queda diferida. No bloquea el desarrollo local, aunque
+sí debe resolverse antes de una publicación formal.
 
 ### Hecho cuando
 
-- `grep` no encuentra `qdrant`, `sentence_transformers` ni `ColeccionQdrant` en
-  `api.py`, `pipeline.py` ni `motor.py`.
-- Cambiar `componentes.fusion` o `componentes.retriever` altera el comportamiento
-  real (hoy no lo hace).
-- Suite completa y caracterización en verde.
-
-### Fuera de alcance
-
-Nuevas técnicas, recalibración de umbrales, cambios de widget y el prefijo
-`passage:` de E5 (requiere reindexar y se trata aparte, con medición).
-
-**Tamaño estimado:** M–L. Lo más delicado es 1.1 (el contrato) y 1.2.
+- La suite tiene una línea base conocida y reproducible.
+- Los cambios de esquema o normalización declaran si requieren reindexación.
+- El repositorio puede empaquetarse y probarse en un entorno limpio.
 
 ---
 
-## Trabajo 2: retriever léxico sobre SQLite FTS5
+## Fase A: arquitectura ejecutable e intercambiable
 
-**Objetivo.** Una segunda implementación completa de `Retriever` + almacén de
-índice que **no necesita Qdrant ni modelo de embeddings**. Es la prueba de que
-la abstracción del Trabajo 1 es real, da una línea base BM25 contra la cual
-medir lo que aporta la búsqueda densa, y resuelve el bloqueo de carpeta del
-Qdrant local (SQLite admite varios lectores).
+**Objetivo.** Que el flujo de consulta use contratos y componentes reales del
+registry, sin conocer Qdrant ni modelos concretos, y que conserve el contrato
+HTTP mientras se vuelve observable y comprobable.
 
-No es un "perfil": es otro valor de `componentes.retriever` (`sqlite_fts`).
-Las dependencias pesadas siguen en el `pyproject` por ahora; lo que se exige es
-que el código **no las importe** en este camino. Moverlas a extras se decide
-después, con datos.
+### A.0 Red de seguridad
 
-Verificado en este entorno: SQLite 3.45.3 con FTS5, y el tokenizer
-`unicode61 remove_diacritics 2` ya encuentra "año" con la consulta "ano".
+- Mantener pruebas de caracterización sobre un corpus sintético pequeño.
+- Congelar, para preguntas representativas, `estado`, `plan`, texto y offsets.
+- Cubrir respuesta exacta, relacionada, fuera de dominio, premisa falsa y
+  conversación.
 
-### 2.1 Almacén de índice
+Estas pruebas definen el comportamiento heredado. Si una corrección de
+fidelidad necesita cambiarlo, el cambio debe ser explícito, versionado y
+justificado por una prueba nueva.
 
-Un archivo `.cache/indice/<nombre>.sqlite` con:
+### A.1 Contrato de recuperación
 
-- `chunks`: `chunk_id`, `doc_id`, texto, offsets, sección y el payload completo
-  en JSON (lo que hoy devuelve Qdrant con cada punto);
-- `chunks_fts`: tabla virtual FTS5 con `unicode61 remove_diacritics 2`;
-- `entidades(valor_norm, chunk_id)`: sustituye el filtro `entidades[].valor_norm`
-  de Qdrant y el inventario de entidades;
-- `manifiesto`: `schema_version`, chunker, `pipeline_version`, hash del corpus,
-  fecha, y estadísticas léxicas (fracción de documentos por término, que hoy
-  vive en `.cache/vocab_bm25`).
+El retriever debe resolver las tres necesidades reales del pipeline:
 
-La escritura se hace en un archivo temporal y se **renombra al terminar**: el
-índice es inmutable y un fallo a mitad de indexación nunca deja el servicio
-con un índice roto (adelanta la idea de alias del plan sin su complejidad).
-El servicio abre en solo lectura (WAL).
+1. producir señales de confianza para abstención;
+2. recuperar candidatos de producción;
+3. ejecutar recuperaciones dirigidas por entidad.
 
-### 2.2 Retriever `sqlite_fts`
+El contrato incluye `FiltroEntidad`, `ResultadoRecuperacion`,
+`SenalesRecuperacion`, candidatos con puntaje e inventarios propios del índice.
+Cada backend traduce su señal a una escala documentada; no se presupone que
+todos producen coseno denso.
 
-- Consulta: tokenizar, quitar stopwords con `rag/texto_util.py`, **entrecomillar
-  cada término** antes de armar la expresión FTS. Sin esto una pregunta con
-  `AND`, `NEAR`, comillas o `*` rompe la consulta o cambia su significado.
-  Prueba de inyección obligatoria.
-- Orden con `bm25()` de FTS5; desempate determinista por `chunk_id`.
-- Filtro por entidad: `JOIN entidades`.
-- Los `RetrievalSignals` rellenan `sparse_score`/`sparse_rank`; los densos quedan `None`.
+### A.2 Política de abstención
 
-### 2.3 El problema difícil: confianza sin coseno
+Extraer la decisión por capas de `pipeline.py` y `consultar()` sin reescribirla
+durante el traslado.
 
-Toda la abstención actual se apoya en el coseno denso del mejor fragmento
-(umbrales 0.80 / 0.85, específicos de e5-small). Un puntaje BM25 no es
-comparable entre consultas, así que **no se puede reutilizar el mismo umbral**.
+#### A.2a Caracterizar las capas
 
-Propuesta para `confianza_top1` en este backend: **cobertura léxica ponderada
-por IDF**, es decir, qué fracción del peso IDF de los términos de contenido de
-la pregunta aparece en el mejor fragmento. Está acotada en [0, 1], es
-determinista y se puede explicar a un usuario ("encontré 4 de tus 5 términos
-clave"). El margen top1–top2 se calcula igual que hoy.
+- Probar por separado fuera de dominio, premisa incompatible, zona gris y
+  confianza alta.
+- Cubrir los límites exactos de los umbrales heredados.
+- Registrar qué candidato y señal provocan la decisión.
 
-Consecuencias que hay que asumir de frente:
+#### A.2b Extraer el contrato
 
-- Los umbrales viven por backend (`abstencion.por_backend.sqlite_fts`) y se
-  marcan `sin_calibrar` hasta tener evaluación (Ruta, Fase C).
-- La búsqueda léxica no entiende paráfrasis. Habrá preguntas que el backend
-  denso responde y este no, y se abstendrá o dará `relacionado`. Es el
-  comportamiento seguro y esperado; lo importante es medirlo, no ocultarlo.
-- Español sin lematizador: "cambia/cambiar/cambio" no coinciden. Primero
-  medir; si duele, evaluar un stemmer ligero opcional. No se añade por intuición.
+Crear `AbstentionPolicy`: recibe análisis de pregunta, señales y candidatos, y
+devuelve una `DecisionAbstencion` estructurada con, al menos:
 
-### 2.4 Ingesta y CLI
+- `estado` y `motivo`;
+- capa que tomó la decisión;
+- señal de confianza utilizada;
+- candidato elegido, si corresponde.
 
-- Separar en `rag/corpus.py` lo genérico (catálogo, parseo, chunking, payloads,
-  inventario de entidades) de lo específico de Qdrant (`indexar_qdrant`,
-  vocabulario sparse). Hoy conviven en 703 líneas.
-- `rag indexar` construye el almacén que corresponda al `retriever` configurado.
-- `/ready` y `rag doctor` dejan de asumir "colección" y modelo; informan del
-  backend activo y sus chequeos (por ejemplo, disponibilidad de FTS5).
-- El calentamiento solo codifica una pregunta si el backend tiene encoder.
-- La selección de oraciones ya usa `metodo_seleccion: lexico` por defecto y
-  `modelo_st` es opcional en `seleccion_fragmento.py`; comprobar que no haya
-  otro punto que exija el modelo.
+La implementación heredada se registra como `layered_v1`.
 
-### 2.5 Pruebas
+#### A.2c Integrar mediante el registry
 
-- Toda la suite de pipeline/API parametrizada por backend: los mismos casos
-  deben cumplir los mismos **invariantes** (offsets exactos, texto literal,
-  guardia, estados). Las respuestas concretas pueden diferir entre backends.
-- Prueba de aislamiento: importar `sentence_transformers` y `qdrant_client`
-  falla a propósito (`sys.modules` envenenado) y el ciclo
-  cargar -> indexar -> consultar sigue funcionando.
-- Acentos, mayúsculas, consulta vacía, solo stopwords, caracteres FTS, términos
-  repetidos, corpus de un solo documento.
-- Lectores concurrentes sobre el mismo archivo.
+- Resolver la política desde `componentes.abstention_policy`.
+- Fallar al arrancar y en `rag doctor` si el nombre u opciones son inválidos.
+- Mantener verdes las pruebas de caracterización.
+
+### A.3 Frontera de tipos
+
+Aplicar los tipos en las fronteras entre componentes:
+
+- el retriever entrega candidatos que contienen `ChunkRecord`;
+- el selector produce `EvidenceSpan`;
+- el verificador recibe evidencia tipada;
+- la política de abstención recibe candidatos tipados;
+- solo `chunk_desde_payload()` y `payload_desde_chunk()` conocen el formato
+  persistido.
+
+`doc_titulo`, `version`, `tiene_excepcion`, `tiene_condicion` y `entidades` son
+campos tipados de `ChunkRecord`. Las funciones internas de redacción pueden
+seguir usando estructuras simples mientras no crucen una frontera pública.
+
+### A.4 `Motor` orquestador
+
+Crear `rag/servicio/motor.py` en cortes pequeños.
+
+#### A.4a Envolver el flujo existente
+
+`Motor.consultar(pregunta, id_sesion) -> AssistantResult` reproduce primero el
+flujo actual sin rediseñarlo.
+
+#### A.4b Separar etapas
+
+Dividir la consulta en análisis, recuperación, abstención, selección de
+evidencia, verificación y construcción del resultado.
+
+#### A.4c Resolver componentes
+
+`Motor.desde_configuracion(cfg)` construye cada componente por nombre con el
+registry y valida sus opciones al arrancar.
+
+#### A.4d Añadir diagnóstico
+
+Cada consulta produce un diagnóstico estructurado con backend, latencias por
+etapa, candidatos, señales, decisión de abstención, evidencia y advertencias.
+El diagnóstico sirve para pruebas y operación; no forma parte obligatoria del
+contrato HTTP público.
+
+### A.5 Aplicación sin estado global
+
+- Introducir `crear_app(motor) -> FastAPI`.
+- Dejar en `api.py` seguridad, admisión, endpoints, manejo de errores y mapeo
+  de `AssistantResult` al contrato V1.
+- Usar `lifespan` solo para `warmup()` y cierre de recursos.
+- Inyectar plantillas y perfil en el `Motor`.
+- Eliminar la dependencia del directorio de trabajo al cargar plantillas.
+- Mantener una entrada de producción compatible para CLI y despliegues.
+- Unificar `recuperacion.*` y `componentes.*` mediante una migración idempotente
+  de `config_version`, con una sola fuente de verdad al terminar.
+
+### A.6 Contratos e intercambio
+
+Crear una matriz de pruebas por familia de componente:
+
+| Componente | Invariantes |
+|---|---|
+| Retriever | orden determinista, filtros, señales válidas e inventarios |
+| AbstentionPolicy | decisión y motivo deterministas para la misma entrada |
+| Selector | texto literal y offsets exactos |
+| Verificador | nunca acepta evidencia fuera del fragmento |
+| Motor | resultado estable y diagnóstico completo |
+
+Pruebas de intercambio obligatorias:
+
+1. un retriever falso en memoria;
+2. una política falsa que fuerce cada estado;
+3. `Motor.consultar()` de punta a punta sin Qdrant, torch ni
+   SentenceTransformers.
+
+### A.7 Guardia mínima de fidelidad
+
+Sin recalibrar todavía la recuperación, impedir que un resultado sea `ok` si
+el dato solicitado no tiene respaldo literal suficiente en la evidencia. El
+primer foco son entidades verificables como precios, fechas, porcentajes y
+cantidades.
+
+Esta tarea corrige falsos positivos de alto riesgo; no intenta mejorar recall,
+ranking ni estilo. Todo cambio frente a la caracterización se documenta como
+corrección deliberada.
+
+### Hecho cuando
+
+- `api.py` es una capa HTTP delgada y `Motor` contiene la orquestación.
+- `api.py`, `pipeline.py` y `motor.py` no importan Qdrant,
+  SentenceTransformers ni `ColeccionQdrant`.
+- Cambiar un componente en configuración cambia la implementación ejecutada.
+- El flujo completo puede probarse en memoria sin dependencias pesadas.
+- Los payloads solo aparecen en los adaptadores autorizados.
+- La caracterización sigue verde, salvo correcciones de fidelidad explícitas y
+  versionadas.
+- La suite rápida corre en CI.
+
+### Fuera de alcance
+
+Recalibrar umbrales, añadir técnicas nuevas, rediseñar el widget y corregir el
+prefijo `passage:` de E5. Todo ello requiere medición o reindexación y se trata
+en fases posteriores.
+
+---
+
+## Fase B: backend léxico SQLite FTS5 — experimento descartado
+
+**Decisión (2026-09-30).** La fase se implementó y probó completa, pero C.3
+detectó un falso `ok` bloqueante ante la pregunta ambigua «¿Cuánto dura?». Para
+el lanzamiento se elige Qdrant y se retiran la implementación SQLite, su
+configuración, pruebas, CI y documentación operativa. El detalle siguiente se
+conserva como registro histórico del experimento, no como funcionalidad vigente.
+
+**Objetivo.** Construir una segunda implementación completa que no necesite
+Qdrant ni embeddings, demostrar que la abstracción de la Fase A es real y
+obtener una línea base léxica medible.
+
+El objetivo se cumplió como experimento; SQLite no pasa a producto.
+
+> Todo el contenido B.1–B.5 que sigue es histórico. Describe lo que se evaluó,
+> no instrucciones ni componentes disponibles en la versión vigente.
+
+### B.1 Índice mínimo válido
+
+Crear `.cache/indice/<nombre>.sqlite` con:
+
+- `chunks` y payload completo en JSON;
+- tabla virtual `chunks_fts` con `unicode61 remove_diacritics 2`;
+- relación `entidades(valor_norm, chunk_id)`;
+- manifiesto con esquema, chunker, pipeline, hash del corpus, fecha y
+  estadísticas léxicas.
+
+La escritura se hace en un archivo temporal y se renombra al terminar. El
+servicio abre el índice en solo lectura. Se prueban versión incompatible,
+índice incompleto, corrupción detectable y lectores concurrentes.
+
+### B.2 Recuperación FTS segura
+
+- Tokenizar y quitar stopwords con las utilidades comunes.
+- Entrecomillar cada término antes de formar la consulta FTS.
+- Ordenar con `bm25()` y desempatar por `chunk_id`.
+- Aplicar filtros mediante la tabla de entidades.
+- Cubrir consulta vacía, solo stopwords, acentos, mayúsculas, operadores FTS,
+  comillas, asteriscos, términos repetidos e intentos de inyección.
+
+### B.3 Confianza léxica experimental
+
+Implementar la cobertura de términos ponderada por IDF como señal inicial,
+identificada como `idf_coverage_v1`:
+
+- valor acotado en `[0, 1]`;
+- términos encontrados y ausentes disponibles en diagnóstico;
+- margen entre los dos primeros candidatos;
+- estado explícito `sin_calibrar`;
+- umbrales separados de los del backend denso.
+
+La señal no se presenta como probabilidad. Su permanencia y sus umbrales se
+deciden en la Fase C.
+
+### B.4 Corte vertical de ingesta y CLI
+
+Completar primero el ciclo:
+
+```text
+cargar -> indexar -> consultar -> doctor
+```
+
+Después adaptar `/ready`, warmup y detalles de CLI:
+
+- separar en `corpus.py` lo genérico de la escritura Qdrant;
+- construir el almacén correspondiente al retriever configurado;
+- informar backend activo y verificaciones específicas;
+- no cargar ni calentar un encoder si el backend no lo necesita.
+
+### B.5 Aislamiento y contratos por backend
+
+- Parametrizar invariantes de pipeline y API para Qdrant y SQLite.
+- Envenenar importaciones pesadas durante pruebas unitarias.
+- Ejecutar en CI un entorno limpio sin Qdrant, torch ni
+  SentenceTransformers.
+- Verificar carga, indexación y consulta completas en ese entorno.
+- Documentar metodología, limitaciones y señal de confianza en
+  `docs/metodologias/recuperacion-lexica.md`.
 
 ### Hecho cuando
 
 - `rag init && rag cargar && rag indexar && rag servir` funciona con
-  `retriever: sqlite_fts` en un entorno donde `torch` y `qdrant_client` no
-  están instalados.
-- Los invariantes pasan en ambos backends.
-- El documento de metodología `docs/metodologias/recuperacion-lexica.md` está
-  escrito con la plantilla del plan (incluye limitaciones y señal de confianza).
+  `sqlite_fts` sin dependencias pesadas instaladas.
+- Los invariantes de literalidad, offsets, guardias y estados pasan en ambos
+  backends.
+- Un fallo a mitad de indexación no reemplaza un índice válido.
+- La señal léxica está documentada como experimental y sin calibrar.
 
 ### Fuera de alcance
 
-Lematización, BM25 propio en memoria, modo en el navegador, y decidir si este
-backend pasa a ser el predeterminado.
-
-**Tamaño estimado:** M. Depende del Trabajo 1 (1.1 y 1.2 al menos).
+Lematización, BM25 propio en memoria, vectores dentro de SQLite, modo en el
+navegador y elección del backend predeterminado.
 
 ---
 
-## Ruta
+## Fase C: evaluación y calibración reproducibles
 
-Cada fase termina con criterios comprobables. Una fase no empieza a medias de otra
-salvo donde se indica.
+**Objetivo.** Convertir opiniones sobre recuperación y calidad en decisiones
+respaldadas por datos.
 
-### Fase 0: higiene (antes de todo)
+### C.1 Banco de evaluación versionado
 
-- Commitear el trabajo pendiente en ramas/commits con sentido (hoy 12 archivos
-  modificados y varios nuevos, con un único commit previo).
-- Entorno de desarrollo con `pytest`; baseline de la suite anotado.
-- Retirar del código y los docs las referencias internas ("molde", "Etapa C/D",
-  "sección 6.1") o convertirlas en enlaces a docs reales. Un colaborador externo
-  no puede seguirlas.
-- Quitar del dominio genérico los tipos de entidad académicos heredados
-  (`nota`, y revisar `plazo`/`articulo`) o moverlos a un perfil de ejemplo.
-- `LICENSE`, `CHANGELOG.md`, `.github/workflows` con pytest en Linux y Windows.
+- Definir un formato con pregunta, estado esperado, respuesta literal y
+  offsets.
+- Etiquetar preguntas exactas, paráfrasis, sin respuesta, premisa falsa,
+  ambiguas y conversacionales.
+- Mantener separados un conjunto sintético reproducible y un golden set manual
+  de 30–50 preguntas sobre un corpus concreto.
+- Evitar que los casos usados para calibrar sean los únicos usados para medir.
 
-### Fase A: Trabajo 1 (registry conectado)
+### C.2 Métricas por etapa
 
-### Fase B: Trabajo 2 (retriever léxico SQLite)
+`rag eval` informa, al menos:
 
-### Fase C: medir, sin calibrar todavía a ciegas
+- Recall@k y MRR;
+- tasa de falsos `ok`;
+- precisión y distribución de abstención;
+- exactitud literal y de offsets;
+- longitud excesiva de respuesta;
+- latencia por etapa;
+- resultados por backend y categoría de pregunta.
 
-Aquí se decide con datos lo que hoy son opiniones.
+La tasa de falsos `ok` es bloqueante: una mejora de recall no compensa una
+degradación relevante de fidelidad.
 
-- `rag eval`: genera preguntas a partir del propio corpus (una oración por
-  fragmento, con offset de la respuesta) y reporta Recall@k, MRR y la tasa de
-  abstención por estado. Las preguntas sintéticas subestiman la dificultad real;
-  sirven para comparar backends y detectar regresiones, no como garantía de calidad.
-- Un golden set pequeño y real (30–50 preguntas) sobre **un** corpus concreto:
-  incluir sin respuesta, premisa falsa y paráfrasis.
-- Tabla comparativa: `sqlite_fts` contra `qdrant` denso e híbrido.
-- Primera calibración de umbrales por backend con `calibrar_umbral`, que ya existe.
-- **Con esto se decide** si el léxico basta como valor por defecto, si el
-  híbrido justifica su peso y si hace falta separar extras.
+### C.3 Comparación y calibración
 
-### Fase D: integración web mínima
+- Comparar inicialmente SQLite, Qdrant denso e híbrido con el mismo banco;
+  después de la decisión, mantener reproducible la comparación entre los modos
+  vectorial e híbrido de Qdrant.
+- Calibrar por combinación de backend, corpus o perfil y versión de señal.
+- Guardar configuración, versión de índice y dataset junto a cada resultado.
+- Emitir un informe reproducible que permita decidir backend predeterminado,
+  umbrales iniciales, utilidad del híbrido y separación de extras.
 
-- `rag servir` funcionando en un comando desde una carpeta de documentos, sin
-  `init` previo obligatorio (crea el proyecto en caliente).
-- `rag widget exportar <carpeta>`: `widget.js` y un snippet listo para pegar.
-- Web Component `<rag-extractivo-chat>` sobre el widget actual (Shadow DOM ya
-  está), con atributos HTML y eventos.
-- Ejemplos verificados: HTML estático, React y WordPress (snippet, sin plugin).
-- Prueba del wheel en entorno limpio y de la imagen Docker en CI.
-- Widget: arrastre, móvil y accesibilidad (ya planeados en Fase 5 del plan).
-- **Se pospone** el paquete npm, ESM/UMD y tipos TypeScript hasta que el
-  Web Component se estabilice.
+Al terminar esta fase se eligió Qdrant como único backend soportado. Los
+umbrales definitivos siguen diferidos hasta contar con el golden set manual.
 
-### Fase E: calidad de respuesta
+### Hecho cuando
 
-Solo con la medición de la Fase C como guía; cada técnica entra si mejora las
-métricas o se descarta.
+- Otra persona puede reproducir la tabla comparativa desde un comando.
+- Cada umbral publicado tiene dataset, métrica y versión asociados.
+- Los defectos conocidos de calidad tienen una medición inicial.
 
-- Corrección `passage:` de E5 con reindexación.
-- Análisis de pregunta, intención y slots; desambiguación
-  ("¿te refieres a X200 o X300?") en vez de elegir una opción.
-- Contexto conversacional acotado para preguntas de seguimiento.
-- Chunker jerárquico con tokenizer real y conservación de tablas.
-- Reranker opcional.
+---
 
-### Fase F: producto y diferenciación
+## Fase D: integración web mínima verificable
 
-- Registro de **preguntas sin respuesta** y panel para el mantenedor (qué le falta
-  a la documentación). Hoy no se registra nada de esto.
-- Ingesta desde sitemap/sitio y Markdown de documentación.
-- Cita con resalte exacto y enlace al pasaje en el documento fuente.
-- `rag audit`: recorre un log de respuestas y comprueba que cada una es
-  subcadena literal del corpus. Publicar esa garantía.
+**Objetivo.** Servir un corpus y conectar una web con el menor número de pasos,
+sin ampliar todavía la superficie de distribución.
+
+Orden de entrega:
+
+1. `rag servir <carpeta>` crea o completa el proyecto necesario en caliente.
+2. `/health` informa que el proceso vive y `/ready` diagnostica el backend.
+3. Presets del widget (`minimal`, `editorial`, `contraste`) administrables con
+   `rag widget tema listar|aplicar|vista-previa`; aplicar un preset fusiona un
+   tema validado y no obliga a editar YAML a mano.
+4. La vista previa genera un mockup local con respuestas `ok`, relacionadas,
+   sin respuesta y conversacionales, incluidas citas cortas y extensas.
+5. `/config` expone de forma pública y solo lectura el preset y las opciones de
+   presentación que necesita el widget. Cualquier futura escritura HTTP exigirá
+   autenticación administrativa distinta de la clave pública del widget.
+6. `rag widget exportar <carpeta>` genera `widget.js` y un snippet verificable.
+7. Web Component `<rag-extractivo-chat>` con Shadow DOM, atributos y eventos.
+8. Ejemplos ejecutables para HTML estático, React y WordPress.
+9. Pruebas de navegador para teclado, móvil, accesibilidad y errores de red.
+10. Wheel en entorno limpio e imagen Docker en CI.
+
+Se posponen npm, ESM/UMD y tipos TypeScript hasta estabilizar el Web Component.
+
+### Hecho cuando
+
+- Una carpeta de documentos puede servirse y consultarse con un comando.
+- Paleta, tipografía, forma, respuestas y citas pueden previsualizarse antes de
+  publicar, y el preset seleccionado es reproducible desde consola.
+- Los ejemplos se prueban automáticamente, no solo se documentan.
+- El widget es utilizable con teclado y en una pantalla móvil.
+
+---
+
+## Fase E: calidad guiada por experimentos
+
+**Objetivo.** Introducir una técnica por vez y conservarla solo si mejora las
+métricas de la Fase C sin degradar fidelidad.
+
+Cada experimento registra:
+
+```text
+hipótesis -> cambio aislado -> evaluación -> decisión
+```
+
+Orden inicial recomendado, sujeto a los resultados de C:
+
+1. corregir el prefijo `passage:` de E5 y reindexar;
+2. medir y ajustar chunking, incluidas tablas y jerarquía;
+3. añadir análisis de intención, slots y desambiguación;
+4. incorporar contexto conversacional acotado;
+5. evaluar un reranker opcional.
+
+No se combinan varias técnicas nuevas en una misma medición si eso impide
+atribuir el resultado.
+
+### Hecho cuando
+
+- Cada técnica tiene comparación antes/después reproducible.
+- Las técnicas sin mejora neta se descartan o quedan documentadas como
+  experimentales.
+- Ninguna mejora aumenta de manera inaceptable los falsos `ok`.
+
+---
+
+## Fase F: producto y diferenciación
+
+Esta fase se divide para que observabilidad, nuevas fuentes y distribución no
+se bloqueen entre sí.
+
+### F.1 Observabilidad y auditoría
+
+- Registrar preguntas sin respuesta para detectar vacíos documentales.
+- Dar al mantenedor un panel o informe accionable.
+- Implementar `rag audit` para verificar que las respuestas son subcadenas
+  literales del corpus.
+
+### F.2 Fuentes y citas
+
+- Ingesta desde sitemap, sitio y Markdown de documentación.
+- Citas con resalte exacto y enlace al pasaje de origen.
+
+### F.3 Integraciones
+
 - Servidor MCP como herramienta de recuperación literal.
-- Modo estático en navegador (índice JSON + buscador en el cliente), para sitios
-  sin backend. Solo si la Fase C muestra que el léxico rinde.
-- Perfiles/extras de instalación, decididos con los números de la Fase C.
 
-## Qué se recorta de PLAN_V2
+### F.4 Distribución
 
-No se abandonan; se posponen hasta que haya evidencia de que hacen falta:
-Docling/Unstructured, ColBERT, servidor TEI, circuit breakers, `late_chunking`,
-`multi_granularity`, `interact.js`, Floating UI, exportación de conversación,
-SBOM, la taxonomía completa de 13 estados (se usan los que necesita cada fase)
-y el plan de nombres de extras.
+- Definir perfiles y extras a partir de los resultados de la Fase C.
+- Mantener comprobaciones de instalación mínima por perfil.
 
-## Decisiones abiertas
+## Secuencia y puertas de fase
 
-1. ¿`ChunkRecord` gana `doc_titulo`, `version` y banderas como campos tipados
-   (recomendado) o van en `metadata`?
-2. ¿La señal de confianza léxica es cobertura IDF (propuesta) u otra? Se puede
-   cambiar tras la Fase C, pero conviene fijar la interfaz ahora.
-3. ¿El almacén SQLite guarda también los vectores en la Fase E, o sigue siendo
-   solo léxico y Qdrant sigue siendo el backend denso?
+El orden previsto es:
+
+```text
+Fase 0 -> A.0/A.1 -> A.2 -> A.3 -> A.4 -> A.5 -> A.6 -> A.7
+       -> Fase B -> Fase C -> Fase D -> Fase E -> Fase F
+```
+
+- B no empieza hasta que el intercambio de componentes esté probado en A.6.
+- C puede preparar datasets antes, pero no calibra hasta que B esté completo.
+- D puede avanzar tras A, pero su cierre exige un backend verificado.
+- E depende de la línea base y las métricas de C.
+- F.1 puede adelantarse si no altera el pipeline; F.4 y F.5 dependen de C.
+
+Cada paso debe cerrar con:
+
+- commit identificado por el paso;
+- pruebas ejecutadas y resultado;
+- cambios observables deliberados;
+- migraciones o reindexación necesarias;
+- actualización simultánea de [avance.md](avance.md).
+
+## Fuera de alcance hasta tener evidencia
+
+Se posponen Docling/Unstructured, ColBERT, servidor TEI, circuit breakers,
+`late_chunking`, `multi_granularity`, `interact.js`, Floating UI, exportación
+de conversación, SBOM, la taxonomía completa de estados y el plan definitivo
+de extras. No se abandonan; se reconsideran cuando una métrica o necesidad de
+producto los justifique.
+
+## Decisiones diferidas
+
+No se resuelven durante este replanteamiento:
+
+1. licencia del proyecto;
+2. momento y destino de publicación de la rama;
+3. umbrales definitivos por modo y perfil de Qdrant;
+4. separación de dependencias en extras;
+5. técnicas de calidad que pasarán de experimento a producto.
+
+Cada decisión se tomará en la puerta de fase correspondiente, con resultados
+reproducibles o una necesidad concreta de distribución.

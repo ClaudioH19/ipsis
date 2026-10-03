@@ -88,39 +88,79 @@ class FusionRRF:
 
 
 class SentenceSelectorExtractor:
-    def __init__(self, limite_caracteres: int = 500) -> None:
+    def __init__(
+        self,
+        limite_caracteres: int = 500,
+        metodo: str = "lexico",
+        modelo_st: Any = None,
+        prefijo_query: str = "",
+    ) -> None:
+        if limite_caracteres < 1:
+            raise ValueError("limite_caracteres debe ser mayor que cero")
+        if metodo not in {"lexico", "denso"}:
+            raise ValueError("metodo debe ser 'lexico' o 'denso'")
         self.limite_caracteres = limite_caracteres
+        self.metodo = metodo
+        self.modelo_st = modelo_st
+        self.prefijo_query = prefijo_query
 
     def extraer(self, consulta, candidatos: Sequence[RetrievalCandidate]) -> list[EvidenceSpan]:
-        from rag.seleccion_fragmento import seleccionar_texto_pertinente
+        from rag.payload import payload_desde_chunk
+        from rag.reglas_extraccion import extraer_entidades
+        from rag.seleccion_fragmento import (
+            ordenar_por_pertinencia_global,
+            recortar_payload_a_texto_pertinente,
+        )
 
-        evidencias: list[EvidenceSpan] = []
-        for candidato in candidatos:
-            chunk = candidato.chunk
-            seleccionado = seleccionar_texto_pertinente(
+        entidades = extraer_entidades(consulta.pregunta_original)
+        payloads = [
+            recortar_payload_a_texto_pertinente(
+                payload_desde_chunk(candidato.chunk),
                 consulta.pregunta_original,
-                chunk.texto_fuente,
-                chunk.offset_inicio,
                 self.limite_caracteres,
+                metodo=self.metodo,
+                modelo_st=self.modelo_st,
+                prefijo_query=self.prefijo_query,
+                entidades_pregunta=entidades,
             )
-            evidencias.append(EvidenceSpan(
-                doc_id=chunk.doc_id,
-                chunk_id=chunk.chunk_id,
-                texto=seleccionado.texto,
-                offset_inicio=seleccionado.offset_inicio,
-                offset_fin=seleccionado.offset_fin,
-                seccion_path=chunk.seccion_path,
-                score=candidato.signals.fusion_score,
-            ))
-        return evidencias
+            for candidato in candidatos
+        ]
+        scores = [candidato.score for candidato in candidatos]
+        payloads, scores = ordenar_por_pertinencia_global(payloads, scores)
+        return [
+            EvidenceSpan(
+                doc_id=payload["doc_id"],
+                chunk_id=payload["chunk_id"],
+                texto=payload["texto"],
+                offset_inicio=payload["offset_inicio"],
+                offset_fin=payload["offset_fin"],
+                seccion_path=payload.get("seccion_path") or [],
+                score=score,
+            )
+            for payload, score in zip(payloads, scores, strict=True)
+        ]
 
 
 class LiteralOffsetsVerifier:
-    def verificar(self, evidencias: Sequence[EvidenceSpan]) -> tuple[bool, list[str]]:
+    def verificar(
+        self,
+        evidencias: Sequence[EvidenceSpan],
+        candidatos: Sequence[RetrievalCandidate],
+    ) -> tuple[bool, list[str]]:
         errores: list[str] = []
+        chunks = {candidato.chunk.chunk_id: candidato.chunk for candidato in candidatos}
         for evidencia in evidencias:
-            if evidencia.offset_fin - evidencia.offset_inicio != len(evidencia.texto):
-                errores.append(f"offsets inválidos en {evidencia.chunk_id}")
+            chunk = chunks.get(evidencia.chunk_id)
+            if chunk is None or chunk.doc_id != evidencia.doc_id:
+                errores.append(f"chunk fuente ausente para {evidencia.chunk_id}")
+                continue
+            inicio = evidencia.offset_inicio - chunk.offset_inicio
+            fin = evidencia.offset_fin - chunk.offset_inicio
+            if inicio < 0 or fin > len(chunk.texto_fuente):
+                errores.append(f"evidencia fuera del chunk {evidencia.chunk_id}")
+                continue
+            if chunk.texto_fuente[inicio:fin] != evidencia.texto:
+                errores.append(f"texto u offsets no literales en {evidencia.chunk_id}")
         return not errores, errores
 
 
@@ -136,9 +176,24 @@ class RulesIntentClassifier:
         )
 
 
+class TemplatesResponseRenderer:
+    """Renderer mínimo para mantener la salida de dominio independiente.
+
+    La composición extractiva ya produce ``mensaje_usuario``; este adaptador
+    declara esa decisión en el registro y deja un punto de extensión para
+    renderers alternativos sin acoplarlos al transporte HTTP.
+    """
+
+    def renderizar(self, resultado) -> str:
+        return resultado.mensaje_usuario
+
+
 def _crear_retriever_qdrant(*args: Any, **kwargs: Any):
     from rag.recuperacion_qdrant import RetrieverQdrant
 
+    if "coleccion" in kwargs:
+        coleccion = kwargs.pop("coleccion")
+        return RetrieverQdrant(coleccion, **kwargs)
     return RetrieverQdrant.desde_configuracion(*args, **kwargs)
 
 
@@ -152,15 +207,20 @@ def registrar_componentes_base(
     destino.registrar("dense_encoder", "sentence_transformers", DenseEncoderSentenceTransformers, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
+    from rag.abstencion import LayeredV1
+
+    destino.registrar("abstention_policy", "layered_v1", LayeredV1, reemplazar=True)
     destino.registrar("fusion", "rrf", FusionRRF, reemplazar=True)
     destino.registrar("answer_extractor", "sentence_selector", SentenceSelectorExtractor, reemplazar=True)
     destino.registrar("evidence_verifier", "literal_offsets", LiteralOffsetsVerifier, reemplazar=True)
     destino.registrar("intent_classifier", "rules", RulesIntentClassifier, reemplazar=True)
+    destino.registrar("response_renderer", "templates", TemplatesResponseRenderer, reemplazar=True)
     return destino
 
 
 __all__ = [
     "ChunkerBuiltin", "DenseEncoderSentenceTransformers", "FusionRRF",
     "LiteralOffsetsVerifier", "ParserBuiltin", "RulesIntentClassifier",
-    "SentenceSelectorExtractor", "SparseEncoderBM25", "registrar_componentes_base",
+    "SentenceSelectorExtractor", "SparseEncoderBM25", "TemplatesResponseRenderer",
+    "registrar_componentes_base",
 ]

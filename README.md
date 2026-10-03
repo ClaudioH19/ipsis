@@ -62,6 +62,53 @@ rag doctor
 rag servir
 ```
 
+También puedes servir directamente una carpeta documental. Se crea un proyecto
+privado en `.rag-extractivo/`, se cargan los archivos y se construye el índice
+si hace falta:
+
+```bash
+rag servir ./mis-documentos
+```
+
+Si la ruta ya es un proyecto, se completan únicamente los archivos faltantes.
+Usa `--reindexar` para reconstruir expresamente el índice.
+
+Para elegir y revisar la presentación del widget sin editar CSS ni iniciar el
+servicio:
+
+```bash
+rag widget tema listar
+rag widget tema aplicar editorial
+rag widget tema vista-previa
+```
+
+Los presets disponibles son `clasico`, `minimal`, `editorial` y `contraste`.
+La vista previa se escribe por defecto en `.cache/widget-vista-previa.html` y
+muestra respuestas directas, relacionadas, abstención, conversación y citas.
+En `configuracion/estilos.yaml`, `presentacion` permite elegir densidad
+`comoda|compacta`, citas `acordeon|abiertas|ocultas` y la visibilidad de la
+etiqueta de estado. `/config` publica estos valores en modo de solo lectura.
+
+Para exportar el cliente y un snippet:
+
+```bash
+rag widget exportar ./public/rag --api https://api.example.com
+```
+
+La integración declarativa usa:
+
+```html
+<rag-extractivo-chat
+  api="https://api.example.com"
+  posicion="abajo-derecha">
+</rag-extractivo-chat>
+<script src="./public/rag/widget.js"></script>
+```
+
+El componente admite `api`, `widget-key`, `color`, `titulo`, `saludo` y
+`posicion`. Emite los eventos `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
+`rag:respuesta` y `rag:error`.
+
 Para inspeccionar los defaults y la selección efectiva de componentes:
 
 ```bash
@@ -71,6 +118,26 @@ rag snapshot-config
 El snapshot queda en `.cache/configuracion-efectiva.yaml`. La sección
 `componentes` de `configuracion/motor.yaml` usa nombres estables y permite
 seleccionar las implementaciones registradas sin cambiar el pipeline.
+
+Para evaluar el backend activo contra un banco versionado y guardar el reporte:
+
+```bash
+rag evaluar --banco data/golden/manifiesto.json --salida data/reportes/actual.json
+```
+
+El comando devuelve código distinto de cero si detecta algún falso `ok`.
+
+Para reproducir una comparación aislada entre Qdrant denso e híbrido con el
+banco sintético incluido:
+
+```bash
+rag benchmark --banco tests/evaluacion/sintetico/manifiesto.json \
+  --salida data/reportes/aqualis_sintetico_v1
+```
+
+El resultado registra configuración, índice, dataset, calibración de `dev` y
+métricas. No cambia defaults ni convierte automáticamente los umbrales sugeridos
+en configuración de producción.
 
 Prueba la API desde otra terminal:
 
@@ -103,6 +170,11 @@ Luego agrega:
 La clave identifica una integración, pero no es un secreto porque se entrega
 al navegador. La protección real del servicio debe completarse en el proxy o
 infraestructura de despliegue.
+
+Hay integraciones ejecutables para [HTML](ejemplos/html/),
+[React](ejemplos/react/) y [WordPress](ejemplos/wordpress/). Todas usan el
+mismo Web Component y muestran dónde configurar la URL, la clave pública y
+los eventos del widget.
 
 ## Plantillas y estilos globales
 
@@ -192,7 +264,7 @@ instalación normal, no el checkout del repositorio.
 - [Instalación en sitios web](docs/referencia/instalacion-web.md)
 - [Plan de evolución V2](PLAN_V2.md)
 
-Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 1` y
+Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 2` y
 se validan estrictamente al cargarse. Esto permite detectar errores de nombre
 o tipos inválidos antes de indexar o iniciar la API, y prepara migraciones
 explícitas cuando cambie el formato.
