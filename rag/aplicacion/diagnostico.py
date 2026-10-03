@@ -191,20 +191,22 @@ def verificar_indice() -> ResultadoChequeo:
     return ResultadoChequeo("índice Qdrant", True, f"colección {nombre_col!r} existe (modo {modo!r})")
 
 
-def verificar_plantillas() -> ResultadoChequeo:
-    """``configuracion/textos.yaml`` existe -- lo necesita CUALQUIER petición a
-    ``/consultar`` (incluida la detección "conversacional", que corre antes
-    que nada más). Sin este archivo el servicio responde 500 en la primera
-    pregunta en vez de un diagnóstico claro -- defecto real encontrado
-    validando que el servicio pueda responder antes de levantarlo."""
-    ruta = Path("configuracion/textos.yaml")
-    if not ruta.exists():
+def verificar_textos_idioma() -> ResultadoChequeo:
+    """El paquete de idioma, con las sobrescrituras de ``configuracion/idioma.yaml``,
+    es válido: lo necesita cualquier petición (incluida la conversacional)."""
+    from rag.configuracion.carga import cargar_dominio
+    from rag.lenguaje.paquete import cargar_paquete
+
+    try:
+        idioma = cargar_dominio().get("idioma", "es")
+        cargar_paquete(idioma, proyecto=Path.cwd())
+    except Exception as e:  # noqa: BLE001
         return ResultadoChequeo(
-            "plantillas de respuesta", False,
-            "no existe configuracion/textos.yaml -- '/consultar' respondería 500 en la primera pregunta",
-            "rag init  # lo recrea si se borró por error; no pisa el resto de tu configuración",
+            "textos del idioma", False,
+            f"el paquete de idioma o configuracion/idioma.yaml no es válido: {e}",
+            "revisa configuracion/idioma.yaml o bórralo para usar los textos por defecto",
         )
-    return ResultadoChequeo("plantillas de respuesta", True, "configuracion/textos.yaml presente")
+    return ResultadoChequeo("textos del idioma", True, f"paquete {idioma!r} válido")
 
 
 def verificar_estilos() -> ResultadoChequeo:
@@ -283,7 +285,7 @@ def ejecutar_diagnostico() -> list[ResultadoChequeo]:
         verificar_config_dominio(),
         verificar_config_recuperacion(),
         verificar_politica_abstencion(),
-        verificar_plantillas(),
+        verificar_textos_idioma(),
         verificar_estilos(),
         verificar_cors(),
         verificar_indice(),

@@ -200,12 +200,6 @@ def inicializar_proyecto_si_falta(
     )
 
 
-def inicializar_plantillas_si_falta(
-    ruta: str = rutas.TEXTOS,
-) -> bool:
-    return _crear_desde_recurso_si_falta(ruta, "textos.yaml")
-
-
 def inicializar_estilos_si_falta(
     ruta: str = rutas.ESTILOS, origen: str | None = None
 ) -> bool:

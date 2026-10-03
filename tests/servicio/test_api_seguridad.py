@@ -169,7 +169,7 @@ def test_config_devuelve_los_textos_del_dominio():
     assert body["densidad"] in {"comoda", "compacta"}
     assert body["citas"] in {"acordeon", "abiertas", "ocultas"}
     assert isinstance(body["mostrar_etiqueta_estado"], bool)
-    # el saludo real de configuracion/textos.yaml, con las variables ya
+    # el saludo real del paquete de idioma, con las variables ya
     # sustituidas (nunca la plantilla cruda con '{nombre_asistente}' sin
     # rellenar) -- misma función que responde un "hola" real.
     assert "{" not in body["saludo"]

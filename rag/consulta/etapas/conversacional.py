@@ -18,17 +18,20 @@ from rag.consulta.etapas.redaccion import _cargar_plantillas, _elegir_variante
 # saludo caía en "No encontré esa información...", que es un mal primer
 # mensaje para cualquier persona que recién abre el chat.
 # ==========================================================================
-@functools.lru_cache(maxsize=1)
-def _patrones_conversacionales_compilados() -> dict[str, list[re.Pattern]]:
-    cfg = _cargar_plantillas().get("conversacional", {})
-    patrones = cfg.get("patrones", {})
-    return {cat: [re.compile(p, re.IGNORECASE) for p in lista] for cat, lista in patrones.items()}
+@functools.lru_cache(maxsize=16)
+def _compilar_patrones(patrones: tuple[tuple[str, tuple[str, ...]], ...]) -> dict[str, list[re.Pattern]]:
+    return {cat: [re.compile(p, re.IGNORECASE) for p in lista] for cat, lista in patrones}
+
+
+def _patrones_conversacionales_compilados(datos: dict) -> dict[str, list[re.Pattern]]:
+    patrones = datos.get("conversacional", {}).get("patrones", {})
+    return _compilar_patrones(tuple((cat, tuple(lista)) for cat, lista in patrones.items()))
 
 
 def detectar_conversacional(pregunta: str, plantillas: dict | None = None) -> str | None:
     """Devuelve la categoría conversacional detectada (``"saludo"``,
     ``"agradecimiento"``, ``"despedida"``, ``"capacidad"``) según los
-    patrones deterministas de ``configuracion/textos.yaml::conversacional``, o
+    patrones deterministas de ``conversacional`` del paquete de idioma, o
     ``None`` si la pregunta no matchea ninguno -- en cuyo caso sigue el
     flujo normal (recuperación + abstención). Se evalúan las categorías en
     el orden declarado en config; la primera que matchea gana. Regex
@@ -36,13 +39,7 @@ def detectar_conversacional(pregunta: str, plantillas: dict | None = None) -> st
     resto del proyecto (nada de esto lo decide un modelo)."""
     datos = plantillas or _cargar_plantillas()
     categorias = datos.get("conversacional", {}).get("categorias", [])
-    if plantillas is None:
-        patrones = _patrones_conversacionales_compilados()
-    else:
-        patrones = {
-            categoria: [re.compile(patron, re.IGNORECASE) for patron in lista]
-            for categoria, lista in datos.get("conversacional", {}).get("patrones", {}).items()
-        }
+    patrones = _patrones_conversacionales_compilados(datos)
     for categoria in categorias:
         for patron in patrones.get(categoria, []):
             if patron.search(pregunta):
@@ -55,7 +52,7 @@ def respuesta_conversacional(
     pregunta: str = "",
     plantillas: dict | None = None,
 ) -> str:
-    """Texto FIJO de ``configuracion/textos.yaml::conversacional.respuestas``
+    """Texto FIJO de ``conversacional.respuestas`` del paquete de idioma
     para la categoría detectada -- nunca generado.
 
     Consume: la categoría y, opcionalmente, la pregunta tal cual la escribió

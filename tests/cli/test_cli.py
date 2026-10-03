@@ -221,17 +221,16 @@ def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temp
     assert "cors_origenes" in salida.lower()
 
 
-def test_doctor_reporta_plantillas_faltantes(proyecto_temporal: Path, capsys):
-    """Si 'configuracion/textos.yaml' se borra, 'rag doctor'
-    debe decirlo -- antes de esta corrección, el primer síntoma era un 500
-    en '/consultar' en vez de un diagnóstico claro."""
+def test_doctor_reporta_textos_de_idioma_invalidos(proyecto_temporal: Path, capsys):
+    """Un configuracion/idioma.yaml inválido rompería '/consultar' en la
+    primera pregunta: 'rag doctor' debe decirlo antes."""
     main(["init"])
-    (proyecto_temporal / "configuracion" / "textos.yaml").unlink()
+    (proyecto_temporal / "configuracion" / "idioma.yaml").write_text("mensajes: [1, 2]\n", encoding="utf-8")
     capsys.readouterr()
     codigo = main(["doctor"])
     salida = capsys.readouterr().out
     assert codigo == 1
-    assert "plantillas" in salida.lower()
+    assert "idioma" in salida.lower()
     assert "FALLA" in salida
 
 
@@ -356,7 +355,7 @@ def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
 
     assert yaml.safe_load(asistente.read_text(encoding="utf-8"))["nombre_asistente"] == "Parcial"
     assert (configuracion / "motor.yaml").is_file()
-    assert (configuracion / "textos.yaml").is_file()
+    assert not (configuracion / "textos.yaml").exists()
     assert (configuracion / "estilos.yaml").is_file()
     assert (proyecto_temporal / "documentos" / "catalogo.yaml").is_file()
 

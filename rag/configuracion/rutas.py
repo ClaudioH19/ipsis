@@ -12,7 +12,6 @@ ESTILOS = "configuracion/estilos.yaml"
 DOMINIO = "configuracion/dominio.yaml"
 IDIOMA = "configuracion/idioma.yaml"
 CALIBRACION = "configuracion/calibracion.yaml"
-TEXTOS = "configuracion/textos.yaml"  # pasa al paquete de idioma en P3.5
 
 DOCUMENTOS = "documentos"
 CATALOGO = "documentos/catalogo.yaml"

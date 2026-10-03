@@ -349,3 +349,6 @@ interfaz:
   error_origen: Este sitio no está autorizado para usar el asistente.
   error_http: El servicio no pudo responder (HTTP {estado}).
   error_red: No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.
+contracciones:
+  ' de el ': ' del '
+  ' a el ': ' al '

@@ -10,7 +10,6 @@ PLANTILLAS_YAML = [
     "asistente.yaml",
     "dominio.yaml",
     "motor.yaml",
-    "textos.yaml",
     "estilos.yaml",
 ]
 

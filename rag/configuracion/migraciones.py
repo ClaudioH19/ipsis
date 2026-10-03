@@ -74,6 +74,57 @@ def _migrar_dominio(raiz: Path, perfil: str, cambios: list[str]) -> None:
         cambios.append(f"[!] perfiles de dominio no usados que quedaron sin migrar: {otros}")
 
 
+def _diferencias(propio, base):
+    """Partes de ``propio`` que difieren de ``base`` (None si son iguales)."""
+    if isinstance(propio, dict) and isinstance(base, dict):
+        salida = {}
+        for clave, valor in propio.items():
+            dif = _diferencias(valor, base.get(clave))
+            if dif is not None:
+                salida[clave] = dif
+        return salida or None
+    return None if propio == base else propio
+
+
+def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
+    """``configuracion/textos.yaml`` pasa al paquete de idioma (P3.5).
+
+    Solo lo que el proyecto había cambiado se conserva, en
+    ``configuracion/idioma.yaml``.
+    """
+    viejo = raiz / rutas.CONFIGURACION / "textos.yaml"
+    if not viejo.is_file():
+        return
+    from importlib.resources import files
+
+    textos = _leer_yaml(viejo)
+    idioma = _leer_yaml(raiz / rutas.ASISTENTE).get("idioma", "es")
+    carpeta = files("rag.recursos").joinpath("idiomas")
+    recurso = carpeta.joinpath(f"{idioma}.yaml")
+    if not recurso.is_file():
+        recurso = carpeta.joinpath("es.yaml")
+    base = yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
+    abstencion = textos.get("abstencion") or {}
+    equivalente = {
+        "mensajes": {
+            "sin_respuesta": abstencion.get("generico"),
+            "premisa_no_encontrada": abstencion.get("premisa_no_encontrada"),
+            "relacionado_intro": abstencion.get("zona_gris_intro"),
+            "conectores": textos.get("conectores"),
+        },
+        "conversacional": textos.get("conversacional"),
+    }
+    equivalente["mensajes"] = {k: v for k, v in equivalente["mensajes"].items() if v is not None}
+    equivalente = {k: v for k, v in equivalente.items() if v}
+    propio = _diferencias(equivalente, base)
+    destino = raiz / rutas.IDIOMA
+    if propio and not destino.exists():
+        _escribir_yaml(destino, propio, "# Textos propios del proyecto (migrados desde textos.yaml).\n")
+        cambios.append(f"{rutas.IDIOMA} creado con los textos personalizados de textos.yaml")
+    viejo.unlink()
+    cambios.append("configuracion/textos.yaml eliminado (los textos viven en el paquete de idioma)")
+
+
 def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
     """Lleva un proyecto v2 a la estructura v3. Devuelve los cambios hechos."""
     raiz = Path(raiz).resolve()
@@ -106,6 +157,8 @@ def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
         cambios.append("configuracion/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)")
     if carpeta_dominios.is_dir() and not any(carpeta_dominios.iterdir()):
         carpeta_dominios.rmdir()
+
+    _migrar_textos(raiz, cambios)
 
     _mover(raiz / ".cache" / "qdrant_local", raiz / rutas.QDRANT, cambios, raiz)
     _mover(raiz / ".cache" / "vocab_bm25", raiz / rutas.INDICE, cambios, raiz)

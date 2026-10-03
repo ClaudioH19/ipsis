@@ -61,6 +61,9 @@ class PaqueteIdioma(_Estricto):
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes
     interfaz: dict[str, str] = Field(default_factory=dict)
+    # Contracciones obligatorias al insertar variables en un texto fijo
+    # (en español: «de el» -> «del»).
+    contracciones: dict[str, str] = Field(default_factory=dict)
     golden_instrucciones: str | None = None
 
 
