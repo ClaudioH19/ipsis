@@ -12,6 +12,19 @@ from rag.configuracion.perfiles import perfil_efectivo
 from rag.nucleo.registro import RegistroComponentes
 
 
+def _hash_corpus_indexado(retriever) -> str | None:
+    """``hash_corpus`` del manifiesto del índice abierto (``None`` si no hay)."""
+    nombre = getattr(getattr(retriever, "coleccion", None), "nombre", None)
+    if not nombre:
+        return None
+    from rag.indice.manifiesto import cargar_manifiesto
+
+    try:
+        return cargar_manifiesto(nombre).hash_corpus
+    except (FileNotFoundError, ValueError):
+        return None
+
+
 def construir_motor(
     cfg: dict[str, Any],
     *,
@@ -67,6 +80,12 @@ def construir_motor(
         qdrant=cfg.get("qdrant", {}),
     )
     analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
+    # La calibración solo vale para el corpus con que se calibró: se vuelve a
+    # resolver el perfil con el hash del índice recién abierto.
+    hash_corpus = _hash_corpus_indexado(retriever)
+    if hash_corpus is not None:
+        perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
+                                             hash_corpus=hash_corpus)
     politica = registro.crear(
         "abstention_policy",
         componentes["abstention_policy"],

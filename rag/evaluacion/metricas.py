@@ -4,7 +4,7 @@ from __future__ import annotations
 import math
 from collections import Counter, defaultdict
 from statistics import mean
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -97,17 +97,6 @@ class ReporteMetricas(BaseModel):
     cobertura: "ReporteCobertura | None" = None
 
 
-class CalibracionDev(BaseModel):
-    split: Literal["dev"] = "dev"
-    metodo_confianza: str
-    fpr_objetivo: float
-    umbral: float
-    falsa_respuesta_dev: float
-    falsa_abstencion_dev: float
-    n_respondibles: int
-    n_no_respondibles: int
-
-
 class ArtefactoEvaluacion(BaseModel):
     schema_version: int = 1
     backend: str
@@ -117,7 +106,6 @@ class ArtefactoEvaluacion(BaseModel):
     configuracion_sha256: str
     configuracion: dict[str, Any]
     indice: dict[str, Any]
-    calibracion_dev: CalibracionDev
     reporte: ReporteMetricas
     observaciones: list[ObservacionEvaluacion] = Field(default_factory=list)
 
@@ -481,42 +469,10 @@ ReporteMetricas.model_rebuild()
 ArtefactoEvaluacion.model_rebuild()
 
 
-def calibrar_observaciones_dev(
-    banco: BancoEvaluacion,
-    observaciones: list[ObservacionEvaluacion],
-    *,
-    fpr_objetivo: float = 0.0,
-) -> CalibracionDev:
-    """Calibra solo con dev; test no participa en la elección del umbral."""
-    from rag.evaluacion.calibracion import calibrar_umbral
-
-    por_id = {observacion.caso_id: observacion for observacion in observaciones}
-    positivas = []
-    negativas = []
-    metodos = set()
-    for caso in banco.casos:
-        if caso.split != "dev" or caso.categoria.value in {"ambigua", "conversacional"}:
-            continue
-        observacion = por_id[caso.id]
-        (positivas if caso.respondible else negativas).append(observacion.confianza_top1)
-        if observacion.metodo_confianza:
-            metodos.add(observacion.metodo_confianza)
-    resultado = calibrar_umbral(positivas, negativas, fpr_objetivo)
-    return CalibracionDev(
-        metodo_confianza=next(iter(metodos)) if len(metodos) == 1 else "backend_activo",
-        fpr_objetivo=fpr_objetivo,
-        umbral=resultado.umbral,
-        falsa_respuesta_dev=resultado.falsa_respuesta,
-        falsa_abstencion_dev=resultado.falsa_abstencion,
-        n_respondibles=resultado.n_respondibles,
-        n_no_respondibles=resultado.n_no_respondibles,
-    )
-
-
 __all__ = [
-    "ArtefactoEvaluacion", "CalibracionDev", "FilaCaso", "GRUPOS", "ObservacionEvaluacion", "ReporteCobertura",
+    "ArtefactoEvaluacion", "FilaCaso", "GRUPOS", "ObservacionEvaluacion", "ReporteCobertura",
     "ReporteMetricas", "ResumenCobertura", "ResumenGrupo", "RiesgoAceptadas", "SenalesObservadas",
-    "calibrar_observaciones_dev", "cota_superior_clopper_pearson", "es_no_respondible", "evaluar_observaciones",
+    "cota_superior_clopper_pearson", "es_no_respondible", "evaluar_observaciones",
     "filas_de_casos", "grupo_de", "muestra_respuesta_literal", "n_minimo", "reporte_cobertura",
     "resumir_cobertura", "riesgo_aceptadas",
 ]

@@ -68,7 +68,7 @@ def separar_entidades_ausentes(
     return en_corpus, genuinamente_ausentes
 
 
-UMBRALES_CASCADA = ("oov", "dominio", "relacionado", "foco", "ok", "cov")
+UMBRALES_CASCADA = ("oov_dominio", "oov_ok", "dominio", "relacionado", "foco", "ok", "cov")
 
 
 @dataclass(frozen=True)
@@ -79,7 +79,6 @@ class SenalesPolitica:
     s_oov: float
     s_foco: float
     s_cov: float
-    acuerdo: float | None
     s_rr: float | None
     s_qa: float | None
 
@@ -108,7 +107,6 @@ def senales_de_contexto(ctx, piso_coseno: float = 0.0) -> SenalesPolitica:
         # Sin términos de foco no hay nada que exigir: s_foco neutro.
         s_foco=lex.s_foco if lex is not None and lex.s_foco is not None else 1.0,
         s_cov=lex.s_cov if lex is not None and lex.s_cov is not None else 0.0,
-        acuerdo=lex.acuerdo if lex is not None else None,
         s_rr=sigmoide(ctx.puntajes_rerank[0]) if ctx.puntajes_rerank else None,
         s_qa=max((lec.s_qa for lec in ctx.lecturas), default=0.0) if ctx.lecturas is not None else None,
     )
@@ -124,17 +122,46 @@ def forma_en_pregunta(pregunta: str, termino: str, paquete=None) -> str:
     return termino
 
 
+# Regla → resultado de la decisión. «concordancia» la agrega EtapaPolitica (heavy)
+# cuando dos tramos se contradicen: baja un ok a relacionado.
+RESULTADO_DE_REGLA = {
+    "premisa": "abstiene", "fuera_dominio": "abstiene", "ok_lector": "responde", "ok_lexico": "responde",
+    "relacionado": "relacionado", "sin_respuesta": "abstiene", "concordancia": "relacionado",
+}
+
+
+def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
+    """La regla de ``cascada_v1`` que decide, en orden (la primera que se cumple).
+
+    Función pura: la usan la política en producción y la calibración, que
+    re-decide con las señales guardadas y otros umbrales sin volver a correr
+    los modelos. Así ambas no pueden divergir.
+    """
+    if premisa_falla:
+        return "premisa"
+    if s.s_oov >= u["oov_dominio"] and s.dominio < u["dominio"]:
+        return "fuera_dominio"
+    respaldo = s.s_foco >= u["foco"] and s.s_oov < u["oov_ok"]
+    if respaldo and s.s_qa is not None and s.s_qa >= u["ok"]:
+        return "ok_lector"
+    if respaldo and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]:
+        return "ok_lexico"
+    if s.dominio >= u["relacionado"]:
+        return "relacionado"
+    return "sin_respuesta"
+
+
 class CascadaV1:
     """Decide con todas las señales de la cascada (arquitectura.md §2.1).
 
     Reglas en orden; la primera que se cumple decide:
 
     1. La premisa falla (pide una entidad que no está) → sin_respuesta.
-    2. ``s_oov ≥ τ_oov`` y dominio < ``τ_dominio`` → fuera_dominio
+    2. ``s_oov ≥ τ_oov_dominio`` y dominio < ``τ_dominio`` → fuera_dominio
        (dominio = max(s_ret, s_rr); ver ``SenalesPolitica.dominio``).
-    3. ``s_foco ≥ τ_foco``, ``s_oov < τ_oov`` y (con lector: ``s_qa ≥ τ_ok``;
-       sin lector: ``s_ret ≥ τ_ok``, ``s_cov ≥ τ_cov`` y ``acuerdo ≥ 0,5``) → ok.
-       ``s_oov < τ_oov``: si casi todo el vocabulario de la pregunta falta en el
+    3. ``s_foco ≥ τ_foco``, ``s_oov < τ_oov_ok`` y (con lector: ``s_qa ≥ τ_ok``;
+       sin lector: ``s_ret ≥ τ_ok`` y ``s_cov ≥ τ_cov``) → ok.
+       ``s_oov < τ_oov_ok``: si casi todo el vocabulario de la pregunta falta en el
        corpus, el corpus no puede respaldar una afirmación literal. El lector da
        el mismo tramo a «¿Cuándo vence la garantía?» y a «¿Qué incluye la
        garantía?»; solo distingue el tipo de respuesta esperado, y eso exigiría
@@ -143,11 +170,16 @@ class CascadaV1:
        falló el foco).
     5. Si no → sin_respuesta.
 
-    Los umbrales vienen del perfil (y de la calibración, si coincide).
+    Los umbrales vienen del perfil (y de la calibración, si coincide). Un
+    ``oov`` único (configuración anterior) vale para ``oov_dominio`` y ``oov_ok``.
+    La regla en sí está en ``regla_cascada``.
     """
 
     def __init__(self, *, umbrales: dict[str, float], paquete=None, piso_coseno: float = 0.0) -> None:
-        faltantes = [u for u in UMBRALES_CASCADA if u not in (umbrales or {})]
+        from rag.configuracion.calibracion import normalizar_umbrales
+
+        umbrales = normalizar_umbrales(umbrales)
+        faltantes = [u for u in UMBRALES_CASCADA if u not in umbrales]
         if faltantes:
             raise ValueError(f"abstention_policy/cascada_v1 requiere los umbrales {faltantes}")
         self.umbrales = {k: float(v) for k, v in umbrales.items()}
@@ -165,19 +197,17 @@ class CascadaV1:
                                       capa_decisora=regla, confianza_utilizada=s.dominio, candidato_id=candidato)
 
         premisa = verificar_premisa_candidatos(ctx.consulta, ctx.candidatos)
-        if premisa.entidades_ausentes:
+        regla = regla_cascada(s, u, premisa_falla=bool(premisa.entidades_ausentes))
+        if regla == "premisa":
             return decision("abstiene", "premisa", "premisa", premisa.entidades_ausentes[0]["texto"])
-        if s.s_oov >= u["oov"] and s.dominio < u["dominio"]:
+        if regla == "fuera_dominio":
             return decision("abstiene", "fuera_dominio", "fuera_dominio")
-        foco_ok = s.s_foco >= u["foco"]
-        respaldo = foco_ok and s.s_oov < u["oov"]
-        if respaldo and s.s_qa is not None and s.s_qa >= u["ok"]:
+        if regla == "ok_lector":
             return decision("responde", "lector", "ok_lector")
-        if (respaldo and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]
-                and (s.acuerdo is None or s.acuerdo >= 0.5)):
+        if regla == "ok_lexico":
             return decision("responde", "lexico", "ok_lexico")
-        if s.dominio >= u["relacionado"]:
-            if not foco_ok and ctx.terminos_foco:
+        if regla == "relacionado":
+            if s.s_foco < u["foco"] and ctx.terminos_foco:
                 termino = forma_en_pregunta(ctx.pregunta, ctx.terminos_foco[0], self.paquete)
                 return decision("relacionado", "foco_ausente", "relacionado", termino)
             return decision("relacionado", "relacionado", "relacionado")
@@ -213,7 +243,10 @@ __all__ = [
     "EtapaPolitica",
     "ResultadoPremisa",
     "SenalesPolitica",
+    "RESULTADO_DE_REGLA",
+    "UMBRALES_CASCADA",
     "forma_en_pregunta",
+    "regla_cascada",
     "normalizar_coseno",
     "senales_de_contexto",
     "separar_entidades_ausentes",

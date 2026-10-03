@@ -29,25 +29,50 @@ def test_ajustes_del_proyecto_se_fusionan(tmp_path):
     assert perfil.origen_umbrales == "perfil"
 
 
-def _calibracion(tmp_path, perfil, modelos):
+HASH = "sha256:corpus"
+
+
+def _calibracion(tmp_path, perfil, modelos, estado="calibrado", hash_corpus=HASH):
     ruta = tmp_path / "calibracion.yaml"
     ruta.write_text(yaml.safe_dump({
-        "perfil": perfil, "procedencia": {"modelos": modelos}, "umbrales": {"ok": 0.71},
+        "estado": estado, "alfa": 0.05, "confianza": 0.95,
+        "procedencia": {"perfil": perfil, "modelos": modelos, "hash_corpus": hash_corpus,
+                        "banco": "golden@1.0.0", "hash_banco": "x"},
+        # «oov» es el nombre anterior: vale para oov_dominio y oov_ok.
+        "umbrales": {"ok": 0.71, "oov": 0.55},
     }), encoding="utf-8")
     return ruta
 
 
 def test_calibracion_con_la_misma_procedencia_reemplaza_umbrales(tmp_path):
     modelos = cargar_perfil_instalacion("medium").modelos.model_dump()
-    perfil = perfil_efectivo("medium", ruta_calibracion=_calibracion(tmp_path, "medium", modelos))
-    assert perfil.umbrales_por_defecto["ok"] == 0.71 and perfil.origen_umbrales == "calibracion"
+    perfil = perfil_efectivo("medium", ruta_calibracion=_calibracion(tmp_path, "medium", modelos), hash_corpus=HASH)
+    u = perfil.umbrales_por_defecto
+    assert (u["ok"], u["oov_dominio"], u["oov_ok"]) == (0.71, 0.55, 0.55)
+    assert perfil.origen_umbrales == "calibracion"
 
 
-def test_calibracion_de_otro_perfil_o_modelo_se_ignora(tmp_path):
+@pytest.mark.parametrize("cambio", ["perfil", "modelos", "corpus", "sin_indice", "estado"])
+def test_calibracion_de_otra_procedencia_o_no_calibrada_se_ignora(tmp_path, cambio):
     modelos = cargar_perfil_instalacion("medium").modelos.model_dump()
-    assert perfil_efectivo("medium", ruta_calibracion=_calibracion(tmp_path, "light", modelos)).origen_umbrales == "perfil"
-    otros = {**modelos, "lector": "otro/modelo"}
-    assert perfil_efectivo("medium", ruta_calibracion=_calibracion(tmp_path, "medium", otros)).origen_umbrales == "perfil"
+    argumentos = {
+        "perfil": ("light", modelos, "calibrado"),
+        "modelos": ("medium", {**modelos, "lector": "otro/modelo"}, "calibrado"),
+        "corpus": ("medium", modelos, "calibrado"),
+        "sin_indice": ("medium", modelos, "calibrado"),
+        "estado": ("medium", modelos, "muestra_insuficiente"),
+    }[cambio]
+    ruta = _calibracion(tmp_path, *argumentos)
+    hash_actual = {"corpus": "sha256:otro", "sin_indice": None}.get(cambio, HASH)
+    perfil = perfil_efectivo("medium", ruta_calibracion=ruta, hash_corpus=hash_actual)
+    assert perfil.origen_umbrales == "perfil"
+    assert perfil.umbrales_por_defecto["ok"] == cargar_perfil_instalacion("medium").umbrales_por_defecto["ok"]
+
+
+def test_ajustes_con_oov_anterior_se_migran_a_los_dos_umbrales():
+    perfil = perfil_efectivo("light", {"umbrales_por_defecto": {"oov": 0.7}})
+    assert (perfil.umbrales_por_defecto["oov_dominio"], perfil.umbrales_por_defecto["oov_ok"]) == (0.7, 0.7)
+    assert "oov" not in perfil.umbrales_por_defecto
 
 
 def test_el_modelo_denso_sale_del_perfil_si_no_se_fija():

@@ -62,7 +62,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P9.3 | ✅ | 2026-10-03 | 514 (suite completa) | rag golden plantilla [--n] [--force] | importar <csv|jsonl|json> | validar | exportar --formato squad2|csv [--salida]. CLI fina → rag/aplicacion/golden.py → rag/evaluacion/golden.py; sin modelos ni red. plantilla no pisa golden.csv sin --force (convención de 'rag init --force'). importar: lista todos los errores con archivo:fila y no escribe nada si hay errores; banco con escritura atómica (temporal + os.replace, manifiesto al final) y procedencia {formato, archivo} sin fecha. validar: solo lectura; detecta corpus cambiado (hash), documento faltante y offsets. SQuAD 2.0: context = párrafo de la evidencia, answer_start relativo y verificado; al importar, context+answer_start fijan la ocurrencia. Extensión opcional 'rag' {tipo, subtipo, par, notas}: par y subtipo sobreviven; un SQuAD externo sin ella importa igual. Pérdidas documentadas: conversacionales no se exportan; premisa_falsa/ambigua son is_impossible en el estándar (el tipo vuelve por la extensión); trampas sin par van con context vacío. Ida y vuelta por squad2 = mismo contenido QA (plan actualizado); por CSV = mismo banco. Desvíos: (1) menos de 30 filas pasa a aviso, no error (la falta de muestra no es error; la ida y vuelta exigida usa 2 filas); (2) las instrucciones de la plantilla van en la columna 'instrucciones' (se ignora al importar), así 'notas' queda libre; (3) validar_evidencias_contra_corpus junta todos los errores. |
 | P9.4 | ✅ | 2026-10-03 | 527 (suite completa) | tests/datos/banco_universal/{es,en,pt}: 90 casos (30 por idioma: 10 exactas, 5 paráfrasis, 10 trampas mismo tema en par, 3 fuera de dominio, 1 premisa falsa, 1 ambigua), 5 microdocumentos por idioma, 10 capacidades. Multilingüe, no cross-lingual. Fuentes (corpus/*.md, casos.yaml) → construir.py → banco.jsonl + manifiesto.json en el formato interno; una prueba verifica que coinciden. Manifiesto con uso: regresion; exigir_calibrable lo rechaza. Línea base en linea_base.json (light y medium; tabla en Hallazgos). Prueba lenta: falla si hay un falso ok nuevo respecto de la línea base (no exige 0: los 4 de hoy van a P10 sin corregir). Desvío: 1 premisa + 1 ambigua por idioma. linea_base.evaluar restaura el idioma y el perfil globales que rag indexar cambia (contaminaba las pruebas posteriores). |
 | P10.1 | ✅ | 2026-10-03 | 545 (suite completa) | metricas.py: SenalesObservadas (s_ret, s_oov, s_foco, s_cov, s_lex, acuerdo, s_rr, s_qa, dominio tal como decidió la política; None si no aplica). ObservacionEvaluacion gana idioma, regla, senales y respuesta_exacta, que evaluar_backend_activo llena desde el diagnóstico real. FilaCaso (vista por caso). ResumenCobertura: cobertura directa y relacionada, recall sin respuesta, falsos ok, tasa sobre no respondibles y directas sin literal. Global, por grupo (exacta, parafrasis, trampa_mismo_tema, sin_respuesta, fuera_de_dominio, premisa_falsa, ambigua) y por idioma, en ReporteMetricas.cobertura. riesgo_aceptadas (n = respuestas ok, x = falsos ok + directas sin literal) con cota_superior_clopper_pearson (CDF binomial + bisección, sin SciPy) y n_minimo. Falso ok unificado: no respondible y no conversacional. linea_base.py resume desde el reporte formal y coincide con la línea base de P9.4. Sin cambios en política, umbrales ni modelos. Definiciones, referencias y hallazgos en Hallazgos. Una corrida completa tuvo 1 fallo intermitente que no se reprodujo (ni aislado ni en una segunda corrida completa). |
-| P10.2 | ⬜ | | | |
+| P10.2 | ✅ | 2026-10-03 | 566 (suite completa) | Auditoría: acuerdo nunca se calculaba (lexico.acuerdo sin llamadas; su condición en light era inerte); se retira de cascada_v1 y de los documentos, sin cambio de comportamiento, y queda como candidata para P10.4. s_lex es señal interna de selección y no se agrega. regla_cascada (pura) la comparten política y calibración; no regresión: re-decidir con los umbrales del perfil reproduce cada estado (sintético y 180 casos del banco universal). τ_oov se separa en oov_dominio y oov_ok (0,6 ambos; un oov anterior vale para los dos; corregido que un oov en ajustes_perfil quedaba ignorado). Línea base universal sin cambios. calibracion.py: calibrar(banco, observaciones, umbrales_perfil, alfa, confianza) con exigir_calibrable; búsqueda conjunta (foco, oov_ok) × barrido de ok sobre valores observados en dev; elige la cobertura directa máxima con cota CP ≤ α y verifica la combinación con la política completa; test se reporta aparte. Estados calibrado/muestra_insuficiente/sin_umbral_seguro (los dos últimos mantienen los umbrales del perfil). escribir_calibracion/cargar_calibracion; configuracion/calibracion.py valida la procedencia (perfil, modelos, hash_corpus del índice) y construir_motor solo aplica estado calibrado. Se retiran calibrar_umbral y CalibracionDev. Análisis del banco universal y hard negatives inseparables en Hallazgos. |
 | P10.3 | ⬜ | | | |
 | P10.4 | ⬜ | | | |
 | P10.5 | ⬜ | | | |
@@ -215,5 +215,80 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   0,50 (< τ_ok 0,5). La quinta tiene `s_cov` 0,53 (< τ_cov 0,6). La pérdida
   viene del coseno de e5 en inglés, no del stemmer. Se analiza en P10.2 o
   después.
+- **P10.2 — auditoría de `acuerdo`.**
+  - `rag/lenguaje/lexico.py::acuerdo()` existe y está probada, pero **ninguna
+    etapa la llama**. No era un valor calculado que se perdía en el camino:
+    nunca se calculó.
+  - Calcularla exige dos búsquedas más por consulta (top-3 solo denso y solo
+    BM25) y cambiaría las decisiones de light, así que no es plumbing.
+  - Como la condición «acuerdo ≥ 0,5» siempre fue inerte (`None` pasaba),
+    todo lo medido en P8-P10.1 se hizo sin ella. Se retira de `cascada_v1` y
+    de la documentación, sin cambio de comportamiento: la caracterización, la
+    línea base universal y la re-decisión de los 180 casos no cambian.
+  - Cablearla queda como mejora candidata, a evaluar con evidencia en P10.4.
+- **P10.2 — auditoría de `s_lex`:** es una señal interna de selección. Ordena
+  oraciones, elige la ancla y la ventana del lector; el plan nunca la usó para
+  decidir. Su `None` a nivel de pregunta es correcto y no se agrega a la
+  política.
+- **P10.2 — `τ_oov` separado.**
+  - `oov_dominio` decide fuera de dominio: `s_oov ≥ τ` y dominio < `τ_dominio`.
+  - `oov_ok` es la condición para responder directo: `s_oov < τ`.
+  - Los perfiles traen ambos en 0,6. Un `oov` anterior (en `ajustes_perfil`,
+    en una calibración o en el constructor de la política) vale para los dos
+    vía `normalizar_umbrales`, sin intervención del cliente.
+  - Defecto encontrado y corregido: un `oov` anterior en los ajustes del
+    proyecto quedaba ignorado porque el perfil ya traía las claves nuevas.
+    Ahora los ajustes se normalizan antes de fusionar.
+- **P10.2 — política pura.** `regla_cascada(senales, umbrales, premisa_falla)`
+  es la regla de `cascada_v1`; la usan producción y calibración. Prueba de no
+  regresión: con los umbrales del perfil, re-decidir las observaciones
+  reproduce exactamente cada estado (10 casos sintéticos y los 90 × 2 perfiles
+  del banco universal).
+- **P10.2 — calibración** (algoritmo en comandos-y-golden.md §4.2).
+  - Los estados son calibrado, muestra_insuficiente y sin_umbral_seguro.
+  - Solo `dev` elige los umbrales; `test` se reporta aparte.
+  - `calibracion.yaml` guarda la procedencia (perfil, modelos, `hash_corpus`
+    del índice y banco) y solo se aplica en estado calibrado con la misma
+    procedencia (`construir_motor` relee el perfil con el hash del índice
+    abierto).
+  - Se retiran `calibrar_umbral`, `CalibracionDev` y `calibracion_dev` de los
+    artefactos: solo calibraban el coseno crudo.
+- **P10.2 — análisis sobre el banco universal** (90 casos; no se usa para
+  elegir umbrales del producto). Con los defaults, la línea base no cambió.
+
+  | Perfil | Configuración (análisis) | Cobertura directa | Paráfrasis | Falsos ok (trampas) | Riesgo x/n |
+  |---|---|---|---|---|---|
+  | medium | defaults | 0,711 | 2/15 | 3 (2) | 3/35 |
+  | medium | oov_ok = 1,0 | 0,844 | 8/15 | 8 (5) | 8/46 |
+  | medium | ok = 0,85 | 0,711 | 2/15 | 1 (0) | 1/33 |
+  | medium | ok = 0,85 + oov_ok = 1,0 | 0,844 | 8/15 | 5 (2) | 5/43 |
+  | light | defaults | 0,489 | 0/15 | 1 (1) | 1/23 |
+  | light | ok = 0,40 | 0,622 (exacta 28/30) | 0/15 | 4 (3) | 4/32 |
+
+  - `explorar_umbrales` da **muestra_insuficiente**: a lo más 13 (light) y 18
+    (medium) respuestas sin error en dev, frente a las 59 necesarias. Es lo
+    esperable de un banco de regresión.
+  - Separar `oov_ok` de `oov_dominio` no cambia el recall de fuera de dominio
+    (1,0 en todas las filas). En este banco los fuera de dominio ya tienen
+    dominio bajo, así que unido y separado dan lo mismo. La separación sirve
+    cuando un golden muestre paráfrasis con `s_oov` alto y dominio alto.
+  - **Paráfrasis en light:** quedan bloqueadas por `s_cov < τ_cov` (0-0,42),
+    no por `s_oov`. Una paráfrasis, por definición, no repite el vocabulario.
+    Light no puede responderlas directo sin bajar `τ_cov`, que no se calibra.
+    Es una limitación estructural del perfil léxico.
+  - **Light en inglés:** bajar `τ_ok` a 0,40 sube las exactas de 22 a 28/30,
+    pero agrega 3 falsos ok. La hipótesis (el umbral es alto) se confirma,
+    pero el costo es real: lo decide la calibración con un golden suficiente.
+  - **medium `ok` = 0,85:** elimina `es-trampa-001` (s_qa 0,83) y
+    `en-trampa-004` (0,82) sin perder cobertura en este banco. Es una
+    hipótesis para el golden del cliente, no un valor del producto.
+- **P10.2 — hard negatives inseparables con las señales actuales.**
+  - `es-ambigua-001` («¿Cuánto dura?»): `s_qa` 0,9999 y `s_oov` 0. Ningún
+    `τ_ok` lo separa sin perder todas las respuestas.
+  - `en-trampa-004` («Who approves the refund request?»): `s_oov` 0 y
+    `s_cov` 1. Solo `τ_ok` lo separa, y por 0,02. `s_oov` no puede resolver
+    estos casos: la relación pedida es otra con el mismo vocabulario.
+  - Relajar `oov_ok` en medium suma 3 trampas más con falso ok: el costo de
+    cobertura de paráfrasis está en esos hard negatives.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

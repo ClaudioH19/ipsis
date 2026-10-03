@@ -459,8 +459,7 @@ def cmd_comparar(args: argparse.Namespace) -> int:
         print(
             f"{fila.backend}: Recall={fila.recall_at_k:.3f} MRR={fila.mrr:.3f} "
             f"falsos_ok={fila.tasa_falsos_ok:.3f} estado={fila.exactitud_estado:.3f} "
-            f"latencia_p95={fila.latencia_p95_ms:.1f}ms "
-            f"umbral_dev={fila.calibracion_dev.umbral:.5f}"
+            f"latencia_p95={fila.latencia_p95_ms:.1f}ms"
         )
     salida = Path(args.salida)
     salida.parent.mkdir(parents=True, exist_ok=True)

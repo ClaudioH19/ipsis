@@ -72,7 +72,7 @@ y la de selección (sobre el tramo elegido).
 | `s_foco` | Fracción de términos foco presentes en la **oración** que contiene la respuesta | **El caso garantía/filtro:** el tramo «6 meses» está en una oración sin «garantía» → `s_foco = 0` |
 | `s_cov` | Peso IDF de los términos de la pregunta presentes en el tramo / peso IDF total | Cobertura general de la pregunta |
 | `s_lex` | BM25(pregunta, oración) / BM25 ideal de la pregunta | Pertinencia léxica normalizada, para ordenar oraciones (tf-isf) |
-| `acuerdo` | 1 si el top-1 denso está en el top-3 de BM25 y viceversa; 0,5 si solo uno; 0 si ninguno | Confianza en la recuperación |
+| `acuerdo` | 1 si el top-1 denso está en el top-3 de BM25 y viceversa; 0,5 si solo uno; 0 si ninguno | Diseñada para la confianza de light; **no se calcula** (P10.2). Se evalúa en P10.4 |
 
 ### Cómo las usa la cascada
 

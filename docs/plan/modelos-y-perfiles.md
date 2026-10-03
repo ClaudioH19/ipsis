@@ -99,7 +99,8 @@ cascada:
   salida_temprana_sin_foco: true
 etapas: [conversacional, analisis, recuperacion, filtros, reranking, lectura, seleccion, politica, verificacion, redaccion]
 umbrales_por_defecto:        # conservadores; `rag calibrar` los reemplaza
-  oov: 0.60
+  oov_dominio: 0.60           # regla 2: vocabulario ajeno + dominio bajo → fuera de dominio
+  oov_ok: 0.60                # regla 3: vocabulario ausente tolerado para responder directo
   dominio: 0.30
   relacionado: 0.50
   foco: 0.50                 # al menos uno de los 2 términos foco
@@ -114,7 +115,7 @@ umbrales_por_defecto:        # conservadores; `rag calibrar` los reemplaza
 | `recuperar_n` | 10 | 20 | 30 |
 | Reranker / `rerank_k` | — | mmarco int8 / 4 | bge-reranker-v2-m3 int8 / 8 |
 | Lector / `leer_m` | — | mdeberta int8 / 2 | mdeberta int8 / 4 (pendiente: ver §2) |
-| Decide `ok` con | `s_ret`, `s_cov`, `s_foco`, `acuerdo` | `s_qa`, `s_foco` | `s_qa`, `s_foco` + concordancia |
+| Decide `ok` con | `s_ret`, `s_cov`, `s_foco` | `s_qa`, `s_foco` | `s_qa`, `s_foco` + concordancia |
 | Extras | — | — | recuperación dirigida por entidad; concordancia entre los 2 mejores tramos |
 
 ### Latencia estimada (P7.6 la mide de verdad)

@@ -143,6 +143,14 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
         if fila.grupo != "conversacional":
             assert fila.regla and fila.senales is not None, fila.caso_id
             assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
+    # La calibración re-decide con la misma regla que producción: con los
+    # umbrales del perfil reproduce exactamente cada estado observado.
+    from rag.configuracion.perfiles import perfil_efectivo
+    from rag.evaluacion.calibracion import redecidir
+
+    umbrales = perfil_efectivo(perfil).umbrales_por_defecto
+    for obs in artefacto.observaciones:
+        assert redecidir(obs, umbrales).estado == obs.estado, (obs.caso_id, obs.regla)
     # …y medir el banco universal no lo vuelve calibrable.
     with pytest.raises(ValueError, match="no para calibrar"):
         exigir_calibrable(cargar_banco(RAIZ / idioma / "manifiesto.json"))
