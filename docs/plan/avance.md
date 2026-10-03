@@ -44,7 +44,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P5.6 | ✅ | 2026-10-03 | 436 (suite completa) | Presets light/medium/heavy/bm25 en rag/recursos/perfiles; perfil_efectivo fusiona perfil ← motor.yaml::ajustes_perfil ← calibracion.yaml (solo si perfil y modelos coinciden). asistente.yaml::perfil (v2 migra a light; rag init usa medium). recuperacion.modelo es opcional: si falta, manda el denso del perfil. Umbral foco por defecto 0,5. Desvío: la migración se hizo sobre config_version 3 (no 3→4) porque v3 aún no se publicó. |
 | P6.1 | ✅ | 2026-10-03 | 436 (suite completa) | ContextoConsulta y 9 clases de etapa (un archivo por responsabilidad, base en etapas/base.py). El motor recorre la lista, mide <nombre>_ms y aplica la admisión a todas menos la conversacional. Los nombres de medición existentes se conservan (confianza, evidencia); se agregan filtros, politica, redaccion y verificacion. Sin cambios en pruebas ni caracterización. |
 | P6.2 | ✅ | 2026-10-03 | 438 (suite completa) | Etapas registradas en el registry (tipo 'etapa') y armadas desde perfil_efectivo; una etapa desconocida falla al construir con mensaje accionable. Filtros calcula términos foco y s_oov; recuperación marca la salida temprana y el motor salta las etapas usa_modelos. Desvío: medium/heavy aún no listan reranking/lectura (se agregan en P7.1/P7.3) para no romper el arranque; los nombres de etapa siguen el flujo vigente (layered_v1) hasta P8. |
-| P6.3 | ⬜ | | | |
+| P6.3 | ✅ | 2026-10-03 | 439 (suite completa) | QueryDiagnostic v2: perfil, senales_lexicas (foco, s_oov, IDF de cada término, términos ausentes del corpus), puntajes_rerank, lecturas, regla y salto_modelos. |
 | P7.1 | ⬜ | | | |
 | P7.2 | ⬜ | | | |
 | P7.3 | ⬜ | | | |
