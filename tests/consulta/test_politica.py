@@ -61,7 +61,7 @@ def test_layered_v1_cumple_el_protocolo_y_se_registra():
     )
 
     assert isinstance(politica, AbstentionPolicy)
-    assert registro.disponibles("abstention_policy") == ["layered_v1"]
+    assert registro.disponibles("abstention_policy") == ["cascada_v1", "layered_v1"]
 
 
 def test_fuera_de_dominio_usa_comparacion_estricta_en_el_limite():

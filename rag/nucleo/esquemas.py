@@ -212,6 +212,7 @@ class QueryDiagnostic(EsquemaEstricto):
     puntajes_rerank: list[float] | None = None
     lecturas: list[dict[str, Any]] | None = None
     regla: str | None = None
+    senales_politica: dict[str, Any] | None = None
     salto_modelos: bool = False
 
 
