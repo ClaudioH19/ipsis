@@ -83,6 +83,7 @@ class ConfigWidget(BaseModel):
     densidad: Literal["comoda", "compacta"] = "comoda"
     citas: Literal["acordeon", "abiertas", "ocultas"] = "acordeon"
     mostrar_etiqueta_estado: bool = True
+    interfaz: dict[str, str] = {}
 
 
 @dataclass
@@ -203,8 +204,10 @@ def crear_app(
     @aplicacion.get("/config", response_model=ConfigWidget)
     def configuracion_widget(request: Request):
         from rag.aplicacion.estilos import cargar_estilos
+        from rag.lenguaje.paquete import cargar_paquete
 
         dominio = cargar_dominio()
+        interfaz = cargar_paquete(dominio.get("idioma", "es"), proyecto=Path.cwd()).interfaz
         estilos = cargar_estilos()
         presentacion = estilos.get("presentacion") or {}
         return ConfigWidget(
@@ -215,6 +218,7 @@ def crear_app(
             densidad=presentacion.get("densidad", "comoda"),
             citas=presentacion.get("citas", "acordeon"),
             mostrar_etiqueta_estado=presentacion.get("mostrar_etiqueta_estado", True),
+            interfaz=interfaz,
         )
 
     @aplicacion.get("/widget.js")

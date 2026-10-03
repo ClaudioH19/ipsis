@@ -73,7 +73,6 @@ def test_sin_proyecto_no_hace_nada(tmp_path: Path):
 
 
 def test_textos_personalizados_pasan_a_idioma_yaml(tmp_path: Path):
-
     conf = tmp_path / "configuracion"
     conf.mkdir()
     (conf / "asistente.yaml").write_text("config_version: 3\nidioma: es\n", encoding="utf-8")

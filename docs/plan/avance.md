@@ -28,7 +28,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P3.3 | ✅ | 2026-10-03 | 351 (suite completa) | fecha (numérica, normalizada a ISO) y monto (símbolo o código ISO 4217 de una lista cerrada; grupos de tres dígitos = miles). Un punto final de oración no bloquea la coincidencia. Caracterización sin cambios. Requiere reindexar para que el inventario incluya los nuevos tipos. |
 | P3.4 | ✅ | 2026-10-03 | 351 (suite completa) | Las listas de palabras van al paquete; la estructura de los patrones queda en código y es común a es/en/pt (el calificador del plazo puede ir antes o después de la unidad). Idioma activo como el perfil: configurar_idioma / usar_idioma; el motor lo aplica por consulta. valor_norm de fechas con nombre: 2024-03-15, --03-15, 2_dow5_m01; '3 meses' pasa de 3_mese a 3_mes. Los marcadores de excepción/condición salen del paquete. Requiere reindexar. |
 | P3.5 | ✅ | 2026-10-03 | 352 (suite completa) | cargar_plantillas(paquete, dominio) arma el mismo diccionario que antes leía de textos.yaml, así redaccion y conversacional casi no cambian. Las contracciones («de el» -> «del») pasan al paquete. 'rag doctor' valida los textos del idioma en lugar de exigir textos.yaml. La migración conserva en idioma.yaml solo lo que el proyecto había cambiado. La migración lee el YAML del paquete desde los recursos para no subir de capa. |
-| P3.6 | ⬜ | | | |
+| P3.6 | ✅ | 2026-10-03 | 331 | /config publica 'interfaz' del paquete (con idioma.yaml). widget.js usa TEXTOS con respaldo en español y los reemplaza al recibir /config. Sintaxis JS verificada con node --check. La prueba de navegador se omite: Playwright no está instalado en este entorno. |
 | P3.7 | ⬜ | | | |
 | P4.1 | ⬜ | | | |
 | P4.2 | ⬜ | | | |
