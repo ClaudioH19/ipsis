@@ -26,49 +26,47 @@
 - **Hilos:** `intra_op_num_threads` configurable y una sola sesión por modelo
   y proceso.
 
-## 2. Candidatos
+## 2. Modelos (verificados en P5.1, 2026-10-03, con la API de Hugging Face)
 
-✔ = confirmado en una ficha consultada el 2026-10-03. ⚠ = la tarea P5.1 lo
-verifica antes de usarlo.
+Licencia y parámetros salen de la ficha de cada repositorio. «Archivo» es el
+ONNX que descarga `rag modelos descargar`.
 
-### Codificador denso (define el índice)
+| Uso | Modelo (ficha) | Licencia | Parámetros | Archivo ONNX | Perfil |
+|---|---|---|---|---|---|
+| Denso | [intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small) | MIT | 118M | `onnx/model.onnx` (470 MB, fp32) | light, medium |
+| Denso | [intfloat/multilingual-e5-base](https://huggingface.co/intfloat/multilingual-e5-base) | MIT | 278M | `onnx/model.onnx` (1,1 GB, fp32) | heavy |
+| Reranker | [cross-encoder/mmarco-mMiniLMv2-L12-H384-v1](https://huggingface.co/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1) | Apache-2.0 | 118M | `onnx/model_quint8_avx2.onnx` (119 MB; en ARM `model_qint8_arm64.onnx`) | medium |
+| Reranker | [onnx-community/bge-reranker-v2-m3-ONNX](https://huggingface.co/onnx-community/bge-reranker-v2-m3-ONNX) (exportación de [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3), Apache-2.0) | Apache-2.0 (del modelo base; la exportación no declara licencia propia) | 568M | `onnx/model_int8.onnx` (571 MB) | heavy |
+| Lector QA | [dewdev/mdeberta-v3-base-squad2-onnx](https://huggingface.co/dewdev/mdeberta-v3-base-squad2-onnx) (exportación de [timpal0l/mdeberta-v3-base-squad2](https://huggingface.co/timpal0l/mdeberta-v3-base-squad2)) | MIT | 278M | `onnx/model_int8.onnx` (317 MB) | medium |
+| Lector QA | ⛔ [deepset/xlm-roberta-large-squad2](https://huggingface.co/deepset/xlm-roberta-large-squad2) | CC-BY-4.0 | 560M | **sin ONNX oficial**; la única exportación ([holisticon](https://huggingface.co/holisticon/xlm-roberta-large-squad2-onnx)) no declara licencia y tiene 11 descargas | heavy (decisión pendiente) |
 
-| Modelo | Parámetros | Dim. | Licencia | Perfil |
-|---|---|---|---|---|
-| `intfloat/multilingual-e5-small` | ~118M ⚠ | 384 | MIT ⚠ | light, medium |
-| `intfloat/multilingual-e5-base` | ~278M ⚠ | 768 | MIT ⚠ | heavy |
-| `BAAI/bge-m3` | ~568M ⚠ | 1024 | MIT ⚠ | candidato para heavy (indexación lenta en CPU) |
+Descartados: `jinaai/jina-reranker-v2-base-multilingual` (licencia no
+comercial) y `BAAI/bge-m3` como denso (su ONNX trae los pesos en un archivo
+externo de 2,2 GB; demasiado para CPU sin una ganancia medida).
 
-`light` y `medium` comparten índice. Pasar a `heavy` obliga a reindexar.
+**Decisión pendiente para `heavy` (la toma el usuario):** opciones para el lector:
+
+1. Usar el mismo lector de medium (mdeberta int8) leyendo más pasajes
+   (`leer_m: 4`), con el reranker y el codificador grandes. Es la opción
+   recomendada: no requiere exportar nada.
+2. Exportar `deepset/xlm-roberta-large-squad2` con `rag modelos exportar`
+   (extra `[exportar]`, requiere torch una vez) y publicar el ONNX en un
+   repositorio propio. Implica atribución CC-BY-4.0.
+
+Mientras tanto, `heavy` usa la opción 1.
 
 ### Disperso: BM25 propio
 
 No es un modelo. Lo generan `terminos()` y `EstadisticasLexicas`: TF
-saturado calculado en el cliente e IDF aplicado en Qdrant (`modifier: idf`).
-Ver [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §4.
+saturado en el cliente e IDF aplicado en Qdrant (`modifier: idf`). Ver
+[lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §4.
 
-### Reranker cross-encoder
+### Cuantización
 
-| Modelo | Tamaño | Licencia | Idiomas | Perfil |
-|---|---|---|---|---|
-| `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | MiniLM 12 capas, ~470 MB fp32 ✔ | Apache-2.0 ✔ | 14 (mMARCO) ✔ | **medium** |
-| `BAAI/bge-reranker-v2-m3` | ~568M ⚠ | Apache-2.0 ⚠ | ~100 | **heavy** |
-| `jinaai/jina-reranker-v2-base-multilingual` | 278M ✔ | CC-BY-NC ⚠ | multilingüe | **excluido** (no comercial) |
-
-El repositorio de mmarco publica ONNX ✔.
-
-### Lector QA extractivo (SQuAD 2.0)
-
-| Modelo | Parámetros | Licencia | Idiomas | Perfil |
-|---|---|---|---|---|
-| `timpal0l/mdeberta-v3-base-squad2` | 278M ✔ | MIT ✔ | 94 ✔ | **medium** |
-| `deepset/xlm-roberta-large-squad2` | ~560M ⚠ | CC-BY-4.0 ⚠ (atribución) | 100+ | **heavy** |
-| `deepset/xlm-roberta-base-squad2` | ~278M ⚠ | CC-BY-4.0 ⚠ | 100+ | alternativa para medium |
-| `mrm8488/distill-bert-base-spanish-wwm-cased-finetuned-spa-squad2-es` | DistilBERT ⚠ | ⚠ | solo español | solo referencia en el benchmark |
-
-Hay una exportación ONNX publicada de mdeberta
-(`dewdev/mdeberta-v3-base-squad2-onnx`) ✔. Estos lectores se entrenaron en
-inglés: su calidad en cada idioma se **mide** con `rag benchmark`.
+- **Reranker y lector:** se usan las variantes int8 publicadas.
+- **Codificador e5:** se usa fp32. Su int8 publicado (`qint8_avx512_vnni`)
+  exige AVX-512 VNNI. Como solo codifica la pregunta en línea, el costo es
+  bajo; la indexación es la que más lo nota.
 
 ## 3. Perfiles
 
@@ -110,7 +108,7 @@ umbrales_por_defecto:        # conservadores; `rag calibrar` los reemplaza
 | Denso | e5-small | e5-small | e5-base |
 | `recuperar_n` | 10 | 20 | 30 |
 | Reranker / `rerank_k` | — | mmarco int8 / 4 | bge-reranker-v2-m3 int8 / 8 |
-| Lector / `leer_m` | — | mdeberta int8 / 2 | xlm-roberta-large int8 / 4 |
+| Lector / `leer_m` | — | mdeberta int8 / 2 | mdeberta int8 / 4 (pendiente: ver §2) |
 | Decide `ok` con | `s_ret`, `s_cov`, `s_foco`, `acuerdo` | `s_qa`, `s_foco` | `s_qa`, `s_foco` + concordancia |
 | Extras | — | — | recuperación dirigida por entidad; concordancia entre los 2 mejores tramos |
 
