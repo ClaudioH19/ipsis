@@ -43,8 +43,8 @@ splits para impedir que los únicos ejemplos medidos sean los usados al ajustar.
 
 Los datos se mantienen en dos ubicaciones distintas:
 
-- `tests/evaluacion/sintetico/`: corpus ficticio, reproducible y versionado;
-- `data/golden/`: futuro conjunto manual de 30–50 preguntas de un corpus real.
+- `tests/datos/banco/`: corpus ficticio, reproducible y versionado;
+- `golden/banco/` del proyecto: conjunto manual de 30–50 preguntas de un corpus real (ver `docs/guia/golden.md`).
 
 El conjunto manual no se rellena automáticamente. Requiere revisión humana y
 no debe incorporar documentos sensibles al repositorio.
@@ -78,7 +78,7 @@ Para producir los tres artefactos y la tabla comparable desde un solo comando:
 
 ```bash
 rag benchmark \
-  --banco tests/evaluacion/sintetico/manifiesto.json \
+  --banco tests/datos/banco/manifiesto.json \
   --salida reportes/aqualis_sintetico_v1
 ```
 
