@@ -35,7 +35,18 @@ def cargar_palabras_generales(
     return frozenset(datos.get("palabras_generales", []))
 
 
-PALABRAS_GENERALES_ES = cargar_palabras_generales("es")
+def _palabras_generales_del_paquete(idioma: str) -> frozenset[str]:
+    """Lee el recurso incluido en el paquete, sin depender del directorio actual."""
+    from rag.recursos import leer_plantilla
+
+    try:
+        datos = yaml.safe_load(leer_plantilla(f"dominios/idiomas/{idioma}.yaml")) or {}
+    except FileNotFoundError:
+        return frozenset()
+    return frozenset(datos.get("palabras_generales", []))
+
+
+PALABRAS_GENERALES_ES = _palabras_generales_del_paquete("es")
 
 
 def escribir_idioma_es_si_falta(
