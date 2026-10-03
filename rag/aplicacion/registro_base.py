@@ -196,6 +196,13 @@ def _crear_retriever_qdrant(*args: Any, **kwargs: Any):
     return RetrieverQdrant.desde_configuracion(*args, **kwargs)
 
 
+def _crear_codificador_onnx(modelo: str = "intfloat/multilingual-e5-small", **opciones: Any):
+    from rag.modelos.catalogo import obtener
+    from rag.modelos.denso import CodificadorDenso
+
+    return CodificadorDenso(obtener(modelo), **opciones)
+
+
 def registrar_componentes_base(
     registro: RegistroComponentes | None = None,
 ) -> RegistroComponentes:
@@ -204,6 +211,7 @@ def registrar_componentes_base(
     destino.registrar("parser", "builtin", ParserBuiltin, reemplazar=True)
     destino.registrar("chunker", "builtin", ChunkerBuiltin, reemplazar=True)
     destino.registrar("dense_encoder", "sentence_transformers", DenseEncoderSentenceTransformers, reemplazar=True)
+    destino.registrar("dense_encoder", "onnx", _crear_codificador_onnx, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
     from rag.consulta.etapas.politica import LayeredV1
