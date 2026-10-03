@@ -47,11 +47,12 @@ rag/
 ├── consulta/        # motor.py, contexto.py, admision.py
 │   └── etapas/      # conversacional, analisis, recuperacion, filtros, reranking, lectura,
 │                    # seleccion, politica, verificacion, redaccion (un archivo cada una)
-├── evaluacion/      # banco.py, golden.py, metricas.py, calibracion.py, benchmark.py
-├── aplicacion/      # casos de uso compartidos por CLI y API: proyecto, corpus, consulta,
-│                    # evaluacion, despliegue, diagnostico (doctor), registro_base (composición)
+├── evaluacion/      # banco.py, golden.py, metricas.py, calibracion.py, comparacion.py (funciones puras)
+├── aplicacion/      # casos de uso compartidos por CLI y API: proyecto, corpus, consulta (construir_motor),
+│                    # evaluacion (evaluar, benchmark), estilos, widget, despliegue, diagnostico (doctor),
+│                    # registro_base (raíz de composición)
 ├── cli/             # __init__.py (main), base.py (Comando), comandos/<grupo>.py
-├── servicio/        # api.py, seguridad.py, estilos.py, widget.py (temas + exportar), estaticos/
+├── servicio/        # api.py, seguridad.py, estaticos/
 └── recursos/        # plantillas/ (proyecto), idiomas/, perfiles/, despliegue/
 ```
 
@@ -67,7 +68,7 @@ nucleo ◀── configuracion ◀── lenguaje ◀── ingesta · modelos �
 - Un módulo solo importa de su capa o de capas a su izquierda.
 - `nucleo`, `configuracion` y `lenguaje` no importan librerías pesadas
   (`onnxruntime`, `qdrant_client`, `fastapi`).
-- `cli` y `servicio` solo llaman a `aplicacion`.
+- `cli` y `servicio` solo llaman a `aplicacion` (y a `nucleo` para los tipos). Esta regla estricta se activa en P11.1; hasta entonces rige solo el orden de capas.
 - `tests/test_arquitectura.py` analiza los imports con `ast` y falla si se
   rompe una regla. La arquitectura se audita sola en cada CI.
 

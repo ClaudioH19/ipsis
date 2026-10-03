@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 from rag import __version__
 from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_seguridad
 from rag.consulta.motor import Motor, MotorNoListo, MotorSaturado
+from rag.aplicacion.consulta import construir_motor
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
     LimitadorPeticiones,
@@ -96,7 +97,7 @@ class EstadoAplicacion:
 
 
 def _construir_motor_produccion() -> Motor:
-    return Motor.desde_configuracion(cargar_proyecto(), cfg_dominio=cargar_dominio())
+    return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
 
 
 def _estado(request: Request) -> EstadoAplicacion:
@@ -201,7 +202,7 @@ def crear_app(
 
     @aplicacion.get("/config", response_model=ConfigWidget)
     def configuracion_widget(request: Request):
-        from rag.servicio.estilos import cargar_estilos
+        from rag.aplicacion.estilos import cargar_estilos
 
         dominio = cargar_dominio()
         estilos = cargar_estilos()
@@ -222,7 +223,7 @@ def crear_app(
 
     @aplicacion.get("/estilos.css")
     def estilos_css():
-        from rag.servicio.estilos import render_css
+        from rag.aplicacion.estilos import render_css
 
         return Response(content=render_css(), media_type="text/css; charset=utf-8")
 

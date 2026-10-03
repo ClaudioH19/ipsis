@@ -469,7 +469,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 ### P11.1 CLI con patrón Command
 
 - **Pasos:** crea `rag/cli/base.py::Comando` y `rag/cli/comandos/<grupo>.py` (grupos de [comandos-y-golden.md](comandos-y-golden.md) §2). Pasa la lógica a `rag/aplicacion/*` y borra `rag/cli.py`. El script de entrada sigue siendo `rag.cli:main`.
-- **Aceptación:** `tests/cli/` en verde, incluida «todas las opciones tienen ayuda».
+- **Aceptación:** `tests/cli/` en verde, incluida «todas las opciones tienen ayuda». `tests/test_arquitectura.py` gana la regla «`cli` y `servicio` solo importan `aplicacion`, `nucleo` y `recursos`», y pasa.
 
 ### P11.2 `rag perfil mostrar|cambiar`
 

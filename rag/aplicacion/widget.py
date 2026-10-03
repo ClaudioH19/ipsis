@@ -10,7 +10,7 @@ from typing import Any
 import yaml
 
 from rag.recursos import leer_plantilla
-from rag.servicio.estilos import RUTA_ESTILOS, cargar_estilos, render_css
+from rag.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
 import html
 from importlib.resources import files
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import yaml
 
 from rag.cli import main
-from rag.servicio.widget import (
+from rag.aplicacion.widget import (
     aplicar_preset,
     generar_vista_previa,
     listar_presets,
