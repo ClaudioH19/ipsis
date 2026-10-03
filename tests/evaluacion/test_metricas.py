@@ -66,7 +66,7 @@ def test_reporte_perfecto_cubre_metricas_y_desgloses():
 
     reporte = evaluar_observaciones(banco, observaciones, _documentos(), k=3)
 
-    assert reporte.n_casos == 12
+    assert reporte.n_casos == 27
     assert reporte.recall_at_k == 1.0
     assert reporte.mrr == 1.0
     assert reporte.tasa_falsos_ok == 0.0
@@ -75,13 +75,13 @@ def test_reporte_perfecto_cubre_metricas_y_desgloses():
     assert reporte.exactitud_estado == 1.0
     assert reporte.exactitud_literal == 1.0
     assert reporte.exactitud_offsets == 1.0
-    assert reporte.latencia_media_ms == pytest.approx(6.5)
-    assert reporte.latencia_p95_ms == 12.0
+    assert reporte.latencia_media_ms == pytest.approx(14.0)
+    assert reporte.latencia_p95_ms == 26.0
     assert set(reporte.por_categoria) == {
         "ambigua", "conversacional", "exacta", "parafrasis",
         "premisa_falsa", "sin_respuesta",
     }
-    assert reporte.por_backend["qdrant_vectorial"].n == 12
+    assert reporte.por_backend["qdrant_vectorial"].n == 27
 
 
 def test_falso_ok_es_bloqueante_aunque_recall_sea_perfecto():
@@ -139,5 +139,5 @@ def test_calibracion_usa_dev_y_no_mira_test():
 
     assert primera == segunda
     assert primera.split == "dev"
-    assert primera.n_respondibles == 2
-    assert primera.n_no_respondibles == 2
+    assert primera.n_respondibles == 4
+    assert primera.n_no_respondibles == 8

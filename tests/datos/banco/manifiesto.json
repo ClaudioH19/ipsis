@@ -1,15 +1,21 @@
 {
   "schema_version": 1,
   "dataset_id": "aqualis_sintetico",
-  "dataset_version": "1.0.0",
+  "dataset_version": "1.1.0",
   "tipo": "sintetico",
   "estado": "estable",
   "casos": "banco_v1.jsonl",
   "corpus": {
     "directorio": "../corpus",
     "archivos": [
-      {"ruta": "manual_purificador.md", "doc_id": "manual-purificador"},
-      {"ruta": "reglamento_servicio.md", "doc_id": "reglamento-servicio"}
+      {
+        "ruta": "manual_purificador.md",
+        "doc_id": "manual-purificador"
+      },
+      {
+        "ruta": "reglamento_servicio.md",
+        "doc_id": "reglamento-servicio"
+      }
     ],
     "sha256": "373ce020c137f1ff2db0a309e170667d9868b79579eda5620ce4de403bf7590a"
   },

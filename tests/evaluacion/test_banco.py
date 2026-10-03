@@ -36,9 +36,9 @@ def _documentos() -> dict[str, str]:
 def test_banco_sintetico_es_versionado_balanceado_y_reproducible():
     banco = cargar_banco(MANIFIESTO)
 
-    assert banco.manifiesto.dataset_version == "1.0.0"
+    assert banco.manifiesto.dataset_version == "1.1.0"
     assert banco.manifiesto.tipo == "sintetico"
-    assert len(banco.casos) == 12
+    assert len(banco.casos) == 27
     assert len(hash_banco(banco)) == 64
     assert {caso.categoria for caso in banco.casos} == set(CategoriaPregunta)
     for categoria in CategoriaPregunta:

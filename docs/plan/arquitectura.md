@@ -164,8 +164,8 @@ pregunta
 Reglas, en orden (la primera que se cumple decide):
 
 1. Premisa falla → `sin_respuesta` (`premisa`).
-2. `s_oov ≥ τ_oov` y señal de dominio < `τ_dominio` → `sin_respuesta` (`fuera_dominio`). La señal de dominio es `s_rr` si hay reranker; si no, `s_ret`.
-3. `s_foco ≥ τ_foco` **y**:
+2. `s_oov ≥ τ_oov` y señal de dominio < `τ_dominio` → `sin_respuesta` (`fuera_dominio`). La señal de dominio es max(`s_ret`, `s_rr`): el reranker confirma el dominio pero no lo niega (sus logits no son una escala absoluta). `s_ret` es el coseno normalizado con el piso del modelo denso.
+3. `s_foco ≥ τ_foco` **y** `s_oov < τ_oov` (el vocabulario de la pregunta existe en el corpus) **y**:
    - con lector: `s_qa ≥ τ_ok`;
    - sin lector (light): `s_ret ≥ τ_ok` y `s_cov ≥ τ_cov` y `acuerdo ≥ 0,5`;
 

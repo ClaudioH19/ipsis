@@ -91,6 +91,10 @@ def test_cada_regla(senales, resultado, regla):
     # τ_ok con lector
     ({"s_qa": 0.8}, "ok_lector"),
     ({"s_qa": 0.79}, "relacionado"),
+    # τ_oov también exige vocabulario del corpus para responder
+    ({"s_qa": 0.9, "s_oov": 0.59}, "ok_lector"),
+    ({"s_qa": 0.9, "s_oov": 0.6}, "relacionado"),
+    ({"s_oov": 0.6}, "relacionado"),
     # τ_foco
     ({"s_qa": 0.9, "s_foco": 0.5}, "ok_lector"),
     ({"s_qa": 0.9, "s_foco": 0.49}, "relacionado"),

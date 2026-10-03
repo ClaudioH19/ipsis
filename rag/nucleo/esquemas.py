@@ -213,6 +213,7 @@ class QueryDiagnostic(EsquemaEstricto):
     lecturas: list[dict[str, Any]] | None = None
     regla: str | None = None
     senales_politica: dict[str, Any] | None = None
+    oracion_foco: str | None = None
     salto_modelos: bool = False
 
 

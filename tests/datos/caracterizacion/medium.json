@@ -115,10 +115,10 @@
     ]
   },
   "¿Qué pasa si no estoy en la visita?": {
-    "estado": "ok",
+    "estado": "relacionado",
     "nivel_servicio": "normal",
-    "plan": "extractivo",
-    "respuesta": "El documento lo plantea así: Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "plan": "zona_gris",
+    "respuesta": "No encontré una respuesta directa. Esto es lo que dicen los documentos sobre el tema: Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confianza": {
       "top1": 0.82167,
       "margen": 0.05341
