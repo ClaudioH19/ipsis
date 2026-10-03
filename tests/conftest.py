@@ -57,9 +57,34 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
             ))
 
 
+@pytest.fixture(scope="session")
+def proyecto_suite(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Proyecto creado con ``rag init``, compartido por la suite.
+
+    Reemplaza a la antigua configuración en la raíz del repositorio: las
+    pruebas leen ``configuracion/`` y ``documentos/`` relativos al directorio
+    actual, igual que el servicio real.
+    """
+    from rag.cli import main
+
+    carpeta = tmp_path_factory.mktemp("proyecto_suite")
+    anterior = Path.cwd()
+    os.chdir(carpeta)
+    try:
+        assert main(["init"]) == 0
+    finally:
+        os.chdir(anterior)
+    return carpeta
+
+
+@pytest.fixture(autouse=True)
+def _en_proyecto_suite(proyecto_suite: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(proyecto_suite)
+
+
 @pytest.fixture(scope="session", autouse=True)
-def _perfil_generico_de_la_suite():
-    configurar_perfil(cargar_perfil_generico())
+def _perfil_generico_de_la_suite(proyecto_suite: Path):
+    configurar_perfil(cargar_perfil_generico(base=str(proyecto_suite / "configuracion" / "dominios")))
     yield
     configurar_perfil(None)
 

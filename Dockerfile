@@ -29,11 +29,11 @@ RUN python -m pip install --no-cache-dir torch --index-url https://download.pyto
     && python -m pip install --no-cache-dir /wheels/rag_extractivo-*.whl \
     && rm -rf /wheels
 
-# Configuración genérica de arranque. En producción puede montarse otra
-# carpeta sobre /app/configuracion sin reconstruir la imagen.
-COPY --chown=rag:rag configuracion/ ./configuracion/
-RUN mkdir -p /app/.cache/vocab_bm25 /app/.cache/huggingface \
-    && chown -R rag:rag /app/.cache
+# Configuración genérica de arranque, generada con las plantillas del paquete.
+# En producción se monta la carpeta del proyecto sobre /app/configuracion.
+RUN cd /app && rag init \
+    && mkdir -p /app/.cache/vocab_bm25 /app/.cache/huggingface \
+    && chown -R rag:rag /app
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \

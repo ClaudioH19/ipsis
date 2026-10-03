@@ -10,8 +10,8 @@ from rag.ingesta.metadata import (
 
 
 @pytest.fixture(scope="module")
-def taxonomia():
-    return cargar_taxonomia("configuracion/categorias.yaml")
+def taxonomia(proyecto_suite):
+    return cargar_taxonomia(str(proyecto_suite / "configuracion" / "categorias.yaml"))
 
 
 def test_clasificar_categoria_contenido(taxonomia):
