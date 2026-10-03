@@ -85,8 +85,9 @@ como entrada y salida para interoperar.
 
 ### `rag golden plantilla`
 
-1. Elige secciones **diversas** con MMR sobre vectores TF-IDF, garantizando
-   que aparezca cada documento. Escribe una fila por sección con
+1. Elige secciones **diversas** con MMR sobre vectores TF-IDF (con IDF
+   calculado sobre las secciones, no sobre los chunks), garantizando que
+   aparezca cada documento. Escribe una fila por sección con
    `documento`, `fragmento_sugerido` y `terminos_clave` (top TF-IDF).
 2. Agrega un 35% de filas trampa en **pares mínimos**. Junto a la fila
    respondible de una sección va una fila `sin_respuesta` con
@@ -96,7 +97,9 @@ como entrada y salida para interoperar.
    la misma entidad, el mismo pasaje tentador y otra relación pedida («¿Cuándo
    vence la garantía?» frente a «¿Qué incluye la garantía?»). Los negativos
    ajenos al corpus aportan poco. `subtipo` es metadata de evaluación, no un
-   tipo público nuevo.
+   tipo público nuevo. La plantilla trae los `id` (`r001` y su trampa `t001`,
+   con `par = r001`). Si el cliente completa la trampa pero no su par,
+   `importar` avisa y la mide sin par.
 3. Agrega 3 filas `conversacional` ya completas en el idioma del proyecto.
 4. Escribe `golden/LEEME.txt` con `golden_instrucciones` del paquete de idioma.
 

@@ -452,7 +452,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ### P9.2 Plantilla para el cliente
 
-- **Pasos:** `generar_plantilla(corpus, est, paquete, n=40)` usa MMR sobre TF-IDF para elegir secciones diversas, llena `terminos_clave`, agrega 35% de filas trampa como **pares mínimos** (`subtipo: trampa_mismo_tema`, `par` = fila respondible de la misma sección) y 3 conversacionales, y escribe `LEEME.txt`. Agrega `golden_instrucciones` a los paquetes es, en y pt.
+- **Pasos:** `generar_plantilla(corpus, paquete, n=40)` usa MMR sobre TF-IDF (calculado sobre las secciones) para elegir secciones diversas, llena `terminos_clave`, agrega 35% de filas trampa como **pares mínimos** (`subtipo: trampa_mismo_tema`, `par` = fila respondible de la misma sección) y 3 conversacionales, y escribe `LEEME.txt`. Agrega `golden_instrucciones` a los paquetes es, en y pt.
 - **Aceptación:** prueba: con `n=20` aparecen todos los documentos, alrededor de 35% de filas son trampa, cada trampa tiene `par` y el CSV se puede releer con `leer_csv`.
 
 ### P9.3 Comandos `rag golden`
