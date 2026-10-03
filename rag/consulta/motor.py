@@ -57,6 +57,7 @@ class Motor:
         abstencion_calibrada: bool | None = None,
         etapas: list | None = None,
         reranker: Any = None,
+        lector: Any = None,
     ) -> None:
         if top_k < 1:
             raise ValueError("top_k debe ser mayor que cero")
@@ -86,6 +87,7 @@ class Motor:
         self.etapas = etapas if etapas is not None else etapas_por_defecto(self)
         self.perfil_instalacion = None
         self.reranker = reranker
+        self.lector = lector
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         valores.setdefault("backend", self.backend)
@@ -110,7 +112,7 @@ class Motor:
         detecta al arrancar, no en la primera pregunta."""
         self._validar_listo()
         self.retriever.calentar()
-        for modelo in (self.reranker,):
+        for modelo in (self.reranker, self.lector):
             calentar = getattr(modelo, "calentar", None)
             if callable(calentar):
                 calentar()
@@ -210,6 +212,7 @@ class Motor:
         evidencias: list[EvidenceSpan] | None = None,
         fragmentos_http: list[dict[str, Any]] | None = None,
         diagnostico: dict[str, Any] | None = None,
+        respuesta_exacta: dict[str, Any] | None = None,
     ) -> AssistantResult:
         estados_http = {
             AssistantState.RESPUESTA_DIRECTA: "ok",
@@ -226,6 +229,8 @@ class Motor:
             "confianza": confianza,
             "latencia_ms": latencia_ms,
         }
+        if respuesta_exacta is not None:
+            contrato["respuesta_exacta"] = respuesta_exacta
         detalles = self._diagnostico(**(diagnostico or {}))
         detalles["contrato_http"] = contrato
         return AssistantResult(

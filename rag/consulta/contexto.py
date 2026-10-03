@@ -31,6 +31,8 @@ class ContextoConsulta:
     candidatos: list[RetrievalCandidate] = field(default_factory=list)
     puntajes_rerank: list[float] | None = None
     lecturas: list[Any] | None = None
+    evidencia_lector: EvidenceSpan | None = None
+    respuesta_exacta: dict[str, Any] | None = None
     saltar_modelos: bool = False
     decision: DecisionAbstencion | None = None
     evidencias: list[EvidenceSpan] = field(default_factory=list)

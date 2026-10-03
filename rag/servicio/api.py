@@ -61,6 +61,15 @@ class Confianza(BaseModel):
     acuerdo_bm25: Optional[bool] = None
 
 
+class RespuestaExacta(BaseModel):
+    """Tramo literal que responde la pregunta (lo marca el lector QA)."""
+
+    chunk_id: str
+    texto: str
+    offset_inicio: int
+    offset_fin: int
+
+
 class RespuestaConsulta(BaseModel):
     estado: Literal["ok", "relacionado", "conversacional", "sin_respuesta", "degradado", "saturado"]
     nivel_servicio: Literal["normal", "media", "alta"]
@@ -73,6 +82,7 @@ class RespuestaConsulta(BaseModel):
     fragmentos: list[Fragmento]
     confianza: Confianza
     latencia_ms: int
+    respuesta_exacta: Optional[RespuestaExacta] = None
 
 
 class ConfigWidget(BaseModel):
@@ -238,6 +248,8 @@ def crear_app(
     @aplicacion.post(
         "/consultar",
         response_model=RespuestaConsulta,
+        # respuesta_exacta solo aparece cuando el lector la marcó.
+        response_model_exclude_unset=True,
         dependencies=[Depends(_verificar_seguridad)],
     )
     def consultar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
