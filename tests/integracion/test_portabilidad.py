@@ -175,9 +175,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
             time.sleep(1)
         assert listo, "el servicio no quedó listo en 90s"
 
-        # Pregunta respondible: 'ok' + cita literal del manual. Usa el vocabulario
-        # del documento: con tres chunks, «¿Cuánto dura...?» (el texto dice «cubre»)
-        # tiene s_oov 0,74 y cascada_v1 la deja en relacionado (ver avance.md, P8.4).
+        # Caso literal: 'ok' + cita literal del manual (usa el vocabulario del documento).
         resp = httpx.post(
             f"http://127.0.0.1:{puerto}/consultar",
             json={"pregunta": "¿Cuántos meses cubre la garantía del equipo X100?", "id_sesion": "portabilidad"},
@@ -198,6 +196,21 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)
         assert frag_manual is not None, datos["fragmentos"]
         assert frag_manual["texto"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
+
+        # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Con tres chunks
+        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (avance.md, P8.4).
+        # Se conserva para que una regresión sea visible: puede mejorar a 'ok', pero
+        # nunca perder el pasaje con «18 meses».
+        resp = httpx.post(
+            f"http://127.0.0.1:{puerto}/consultar",
+            json={"pregunta": "¿Cuánto dura la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            timeout=30.0,
+        )
+        assert resp.status_code == 200
+        datos = resp.json()
+        assert datos["estado"] in {"ok", "relacionado"}, datos
+        assert any("18 meses" in f["texto"] for f in datos["fragmentos"]), datos["fragmentos"]
+        assert "18 meses" in datos["respuesta"]
 
         # Pregunta ajena: nunca debe llegar a 'ok'.
         resp = httpx.post(
