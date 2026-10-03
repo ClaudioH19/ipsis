@@ -457,7 +457,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ### P9.3 Comandos `rag golden`
 
-- **Aceptación:** prueba de ida y vuelta: plantilla → completar 2 filas → importar → exportar squad2 → importar squad2 → mismo banco.
+- **Aceptación:** prueba de ida y vuelta: plantilla → completar 2 filas → importar → exportar squad2 → importar squad2 → mismo **contenido QA** (ver [comandos-y-golden.md](comandos-y-golden.md) «SQuAD 2.0: qué se conserva»; las conversacionales no pasan por SQuAD). Por CSV, mismo banco.
 
 ### P9.4 Banco universal de regresión (solo CI)
 

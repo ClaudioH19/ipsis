@@ -116,6 +116,9 @@ class ManifiestoBanco(BaseModel):
     casos: str = Field(min_length=1)
     corpus: CorpusBanco
     categorias_requeridas: list[CategoriaPregunta]
+    # De dónde salió el banco (``rag golden importar``): formato y archivo de
+    # origen. Sin fecha, para que reimportar lo mismo dé el mismo banco.
+    procedencia: dict[str, str] | None = None
 
 
 class BancoEvaluacion(BaseModel):
@@ -180,13 +183,19 @@ def validar_evidencias_contra_corpus(
     banco: BancoEvaluacion,
     documentos: dict[str, str],
 ) -> None:
+    """Cada evidencia sigue siendo texto literal del corpus en sus offsets.
+    Junta todos los problemas en un solo ``ValueError`` (una línea por caso)."""
+    errores = []
     for caso in banco.casos:
         for evidencia in caso.evidencias:
             if evidencia.doc_id not in documentos:
-                raise ValueError(f"{caso.id}: documento desconocido {evidencia.doc_id!r}")
+                errores.append(f"{caso.id}: documento desconocido {evidencia.doc_id!r}")
+                continue
             texto = documentos[evidencia.doc_id]
             if texto[evidencia.offset_inicio:evidencia.offset_fin] != evidencia.texto:
-                raise ValueError(f"{caso.id}: evidencia no literal o offsets inválidos")
+                errores.append(f"{caso.id}: evidencia no literal o offsets inválidos")
+    if errores:
+        raise ValueError("\n".join(errores))
 
 
 __all__ = [
