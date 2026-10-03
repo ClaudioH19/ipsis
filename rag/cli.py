@@ -8,7 +8,7 @@ corta que solo orquesta lo que ya vive en `rag/` y `servicio/`.** Si algo
 necesita lógica nueva, esa lógica se escribe en un módulo de `rag/` (ver
 `rag/corpus.py::agregar_documentos_al_catalogo`/`ejecutar_ingesta`,
 `rag/configuracion.py::actualizar_dominio`, `rag/diagnostico.py`,
-`rag/evaluacion.py::evaluar_indice_produccion`), nunca aquí. Los argumentos
+`rag/metricas_banco.py::evaluar_backend_activo`), nunca aquí. Los argumentos
 se arman con ``argparse`` de la biblioteca estándar -- sin dependencias
 nuevas para la CLI, el plugin ya arrastra modelos pesados.
 """
@@ -637,13 +637,13 @@ def _construir_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("comparar", help="Compara artefactos producidos por 'rag evaluar'.")
     p.add_argument("artefactos", nargs="+", help="Dos o más reportes JSON comparables.")
-    p.add_argument("--salida", default="data/reportes/comparacion.json",
+    p.add_argument("--salida", default="reportes/comparacion.json",
                    help="Ruta del informe consolidado.")
     p.set_defaults(func=cmd_comparar)
 
     p = sub.add_parser("benchmark", help="Compara Qdrant vectorial e híbrido.")
     p.add_argument("--banco", required=True, help="Manifiesto versionado a evaluar.")
-    p.add_argument("--salida", default="data/reportes/benchmark",
+    p.add_argument("--salida", default="reportes/benchmark",
                    help="Directorio para artefactos e informe comparativo.")
     p.set_defaults(func=cmd_benchmark)
 
