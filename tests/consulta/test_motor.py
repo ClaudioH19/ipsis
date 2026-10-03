@@ -298,7 +298,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
     assert motor.n_chunks() == 7
     assert analisis.pregunta_normalizada == "  dato  "
     assert capturado["analisis"] == ("  DATO  ", {"id_sesion": "s-1"})
-    assert capturado["extractor"]["modelo_st"] is retriever.codificador
+    assert capturado["extractor"]["estadisticas"].df["documento"] == 1
     assert capturado["calentado"] is True
     assert motor.perfil is not None
     assert motor.plantillas is not None

@@ -4,17 +4,12 @@ respuesta concatenaba los 3 chunks completos (~1.700 caracteres cada uno,
 CH-F256) y la oración que respondía la pregunta podía quedar enterrada bajo
 texto irrelevante del mismo chunk.
 
-Determinista por diseño, dos métodos elegibles por configuración
-(``configuracion/motor.yaml::redaccion.metodo_seleccion``):
-  - ``"lexico"``: solapamiento léxico pregunta-unidad
-    (``rag/lenguaje/texto.py::solapamiento_lexico``, ya probado — no se
-    reimplementa).
-  - ``"denso"``: coseno entre el embedding de la pregunta y el de cada
-    unidad, con el modelo YA CARGADO por el servicio (``e5-small``) — no se
-    descarga ni instancia un modelo nuevo, solo se reusa el encoder de
-    embeddings de la recuperación.
+Determinista: cada unidad se puntúa con ``s_lex`` (BM25 de la unidad
+normalizado, ``rag/lenguaje/lexico.py``) usando las estadísticas del índice y
+el stemmer del idioma activo. Sin estadísticas del índice, se calculan sobre
+las propias unidades del fragmento (tf-isf).
 
-Ninguno de los dos métodos "redacta": solo deciden qué texto LITERAL
+La selección no "redacta": solo deciden qué texto LITERAL
 mostrar y qué recortar. La unidad elegida es siempre substring exacto del
 chunk (y por transitividad del documento fuente) — invariante que aprovecha
 ``rag/ingesta/parsear.py`` (offsets exactos por bloque) y se verifica con test.
@@ -25,7 +20,7 @@ import re
 from dataclasses import dataclass
 
 from rag.lenguaje.entidades import extraer_entidades
-from rag.lenguaje.texto import dividir_oraciones, solapamiento_lexico
+from rag.lenguaje.texto import dividir_oraciones, terminos
 
 # Una "unidad" es una línea completa (fila de tabla, ya unida por
 # `rag/ingesta/parsear.py::_fila_a_texto` con " | " entre celdas) o una oración
@@ -82,10 +77,8 @@ def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]
     """Índices de las unidades que contienen, LITERALMENTE (mismo criterio
     determinista de ``rag/lenguaje/entidades.py``, no substring ingenuo), al
     menos una de las entidades de la pregunta. Caso real que motivó esto:
-    "¿Qué pasa si saco un 3,9?" -- "3,9" tokeniza a
-    fragmentos de 1 carácter para el solapamiento léxico
-    (``rag/lenguaje/texto.py::palabras_contenido`` exige largo >= 4), así que
-    NINGÚN método de score (léxico o denso) prioriza de forma confiable la
+    "¿Qué pasa si saco un 3,9?" -- una cifra corta pesa poco en
+    un puntaje léxico, así que el score no prioriza de forma confiable la
     oración "Reprobará asimismo con nota final 3,9..." frente a otras del
     mismo chunk o de otros fragmentos -- hace falta una señal exacta de
     entidad, no una de similitud."""
@@ -99,21 +92,18 @@ def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]
     return indices
 
 
-def _puntuar_lexico(pregunta: str, unidades: list[Unidad]) -> list[float]:
-    return [solapamiento_lexico(pregunta, u.texto) for u in unidades]
+def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[float]:
+    """``s_lex`` de cada unidad frente a la pregunta, en [0, 1]."""
+    from rag.indice.estadisticas import EstadisticasLexicas
+    from rag.lenguaje.entidades import idioma_activo
+    from rag.lenguaje.lexico import s_lex, terminos_pregunta
 
-
-def _puntuar_denso(pregunta: str, unidades: list[Unidad], modelo_st, prefijo_query: str = "") -> list[float]:
-    """Coseno entre el embedding de la pregunta y el de cada unidad, con el
-    modelo YA CARGADO por el servicio (nunca se instancia uno nuevo). Los
-    vectores de e5-small ya salen normalizados (``normalize_embeddings=True``,
-    igual que en ``rag/indice/qdrant.py``), así que el producto punto ES el coseno."""
-    import numpy as np
-
-    textos = [prefijo_query + pregunta] + [u.texto for u in unidades]
-    vectores = modelo_st.encode(textos, convert_to_numpy=True, normalize_embeddings=True)
-    v_pregunta = vectores[0]
-    return [float(np.dot(v_pregunta, v)) for v in vectores[1:]]
+    if not unidades:
+        return []
+    paquete = idioma_activo()
+    est = estadisticas or EstadisticasLexicas.construir([u.texto for u in unidades], paquete)
+    tq = terminos_pregunta(pregunta, paquete)
+    return [s_lex(tq, terminos(u.texto, paquete), est) for u in unidades]
 
 
 @dataclass
@@ -127,8 +117,7 @@ class ResultadoSeleccion:
 
 
 def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_inicio: int,
-                                   limite_caracteres: int, metodo: str = "lexico",
-                                   modelo_st=None, prefijo_query: str = "",
+                                   limite_caracteres: int, estadisticas=None,
                                    entidades_pregunta: list[dict] | None = None) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
@@ -145,17 +134,13 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
          mismo criterio que la capa de premisa), esa unidad es el ancla --
          la coincidencia exacta de una entidad manda sobre cualquier score
          de similitud, léxica o densa.
-      2. Si no, ancla en la unidad de mayor score (léxico o denso, según
-         ``metodo``).
+      2. Si no, ancla en la unidad de mayor ``s_lex``.
     Desde el ancla, se expande hacia los vecinos (antes/después) en orden
     de score decreciente mientras quepan en el presupuesto de caracteres --
     da contexto alrededor de la oración más pertinente en vez de
     devolverla aislada, sin salirse del límite."""
     unidades_completas = dividir_en_unidades(texto_chunk)
-    if metodo == "denso" and modelo_st is not None:
-        scores_completos = _puntuar_denso(pregunta, unidades_completas, modelo_st, prefijo_query) if unidades_completas else []
-    else:
-        scores_completos = _puntuar_lexico(pregunta, unidades_completas) if unidades_completas else []
+    scores_completos = _puntuar(pregunta, unidades_completas, estadisticas)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
 
     valores_norm_entidad = {e["valor_norm"] for e in entidades_pregunta} if entidades_pregunta else set()
@@ -227,8 +212,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
 
 
 def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_caracteres: int,
-                                          metodo: str = "lexico", modelo_st=None,
-                                          prefijo_query: str = "",
+                                          estadisticas=None,
                                           entidades_pregunta: list[dict] | None = None) -> dict:
     """Devuelve una COPIA del payload de un chunk con ``texto``,
     ``offset_inicio`` y ``offset_fin`` reemplazados por el tramo pertinente
@@ -242,8 +226,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     por sobre el score de similitud (ver ``seleccionar_texto_pertinente``)."""
     resultado = seleccionar_texto_pertinente(
         pregunta, payload["texto"], payload["offset_inicio"], limite_caracteres,
-        metodo=metodo, modelo_st=modelo_st, prefijo_query=prefijo_query,
-        entidades_pregunta=entidades_pregunta,
+        estadisticas=estadisticas, entidades_pregunta=entidades_pregunta,
     )
     nuevo = dict(payload)
     nuevo["texto"] = resultado.texto
