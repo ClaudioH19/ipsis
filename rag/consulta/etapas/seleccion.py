@@ -279,11 +279,23 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     return payloads_ordenados, scores_ordenados
 
 
+def oracion_ancla(pregunta: str, texto: str, estadisticas=None) -> str:
+    """Oración (o fila) de ``texto`` con mayor ``s_lex`` frente a la pregunta."""
+    unidades = dividir_en_unidades(texto)
+    if not unidades:
+        return texto
+    scores = _puntuar(pregunta, unidades, estadisticas)
+    return unidades[max(range(len(unidades)), key=lambda i: scores[i])].texto
+
+
 def _proximidad_del_foco(motor, ctx) -> None:
-    """``s_foco`` y ``s_cov`` sobre la oración que se mostrará como respuesta.
+    """``s_foco`` y ``s_cov`` sobre la oración que responde.
 
     Un tramo correcto debe estar cerca de lo que se pregunta: «6 meses» en una
-    oración sobre el filtro no responde «¿Cuánto dura la garantía?».
+    oración sobre el filtro no responde «¿Cuánto dura la garantía?». Con lector,
+    la evidencia ya es la oración de su tramo; sin lector, la evidencia es una
+    ventana de contexto y se mide sobre su oración ancla (mayor ``s_lex``), no
+    sobre la ventana entera, que casi siempre contiene los términos de foco.
     """
     if ctx.lexicas is None or not ctx.evidencias:
         return
@@ -293,7 +305,11 @@ def _proximidad_del_foco(motor, ctx) -> None:
     est = obtener() if callable(obtener) else None
     if est is None or not hasattr(est, "idf"):
         return
-    terminos_oracion = terminos(ctx.evidencias[0].texto, motor.idioma)
+    oracion = ctx.evidencias[0].texto
+    if ctx.evidencia_lector is None:
+        oracion = oracion_ancla(ctx.pregunta, oracion, est)
+    ctx.diagnostico["oracion_foco"] = oracion
+    terminos_oracion = terminos(oracion, motor.idioma)
     ctx.lexicas = ctx.lexicas.model_copy(update={
         "s_foco": s_foco(ctx.terminos_foco, terminos_oracion),
         "s_cov": s_cov(ctx.terminos_pregunta, terminos_oracion, est),

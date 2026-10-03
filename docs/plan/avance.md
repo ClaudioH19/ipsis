@@ -54,7 +54,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P8.1 | ✅ | 2026-10-03 | 483 (suite completa) | CascadaV1 en politica.py, registrada como abstention_policy cascada_v1 (aún no activa). Decide en EtapaPolitica vía decidir_contexto(ctx) con s_ret/s_oov/s_foco/s_cov/acuerdo/s_rr/s_qa; umbrales del perfil (construir_motor pasa umbrales=umbrales_por_defecto). Guarda regla en capa_decisora y señales en diagnostico.senales_politica. relacionado por foco ausente nombra la palabra de la pregunta (mensajes.relacionado_foco_ausente). EtapaPolitica conserva el motivo fuera_dominio. Requiere que politica corra DESPUÉS de evidencia (s_foco/s_cov se miden sobre la oración de evidencia): lo hace P8.2. 29 pruebas en tests/consulta/test_cascada.py. |
 | P8.2 | ✅ | 2026-10-03 | 502 (suite completa) | Perfiles con cascada_v1 (config v4 migra layered_v1→cascada_v1; plantilla y default actualizados) y politica después de evidencia. Caracterización por perfil: light.json y medium.json (medium si sus modelos están en caché). Cambios de estado deliberados — light: reembolso tras instalar ok→relacionado (s_cov 0,20: el tramo no cubre la pregunta), precio sin_respuesta→relacionado (muestra lo cercano con encabezado de no-respuesta). medium vs. light anterior: visita, recargo art. 4 y presión 4,0 bar relacionado→ok (tramos correctos del lector), reembolso tras instalar ok→relacionado (s_qa 0,76 < 0,8), precio sin_respuesta→relacionado. Sin falsos ok en la caracterización; ver hallazgos (s_ret normalizado, dominio = max(s_ret, s_rr), falso ok conocido «¿Qué incluye la garantía?»). |
 | P8.3 | ✅ | 2026-10-03 | 481 (suite completa) | Borrados LayeredV1, decidir_capas, tiene_grounding_*, verificar_respaldo_dato_solicitado y sus regex (precio/duración/cantidad en español), config_abstencion y test_politica.py (lo cubre test_cascada.py). El protocolo AbstentionPolicy queda en decidir_contexto(ctx); EtapaFiltros ya no decide dominio. motor.yaml::abstencion queda en max_fragmentos_adicionales (la migración v3→v4 poda capa_a/confianza_alta/zona_gris/perfiles_retriever). Caracterización light/medium sin cambios: la guardia ya no decidía nada con cascada_v1. El rg de aceptación no devuelve nada. |
-| P8.4 | ⬜ | | | |
+| P8.4 | ✅ | 2026-10-03 | 484 (suite completa) | Banco v1.1.0: 27 casos, 15 sin respuesta (56%): 12 trampas «mismo tema, dato ausente» (garantía del filtro, repuestos, quién autoriza el reembolso, agua de pozo, qué incluye la garantía, litros por hora, teléfono, domingos; 3 en inglés) y 4 respondibles nuevos (vencimiento de garantía, presión, sábados, una en inglés). Falsos ok: light 0/19, medium 0/19. Cobertura de ok en respondibles: light 2/8, medium 4/8. Para llegar a 0: s_foco/s_cov se miden en la oración ancla (light medía la ventana entera) y ok exige s_oov < τ_oov (ver hallazgos). Caracterización: medium «¿Qué pasa si no estoy en la visita?» ok→relacionado (s_oov 0,84). |
 | P9.1 | ⬜ | | | |
 | P9.2 | ⬜ | | | |
 | P9.3 | ⬜ | | | |
@@ -95,3 +95,20 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
 - **P8.2 — corpus sintético diminuto.** Con 2 chunks el IDF es degenerado (ausente
   1,79 vs. presente 0,18-0,69): `s_oov` sale alto (0,7-0,8) en preguntas del dominio.
   No ajustar `τ_oov` con este corpus; calibrar con el golden del cliente (P9-P10).
+- **P8.4 — `ok` exige `s_oov < τ_oov`.** Ninguna señal léxica separa «¿Cuándo vence
+  la garantía?» (correcta) de «¿Qué incluye la garantía?» (trampa): mismo `s_oov` 0,72,
+  `s_cov` 0,28 y el mismo tramo del lector («24 meses…», `s_qa` 0,99/0,97). Se eligió
+  precisión: si casi todo el vocabulario de la pregunta falta en el corpus, la
+  respuesta es `relacionado`, que igual muestra el pasaje. Costo en corpus
+  diminutos: «¿Cuánto dura la garantía del X100?» frente a «cubre 18 meses» queda
+  en relacionado (por eso cambió la pregunta de `test_portabilidad`). P10 decide
+  si separar `τ_oov` de dominio y de ok, calibrado con Clopper-Pearson.
+- **P8.4 — light muestra contexto antes que la respuesta.** La ventana de 500
+  caracteres crece hacia la izquierda desde la oración ancla. A «¿En cuántos días
+  hábiles se paga el reembolso?» responde empezando por «La empresa responde dentro
+  de 5 días hábiles.» (literalidad 0,5). La decisión ya usa la oración ancla
+  (`oracion_foco` en el diagnóstico); falta mostrarla primero, sin expandir hacia la
+  izquierda, como ya ocurre cuando la ancla es una entidad. Pendiente para P10
+  (métrica de literalidad).
+- **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
+  (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

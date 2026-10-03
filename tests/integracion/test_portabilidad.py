@@ -175,10 +175,12 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
             time.sleep(1)
         assert listo, "el servicio no quedó listo en 90s"
 
-        # Pregunta respondible: 'ok' + cita literal del manual.
+        # Pregunta respondible: 'ok' + cita literal del manual. Usa el vocabulario
+        # del documento: con tres chunks, «¿Cuánto dura...?» (el texto dice «cubre»)
+        # tiene s_oov 0,74 y cascada_v1 la deja en relacionado (ver avance.md, P8.4).
         resp = httpx.post(
             f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuánto dura la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            json={"pregunta": "¿Cuántos meses cubre la garantía del equipo X100?", "id_sesion": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200

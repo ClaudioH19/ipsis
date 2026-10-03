@@ -132,8 +132,13 @@ class CascadaV1:
     1. La premisa falla (pide una entidad que no está) → sin_respuesta.
     2. ``s_oov ≥ τ_oov`` y dominio < ``τ_dominio`` → fuera_dominio
        (dominio = max(s_ret, s_rr); ver ``SenalesPolitica.dominio``).
-    3. ``s_foco ≥ τ_foco`` y (con lector: ``s_qa ≥ τ_ok``; sin lector:
-       ``s_ret ≥ τ_ok``, ``s_cov ≥ τ_cov`` y ``acuerdo ≥ 0,5``) → ok.
+    3. ``s_foco ≥ τ_foco``, ``s_oov < τ_oov`` y (con lector: ``s_qa ≥ τ_ok``;
+       sin lector: ``s_ret ≥ τ_ok``, ``s_cov ≥ τ_cov`` y ``acuerdo ≥ 0,5``) → ok.
+       ``s_oov < τ_oov``: si casi todo el vocabulario de la pregunta falta en el
+       corpus, el corpus no puede respaldar una afirmación literal. El lector da
+       el mismo tramo a «¿Cuándo vence la garantía?» y a «¿Qué incluye la
+       garantía?»; solo distingue el tipo de respuesta esperado, y eso exigiría
+       reglas por idioma.
     4. dominio ≥ ``τ_relacionado`` → relacionado (con el término ausente si
        falló el foco).
     5. Si no → sin_respuesta.
@@ -165,9 +170,10 @@ class CascadaV1:
         if s.s_oov >= u["oov"] and s.dominio < u["dominio"]:
             return decision("abstiene", "fuera_dominio", "fuera_dominio")
         foco_ok = s.s_foco >= u["foco"]
-        if foco_ok and s.s_qa is not None and s.s_qa >= u["ok"]:
+        respaldo = foco_ok and s.s_oov < u["oov"]
+        if respaldo and s.s_qa is not None and s.s_qa >= u["ok"]:
             return decision("responde", "lector", "ok_lector")
-        if (foco_ok and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]
+        if (respaldo and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]
                 and (s.acuerdo is None or s.acuerdo >= 0.5)):
             return decision("responde", "lexico", "ok_lexico")
         if s.dominio >= u["relacionado"]:
