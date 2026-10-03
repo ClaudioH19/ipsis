@@ -23,17 +23,11 @@ from pathlib import Path
 import yaml
 
 from rag.configuracion import rutas
-from rag.lenguaje.texto import normalizar, tokenizar
+from rag.lenguaje.texto import terminos, tokenizar
 
 from rag.lenguaje.entidades import extraer_entidades, idioma_activo, tiene_marcador
 from rag.ingesta.chunking import Chunk
 from rag.recursos import leer_plantilla
-
-def _stopwords() -> set[str]:
-    """Stopwords del idioma activo, normalizadas (sin tildes en escritura latina)."""
-    paquete = idioma_activo()
-    return {normalizar(p) for p in paquete.stopwords} if paquete is not None else set()
-
 
 def cargar_taxonomia(ruta: str = rutas.DOMINIO) -> dict:
     """Taxonomía del proyecto: sección ``taxonomia`` de ``configuracion/dominio.yaml``.
@@ -57,8 +51,16 @@ class ResultadoCategoria:
     origen: str = "keywords_v1"
 
 
-def _tokenizar(texto: str) -> list[str]:
-    return [t for t in tokenizar(texto, normalizado=False) if len(t) >= 3 and t.isalpha()]
+def _terminos_con_superficie(texto: str) -> list[tuple[str, str]]:
+    """Pares (término, forma original) sin stopwords, cifras ni palabras cortas."""
+    paquete = idioma_activo()
+    stop = set(terminos(" ".join(paquete.stopwords), paquete)) if paquete is not None else set()
+    pares = zip(terminos(texto, paquete), tokenizar(texto, normalizado=False))
+    return [(t, f) for t, f in pares if t not in stop and len(f) >= 3 and f.isalpha()]
+
+
+def _terminos(texto: str) -> set[str]:
+    return {t for t, _ in _terminos_con_superficie(texto)}
 
 
 def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
@@ -73,8 +75,7 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
     configuración por dominio (categorías, descripciones): las palabras
     configuración por dominio y las palabras gatillo se declaran ahí mismo.
     """
-    stop = _stopwords()
-    palabras_texto = {w for w in _tokenizar(texto) if normalizar(w) not in stop}
+    palabras_texto = _terminos(texto)
 
     mejor_cat = "otro"
     mejor_score = 0.0
@@ -82,8 +83,8 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
         cid = cat["id"]
         if cid == "otro":
             continue
-        desc_palabras = set(_tokenizar(cat.get("descripcion", "")))
-        gatillo = {w.lower() for w in cat.get("palabras_gatillo", [])}
+        desc_palabras = _terminos(cat.get("descripcion", ""))
+        gatillo = _terminos(" ".join(cat.get("palabras_gatillo", [])))
         solape_desc = len(palabras_texto & desc_palabras)
         solape_gatillo = len(palabras_texto & gatillo)
         score_bruto = solape_gatillo * 2 + solape_desc
@@ -101,13 +102,20 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
     return ResultadoCategoria(mejor_cat, round(mejor_score, 3))
 
 
-def extraer_keywords(texto: str, top_k: int = 5) -> list[str]:
-    """Extracción de palabras clave por frecuencia (simplificación determinista
-    y reproducible de YAKE/KeyBERT — documentada en ESTADO.md)."""
-    stop = _stopwords()
-    palabras = [w for w in _tokenizar(texto) if normalizar(w) not in stop]
-    conteo = Counter(palabras)
-    return [w for w, _ in conteo.most_common(top_k)]
+def extraer_keywords(texto: str, top_k: int = 5, estadisticas=None) -> list[str]:
+    """Palabras clave del texto: mayor TF-IDF (o frecuencia sin estadísticas).
+
+    Devuelve la forma original más frecuente de cada término (con tildes).
+    Los empates se resuelven por orden alfabético del término.
+    """
+    pares = _terminos_con_superficie(texto)
+    tf = Counter(t for t, _ in pares)
+    formas: dict[str, Counter] = {}
+    for t, f in pares:
+        formas.setdefault(t, Counter())[f] += 1
+    idf = estadisticas.idf if estadisticas is not None else (lambda _t: 1.0)
+    orden = sorted(tf, key=lambda t: (-tf[t] * idf(t), t))[:top_k]
+    return [max(formas[t].items(), key=lambda par: (par[1], par[0]))[0] for t in orden]
 
 
 @dataclass
@@ -156,7 +164,7 @@ def validar_chunk(chunk_payload: dict, taxonomia: dict) -> list[ErrorValidacion]
 
 def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool,
                        taxonomia: dict, texto_embebido: str,
-                       pipeline_version: str = "ingesta-0.1.0") -> dict:
+                       pipeline_version: str = "ingesta-0.1.0", estadisticas=None) -> dict:
     """Construye el payload completo de un chunk (esquema sección 3.3)."""
     entidades = extraer_entidades(chunk.texto)
     cat = clasificar_categoria(chunk.texto, taxonomia)
@@ -164,7 +172,7 @@ def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool
     marcadores = paquete.marcadores if paquete is not None else None
     tiene_exc = tiene_marcador(chunk.texto, marcadores.excepcion if marcadores else [])
     tiene_cond = tiene_marcador(chunk.texto, marcadores.condicion if marcadores else [])
-    keywords = extraer_keywords(chunk.texto)
+    keywords = extraer_keywords(chunk.texto, estadisticas=estadisticas)
     hash_texto = "sha256:" + hashlib.sha256(chunk.texto.encode("utf-8")).hexdigest()
 
     return {
