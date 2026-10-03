@@ -8,6 +8,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from rag.consulta.etapas.base import _Etapa
 from rag.lenguaje.entidades import extraer_entidades
 from rag.lenguaje.texto import sin_acentos
 
@@ -130,3 +131,28 @@ def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> Resu
             motivos=[f"entidad en la respuesta sin respaldo literal en los fragmentos: {sorted(faltantes)}"],
         )
     return ResultadoFidelidad(fiel=True)
+
+
+class EtapaVerificacion(_Etapa):
+    """Última guardia: toda entidad de la respuesta existe en la fuente."""
+
+    nombre = "verificacion"
+
+    def ejecutar(self, ctx) -> None:
+        m = self.motor
+        fidelidad = verificar_fidelidad(ctx.texto, ctx.payloads)
+        if not fidelidad.fiel:
+            ctx.diagnostico["advertencias"].extend(fidelidad.motivos)
+            ctx.resultado = m._abstener("guardia", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+            return
+        ctx.resultado = m._resultado(
+            estado=ctx.estado,
+            motivo=ctx.decision.motivo,
+            mensaje=ctx.texto,
+            confianza=ctx.confianza,
+            latencia_ms=ctx.latencia_ms(),
+            plan=ctx.plan,
+            evidencias=ctx.evidencias,
+            fragmentos_http=m._fragmentos_http(ctx.evidencias, ctx.candidatos),
+            diagnostico=ctx.diagnostico,
+        )

@@ -115,8 +115,19 @@ class ResponseRenderer(Protocol):
     def renderizar(self, resultado: AssistantResult) -> str: ...
 
 
+@runtime_checkable
+class Etapa(Protocol):
+    """Paso de la cascada de consulta. Para cerrar la consulta asigna
+    ``ctx.resultado``; el motor se detiene en ese momento."""
+
+    nombre: str
+    requiere_admision: bool
+
+    def ejecutar(self, ctx: Any) -> None: ...
+
+
 __all__ = [
-    "AbstentionPolicy", "AnswerExtractor", "Chunker", "DenseEncoder", "DocumentParser",
+    "AbstentionPolicy", "AnswerExtractor", "Chunker", "DenseEncoder", "DocumentParser", "Etapa",
     "EvidenceVerifier", "FusionStrategy", "IntentClassifier", "Reranker",
     "ResponseRenderer", "Retriever", "SparseEncoder",
 ]

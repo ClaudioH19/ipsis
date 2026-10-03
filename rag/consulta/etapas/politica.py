@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 
+from rag.consulta.etapas.base import _Etapa
 from rag.nucleo.esquemas import (
     DecisionAbstencion,
     QueryAnalysis,
@@ -223,8 +224,27 @@ class LayeredV1:
         )
 
 
+class EtapaPolitica(_Etapa):
+    """Decisión de la política: responder, relacionado o abstenerse."""
+
+    nombre = "politica"
+
+    def ejecutar(self, ctx) -> None:
+        m = self.motor
+        decision = m.politica_abstencion.decidir(ctx.consulta, ctx.senales, ctx.candidatos)
+        ctx.decision = decision
+        ctx.diagnostico["decision"] = decision.__dict__
+        if decision.abstiene:
+            motivo = "premisa" if decision.motivo == "premisa" else "generico"
+            ctx.resultado = m._abstener(
+                motivo, ctx.confianza, ctx.latencia_ms(),
+                entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico,
+            )
+
+
 __all__ = [
     "DecisionAbstencion",
+    "EtapaPolitica",
     "decidir_capas",
     "LayeredV1",
     "ResultadoPremisa",
