@@ -1,4 +1,4 @@
-"""Tests del despacho por extensión de `rag/parsear.py`: PDF, Markdown y texto
+"""Tests del despacho por extensión de `rag/ingesta/parsear.py`: PDF, Markdown y texto
 plano. Cada documento de prueba lo construye el propio test, en un directorio temporal, sin material institucional -- nunca
 se toca `documentos/`.
 
@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from rag.parsear import (
+from rag.ingesta.parsear import (
     DocumentoEscaneadoError,
     parsear_documento,
     parsear_markdown,

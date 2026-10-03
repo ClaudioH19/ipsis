@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from rag.parsear import Bloque, DocumentoParseado
+from rag.ingesta.parsear import Bloque, DocumentoParseado
 
 
 @dataclass

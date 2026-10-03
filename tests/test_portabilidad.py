@@ -191,7 +191,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         # .md, que traen sintaxis ('# ', líneas en blanco) que el parser ya
         # normaliza; es el mismo criterio que usan
         # tests/test_parsear.py y tests/test_parsear_multiformato.py.
-        from rag.parsear import parsear_markdown
+        from rag.ingesta.parsear import parsear_markdown
         doc_manual = parsear_markdown(str(docs["manual"]), doc_id="x", doc_titulo="x", version="1")
         frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)
         assert frag_manual is not None, datos["fragmentos"]

@@ -2,8 +2,8 @@
 
 import pytest
 
-from rag.parsear import parsear_docx, DocumentoParseado
-from rag.chunking import ESTRATEGIAS
+from rag.ingesta.parsear import parsear_docx, DocumentoParseado
+from rag.ingesta.chunking import ESTRATEGIAS
 
 @pytest.fixture(scope="module")
 def documento(ruta_docx_sintetico) -> DocumentoParseado:

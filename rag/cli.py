@@ -6,7 +6,7 @@ depender del checkout desde el que se instaló la librería.
 Regla de diseño de este módulo, no negociable: **cada comando es una función
 corta que solo orquesta lo que ya vive en `rag/` y `servicio/`.** Si algo
 necesita lógica nueva, esa lógica se escribe en un módulo de `rag/` (ver
-`rag/corpus.py::agregar_documentos_al_catalogo`/`ejecutar_ingesta`,
+`rag/ingesta/catalogo.py::agregar_documentos_al_catalogo`/`rag/ingesta/ingesta.py::ejecutar_ingesta`,
 `rag/configuracion/carga.py::actualizar_dominio`, `rag/diagnostico.py`,
 `rag/metricas_banco.py::evaluar_backend_activo`), nunca aquí. Los argumentos
 se arman con ``argparse`` de la biblioteca estándar -- sin dependencias
@@ -31,9 +31,9 @@ def cmd_init(args: argparse.Namespace) -> int:
         inicializar_plantillas_si_falta, inicializar_proyecto_si_falta,
         slug_coleccion,
     )
-    from rag.corpus import CATALOGO_PATH, plantilla_catalogo_vacio
+    from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
     from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
-    from rag.metadata import inicializar_taxonomia_si_falta
+    from rag.ingesta.metadata import inicializar_taxonomia_si_falta
     from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     ruta_dominio = Path(RUTA_DOMINIO)
@@ -112,7 +112,7 @@ def cmd_init(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def _archivos_de_ruta(ruta: Path) -> list[Path]:
-    from rag.parsear import EXTENSIONES_SOPORTADAS
+    from rag.ingesta.parsear import EXTENSIONES_SOPORTADAS
     if ruta.is_file():
         return [ruta]
     if ruta.is_dir():
@@ -126,7 +126,7 @@ def _archivos_de_ruta(ruta: Path) -> list[Path]:
 
 
 def cmd_cargar(args: argparse.Namespace) -> int:
-    from rag.corpus import agregar_documentos_al_catalogo
+    from rag.ingesta.catalogo import agregar_documentos_al_catalogo
 
     try:
         archivos = _archivos_de_ruta(Path(args.ruta))
@@ -190,7 +190,7 @@ def cmd_configurar(args: argparse.Namespace) -> int:
 
 def cmd_indexar(args: argparse.Namespace) -> int:
     from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_recuperacion
-    from rag.corpus import ejecutar_ingesta
+    from rag.ingesta.ingesta import ejecutar_ingesta
     from rag.lenguaje.dominio import cargar_perfil
     from rag.lenguaje.entidades import configurar_perfil
 
@@ -255,9 +255,9 @@ def _completar_proyecto_existente() -> None:
         inicializar_proyecto_si_falta,
         slug_coleccion,
     )
-    from rag.corpus import CATALOGO_PATH, plantilla_catalogo_vacio
+    from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
     from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
-    from rag.metadata import inicializar_taxonomia_si_falta
+    from rag.ingesta.metadata import inicializar_taxonomia_si_falta
     from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     dominio = cargar_dominio()

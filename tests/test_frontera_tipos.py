@@ -8,7 +8,7 @@ from rag.nucleo.esquemas import (
     RetrievalCandidate,
     RetrievalSignals,
 )
-from rag.payload import payload_desde_evidencia
+from rag.indice.payload import payload_desde_evidencia
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
 
 

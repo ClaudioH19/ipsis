@@ -13,7 +13,7 @@ from rag.banco_evaluacion import (
     hash_banco,
     validar_evidencias_contra_corpus,
 )
-from rag.parsear import parsear_markdown
+from rag.ingesta.parsear import parsear_markdown
 
 RAIZ = Path(__file__).parent
 MANIFIESTO = RAIZ / "evaluacion" / "sintetico" / "manifiesto.json"

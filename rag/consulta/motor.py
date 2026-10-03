@@ -24,7 +24,7 @@ from rag.nucleo.esquemas import (
     QueryDiagnostic,
     RetrievalCandidate,
 )
-from rag.payload import payload_desde_evidencia
+from rag.indice.payload import payload_desde_evidencia
 from rag.consulta.etapas.redaccion import (
     construir_mensaje_abstencion,
     cargar_plantillas,

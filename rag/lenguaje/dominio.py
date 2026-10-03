@@ -146,7 +146,7 @@ def _perfiles_disponibles(base: str) -> list[str]:
 
 def cargar_perfil(nombre: str, base: str = RUTA_DOMINIOS) -> PerfilDominio:
     """Carga ``<base>/<nombre>/perfil.yaml``. Falla fuerte y explícito si no
-    existe -- mismo criterio que ``rag/corpus.py::cargar_vocabulario_bm25``:
+    existe -- mismo criterio que ``rag/indice/qdrant.py::cargar_vocabulario_bm25``:
     nunca se inventa un perfil vacío en silencio cuando se pidió uno con
     nombre."""
     ruta = Path(base) / nombre / "perfil.yaml"

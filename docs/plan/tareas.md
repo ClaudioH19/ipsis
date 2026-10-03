@@ -534,6 +534,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
   - ADR `0003-onnx-y-perfiles` y `0004-cascada-lexica-y-retiro-de-guardias-regex`.
   - Versión `0.8.0` en `CHANGELOG.md`.
 - **Aceptación:** `rg -n "torch|sentence-transformers|layered_v1|textos.yaml|vocab_bm25|data/golden|palabras_generales" README.md docs ejemplos` no devuelve nada, salvo en ADR o CHANGELOG como historia.
+- **Además:** quita de comentarios y docstrings de `rag/` las etiquetas históricas («Etapa …», «Fase …», «E1–E8», «molde», «coordinador»), reescribiendo la frase si hace falta. Aceptación: `rg -n "Etapa [A-Z0-9]|E[1-8]|molde|coordinador" rag` no devuelve nada.
 
 ### P13.2 Cerrar el plan
 

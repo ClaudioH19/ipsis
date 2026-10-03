@@ -17,7 +17,7 @@ Determinista por diseño, dos métodos elegibles por configuración
 Ninguno de los dos métodos "redacta": solo deciden qué texto LITERAL
 mostrar y qué recortar. La unidad elegida es siempre substring exacto del
 chunk (y por transitividad del documento fuente) — invariante que aprovecha
-``rag/parsear.py`` (offsets exactos por bloque) y se verifica con test.
+``rag/ingesta/parsear.py`` (offsets exactos por bloque) y se verifica con test.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ from rag.lenguaje.entidades import extraer_entidades
 from rag.lenguaje.texto import solapamiento_lexico
 
 # Una "unidad" es una línea completa (fila de tabla, ya unida por
-# `rag/parsear.py::_fila_a_texto` con " | " entre celdas) o una oración
+# `rag/ingesta/parsear.py::_fila_a_texto` con " | " entre celdas) o una oración
 # dentro de una línea narrativa. Nunca se parte una fila de tabla a la
 # mitad: el marcador " | " es el MISMO que usa el parser para unir celdas,
 # así que su presencia es una señal determinista de "esto es una fila", no
@@ -113,7 +113,7 @@ def _puntuar_denso(pregunta: str, unidades: list[Unidad], modelo_st, prefijo_que
     """Coseno entre el embedding de la pregunta y el de cada unidad, con el
     modelo YA CARGADO por el servicio (nunca se instancia uno nuevo). Los
     vectores de e5-small ya salen normalizados (``normalize_embeddings=True``,
-    igual que en ``rag/indice.py``), así que el producto punto ES el coseno."""
+    igual que en ``rag/indice/qdrant.py``), así que el producto punto ES el coseno."""
     import numpy as np
 
     textos = [prefijo_query + pregunta] + [u.texto for u in unidades]
