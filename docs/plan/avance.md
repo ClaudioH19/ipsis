@@ -13,7 +13,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P1.1 | ✅ | 2026-10-03 | 313 | DecisionAbstencion y Resultado pasan a nucleo/esquemas para que nucleo no dependa de consulta. Prueba nueva: el núcleo no importa dependencias pesadas. |
 | P1.2 | ✅ | 2026-10-03 | 313 | Sin desvíos. |
 | P1.3 | ✅ | 2026-10-03 | 313 | Sin desvíos. |
-| P1.4 | ⬜ | | | |
+| P1.4 | ✅ | 2026-10-03 | 300 | −13 pruebas: 7 duplicaban tests/test_abstencion.py (capas y umbral) y 6 cubrían el adaptador legado. Las 4 de premisa siguen, ahora sobre verificar_premisa_textos. |
 | P1.5 | ⬜ | | | |
 | P1.6 | ⬜ | | | |
 | P1.7 | ⬜ | | | |

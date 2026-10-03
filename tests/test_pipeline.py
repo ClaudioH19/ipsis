@@ -9,14 +9,20 @@ import pytest
 
 from rag.servicio.pipeline import (
     ConfiguracionAdmision, ControlAdmision,
-    SenalesAbstencion, decidir_abstencion,
-    ResultadoPremisa, verificar_premisa, separar_entidades_ausentes,
-    DecisionAbstencion, decidir_capas_abstencion,
-    PlanDeRespuesta, redactar, redactar_zona_gris, construir_mensaje_abstencion,
+    redactar, redactar_zona_gris, construir_mensaje_abstencion,
     verificar_fidelidad, verificar_respaldo_dato_solicitado,
     detectar_conversacional, respuesta_conversacional,
-    tiene_grounding_lexico, tiene_grounding_dominio,
 )
+from rag.abstencion import (
+    separar_entidades_ausentes,
+    tiene_grounding_dominio,
+    tiene_grounding_lexico,
+    verificar_premisa_textos,
+)
+
+
+def verificar_premisa(pregunta, fragmentos):
+    return verificar_premisa_textos(pregunta, [f["texto"] for f in fragmentos])
 
 
 # ---------------------------------------------------------------------------
@@ -30,18 +36,6 @@ def test_control_admision_admite_hasta_el_limite_y_luego_rechaza():
     assert control.intentar_admitir() is False
     control.liberar()
     assert control.intentar_admitir() is True
-
-
-# ---------------------------------------------------------------------------
-# Capa (a): fuera de dominio (score denso + umbral)
-# ---------------------------------------------------------------------------
-
-def test_decidir_abstencion_bajo_umbral_abstiene():
-    assert decidir_abstencion(SenalesAbstencion(score_top1=0.5, margen_top1_top2=0.0), umbral=0.7) is True
-
-
-def test_decidir_abstencion_sobre_umbral_no_abstiene():
-    assert decidir_abstencion(SenalesAbstencion(score_top1=0.9, margen_top1_top2=0.1), umbral=0.7) is False
 
 
 # ---------------------------------------------------------------------------
@@ -79,63 +73,6 @@ def test_verificar_premisa_articulo_no_respaldado():
 
 
 # ---------------------------------------------------------------------------
-# Combinación de las tres capas
-# ---------------------------------------------------------------------------
-
-def _senales(score):
-    return SenalesAbstencion(score_top1=score, margen_top1_top2=0.0)
-
-
-def test_decidir_capas_premisa_manda_sobre_todo_lo_demas():
-    premisa_invalida = ResultadoPremisa(premisa_valida=False, entidades_ausentes=[
-        {"tipo": "practica", "texto": "Práctica III", "valor_norm": "practica_3"}
-    ])
-    # score ALTO (confianza alta) pero premisa inválida -> igual se abstiene
-    decision = decidir_capas_abstencion(_senales(0.99), umbral_fuera_dominio=0.7,
-                                         umbral_confianza_alta=0.87, resultado_premisa=premisa_invalida)
-    assert decision.abstiene is True
-    assert decision.motivo == "premisa"
-    assert decision.entidad_texto == "Práctica III"
-
-
-def test_decidir_capas_score_bajo_fuera_dominio():
-    premisa_ok = ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
-    decision = decidir_capas_abstencion(_senales(0.5), umbral_fuera_dominio=0.7,
-                                         umbral_confianza_alta=0.87, resultado_premisa=premisa_ok)
-    assert decision.abstiene is True
-    assert decision.motivo == "fuera_dominio"
-
-
-def test_decidir_capas_zona_gris_modo_abstenerse():
-    premisa_ok = ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
-    decision = decidir_capas_abstencion(_senales(0.8), umbral_fuera_dominio=0.7,
-                                         umbral_confianza_alta=0.87, resultado_premisa=premisa_ok,
-                                         zona_gris_modo="abstenerse")
-    assert decision.resultado == "abstiene"
-    assert decision.abstiene is True
-    assert decision.motivo == "zona_gris"
-
-
-def test_decidir_capas_zona_gris_modo_relacionado_por_defecto():
-    """"relacionado" es el default (Etapa C, punto 2) -- no es un abstiene
-    ni un responde, es su propio estado."""
-    premisa_ok = ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
-    decision = decidir_capas_abstencion(_senales(0.8), umbral_fuera_dominio=0.7,
-                                         umbral_confianza_alta=0.87, resultado_premisa=premisa_ok)
-    assert decision.resultado == "relacionado"
-    assert decision.abstiene is False
-    assert decision.motivo == "zona_gris"
-
-
-def test_decidir_capas_confianza_alta_no_abstiene():
-    premisa_ok = ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
-    decision = decidir_capas_abstencion(_senales(0.95), umbral_fuera_dominio=0.7,
-                                         umbral_confianza_alta=0.87, resultado_premisa=premisa_ok)
-    assert decision.abstiene is False
-    assert decision.motivo == "confianza_alta"
-
-
-# ---------------------------------------------------------------------------
 # Mensajes de abstención SIEMPRE son texto listo para mostrar (nunca vacíos)
 # ---------------------------------------------------------------------------
 
@@ -163,7 +100,7 @@ def _fragmento(texto, doc="Manual X100", seccion=("Capítulo 1",), excepcion=Fal
 def test_redactar_texto_literal_con_cita():
     """El texto del documento se copia literal y la cita nombra el documento."""
     frag = _fragmento("El plazo es de quince días hábiles.")
-    texto = redactar(PlanDeRespuesta(plan="extractivo", slots={}), [frag])
+    texto = redactar([frag])
     assert "El plazo es de quince días hábiles." in texto
     assert "Manual X100" in texto
 
@@ -184,7 +121,7 @@ def test_estilo_de_cita_en_el_texto(monkeypatch):
             lambda *a, **k: {"cita_en_texto": estilo, "incluir_apertura": apertura,
                              "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.6},
         )
-        return redactar(PlanDeRespuesta(plan="extractivo", slots={}), [frag])
+        return redactar([frag])
 
     completa = con_estilo("completa")
     assert "Manual X100" in completa and "Capítulo 1" in completa
@@ -208,7 +145,7 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
     frags = [_fragmento("Primero.", chunk_id="a"),
              _fragmento("Segundo.", chunk_id="b"),
              _fragmento("Tercero.", chunk_id="c")]
-    texto = redactar(PlanDeRespuesta(plan="extractivo", slots={}), frags)
+    texto = redactar(frags)
     from rag.servicio.pipeline import _cargar_plantillas
     usados = [c for c in _cargar_plantillas()["conectores"]["complemento"] if c in texto]
     assert len(usados) == 2, f"se esperaban dos conectores distintos, hubo {usados}"
@@ -237,7 +174,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     frags = [_fragmento("Pertinente.", chunk_id="a", score=1.0),
              _fragmento("Algo pertinente.", chunk_id="b", score=0.8),
              _fragmento("Ruido de otra seccion.", chunk_id="c", score=0.2)]
-    texto = redactar(PlanDeRespuesta(plan="extractivo", slots={}), frags)
+    texto = redactar(frags)
     assert "Pertinente." in texto and "Algo pertinente." in texto
     assert "Ruido de otra seccion." not in texto
 
@@ -246,7 +183,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 1, "score_relativo_minimo": 0.0},
     )
-    solo_uno = redactar(PlanDeRespuesta(plan="extractivo", slots={}), frags)
+    solo_uno = redactar(frags)
     assert "Pertinente." in solo_uno and "Algo pertinente." not in solo_uno
 
 
@@ -259,7 +196,7 @@ def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
 
 def test_verificar_fidelidad_pasa_si_la_respuesta_es_literal():
     frag = _fragmento("El plazo es de quince días hábiles según el artículo 5.")
-    respuesta = redactar(PlanDeRespuesta(plan="extractivo", slots={}), [frag])
+    respuesta = redactar([frag])
     resultado = verificar_fidelidad(respuesta, [frag])
     assert resultado.fiel is True
 

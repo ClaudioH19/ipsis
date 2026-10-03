@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -30,25 +29,12 @@ from rag.servicio.pipeline import (
     construir_mensaje_abstencion,
     cargar_plantillas,
     detectar_conversacional,
-    elegir_plan,
     redactar,
     redactar_zona_gris,
     respuesta_conversacional,
     verificar_fidelidad,
     verificar_respaldo_dato_solicitado,
 )
-
-EjecutorLegacy = Callable[[str, str], Any]
-
-_ESTADOS_LEGACY: dict[str, AssistantState] = {
-    "ok": AssistantState.RESPUESTA_DIRECTA,
-    "relacionado": AssistantState.RELACIONADO,
-    "conversacional": AssistantState.CONVERSACIONAL,
-    "sin_respuesta": AssistantState.SIN_RESPUESTA,
-    "degradado": AssistantState.DEGRADADO,
-    "saturado": AssistantState.SATURADO,
-}
-
 
 class MotorNoListo(RuntimeError):
     pass
@@ -63,7 +49,6 @@ class Motor:
 
     def __init__(
         self,
-        ejecutor_legacy: EjecutorLegacy | None = None,
         *,
         retriever: Retriever | None = None,
         analizador: IntentClassifier | None = None,
@@ -104,7 +89,6 @@ class Motor:
             if abstencion_calibrada is None
             else abstencion_calibrada
         )
-        self._ejecutor_legacy = ejecutor_legacy
 
     @classmethod
     def desde_configuracion(
@@ -205,52 +189,6 @@ class Motor:
                 cfg_abs is not None
                 and "sin_calibrar" not in str(cfg_abs.get("version", ""))
             ),
-        )
-
-    @classmethod
-    def desde_ejecutor_legacy(cls, ejecutor: EjecutorLegacy) -> "Motor":
-        if not callable(ejecutor):
-            raise TypeError("ejecutor debe ser invocable")
-        return cls(ejecutor_legacy=ejecutor)
-
-    def _adaptar_legacy(self, pregunta: str, id_sesion: str) -> AssistantResult:
-        respuesta = self._ejecutor_legacy(pregunta, id_sesion)
-        if not hasattr(respuesta, "model_dump"):
-            raise TypeError("el ejecutor heredado debe devolver un modelo Pydantic")
-        contrato = respuesta.model_dump(mode="python")
-        estado_legacy = str(contrato["estado"])
-        try:
-            estado = _ESTADOS_LEGACY[estado_legacy]
-        except KeyError as exc:
-            raise ValueError(f"estado heredado desconocido: {estado_legacy}") from exc
-        evidencias = [
-            EvidenceSpan(
-                doc_id=fragmento.get("doc_id") or fragmento["doc_titulo"],
-                chunk_id=fragmento["chunk_id"],
-                texto=fragmento["texto"],
-                offset_inicio=fragmento["offset_inicio"],
-                offset_fin=fragmento["offset_fin"],
-                seccion_path=(
-                    []
-                    if fragmento.get("seccion") in {None, "", "(sin sección)"}
-                    else str(fragmento["seccion"]).split(" > ")
-                ),
-                score=fragmento.get("score"),
-            )
-            for fragmento in contrato.get("fragmentos", [])
-        ]
-        diagnostico = self._diagnostico(
-            advertencias=["flujo heredado adaptado; diagnóstico limitado"]
-        )
-        diagnostico["contrato_http"] = contrato
-        return AssistantResult(
-            estado=estado,
-            motivo=f"flujo_heredado:{estado_legacy}",
-            mensaje_usuario=str(contrato.get("respuesta") or ""),
-            evidencias=evidencias,
-            puede_reintentar=estado in {AssistantState.DEGRADADO, AssistantState.SATURADO},
-            confianza=dict(contrato.get("confianza") or {}),
-            diagnostico=diagnostico,
         )
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
@@ -426,9 +364,6 @@ class Motor:
             return self._consultar_en_contexto(pregunta, id_sesion)
 
     def _consultar_en_contexto(self, pregunta: str, id_sesion: str) -> AssistantResult:
-        if self._ejecutor_legacy is not None:
-            return self._adaptar_legacy(pregunta, id_sesion)
-
         inicio = time.perf_counter()
         latencia = lambda: int((time.perf_counter() - inicio) * 1000)
         categoria = detectar_conversacional(pregunta, self.plantillas)
@@ -531,7 +466,6 @@ class Motor:
                         diagnostico=diagnostico,
                     )
                 texto = redactar(
-                    elegir_plan(pregunta, payloads),
                     payloads,
                     plantillas=self.plantillas,
                     cfg_redaccion=self.configuracion_redaccion,
