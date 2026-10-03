@@ -6,17 +6,17 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from rag.componentes import RegistroComponentes
+from rag.nucleo.registro import RegistroComponentes
 from rag.configuracion import cargar_dominio, cargar_proyecto
-from rag.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
+from rag.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
 from rag.abstencion import DecisionAbstencion
-from rag.esquemas import (
+from rag.nucleo.esquemas import (
     ChunkRecord,
     RetrievalCandidate,
     RetrievalSignals,
     SenalesRecuperacion,
 )
-from rag.registro import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
+from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
 from rag.reglas_extraccion import extraer_entidades
 from rag.servicio.motor import Motor
 

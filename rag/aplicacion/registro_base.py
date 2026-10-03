@@ -9,8 +9,8 @@ from __future__ import annotations
 import re
 from typing import Any, Sequence
 
-from rag.componentes import RegistroComponentes, registro_componentes
-from rag.esquemas import EvidenceSpan, RetrievalCandidate
+from rag.nucleo.registro import RegistroComponentes, registro_componentes
+from rag.nucleo.esquemas import EvidenceSpan, RetrievalCandidate
 
 
 class ParserBuiltin:
@@ -166,7 +166,7 @@ class LiteralOffsetsVerifier:
 
 class RulesIntentClassifier:
     def analizar(self, pregunta: str, contexto: dict[str, Any] | None = None):
-        from rag.esquemas import QueryAnalysis
+        from rag.nucleo.esquemas import QueryAnalysis
 
         normalizada = re.sub(r"\s+", " ", pregunta.strip())
         return QueryAnalysis(

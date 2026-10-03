@@ -11,7 +11,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from rag.banco_evaluacion import BancoEvaluacion, CasoEvaluacion, hash_banco
-from rag.esquemas import ChunkRecord, EvidenceSpan
+from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
 
 
 class ObservacionEvaluacion(BaseModel):
@@ -208,7 +208,7 @@ def evaluar_backend_activo(
 
     from rag.banco_evaluacion import cargar_banco
     from rag.configuracion import cargar_dominio, cargar_proyecto
-    from rag.esquemas import QueryAnalysis
+    from rag.nucleo.esquemas import QueryAnalysis
     from rag.parsear import parsear_documento
     from rag.servicio.motor import Motor
 

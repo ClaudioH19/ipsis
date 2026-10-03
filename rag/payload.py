@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from rag.esquemas import ChunkRecord, EvidenceSpan
+from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
 
 # Campos del payload que ChunkRecord tipa con otro nombre.
 _RENOMBRADOS = {"texto": "texto_fuente", "texto_embebido": "texto_embedding"}

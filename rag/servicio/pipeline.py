@@ -390,7 +390,7 @@ def decidir_capas_abstencion(senales: SenalesAbstencion, umbral_fuera_dominio: f
     una entidad de la pregunta sin respaldo (tras la recuperación dirigida),
     se abstiene citándola, pase lo que pase con el score."""
     from rag.abstencion import ResultadoPremisa as ResultadoPremisaTipado, decidir_capas
-    from rag.esquemas import SenalesRecuperacion
+    from rag.nucleo.esquemas import SenalesRecuperacion
 
     decision = decidir_capas(
         SenalesRecuperacion(

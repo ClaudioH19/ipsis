@@ -45,7 +45,7 @@ class ComponentesConfig(ConfiguracionEstricta):
     """Selección declarativa de implementaciones de la tubería.
 
     Los nombres son estables; la resolución de factories vive en
-    ``rag.componentes``. Un valor ``None`` desactiva un componente opcional.
+    ``rag.nucleo.contratos``. Un valor ``None`` desactiva un componente opcional.
     """
 
     parser: str = Field(default="builtin", min_length=1)

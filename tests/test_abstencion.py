@@ -3,14 +3,15 @@ from __future__ import annotations
 import pytest
 
 from rag.abstencion import LayeredV1
-from rag.componentes import AbstentionPolicy, RegistroComponentes
-from rag.esquemas import (
+from rag.nucleo.contratos import AbstentionPolicy
+from rag.nucleo.registro import RegistroComponentes
+from rag.nucleo.esquemas import (
     ChunkRecord,
     QueryAnalysis,
     RetrievalCandidate,
     SenalesRecuperacion,
 )
-from rag.registro import registrar_componentes_base
+from rag.aplicacion.registro_base import registrar_componentes_base
 
 
 def _configuracion(*, zona_gris: str = "relacionado") -> dict:

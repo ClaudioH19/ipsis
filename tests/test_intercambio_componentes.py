@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from rag.abstencion import DecisionAbstencion, LayeredV1
-from rag.esquemas import (
+from rag.nucleo.esquemas import (
     AssistantState,
     ChunkRecord,
     EvidenceSpan,
@@ -19,7 +19,7 @@ from rag.esquemas import (
     RetrievalSignals,
     SenalesRecuperacion,
 )
-from rag.registro import LiteralOffsetsVerifier, SentenceSelectorExtractor
+from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
 from rag.servicio.motor import Motor
 
 
