@@ -308,7 +308,7 @@ def test_servir_carpeta_crea_proyecto_privado_y_carga_documentos(
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append(Path.cwd()))
     monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
     monkeypatch.setattr(
-        "rag.diagnostico.verificar_indice",
+        "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
     )
 
@@ -330,7 +330,7 @@ def test_servir_carpeta_reutiliza_indice_vigente(monkeypatch, proyecto_temporal)
     servidores = []
     monkeypatch.setattr("rag.cli.cmd_indexar", lambda args: indexaciones.append(args) or 0)
     monkeypatch.setattr(
-        "rag.diagnostico.verificar_indice",
+        "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": True})(),
     )
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: servidores.append(Path.cwd()))
@@ -356,7 +356,7 @@ def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
     )
     monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
     monkeypatch.setattr(
-        "rag.diagnostico.verificar_indice",
+        "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
     )
     monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: None)

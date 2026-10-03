@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from rag.comparacion import comparar_artefactos
-from rag.metricas_banco import (
+from rag.evaluacion.benchmark import comparar_artefactos
+from rag.evaluacion.metricas import (
     ArtefactoEvaluacion,
     CalibracionDev,
     ReporteMetricas,

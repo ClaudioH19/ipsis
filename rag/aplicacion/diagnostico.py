@@ -222,7 +222,7 @@ def verificar_estilos() -> ResultadoChequeo:
         )
     try:
         from rag.servicio.estilos import cargar_estilos, render_css
-        from rag.temas_widget import validar_tema
+        from rag.servicio.widget import validar_tema
 
         tema = cargar_estilos()
         validar_tema(tema)

@@ -1,4 +1,4 @@
-"""Tests de ``rag/diagnostico.py`` -- chequeos de CORS vacío con claves de widget configuradas, y
+"""Tests de ``rag/aplicacion/diagnostico.py`` -- chequeos de CORS vacío con claves de widget configuradas, y
 ``configuracion/textos.yaml`` faltante. No existían tests directos de este
 módulo antes de esta tanda (se probaba solo indirectamente vía
 ``rag doctor`` en ``tests/test_cli.py``); estos son unitarios sobre las
@@ -36,7 +36,7 @@ def _escribir_dominio(raiz: Path, **overrides) -> None:
 # ---------------------------------------------------------------------------
 
 def test_cors_vacio_sin_claves_widget_es_informativo_no_falla(directorio_dominio: Path):
-    from rag.diagnostico import verificar_cors
+    from rag.aplicacion.diagnostico import verificar_cors
 
     _escribir_dominio(directorio_dominio, cors_origenes=[], claves_widget=[])
     r = verificar_cors()
@@ -47,7 +47,7 @@ def test_cors_vacio_con_claves_widget_configuradas_es_falla(directorio_dominio: 
     """Caso concreto: alguien preparó el widget
     (configuró una clave) pero se olvidó de abrir CORS -- el navegador
     bloqueará las peticiones aunque la clave sea válida."""
-    from rag.diagnostico import verificar_cors
+    from rag.aplicacion.diagnostico import verificar_cors
 
     _escribir_dominio(directorio_dominio, cors_origenes=[], claves_widget=["clave-sitio-a"])
     r = verificar_cors()
@@ -56,7 +56,7 @@ def test_cors_vacio_con_claves_widget_configuradas_es_falla(directorio_dominio: 
 
 
 def test_cors_configurado_es_ok(directorio_dominio: Path):
-    from rag.diagnostico import verificar_cors
+    from rag.aplicacion.diagnostico import verificar_cors
 
     _escribir_dominio(directorio_dominio, cors_origenes=["https://mi-sitio.cl"], claves_widget=["clave-sitio-a"])
     r = verificar_cors()
@@ -68,7 +68,7 @@ def test_cors_configurado_es_ok(directorio_dominio: Path):
 # ---------------------------------------------------------------------------
 
 def test_plantillas_ausente_es_falla_accionable(directorio_dominio: Path):
-    from rag.diagnostico import verificar_plantillas
+    from rag.aplicacion.diagnostico import verificar_plantillas
 
     assert not (directorio_dominio / "configuracion" / "textos.yaml").exists()
     r = verificar_plantillas()
@@ -77,7 +77,7 @@ def test_plantillas_ausente_es_falla_accionable(directorio_dominio: Path):
 
 
 def test_plantillas_presente_es_ok(directorio_dominio: Path):
-    from rag.diagnostico import verificar_plantillas
+    from rag.aplicacion.diagnostico import verificar_plantillas
 
     (directorio_dominio / "configuracion" / "textos.yaml").write_text("planes: {}\n", encoding="utf-8")
     r = verificar_plantillas()
@@ -85,7 +85,7 @@ def test_plantillas_presente_es_ok(directorio_dominio: Path):
 
 
 def test_ejecutar_diagnostico_incluye_los_chequeos_nuevos(directorio_dominio: Path):
-    from rag.diagnostico import ejecutar_diagnostico
+    from rag.aplicacion.diagnostico import ejecutar_diagnostico
 
     _escribir_dominio(directorio_dominio)
     nombres = {r.nombre for r in ejecutar_diagnostico()}
