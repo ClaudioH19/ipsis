@@ -434,12 +434,16 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "docu
         titulo = inferir_titulo(doc_parseado, ruta_origen.name)
 
         destino = Path(carpeta_corpus) / ruta_origen.name
+        if destino.is_file() and hashlib.sha256(destino.read_bytes()).hexdigest() != hash_contenido:
+            destino = destino.with_name(
+                f"{destino.stem}-{hash_contenido[:6]}{destino.suffix}"
+            )
         if destino.resolve() != ruta_origen.resolve():
             shutil.copy2(ruta_origen, destino)
         ids_existentes.add(doc_id)
 
         entrada = {
-            "archivo": ruta_origen.name, "doc_id": doc_id, "doc_titulo": titulo,
+            "archivo": destino.name, "doc_id": doc_id, "doc_titulo": titulo,
             "version": "1", "vigente": True, "hash_contenido": hash_contenido,
         }
         _append_entrada_catalogo(ruta_catalogo, entrada)

@@ -5,13 +5,15 @@ Qdrant se prueban aparte, contra el índice real, en ``tests/test_api.py``).
 """
 from __future__ import annotations
 
+import pytest
+
 from rag.servicio.pipeline import (
     ConfiguracionAdmision, ControlAdmision,
     SenalesAbstencion, decidir_abstencion,
     ResultadoPremisa, verificar_premisa, separar_entidades_ausentes,
     DecisionAbstencion, decidir_capas_abstencion,
     PlanDeRespuesta, redactar, redactar_zona_gris, construir_mensaje_abstencion,
-    verificar_fidelidad,
+    verificar_fidelidad, verificar_respaldo_dato_solicitado,
     detectar_conversacional, respuesta_conversacional,
     tiene_grounding_lexico, tiene_grounding_dominio,
 )
@@ -267,6 +269,45 @@ def test_verificar_fidelidad_falla_si_aparece_una_entidad_no_respaldada():
     respuesta_inventada = "El plazo es de treinta días hábiles."  # "30" no está en el fragmento
     resultado = verificar_fidelidad(respuesta_inventada, [frag])
     assert resultado.fiel is False
+
+
+@pytest.mark.parametrize(
+    ("pregunta", "texto"),
+    [
+        ("¿Cuánto cuesta el equipo?", "El precio es $499.990 impuestos incluidos."),
+        ("¿Cuántos filtros usa?", "El equipo usa tres filtros reemplazables."),
+        ("¿En cuántos días se paga?", "El pago se procesa en 10 días hábiles."),
+        ("¿Cada cuánto se cambia?", "Se cambia cada 6 meses."),
+    ],
+)
+def test_guardia_dato_solicitado_acepta_evidencia_del_tipo_correcto(pregunta, texto):
+    assert verificar_respaldo_dato_solicitado(pregunta, [_fragmento(texto)]).fiel is True
+
+
+def test_guardia_dato_solicitado_rechaza_precio_sin_importe_monetario():
+    fragmentos = [_fragmento("Se cobra un recargo del 15% sobre la tarifa de visita.")]
+
+    resultado = verificar_respaldo_dato_solicitado("¿Cuánto cuesta el equipo?", fragmentos)
+
+    assert resultado.fiel is False
+    assert "importe monetario" in resultado.motivos[0]
+
+
+def test_guardia_dato_solicitado_rechaza_cantidad_sin_objetivo_numerado():
+    fragmentos = [_fragmento("El equipo incluye filtros reemplazables.")]
+
+    resultado = verificar_respaldo_dato_solicitado("¿Cuántos filtros usa?", fragmentos)
+
+    assert resultado.fiel is False
+
+
+def test_guardia_dato_solicitado_no_bloquea_pregunta_no_cuantitativa():
+    resultado = verificar_respaldo_dato_solicitado(
+        "¿Cómo se instala el equipo?",
+        [_fragmento("El equipo se instala bajo el lavaplatos.")],
+    )
+
+    assert resultado.fiel is True
 
 
 # ---------------------------------------------------------------------------

@@ -19,6 +19,7 @@ from rag.esquemas import (
     RetrievalCandidate,
     SenalesRecuperacion,
 )
+from rag.abstencion import DecisionAbstencion
 
 
 @runtime_checkable
@@ -63,6 +64,24 @@ class Retriever(Protocol):
 
 
 @runtime_checkable
+class AbstentionPolicy(Protocol):
+    """Decide si continuar, responder, relacionar o abstenerse."""
+
+    def decidir_dominio(
+        self,
+        consulta: QueryAnalysis,
+        senales: SenalesRecuperacion,
+    ) -> DecisionAbstencion | None: ...
+
+    def decidir(
+        self,
+        consulta: QueryAnalysis,
+        senales: SenalesRecuperacion,
+        candidatos: Sequence[RetrievalCandidate],
+    ) -> DecisionAbstencion: ...
+
+
+@runtime_checkable
 class FusionStrategy(Protocol):
     def fusionar(self, resultados: Sequence[Sequence[RetrievalCandidate]], limite: int) -> list[RetrievalCandidate]: ...
 
@@ -84,7 +103,11 @@ class AnswerExtractor(Protocol):
 
 @runtime_checkable
 class EvidenceVerifier(Protocol):
-    def verificar(self, evidencias: Sequence[EvidenceSpan]) -> tuple[bool, list[str]]: ...
+    def verificar(
+        self,
+        evidencias: Sequence[EvidenceSpan],
+        candidatos: Sequence[RetrievalCandidate],
+    ) -> tuple[bool, list[str]]: ...
 
 
 @runtime_checkable
@@ -177,7 +200,7 @@ def componente(tipo: str, nombre: str, *, reemplazar: bool = False):
 
 
 __all__ = [
-    "AnswerExtractor", "Chunker", "DenseEncoder", "DocumentParser",
+    "AbstentionPolicy", "AnswerExtractor", "Chunker", "DenseEncoder", "DocumentParser",
     "EvidenceVerifier", "FusionStrategy", "IntentClassifier", "Reranker",
     "ResponseRenderer", "Retriever", "SparseEncoder", "RegistroComponentes",
     "componente", "registro_componentes",

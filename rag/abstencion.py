@@ -1,0 +1,253 @@
+"""Políticas de abstención independientes del transporte y del backend.
+
+La política decide con señales normalizadas y candidatos tipados. No recupera
+datos ni conoce Qdrant: la orquestación puede pedir evidencia adicional y
+volver a evaluarla con el conjunto ampliado.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Literal, Sequence
+
+from rag.esquemas import QueryAnalysis, RetrievalCandidate, SenalesRecuperacion
+from rag.reglas_extraccion import extraer_entidades
+from rag.texto_util import PALABRAS_GENERALES_ES, palabras_contenido
+
+Resultado = Literal["responde", "relacionado", "abstiene"]
+
+
+@dataclass(frozen=True)
+class ResultadoPremisa:
+    premisa_valida: bool
+    entidades_ausentes: list[dict]
+
+
+@dataclass(frozen=True)
+class DecisionAbstencion:
+    resultado: Resultado
+    motivo: str
+    entidad_texto: str | None = None
+    capa_decisora: str = ""
+    confianza_utilizada: float | None = None
+    candidato_id: str | None = None
+
+    @property
+    def abstiene(self) -> bool:
+        return self.resultado == "abstiene"
+
+
+def verificar_premisa_textos(pregunta: str, textos: Sequence[str]) -> ResultadoPremisa:
+    """Comprueba que las entidades cerradas de la pregunta estén respaldadas."""
+    entidades_pregunta = extraer_entidades(pregunta)
+    if not entidades_pregunta:
+        return ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
+    entidades_fragmentos = {
+        entidad["valor_norm"]
+        for entidad in extraer_entidades(" ".join(textos))
+    }
+    ausentes = [
+        entidad for entidad in entidades_pregunta
+        if entidad["valor_norm"] not in entidades_fragmentos
+    ]
+    return ResultadoPremisa(
+        premisa_valida=not ausentes,
+        entidades_ausentes=ausentes,
+    )
+
+
+def verificar_premisa_candidatos(
+    consulta: QueryAnalysis,
+    candidatos: Sequence[RetrievalCandidate],
+) -> ResultadoPremisa:
+    return verificar_premisa_textos(
+        consulta.pregunta_original,
+        [candidato.chunk.texto_fuente for candidato in candidatos],
+    )
+
+
+def separar_entidades_ausentes(
+    entidades_ausentes: list[dict],
+    inventario_corpus: set[str],
+) -> tuple[list[dict], list[dict]]:
+    en_corpus = [
+        entidad for entidad in entidades_ausentes
+        if entidad["valor_norm"] in inventario_corpus
+    ]
+    genuinamente_ausentes = [
+        entidad for entidad in entidades_ausentes
+        if entidad["valor_norm"] not in inventario_corpus
+    ]
+    return en_corpus, genuinamente_ausentes
+
+
+def tiene_grounding_lexico(
+    pregunta: str,
+    estadisticas_lexico: dict[str, float],
+    df_fraccion_max: float = 0.8,
+    palabras_generales: frozenset[str] | None = None,
+) -> bool:
+    generales = palabras_generales if palabras_generales is not None else PALABRAS_GENERALES_ES
+    for palabra in palabras_contenido(pregunta):
+        if palabra in generales:
+            continue
+        fraccion = estadisticas_lexico.get(palabra)
+        if fraccion is not None and fraccion <= df_fraccion_max:
+            return True
+    return False
+
+
+def tiene_grounding_dominio(
+    pregunta: str,
+    inventario_entidades: set[str],
+    estadisticas_lexico: dict[str, float],
+    df_fraccion_max: float = 0.8,
+    palabras_generales: frozenset[str] | None = None,
+) -> bool:
+    entidades_pregunta = extraer_entidades(pregunta)
+    if any(
+        entidad["valor_norm"] in inventario_entidades
+        for entidad in entidades_pregunta
+    ):
+        return True
+    return tiene_grounding_lexico(
+        pregunta,
+        estadisticas_lexico,
+        df_fraccion_max,
+        palabras_generales,
+    )
+
+
+def decidir_capas(
+    senales: SenalesRecuperacion,
+    umbral_fuera_dominio: float,
+    umbral_confianza_alta: float,
+    resultado_premisa: ResultadoPremisa,
+    *,
+    zona_gris_modo: str = "relacionado",
+    grounding_dominio: bool = False,
+    candidato_id: str | None = None,
+) -> DecisionAbstencion:
+    """Decisión heredada, pura y sin dependencias de infraestructura."""
+    if resultado_premisa.entidades_ausentes:
+        return DecisionAbstencion(
+            resultado="abstiene",
+            motivo="premisa",
+            entidad_texto=resultado_premisa.entidades_ausentes[0]["texto"],
+            capa_decisora="premisa",
+            confianza_utilizada=senales.confianza_top1,
+            candidato_id=candidato_id,
+        )
+    if senales.confianza_top1 < umbral_fuera_dominio and not grounding_dominio:
+        return DecisionAbstencion(
+            resultado="abstiene",
+            motivo="fuera_dominio",
+            capa_decisora="fuera_dominio",
+            confianza_utilizada=senales.confianza_top1,
+            candidato_id=candidato_id,
+        )
+    if senales.confianza_top1 < umbral_confianza_alta:
+        return DecisionAbstencion(
+            resultado=("relacionado" if zona_gris_modo == "relacionado" else "abstiene"),
+            motivo="zona_gris",
+            capa_decisora="zona_gris",
+            confianza_utilizada=senales.confianza_top1,
+            candidato_id=candidato_id,
+        )
+    return DecisionAbstencion(
+        resultado="responde",
+        motivo="confianza_alta",
+        capa_decisora="confianza_alta",
+        confianza_utilizada=senales.confianza_top1,
+        candidato_id=candidato_id,
+    )
+
+
+class LayeredV1:
+    """Implementación tipada de la decisión heredada por capas."""
+
+    def __init__(
+        self,
+        configuracion: dict,
+        inventario_entidades: set[str] | None = None,
+        estadisticas_lexico: dict[str, float] | None = None,
+        palabras_generales: frozenset[str] | None = None,
+    ) -> None:
+        try:
+            capa_a = configuracion["capa_a_fuera_dominio"]
+            confianza_alta = configuracion["confianza_alta"]
+            self.umbral_fuera_dominio = float(capa_a["umbral"])
+            self.umbral_confianza_alta = float(confianza_alta["umbral"])
+            self.df_fraccion_max = float(
+                capa_a["grounding_lexico"]["df_fraccion_max"]
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("configuración inválida para abstention_policy/layered_v1") from exc
+        if self.umbral_confianza_alta < self.umbral_fuera_dominio:
+            raise ValueError(
+                "confianza_alta.umbral debe ser mayor o igual que "
+                "capa_a_fuera_dominio.umbral"
+            )
+        self.zona_gris_modo = configuracion.get("zona_gris", {}).get(
+            "modo", "relacionado"
+        )
+        if self.zona_gris_modo not in {"relacionado", "abstenerse"}:
+            raise ValueError("abstencion.zona_gris.modo debe ser relacionado o abstenerse")
+        self.inventario_entidades = set(inventario_entidades or ())
+        self.estadisticas_lexico = dict(estadisticas_lexico or {})
+        self.palabras_generales = palabras_generales
+
+    def _grounding(self, consulta: QueryAnalysis) -> bool:
+        return tiene_grounding_dominio(
+            consulta.pregunta_original,
+            self.inventario_entidades,
+            self.estadisticas_lexico,
+            self.df_fraccion_max,
+            self.palabras_generales,
+        )
+
+    def decidir_dominio(
+        self,
+        consulta: QueryAnalysis,
+        senales: SenalesRecuperacion,
+    ) -> DecisionAbstencion | None:
+        """Devuelve una abstención temprana o ``None`` para continuar."""
+        if (
+            senales.confianza_top1 < self.umbral_fuera_dominio
+            and not self._grounding(consulta)
+        ):
+            return DecisionAbstencion(
+                resultado="abstiene",
+                motivo="fuera_dominio",
+                capa_decisora="fuera_dominio",
+                confianza_utilizada=senales.confianza_top1,
+            )
+        return None
+
+    def decidir(
+        self,
+        consulta: QueryAnalysis,
+        senales: SenalesRecuperacion,
+        candidatos: Sequence[RetrievalCandidate],
+    ) -> DecisionAbstencion:
+        return decidir_capas(
+            senales,
+            self.umbral_fuera_dominio,
+            self.umbral_confianza_alta,
+            verificar_premisa_candidatos(consulta, candidatos),
+            zona_gris_modo=self.zona_gris_modo,
+            grounding_dominio=self._grounding(consulta),
+            candidato_id=candidatos[0].chunk.chunk_id if candidatos else None,
+        )
+
+
+__all__ = [
+    "DecisionAbstencion",
+    "decidir_capas",
+    "LayeredV1",
+    "ResultadoPremisa",
+    "separar_entidades_ausentes",
+    "tiene_grounding_dominio",
+    "tiene_grounding_lexico",
+    "verificar_premisa_candidatos",
+    "verificar_premisa_textos",
+]

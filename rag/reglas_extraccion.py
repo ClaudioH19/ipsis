@@ -14,6 +14,8 @@ literal y no requiere NLU.
 from __future__ import annotations
 
 import re
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, asdict
 from typing import Iterable
 
@@ -211,6 +213,11 @@ TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "articulo"}
 # por falta de perfil.
 # ---------------------------------------------------------------------------
 _perfil_activo = None
+_SIN_PERFIL_CONTEXTUAL = object()
+_perfil_contextual: ContextVar = ContextVar(
+    "rag_perfil_contextual",
+    default=_SIN_PERFIL_CONTEXTUAL,
+)
 
 
 def configurar_perfil(perfil) -> None:
@@ -225,7 +232,18 @@ def configurar_perfil(perfil) -> None:
 def perfil_activo():
     """El perfil configurado actualmente (o None si no se configuro
     ninguno)."""
-    return _perfil_activo
+    contextual = _perfil_contextual.get()
+    return _perfil_activo if contextual is _SIN_PERFIL_CONTEXTUAL else contextual
+
+
+@contextmanager
+def usar_perfil(perfil):
+    """Activa un perfil solo para la consulta/contexto actual."""
+    token = _perfil_contextual.set(perfil)
+    try:
+        yield
+    finally:
+        _perfil_contextual.reset(token)
 
 
 def tipos_con_regla() -> set[str]:
@@ -237,8 +255,9 @@ def tipos_con_regla() -> set[str]:
     criterio que extraer_entidades. Asi ningun modulo de evaluacion
     necesita conocer los tipos de un perfil en particular."""
     tipos = set(TIPOS_GENERICOS)
-    if _perfil_activo is not None:
-        tipos |= _perfil_activo.tipos_aportados()
+    perfil = perfil_activo()
+    if perfil is not None:
+        tipos |= perfil.tipos_aportados()
     return tipos
 
 
@@ -253,8 +272,9 @@ def extraer_entidades(texto: str) -> list[dict]:
     entidades: list[Entidad] = []
     for extractor in EXTRACTORES:
         entidades.extend(extractor(texto))
-    if _perfil_activo is not None:
-        entidades.extend(_perfil_activo.extraer_entidades_extra(texto))
+    perfil = perfil_activo()
+    if perfil is not None:
+        entidades.extend(perfil.extraer_entidades_extra(texto))
     entidades.sort(key=lambda e: e.offset)
     # valida la invariante antes de devolver (falla temprano si una regla se desalinea)
     for e in entidades:

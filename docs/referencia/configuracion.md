@@ -3,13 +3,17 @@
 ## Versionado
 
 `configuracion/motor.yaml` y `configuracion/asistente.yaml` usan
-`config_version`. La versión vigente es `1`.
+`config_version`. La versión vigente es `2`.
 
 - Si falta `config_version`, el cargador interpreta el archivo como versión 0
-  y lo migra a la versión 1.
+  y lo migra de forma secuencial hasta la versión 2.
 - La migración no modifica el archivo original.
 - La validación rechaza claves desconocidas.
 - Una versión superior a la soportada produce un error explícito.
+
+La versión 2 elimina `recuperacion.reranker`: la implementación se selecciona
+únicamente mediante `componentes.reranker`. Los archivos anteriores se migran
+sin modificar el YAML de origen.
 
 La configuración ya validada puede cargarse desde Python:
 
@@ -63,6 +67,29 @@ Los adaptadores base disponibles no descargan modelos durante el registro.
 `sentence_transformers` carga el modelo solo al crear el encoder. La conexión
 a Qdrant y los rerankers se configura desde el servicio porque depende del
 índice, la colección y los recursos disponibles.
+
+### Backend de recuperación
+
+`qdrant` es el único backend soportado. `recuperacion.modo` permite elegir
+`vectorial` o `hibrida`; ambos conservan el mismo contrato y requieren volver a
+indexar cuando cambia la representación persistida.
+
+## Presentación del widget
+
+`configuracion/estilos.yaml` admite un `preset` y opciones independientes del
+contenido documental:
+
+```yaml
+preset: editorial
+presentacion:
+  densidad: comoda
+  citas: abiertas
+  mostrar_etiqueta_estado: true
+```
+
+Los presets se administran mediante `rag widget tema`. `/config` expone estos
+valores para que el widget los aplique, pero no ofrece escritura HTTP. La clave
+pública del widget autoriza consultas y no debe utilizarse para administración.
 
 ## Snapshot efectivo
 

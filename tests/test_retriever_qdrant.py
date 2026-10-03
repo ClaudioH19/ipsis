@@ -160,7 +160,7 @@ def test_modo_invalido_falla_al_construir(retriever):
         RetrieverQdrant(retriever.coleccion, modo="magico")
 
 
-def test_registry_expone_el_retriever_qdrant():
+def test_registry_expone_qdrant_como_unico_retriever_base():
     from rag.componentes import RegistroComponentes
     from rag.registro import registrar_componentes_base
 

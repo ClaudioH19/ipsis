@@ -43,3 +43,6 @@ data/reportes/*.tmp
 .DS_Store
 Thumbs.db
 onnx_scratch/
+
+# Grafo de conocimiento local (graphify)
+graphify-out/

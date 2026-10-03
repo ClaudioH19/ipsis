@@ -14,21 +14,20 @@ FastAPI que corre ANTES que el cuerpo de la ruta -- ver
 ``rag/servicio/api.py::_verificar_seguridad`` -- y ``/config``/``/widget.js``/
 ``/widget/demo.html`` tampoco tocan el índice.
 
-Los tests de autenticación y límite de peticiones SIEMPRE reemplazan
-``estado.claves_widget``/``estado.limitador`` con ``monkeypatch`` -- nunca
-mutan el objeto global compartido con el resto de la suite (en particular
-``tests/test_api.py``, que hace decenas de peticiones reales a
-``/consultar`` en el mismo proceso de pytest y compartiría el mismo *token
-bucket* si no se aislara)."""
+Los tests de autenticación y límite de peticiones reemplazan los atributos
+de ``app.state.servicio`` con ``monkeypatch``. El estado pertenece a esta
+instancia de aplicación; ``crear_app`` produce otro estado y otro *token
+bucket* para cada aplicación."""
 from __future__ import annotations
 
 import pytest
 from fastapi.testclient import TestClient
 
-from rag.servicio.api import app, estado
+from rag.servicio.api import app
 from rag.servicio.seguridad import NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones
 
 client = TestClient(app)  # SIN 'with': no dispara startup (no requiere corpus/índice)
+estado = app.state.servicio
 
 
 @pytest.fixture(autouse=True)
@@ -166,6 +165,10 @@ def test_config_devuelve_los_textos_del_dominio():
     assert body["nombre_asistente"]
     assert body["descripcion_dominio"]
     assert body["saludo"]
+    assert body["preset"] in {"clasico", "minimal", "editorial", "contraste"}
+    assert body["densidad"] in {"comoda", "compacta"}
+    assert body["citas"] in {"acordeon", "abiertas", "ocultas"}
+    assert isinstance(body["mostrar_etiqueta_estado"], bool)
     # el saludo real de configuracion/textos.yaml, con las variables ya
     # sustituidas (nunca la plantilla cruda con '{nombre_asistente}' sin
     # rellenar) -- misma función que responde un "hola" real.

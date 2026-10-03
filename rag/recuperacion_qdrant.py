@@ -94,7 +94,12 @@ class RetrieverQdrant:
                      vector_precomputado=self._vector_consulta(pregunta))
         s1 = res.scores[0] if res.scores else 0.0
         s2 = res.scores[1] if len(res.scores) > 1 else 0.0
-        return SenalesRecuperacion(confianza_top1=s1, margen_top1_top2=s1 - s2)
+        return SenalesRecuperacion(
+            confianza_top1=s1,
+            margen_top1_top2=s1 - s2,
+            metodo_confianza="cosine_top1_v1",
+            estado_calibracion="sin_calibrar",
+        )
 
     def recuperar(self, consulta: QueryAnalysis, limite: int,
                   filtro: FiltroEntidad | None = None) -> list[RetrievalCandidate]:
@@ -124,6 +129,11 @@ class RetrieverQdrant:
         """Una inferencia real antes de aceptar tráfico, para que la primera
         pregunta no pague la carga en frío del modelo."""
         self._codificar("calentamiento del modelo")
+
+    def cerrar(self) -> None:
+        cerrar = getattr(self.coleccion.client, "close", None)
+        if callable(cerrar):
+            cerrar()
 
 
 __all__ = ["RetrieverQdrant"]

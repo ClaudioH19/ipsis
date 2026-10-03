@@ -6,11 +6,11 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-CONFIG_VERSION = 1
+CONFIG_VERSION = 2
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
-    "evidence_verifier", "response_renderer",
+    "evidence_verifier", "response_renderer", "abstention_policy",
 )
 
 
@@ -36,7 +36,6 @@ class RecuperacionConfig(ConfiguracionEstricta):
     con_header: bool = False
     modo: Literal["vectorial", "hibrida"] = "hibrida"
     top_k: int = Field(default=3, ge=1)
-    reranker: str | dict[str, Any] | None = None
     coleccion_base: str = Field(min_length=1)
     qdrant_path: str = ".cache/qdrant_local"
     version_coleccion: int = Field(default=1, ge=1)
@@ -60,6 +59,7 @@ class ComponentesConfig(ConfiguracionEstricta):
     answer_extractor: str = Field(default="sentence_selector", min_length=1)
     evidence_verifier: str = Field(default="literal_offsets", min_length=1)
     response_renderer: str = Field(default="templates", min_length=1)
+    abstention_policy: str = Field(default="layered_v1", min_length=1)
 
 
 class QdrantConfig(ConfiguracionEstricta):
@@ -124,6 +124,25 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
         if version == 0:
             salida["config_version"] = 1
             version = 1
+        elif version == 1:
+            if nombre == "motor":
+                recuperacion = salida.setdefault("recuperacion", {})
+                heredado = recuperacion.pop("reranker", None)
+                componentes = salida.setdefault("componentes", {})
+                seleccionado = componentes.get("reranker")
+                if isinstance(heredado, dict):
+                    raise ValueError(
+                        "recuperacion.reranker con opciones no puede migrarse "
+                        "automáticamente; selecciona componentes.reranker por nombre"
+                    )
+                if heredado is not None and seleccionado not in {None, heredado}:
+                    raise ValueError(
+                        "recuperacion.reranker y componentes.reranker se contradicen"
+                    )
+                if heredado is not None:
+                    componentes["reranker"] = heredado
+            salida["config_version"] = 2
+            version = 2
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(f"no existe migración de {nombre} versión {version}")
     return salida

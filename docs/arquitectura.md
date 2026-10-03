@@ -6,8 +6,8 @@ widget web consume esa API; no ejecuta embeddings ni Qdrant en el navegador.
 
 ```text
 documentos -> parsing -> chunks -> metadata -> Qdrant dense+sparse
-                                                    |
-pregunta -> análisis -> recuperación -> selección literal -> API -> widget
+                                           |
+pregunta -> análisis -> Qdrant -> selección literal -> API -> widget
 ```
 
 ## Restricción central
@@ -54,9 +54,13 @@ Los adaptadores actualmente disponibles se registran mediante
 abre conexiones; las dependencias pesadas se inicializan únicamente cuando se
 crea el componente correspondiente.
 
+El retriever base soportado es `qdrant`, en modo vectorial o híbrido. Entrega
+tipos versionados, admite filtros exactos por entidad y conserva señales densas
+y léxicas en el diagnóstico.
+
 La configuración de [configuracion/motor.yaml](../configuracion/motor.yaml)
 declara los nombres estables bajo `componentes`. Los archivos antiguos sin
-`config_version` se migran de forma idempotente a la versión 1; las versiones
+`config_version` se migran de forma idempotente a la versión 2; las versiones
 futuras se rechazan para evitar interpretar silenciosamente una configuración
 incompatible.
 

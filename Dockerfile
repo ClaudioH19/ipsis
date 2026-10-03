@@ -23,7 +23,10 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY --from=builder /wheels/ /wheels/
-RUN python -m pip install --no-cache-dir /wheels/rag_extractivo-*.whl \
+# Instalar primero PyTorch desde el índice CPU evita incorporar varios GB de
+# runtimes CUDA que este proyecto no utiliza.
+RUN python -m pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+    && python -m pip install --no-cache-dir /wheels/rag_extractivo-*.whl \
     && rm -rf /wheels
 
 # Configuración genérica de arranque. En producción puede montarse otra

@@ -51,7 +51,7 @@ from typing import Literal
 import yaml
 
 from rag.reglas_extraccion import extraer_entidades
-from rag.texto_util import palabras_contenido
+from rag.texto_util import sin_acentos
 
 
 # ==========================================================================
@@ -69,7 +69,7 @@ def _patrones_conversacionales_compilados() -> dict[str, list[re.Pattern]]:
     return {cat: [re.compile(p, re.IGNORECASE) for p in lista] for cat, lista in patrones.items()}
 
 
-def detectar_conversacional(pregunta: str) -> str | None:
+def detectar_conversacional(pregunta: str, plantillas: dict | None = None) -> str | None:
     """Devuelve la categoría conversacional detectada (``"saludo"``,
     ``"agradecimiento"``, ``"despedida"``, ``"capacidad"``) según los
     patrones deterministas de ``configuracion/textos.yaml::conversacional``, o
@@ -78,8 +78,15 @@ def detectar_conversacional(pregunta: str) -> str | None:
     el orden declarado en config; la primera que matchea gana. Regex
     simples, sin NLP: exactamente el mismo criterio de determinismo que el
     resto del proyecto (nada de esto lo decide un modelo)."""
-    categorias = _cargar_plantillas().get("conversacional", {}).get("categorias", [])
-    patrones = _patrones_conversacionales_compilados()
+    datos = plantillas or _cargar_plantillas()
+    categorias = datos.get("conversacional", {}).get("categorias", [])
+    if plantillas is None:
+        patrones = _patrones_conversacionales_compilados()
+    else:
+        patrones = {
+            categoria: [re.compile(patron, re.IGNORECASE) for patron in lista]
+            for categoria, lista in datos.get("conversacional", {}).get("patrones", {}).items()
+        }
     for categoria in categorias:
         for patron in patrones.get(categoria, []):
             if patron.search(pregunta):
@@ -87,7 +94,11 @@ def detectar_conversacional(pregunta: str) -> str | None:
     return None
 
 
-def respuesta_conversacional(categoria: str, pregunta: str = "") -> str:
+def respuesta_conversacional(
+    categoria: str,
+    pregunta: str = "",
+    plantillas: dict | None = None,
+) -> str:
     """Texto FIJO de ``configuracion/textos.yaml::conversacional.respuestas``
     para la categoría detectada -- nunca generado.
 
@@ -101,7 +112,7 @@ def respuesta_conversacional(categoria: str, pregunta: str = "") -> str:
     que sigue siendo testeable, pero "hola" y "buenas" no contestan lo
     mismo. Acepta también un string suelto, por compatibilidad con un
     `plantillas.yaml` anterior a esta variedad."""
-    opciones = _cargar_plantillas()["conversacional"]["respuestas"][categoria]
+    opciones = (plantillas or _cargar_plantillas())["conversacional"]["respuestas"][categoria]
     if isinstance(opciones, str):
         return opciones
     return _elegir_variante(opciones, pregunta)
@@ -233,15 +244,16 @@ def verificar_premisa(pregunta: str, fragmentos: list[dict]) -> ResultadoPremisa
     recuperados. Si la pregunta no menciona ninguna entidad cerrada, la
     premisa se da por válida (esta capa no tiene nada que verificar -- no es
     lo mismo que "está bien respaldada", ver la zona gris más abajo)."""
-    from rag.reglas_extraccion import extraer_entidades
+    from rag.abstencion import verificar_premisa_textos
 
-    entidades_pregunta = extraer_entidades(pregunta)
-    if not entidades_pregunta:
-        return ResultadoPremisa(premisa_valida=True, entidades_ausentes=[])
-    texto_fragmentos = " ".join(f["texto"] for f in fragmentos)
-    entidades_fragmentos = {e["valor_norm"] for e in extraer_entidades(texto_fragmentos)}
-    ausentes = [e for e in entidades_pregunta if e["valor_norm"] not in entidades_fragmentos]
-    return ResultadoPremisa(premisa_valida=(len(ausentes) == 0), entidades_ausentes=ausentes)
+    resultado = verificar_premisa_textos(
+        pregunta,
+        [fragmento["texto"] for fragmento in fragmentos],
+    )
+    return ResultadoPremisa(
+        premisa_valida=resultado.premisa_valida,
+        entidades_ausentes=resultado.entidades_ausentes,
+    )
 
 
 def separar_entidades_ausentes(entidades_ausentes: list[dict], inventario_corpus: set[str]) -> tuple[list[dict], list[dict]]:
@@ -258,9 +270,9 @@ def separar_entidades_ausentes(entidades_ausentes: list[dict], inventario_corpus
         top-k, p.ej. "artículo 99" o "20 semanas").
 
     Devuelve ``(en_corpus, genuinamente_ausentes)``."""
-    en_corpus = [e for e in entidades_ausentes if e["valor_norm"] in inventario_corpus]
-    genuinamente_ausentes = [e for e in entidades_ausentes if e["valor_norm"] not in inventario_corpus]
-    return en_corpus, genuinamente_ausentes
+    from rag.abstencion import separar_entidades_ausentes as separar
+
+    return separar(entidades_ausentes, inventario_corpus)
 
 
 def tiene_grounding_lexico(pregunta: str, estadisticas_lexico: dict[str, float],
@@ -298,16 +310,14 @@ def tiene_grounding_lexico(pregunta: str, estadisticas_lexico: dict[str, float],
     asumir siempre español (``rag/texto_util.py::cargar_palabras_generales``).
     Si es ``None`` (compatibilidad hacia atrás, tests unitarios), cae al
     conjunto por defecto en español."""
-    from rag.texto_util import PALABRAS_GENERALES_ES
+    from rag.abstencion import tiene_grounding_lexico as tiene_grounding
 
-    generales = palabras_generales if palabras_generales is not None else PALABRAS_GENERALES_ES
-    for palabra in palabras_contenido(pregunta):
-        if palabra in generales:
-            continue
-        fraccion = estadisticas_lexico.get(palabra)
-        if fraccion is not None and fraccion <= df_fraccion_max:
-            return True
-    return False
+    return tiene_grounding(
+        pregunta,
+        estadisticas_lexico,
+        df_fraccion_max,
+        palabras_generales,
+    )
 
 
 def tiene_grounding_dominio(pregunta: str, inventario_entidades: set[str],
@@ -324,10 +334,15 @@ def tiene_grounding_dominio(pregunta: str, inventario_entidades: set[str],
     corpus) y "q pasa si me atraso con la bitacora" (palabra "bitácora" en
     el vocabulario, sin tilde en la pregunta, y NO en
     ``PALABRAS_GENERALES_ES``)."""
-    entidades_pregunta = extraer_entidades(pregunta)
-    if any(e["valor_norm"] in inventario_entidades for e in entidades_pregunta):
-        return True
-    return tiene_grounding_lexico(pregunta, estadisticas_lexico, df_fraccion_max, palabras_generales)
+    from rag.abstencion import tiene_grounding_dominio as tiene_grounding
+
+    return tiene_grounding(
+        pregunta,
+        inventario_entidades,
+        estadisticas_lexico,
+        df_fraccion_max,
+        palabras_generales,
+    )
 
 
 Resultado = Literal["responde", "relacionado", "abstiene"]
@@ -374,20 +389,28 @@ def decidir_capas_abstencion(senales: SenalesAbstencion, umbral_fuera_dominio: f
     depende de dónde caiga el score continuo): capa (b) primero -- si hay
     una entidad de la pregunta sin respaldo (tras la recuperación dirigida),
     se abstiene citándola, pase lo que pase con el score."""
-    if resultado_premisa.entidades_ausentes:
-        entidad = resultado_premisa.entidades_ausentes[0]["texto"]
-        return DecisionAbstencion(resultado="abstiene", motivo="premisa", entidad_texto=entidad)
-    if senales.score_top1 < umbral_fuera_dominio and not grounding_dominio:
-        return DecisionAbstencion(resultado="abstiene", motivo="fuera_dominio")
-    if senales.score_top1 < umbral_confianza_alta:
-        # Nota: si `grounding_dominio` rescató a la pregunta de la capa (a)
-        # pese a un score bajo el umbral, cae aquí (zona gris) en vez de
-        # "confianza alta" -- es la franja correcta para un match débil con
-        # evidencia de dominio determinista, no una respuesta confiada.
-        if zona_gris_modo == "relacionado":
-            return DecisionAbstencion(resultado="relacionado", motivo="zona_gris")
-        return DecisionAbstencion(resultado="abstiene", motivo="zona_gris")
-    return DecisionAbstencion(resultado="responde", motivo="confianza_alta")
+    from rag.abstencion import ResultadoPremisa as ResultadoPremisaTipado, decidir_capas
+    from rag.esquemas import SenalesRecuperacion
+
+    decision = decidir_capas(
+        SenalesRecuperacion(
+            confianza_top1=senales.score_top1,
+            margen_top1_top2=senales.margen_top1_top2,
+        ),
+        umbral_fuera_dominio,
+        umbral_confianza_alta,
+        ResultadoPremisaTipado(
+            premisa_valida=resultado_premisa.premisa_valida,
+            entidades_ausentes=resultado_premisa.entidades_ausentes,
+        ),
+        zona_gris_modo=zona_gris_modo,
+        grounding_dominio=grounding_dominio,
+    )
+    return DecisionAbstencion(
+        resultado=decision.resultado,
+        motivo=decision.motivo,
+        entidad_texto=decision.entidad_texto,
+    )
 
 
 @dataclass
@@ -486,18 +509,18 @@ def extraer_slots(plan: Plan, fragmentos: list[dict]) -> dict:
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
 # ==========================================================================
-@functools.lru_cache(maxsize=1)
-def _cargar_plantillas(ruta: str = "configuracion/textos.yaml") -> dict:
+def cargar_plantillas(ruta: str | Path, dominio: dict | None = None) -> dict:
     """Carga ``configuracion/textos.yaml`` y sustituye las variables de dominio
     (``{nombre_asistente}``/``{descripcion_dominio}``) en los textos
     conversacionales fijos, usando ``configuracion/asistente.yaml`` (Etapa Plugin,
     Tarea C) -- así el mismo YAML de plantillas sirve para cualquier
     dominio, sin nombrar ningún corpus en el texto fijo. Cacheado (mismo
     criterio que el resto del módulo): se lee una vez por proceso."""
-    from rag.configuracion import cargar_dominio
-
     datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
-    dominio = cargar_dominio()
+    if dominio is None:
+        from rag.configuracion import cargar_dominio
+
+        dominio = cargar_dominio()
     variables = {
         "nombre_asistente": dominio.get("nombre_asistente", "el asistente"),
         "descripcion_dominio": dominio.get("descripcion_dominio", "los documentos cargados"),
@@ -522,6 +545,12 @@ def _cargar_plantillas(ruta: str = "configuracion/textos.yaml") -> dict:
         else:
             respuestas[categoria] = [sustituir(t) for t in valor]
     return datos
+
+
+@functools.lru_cache(maxsize=1)
+def _cargar_plantillas(ruta: str = "configuracion/textos.yaml") -> dict:
+    """Compatibilidad para llamadas fuera de ``Motor``."""
+    return cargar_plantillas(ruta)
 
 
 def _elegir_variante(opciones: list[str], semilla: str, evitar: set[str] | None = None) -> str:
@@ -603,7 +632,13 @@ def _formatear_cita(frag: dict, estilo: str) -> str:
     return f"(Fuente: {frag['doc_titulo']}, seccion: {seccion})"
 
 
-def _ensamblar_fragmentos_con_citas(fragmentos: list[dict], con_apertura: bool = True) -> str:
+def _ensamblar_fragmentos_con_citas(
+    fragmentos: list[dict],
+    con_apertura: bool = True,
+    *,
+    plantillas: dict | None = None,
+    cfg_redaccion: dict | None = None,
+) -> str:
     """Concatena el texto LITERAL de cada fragmento (nunca lo reescribe) con
     su cita y, entre fragmentos, un conector FIJO de
     ``configuracion/textos.yaml`` -- la unica "redaccion" permitida.
@@ -619,9 +654,9 @@ def _ensamblar_fragmentos_con_citas(fragmentos: list[dict], con_apertura: bool =
     (estado ``relacionado``)."""
     from rag.configuracion import config_redaccion
 
-    plantillas = _cargar_plantillas()
+    plantillas = plantillas or _cargar_plantillas()
     conectores = plantillas["conectores"]
-    cfg = config_redaccion()
+    cfg = cfg_redaccion or config_redaccion()
     estilo_cita = str(cfg.get("cita_en_texto", "completa"))
 
     elegidos = _fragmentos_para_el_texto(fragmentos, cfg)
@@ -658,13 +693,28 @@ def _ensamblar_fragmentos_con_citas(fragmentos: list[dict], con_apertura: bool =
     return " ".join(partes)
 
 
-def redactar(plan: PlanDeRespuesta, fragmentos: list[dict]) -> str:
+def redactar(
+    plan: PlanDeRespuesta,
+    fragmentos: list[dict],
+    *,
+    plantillas: dict | None = None,
+    cfg_redaccion: dict | None = None,
+) -> str:
     """Respuesta normal (estado ``ok``): fragmentos literales + citas +
     conectores fijos, sin ningún encabezado adicional."""
-    return _ensamblar_fragmentos_con_citas(fragmentos)
+    return _ensamblar_fragmentos_con_citas(
+        fragmentos,
+        plantillas=plantillas,
+        cfg_redaccion=cfg_redaccion,
+    )
 
 
-def redactar_zona_gris(fragmentos: list[dict]) -> str:
+def redactar_zona_gris(
+    fragmentos: list[dict],
+    *,
+    plantillas: dict | None = None,
+    cfg_redaccion: dict | None = None,
+) -> str:
     """Estado propio ``"relacionado"`` (Etapa C, punto 2 del encargo del
     coordinador -- ACTIVO por defecto desde esta etapa): cuando la pregunta
     pasa las dos capas de abstención pero el score denso es "intermedio"
@@ -678,14 +728,19 @@ def redactar_zona_gris(fragmentos: list[dict]) -> str:
     Configurable: ``configuracion/motor.yaml::abstencion.zona_gris.modo`` en
     {"relacionado" (default), "abstenerse"} -- dominios de costo de error
     ALTO pueden volver a "abstenerse" por configuración, sin tocar código."""
-    intro = _cargar_plantillas()["abstencion"]["zona_gris_intro"]
+    plantillas = plantillas or _cargar_plantillas()
+    intro = plantillas["abstencion"]["zona_gris_intro"]
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
-    return f"{intro} {_ensamblar_fragmentos_con_citas(fragmentos, con_apertura=False)}"
+    return f"{intro} {_ensamblar_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas, cfg_redaccion=cfg_redaccion)}"
 
 
-def construir_mensaje_abstencion(motivo: str, entidad_texto: str | None = None) -> str:
+def construir_mensaje_abstencion(
+    motivo: str,
+    entidad_texto: str | None = None,
+    plantillas: dict | None = None,
+) -> str:
     """Mensaje de abstención SIEMPRE listo para mostrar a un usuario final
     (nunca ``null`` en la respuesta HTTP: el servicio puede servir a un
     frontend externo -- plugin/widget de chat -- que necesita un string,
@@ -693,10 +748,10 @@ def construir_mensaje_abstencion(motivo: str, entidad_texto: str | None = None) 
     {"fuera_dominio", "premisa", "guardia", "sin_fragmentos"}; solo
     "premisa" usa ``entidad_texto`` (copiado LITERAL de la pregunta del
     usuario, nunca inventado)."""
-    plantillas = _cargar_plantillas()["abstencion"]
+    textos = (plantillas or _cargar_plantillas())["abstencion"]
     if motivo == "premisa" and entidad_texto:
-        return plantillas["premisa_no_encontrada"].format(entidad=entidad_texto)
-    return plantillas["generico"]
+        return textos["premisa_no_encontrada"].format(entidad=entidad_texto)
+    return textos["generico"]
 
 
 # ==========================================================================
@@ -706,6 +761,92 @@ def construir_mensaje_abstencion(motivo: str, entidad_texto: str | None = None) 
 class ResultadoFidelidad:
     fiel: bool
     motivos: list[str] = field(default_factory=list)
+
+
+_RE_SOLICITUD_PRECIO = re.compile(
+    r"\b(?:precio|costo|coste|tarifa)\b|\bcuanto\s+(?:cuesta|cuestan|vale|valen)\b|\bvalor\s+(?:de|del)\b",
+    re.IGNORECASE,
+)
+_RE_DINERO = re.compile(
+    r"(?:[$€£]\s*\d)|(?:\b(?:clp|usd|eur|uf|utm)\s*\$?\s*\d)"
+    r"|(?:\b\d[\d.,]*\s*(?:pesos?|dolares?|euros?|clp|usd|eur|uf|utm)\b)",
+    re.IGNORECASE,
+)
+_RE_SOLICITUD_DURACION = re.compile(
+    r"\bcada\s+cuanto\b|\bcuanto\s+dura\b|\bcuantos?\s+(?:dias?|semanas?|meses?|horas?|minutos?)\b",
+    re.IGNORECASE,
+)
+_RE_SOLICITUD_CANTIDAD = re.compile(
+    r"\bcuant(?:os|as)\s+([a-z]+)\b|\bcantidad\s+de\s+([a-z]+)\b",
+    re.IGNORECASE,
+)
+_NUMEROS_CANTIDAD = {
+    "un", "una", "uno", "dos", "tres", "cuatro", "cinco", "seis",
+    "siete", "ocho", "nueve", "diez", "once", "doce", "trece",
+    "catorce", "quince", "veinte", "treinta", "cien", "mil",
+}
+
+
+def _texto_fuente(fragmentos: list[dict]) -> str:
+    return " ".join(
+        f"{f['texto']} {f['doc_titulo']} {' '.join(f.get('seccion_path') or [])}"
+        for f in fragmentos
+    )
+
+
+def _cantidad_cercana_a_objetivo(texto: str, objetivo: str) -> bool:
+    tokens = re.findall(r"\d+(?:[.,]\d+)?|[a-z]+", sin_acentos(texto).lower())
+    raiz = objetivo[:-2] if objetivo.endswith("es") else objetivo[:-1] if objetivo.endswith("s") else objetivo
+    for indice, token in enumerate(tokens):
+        if token != objetivo and not (len(raiz) >= 3 and token.startswith(raiz)):
+            continue
+        anteriores = tokens[max(0, indice - 4):indice]
+        if any(re.fullmatch(r"\d+(?:[.,]\d+)?", valor) or valor in _NUMEROS_CANTIDAD for valor in anteriores):
+            return True
+    return False
+
+
+def verificar_respaldo_dato_solicitado(
+    pregunta: str,
+    fragmentos: list[dict],
+) -> ResultadoFidelidad:
+    """Exige el tipo de dato pedido antes de permitir una respuesta directa.
+
+    Es deliberadamente conservadora: solo bloquea intenciones cuantitativas
+    reconocibles con alta precisión. No intenta juzgar relevancia semántica ni
+    sustituye la evaluación de recuperación.
+    """
+    pregunta_norm = sin_acentos(pregunta).lower()
+    fuente = _texto_fuente(fragmentos)
+    fuente_norm = sin_acentos(fuente).lower()
+
+    if _RE_SOLICITUD_PRECIO.search(pregunta_norm):
+        if not _RE_DINERO.search(fuente_norm):
+            return ResultadoFidelidad(
+                fiel=False,
+                motivos=["la pregunta solicita un precio, pero la evidencia no contiene un importe monetario"],
+            )
+        return ResultadoFidelidad(fiel=True)
+
+    if _RE_SOLICITUD_DURACION.search(pregunta_norm):
+        if not any(entidad["tipo"] == "plazo" for entidad in extraer_entidades(fuente)):
+            return ResultadoFidelidad(
+                fiel=False,
+                motivos=["la pregunta solicita una duración, pero la evidencia no contiene un plazo"],
+            )
+        return ResultadoFidelidad(fiel=True)
+
+    solicitud = _RE_SOLICITUD_CANTIDAD.search(pregunta_norm)
+    if solicitud:
+        objetivo = solicitud.group(1) or solicitud.group(2)
+        if not _cantidad_cercana_a_objetivo(fuente_norm, objetivo):
+            return ResultadoFidelidad(
+                fiel=False,
+                motivos=[
+                    f"la pregunta solicita una cantidad de {objetivo}, pero la evidencia no contiene esa cantidad"
+                ],
+            )
+    return ResultadoFidelidad(fiel=True)
 
 
 def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> ResultadoFidelidad:
@@ -726,10 +867,7 @@ def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> Resu
     pregunta real de un usuario). Aquí la única fuente de verdad son los
     fragmentos que el propio sistema recuperó."""
     entidades_respuesta = {e["valor_norm"] for e in extraer_entidades(respuesta_generada)}
-    texto_fuente = " ".join(
-        f"{f['texto']} {f['doc_titulo']} {' '.join(f.get('seccion_path') or [])}"
-        for f in fragmentos
-    )
+    texto_fuente = _texto_fuente(fragmentos)
     entidades_fuente = {e["valor_norm"] for e in extraer_entidades(texto_fuente)}
     faltantes = entidades_respuesta - entidades_fuente
     if faltantes:

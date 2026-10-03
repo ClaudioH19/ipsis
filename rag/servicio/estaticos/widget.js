@@ -6,6 +6,14 @@
  *
  *   <script src="https://tu-servidor/widget.js" data-api="https://tu-servidor"></script>
  *
+ * O como Web Component declarativo:
+ *   <rag-extractivo-chat api="https://tu-servidor"></rag-extractivo-chat>
+ *   <script src="https://tu-servidor/widget.js"></script>
+ *
+ * El componente acepta `api`, `widget-key`, `color`, `titulo`, `saludo` y
+ * `posicion`; emite rag:abierto, rag:cerrado, rag:pregunta, rag:respuesta y
+ * rag:error.
+ *
  * Atributos `data-` soportados en la etiqueta <script>:
  *   data-api        base del servicio (si se omite, usa el mismo origen
  *                   desde el que se sirvió este archivo -- normalmente
@@ -50,14 +58,35 @@
     }
   }
   var datos = (scriptActual && scriptActual.dataset) || {};
+  if (window.customElements && !window.customElements.get("rag-extractivo-chat")) {
+    window.customElements.define("rag-extractivo-chat", class extends HTMLElement {});
+  }
+  var host = document.querySelector("rag-extractivo-chat:not([data-rag-inicializado])");
+  if (!host) {
+    host = document.createElement(window.customElements ? "rag-extractivo-chat" : "div");
+    document.body.appendChild(host);
+  }
+  host.id = host.id || "rag-widget-host";
+  host.setAttribute("data-rag-inicializado", "true");
 
-  var API_BASE = (datos.api || window.location.origin).replace(/\/$/, "");
-  var CLAVE_WIDGET = datos.widgetKey || null;
-  var COLOR_ACENTO = datos.color || "#2563eb";
-  var TITULO_INICIAL = datos.titulo || "Asistente";
-  var SALUDO_INICIAL = datos.saludo || "Hola, ¿en qué puedo ayudarte?";
-  var POSICION = datos.posicion === "abajo-izquierda" ? "izquierda" : "derecha";
+  function opcion(atributo, dato, repuesto) {
+    return host.getAttribute(atributo) || datos[dato] || repuesto;
+  }
+  var API_BASE = opcion("api", "api", window.location.origin).replace(/\/$/, "");
+  var CLAVE_WIDGET = opcion("widget-key", "widgetKey", "") || null;
+  var COLOR_ACENTO = opcion("color", "color", "#2563eb");
+  var TITULO_INICIAL = opcion("titulo", "titulo", "Asistente");
+  var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
+  var POSICION = opcion("posicion", "posicion", "abajo-derecha") === "abajo-izquierda" ? "izquierda" : "derecha";
   var CABECERA_CLAVE_WIDGET = "X-Rag-Widget-Key";
+  var PRESENTACION = {
+    densidad: "comoda",
+    citas: "acordeon",
+    mostrarEtiquetaEstado: true,
+  };
+  function emitir(nombre, detalle) {
+    host.dispatchEvent(new CustomEvent(nombre, { detail: detalle || {}, bubbles: true }));
+  }
 
   // -------------------------------------------------------------------
   // 1. Identificador de sesión: se genera una vez por navegador y se
@@ -93,9 +122,6 @@
   // 2. Contenedor con Shadow DOM: aísla el CSS del widget del sitio
   //    anfitrión (y viceversa), sea cual sea el sitio donde se embeba.
   // -------------------------------------------------------------------
-  var host = document.createElement("div");
-  host.id = "rag-widget-host";
-  document.body.appendChild(host);
   var raiz = host.attachShadow({ mode: "open" });
 
   var estilos = document.createElement("style");
@@ -202,6 +228,8 @@
     "  scrollbar-width:thin;}",
     ".rw-mensajes::-webkit-scrollbar{width:8px;}",
     ".rw-mensajes::-webkit-scrollbar-thumb{background:var(--rw-borde);border-radius:99px;}",
+    ".rw-panel[data-densidad='compacta'] .rw-mensajes{padding:10px;gap:8px;}",
+    ".rw-panel[data-densidad='compacta'] .rw-msg{padding:7px 10px;max-width:92%;}",
     ".rw-msg{max-width:86%;padding:10px 13px;border-radius:var(--rw-radio-burbuja);",
     "  font-size:var(--rw-tamano-mensaje);line-height:var(--rw-interlineado);",
     "  white-space:pre-wrap;overflow-wrap:anywhere;",
@@ -424,7 +452,7 @@
   };
 
   function agregarCitas(contenedorMsg, fragmentos) {
-    if (!fragmentos || !fragmentos.length) return;
+    if (!fragmentos || !fragmentos.length || PRESENTACION.citas === "ocultas") return;
     var caja = document.createElement("div");
     caja.className = "rw-citas";
     // Encabezado con el numero de fuentes: deja ver de un vistazo que la
@@ -437,6 +465,7 @@
     caja.appendChild(titulo);
     fragmentos.forEach(function (frag) {
       var det = document.createElement("details");
+      det.open = PRESENTACION.citas === "abiertas";
       var resumen = document.createElement("summary");
       // documento + sección: texto de la API, SIEMPRE por textContent.
       resumen.textContent = (frag.doc_titulo || "") + " › " + (frag.seccion || "");
@@ -456,7 +485,7 @@
     burbuja.className = "rw-msg rw-msg-" + (ETIQUETAS_ESTADO.hasOwnProperty(estadoResp) ? estadoResp : "sin_respuesta");
 
     var aviso = ETIQUETAS_ESTADO[estadoResp];
-    if (aviso) {
+    if (aviso && PRESENTACION.mostrarEtiquetaEstado) {
       var spanAviso = document.createElement("span");
       spanAviso.className = "rw-aviso";
       spanAviso.textContent = aviso; // texto FIJO del widget, no de la API
@@ -527,6 +556,12 @@
         return r.json();
       })
       .then(function (cfg) {
+        PRESENTACION.densidad = cfg.densidad === "compacta" ? "compacta" : "comoda";
+        PRESENTACION.citas = ["acordeon", "abiertas", "ocultas"].indexOf(cfg.citas) >= 0
+          ? cfg.citas : "acordeon";
+        PRESENTACION.mostrarEtiquetaEstado = cfg.mostrar_etiqueta_estado !== false;
+        panel.setAttribute("data-densidad", PRESENTACION.densidad);
+        if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
         if (cfg.nombre_asistente) {
           tituloEl.textContent = cfg.nombre_asistente;
           panel.setAttribute("aria-label", cfg.nombre_asistente);
@@ -573,9 +608,18 @@
       })
       .then(function (respuesta) {
         agregarMensajeAsistente(respuesta);
+        emitir("rag:respuesta", { estado: respuesta.estado, respuesta: respuesta });
       })
       .catch(function (err) {
-        agregarMensajeError(err && err.message ? err.message : "No se pudo contactar al asistente.");
+        // Los navegadores describen los fallos de transporte con textos
+        // distintos ("Failed to fetch", "Load failed", etc.). Los errores
+        // HTTP creados arriba sí son deliberados y se conservan; un TypeError
+        // de fetch recibe un mensaje estable para quien usa el widget.
+        var mensajeError = err instanceof TypeError
+          ? "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo."
+          : (err && err.message ? err.message : "No se pudo contactar al asistente.");
+        agregarMensajeError(mensajeError);
+        emitir("rag:error", { mensaje: mensajeError });
       })
       .finally(function () {
         ocultarEscribiendo();
@@ -589,6 +633,7 @@
     ev.preventDefault();
     var texto = input.value.trim();
     if (!texto) return;
+    emitir("rag:pregunta", { pregunta: texto });
     enviarPregunta(texto);
   });
 
@@ -605,12 +650,15 @@
   }
 
   function abrirPanel() {
-    elementoFocoPrevio = document.activeElement;
+    // Dentro de Shadow DOM, document.activeElement es el host; conservar el
+    // elemento interno permite devolver el foco al botón que abrió el diálogo.
+    elementoFocoPrevio = raiz.activeElement || document.activeElement;
     panel.hidden = false;
     boton.setAttribute("aria-expanded", "true");
     if (mensajes.children.length === 0) cargarConfigServidor();
     input.focus();
     document.addEventListener("keydown", manejarTeclado, true);
+    emitir("rag:abierto");
   }
 
   function cerrarPanel() {
@@ -622,6 +670,7 @@
     } else {
       boton.focus();
     }
+    emitir("rag:cerrado");
   }
 
   function manejarTeclado(ev) {
