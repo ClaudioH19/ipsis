@@ -9,7 +9,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 |---|---|---|---|---|
 | P0.1 | ✅ | 2026-10-03 | 323 | Commits `d2b234e` (estado previo) y `855d4b3` (plan). |
 | P0.2 | ✅ | 2026-10-03 | 312 | −11 pruebas del evaluador antiguo. `.cache/` conserva carpetas bloqueadas por OneDrive (ignoradas por git). |
-| P0.3 | ⬜ | | | |
+| P0.3 | ✅ | 2026-10-03 | 312 | `--import-mode=importlib` se pospone a P2.1 (requiere quitar `tests/__init__.py` y el import cruzado de `test_portabilidad`). La marca es `modelos("org/nombre", ...)`; la caché se busca en `RAG_MODELOS_DIR` o `~/.cache/rag-extractivo/modelos` con la estructura de huggingface_hub. |
 | P1.1 | ⬜ | | | |
 | P1.2 | ⬜ | | | |
 | P1.3 | ⬜ | | | |
