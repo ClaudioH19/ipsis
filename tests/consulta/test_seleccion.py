@@ -1,8 +1,6 @@
 """Tests de ``rag/consulta/etapas/seleccion.py`` (evita respuestas demasiado
-largas). Funciones puras, sin modelos ni
-red -- el método "denso" se prueba aparte solo donde hace falta un
-``modelo_st`` real (ninguno de estos tests lo necesita: `metodo="lexico"`
-por defecto cubre todo el algoritmo de selección/expansión)."""
+largas). Funciones puras, sin modelos ni red: la puntuación por ``s_lex``
+cubre todo el algoritmo de selección y expansión."""
 from __future__ import annotations
 
 from rag.consulta.etapas.seleccion import (
@@ -61,7 +59,7 @@ def test_seleccionar_texto_pertinente_elige_la_oracion_mas_relevante():
     )
     resultado = seleccionar_texto_pertinente(
         "¿Cuánto dura la garantía del equipo X100?", texto, offset_chunk_inicio=0,
-        limite_caracteres=90, metodo="lexico",
+        limite_caracteres=90,
     )
     assert "dieciocho meses" in resultado.texto
     assert len(resultado.texto) <= 200  # se expande con contexto, pero no explota el límite arbitrariamente

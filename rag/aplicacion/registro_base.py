@@ -98,18 +98,12 @@ class SentenceSelectorExtractor:
     def __init__(
         self,
         limite_caracteres: int = 500,
-        metodo: str = "lexico",
-        modelo_st: Any = None,
-        prefijo_query: str = "",
+        estadisticas: Any = None,
     ) -> None:
         if limite_caracteres < 1:
             raise ValueError("limite_caracteres debe ser mayor que cero")
-        if metodo not in {"lexico", "denso"}:
-            raise ValueError("metodo debe ser 'lexico' o 'denso'")
         self.limite_caracteres = limite_caracteres
-        self.metodo = metodo
-        self.modelo_st = modelo_st
-        self.prefijo_query = prefijo_query
+        self.estadisticas = estadisticas
 
     def extraer(self, consulta, candidatos: Sequence[RetrievalCandidate]) -> list[EvidenceSpan]:
         from rag.indice.payload import payload_desde_chunk
@@ -125,9 +119,7 @@ class SentenceSelectorExtractor:
                 payload_desde_chunk(candidato.chunk),
                 consulta.pregunta_original,
                 self.limite_caracteres,
-                metodo=self.metodo,
-                modelo_st=self.modelo_st,
-                prefijo_query=self.prefijo_query,
+                estadisticas=self.estadisticas,
                 entidades_pregunta=entidades,
             )
             for candidato in candidatos

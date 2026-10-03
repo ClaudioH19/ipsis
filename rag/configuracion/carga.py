@@ -133,7 +133,6 @@ def config_servicio(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
 def config_redaccion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     return cfg.get("redaccion", {
-        "metodo_seleccion": "lexico",
         "longitud_maxima_fragmento_chars": 10**9,
         "max_fragmentos_en_respuesta": 2,
         "score_relativo_minimo": 0.6,

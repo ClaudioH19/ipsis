@@ -72,9 +72,7 @@ def construir_motor(
         "answer_extractor",
         componentes["answer_extractor"],
         limite_caracteres=cfg_red["longitud_maxima_fragmento_chars"],
-        metodo=cfg_red["metodo_seleccion"],
-        modelo_st=getattr(retriever, "codificador", None),
-        prefijo_query=cfg_rec.get("prefijo_query", ""),
+        estadisticas=retriever.estadisticas_lexico(),
     )
     verificador = registro.crear(
         "evidence_verifier", componentes["evidence_verifier"]

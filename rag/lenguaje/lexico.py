@@ -121,6 +121,14 @@ def terminos_contenido(terminos_q: Sequence[str], stop: set[str] | frozenset[str
     return vistos
 
 
+def terminos_pregunta(pregunta: str, paquete=None) -> list[str]:
+    """Términos de contenido de una pregunta: ``terminos()`` sin stopwords del idioma."""
+    from rag.lenguaje.texto import terminos
+
+    stop = set(terminos(" ".join(paquete.stopwords), paquete)) if paquete is not None else set()
+    return terminos_contenido(terminos(pregunta, paquete), stop)
+
+
 def terminos_foco(terminos_q: Sequence[str], est: Estadisticas, k: int = 2) -> list[str]:
     """Los ``k`` términos de la pregunta con mayor IDF que existen en el corpus.
 
@@ -177,5 +185,5 @@ def acuerdo(ids_denso: Sequence, ids_bm25: Sequence, n: int = 3) -> float:
 __all__ = [
     "B", "K1", "Estadisticas", "acuerdo", "bm25_consulta", "bm25_doc", "bm25_puntaje",
     "coseno", "id_termino", "mmr", "s_cov", "s_foco", "s_lex", "s_oov", "terminos_contenido",
-    "terminos_foco", "tfidf_vector",
+    "terminos_foco", "terminos_pregunta", "tfidf_vector",
 ]

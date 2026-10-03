@@ -40,7 +40,6 @@ seguridad:
     tasa_por_segundo: 1.0
 
 redaccion:
-  metodo_seleccion: "lexico"
   longitud_maxima_fragmento_chars: 500
   max_fragmentos_en_respuesta: 2
   score_relativo_minimo: 0.6

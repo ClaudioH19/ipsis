@@ -69,26 +69,17 @@ def separar_entidades_ausentes(
     return en_corpus, genuinamente_ausentes
 
 
-def terminos_de_pregunta(pregunta: str, paquete=None) -> list[str]:
-    """Términos de contenido de la pregunta (sin stopwords del idioma)."""
-    from rag.lenguaje.lexico import terminos_contenido
-    from rag.lenguaje.texto import terminos
-
-    stop = set(terminos(" ".join(paquete.stopwords), paquete)) if paquete is not None else set()
-    return terminos_contenido(terminos(pregunta, paquete), stop)
-
-
 def tiene_grounding_lexico(pregunta: str, estadisticas, oov_max: float = 0.5, paquete=None) -> bool:
     """La pregunta usa vocabulario del corpus: ``s_oov`` bajo ``oov_max``.
 
     ``s_oov`` es la masa IDF de los términos de la pregunta que no existen en
     el corpus; no necesita listas de palabras generales por idioma.
     """
-    from rag.lenguaje.lexico import s_oov
+    from rag.lenguaje.lexico import s_oov, terminos_pregunta
 
     if estadisticas is None:
         return False
-    tq = terminos_de_pregunta(pregunta, paquete)
+    tq = terminos_pregunta(pregunta, paquete)
     return bool(tq) and s_oov(tq, estadisticas) < oov_max
 
 

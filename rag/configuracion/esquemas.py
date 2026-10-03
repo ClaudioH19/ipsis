@@ -80,7 +80,6 @@ class SeguridadConfig(ConfiguracionEstricta):
 
 
 class RedaccionConfig(ConfiguracionEstricta):
-    metodo_seleccion: Literal["lexico", "denso"] = "lexico"
     longitud_maxima_fragmento_chars: int = Field(default=500, ge=1)
     max_fragmentos_en_respuesta: int = Field(default=2, ge=1)
     score_relativo_minimo: float = Field(default=0.6, ge=0)
@@ -149,6 +148,7 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             if nombre == "asistente":
                 salida.pop("perfil", None)
             if nombre == "motor":
+                (salida.get("redaccion") or {}).pop("metodo_seleccion", None)
                 recuperacion = salida.get("recuperacion") or {}
                 if recuperacion.get("qdrant_path") == ".cache/qdrant_local":
                     recuperacion["qdrant_path"] = ".rag/indice/qdrant"

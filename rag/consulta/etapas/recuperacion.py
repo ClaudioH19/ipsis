@@ -76,7 +76,7 @@ class RetrieverQdrant:
     @property
     def codificador(self):
         """Modelo denso cargado, reutilizable por otras etapas (selección de
-        oraciones con ``metodo_seleccion: denso``)."""
+        oraciones)."""
         return self.coleccion.modelo_st
 
     def _codificar(self, texto: str):
