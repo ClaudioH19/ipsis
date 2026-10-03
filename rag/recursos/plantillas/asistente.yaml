@@ -3,5 +3,6 @@ config_version: 3
 nombre_asistente: "Asistente documental"
 descripcion_dominio: "los documentos cargados"
 idioma: es
+perfil: medium
 cors_origenes: []
 claves_widget: []

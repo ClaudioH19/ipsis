@@ -2,7 +2,7 @@
 # partida sin calibrar; ajústalos con preguntas representativas de tu corpus.
 config_version: 3
 recuperacion:
-  modelo: "intfloat/multilingual-e5-small"
+  # modelo: lo define el perfil (asistente.yaml::perfil); descomenta para fijarlo.
   estrategia_chunking: "CH-F256"
   con_header: false
   modo: "hibrida"

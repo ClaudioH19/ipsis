@@ -49,7 +49,7 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     assert cambios
     conf = tmp_path / "configuracion"
     asistente = yaml.safe_load((conf / "asistente.yaml").read_text(encoding="utf-8"))
-    assert asistente["config_version"] == 3 and "perfil" not in asistente
+    assert asistente["config_version"] == 3 and asistente["perfil"] == "light"
     assert (conf / "asistente.yaml").read_text(encoding="utf-8").startswith("# Identidad")
     assert not (conf / "categorias.yaml").exists()
     assert not (conf / "dominios" / "equipos").exists()

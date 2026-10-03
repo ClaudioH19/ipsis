@@ -136,6 +136,7 @@ def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
     if int(datos.get("config_version", 0)) < 3:
         perfil = datos.pop("perfil", "_generico") or "_generico"
         _migrar_dominio(raiz, perfil, cambios)
+        datos["perfil"] = "light"  # perfil de instalación; sin modelos adicionales
         datos["config_version"] = 3
         _escribir_yaml(asistente, datos, _encabezado(asistente))
         cambios.append(f"{rutas.ASISTENTE}: config_version 3 (sin la clave 'perfil')")

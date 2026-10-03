@@ -25,6 +25,7 @@ _DOMINIO_POR_DEFECTO = {
     "nombre_asistente": "Asistente documental",
     "descripcion_dominio": "los documentos cargados",
     "idioma": "es",
+    "perfil": "light",
     "cors_origenes": [],
     "claves_widget": [],
 }
@@ -99,9 +100,16 @@ def guardar_snapshot_configuracion(
     return str(destino)
 
 
-def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
+def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perfil: str | None = None) -> dict:
+    """Recuperación efectiva: si ``modelo`` falta, se usa el modelo denso del perfil."""
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
-    return cfg["recuperacion"]
+    recuperacion = dict(cfg["recuperacion"])
+    if not recuperacion.get("modelo"):
+        from rag.configuracion.perfiles import cargar_perfil_instalacion
+
+        nombre = perfil or cargar_dominio().get("perfil", "light")
+        recuperacion["modelo"] = cargar_perfil_instalacion(nombre).modelos.denso
+    return recuperacion
 
 
 def config_abstencion(
@@ -156,7 +164,7 @@ def config_seguridad(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict
 
 
 CLAVES_DOMINIO_VALIDAS = {
-    "nombre_asistente", "descripcion_dominio", "idioma",
+    "nombre_asistente", "descripcion_dominio", "idioma", "perfil",
     "cors_origenes", "claves_widget",
 }
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
