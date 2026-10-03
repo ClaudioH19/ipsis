@@ -16,6 +16,7 @@ cascada:
   stride: 128
   salida_temprana_sin_foco: true
   concordancia: true
+  max_caracteres_lectura: 1200
 etapas:
 - conversacional
 - analisis

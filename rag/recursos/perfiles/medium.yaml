@@ -15,6 +15,7 @@ cascada:
   max_tokens_pasaje: 384
   stride: 128
   salida_temprana_sin_foco: true
+  max_caracteres_lectura: 600
 etapas:
 - conversacional
 - analisis

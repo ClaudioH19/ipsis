@@ -28,6 +28,18 @@ def hay_discordancia(lecturas, umbral: float = 0.5) -> bool:
     return any({v for t, v in a if t == tipo} != {v for t, v in b if t == tipo} for tipo in tipos_comunes)
 
 
+def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int) -> tuple[int, int]:
+    """Rango ``[a, b)`` de ``texto`` (a lo más ``limite`` caracteres) más pertinente."""
+    if len(texto) <= limite:
+        return 0, len(texto)
+    from rag.consulta.etapas.seleccion import seleccionar_texto_pertinente
+
+    obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
+    est = obtener() if callable(obtener) else None
+    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est)
+    return resultado.offset_inicio, resultado.offset_fin
+
+
 class EtapaLectura(_Etapa):
     """Lee los ``leer_m`` primeros candidatos. Si hay un tramo con respuesta,
     la evidencia es la oración que lo contiene (texto literal, offsets exactos)
@@ -43,7 +55,16 @@ class EtapaLectura(_Etapa):
         perfil = getattr(m, "perfil_instalacion", None)
         leer_m = perfil.cascada.leer_m if perfil is not None and perfil.cascada.leer_m else 2
         candidatos = ctx.candidatos[:leer_m]
-        ctx.lecturas = m.lector.leer(ctx.pregunta, [c.chunk.texto_fuente for c in candidatos])
+        limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
+        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite) for c in candidatos]
+        lecturas = m.lector.leer(ctx.pregunta, [texto[a:b] for texto, (a, b) in zip(
+            (c.chunk.texto_fuente for c in candidatos), ventanas)])
+        # offsets de la ventana -> offsets del pasaje completo
+        ctx.lecturas = [
+            lec.model_copy(update={"inicio": lec.inicio + ventanas[lec.indice_pasaje][0],
+                                   "fin": lec.fin + ventanas[lec.indice_pasaje][0]})
+            for lec in lecturas
+        ]
         ctx.diagnostico["lecturas"] = [
             {"chunk_id": candidatos[lec.indice_pasaje].chunk.chunk_id, "texto": lec.texto,
              "prob_respuesta": round(lec.prob_respuesta, 4), "s_qa": round(lec.s_qa, 4)}
