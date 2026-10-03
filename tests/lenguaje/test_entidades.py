@@ -93,3 +93,37 @@ def test_marcadores_excepcion_y_condicion():
     assert tiene_marcador("salvo que sea personalizado", ["salvo", "excepto"])
     assert not tiene_marcador("no hay excepciones", ["salvo", "excepto"])
     assert tiene_marcador("siempre que se cumplan los requisitos", ["siempre que", "cuando"])
+
+
+# ---------------------------------------------------------------------------
+# Entidades universales: fechas numéricas y montos
+# ---------------------------------------------------------------------------
+import pytest as _pytest
+
+from rag.lenguaje.entidades import extraer_fechas_numericas, extraer_montos
+
+
+@_pytest.mark.parametrize(("texto", "esperado"), [
+    ("Vence el 05/03/2025.", ["2025-03-05"]),
+    ("Desde 2025-3-5 hasta 31.12.2025.", ["2025-03-05", "2025-12-31"]),
+    ("Versión 1.2.3 y fecha inválida 45/13/2025.", []),
+])
+def test_fechas_numericas_se_normalizan_a_iso(texto, esperado):
+    entidades = extraer_fechas_numericas(texto)
+    assert sorted(e.valor_norm for e in entidades) == sorted(esperado)
+    for e in entidades:
+        assert texto[e.offset:e.offset + len(e.texto)] == e.texto
+
+
+@_pytest.mark.parametrize(("texto", "esperado"), [
+    ("Cuesta $12.500 al mes.", ["monto_12500"]),
+    ("Price: US$ 3,50.", ["monto_3.50"]),
+    ("Total 1.200,50 EUR y 30 USD.", ["monto_1200.50", "monto_30"]),
+    ("R$ 99 ou 10 €.", ["monto_99", "monto_10"]),
+    ("Norma ISO 9001 para 12.500 personas.", []),
+])
+def test_montos_requieren_moneda_y_normalizan_miles(texto, esperado):
+    entidades = extraer_montos(texto)
+    assert sorted(e.valor_norm for e in entidades) == sorted(esperado)
+    for e in entidades:
+        assert texto[e.offset:e.offset + len(e.texto)] == e.texto

@@ -185,18 +185,85 @@ def extraer_articulos(texto: str) -> list[Entidad]:
 
 
 # ---------------------------------------------------------------------------
+# FECHA NUMÉRICA (universal): dd/mm/aaaa, dd-mm-aaaa, dd.mm.aaaa o aaaa-mm-dd.
+# Se normaliza a ISO (aaaa-mm-dd) para comparar fechas escritas distinto.
+# ---------------------------------------------------------------------------
+_RE_FECHA_DMA = re.compile(r"(?<![\d/.-])(\d{1,2})([/.-])(\d{1,2})\2(\d{4})(?![\d/-]|\.\d)")
+_RE_FECHA_ISO = re.compile(r"(?<![\d/.-])(\d{4})-(\d{1,2})-(\d{1,2})(?![\d/-]|\.\d)")
+
+
+def _fecha_iso(anio: str, mes: str, dia: str) -> str | None:
+    m, d = int(mes), int(dia)
+    if not (1 <= m <= 12 and 1 <= d <= 31):
+        return None
+    return f"{anio}-{m:02d}-{d:02d}"
+
+
+def extraer_fechas_numericas(texto: str) -> list[Entidad]:
+    out = []
+    for m in _RE_FECHA_DMA.finditer(texto):
+        valor = _fecha_iso(m.group(4), m.group(3), m.group(1))
+        if valor:
+            out.append(Entidad("fecha", m.group(0), valor, m.start(0)))
+    for m in _RE_FECHA_ISO.finditer(texto):
+        valor = _fecha_iso(m.group(1), m.group(2), m.group(3))
+        if valor:
+            out.append(Entidad("fecha", m.group(0), valor, m.start(0)))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# MONTO (universal): número junto a un símbolo de moneda o a un código ISO
+# 4217 frecuente. «12.500» y «12,500» con grupos de tres dígitos se leen como
+# miles; cualquier otro separador, como decimal.
+# ---------------------------------------------------------------------------
+_CODIGOS_MONEDA = (
+    "USD|EUR|GBP|JPY|CNY|CHF|CAD|AUD|CLP|CLF|ARS|MXN|COP|PEN|BRL|UYU|BOB|PYG"
+)
+_NUMERO = r"\d{1,3}(?:[.,\u00a0 ]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?"
+_RE_MONTO_ANTES = re.compile(
+    rf"(?:R\$|US\$|[$€£¥]|\b(?:{_CODIGOS_MONEDA})\b)\s?({_NUMERO})(?!\d|[.,]\d)"
+)
+_RE_MONTO_DESPUES = re.compile(rf"(?<![\d.,])({_NUMERO})\s?(?:[€£¥]|\b(?:{_CODIGOS_MONEDA})\b)")
+
+
+def _normalizar_monto(numero: str) -> str:
+    limpio = numero.replace("\u00a0", " ")
+    if re.fullmatch(r"\d{1,3}(?:[., ]\d{3})+", limpio):
+        return re.sub(r"[., ]", "", limpio)
+    entero_decimal = re.fullmatch(r"(\d{1,3}(?:[., ]\d{3})+)([.,])(\d{1,2})", limpio)
+    if entero_decimal:
+        return re.sub(r"[., ]", "", entero_decimal.group(1)) + "." + entero_decimal.group(3)
+    return limpio.replace(",", ".")
+
+
+def extraer_montos(texto: str) -> list[Entidad]:
+    out = []
+    vistos: set[int] = set()
+    for patron in (_RE_MONTO_ANTES, _RE_MONTO_DESPUES):
+        for m in patron.finditer(texto):
+            if m.start(0) in vistos:
+                continue
+            vistos.add(m.start(0))
+            out.append(Entidad("monto", m.group(0), f"monto_{_normalizar_monto(m.group(1))}", m.start(0)))
+    return out
+
+
+# ---------------------------------------------------------------------------
 EXTRACTORES = [
     extraer_decimales,
     extraer_porcentajes,
     extraer_plazos,
     extraer_fechas,
+    extraer_fechas_numericas,
+    extraer_montos,
     extraer_articulos,
 ]
 
 # Nombres de tipo que produce cada extractor GENERICO de arriba (mismo orden
 # conceptual que EXTRACTORES, pero como nombres -- lo usa tipos_con_regla()
 # para no hardcodear en ningun otro modulo cuales tipos vienen del nucleo).
-TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "articulo"}
+TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "monto", "articulo"}
 
 
 # ---------------------------------------------------------------------------
