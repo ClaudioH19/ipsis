@@ -30,6 +30,33 @@ def pytest_configure(config: pytest.Config) -> None:
         config.option.basetemp = elegido
 
 
+def ruta_cache_modelos() -> Path:
+    """Caché global de modelos; debe coincidir con ``rag.modelos.descarga``."""
+    elegido = os.environ.get("RAG_MODELOS_DIR")
+    if elegido:
+        return Path(elegido)
+    return Path.home() / ".cache" / "rag-extractivo" / "modelos"
+
+
+def _modelo_en_cache(id_hf: str) -> bool:
+    # Estructura de caché de huggingface_hub: models--<org>--<nombre>/snapshots/
+    carpeta = ruta_cache_modelos() / ("models--" + id_hf.replace("/", "--")) / "snapshots"
+    return carpeta.is_dir() and any(carpeta.iterdir())
+
+
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
+    """Omite las pruebas ``modelos`` cuyos modelos no están descargados."""
+    for item in items:
+        marca = item.get_closest_marker("modelos")
+        if marca is None:
+            continue
+        faltantes = [id_hf for id_hf in marca.args if not _modelo_en_cache(id_hf)]
+        if faltantes or not marca.args:
+            item.add_marker(pytest.mark.skip(
+                reason=f"faltan modelos en caché: {faltantes or 'sin id'}; ejecuta 'rag modelos descargar'"
+            ))
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _perfil_generico_de_la_suite():
     configurar_perfil(cargar_perfil_generico())
