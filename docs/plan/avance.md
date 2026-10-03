@@ -38,7 +38,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P4.6 | ✅ | 2026-10-03 | 417 (suite completa) | Palabras clave = mayor TF-IDF con el IDF del corpus completo (calculado antes de armar los payloads), devueltas en su forma original. Categorías comparan términos con stem: plurales y tildes ya no impiden coincidir con palabras gatillo. |
 | P5.1 | ✅ | 2026-10-03 | — | Licencias, parámetros y archivos ONNX verificados con la API de Hugging Face (tabla en modelos-y-perfiles.md §2). ⛔ Decisión del usuario pendiente: xlm-roberta-large-squad2 no tiene ONNX confiable; heavy usa mdeberta con leer_m=4 mientras tanto. e5 se usa en fp32 porque su int8 publicado exige AVX-512 VNNI. |
 | P5.2 | ✅ | 2026-10-03 | 6 nuevas | ModeloSpec con ONNX por arquitectura (x86_64/arm64) y caché global en formato huggingface_hub; ruta_local() falla con 'rag modelos descargar'. huggingface-hub declarado como dependencia. |
-| P5.3 | ⬜ | | | |
+| P5.3 | ✅ | 2026-10-03 | 398 rápidas + 3 modelos | ModeloOnnx (sesión única, tokenizador, entradas) y CodificadorDenso con prefijos y pooling promedio. Verificado: vectores idénticos a sentence-transformers (coseno 1,0). Registrado como dense_encoder: onnx. onnxruntime y tokenizers declarados. |
 | P5.4 | ⬜ | | | |
 | P5.5 | ⬜ | | | |
 | P5.6 | ⬜ | | | |

@@ -11,6 +11,7 @@ readme = "README.md"
 dependencies = [
   "fastapi>=0.115,<1",
   "httpx>=0.27,<1",
+  "onnxruntime>=1.18,<2",
   "huggingface-hub>=0.24,<2",
   "pydantic>=2.8,<3",
   "pypdf>=5,<7",
@@ -18,6 +19,7 @@ dependencies = [
   "PyYAML>=6,<7",
   "qdrant-client>=1.12,<2",
   "snowballstemmer>=2.2,<4",
+  "tokenizers>=0.19,<1",
   "sentence-transformers>=3,<7",
   "uvicorn>=0.30,<1",
 ]
