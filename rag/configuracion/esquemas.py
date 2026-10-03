@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-CONFIG_VERSION = 2
+CONFIG_VERSION = 3
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
@@ -23,7 +23,6 @@ class AsistenteConfig(ConfiguracionEstricta):
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
     descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
     idioma: str = Field(default="es", min_length=2)
-    perfil: str = Field(default="_generico", min_length=1)
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
 
@@ -37,7 +36,7 @@ class RecuperacionConfig(ConfiguracionEstricta):
     modo: Literal["vectorial", "hibrida"] = "hibrida"
     top_k: int = Field(default=3, ge=1)
     coleccion_base: str = Field(min_length=1)
-    qdrant_path: str = ".cache/qdrant_local"
+    qdrant_path: str = ".rag/indice/qdrant"
     version_coleccion: int = Field(default=1, ge=1)
 
 
@@ -143,6 +142,18 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                     componentes["reranker"] = heredado
             salida["config_version"] = 2
             version = 2
+        elif version == 2:
+            # v3: un único configuracion/dominio.yaml reemplaza a los perfiles
+            # de dominio con nombre, y los artefactos pasan de .cache/ a .rag/.
+            # Los archivos los mueve rag.configuracion.migraciones.
+            if nombre == "asistente":
+                salida.pop("perfil", None)
+            if nombre == "motor":
+                recuperacion = salida.get("recuperacion") or {}
+                if recuperacion.get("qdrant_path") == ".cache/qdrant_local":
+                    recuperacion["qdrant_path"] = ".rag/indice/qdrant"
+            salida["config_version"] = 3
+            version = 3
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(f"no existe migración de {nombre} versión {version}")
     return salida

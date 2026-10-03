@@ -5,20 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from rag.lenguaje.dominio import cargar_perfil, cargar_perfil_generico
+from rag.lenguaje.dominio import cargar_perfil
 from rag.lenguaje.entidades import extraer_decimales, extraer_porcentajes
 
 
 @pytest.fixture()
 def perfil_sintetico(tmp_path: Path):
-    base = tmp_path / "dominios"
-    ruta = base / "equipos" / "perfil.yaml"
-    ruta.parent.mkdir(parents=True)
+    ruta = tmp_path / "dominio.yaml"
     ruta.write_text(
-        """nombre_asistente: Asistente de equipos
-descripcion_dominio: manuales ficticios
-idioma: es
-organismos: [Mesa Técnica]
+        """organismos: [Mesa Técnica]
 extractores_regex:
   - tipo: ciclo
     patron: '\\bciclos?\\s+(?P<n1>\\d+)(\\s+(?P<conector>y|a)\\s+(?P<n2>\\d+))?\\b'
@@ -31,7 +26,7 @@ extractores_regex:
 """,
         encoding="utf-8",
     )
-    return cargar_perfil("equipos", str(base))
+    return cargar_perfil(str(ruta))
 
 
 def test_segmento_opcional_omitido(perfil_sintetico):
@@ -54,38 +49,35 @@ def test_transform_no_afecta_digito(perfil_sintetico):
     assert next(e for e in entidades if e.tipo == "modelo").valor_norm == "modelo_2"
 
 
-def test_perfil_inexistente_lista_disponibles(tmp_path: Path):
-    base = tmp_path / "dominios"
-    generico = base / "_generico"
-    generico.mkdir(parents=True)
-    (generico / "perfil.yaml").write_text("extractores_regex: []\n", encoding="utf-8")
-    with pytest.raises(FileNotFoundError) as exc_info:
-        cargar_perfil("no_existe", str(base))
-    assert "no_existe" in str(exc_info.value)
-    assert "_generico" in str(exc_info.value)
+def test_sin_dominio_yaml_el_perfil_no_aporta_entidades(tmp_path: Path):
+    perfil = cargar_perfil(str(tmp_path / "no_existe.yaml"))
+    assert perfil.extraer_entidades_extra("modelo 3, 20%") == []
+    assert perfil.tipos_aportados() == set()
 
 
-def test_perfil_generico_no_aporta_entidades():
-    assert cargar_perfil_generico().extraer_entidades_extra("modelo 3, 20%") == []
-    assert cargar_perfil_generico().tipos_aportados() == set()
+def test_plantilla_de_dominio_no_aporta_entidades(tmp_path: Path):
+    from rag.recursos import leer_plantilla
+
+    ruta = tmp_path / "dominio.yaml"
+    ruta.write_text(leer_plantilla("dominio.yaml"), encoding="utf-8")
+    assert cargar_perfil(str(ruta)).tipos_aportados() == set()
 
 
 def test_ejemplo_comentado_del_perfil_generico_funciona(tmp_path: Path):
     """El ejemplo de regla documentado en la plantilla debe seguir siendo válido."""
     from rag.recursos import leer_plantilla
 
-    lineas = leer_plantilla("dominios/_generico/perfil.yaml").splitlines()
+    lineas = leer_plantilla("dominio.yaml").splitlines()
     inicio = lineas.index("# extractores_regex:")
     ejemplo = []
     for linea in lineas[inicio:]:
         if not linea.startswith("#"):
             break
         ejemplo.append(linea[2:])
-    ruta = tmp_path / "dominios" / "notas" / "perfil.yaml"
-    ruta.parent.mkdir(parents=True)
+    ruta = tmp_path / "dominio.yaml"
     ruta.write_text("\n".join(ejemplo) + "\n", encoding="utf-8")
 
-    perfil = cargar_perfil("notas", str(tmp_path / "dominios"))
+    perfil = cargar_perfil(str(ruta))
     valores = [e.valor_norm for e in perfil.extraer_entidades_extra("con nota 3,9 reprueba")]
     assert valores == ["nota_3.9"]
 

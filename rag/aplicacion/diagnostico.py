@@ -22,11 +22,10 @@ class ResultadoChequeo:
 
 
 def verificar_config_dominio() -> ResultadoChequeo:
-    """``configuracion/asistente.yaml`` existe (o cae a los valores por defecto), su
-    ``perfil`` existe en ``dominios/`` y su ``idioma`` tiene recurso en
-    ``configuracion/dominios/idiomas/``."""
+    """``configuracion/asistente.yaml`` es válido y ``configuracion/dominio.yaml``,
+    si existe, se puede cargar."""
     from rag.configuracion.carga import cargar_dominio
-    from rag.lenguaje.dominio import RUTA_DOMINIOS, _perfiles_disponibles
+    from rag.lenguaje.dominio import cargar_perfil
 
     try:
         cfg = cargar_dominio()
@@ -34,12 +33,13 @@ def verificar_config_dominio() -> ResultadoChequeo:
         return ResultadoChequeo("configuración de dominio", False, f"error leyendo configuracion/asistente.yaml: {e}",
                                  "rag init")
 
-    disponibles = _perfiles_disponibles(RUTA_DOMINIOS)
-    if cfg["perfil"] not in disponibles:
+    try:
+        perfil = cargar_perfil()
+    except Exception as e:  # noqa: BLE001
         return ResultadoChequeo(
             "configuración de dominio", False,
-            f"el perfil {cfg['perfil']!r} no existe en {RUTA_DOMINIOS}/ (disponibles: {disponibles or '(ninguno)'})",
-            "rag configurar perfil=_generico",
+            f"configuracion/dominio.yaml no se pudo cargar: {e}",
+            "revisa la sintaxis de configuracion/dominio.yaml",
         )
     # El recurso de idioma (configuracion/dominios/idiomas/<idioma>.yaml) es OPCIONAL por
     # diseño: `rag/lenguaje/texto.py::cargar_palabras_generales` ya tolera que no
@@ -52,7 +52,7 @@ def verificar_config_dominio() -> ResultadoChequeo:
     nota_idioma = "" if recurso_idioma.exists() else f" (sin recurso de idioma en {recurso_idioma}, opcional)"
     return ResultadoChequeo(
         "configuración de dominio", True,
-        f"perfil={cfg['perfil']!r}, idioma={cfg.get('idioma')!r}, "
+        f"reglas propias={len(perfil.reglas)}, idioma={cfg.get('idioma')!r}, "
         f"asistente={cfg.get('nombre_asistente')!r}{nota_idioma}",
     )
 
@@ -268,7 +268,7 @@ def verificar_cors() -> ResultadoChequeo:
 def verificar_golden_set() -> ResultadoChequeo:
     """No es un requisito para operar (a diferencia de los chequeos de
     arriba) -- informativo, para que ``rag evaluar`` no sea una sorpresa."""
-    candidatos = ["data/golden/manifiesto.json"]
+    candidatos = ["golden/banco/manifiesto.json"]
     existentes = [c for c in candidatos if Path(c).exists()]
     if not existentes:
         return ResultadoChequeo("golden set", True, "no hay golden set todavía ('rag evaluar' lo dirá y no fallará)")

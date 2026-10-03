@@ -35,8 +35,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     )
     from rag.aplicacion.proyecto import actualizar_dominio
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
-    from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
-    from rag.ingesta.metadata import inicializar_taxonomia_si_falta
+    from rag.configuracion.carga import inicializar_dominio_si_falta
     from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     ruta_dominio = Path(RUTA_DOMINIO)
@@ -48,17 +47,9 @@ def cmd_init(args: argparse.Namespace) -> int:
         ruta_dominio.unlink()  # --force: parte de los valores por defecto, no fusiona con lo viejo
 
     idioma = args.idioma or "es"
-    perfil = args.perfil or "_generico"
 
-    # Un directorio de trabajo VACÍO
-    # (el caso de uso real de un plugin, fuera de una copia de este repo) no
-    # trae 'configuracion/dominios/_generico/perfil.yaml' ni 'configuracion/dominios/idiomas/es.yaml' --
-    # 'rag init' debe ESCRIBIRLOS (desde plantillas embebidas en Python, no
-    # leerlos del árbol del proyecto) para poder validar el perfil/idioma por
-    # defecto, en vez de asumir que ya están ahí. Se escriben ANTES de
-    # 'actualizar_dominio' porque esa función valida que existan.
-    if perfil == "_generico":
-        escribir_perfil_generico_si_falta()
+    # Un directorio vacío no trae el recurso de idioma: se escribe desde la
+    # plantilla incluida en el paquete, nunca desde el árbol del repositorio.
     if idioma == "es":
         escribir_idioma_es_si_falta()
 
@@ -68,7 +59,6 @@ def cmd_init(args: argparse.Namespace) -> int:
         "nombre_asistente": args.nombre_asistente or "Asistente documental",
         "descripcion_dominio": args.descripcion_dominio or "los documentos cargados",
         "idioma": idioma,
-        "perfil": perfil,
     }
     try:
         nuevo = actualizar_dominio(pares)
@@ -85,7 +75,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     creo_proyecto = inicializar_proyecto_si_falta(
         coleccion_base=slug_coleccion(nuevo["nombre_asistente"])
     )
-    creo_taxonomia = inicializar_taxonomia_si_falta(descripcion_dominio=nuevo["descripcion_dominio"])
+    creo_dominio = inicializar_dominio_si_falta(descripcion_dominio=nuevo["descripcion_dominio"])
     inicializar_plantillas_si_falta()  # configuracion/textos.yaml: genérico, no necesita mensaje aparte
     if inicializar_estilos_si_falta():
         print("configuracion/estilos.yaml creado: ahí se cambia TODO el diseño del widget "
@@ -94,18 +84,17 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f"Dominio inicializado en {RUTA_DOMINIO}:")
     print(f"  nombre_asistente = {nuevo['nombre_asistente']!r}")
     print(f"  descripcion_dominio = {nuevo['descripcion_dominio']!r}")
-    print(f"  idioma = {nuevo['idioma']!r}, perfil = {nuevo['perfil']!r}")
+    print(f"  idioma = {nuevo['idioma']!r}")
     print(f"Corpus vacío listo en documentos/ (catálogo en {CATALOGO_PATH}).")
     if creo_proyecto:
         print("configuracion/motor.yaml creado con umbrales genéricos de partida. "
               "La calibración se realiza al final, después de estabilizar la infraestructura.")
     else:
         print("configuracion/motor.yaml ya existía -- no se tocó.")
-    if creo_taxonomia:
-        print("configuracion/categorias.yaml creado con una plantilla genérica mínima "
-              "(agrégale categorías propias de tu dominio cuando puedas).")
+    if creo_dominio:
+        print("configuracion/dominio.yaml creado: reglas y categorías propias de tu dominio (opcional).")
     else:
-        print("configuracion/categorias.yaml ya existía -- no se tocó.")
+        print("configuracion/dominio.yaml ya existía -- no se tocó.")
     print("Siguiente paso: 'rag cargar <archivo|carpeta>', después 'rag indexar'.")
     return 0
 
@@ -198,8 +187,8 @@ def cmd_indexar(args: argparse.Namespace) -> int:
     from rag.lenguaje.entidades import configurar_perfil
 
     try:
-        cfg_dominio = cargar_dominio()
-        configurar_perfil(cargar_perfil(cfg_dominio["perfil"]))
+        cargar_dominio()
+        configurar_perfil(cargar_perfil())
         cfg = cargar_proyecto()
         cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
@@ -244,7 +233,6 @@ def _argumentos_init_automatico() -> argparse.Namespace:
         nombre_asistente=None,
         descripcion_dominio=None,
         idioma=None,
-        perfil=None,
         force=False,
     )
 
@@ -259,19 +247,16 @@ def _completar_proyecto_existente() -> None:
         slug_coleccion,
     )
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
-    from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
-    from rag.ingesta.metadata import inicializar_taxonomia_si_falta
+    from rag.configuracion.carga import inicializar_dominio_si_falta
     from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     dominio = cargar_dominio()
-    if dominio.get("perfil", "_generico") == "_generico":
-        escribir_perfil_generico_si_falta()
     if dominio.get("idioma", "es") == "es":
         escribir_idioma_es_si_falta()
     inicializar_proyecto_si_falta(
         coleccion_base=slug_coleccion(dominio.get("nombre_asistente", "Asistente documental"))
     )
-    inicializar_taxonomia_si_falta(
+    inicializar_dominio_si_falta(
         descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados")
     )
     inicializar_plantillas_si_falta()
@@ -427,7 +412,7 @@ def cmd_snapshot_config(args: argparse.Namespace) -> int:
 # rag evaluar
 # ---------------------------------------------------------------------------
 
-_MANIFIESTO_GOLDEN = "data/golden/manifiesto.json"
+_MANIFIESTO_GOLDEN = "golden/banco/manifiesto.json"
 
 
 def cmd_evaluar(args: argparse.Namespace) -> int:
@@ -569,9 +554,6 @@ def _construir_parser() -> argparse.ArgumentParser:
                          "(por defecto: 'los documentos cargados').")
     p.add_argument("--idioma", default=None,
                     help="Idioma de las palabras de alta frecuencia general (por defecto: 'es').")
-    p.add_argument("--perfil", default=None,
-                    help="Perfil de configuracion/dominios/<perfil>/perfil.yaml a usar (por defecto: '_generico', "
-                         "sin reglas de extracción propias).")
     p.add_argument("--force", action="store_true", help="Reinicia configuracion/asistente.yaml si ya existe.")
     p.set_defaults(func=cmd_init)
 
@@ -626,8 +608,8 @@ def _construir_parser() -> argparse.ArgumentParser:
     )
     p.add_argument(
         "--salida",
-        default=".cache/configuracion-efectiva.yaml",
-        help="Ruta del snapshot (por defecto: .cache/configuracion-efectiva.yaml).",
+        default=".rag/configuracion-efectiva.yaml",
+        help="Ruta del snapshot (por defecto: .rag/configuracion-efectiva.yaml).",
     )
     p.set_defaults(func=cmd_snapshot_config)
 
@@ -675,7 +657,7 @@ def _construir_parser() -> argparse.ArgumentParser:
         help="Archivo de estilos que se desea previsualizar.",
     )
     p_preview.add_argument(
-        "--salida", default=".cache/widget-vista-previa.html",
+        "--salida", default=".rag/widget-vista-previa.html",
         help="Archivo HTML de salida.",
     )
     p_preview.set_defaults(func=cmd_widget_tema_vista_previa)
@@ -719,6 +701,10 @@ def main(argv: list[str] | None = None) -> int:
     _asegurar_salida_no_crashea()
     parser = _construir_parser()
     args = parser.parse_args(argv)
+    from rag.configuracion.migraciones import migrar_proyecto
+
+    for cambio in migrar_proyecto():
+        print(f"[migración] {cambio}")
     try:
         return args.func(args)
     except KeyboardInterrupt:

@@ -1,6 +1,8 @@
 """Presentación del widget: presets visuales y exportación del cliente embebible."""
 from __future__ import annotations
 
+from rag.configuracion import rutas
+
 import os
 import html as html_lib
 from copy import deepcopy
@@ -135,7 +137,7 @@ def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
 
 
 def generar_vista_previa(
-    salida: str = ".cache/widget-vista-previa.html",
+    salida: str = rutas.VISTA_PREVIA,
     ruta_estilos: str = RUTA_ESTILOS,
 ) -> Path:
     """Genera un mockup autónomo, sin API ni índice, con todos los estados."""

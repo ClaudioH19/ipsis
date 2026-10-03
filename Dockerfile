@@ -32,7 +32,7 @@ RUN python -m pip install --no-cache-dir torch --index-url https://download.pyto
 # Configuración genérica de arranque, generada con las plantillas del paquete.
 # En producción se monta la carpeta del proyecto sobre /app/configuracion.
 RUN cd /app && rag init \
-    && mkdir -p /app/.cache/vocab_bm25 /app/.cache/huggingface \
+    && mkdir -p /app/.rag/indice /app/.cache/huggingface \
     && chown -R rag:rag /app
 
 ENV PYTHONUNBUFFERED=1 \

@@ -1,0 +1,27 @@
+# Reglas propias del dominio. Es opcional: sin este archivo el asistente usa
+# solo las reglas generales del núcleo (decimales, porcentajes, plazos, fechas
+# y artículos).
+#
+# Ejemplo de entidad propia: una escala de notas de 1,0 a 7,0.
+#
+# extractores_regex:
+#   - tipo: nota
+#     patron: '\bnota\s+(?P<entero>[1-7]),(?P<decimal>\d)\b'
+#     valor_norm: 'nota_{entero}.{decimal}'
+#     glosa: calificación en escala de 1,0 a 7,0
+organismos: []
+extractores_regex: []
+
+# Taxonomía de los fragmentos. Agrega categorías y palabras gatillo propias
+# de tus documentos; `otro` es la categoría de respaldo obligatoria.
+taxonomia:
+  dominio: "{descripcion_dominio}"
+  categorias:
+    - id: contenido
+      descripcion: "Contenido general de los documentos cargados."
+      palabras_gatillo: []
+    - id: otro
+      descripcion: "No encaja en ninguna categoría anterior."
+  marcadores_excepcion: ["salvo", "excepto", "a menos que", "sin perjuicio de"]
+  marcadores_condicion: ["siempre que", "en caso de", "cuando", "si"]
+  umbral_categoria_filtro_duro: 0.95

@@ -6,6 +6,8 @@ La búsqueda usa la fusión RRF nativa de Qdrant (``query_points`` con
 """
 from __future__ import annotations
 
+from rag.configuracion import rutas
+
 import pathlib
 import re
 from collections import Counter
@@ -205,12 +207,12 @@ def texto_a_vector_sparse(texto: str, vocab: dict[str, int]):
 # como JSON junto al resto de artefactos de ingesta y el servicio lo carga
 # de ahí, sin tocar el corpus para nada.
 # ---------------------------------------------------------------------------
-def ruta_vocabulario_bm25(nombre_coleccion: str, directorio: str = ".cache/vocab_bm25") -> str:
+def ruta_vocabulario_bm25(nombre_coleccion: str, directorio: str = rutas.INDICE) -> str:
     return str(pathlib.Path(directorio) / f"{nombre_coleccion}.json")
 
 
 def guardar_vocabulario_bm25(vocab: dict[str, int], nombre_coleccion: str,
-                              directorio: str = ".cache/vocab_bm25") -> str:
+                              directorio: str = rutas.INDICE) -> str:
     """Escribe el vocabulario BM25 como artefacto de ingesta (JSON, un dict
     token->índice). Devuelve la ruta escrita."""
     import json
@@ -222,7 +224,7 @@ def guardar_vocabulario_bm25(vocab: dict[str, int], nombre_coleccion: str,
     return ruta
 
 
-def cargar_vocabulario_bm25(nombre_coleccion: str, directorio: str = ".cache/vocab_bm25") -> dict[str, int]:
+def cargar_vocabulario_bm25(nombre_coleccion: str, directorio: str = rutas.INDICE) -> dict[str, int]:
     """Lee el vocabulario BM25 persistido por `guardar_vocabulario_bm25`
     (creado por ``rag indexar``). Falla fuerte y explícito (`FileNotFoundError`
     con el comando a correr) si el artefacto no existe -- nunca se inventa
@@ -264,12 +266,12 @@ def construir_inventario_entidades(payloads: list[dict]) -> list[str]:
     return sorted(valores)
 
 
-def ruta_inventario_entidades(nombre_coleccion: str, directorio: str = ".cache/vocab_bm25") -> str:
+def ruta_inventario_entidades(nombre_coleccion: str, directorio: str = rutas.INDICE) -> str:
     return str(pathlib.Path(directorio) / f"{nombre_coleccion}.entidades.json")
 
 
 def guardar_inventario_entidades(inventario: list[str], nombre_coleccion: str,
-                                  directorio: str = ".cache/vocab_bm25") -> str:
+                                  directorio: str = rutas.INDICE) -> str:
     """Escribe el inventario de entidades como artefacto de ingesta (JSON,
     lista de `valor_norm`), junto al vocabulario BM25 (mismo directorio, un
     solo lugar de artefactos de ingesta que el servicio necesita en
@@ -284,7 +286,7 @@ def guardar_inventario_entidades(inventario: list[str], nombre_coleccion: str,
 
 
 def cargar_inventario_entidades(nombre_coleccion: str,
-                                 directorio: str = ".cache/vocab_bm25") -> set[str]:
+                                 directorio: str = rutas.INDICE) -> set[str]:
     """Lee el inventario de entidades persistido por
     `guardar_inventario_entidades` durante ``rag indexar``. Falla fuerte
     y explícito si el artefacto no existe -- mismo criterio que
@@ -326,12 +328,12 @@ def construir_estadisticas_lexico_dominio(payloads: list[dict], con_header: bool
 
 
 def ruta_estadisticas_lexico_dominio(nombre_coleccion: str,
-                                      directorio: str = ".cache/vocab_bm25") -> str:
+                                      directorio: str = rutas.INDICE) -> str:
     return str(pathlib.Path(directorio) / f"{nombre_coleccion}.estadisticas_lexico.json")
 
 
 def guardar_estadisticas_lexico_dominio(estadisticas: dict[str, float], nombre_coleccion: str,
-                                         directorio: str = ".cache/vocab_bm25") -> str:
+                                         directorio: str = rutas.INDICE) -> str:
     import json
 
     ruta = ruta_estadisticas_lexico_dominio(nombre_coleccion, directorio)
@@ -342,7 +344,7 @@ def guardar_estadisticas_lexico_dominio(estadisticas: dict[str, float], nombre_c
 
 
 def cargar_estadisticas_lexico_dominio(nombre_coleccion: str,
-                                        directorio: str = ".cache/vocab_bm25") -> dict[str, float]:
+                                        directorio: str = rutas.INDICE) -> dict[str, float]:
     import json
 
     ruta = ruta_estadisticas_lexico_dominio(nombre_coleccion, directorio)

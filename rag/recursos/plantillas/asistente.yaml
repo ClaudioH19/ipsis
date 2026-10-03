@@ -1,8 +1,7 @@
 # Identidad del asistente. Generado por `rag init`.
-config_version: 2
+config_version: 3
 nombre_asistente: "Asistente documental"
 descripcion_dominio: "los documentos cargados"
 idioma: es
-perfil: _generico
 cors_origenes: []
 claves_widget: []

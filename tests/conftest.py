@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from docx import Document
 
-from rag.lenguaje.dominio import cargar_perfil_generico
+from rag.lenguaje.dominio import cargar_perfil
 from rag.lenguaje.entidades import configurar_perfil
 
 
@@ -84,7 +84,7 @@ def _en_proyecto_suite(proyecto_suite: Path, monkeypatch: pytest.MonkeyPatch) ->
 
 @pytest.fixture(scope="session", autouse=True)
 def _perfil_generico_de_la_suite(proyecto_suite: Path):
-    configurar_perfil(cargar_perfil_generico(base=str(proyecto_suite / "configuracion" / "dominios")))
+    configurar_perfil(cargar_perfil(str(proyecto_suite / "configuracion" / "dominio.yaml")))
     yield
     configurar_perfil(None)
 

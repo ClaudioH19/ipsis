@@ -21,7 +21,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P1.9 | ✅ | 2026-10-03 | 303 + 18/18 caracterización | Wheel con 63 archivos, incluye plantillas y estáticos. Grafo actualizado. |
 | P2.1 | ✅ | 2026-10-03 | 303 + 21 lentas | Desvío: test_contratos, test_frontera_tipos y test_intercambio no se fusionaron (cubren cosas distintas); quedan en nucleo/ y consulta/. Helpers de PDF y rutas en tests/apoyo.py (pythonpath=tests, import-mode=importlib, pendiente de P0.3). .gitattributes apunta a tests/datos. |
 | P2.2 | ✅ | 2026-10-03 | 303 + 21 lentas | Fixture autouse proyecto_suite (rag init en temporal + chdir) en lugar de una fixture explícita por prueba. Corrige un defecto: PALABRAS_GENERALES_ES dependía del directorio actual al importarse; ahora sale del recurso del paquete. Dockerfile ejecuta rag init en build. CI ya usaba rag init en carpeta temporal. |
-| P2.3 | ⬜ | | | |
+| P2.3 | ✅ | 2026-10-03 | 304 + 21 lentas | Nuevo rag/configuracion/rutas.py como única fuente de rutas. dominio.yaml une perfil.yaml y categorias.yaml (taxonomía bajo 'taxonomia'); desaparece la clave 'perfil' de asistente.yaml y el concepto _generico. La CLI migra el proyecto al arrancar cualquier comando. Corrige un defecto: cargar_dominio aplicaba la versión por defecto antes de migrar. La caché global de modelos llega con P5.2. |
 | P2.4 | ⬜ | | | |
 | P3.1 | ⬜ | | | |
 | P3.2 | ⬜ | | | |

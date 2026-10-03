@@ -1,7 +1,7 @@
 """Perfiles declarativos para extender la extracción sin editar Python.
 
 Las reglas propias de un dominio se declaran en
-``configuracion/dominios/<nombre>/perfil.yaml`` y son interpretadas por un
+``configuracion/dominio.yaml`` y son interpretadas por un
 motor genérico:
 
 - ``extractores_regex``: cada regla es un patrón regex con grupos
@@ -28,8 +28,8 @@ from pathlib import Path
 
 import yaml
 
-RUTA_DOMINIOS = "configuracion/dominios"
-PERFIL_GENERICO = "_generico"
+from rag.configuracion import rutas
+
 
 _ROMANOS_A_NUM = {"I": 1, "II": 2, "III": 3, "IV": 4}
 
@@ -137,28 +137,16 @@ class PerfilDominio:
         return {r.tipo: r.glosa for r in self.reglas if r.glosa}
 
 
-def _perfiles_disponibles(base: str) -> list[str]:
-    ruta = Path(base)
-    if not ruta.exists():
-        return []
-    return sorted(p.name for p in ruta.iterdir() if p.is_dir() and (p / "perfil.yaml").exists())
+def cargar_perfil(ruta: str = rutas.DOMINIO) -> PerfilDominio:
+    """Carga las reglas propias del proyecto desde ``configuracion/dominio.yaml``.
 
-
-def cargar_perfil(nombre: str, base: str = RUTA_DOMINIOS) -> PerfilDominio:
-    """Carga ``<base>/<nombre>/perfil.yaml``. Falla fuerte y explícito si no
-    existe -- mismo criterio que ``rag/indice/qdrant.py::cargar_vocabulario_bm25``:
-    nunca se inventa un perfil vacío en silencio cuando se pidió uno con
-    nombre."""
-    ruta = Path(base) / nombre / "perfil.yaml"
-    if not ruta.exists():
-        disponibles = _perfiles_disponibles(base)
-        raise FileNotFoundError(
-            f"no existe el perfil de dominio {nombre!r} en {ruta!r}. "
-            f"Perfiles disponibles: {disponibles or '(ninguno)'}"
-        )
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
+    El archivo es opcional: si no existe, devuelve un perfil sin reglas y el
+    núcleo extrae solo las entidades generales.
+    """
+    p = Path(ruta)
+    datos = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
     reglas = []
-    for r in datos.get("extractores_regex", []):
+    for r in datos.get("extractores_regex") or []:
         flags = re.IGNORECASE if r.get("ignorecase", True) else 0
         reglas.append(ReglaEntidad(
             tipo=r["tipo"],
@@ -168,35 +156,7 @@ def cargar_perfil(nombre: str, base: str = RUTA_DOMINIOS) -> PerfilDominio:
             glosa=r.get("glosa"),
         ))
     return PerfilDominio(
-        nombre=nombre,
-        nombre_asistente=datos.get("nombre_asistente", nombre),
-        descripcion_dominio=datos.get("descripcion_dominio", "los documentos cargados"),
-        idioma=datos.get("idioma", "es"),
-        organismos=list(datos.get("organismos", [])),
+        nombre=p.stem,
+        organismos=list(datos.get("organismos") or []),
         reglas=reglas,
     )
-
-
-def cargar_perfil_generico(base: str = RUTA_DOMINIOS) -> PerfilDominio:
-    """Perfil sin reglas propias (``configuracion/dominios/_generico/``): usado por
-    ``rag init`` como punto de partida para un dominio nuevo -- el núcleo ya
-    extrae las entidades genéricas sin necesitar ninguna regla adicional."""
-    return cargar_perfil(PERFIL_GENERICO, base)
-
-
-# ---------------------------------------------------------------------------
-# Semilla para `rag init`: un directorio de trabajo VACÍO no tiene
-# `configuracion/dominios/_generico/perfil.yaml`. Se copia desde la plantilla
-# incluida en el paquete, no desde el árbol del proyecto, para que `rag init`
-# funcione en cualquier directorio.
-# ---------------------------------------------------------------------------
-def escribir_perfil_generico_si_falta(base: str = RUTA_DOMINIOS) -> bool:
-    """Escribe el perfil global incluido en el paquete si todavía no existe."""
-    from rag.recursos import leer_plantilla
-
-    ruta = Path(base) / PERFIL_GENERICO / "perfil.yaml"
-    if ruta.exists():
-        return False
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(leer_plantilla("dominios/_generico/perfil.yaml"), encoding="utf-8")
-    return True

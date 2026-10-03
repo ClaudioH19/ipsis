@@ -8,11 +8,10 @@ from rag.recursos import leer_plantilla
 
 PLANTILLAS_YAML = [
     "asistente.yaml",
-    "categorias.yaml",
+    "dominio.yaml",
     "motor.yaml",
     "textos.yaml",
     "estilos.yaml",
-    "dominios/_generico/perfil.yaml",
     "dominios/idiomas/es.yaml",
 ]
 
@@ -24,12 +23,13 @@ def test_todas_las_plantillas_globales_estan_empaquetadas_y_son_yaml():
         assert isinstance(yaml.safe_load(texto), dict), nombre
 
 
-def test_recursos_parten_del_perfil_generico():
+def test_plantilla_de_dominio_parte_sin_reglas_propias():
     asistente = yaml.safe_load(leer_plantilla("asistente.yaml"))
-    perfil = yaml.safe_load(leer_plantilla("dominios/_generico/perfil.yaml"))
-    assert asistente["perfil"] == "_generico"
-    assert perfil["organismos"] == []
-    assert perfil["extractores_regex"] == []
+    dominio = yaml.safe_load(leer_plantilla("dominio.yaml"))
+    assert "perfil" not in asistente
+    assert dominio["organismos"] == []
+    assert dominio["extractores_regex"] == []
+    assert any(c["id"] == "otro" for c in dominio["taxonomia"]["categorias"])
 
 
 def test_widget_y_demo_estan_dentro_del_paquete():

@@ -79,23 +79,22 @@ def _doc_prueba_txt(tmp_path: Path) -> Path:
 
 
 def test_init_crea_configuracion_minima(proyecto_temporal: Path):
-    codigo = main(["init", "--nombre-asistente", "Asistente X100", "--perfil", "_generico"])
+    codigo = main(["init", "--nombre-asistente", "Asistente X100"])
     assert codigo == 0
     assert (proyecto_temporal / "configuracion" / "asistente.yaml").exists()
     assert (proyecto_temporal / "configuracion" / "motor.yaml").exists()
-    assert (proyecto_temporal / "configuracion" / "categorias.yaml").exists()
+    assert (proyecto_temporal / "configuracion" / "dominio.yaml").exists()
     assert (proyecto_temporal / "documentos" / "catalogo.yaml").exists()
     assert (proyecto_temporal / "documentos").is_dir()
 
     # Corrección de esta tanda (revisión independiente, DEFECTO 1): en un
     # directorio VACÍO, 'rag init' debe ESCRIBIR el andamiaje del perfil y
     # del recurso de idioma, no asumir que ya existen.
-    assert (proyecto_temporal / "configuracion/dominios" / "_generico" / "perfil.yaml").exists()
     assert (proyecto_temporal / "configuracion" / "dominios" / "idiomas" / "es.yaml").exists()
 
     dominio = yaml.safe_load((proyecto_temporal / "configuracion" / "asistente.yaml").read_text(encoding="utf-8"))
     assert dominio["nombre_asistente"] == "Asistente X100"
-    assert dominio["perfil"] == "_generico"
+    assert "perfil" not in dominio
     motor = yaml.safe_load((proyecto_temporal / "configuracion" / "motor.yaml").read_text(encoding="utf-8"))
     assert motor["recuperacion"]["coleccion_base"] == "asistente_x100"
 
@@ -182,14 +181,6 @@ def test_cargar_formato_no_soportado_falla_sin_tocar_catalogo(proyecto_temporal:
     ruta.write_text("contenido", encoding="utf-8")
     codigo = main(["cargar", str(ruta)])
     assert codigo == 1
-
-
-def test_configurar_valida_perfil_inexistente(proyecto_temporal: Path):
-    main(["init"])
-    codigo = main(["configurar", "perfil=no_existe"])
-    assert codigo == 1
-    dominio = yaml.safe_load((proyecto_temporal / "configuracion" / "asistente.yaml").read_text(encoding="utf-8"))
-    assert dominio["perfil"] == "_generico"  # no se aplicó el valor inválido
 
 
 def test_configurar_clave_desconocida_falla(proyecto_temporal: Path):

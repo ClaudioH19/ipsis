@@ -8,6 +8,8 @@ from pathlib import Path
 
 import yaml
 
+from rag.configuracion import rutas
+
 STOPWORDS_ES = {
     "el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del", "al",
     "a", "en", "y", "o", "u", "e", "que", "se", "su", "sus", "por", "para",
@@ -25,7 +27,7 @@ STOPWORDS_ES = {
 
 @functools.lru_cache(maxsize=None)
 def cargar_palabras_generales(
-    idioma: str = "es", ruta_base: str = "configuracion/dominios/idiomas"
+    idioma: str = "es", ruta_base: str = rutas.IDIOMAS_LEGADO
 ) -> frozenset[str]:
     """Carga palabras frecuentes que no prueban pertenencia al dominio."""
     ruta = Path(ruta_base) / f"{idioma}.yaml"
@@ -50,7 +52,7 @@ PALABRAS_GENERALES_ES = _palabras_generales_del_paquete("es")
 
 
 def escribir_idioma_es_si_falta(
-    ruta_base: str = "configuracion/dominios/idiomas",
+    ruta_base: str = rutas.IDIOMAS_LEGADO,
 ) -> bool:
     """Copia el recurso global de español incluido en el paquete."""
     from rag.recursos import leer_plantilla
