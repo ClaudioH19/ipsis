@@ -26,8 +26,10 @@ from rag.evaluacion.banco import (
 
 TIPOS = ("respondible", "sin_respuesta", "premisa_falsa", "ambigua", "conversacional")
 SUBTIPOS = ("trampa_mismo_tema",)
+# ``instrucciones``, ``fragmento_sugerido`` y ``terminos_clave`` son ayudas de la
+# plantilla: se ignoran al importar. ``notas`` queda libre para quien completa.
 COLUMNAS = ("id", "pregunta", "tipo", "respuesta_literal", "documento", "subtipo", "par", "notas",
-            "fragmento_sugerido", "terminos_clave")
+            "instrucciones", "fragmento_sugerido", "terminos_clave")
 MINIMO_FILAS = 30
 PROPORCION_MINIMA_SIN_RESPUESTA = 0.30
 # Con 0 errores, la cota de Clopper-Pearson al 95% baja de 5% recién con 59
@@ -64,6 +66,10 @@ class FilaGolden:
     par: str | None = None
     notas: str | None = None
     origen: str = ""  # «golden.csv:12», para los mensajes
+    # Solo SQuAD 2.0: el párrafo y la posición de la respuesta dentro de él,
+    # para ubicar la misma ocurrencia aunque el texto se repita.
+    contexto: str | None = None
+    inicio_contexto: int | None = None
 
 
 @dataclass(frozen=True)
@@ -134,8 +140,11 @@ def leer_jsonl(ruta: str | Path) -> list[FilaGolden]:
 def leer_squad2(ruta: str | Path) -> list[FilaGolden]:
     """SQuAD 2.0 como formato de intercambio: ``is_impossible`` → sin_respuesta.
 
-    El ``title`` de cada artículo se usa como ``documento``; la respuesta se
-    vuelve a ubicar en el corpus del proyecto (el ``context`` no se usa).
+    El ``title`` de cada artículo se usa como ``documento``; ``context`` y
+    ``answer_start`` ubican la ocurrencia exacta de la respuesta en el corpus.
+    El objeto opcional ``"rag"`` de cada pregunta es una extensión propia
+    (``tipo``, ``subtipo``, ``par``, ``notas``) que escribe ``exportar_squad2``;
+    un SQuAD externo sin él se importa igual.
     """
     ruta = Path(ruta)
     datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
@@ -144,18 +153,24 @@ def leer_squad2(ruta: str | Path) -> list[FilaGolden]:
         for parrafo in articulo.get("paragraphs", []):
             for qa in parrafo.get("qas", []):
                 imposible = qa.get("is_impossible", False) or not qa.get("answers")
+                respuesta = None if imposible else qa["answers"][0]
                 fila = _fila({
                     "id": qa.get("id"),
                     "pregunta": qa.get("question"),
                     "tipo": "sin_respuesta" if imposible else "respondible",
-                    "respuesta_literal": None if imposible else qa["answers"][0]["text"],
+                    "respuesta_literal": None if imposible else respuesta["text"],
                     "documento": articulo.get("title"),
                 }, f"{ruta.name}:{qa.get('id', '?')}")
-                # Extensión propia (la escribe exportar) para conservar el tipo.
-                if qa.get("rag_tipo") in TIPOS:
-                    fila.tipo = qa["rag_tipo"]
-                fila.subtipo = _limpio(qa.get("rag_subtipo"))
-                fila.par = _limpio(qa.get("rag_par"))
+                if respuesta is not None:
+                    fila.contexto = parrafo.get("context")
+                    fila.inicio_contexto = respuesta.get("answer_start")
+                extension = qa.get("rag") if isinstance(qa.get("rag"), dict) else {}
+                # El tipo de la extensión solo afina dentro de lo que dice el estándar.
+                if extension.get("tipo") in TIPOS and (extension["tipo"] == "respondible") == (not imposible):
+                    fila.tipo = extension["tipo"]
+                fila.subtipo = _limpio(extension.get("subtipo"))
+                fila.par = _limpio(extension.get("par"))
+                fila.notas = _limpio(extension.get("notas"))
                 filas.append(fila)
     return filas
 
@@ -222,6 +237,37 @@ def ubicar_respuesta(
     return Ubicacion(doc_id, ini, fin, documentos[doc_id][ini:fin]), avisos
 
 
+def ubicar_en_contexto(
+    fila: FilaGolden,
+    documentos: dict[str, str],
+    alias: dict[str, str] | None = None,
+) -> Ubicacion | None:
+    """La ocurrencia que indica SQuAD: ``context`` en el documento más
+    ``answer_start``. ``None`` si el párrafo ya no está igual en el corpus."""
+    if not fila.contexto or fila.inicio_contexto is None:
+        return None
+    respuesta = fila.respuesta_literal or ""
+    if fila.contexto[fila.inicio_contexto:fila.inicio_contexto + len(respuesta)] != respuesta:
+        return None
+    doc_id = None
+    if fila.documento:
+        doc_id = fila.documento if fila.documento in documentos else (alias or {}).get(fila.documento)
+    candidatos = {doc_id: documentos[doc_id]} if doc_id else documentos
+    for doc, texto in candidatos.items():
+        posicion = texto.find(fila.contexto)
+        if posicion >= 0:
+            inicio = posicion + fila.inicio_contexto
+            return Ubicacion(doc, inicio, inicio + len(respuesta), respuesta)
+    return None
+
+
+def linea_de(texto: str, inicio: int, fin: int) -> tuple[int, int]:
+    """Párrafo (línea del texto parseado) que contiene ``[inicio, fin)``."""
+    linea_ini = texto.rfind("\n", 0, inicio) + 1
+    salto = texto.find("\n", fin)
+    return linea_ini, len(texto) if salto == -1 else salto
+
+
 def oracion_de(texto: str, inicio: int, fin: int) -> tuple[int, int]:
     """Oraciones de la línea de ``texto`` que cubren ``[inicio, fin)``.
 
@@ -230,9 +276,7 @@ def oracion_de(texto: str, inicio: int, fin: int) -> tuple[int, int]:
     """
     from rag.lenguaje.texto import dividir_oraciones
 
-    linea_ini = texto.rfind("\n", 0, inicio) + 1
-    salto = texto.find("\n", fin)
-    linea_fin = len(texto) if salto == -1 else salto
+    linea_ini, linea_fin = linea_de(texto, inicio, fin)
     linea = texto[linea_ini:linea_fin]
     rangos = [(a + linea_ini, b + linea_ini) for a, b in dividir_oraciones(linea)
               if a + linea_ini < fin and b + linea_ini > inicio]
@@ -278,11 +322,13 @@ def separar_dev_test(filas: list[FilaGolden]) -> dict[str, str]:
     return split
 
 
-def avisos_de_tamano(filas: list[FilaGolden], minimo: int = MINIMO_FILAS) -> tuple[list[str], list[str]]:
-    """Errores (menos de ``minimo`` filas) y avisos de balance y de certificación."""
-    errores, avisos = [], []
-    if len(filas) < minimo:
-        errores.append(f"el golden tiene {len(filas)} filas; hacen falta al menos {minimo}")
+def avisos_de_tamano(filas: list[FilaGolden]) -> list[str]:
+    """Avisos de tamaño, balance y certificación. Ninguno impide importar: un
+    golden chico sirve de prueba rápida, solo no permite medir el riesgo."""
+    avisos = []
+    if len(filas) < MINIMO_FILAS:
+        avisos.append(f"el golden tiene {len(filas)} filas: sirve como prueba rápida; para ajustar umbrales "
+                      f"y comparar perfiles conviene tener al menos {MINIMO_FILAS}")
     sin = sum(f.tipo in {"sin_respuesta", "premisa_falsa"} for f in filas)
     if filas and sin / len(filas) < PROPORCION_MINIMA_SIN_RESPUESTA:
         avisos.append(f"solo {sin} de {len(filas)} filas son sin_respuesta o premisa_falsa "
@@ -295,7 +341,7 @@ def avisos_de_tamano(filas: list[FilaGolden], minimo: int = MINIMO_FILAS) -> tup
         avisos.append(f"sirve para ajuste práctico, no para certificar: con 0 errores hacen falta al menos "
                       f"{ACEPTADAS_PARA_CERTIFICAR} respuestas aceptadas en test para afirmar α=0,05 al 95% "
                       f"(hay ~{respondibles_test} respondibles en test)")
-    return errores, avisos
+    return avisos
 
 
 def _validar_fila(fila: FilaGolden, ids_respondibles: set[str], ids: set[str]) -> list[str]:
@@ -326,37 +372,50 @@ def a_banco(
     alias: dict[str, str] | None = None,
     dataset_id: str = "golden",
     dataset_version: str = "1.0.0",
-    minimo: int = MINIMO_FILAS,
+    procedencia: dict[str, str] | None = None,
 ) -> ResultadoImportacion:
     """Convierte las filas en un banco versionado. Junta todos los errores
     antes de fallar, para que el cliente corrija el archivo de una vez."""
     from rag.lenguaje.lexico import s_cov, terminos_pregunta
     from rag.lenguaje.texto import terminos
 
+    if not filas:
+        raise ErrorGolden(["el golden no tiene preguntas completas: escribe al menos una en la columna 'pregunta'"])
     errores = asignar_ids(filas)
-    errores_tamano, avisos = avisos_de_tamano(filas, minimo)
-    errores += errores_tamano
+    if errores:  # sin ids únicos no hay split ni pares
+        raise ErrorGolden(errores)
+    avisos = avisos_de_tamano(filas)
     ids_respondibles = {f.id for f in filas if f.tipo == "respondible"}
     ids = {f.id for f in filas}
+    invalidas = set()
     for fila in filas:
-        errores += _validar_fila(fila, ids_respondibles, ids)
+        errores_fila = _validar_fila(fila, ids_respondibles, ids)
+        if errores_fila:
+            errores += errores_fila
+            invalidas.add(fila.id)
         if fila.par is not None and fila.par not in ids:
             avisos.append(f"{fila.origen}: su par {fila.par!r} quedó sin completar; se mide sin par")
             fila.par = None
-    if errores:
-        raise ErrorGolden(errores)
 
     split = separar_dev_test(filas)
     casos = []
     for fila in filas:
+        if fila.id in invalidas:  # ya reportada; se siguen revisando las demás
+            continue
         comunes = dict(schema_version=1, dataset_version=dataset_version, id=fila.id, split=split[fila.id],
                        pregunta=fila.pregunta, notas=fila.notas, subtipo=fila.subtipo, par=fila.par)
         if fila.tipo == "respondible":
-            try:
-                ubicacion, avisos_fila = ubicar_respuesta(fila.respuesta_literal, documentos, fila.documento, alias)
-            except ValueError as e:
-                errores.append(f"{fila.origen}: {e}")
-                continue
+            ubicacion, avisos_fila = ubicar_en_contexto(fila, documentos, alias), []
+            if ubicacion is None:
+                if fila.contexto:
+                    avisos.append(f"{fila.origen}: el párrafo de origen ya no está igual en el corpus; "
+                                  "la respuesta se busca por su texto")
+                try:
+                    ubicacion, avisos_fila = ubicar_respuesta(fila.respuesta_literal, documentos, fila.documento,
+                                                              alias)
+                except ValueError as e:
+                    errores.append(f"{fila.origen}: {e}")
+                    continue
             avisos += [f"{fila.origen}: {a}" for a in avisos_fila]
             texto = documentos[ubicacion.doc_id]
             ini, fin = oracion_de(texto, ubicacion.inicio, ubicacion.fin)
@@ -379,6 +438,7 @@ def a_banco(
         estado="estable" if {c.split for c in casos} == {"dev", "test"} else "borrador",
         casos="golden.jsonl", corpus=corpus,
         categorias_requeridas=sorted({c.categoria for c in casos}, key=lambda c: c.value),
+        procedencia=procedencia,
     )
     return ResultadoImportacion(BancoEvaluacion(manifiesto=manifiesto, casos=casos), avisos)
 
@@ -512,12 +572,12 @@ def generar_plantilla(corpus, paquete, n: int = 40) -> Plantilla:
                    "terminos_clave": clave}
         id_respondible = f"r{numero:03d}"
         filas.append({"id": id_respondible, "tipo": "respondible", **comunes,
-                      "notas": textos.nota_respondible.format(documento=seccion.doc_id, terminos=clave,
+                      "instrucciones": textos.nota_respondible.format(documento=seccion.doc_id, terminos=clave,
                                                               par=id_respondible)})
         if numero <= n_trampas:
             filas.append({"id": f"t{numero:03d}", "tipo": "sin_respuesta", "subtipo": "trampa_mismo_tema",
                           "par": id_respondible, **comunes,
-                          "notas": textos.nota_trampa.format(documento=seccion.doc_id, terminos=clave,
+                          "instrucciones": textos.nota_trampa.format(documento=seccion.doc_id, terminos=clave,
                                                              par=id_respondible)})
     for numero, pregunta in enumerate(textos.conversacionales, start=1):
         filas.append({"id": f"c{numero:03d}", "pregunta": pregunta, "tipo": "conversacional"})
@@ -528,14 +588,125 @@ def escribir_plantilla(plantilla: Plantilla, carpeta: str | Path) -> tuple[Path,
     """Escribe ``golden.csv`` (UTF-8 con BOM, para que Excel respete las tildes)
     y ``LEEME.txt`` en ``carpeta``."""
     carpeta = Path(carpeta)
-    carpeta.mkdir(parents=True, exist_ok=True)
     ruta_csv, ruta_leeme = carpeta / "golden.csv", carpeta / "LEEME.txt"
-    with ruta_csv.open("w", encoding="utf-8-sig", newline="") as archivo:
-        escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS)
-        escritor.writeheader()
-        escritor.writerows(plantilla.filas)
-    ruta_leeme.write_text(plantilla.leeme, encoding="utf-8")
+    escribir_csv(plantilla.filas, ruta_csv)
+    escribir_atomico(ruta_leeme, plantilla.leeme)
     return ruta_csv, ruta_leeme
+
+
+# ---------------------------------------------------------------------------
+# Escritura y exportación (``rag golden importar`` / ``exportar``)
+# ---------------------------------------------------------------------------
+TIPO_PUBLICO = {
+    CategoriaPregunta.EXACTA: "respondible",
+    CategoriaPregunta.PARAFRASIS: "respondible",
+    CategoriaPregunta.SIN_RESPUESTA: "sin_respuesta",
+    CategoriaPregunta.PREMISA_FALSA: "premisa_falsa",
+    CategoriaPregunta.AMBIGUA: "ambigua",
+    CategoriaPregunta.CONVERSACIONAL: "conversacional",
+}
+COLUMNAS_EXPORTADAS = ("id", "pregunta", "tipo", "respuesta_literal", "documento", "subtipo", "par", "notas")
+
+
+def escribir_atomico(ruta: Path, texto: str, encoding: str = "utf-8") -> None:
+    """Temporal + ``os.replace``: un fallo a mitad nunca deja un archivo cortado."""
+    import os
+
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    temporal = ruta.with_name(ruta.name + ".tmp")
+    with temporal.open("w", encoding=encoding, newline="") as archivo:
+        archivo.write(texto)
+    os.replace(temporal, ruta)
+
+
+def escribir_csv(filas: list[dict], ruta: str | Path, columnas=COLUMNAS) -> None:
+    """CSV en UTF-8 con BOM (Excel respeta las tildes), separado por comas."""
+    import io
+
+    salida = io.StringIO()
+    escritor = csv.DictWriter(salida, fieldnames=list(columnas), extrasaction="ignore")
+    escritor.writeheader()
+    escritor.writerows({c: ("" if f.get(c) is None else f.get(c)) for c in columnas} for f in filas)
+    escribir_atomico(Path(ruta), salida.getvalue(), encoding="utf-8-sig")
+
+
+def escribir_banco(banco: BancoEvaluacion, carpeta: str | Path) -> Path:
+    """``manifiesto.json`` + casos en JSONL, cada uno escrito de forma atómica.
+
+    El manifiesto se reemplaza al final: un banco a medio escribir no queda
+    declarado. Devuelve la ruta del manifiesto.
+    """
+    carpeta = Path(carpeta)
+    lineas = [caso.model_dump_json(exclude_none=True) for caso in banco.casos]
+    escribir_atomico(carpeta / banco.manifiesto.casos, "\n".join(lineas) + "\n")
+    manifiesto = carpeta / "manifiesto.json"
+    escribir_atomico(manifiesto, banco.manifiesto.model_dump_json(indent=2, exclude_none=True) + "\n")
+    return manifiesto
+
+
+def exportar_filas_csv(banco: BancoEvaluacion) -> list[dict]:
+    """El banco como filas del golden: tipo público, sin offsets ni split."""
+    return [{
+        "id": caso.id, "pregunta": caso.pregunta, "tipo": TIPO_PUBLICO[caso.categoria],
+        "respuesta_literal": caso.respuesta_literal,
+        "documento": caso.evidencias[0].doc_id if caso.evidencias else None,
+        "subtipo": caso.subtipo, "par": caso.par, "notas": caso.notas,
+    } for caso in banco.casos]
+
+
+def _qa(caso: CasoEvaluacion, respuestas: list[dict]) -> dict:
+    extension = {k: v for k, v in {"tipo": TIPO_PUBLICO[caso.categoria], "subtipo": caso.subtipo,
+                                    "par": caso.par, "notas": caso.notas}.items() if v}
+    return {"id": caso.id, "question": caso.pregunta, "answers": respuestas,
+            "is_impossible": not respuestas, "rag": extension}
+
+
+def exportar_squad2(banco: BancoEvaluacion, documentos: dict[str, str]) -> tuple[dict, list[str]]:
+    """SQuAD 2.0 estándar, con la extensión opcional ``"rag"`` por pregunta.
+
+    - ``context`` es el párrafo del documento que contiene la evidencia;
+      ``answer_start`` es relativo a ese párrafo y se verifica antes de escribir.
+    - Las preguntas sin respuesta van con ``is_impossible: true`` y
+      ``answers: []``. Una trampa con ``par`` va en el párrafo de su par (el
+      estilo de SQuAD 2.0); las demás, en un párrafo con ``context`` vacío.
+    - ``premisa_falsa`` y ``ambigua`` se exportan como ``is_impossible``: el
+      estándar pierde esa distinción, que conserva ``"rag": {"tipo": ...}``.
+    - Las conversacionales no son QA extractivo: no se exportan (aviso).
+    """
+    parrafos: dict[tuple[str, str], list[dict]] = {}
+    contexto_de: dict[str, tuple[str, str]] = {}
+    for caso in banco.casos:
+        if not caso.respondible:
+            continue
+        evidencia = caso.evidencias[0]
+        texto = documentos[evidencia.doc_id]
+        inicio_respuesta = evidencia.offset_inicio + evidencia.texto.index(caso.respuesta_literal)
+        a, b = linea_de(texto, evidencia.offset_inicio, evidencia.offset_fin)
+        contexto = texto[a:b]
+        inicio = inicio_respuesta - a
+        if contexto[inicio:inicio + len(caso.respuesta_literal)] != caso.respuesta_literal:
+            raise ValueError(f"{caso.id}: el offset de la respuesta no coincide con su contexto")
+        contexto_de[caso.id] = (evidencia.doc_id, contexto)
+        parrafos.setdefault((evidencia.doc_id, contexto), []).append(
+            _qa(caso, [{"text": caso.respuesta_literal, "answer_start": inicio}]))
+
+    avisos: list[str] = []
+    conversacionales = 0
+    for caso in banco.casos:
+        if caso.respondible:
+            continue
+        if caso.categoria == CategoriaPregunta.CONVERSACIONAL:
+            conversacionales += 1
+            continue
+        parrafos.setdefault(contexto_de.get(caso.par, ("", "")), []).append(_qa(caso, []))
+    if conversacionales:
+        avisos.append(f"{conversacionales} preguntas conversacionales no se exportan: SQuAD 2.0 es QA extractivo")
+
+    articulos: dict[str, list[dict]] = {}
+    for (doc_id, contexto), qas in parrafos.items():
+        articulos.setdefault(doc_id, []).append({"context": contexto, "qas": qas})
+    datos = {"version": "v2.0", "data": [{"title": d, "paragraphs": ps} for d, ps in articulos.items()]}
+    return datos, avisos
 
 
 __all__ = [
@@ -543,4 +714,6 @@ __all__ = [
     "SUBTIPOS", "TIPOS", "Ubicacion", "a_banco", "asignar_ids", "avisos_de_tamano", "leer_csv", "leer_golden",
     "leer_jsonl", "leer_squad2", "oracion_de", "separar_dev_test", "ubicar_respuesta",
     "Plantilla", "Seccion", "elegir_secciones", "escribir_plantilla", "generar_plantilla", "secciones_de",
+    "COLUMNAS_EXPORTADAS", "TIPO_PUBLICO", "escribir_banco", "escribir_csv", "exportar_filas_csv",
+    "escribir_atomico", "exportar_squad2", "linea_de", "ubicar_en_contexto",
 ]

@@ -103,7 +103,7 @@ def test_leer_jsonl_y_squad2(tmp_path):
             {"id": "q1", "question": "¿Cuánto dura?", "answers": [{"text": "24 meses", "answer_start": 0}],
              "is_impossible": False},
             {"id": "q2", "question": "¿Qué incluye?", "answers": [], "is_impossible": True,
-             "rag_subtipo": "trampa_mismo_tema", "rag_par": "q1"},
+             "rag": {"subtipo": "trampa_mismo_tema", "par": "q1"}},
         ]}]}]}), encoding="utf-8")
     filas = leer_squad2(squad)
     assert [(f.tipo, f.documento, f.respuesta_literal) for f in filas] == [
@@ -133,8 +133,8 @@ def test_separacion_estratificada_y_estable():
 
 
 def test_avisos_de_tamano_balance_y_certificacion():
-    errores, avisos = avisos_de_tamano(_filas(10, 2), minimo=30)
-    assert errores and "al menos 30" in errores[0]
+    avisos = avisos_de_tamano(_filas(10, 2))
+    assert any("prueba rápida" in a and "30" in a for a in avisos)  # chico: aviso, no error
     assert any("sin_respuesta o premisa_falsa" in a for a in avisos)
     assert any("no para certificar" in a and "59" in a for a in avisos)
 
@@ -146,7 +146,7 @@ def test_a_banco_ubica_clasifica_y_valida_contra_el_corpus():
                    respuesta_literal="24 meses desde la fecha de compra"),
         FilaGolden(pregunta="hola", tipo="conversacional"),
     ]
-    resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+    resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
     casos = {c.id: c for c in resultado.banco.casos}
     assert casos["r0"].categoria == CategoriaPregunta.EXACTA  # meses, cubre, garantía: en la oración
     assert casos["p1"].categoria == CategoriaPregunta.PARAFRASIS  # «vence» no está
@@ -164,18 +164,18 @@ def test_a_banco_junta_todos_los_errores():
         FilaGolden(id="d", pregunta="¿Cuánto?", tipo="respondible", respuesta_literal="99 meses", origen="g.csv:5"),
     ]
     with pytest.raises(ErrorGolden) as exc:
-        a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+        a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
     texto = str(exc.value)
     assert "g.csv:2" in texto and "g.csv:3" in texto and "g.csv:4" in texto
     with pytest.raises(ErrorGolden, match="g.csv:5"):
-        a_banco([filas[3]], DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+        a_banco([filas[3]], DOCS, CORPUS, estadisticas=est, paquete=es)
 
 
 def test_par_sin_completar_es_aviso_no_error():
     est, es = _est()
     filas = [FilaGolden(id="t1", pregunta="¿Qué incluye la garantía?", tipo="sin_respuesta",
                         subtipo="trampa_mismo_tema", par="r9", origen="g.csv:2")]
-    resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+    resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
     assert resultado.banco.casos[0].par is None
     assert any("r9" in a and "sin completar" in a for a in resultado.avisos)
 
@@ -224,7 +224,8 @@ def test_plantilla_cubre_documentos_con_pares_y_35_por_ciento_de_trampas():
         par = respondibles[trampa["par"]]  # cada trampa apunta a una respondible…
         assert par["documento"] == trampa["documento"]  # …de la misma sección
         assert par["fragmento_sugerido"] == trampa["fragmento_sugerido"]
-        assert trampa["par"] in trampa["notas"]
+        assert trampa["par"] in trampa["instrucciones"]
+        assert trampa["notas"] == ""  # notas queda libre para quien completa
     conversacionales = [f for f in filas if f["tipo"] == "conversacional"]
     assert [f["pregunta"] for f in conversacionales] == ["hola", "gracias", "¿Qué puedes hacer?"]
     assert all(f["terminos_clave"] and not any(t.strip().isdigit() for t in f["terminos_clave"].split(","))
@@ -260,7 +261,7 @@ def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
     assert len(leidas) == 5
     textos = {d.doc_id: d.texto_completo for d in corpus}
     est = EstadisticasLexicas.construir(list(textos.values()), cargar_paquete("es"))
-    resultado = a_banco(leidas, textos, CORPUS, estadisticas=est, paquete=cargar_paquete("es"), minimo=1)
+    resultado = a_banco(leidas, textos, CORPUS, estadisticas=est, paquete=cargar_paquete("es"))
     casos = {c.id: c for c in resultado.banco.casos}
     assert casos[trampa["id"]].par == "r001" and casos[trampa["id"]].subtipo == "trampa_mismo_tema"
     assert casos["r001"].respondible
@@ -273,7 +274,7 @@ def test_plantilla_en_cada_idioma(idioma):
     paquete = cargar_paquete(idioma)
     plantilla = generar_plantilla(_corpus_sintetico(), paquete, n=20)
     assert plantilla.leeme == paquete.golden_instrucciones.leeme
-    assert "{" not in "".join(f["notas"] for f in plantilla.filas)  # sin variables sin reemplazar
+    assert "{" not in "".join(f["instrucciones"] for f in plantilla.filas)  # sin variables sin reemplazar
     assert [f["pregunta"] for f in plantilla.filas if f["tipo"] == "conversacional"] == \
         paquete.golden_instrucciones.conversacionales
     import re

@@ -500,6 +500,86 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     return 0
 
 
+def _imprimir_errores_golden(e) -> int:
+    print("No se pudo completar la operación con el golden:")
+    for error in e.errores:
+        print(f"  - {error}")
+    return 1
+
+
+def _imprimir_resumen_golden(resumen) -> None:
+    for tipo in ("respondible", "sin_respuesta", "premisa_falsa", "ambigua", "conversacional"):
+        if resumen.por_tipo.get(tipo):
+            print(f"  {tipo:15} {resumen.por_tipo[tipo]}")
+    print(f"  dev / test      {resumen.por_split.get('dev', 0)} / {resumen.por_split.get('test', 0)}")
+    if resumen.avisos:
+        print("Avisos:")
+        for aviso in resumen.avisos:
+            print(f"  - {aviso}")
+
+
+def cmd_golden_plantilla(args: argparse.Namespace) -> int:
+    from rag.aplicacion.golden import generar_plantilla_golden
+    from rag.evaluacion.golden import ErrorGolden
+
+    try:
+        ruta_csv, ruta_leeme, avisos = generar_plantilla_golden(n=args.n, forzar=args.force)
+    except FileExistsError as e:
+        print(f"{e} ya existe y puede tener preguntas escritas: no se sobrescribió.")
+        print("Usa 'rag golden plantilla --force' para regenerarla desde cero.")
+        return 1
+    except ErrorGolden as e:
+        return _imprimir_errores_golden(e)
+    print(f"Plantilla escrita en {ruta_csv} (instrucciones en {ruta_leeme}).")
+    for aviso in avisos:
+        print(f"Aviso: {aviso}")
+    print("Complétala y luego ejecuta: rag golden importar golden/golden.csv")
+    return 0
+
+
+def cmd_golden_importar(args: argparse.Namespace) -> int:
+    from rag.aplicacion.golden import importar_golden
+    from rag.evaluacion.golden import ErrorGolden
+
+    if not Path(args.archivo).is_file():
+        print(f"No existe el archivo {args.archivo}.")
+        return 1
+    try:
+        resumen = importar_golden(args.archivo)
+    except ErrorGolden as e:
+        return _imprimir_errores_golden(e)
+    print(f"Golden importado en {resumen.manifiesto.parent} ({sum(resumen.por_tipo.values())} casos):")
+    _imprimir_resumen_golden(resumen)
+    return 0
+
+
+def cmd_golden_validar(_args: argparse.Namespace) -> int:
+    from rag.aplicacion.golden import validar_golden
+    from rag.evaluacion.golden import ErrorGolden
+
+    try:
+        resumen = validar_golden()
+    except ErrorGolden as e:
+        return _imprimir_errores_golden(e)
+    print(f"Banco válido para el corpus actual ({sum(resumen.por_tipo.values())} casos):")
+    _imprimir_resumen_golden(resumen)
+    return 0
+
+
+def cmd_golden_exportar(args: argparse.Namespace) -> int:
+    from rag.aplicacion.golden import exportar_golden
+    from rag.evaluacion.golden import ErrorGolden
+
+    try:
+        destino, avisos = exportar_golden(args.formato, args.salida)
+    except ErrorGolden as e:
+        return _imprimir_errores_golden(e)
+    print(f"Banco exportado en formato {args.formato} a {destino}.")
+    for aviso in avisos:
+        print(f"Aviso: {aviso}")
+    return 0
+
+
 def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
     from rag.aplicacion.widget import listar_presets
 
@@ -651,6 +731,23 @@ def _construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--salida", default="reportes/benchmark",
                    help="Directorio para artefactos e informe comparativo.")
     p.set_defaults(func=cmd_benchmark)
+
+    p_golden = sub.add_parser("golden", help="Golden set del cliente: plantilla, importar, validar y exportar.")
+    sub_golden = p_golden.add_subparsers(dest="golden_comando", required=True, help="Operación sobre el golden.")
+    p = sub_golden.add_parser("plantilla", help="Genera golden/golden.csv y golden/LEEME.txt para completar.")
+    p.add_argument("--n", type=int, default=40, help="Filas a generar (por defecto: 40).")
+    p.add_argument("--force", action="store_true", help="Reemplaza golden/golden.csv si ya existe.")
+    p.set_defaults(func=cmd_golden_plantilla)
+    p = sub_golden.add_parser("importar", help="Valida el golden y escribe golden/banco/.")
+    p.add_argument("archivo", help="golden.csv, un .jsonl o un SQuAD 2.0 (.json).")
+    p.set_defaults(func=cmd_golden_importar)
+    p = sub_golden.add_parser("validar", help="Revisa el banco contra el corpus actual (solo lectura).")
+    p.set_defaults(func=cmd_golden_validar)
+    p = sub_golden.add_parser("exportar", help="Exporta el banco a SQuAD 2.0 o CSV.")
+    p.add_argument("--formato", choices=["squad2", "csv"], required=True, help="Formato de salida.")
+    p.add_argument("--salida", default=None,
+                   help="Archivo de salida (por defecto: golden/exportado.squad2.json o golden/exportado.csv).")
+    p.set_defaults(func=cmd_golden_exportar)
 
     p_widget = sub.add_parser("widget", help="Configura y exporta el widget embebible.")
     sub_widget = p_widget.add_subparsers(

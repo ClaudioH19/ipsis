@@ -37,7 +37,7 @@ a un caso de uso de `rag/aplicacion/`.
 | corpus | `rag indexar [--reindexar]` | Parsea, fragmenta, calcula `EstadisticasLexicas`, codifica e indexa. Escribe el manifiesto |
 | consulta | `rag preguntar "<texto>" [--diagnostico]` | Consulta local; con diagnóstico muestra etapas, latencias, señales, términos foco y regla |
 | consulta | `rag servir [carpeta] [--reindexar]` | API HTTP + widget |
-| golden | ★ `rag golden plantilla [--n 40]` | Genera `golden/golden.csv` y `golden/LEEME.txt` (§3) |
+| golden | ★ `rag golden plantilla [--n 40] [--force]` | Genera `golden/golden.csv` y `golden/LEEME.txt` (§3) |
 | golden | ★ `rag golden importar <archivo.csv\|.jsonl\|squad.json>` | Valida, ubica offsets, separa `dev`/`test` y escribe `golden/banco/` |
 | golden | ★ `rag golden validar` | Revisa el banco contra el corpus actual |
 | golden | ★ `rag golden exportar --formato squad2\|csv` | Exporta el banco |
@@ -63,6 +63,36 @@ Por eso el cliente completa un **CSV simple**, el asistente calcula los offsets
 y el banco interno (manifiesto + JSONL) conserva el rigor. SQuAD 2.0 se acepta
 como entrada y salida para interoperar.
 
+### SQuAD 2.0: qué se conserva
+
+SQuAD 2.0 es formato de **intercambio**; la verdad es el banco interno.
+`rag golden exportar --formato squad2` escribe un SQuAD 2.0 estándar:
+
+- `title` es el `doc_id` y `context` es el párrafo del documento que contiene
+  la evidencia (sin chunking nuevo).
+- `answer_start` es relativo a ese `context`, y se verifica
+  `context[answer_start:answer_start + len(text)] == text` antes de escribir.
+  Al importar, `context` + `answer_start` ubican la misma ocurrencia aunque el
+  texto se repita en el documento.
+- `sin_respuesta` → `is_impossible: true`, `answers: []`. Una trampa con `par`
+  va en el párrafo de su par (estilo SQuAD 2.0); las demás, en un párrafo con
+  `context` vacío (no se inventa contexto).
+- `premisa_falsa` y `ambigua` → `is_impossible: true`: el estándar pierde la
+  distinción.
+- `conversacional` no se exporta (aviso): no es QA extractivo.
+- **Extensión opcional `"rag"`** en cada pregunta: `tipo`, `subtipo`, `par` y
+  `notas`. Las herramientas estándar la ignoran; un SQuAD externo sin ella se
+  importa igual (`is_impossible` → `sin_respuesta`). Con ella, el tipo y el
+  par sobreviven a la ida y vuelta.
+- `exacta`/`parafrasis` no se exporta: se recalcula al importar con `s_cov`.
+- El split no se exporta: se recalcula, determinista por `id`.
+
+**Ida y vuelta** (`importar → exportar squad2 → importar`): el mismo
+**contenido QA** (ids, preguntas, respondibilidad, respuesta literal,
+evidencia y offsets, categoría y split) y, gracias a la extensión, `subtipo` y
+`par`. Se pierden las conversacionales. Por CSV la ida y vuelta da el mismo
+banco.
+
 ### `golden/golden.csv` (UTF-8 con BOM, para que Excel respete los acentos)
 
 | Columna | Obligatoria | Contenido |
@@ -73,7 +103,8 @@ como entrada y salida para interoperar.
 | `respuesta_literal` | si es `respondible` | Texto **copiado tal cual** del documento: el dato mínimo |
 | `documento` | no | Para desambiguar si el texto aparece en varios documentos |
 | `notas` | no | Libre |
-| `fragmento_sugerido`, `terminos_clave` | no | Ayudas que llena la plantilla; se ignoran al importar |
+| `subtipo`, `par` | no | `trampa_mismo_tema` y el `id` de la fila respondible del mismo tema (los llena la plantilla) |
+| `instrucciones`, `fragmento_sugerido`, `terminos_clave` | no | Ayudas que llena la plantilla; se ignoran al importar |
 
 | `tipo` | Categoría interna | Estado esperado |
 |---|---|---|
@@ -109,7 +140,8 @@ como entrada y salida para interoperar.
   después con espacios colapsados, mapeando de vuelta a los offsets
   originales. Si el texto aparece más de una vez y la fila no indica
   `documento`, avisa.
-- Exige al menos 30 filas para importar, y advierte si hay menos de 30% de
+- Con menos de 30 filas importa igual y avisa que solo sirve de prueba rápida
+  (la falta de muestra no es un error), y advierte si hay menos de 30% de
   `sin_respuesta` + `premisa_falsa`. **Con ese tamaño el golden sirve de ajuste
   práctico**: detecta errores evidentes, compara perfiles y explora umbrales,
   pero **no certifica** un riesgo de 5% (ver §4.1). `importar` informa cuántos
