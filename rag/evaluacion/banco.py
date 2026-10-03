@@ -119,6 +119,9 @@ class ManifiestoBanco(BaseModel):
     # De dónde salió el banco (``rag golden importar``): formato y archivo de
     # origen. Sin fecha, para que reimportar lo mismo dé el mismo banco.
     procedencia: dict[str, str] | None = None
+    # «regresion»: banco universal del software (lo usan las pruebas), igual para
+    # todos los clientes; mide, pero nunca calibra umbrales de un cliente.
+    uso: Literal["evaluacion", "regresion"] = "evaluacion"
 
 
 class BancoEvaluacion(BaseModel):
@@ -179,6 +182,13 @@ def cargar_banco(ruta_manifiesto: str | Path) -> BancoEvaluacion:
     return BancoEvaluacion(manifiesto=manifiesto, casos=casos)
 
 
+def exigir_calibrable(banco: BancoEvaluacion) -> None:
+    """Solo el golden del cliente calibra: un banco de regresión no."""
+    if banco.manifiesto.uso == "regresion":
+        raise ValueError(f"el banco {banco.manifiesto.dataset_id!r} es de regresión del software: sirve para "
+                         "medir y comparar, no para calibrar umbrales. Calibra con el golden del cliente")
+
+
 def validar_evidencias_contra_corpus(
     banco: BancoEvaluacion,
     documentos: dict[str, str],
@@ -201,6 +211,6 @@ def validar_evidencias_contra_corpus(
 __all__ = [
     "BANCO_SCHEMA_VERSION", "BancoEvaluacion", "CasoEvaluacion",
     "CategoriaPregunta", "EvidenciaEsperada", "ArchivoCorpus", "ManifiestoBanco",
-    "cargar_banco", "hash_banco", "hash_archivos_corpus",
+    "cargar_banco", "exigir_calibrable", "hash_banco", "hash_archivos_corpus",
     "validar_evidencias_contra_corpus",
 ]

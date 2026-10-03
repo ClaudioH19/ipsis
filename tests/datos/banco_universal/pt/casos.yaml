@@ -1,0 +1,117 @@
+# Casos del banco universal (fuente). La categoría sale del id; las evidencias
+# y offsets los calcula construir.py. Ver ../README.md.
+- id: pt-exacta-001
+  documento: garantia_cafeteira.md
+  capacidad: duracion
+  pregunta: Quanto tempo dura a garantia da cafeteira Brío C2?
+  respuesta: 24 meses a partir da data de compra
+- id: pt-trampa-001
+  par: pt-exacta-001
+  pregunta: Quanto custa estender a garantia da cafeteira Brío C2?
+- id: pt-exacta-002
+  documento: garantia_cafeteira.md
+  capacidad: lista
+  pregunta: Quais defeitos a garantia cobre?
+  respuesta: defeitos do motor, da bomba e do aquecedor
+- id: pt-trampa-002
+  par: pt-exacta-002
+  pregunta: Quem autoriza os reparos da garantia?
+- id: pt-parafrasis-001
+  documento: garantia_cafeteira.md
+  capacidad: procedimiento
+  pregunta: O que devo fazer se minha cafeteira quebrar?
+  respuesta: leve a cafeteira e a nota fiscal a qualquer loja Brío
+- id: pt-trampa-003
+  par: pt-parafrasis-001
+  pregunta: Quantos dias a loja demora para consertar a cafeteira?
+- id: pt-parafrasis-002
+  documento: garantia_cafeteira.md
+  capacidad: si_no
+  pregunta: Estou coberto se a cafeteira cair no chão?
+  respuesta: não cobre danos por quedas
+- id: pt-exacta-003
+  documento: reembolsos.md
+  capacidad: fecha
+  pregunta: Até quando posso pedir o reembolso?
+  respuesta: até 30 dias depois de receber o pedido
+- id: pt-exacta-004
+  documento: reembolsos.md
+  capacidad: duracion
+  pregunta: Em quantos dias úteis o reembolso é pago?
+  respuesta: 10 dias úteis
+- id: pt-trampa-004
+  par: pt-exacta-004
+  pregunta: Quem aprova a solicitação de reembolso?
+- id: pt-exacta-005
+  documento: reembolsos.md
+  capacidad: condicion
+  pregunta: Quando o frete da devolução é grátis?
+  respuesta: Se o produto chegar danificado
+- id: pt-trampa-005
+  par: pt-exacta-005
+  pregunta: Qual transportadora retira a devolução?
+- id: pt-parafrasis-003
+  documento: reembolsos.md
+  capacidad: causa
+  pregunta: Por que não é possível devolver escovas de dentes?
+  respuesta: por razões sanitárias
+- id: pt-exacta-006
+  documento: irrigacao_estufa.md
+  capacidad: cantidad
+  pregunta: Quantos litros por hora cada gotejador fornece?
+  respuesta: 4 litros por hora
+- id: pt-trampa-006
+  par: pt-exacta-006
+  pregunta: Quantos gotejadores a estufa tem?
+- id: pt-exacta-007
+  documento: irrigacao_estufa.md
+  capacidad: fecha
+  pregunta: A que horas funciona a irrigação por gotejamento?
+  respuesta: às 7:00 e às 19:00
+- id: pt-trampa-007
+  par: pt-exacta-007
+  pregunta: Que tipo de fertilizante é adicionado à irrigação?
+- id: pt-parafrasis-004
+  documento: irrigacao_estufa.md
+  capacidad: condicion
+  pregunta: Quando as plantas são regadas uma terceira vez nos meses quentes?
+  respuesta: se a temperatura passar de 30 °C
+- id: pt-exacta-008
+  documento: laboratorio.md
+  capacidad: persona
+  pregunta: Quem é a responsável pelo registro de amostras?
+  respuesta: a técnica Marta Rojas
+- id: pt-trampa-008
+  par: pt-exacta-008
+  pregunta: Quem assina os resultados das amostras?
+- id: pt-exacta-009
+  documento: laboratorio.md
+  capacidad: causa
+  pregunta: Por que uma amostra sem etiqueta é rejeitada?
+  respuesta: porque não é possível garantir sua origem
+- id: pt-trampa-009
+  par: pt-exacta-009
+  pregunta: Quantas amostras são rejeitadas por mês?
+- id: pt-parafrasis-005
+  documento: laboratorio.md
+  capacidad: duracion
+  pregunta: Por quanto tempo as amostras de sangue podem ser conservadas?
+  respuesta: 72 horas
+- id: pt-exacta-010
+  documento: biblioteca.md
+  capacidad: ubicacion
+  pregunta: Em que andar fica a biblioteca?
+  respuesta: no segundo andar do prédio B
+- id: pt-trampa-010
+  par: pt-exacta-010
+  pregunta: O prédio B tem elevador?
+- id: pt-premisa-001
+  pregunta: O que acontece se o tanque ficar abaixo de 50 %?
+- id: pt-ambigua-001
+  pregunta: Quanto tempo dura?
+- id: pt-fuera-001
+  pregunta: Qual é a capital da Mongólia?
+- id: pt-fuera-002
+  pregunta: Como se faz pão de fermentação natural?
+- id: pt-fuera-003
+  pregunta: Quem ganhou a Copa do Mundo de 1998?
