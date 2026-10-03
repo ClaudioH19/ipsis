@@ -12,7 +12,6 @@ PLANTILLAS_YAML = [
     "motor.yaml",
     "textos.yaml",
     "estilos.yaml",
-    "dominios/idiomas/es.yaml",
 ]
 
 

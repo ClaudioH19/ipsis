@@ -8,7 +8,6 @@ from pathlib import Path
 
 import yaml
 
-from rag.configuracion import rutas
 
 STOPWORDS_ES = {
     "el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del", "al",
@@ -26,44 +25,21 @@ STOPWORDS_ES = {
 
 
 @functools.lru_cache(maxsize=None)
-def cargar_palabras_generales(
-    idioma: str = "es", ruta_base: str = rutas.IDIOMAS_LEGADO
-) -> frozenset[str]:
-    """Carga palabras frecuentes que no prueban pertenencia al dominio."""
-    ruta = Path(ruta_base) / f"{idioma}.yaml"
-    if not ruta.exists():
-        return frozenset()
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
-    return frozenset(datos.get("palabras_generales", []))
+def cargar_palabras_generales(idioma: str = "es") -> frozenset[str]:
+    """Palabras frecuentes que no prueban pertenencia al dominio.
 
-
-def _palabras_generales_del_paquete(idioma: str) -> frozenset[str]:
-    """Lee el recurso incluido en el paquete, sin depender del directorio actual."""
-    from rag.recursos import leer_plantilla
+    Transitorio: la señal s_oov basada en IDF las reemplaza en el plan V3 (P4.4).
+    Un idioma sin paquete devuelve un conjunto vacío.
+    """
+    from rag.lenguaje.paquete import cargar_paquete
 
     try:
-        datos = yaml.safe_load(leer_plantilla(f"dominios/idiomas/{idioma}.yaml")) or {}
-    except FileNotFoundError:
+        return frozenset(cargar_paquete(idioma).palabras_generales)
+    except ValueError:
         return frozenset()
-    return frozenset(datos.get("palabras_generales", []))
 
 
-PALABRAS_GENERALES_ES = _palabras_generales_del_paquete("es")
-
-
-def escribir_idioma_es_si_falta(
-    ruta_base: str = rutas.IDIOMAS_LEGADO,
-) -> bool:
-    """Copia el recurso global de español incluido en el paquete."""
-    from rag.recursos import leer_plantilla
-
-    ruta = Path(ruta_base) / "es.yaml"
-    if ruta.exists():
-        return False
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(leer_plantilla("dominios/idiomas/es.yaml"), encoding="utf-8")
-    cargar_palabras_generales.cache_clear()
-    return True
+PALABRAS_GENERALES_ES = cargar_palabras_generales("es")
 
 
 def sin_acentos(texto: str) -> str:

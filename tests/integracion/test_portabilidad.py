@@ -143,7 +143,7 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
 
     # El andamiaje que 'rag init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
     assert (proyecto_externo / "configuracion" / "dominio.yaml").exists()
-    assert (proyecto_externo / "configuracion" / "dominios" / "idiomas" / "es.yaml").exists()
+    assert not (proyecto_externo / "configuracion" / "dominios").exists()
     assert (proyecto_externo / "configuracion" / "textos.yaml").exists()
 
 

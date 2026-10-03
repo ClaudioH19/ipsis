@@ -13,7 +13,6 @@ DOMINIO = "configuracion/dominio.yaml"
 IDIOMA = "configuracion/idioma.yaml"
 CALIBRACION = "configuracion/calibracion.yaml"
 TEXTOS = "configuracion/textos.yaml"  # pasa al paquete de idioma en P3.5
-IDIOMAS_LEGADO = "configuracion/dominios/idiomas"  # se retira en P3.1
 
 DOCUMENTOS = "documentos"
 CATALOGO = "documentos/catalogo.yaml"

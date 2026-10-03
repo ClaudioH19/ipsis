@@ -36,7 +36,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     from rag.aplicacion.proyecto import actualizar_dominio
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
     from rag.configuracion.carga import inicializar_dominio_si_falta
-    from rag.lenguaje.texto import escribir_idioma_es_si_falta
+    from rag.lenguaje.paquete import idiomas_disponibles
 
     ruta_dominio = Path(RUTA_DOMINIO)
     if ruta_dominio.exists() and not args.force:
@@ -47,11 +47,9 @@ def cmd_init(args: argparse.Namespace) -> int:
         ruta_dominio.unlink()  # --force: parte de los valores por defecto, no fusiona con lo viejo
 
     idioma = args.idioma or "es"
-
-    # Un directorio vacío no trae el recurso de idioma: se escribe desde la
-    # plantilla incluida en el paquete, nunca desde el árbol del repositorio.
-    if idioma == "es":
-        escribir_idioma_es_si_falta()
+    if idioma not in idiomas_disponibles():
+        print(f"Error: no hay paquete de idioma {idioma!r}. Disponibles: {', '.join(idiomas_disponibles())}.")
+        return 1
 
     inicializar_asistente_si_falta()
 
@@ -248,11 +246,8 @@ def _completar_proyecto_existente() -> None:
     )
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
     from rag.configuracion.carga import inicializar_dominio_si_falta
-    from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     dominio = cargar_dominio()
-    if dominio.get("idioma", "es") == "es":
-        escribir_idioma_es_si_falta()
     inicializar_proyecto_si_falta(
         coleccion_base=slug_coleccion(dominio.get("nombre_asistente", "Asistente documental"))
     )
@@ -553,7 +548,7 @@ def _construir_parser() -> argparse.ArgumentParser:
                     help="Descripción corta del dominio, p.ej. 'el manual de mi equipo' "
                          "(por defecto: 'los documentos cargados').")
     p.add_argument("--idioma", default=None,
-                    help="Idioma de las palabras de alta frecuencia general (por defecto: 'es').")
+                    help="Código del paquete de idioma: textos, patrones y reglas (por defecto: 'es').")
     p.add_argument("--force", action="store_true", help="Reinicia configuracion/asistente.yaml si ya existe.")
     p.set_defaults(func=cmd_init)
 

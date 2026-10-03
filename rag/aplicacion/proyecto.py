@@ -30,6 +30,14 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
         else:
             nuevo[clave] = valor
 
+    if "idioma" in pares:
+        from rag.lenguaje.paquete import idiomas_disponibles
+
+        if nuevo["idioma"] not in idiomas_disponibles():
+            raise ValueError(
+                f"no hay paquete de idioma {nuevo['idioma']!r} (disponibles: {idiomas_disponibles()})"
+            )
+
     ruta_p.parent.mkdir(parents=True, exist_ok=True)
     ruta_p.write_text(
         _encabezado_comentarios(ruta_p)
