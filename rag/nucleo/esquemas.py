@@ -129,6 +129,17 @@ class SenalesRecuperacion(EsquemaEstricto):
     terminos_ausentes: list[str] = Field(default_factory=list)
 
 
+class SenalesLexicas(EsquemaEstricto):
+    """Señales léxicas de una consulta, todas en [0, 1] (ver ``rag.lenguaje.lexico``)."""
+
+    terminos_foco: list[str] = Field(default_factory=list)  # forma de superficie
+    s_oov: float = Field(default=0.0, ge=0.0, le=1.0)
+    s_cov: float | None = Field(default=None, ge=0.0, le=1.0)
+    s_foco: float | None = Field(default=None, ge=0.0, le=1.0)
+    s_lex: float | None = Field(default=None, ge=0.0, le=1.0)
+    acuerdo: float | None = Field(default=None, ge=0.0, le=1.0)
+
+
 class EvidenceSpan(EsquemaEstricto):
     doc_id: str = Field(min_length=1)
     chunk_id: str = Field(min_length=1)

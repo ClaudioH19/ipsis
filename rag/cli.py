@@ -215,8 +215,7 @@ def cmd_indexar(args: argparse.Namespace) -> int:
         print(f"  [!] {a}")
     print(f"Indexado en la colección {resumen.nombre_coleccion!r}: "
           f"BM25 ({resumen.n_vocab_bm25} términos), "
-          f"inventario de entidades ({resumen.n_entidades_inventario} valores), "
-          f"estadísticas léxicas ({resumen.n_terminos_lexico} términos).")
+          f"inventario de entidades ({resumen.n_entidades_inventario} valores).")
     print(f"Tiempo total: {resumen.tiempo_seg:.1f}s")
     print("Siguiente paso: 'rag servir' (o 'rag preguntar \"...\"' si ya está sirviendo).")
     return 0

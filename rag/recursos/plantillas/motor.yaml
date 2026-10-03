@@ -53,7 +53,7 @@ abstencion:
     senal: "score_top1_denso"
     umbral: 0.80
     grounding_lexico:
-      df_fraccion_max: 0.8
+      oov_max: 0.5
   confianza_alta:
     senal: "score_top1_denso"
     umbral: 0.85

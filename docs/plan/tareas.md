@@ -268,7 +268,7 @@ Referencia: [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §2–§5.
   - Agrega `SenalesLexicas` a `nucleo/esquemas.py`.
   - Reemplaza `tiene_grounding_lexico` y `tiene_grounding_dominio` por `s_oov`.
 - **Aceptación:** pruebas con el corpus sintético:
-  - «¿Cuánto dura la garantía?»: el foco incluye el término de «garantía», y `s_foco` = 0 contra la oración del filtro de sedimentos y 1 contra la de la garantía.
+  - «¿Cuánto dura la garantía?»: el foco incluye el término de «garantía», y `s_foco` = 0 contra la oración del filtro de sedimentos y ≥ 0,5 contra la de la garantía (el foco también contiene «dura», que esa oración no repite; por eso el umbral por defecto es 0,5).
   - Una pregunta sobre asados da `s_oov` > 0,6.
 
   `PYTEST` en verde.

@@ -33,7 +33,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P4.1 | ✅ | 2026-10-03 | 11 nuevas | EstadisticasLexicas con df, largo medio y forma de superficie; escritura atómica. |
 | P4.2 | ✅ | 2026-10-03 | (mismo commit) | lexico.py puro: id por crc32, BM25 doc/consulta/puntaje, TF-IDF, coseno y MMR. Recibe las estadísticas por Protocol para no depender de la capa indice. |
 | P4.3 | ✅ | 2026-10-03 | 413 (suite completa) | Vector disperso = bm25_doc(terminos()) con id crc32; Qdrant aplica IDF. Sin vocabulario: las estadísticas se guardan por colección en .rag/indice/<colección>.estadisticas.json (el benchmark crea varias colecciones). La consulta usa el stemmer guardado en las estadísticas, no la configuración. Desvío: el inventario de entidades y las estadísticas de grounding siguen en archivos propios hasta P4.4/P5.4. BM25 solo recupera el chunk correcto en 3/3 preguntas de prueba; caracterización sin cambios. |
-| P4.4 | ⬜ | | | |
+| P4.4 | ✅ | 2026-10-03 | 417 (suite completa) | Señales en lexico.py y esquema SenalesLexicas. El grounding de layered_v1 pasa a 'entidad en inventario o s_oov < oov_max (0,5)'; se eliminan palabras_generales (paquetes y código) y las estadísticas df antiguas. Si la pregunta trae entidades, decide la premisa (conserva el mensaje «No encontré información sobre …»). Cambio deliberado de caracterización: «¿Atienden los domingos?» pasa de relacionado (mostraba reembolsos y filtro) a sin_respuesta. Hallazgo: con 2 términos foco, la oración correcta puede contener solo uno; umbral por defecto de s_foco = 0,5. |
 | P4.5 | ⬜ | | | |
 | P4.6 | ⬜ | | | |
 | P5.1 | ⬜ | | | |

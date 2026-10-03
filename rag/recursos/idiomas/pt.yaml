@@ -73,19 +73,6 @@ stopwords:
 - umas
 - uns
 - é
-palabras_generales:
-- preciso
-- fazer
-- saber
-- sobre
-- coisa
-- algo
-- informação
-- pergunta
-- ajuda
-- funciona
-- usar
-- quero
 numeros:
   um: 1
   uma: 1

@@ -166,7 +166,7 @@ def test_motor_orquesta_recuperacion_dirigida_y_etapas_tipadas():
             return {valor_entidad}
 
         def estadisticas_lexico(self):
-            return {}
+            return None
 
         def n_chunks(self):
             return 2
@@ -253,7 +253,9 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
             return {"articulo:9"}
 
         def estadisticas_lexico(self):
-            return {"documento": 0.2}
+            from rag.indice.estadisticas import EstadisticasLexicas
+
+            return EstadisticasLexicas.construir(["El documento describe el equipo."])
 
         def calentar(self):
             capturado["calentado"] = True

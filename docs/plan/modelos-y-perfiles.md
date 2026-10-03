@@ -99,7 +99,7 @@ umbrales_por_defecto:        # conservadores; `rag calibrar` los reemplaza
   oov: 0.60
   dominio: 0.30
   relacionado: 0.50
-  foco: 1.00
+  foco: 0.50                 # al menos uno de los 2 términos foco
   ok: 0.80
   cov: 0.60                  # solo lo usa light
 ```

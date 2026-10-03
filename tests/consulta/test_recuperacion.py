@@ -76,7 +76,7 @@ def retriever(payloads):
         modelo_st=codificador, client=QdrantClient(":memory:"),
     )
     coleccion = ColeccionQdrant(client=client, modelo_st=modelo, estadisticas=estadisticas, nombre=nombre, qdrant_path="")
-    return RetrieverQdrant(coleccion, inventario_entidades={"articulo_4"}, estadisticas_lexico={"filtro": 0.2})
+    return RetrieverQdrant(coleccion, inventario_entidades={"articulo_4"})
 
 
 def _consulta(texto: str) -> QueryAnalysis:
@@ -150,7 +150,7 @@ def test_la_pregunta_se_codifica_una_sola_vez_por_texto(retriever):
 def test_expone_inventarios_y_tamano(retriever, payloads):
     assert retriever.n_chunks() == len(payloads)
     assert retriever.inventario_entidades() == {"articulo_4"}
-    assert retriever.estadisticas_lexico() == {"filtro": 0.2}
+    assert retriever.estadisticas_lexico().n_chunks == retriever.n_chunks()
 
 
 def test_modo_invalido_falla_al_construir(retriever):

@@ -108,7 +108,74 @@ def mmr(
     return elegidos
 
 
+# ---------------------------------------------------------------------------
+# Señales léxicas, todas en [0, 1]. ``terminos_q`` ya viene sin stopwords
+# (ver ``terminos_contenido``): las palabras vacías no aportan evidencia.
+# ---------------------------------------------------------------------------
+def terminos_contenido(terminos_q: Sequence[str], stop: set[str] | frozenset[str] = frozenset()) -> list[str]:
+    """Términos de la pregunta sin stopwords ni duplicados, en orden."""
+    vistos: list[str] = []
+    for t in terminos_q:
+        if t not in stop and t not in vistos:
+            vistos.append(t)
+    return vistos
+
+
+def terminos_foco(terminos_q: Sequence[str], est: Estadisticas, k: int = 2) -> list[str]:
+    """Los ``k`` términos de la pregunta con mayor IDF que existen en el corpus.
+
+    Son «de qué se habla»: en «¿Cuánto dura la garantía?», la garantía. Los
+    términos ausentes del corpus no cuentan (los mide ``s_oov``). Empates por
+    orden alfabético, para que el resultado sea determinista.
+    """
+    presentes = [t for t in dict.fromkeys(terminos_q) if est.df.get(t, 0) > 0]
+    return sorted(presentes, key=lambda t: (-est.idf(t), t))[:k]
+
+
+def s_oov(terminos_q: Sequence[str], est: Estadisticas) -> float:
+    """Masa IDF de la pregunta que no existe en el corpus (1 = nada existe)."""
+    unicos = list(dict.fromkeys(terminos_q))
+    total = sum(est.idf(t) for t in unicos)
+    if not total:
+        return 0.0
+    return sum(est.idf(t) for t in unicos if est.df.get(t, 0) == 0) / total
+
+
+def s_cov(terminos_q: Sequence[str], terminos_tramo: Sequence[str], est: Estadisticas) -> float:
+    """Fracción de la masa IDF de la pregunta presente en el tramo."""
+    unicos = list(dict.fromkeys(terminos_q))
+    total = sum(est.idf(t) for t in unicos)
+    if not total:
+        return 0.0
+    presentes = set(terminos_tramo)
+    return sum(est.idf(t) for t in unicos if t in presentes) / total
+
+
+def s_foco(foco: Sequence[str], terminos_oracion: Sequence[str]) -> float:
+    """Fracción de términos foco presentes en la oración (1 si no hay foco)."""
+    if not foco:
+        return 1.0
+    presentes = set(terminos_oracion)
+    return sum(1 for t in foco if t in presentes) / len(foco)
+
+
+def s_lex(
+    terminos_q: Sequence[str], terminos_oracion: Sequence[str], est: Estadisticas, k1: float = K1, b: float = B
+) -> float:
+    """BM25 de la oración normalizado por el máximo teórico de la pregunta."""
+    maximo = sum(est.idf(t) * (k1 + 1) for t in set(terminos_q))
+    return bm25_puntaje(terminos_q, terminos_oracion, est, k1, b) / maximo if maximo else 0.0
+
+
+def acuerdo(ids_denso: Sequence, ids_bm25: Sequence, n: int = 3) -> float:
+    """1 si cada top-1 está en el top-``n`` del otro, 0,5 si solo uno, 0 si ninguno."""
+    if not ids_denso or not ids_bm25:
+        return 0.0
+    return (0.5 if ids_denso[0] in ids_bm25[:n] else 0.0) + (0.5 if ids_bm25[0] in ids_denso[:n] else 0.0)
+
+
 __all__ = [
-    "B", "K1", "Estadisticas", "bm25_consulta", "bm25_doc", "bm25_puntaje",
-    "coseno", "id_termino", "mmr", "tfidf_vector",
+    "B", "K1", "Estadisticas", "acuerdo", "bm25_consulta", "bm25_doc", "bm25_puntaje",
+    "coseno", "id_termino", "mmr", "s_cov", "s_foco", "s_lex", "s_oov", "terminos_contenido",
+    "terminos_foco", "tfidf_vector",
 ]

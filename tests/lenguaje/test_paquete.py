@@ -18,7 +18,6 @@ def test_el_paquete_espanol_esta_completo():
     assert paquete.conversacional.patrones["saludo"]
     assert paquete.mensajes.sin_respuesta
     assert paquete.interfaz["placeholder"]
-    assert "curso" not in paquete.palabras_generales
 
 
 def test_codigo_inexistente_falla_con_los_disponibles():

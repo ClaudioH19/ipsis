@@ -306,33 +306,41 @@ def test_respuesta_conversacional_no_esta_vacia_para_cada_categoria():
 # tocar ningún corpus real.
 # ---------------------------------------------------------------------------
 
-def test_tiene_grounding_lexico_palabra_generica_no_cuenta_aunque_este_en_estadisticas():
-    """Caso real reportado por el coordinador: "prepara" aparecía en el
-    corpus (por azar, en un contexto distinto), pero es una palabra de alta
-    frecuencia general -- no debe contar como evidencia de dominio."""
-    estadisticas = {"prepara": 0.05, "asado": None}  # "prepara" rara en el corpus, pero genérica
-    assert tiene_grounding_lexico("¿Cómo se prepara un asado?", estadisticas) is False
+def _est(*textos):
+    from rag.indice.estadisticas import EstadisticasLexicas
+    from rag.lenguaje.paquete import cargar_paquete
+
+    return EstadisticasLexicas.construir(textos, cargar_paquete("es"))
 
 
-def test_tiene_grounding_lexico_palabra_especifica_del_dominio_si_cuenta():
-    estadisticas = {"bitacora": 0.40}  # específica, ni omnipresente ni ausente
-    assert tiene_grounding_lexico("q pasa si me atraso con la bitacora", estadisticas) is True
+def _es():
+    from rag.lenguaje.paquete import cargar_paquete
+
+    return cargar_paquete("es")
 
 
-def test_tiene_grounding_lexico_palabra_omnipresente_en_el_corpus_no_cuenta():
-    """Una palabra que aparece en casi todos los chunks no discrimina,
-    aunque no esté en la lista de palabras generales."""
-    estadisticas = {"inventada": 0.95}
-    assert tiene_grounding_lexico("pregunta sobre inventada", estadisticas, df_fraccion_max=0.8) is False
+def test_grounding_no_cuenta_si_casi_todo_el_vocabulario_falta_del_corpus():
+    """«preparar» aparece por azar en el corpus, pero «asado» no: la mayor parte
+    de la masa IDF de la pregunta es ajena al dominio (s_oov alto)."""
+    est = _est("Para preparar el equipo, lea el manual.", "El filtro se cambia cada mes.")
+    assert tiene_grounding_lexico("¿Cómo se prepara un asado?", est, paquete=_es()) is False
+
+
+def test_grounding_cuenta_si_el_vocabulario_de_la_pregunta_esta_en_el_corpus():
+    est = _est("La bitácora se entrega cada semana.", "El filtro se cambia cada mes.")
+    assert tiene_grounding_lexico("¿Cuándo se entrega la bitacora?", est, paquete=_es()) is True
+
+
+def test_grounding_sin_estadisticas_o_sin_terminos_es_falso():
+    assert tiene_grounding_lexico("¿Cuándo?", None, paquete=_es()) is False
+    assert tiene_grounding_lexico("¿y?", _est("texto"), paquete=_es()) is False
 
 
 def test_tiene_grounding_dominio_combina_entidad_y_lexico():
     inventario = {"articulo_2"}
-    estadisticas = {}
-    # ni entidad ni palabra específica -> sin grounding
-    assert tiene_grounding_dominio("¿cómo se prepara un asado?", inventario, estadisticas) is False
-    # entidad presente en el corpus -> grounding, sin necesidad de léxico
-    assert tiene_grounding_dominio("¿qué dice el artículo 2?", inventario, estadisticas) is True
+    est = _est("El filtro se cambia cada mes.")
+    assert tiene_grounding_dominio("¿cómo se prepara un asado?", inventario, est, paquete=_es()) is False
+    assert tiene_grounding_dominio("¿qué dice el artículo 2?", inventario, est, paquete=_es()) is True
 
 
 def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():

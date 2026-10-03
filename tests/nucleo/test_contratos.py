@@ -108,7 +108,7 @@ def test_abstencion_selecciona_umbrales_propios_del_retriever_sin_mutar_base():
             "capa_a_fuera_dominio": {
                 "senal": "score_top1_denso",
                 "umbral": 0.8,
-                "grounding_lexico": {"df_fraccion_max": 0.8},
+                "grounding_lexico": {"oov_max": 0.5},
             },
             "confianza_alta": {"senal": "score_top1_denso", "umbral": 0.85},
             "perfiles_retriever": {
