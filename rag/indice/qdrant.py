@@ -254,60 +254,6 @@ def cargar_inventario_entidades(nombre_coleccion: str,
         return set(json.load(f))
 
 
-# ---------------------------------------------------------------------------
-# Estadísticas léxicas de dominio (Etapa D, punto 1): reemplaza el chequeo
-# de "grounding léxico" anterior (¿está la palabra en el vocabulario BM25?
-# -- demasiado permisivo, medido: "prepara" o "necesito" bastaban porque
-# aparecían un par de veces en el corpus). Se persiste, por token (sin
-# acentos), la FRACCIÓN de chunks del corpus que lo contienen -- una
-# palabra que aparece en muy pocos chunks por simple azar (típico en un
-# corpus de 38 chunks) no es, solo por eso, evidencia de dominio; hace
-# falta combinarlo con la lista de palabras de alta frecuencia general
-# (``rag/lenguaje/texto.py::PALABRAS_GENERALES_ES``) en el chequeo real.
-# ---------------------------------------------------------------------------
-def construir_estadisticas_lexico_dominio(payloads: list[dict], con_header: bool) -> dict[str, float]:
-    from rag.lenguaje.texto import tokenizar
-
-    textos = [p["texto_embebido"] if con_header else p["texto"] for p in payloads]
-    n = len(textos)
-    df: dict[str, int] = {}
-    for t in textos:
-        vistos = set(tokenizar(t))
-        for tok in vistos:
-            df[tok] = df.get(tok, 0) + 1
-    return {tok: d / n for tok, d in df.items()} if n else {}
-
-
-def ruta_estadisticas_lexico_dominio(nombre_coleccion: str,
-                                      directorio: str = rutas.INDICE) -> str:
-    return str(pathlib.Path(directorio) / f"{nombre_coleccion}.estadisticas_lexico.json")
-
-
-def guardar_estadisticas_lexico_dominio(estadisticas: dict[str, float], nombre_coleccion: str,
-                                         directorio: str = rutas.INDICE) -> str:
-    import json
-
-    ruta = ruta_estadisticas_lexico_dominio(nombre_coleccion, directorio)
-    pathlib.Path(directorio).mkdir(parents=True, exist_ok=True)
-    with open(ruta, "w", encoding="utf-8") as f:
-        json.dump(estadisticas, f, ensure_ascii=False)
-    return ruta
-
-
-def cargar_estadisticas_lexico_dominio(nombre_coleccion: str,
-                                        directorio: str = rutas.INDICE) -> dict[str, float]:
-    import json
-
-    ruta = ruta_estadisticas_lexico_dominio(nombre_coleccion, directorio)
-    if not pathlib.Path(ruta).exists():
-        raise FileNotFoundError(
-            f"no existen las estadísticas léxicas persistidas en {ruta!r}. Corré "
-            f"'rag indexar' primero (deja este artefacto junto al índice)."
-        )
-    with open(ruta, encoding="utf-8") as f:
-        return json.load(f)
-
-
 def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_version: int = 1,
                                  sufijo: str | None = None) -> str:
     """Nombre de colección exigido por la sección 3.2 del molde:

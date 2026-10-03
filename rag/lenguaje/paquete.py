@@ -47,7 +47,6 @@ class PaqueteIdioma(_Estricto):
     nombre: str = Field(min_length=1)
     stemmer: str | None = None
     stopwords: list[str] = Field(default_factory=list)
-    palabras_generales: list[str] = Field(default_factory=list)
     numeros: dict[str, int] = Field(default_factory=dict)
     ordinales: dict[str, int] = Field(default_factory=dict)
     meses: list[str] = Field(default_factory=list)

@@ -18,7 +18,7 @@ def _configuracion(*, zona_gris: str = "relacionado") -> dict:
     return {
         "capa_a_fuera_dominio": {
             "umbral": 0.80,
-            "grounding_lexico": {"df_fraccion_max": 0.8},
+            "grounding_lexico": {"oov_max": 0.5},
         },
         "confianza_alta": {"umbral": 0.85},
         "zona_gris": {"modo": zona_gris},
@@ -110,9 +110,14 @@ def test_limites_de_zona_gris_y_confianza_alta():
 
 
 def test_grounding_rescata_score_bajo_pero_lo_deja_en_zona_gris():
+    from rag.indice.estadisticas import EstadisticasLexicas
+    from rag.lenguaje.paquete import cargar_paquete
+
+    es = cargar_paquete("es")
     politica = LayeredV1(
         _configuracion(),
-        estadisticas_lexico={"garantia": 0.1},
+        estadisticas_lexico=EstadisticasLexicas.construir(["La garantía cubre el equipo.", "Otro tema."], es),
+        paquete=es,
     )
     consulta = _consulta("garantía")
     senales = _senales(0.70)
@@ -144,7 +149,7 @@ def test_zona_gris_puede_configurarse_para_abstenerse():
         {
             "capa_a_fuera_dominio": {
                 "umbral": 0.9,
-                "grounding_lexico": {"df_fraccion_max": 0.8},
+                "grounding_lexico": {"oov_max": 0.5},
             },
             "confianza_alta": {"umbral": 0.8},
         },

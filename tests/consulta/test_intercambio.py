@@ -69,7 +69,9 @@ class RetrieverMemoria:
         return {"articulo:9"}
 
     def estadisticas_lexico(self):
-        return {"equipo": 0.1}
+        from rag.indice.estadisticas import EstadisticasLexicas
+
+        return EstadisticasLexicas.construir(["El equipo incluye un filtro."])
 
     def n_chunks(self):
         return 2
@@ -201,7 +203,7 @@ def test_contrato_retriever_orden_filtro_senales_e_inventarios():
     assert dirigida[0].score == pytest.approx(0.8)
     assert retriever.filtros == [None, None, "articulo:9"]
     assert retriever.inventario_entidades() == {"articulo:9"}
-    assert retriever.estadisticas_lexico() == {"equipo": 0.1}
+    assert retriever.estadisticas_lexico().df["equipo"] == 1
 
 
 def test_contrato_politica_es_determinista_para_la_misma_entrada():
@@ -209,7 +211,7 @@ def test_contrato_politica_es_determinista_para_la_misma_entrada():
         configuracion={
             "capa_a_fuera_dominio": {
                 "umbral": 0.4,
-                "grounding_lexico": {"df_fraccion_max": 0.8},
+                "grounding_lexico": {"oov_max": 0.5},
             },
             "confianza_alta": {"umbral": 0.8},
             "zona_gris": {"modo": "relacionado"},

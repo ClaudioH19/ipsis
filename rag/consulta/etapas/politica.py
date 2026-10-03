@@ -17,7 +17,6 @@ from rag.nucleo.esquemas import (
     SenalesRecuperacion,
 )
 from rag.lenguaje.entidades import extraer_entidades
-from rag.lenguaje.texto import PALABRAS_GENERALES_ES, palabras_contenido
 
 
 @dataclass(frozen=True)
@@ -70,41 +69,40 @@ def separar_entidades_ausentes(
     return en_corpus, genuinamente_ausentes
 
 
-def tiene_grounding_lexico(
-    pregunta: str,
-    estadisticas_lexico: dict[str, float],
-    df_fraccion_max: float = 0.8,
-    palabras_generales: frozenset[str] | None = None,
-) -> bool:
-    generales = palabras_generales if palabras_generales is not None else PALABRAS_GENERALES_ES
-    for palabra in palabras_contenido(pregunta):
-        if palabra in generales:
-            continue
-        fraccion = estadisticas_lexico.get(palabra)
-        if fraccion is not None and fraccion <= df_fraccion_max:
-            return True
-    return False
+def terminos_de_pregunta(pregunta: str, paquete=None) -> list[str]:
+    """Términos de contenido de la pregunta (sin stopwords del idioma)."""
+    from rag.lenguaje.lexico import terminos_contenido
+    from rag.lenguaje.texto import terminos
+
+    stop = set(terminos(" ".join(paquete.stopwords), paquete)) if paquete is not None else set()
+    return terminos_contenido(terminos(pregunta, paquete), stop)
+
+
+def tiene_grounding_lexico(pregunta: str, estadisticas, oov_max: float = 0.5, paquete=None) -> bool:
+    """La pregunta usa vocabulario del corpus: ``s_oov`` bajo ``oov_max``.
+
+    ``s_oov`` es la masa IDF de los términos de la pregunta que no existen en
+    el corpus; no necesita listas de palabras generales por idioma.
+    """
+    from rag.lenguaje.lexico import s_oov
+
+    if estadisticas is None:
+        return False
+    tq = terminos_de_pregunta(pregunta, paquete)
+    return bool(tq) and s_oov(tq, estadisticas) < oov_max
 
 
 def tiene_grounding_dominio(
     pregunta: str,
     inventario_entidades: set[str],
-    estadisticas_lexico: dict[str, float],
-    df_fraccion_max: float = 0.8,
-    palabras_generales: frozenset[str] | None = None,
+    estadisticas,
+    oov_max: float = 0.5,
+    paquete=None,
 ) -> bool:
-    entidades_pregunta = extraer_entidades(pregunta)
-    if any(
-        entidad["valor_norm"] in inventario_entidades
-        for entidad in entidades_pregunta
-    ):
+    """Una entidad de la pregunta existe en el corpus, o su vocabulario sí."""
+    if any(e["valor_norm"] in inventario_entidades for e in extraer_entidades(pregunta)):
         return True
-    return tiene_grounding_lexico(
-        pregunta,
-        estadisticas_lexico,
-        df_fraccion_max,
-        palabras_generales,
-    )
+    return tiene_grounding_lexico(pregunta, estadisticas, oov_max, paquete)
 
 
 def decidir_capas(
@@ -159,17 +157,15 @@ class LayeredV1:
         self,
         configuracion: dict,
         inventario_entidades: set[str] | None = None,
-        estadisticas_lexico: dict[str, float] | None = None,
-        palabras_generales: frozenset[str] | None = None,
+        estadisticas_lexico=None,
+        paquete=None,
     ) -> None:
         try:
             capa_a = configuracion["capa_a_fuera_dominio"]
             confianza_alta = configuracion["confianza_alta"]
             self.umbral_fuera_dominio = float(capa_a["umbral"])
             self.umbral_confianza_alta = float(confianza_alta["umbral"])
-            self.df_fraccion_max = float(
-                capa_a["grounding_lexico"]["df_fraccion_max"]
-            )
+            self.oov_max = float(capa_a.get("grounding_lexico", {}).get("oov_max", 0.5))
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError("configuración inválida para abstention_policy/layered_v1") from exc
         if self.umbral_confianza_alta < self.umbral_fuera_dominio:
@@ -183,16 +179,16 @@ class LayeredV1:
         if self.zona_gris_modo not in {"relacionado", "abstenerse"}:
             raise ValueError("abstencion.zona_gris.modo debe ser relacionado o abstenerse")
         self.inventario_entidades = set(inventario_entidades or ())
-        self.estadisticas_lexico = dict(estadisticas_lexico or {})
-        self.palabras_generales = palabras_generales
+        self.estadisticas_lexico = estadisticas_lexico
+        self.paquete = paquete
 
     def _grounding(self, consulta: QueryAnalysis) -> bool:
         return tiene_grounding_dominio(
             consulta.pregunta_original,
             self.inventario_entidades,
             self.estadisticas_lexico,
-            self.df_fraccion_max,
-            self.palabras_generales,
+            self.oov_max,
+            self.paquete,
         )
 
     def decidir_dominio(
@@ -200,7 +196,13 @@ class LayeredV1:
         consulta: QueryAnalysis,
         senales: SenalesRecuperacion,
     ) -> DecisionAbstencion | None:
-        """Devuelve una abstención temprana o ``None`` para continuar."""
+        """Devuelve una abstención temprana o ``None`` para continuar.
+
+        Si la pregunta menciona entidades concretas (un artículo, un plazo),
+        decide la capa de premisa: su mensaje dice exactamente qué no existe.
+        """
+        if extraer_entidades(consulta.pregunta_original):
+            return None
         if (
             senales.confianza_top1 < self.umbral_fuera_dominio
             and not self._grounding(consulta)

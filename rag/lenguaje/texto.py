@@ -22,24 +22,6 @@ STOPWORDS_ES = {
 }
 
 
-@functools.lru_cache(maxsize=None)
-def cargar_palabras_generales(idioma: str = "es") -> frozenset[str]:
-    """Palabras frecuentes que no prueban pertenencia al dominio.
-
-    Transitorio: la señal s_oov basada en IDF las reemplaza en el plan V3 (P4.4).
-    Un idioma sin paquete devuelve un conjunto vacío.
-    """
-    from rag.lenguaje.paquete import cargar_paquete
-
-    try:
-        return frozenset(cargar_paquete(idioma).palabras_generales)
-    except ValueError:
-        return frozenset()
-
-
-PALABRAS_GENERALES_ES = cargar_palabras_generales("es")
-
-
 def sin_acentos(texto: str) -> str:
     return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
 

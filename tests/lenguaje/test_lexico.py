@@ -81,3 +81,59 @@ def test_guardar_y_cargar(tmp_path, est):
     est.guardar(ruta)
     assert EstadisticasLexicas.cargar(ruta) == est
     assert not (tmp_path / "estadisticas.json.tmp").exists()
+
+
+# ---------------------------------------------------------------------------
+# Señales léxicas sobre el corpus sintético
+# ---------------------------------------------------------------------------
+from apoyo import CORPUS
+from rag.lenguaje.lexico import acuerdo, s_cov, s_foco, s_lex, s_oov, terminos_contenido, terminos_foco
+
+
+@pytest.fixture(scope="module")
+def corpus():
+    es = cargar_paquete("es")
+    textos = [p.read_text(encoding="utf-8") for p in sorted(CORPUS.glob("*.md"))]
+    stop = set(terminos(" ".join(es.stopwords), es))
+    return es, EstadisticasLexicas.construir(textos, es), stop
+
+
+def _tq(corpus, pregunta):
+    es, _est, stop = corpus
+    return terminos_contenido(terminos(pregunta, es), stop)
+
+
+ORACION_FILTRO = "El filtro de sedimentos se cambia cada 6 meses."
+ORACION_GARANTIA = "La garantía cubre 24 meses desde la fecha de compra."
+
+
+def test_foco_detecta_el_pasaje_que_se_parece_pero_no_responde(corpus):
+    es, est, _ = corpus
+    tq = _tq(corpus, "¿Cuánto dura la garantía?")
+    foco = terminos_foco(tq, est)
+    assert terminos("garantía", es)[0] in foco
+    assert s_foco(foco, terminos(ORACION_FILTRO, es)) == 0
+    assert s_foco(foco, terminos(ORACION_GARANTIA, es)) >= 0.5
+
+
+def test_s_oov_alto_para_preguntas_ajenas_al_dominio(corpus):
+    _es, est, _ = corpus
+    assert s_oov(_tq(corpus, "¿Cómo se prepara un asado?"), est) > 0.6
+    assert s_oov(_tq(corpus, "¿Cada cuánto se cambia el filtro?"), est) == 0
+
+
+def test_s_cov_y_s_lex_ordenan_las_oraciones(corpus):
+    es, est, _ = corpus
+    tq = _tq(corpus, "¿Cada cuánto se cambia el filtro de sedimentos?")
+    assert s_cov(tq, terminos(ORACION_FILTRO, es), est) == pytest.approx(1.0)
+    assert s_cov(tq, terminos(ORACION_GARANTIA, es), est) == 0
+    assert 0 < s_lex(tq, terminos(ORACION_FILTRO, es), est) <= 1
+    assert s_lex(tq, terminos(ORACION_GARANTIA, es), est) == 0
+
+
+def test_acuerdo_entre_rankings():
+    assert acuerdo(["a", "b"], ["a", "c"]) == 1.0
+    assert acuerdo(["a", "c"], ["c", "a"]) == 1.0
+    assert acuerdo(["a", "b", "c"], ["d", "e", "a"]) == 0.5
+    assert acuerdo(["a"], ["z"]) == 0.0
+    assert acuerdo([], ["z"]) == 0.0

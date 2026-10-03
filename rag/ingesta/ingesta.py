@@ -10,9 +10,7 @@ from rag.ingesta.chunking import ESTRATEGIAS, construir_texto_embebido, Chunk
 from rag.ingesta.metadata import cargar_taxonomia, construir_payload, validar_chunk
 from rag.ingesta.catalogo import cargar_catalogo
 from rag.indice.qdrant import (
-    construir_estadisticas_lexico_dominio,
     construir_inventario_entidades,
-    guardar_estadisticas_lexico_dominio,
     guardar_inventario_entidades,
     indexar_qdrant,
     ruta_estadisticas,
@@ -96,7 +94,6 @@ class ResumenIngesta:
     nombre_coleccion: str = ""
     n_vocab_bm25: int = 0
     n_entidades_inventario: int = 0
-    n_terminos_lexico: int = 0
 
     @property
     def n_documentos(self) -> int:
@@ -165,11 +162,9 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
     inventario = construir_inventario_entidades(payloads)
     guardar_inventario_entidades(inventario, nombre_col)
-    estadisticas = construir_estadisticas_lexico_dominio(payloads, con_header)
-    guardar_estadisticas_lexico_dominio(estadisticas, nombre_col)
 
     return ResumenIngesta(
         documentos=resumen_docs, n_chunks=len(chunks), errores_validacion=errores, advertencias=advertencias,
         tiempo_seg=time.perf_counter() - t0, nombre_coleccion=nombre_col, n_vocab_bm25=len(estadisticas_lexicas.df),
-        n_entidades_inventario=len(inventario), n_terminos_lexico=len(estadisticas),
+        n_entidades_inventario=len(inventario),
     )

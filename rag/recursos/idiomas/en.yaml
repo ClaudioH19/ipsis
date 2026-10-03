@@ -83,24 +83,6 @@ stopwords:
 - would
 - you
 - your
-palabras_generales:
-- about
-- need
-- make
-- know
-- tell
-- want
-- please
-- thing
-- something
-- anything
-- information
-- question
-- help
-- does
-- work
-- used
-- using
 numeros:
   a: 1
   an: 1

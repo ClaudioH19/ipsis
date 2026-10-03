@@ -33,7 +33,6 @@ def construir_motor(
     from rag.lenguaje.dominio import cargar_perfil
     from rag.aplicacion.registro_base import registrar_componentes_base
     from rag.consulta.admision import ConfiguracionAdmision, ControlAdmision
-    from rag.lenguaje.texto import cargar_palabras_generales
 
     componentes = dict(cfg.get("componentes") or {})
     if not componentes:
@@ -47,7 +46,6 @@ def construir_motor(
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
     plantillas = cargar_plantillas(idioma, cfg_dominio)
-    palabras_generales = cargar_palabras_generales(cfg_dominio.get("idioma", "es"))
     cfg_rec = config_recuperacion(cfg)
     cfg_abs = config_abstencion(cfg, retriever=componentes["retriever"])
     cfg_red = config_redaccion(cfg)
@@ -68,7 +66,7 @@ def construir_motor(
             configuracion=cfg_abs,
             inventario_entidades=retriever.inventario_entidades(),
             estadisticas_lexico=retriever.estadisticas_lexico(),
-            palabras_generales=palabras_generales,
+            paquete=idioma,
         )
     extractor = registro.crear(
         "answer_extractor",

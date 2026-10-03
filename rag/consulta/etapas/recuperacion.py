@@ -22,7 +22,6 @@ MODOS = ("vectorial", "hibrida")
 class RetrieverQdrant:
     def __init__(self, coleccion: ColeccionQdrant, *, modo: str = "hibrida", prefijo_query: str = "",
                  inventario_entidades: set[str] | None = None,
-                 estadisticas_lexico: dict[str, float] | None = None,
                  cache_consultas: int = 256) -> None:
         if modo not in MODOS:
             raise ValueError(f"modo desconocido: {modo!r}; disponibles: {', '.join(MODOS)}")
@@ -30,7 +29,6 @@ class RetrieverQdrant:
         self.modo = modo
         self.prefijo_query = prefijo_query
         self._inventario = set(inventario_entidades or ())
-        self._estadisticas = dict(estadisticas_lexico or {})
         # Una petición consulta la misma pregunta hasta tres veces (señal,
         # recuperación y recuperación dirigida); se codifica una sola vez.
         self._vector_consulta = functools.lru_cache(maxsize=cache_consultas)(self._codificar)
@@ -41,7 +39,6 @@ class RetrieverQdrant:
         """Conecta con la colección que dejó ``rag indexar`` y carga sus
         artefactos. Falla si la colección no existe: nunca sirve un índice vacío."""
         from rag.indice.qdrant import (
-            cargar_estadisticas_lexico_dominio,
             cargar_inventario_entidades,
             cargar_estadisticas,
             crear_cliente_qdrant,
@@ -73,7 +70,6 @@ class RetrieverQdrant:
             modo=opciones.pop("modo", recuperacion.get("modo", "hibrida")),
             prefijo_query=opciones.pop("prefijo_query", recuperacion.get("prefijo_query", "")),
             inventario_entidades=cargar_inventario_entidades(nombre),
-            estadisticas_lexico=cargar_estadisticas_lexico_dominio(nombre),
             **opciones,
         )
 
@@ -125,8 +121,9 @@ class RetrieverQdrant:
     def inventario_entidades(self) -> set[str]:
         return self._inventario
 
-    def estadisticas_lexico(self) -> dict[str, float]:
-        return self._estadisticas
+    def estadisticas_lexico(self):
+        """Estadísticas léxicas del índice (``EstadisticasLexicas``)."""
+        return self.coleccion.estadisticas
 
     def calentar(self) -> None:
         """Una inferencia real antes de aceptar tráfico, para que la primera
