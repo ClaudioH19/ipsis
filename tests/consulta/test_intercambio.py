@@ -370,3 +370,32 @@ def test_diagnostico_v2_incluye_perfil_senales_lexicas_y_regla():
     assert diagnostico.regla
     assert diagnostico.salto_modelos is False
     assert "modelo_falso_ms" in diagnostico.etapas
+
+
+class _LectorFijo:
+    """Etapa falsa: deja un tramo del lector en el contexto, como EtapaLectura."""
+
+    nombre = "lectura"
+    requiere_admision = True
+    usa_modelos = False
+
+    def __init__(self, motor):
+        self.motor = motor
+
+    def ejecutar(self, ctx):
+        ctx.respuesta_exacta = {"chunk_id": "c1", "texto": "24 meses", "offset_inicio": 0, "offset_fin": 8}
+
+
+@pytest.mark.parametrize(("decision", "publica"), [("responde", True), ("relacionado", False)])
+def test_relacionado_nunca_publica_el_tramo_del_lector_como_respuesta(decision, publica):
+    """La política manda sobre el lector: en relacionado no hay respuesta_exacta
+    y el texto lleva el encabezado de no-respuesta."""
+    motor = _crear_motor(decision)
+    motor.etapas.insert(0, _LectorFijo(motor))
+
+    resultado = motor.consultar("¿Qué incluye el equipo?", "s-lector")
+
+    assert ("respuesta_exacta" in resultado.diagnostico["contrato_http"]) is publica
+    if not publica:
+        assert resultado.estado == AssistantState.RELACIONADO
+        assert resultado.mensaje_usuario.startswith(_PLANTILLAS["abstencion"]["zona_gris_intro"])

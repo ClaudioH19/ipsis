@@ -197,3 +197,25 @@ def test_recortar_payload_a_texto_pertinente_conserva_el_resto_de_campos():
     assert nuevo["texto"] != payload["texto"]  # sí se recortó
     assert nuevo["texto"] in payload["texto"]  # pero es substring literal
     assert payload["texto"][nuevo["offset_inicio"] - 1000:nuevo["offset_fin"] - 1000] == nuevo["texto"]
+
+
+def test_la_oracion_ancla_va_primera_y_el_contexto_solo_despues():
+    """Con contexto a la izquierda, otra cifra («5 días») podía parecer la respuesta."""
+    texto = ("La empresa responde dentro de 5 días hábiles. "
+             "El reembolso se paga en un plazo de 10 días hábiles. "
+             "Se transfiere a la cuenta registrada.")
+    resultado = seleccionar_texto_pertinente("¿En cuántos días hábiles se paga el reembolso?", texto,
+                                              offset_chunk_inicio=0, limite_caracteres=90)
+    assert resultado.texto.startswith("El reembolso se paga")
+    assert "5 días" not in resultado.texto
+    assert texto[resultado.offset_inicio:resultado.offset_fin] == resultado.texto
+
+
+def test_ventana_centrada_para_el_lector_incluye_contexto_previo():
+    texto = ("Artículo 3. La empresa responde dentro de 5 días hábiles. "
+             "Artículo 4. Se cobra un recargo del 15% sobre la tarifa de visita.")
+    pregunta = "¿Qué recargo se cobra?"
+    mostrada = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200)
+    lector = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200, centrada=True)
+    assert mostrada.texto.startswith("Se cobra un recargo")
+    assert lector.texto == texto

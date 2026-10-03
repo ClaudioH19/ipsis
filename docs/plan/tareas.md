@@ -417,10 +417,11 @@ Referencia: [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §2–§5.
 ### P8.5 Presentación de la evidencia
 
 - **Pasos:**
-  - Sin entidad en la pregunta, la ventana de `seleccionar_texto_pertinente`
-    pone la oración ancla **primero**: expande a la derecha y a la izquierda
-    solo si queda presupuesto. La ancla es la que usa `oracion_ancla` para
-    `s_foco`.
+  - La ventana de `seleccionar_texto_pertinente` pone la oración ancla
+    **primero** y agrega contexto solo a la derecha. La ancla es la misma que
+    usa `oracion_ancla` para `s_foco`.
+  - El lector QA usa una ventana centrada (`centrada=True`): lee mejor con el
+    contexto previo, y su ventana no se muestra.
   - Prueba que en `relacionado` el contrato HTTP no trae `respuesta_exacta` y
     el texto lleva el encabezado de no-respuesta.
 - **Aceptación:**
