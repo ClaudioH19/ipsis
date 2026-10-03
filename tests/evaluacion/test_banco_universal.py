@@ -124,12 +124,25 @@ MEDIUM = ("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base
 ])
 @pytest.mark.parametrize("idioma", IDIOMAS)
 def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
+    """Regresión, no objetivo de seguridad: la línea base registra los falsos ok
+    de hoy para detectar uno nuevo; no los declara aceptables."""
     linea_base = _modulo("linea_base")
     referencia = json.loads((RAIZ / "linea_base.json").read_text(encoding="utf-8"))[perfil][idioma]
-    actual = linea_base.evaluar(idioma, perfil)
+    artefacto = linea_base.evaluar_artefacto(idioma, perfil)
+    actual = linea_base.resumir(artefacto)
     nuevos = sorted(set(actual["falsos_ok"]) - set(referencia["falsos_ok"]))
     assert not nuevos, f"falsos ok nuevos respecto de la línea base: {nuevos}"
     # La evidencia mostrada en cada ok respondible sigue siendo literal.
     for nombre in ("exacta", "parafrasis"):
         grupo = actual["grupos"][nombre]
         assert grupo["ok_literal"] == grupo["ok"], (nombre, grupo)
+    # Las observaciones guardan la decisión auditable de cada caso…
+    cobertura = artefacto.reporte.cobertura
+    assert set(cobertura.por_idioma) == {idioma}
+    for fila in cobertura.casos:
+        if fila.grupo != "conversacional":
+            assert fila.regla and fila.senales is not None, fila.caso_id
+            assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
+    # …y medir el banco universal no lo vuelve calibrable.
+    with pytest.raises(ValueError, match="no para calibrar"):
+        exigir_calibrable(cargar_banco(RAIZ / idioma / "manifiesto.json"))

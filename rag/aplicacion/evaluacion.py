@@ -51,7 +51,11 @@ def evaluar_backend_activo(
         )
         documentos[archivo.doc_id] = documento.texto_completo
 
-    motor = construir_motor(cfg, cfg_dominio=cargar_dominio())
+    from rag.evaluacion.metricas import SenalesObservadas
+
+    cfg_dominio = cargar_dominio()
+    idioma = cfg_dominio.get("idioma")
+    motor = construir_motor(cfg, cfg_dominio=cfg_dominio)
     etiqueta_backend = (
         f"qdrant_{cfg['recuperacion']['modo']}"
         if motor.backend == "qdrant"
@@ -80,6 +84,11 @@ def evaluar_backend_activo(
                 etapas_ms=dict(resultado.diagnostico.get("etapas") or {}),
                 confianza_top1=float(resultado.confianza.get("top1", 0.0)),
                 metodo_confianza=(resultado.diagnostico.get("senales") or {}).get("metodo_confianza"),
+                idioma=idioma,
+                regla=resultado.diagnostico.get("regla"),
+                senales=SenalesObservadas.desde_diagnostico(resultado.diagnostico),
+                respuesta_exacta=((resultado.diagnostico.get("contrato_http") or {})
+                                  .get("respuesta_exacta") or {}).get("texto"),
             ))
         retriever = motor.retriever
         if hasattr(retriever, "indice"):
