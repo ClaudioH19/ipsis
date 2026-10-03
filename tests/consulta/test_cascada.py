@@ -66,7 +66,7 @@ def _decidir(**senales):
     # 1. premisa
     ({"pregunta": "¿Qué dice el artículo 99?", "s_qa": 0.95}, "abstiene", "premisa"),
     # 2. fuera de dominio (con reranker y sin él)
-    ({"s_oov": 0.9, "p_rr": 0.1, "s_qa": 0.0}, "abstiene", "fuera_dominio"),
+    ({"s_oov": 0.9, "s_ret": 0.1, "p_rr": 0.1, "s_qa": 0.0}, "abstiene", "fuera_dominio"),
     ({"s_oov": 0.9, "s_ret": 0.1}, "abstiene", "fuera_dominio"),
     # 3. ok con lector y ok léxico (light)
     ({"p_rr": 0.9, "s_qa": 0.9}, "responde", "ok_lector"),
@@ -74,7 +74,7 @@ def _decidir(**senales):
     # 4. relacionado
     ({"p_rr": 0.9, "s_qa": 0.1}, "relacionado", "relacionado"),
     # 5. sin respuesta
-    ({"p_rr": 0.2, "s_qa": 0.1}, "abstiene", "sin_respuesta"),
+    ({"s_ret": 0.2, "p_rr": 0.2, "s_qa": 0.1}, "abstiene", "sin_respuesta"),
 ])
 def test_cada_regla(senales, resultado, regla):
     decision = _decidir(**senales)
@@ -106,6 +106,11 @@ def test_cada_regla(senales, resultado, regla):
 ])
 def test_limites_de_umbral(senales, regla):
     assert _decidir(**senales).capa_decisora == regla
+
+
+def test_el_reranker_confirma_el_dominio_pero_no_lo_niega():
+    assert _decidir(s_oov=0.9, s_ret=0.1, p_rr=0.9, s_qa=0.0).capa_decisora == "relacionado"
+    assert _decidir(s_oov=0.9, s_ret=0.9, p_rr=0.01, s_qa=0.0).capa_decisora == "relacionado"
 
 
 def test_foco_ausente_nombra_la_palabra_de_la_pregunta():

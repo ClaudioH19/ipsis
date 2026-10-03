@@ -52,7 +52,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P7.5 | ✅ | 2026-10-03 | 453 (suite completa) | Concordancia en heavy (cascada.concordancia): si los dos mejores tramos confiables de pasajes distintos traen entidades del mismo tipo con valores distintos, la decisión baja a relacionado (motivo discordancia). La recuperación dirigida por entidad ya existía para todos los perfiles. |
 | P7.6 | ✅ | 2026-10-03 | 454 (suite completa) | rag benchmark --solo-latencia (20 rep. light/medium, 10 heavy, corpus sintético, CPU local): light p50 70 / p95 82 ms (presup. 150); medium p50 749 / p95 886 ms (presup. 1000; reranking ~146, lectura ~548); heavy p50 1951 / p95 2221 ms (presup. 4000; reranking ~1103, lectura ~844). El lector lee una ventana de max_caracteres_lectura (600 medium, 1200 heavy) elegida por s_lex en vez del pasaje completo. |
 | P8.1 | ✅ | 2026-10-03 | 483 (suite completa) | CascadaV1 en politica.py, registrada como abstention_policy cascada_v1 (aún no activa). Decide en EtapaPolitica vía decidir_contexto(ctx) con s_ret/s_oov/s_foco/s_cov/acuerdo/s_rr/s_qa; umbrales del perfil (construir_motor pasa umbrales=umbrales_por_defecto). Guarda regla en capa_decisora y señales en diagnostico.senales_politica. relacionado por foco ausente nombra la palabra de la pregunta (mensajes.relacionado_foco_ausente). EtapaPolitica conserva el motivo fuera_dominio. Requiere que politica corra DESPUÉS de evidencia (s_foco/s_cov se miden sobre la oración de evidencia): lo hace P8.2. 29 pruebas en tests/consulta/test_cascada.py. |
-| P8.2 | ⬜ | | | |
+| P8.2 | ✅ | 2026-10-03 | 502 (suite completa) | Perfiles con cascada_v1 (config v4 migra layered_v1→cascada_v1; plantilla y default actualizados) y politica después de evidencia. Caracterización por perfil: light.json y medium.json (medium si sus modelos están en caché). Cambios de estado deliberados — light: reembolso tras instalar ok→relacionado (s_cov 0,20: el tramo no cubre la pregunta), precio sin_respuesta→relacionado (muestra lo cercano con encabezado de no-respuesta). medium vs. light anterior: visita, recargo art. 4 y presión 4,0 bar relacionado→ok (tramos correctos del lector), reembolso tras instalar ok→relacionado (s_qa 0,76 < 0,8), precio sin_respuesta→relacionado. Sin falsos ok en la caracterización; ver hallazgos (s_ret normalizado, dominio = max(s_ret, s_rr), falso ok conocido «¿Qué incluye la garantía?»). |
 | P8.3 | ⬜ | | | |
 | P8.4 | ⬜ | | | |
 | P9.1 | ⬜ | | | |
@@ -80,3 +80,18 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 ## Hallazgos y desvíos
 
 Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
+
+- **P8.2 — `s_ret` crudo no sirve.** El coseno de e5 vale ~0,72-0,88 incluso con
+  preguntas ajenas. `ModeloSpec.coseno_piso` (0,7 en e5) lo normaliza:
+  `s_ret = (cos − piso)/(1 − piso)`. Los umbrales de light (dominio/relacionado 0,33,
+  ok 0,5) equivalen a los cosenos 0,80/0,85 que usaba `layered_v1`.
+- **P8.2 — `s_rr` no es una escala absoluta.** mmarco da 0,08 a «¿Cuánto dura la
+  garantía?» con el pasaje correcto. La señal de dominio es max(`s_ret`, `s_rr`):
+  el reranker confirma el dominio pero no lo niega. Revisar con bge (heavy) en P10.
+- **P8.2 — falso `ok` conocido (medium):** «¿Qué incluye la garantía?» → «24 meses»
+  (`s_qa` 0,97; «incluye» no está en el corpus y `terminos_foco` solo toma términos
+  presentes). Light da relacionado. Lo cubre el banco trampa (P8.4) y se decide en
+  P10 entre: foco con términos ausentes, `τ_ok` calibrado, o concordancia/heavy.
+- **P8.2 — corpus sintético diminuto.** Con 2 chunks el IDF es degenerado (ausente
+  1,79 vs. presente 0,18-0,69): `s_oov` sale alto (0,7-0,8) en preguntas del dominio.
+  No ajustar `τ_oov` con este corpus; calibrar con el golden del cliente (P9-P10).

@@ -1,6 +1,6 @@
 # Configuración global inicial. Los umbrales de abstención son valores de
 # partida sin calibrar; ajústalos con preguntas representativas de tu corpus.
-config_version: 3
+config_version: 4
 recuperacion:
   # modelo: lo define el perfil (asistente.yaml::perfil); descomenta para fijarlo.
   estrategia_chunking: "CH-F256"
@@ -23,7 +23,7 @@ componentes:
   answer_extractor: "sentence_selector"
   evidence_verifier: "literal_offsets"
   response_renderer: "templates"
-  abstention_policy: "layered_v1"
+  abstention_policy: "cascada_v1"
 
 qdrant:
   modo: "local"

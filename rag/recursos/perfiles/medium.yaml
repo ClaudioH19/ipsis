@@ -24,8 +24,8 @@ etapas:
 - recuperacion
 - reranking
 - lectura
-- politica
 - evidencia
+- politica
 - redaccion
 - verificacion
 lexico:
@@ -34,8 +34,8 @@ lexico:
   max_terminos_foco: 2
 umbrales_por_defecto:
   oov: 0.6
-  dominio: 0.3
-  relacionado: 0.5
+  dominio: 0.33
+  relacionado: 0.33
   foco: 0.5
   ok: 0.8
   cov: 0.6

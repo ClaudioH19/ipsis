@@ -242,16 +242,25 @@ class SenalesPolitica:
 
     @property
     def dominio(self) -> float:
-        """Señal de dominio: el reranker si existe; si no, la recuperación."""
-        return self.s_rr if self.s_rr is not None else self.s_ret
+        """Señal de dominio: la recuperación, o el reranker si da más.
+
+        Los logits de un cross-encoder ordenan bien dentro de una consulta pero
+        no son una escala absoluta (mmarco da 0,08 a un pasaje correcto): el
+        reranker puede confirmar el dominio, no negarlo."""
+        return self.s_ret if self.s_rr is None else max(self.s_ret, self.s_rr)
 
 
-def senales_de_contexto(ctx) -> SenalesPolitica:
+def normalizar_coseno(coseno: float, piso: float = 0.0) -> float:
+    """Coseno del modelo denso llevado a [0, 1] desde su piso."""
+    return min(1.0, max(0.0, (coseno - piso) / (1.0 - piso)))
+
+
+def senales_de_contexto(ctx, piso_coseno: float = 0.0) -> SenalesPolitica:
     from rag.consulta.etapas.reranking import sigmoide
 
     lex = ctx.lexicas
     return SenalesPolitica(
-        s_ret=float(ctx.senales.confianza_top1) if ctx.senales is not None else 0.0,
+        s_ret=normalizar_coseno(float(ctx.senales.confianza_top1), piso_coseno) if ctx.senales is not None else 0.0,
         s_oov=lex.s_oov if lex is not None else 0.0,
         # Sin términos de foco no hay nada que exigir: s_foco neutro.
         s_foco=lex.s_foco if lex is not None and lex.s_foco is not None else 1.0,
@@ -278,7 +287,8 @@ class CascadaV1:
     Reglas en orden; la primera que se cumple decide:
 
     1. La premisa falla (pide una entidad que no está) → sin_respuesta.
-    2. ``s_oov ≥ τ_oov`` y dominio < ``τ_dominio`` → fuera_dominio.
+    2. ``s_oov ≥ τ_oov`` y dominio < ``τ_dominio`` → fuera_dominio
+       (dominio = max(s_ret, s_rr); ver ``SenalesPolitica.dominio``).
     3. ``s_foco ≥ τ_foco`` y (con lector: ``s_qa ≥ τ_ok``; sin lector:
        ``s_ret ≥ τ_ok``, ``s_cov ≥ τ_cov`` y ``acuerdo ≥ 0,5``) → ok.
     4. dominio ≥ ``τ_relacionado`` → relacionado (con el término ausente si
@@ -289,12 +299,13 @@ class CascadaV1:
     """
 
     def __init__(self, configuracion: dict | None = None, *, umbrales: dict[str, float] | None = None,
-                 paquete=None, **_ignoradas) -> None:
+                 paquete=None, piso_coseno: float = 0.0, **_ignoradas) -> None:
         faltantes = [u for u in UMBRALES_CASCADA if u not in (umbrales or {})]
         if faltantes:
             raise ValueError(f"abstention_policy/cascada_v1 requiere los umbrales {faltantes}")
         self.umbrales = {k: float(v) for k, v in umbrales.items()}
         self.paquete = paquete
+        self.piso_coseno = piso_coseno
 
     def decidir_dominio(self, consulta: QueryAnalysis, senales: SenalesRecuperacion) -> None:
         """Sin salida temprana: el filtro de dominio usa señales posteriores."""
@@ -305,7 +316,7 @@ class CascadaV1:
 
     def decidir_contexto(self, ctx) -> DecisionAbstencion:
         u = self.umbrales
-        s = senales_de_contexto(ctx)
+        s = senales_de_contexto(ctx, self.piso_coseno)
         ctx.diagnostico["senales_politica"] = {k: v for k, v in s.__dict__.items()} | {"dominio": s.dominio}
         candidato = ctx.candidatos[0].chunk.chunk_id if ctx.candidatos else None
 
@@ -368,6 +379,7 @@ __all__ = [
     "ResultadoPremisa",
     "SenalesPolitica",
     "forma_en_pregunta",
+    "normalizar_coseno",
     "senales_de_contexto",
     "separar_entidades_ausentes",
     "tiene_grounding_dominio",

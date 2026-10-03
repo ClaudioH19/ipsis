@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from rag.modelos.catalogo import obtener as obtener_modelo
 from rag.consulta.etapas.redaccion import cargar_plantillas
 from rag.consulta.motor import Motor
 from rag.lenguaje.paquete import cargar_paquete
@@ -78,6 +79,7 @@ def construir_motor(
             estadisticas_lexico=retriever.estadisticas_lexico(),
             paquete=idioma,
             umbrales=perfil_instalacion.umbrales_por_defecto,
+            piso_coseno=obtener_modelo(perfil_instalacion.modelos.denso).coseno_piso,
         )
     extractor = registro.crear(
         "answer_extractor",

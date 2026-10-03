@@ -29,6 +29,9 @@ class ModeloSpec(BaseModel):
     prefijo_consulta: str = ""
     prefijo_pasaje: str = ""
     dimension: int | None = None
+    # Coseno típico entre textos sin relación: s_ret = (coseno - piso) / (1 - piso).
+    # Los e5 dan ~0,7 aun a pares ajenos, así que su coseno crudo no sirve de señal.
+    coseno_piso: float = Field(default=0.0, ge=0.0, lt=1.0)
     idiomas: str = "multilingüe"
 
     def archivo_onnx(self, maquina: str | None = None) -> str:
@@ -50,13 +53,13 @@ CATALOGO: dict[str, ModeloSpec] = {
             id_hf="intfloat/multilingual-e5-small",
             tarea="denso", licencia="MIT", parametros=117_654_272,
             archivos_onnx={"*": "onnx/model.onnx"},
-            prefijo_consulta="query: ", prefijo_pasaje="passage: ", dimension=384,
+            prefijo_consulta="query: ", prefijo_pasaje="passage: ", dimension=384, coseno_piso=0.7,
         ),
         ModeloSpec(
             id_hf="intfloat/multilingual-e5-base",
             tarea="denso", licencia="MIT", parametros=278_044_162,
             archivos_onnx={"*": "onnx/model.onnx"},
-            prefijo_consulta="query: ", prefijo_pasaje="passage: ", dimension=768,
+            prefijo_consulta="query: ", prefijo_pasaje="passage: ", dimension=768, coseno_piso=0.7,
         ),
         ModeloSpec(
             id_hf="cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",

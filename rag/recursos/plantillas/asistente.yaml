@@ -1,5 +1,5 @@
 # Identidad del asistente. Generado por `rag init`.
-config_version: 3
+config_version: 4
 nombre_asistente: "Asistente documental"
 descripcion_dominio: "los documentos cargados"
 idioma: es
