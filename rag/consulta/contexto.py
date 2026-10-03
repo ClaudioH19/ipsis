@@ -34,6 +34,7 @@ class ContextoConsulta:
     lecturas: list[Any] | None = None
     evidencia_lector: EvidenceSpan | None = None
     respuesta_exacta: dict[str, Any] | None = None
+    discordancia: bool = False
     saltar_modelos: bool = False
     decision: DecisionAbstencion | None = None
     evidencias: list[EvidenceSpan] = field(default_factory=list)

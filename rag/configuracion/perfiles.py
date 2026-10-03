@@ -45,6 +45,8 @@ class CascadaPerfil(_Estricto):
     max_tokens_pasaje: int = Field(default=384, ge=32)
     stride: int = Field(default=128, ge=0)
     salida_temprana_sin_foco: bool = True
+    # Si los dos mejores tramos dan valores distintos del mismo tipo, no se responde «ok».
+    concordancia: bool = False
 
 
 class PerfilInstalacion(_Estricto):

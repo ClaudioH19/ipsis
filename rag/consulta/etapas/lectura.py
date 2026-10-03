@@ -14,6 +14,20 @@ def oracion_que_contiene(texto: str, inicio: int, fin: int) -> tuple[int, int]:
     return rangos[0][0], rangos[-1][1]
 
 
+def hay_discordancia(lecturas, umbral: float = 0.5) -> bool:
+    """Dos tramos confiables de pasajes distintos con entidades del mismo tipo
+    y valor distinto (p. ej. «6 meses» y «12 meses») se contradicen."""
+    from rag.lenguaje.entidades import extraer_entidades
+
+    confiables = sorted((lec for lec in lecturas if lec.texto and lec.s_qa >= umbral), key=lambda lec: -lec.s_qa)[:2]
+    if len(confiables) < 2 or confiables[0].indice_pasaje == confiables[1].indice_pasaje:
+        return False
+    a = {(e["tipo"], e["valor_norm"]) for e in extraer_entidades(confiables[0].texto)}
+    b = {(e["tipo"], e["valor_norm"]) for e in extraer_entidades(confiables[1].texto)}
+    tipos_comunes = {t for t, _ in a} & {t for t, _ in b}
+    return any({v for t, v in a if t == tipo} != {v for t, v in b if t == tipo} for tipo in tipos_comunes)
+
+
 class EtapaLectura(_Etapa):
     """Lee los ``leer_m`` primeros candidatos. Si hay un tramo con respuesta,
     la evidencia es la oración que lo contiene (texto literal, offsets exactos)
@@ -35,6 +49,10 @@ class EtapaLectura(_Etapa):
              "prob_respuesta": round(lec.prob_respuesta, 4), "s_qa": round(lec.s_qa, 4)}
             for lec in ctx.lecturas
         ]
+        if perfil is not None and perfil.cascada.concordancia:
+            ctx.discordancia = hay_discordancia(ctx.lecturas)
+            if ctx.discordancia:
+                ctx.diagnostico["advertencias"].append("los dos mejores tramos dan valores distintos del mismo tipo")
         mejor = max(ctx.lecturas, key=lambda lec: (lec.s_qa, -lec.indice_pasaje))
         if not mejor.texto or mejor.s_qa <= 0:
             return
@@ -57,4 +75,4 @@ class EtapaLectura(_Etapa):
         }
 
 
-__all__ = ["EtapaLectura", "oracion_que_contiene"]
+__all__ = ["EtapaLectura", "hay_discordancia", "oracion_que_contiene"]
