@@ -5,6 +5,7 @@ import time
 from typing import Any
 
 from rag.consulta.etapas.politica import verificar_premisa_candidatos, separar_entidades_ausentes
+from rag.consulta.contexto import ContextoConsulta
 from rag.nucleo.contratos import (
     AbstentionPolicy,
     AnswerExtractor,
@@ -22,14 +23,8 @@ from rag.nucleo.esquemas import (
     QueryDiagnostic,
     RetrievalCandidate,
 )
-from rag.indice.payload import payload_desde_evidencia
-from rag.consulta.etapas.redaccion import (
-    construir_mensaje_abstencion,
-    redactar,
-    redactar_zona_gris,
-)
-from rag.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
-from rag.consulta.etapas.verificacion import verificar_fidelidad, verificar_respaldo_dato_solicitado
+from rag.consulta.etapas.redaccion import construir_mensaje_abstencion
+from rag.consulta.etapas.conversacional import respuesta_conversacional
 
 class MotorNoListo(RuntimeError):
     pass
@@ -60,6 +55,7 @@ class Motor:
         top_k: int = 3,
         max_fragmentos_adicionales: int = 2,
         abstencion_calibrada: bool | None = None,
+        etapas: list | None = None,
     ) -> None:
         if top_k < 1:
             raise ValueError("top_k debe ser mayor que cero")
@@ -86,6 +82,7 @@ class Motor:
             if abstencion_calibrada is None
             else abstencion_calibrada
         )
+        self.etapas = etapas if etapas is not None else etapas_por_defecto(self)
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         valores.setdefault("backend", self.backend)
@@ -264,134 +261,54 @@ class Motor:
                 contexto.enter_context(usar_idioma(self.idioma))
             return self._consultar_en_contexto(pregunta, id_sesion)
 
+    def _ejecutar_etapa(self, etapa, ctx: ContextoConsulta) -> None:
+        marca = time.perf_counter()
+        etapa.ejecutar(ctx)
+        clave = f"{etapa.nombre}_ms"
+        ms = int((time.perf_counter() - marca) * 1000)
+        ctx.diagnostico.setdefault("etapas", {})[clave] = ms
+        if ctx.resultado is not None:
+            ctx.resultado.diagnostico.setdefault("etapas", {})[clave] = ms
+
     def _consultar_en_contexto(self, pregunta: str, id_sesion: str) -> AssistantResult:
-        inicio = time.perf_counter()
-        latencia = lambda: int((time.perf_counter() - inicio) * 1000)
-        categoria = detectar_conversacional(pregunta, self.plantillas)
-        if categoria is not None:
-            confianza = {"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None}
-            return self._resultado(
-                estado=AssistantState.CONVERSACIONAL,
-                motivo=f"conversacional:{categoria}",
-                mensaje=self.respuesta_conversacional(categoria, pregunta),
-                confianza=confianza,
-                latencia_ms=latencia(),
-                plan="conversacional",
-                diagnostico={"etapas": {"conversacional_ms": latencia()}},
-            )
+        ctx = ContextoConsulta(pregunta=pregunta, id_sesion=id_sesion)
+        pendientes = list(self.etapas)
+        # Las etapas que no consumen recursos (conversacional) corren antes del
+        # control de admisión: un saludo nunca espera ni satura el servicio.
+        while pendientes and not pendientes[0].requiere_admision:
+            self._ejecutar_etapa(pendientes.pop(0), ctx)
+            if ctx.resultado is not None:
+                return ctx.resultado
 
         self._validar_listo()
         if self.control_admision is not None and not self.control_admision.intentar_admitir():
             raise MotorSaturado("límite de concurrencia alcanzado")
-
-        diagnostico = self._diagnostico()
+        ctx.diagnostico = {**self._diagnostico(), "etapas": dict(ctx.diagnostico.get("etapas", {}))}
         try:
-            marca = time.perf_counter()
-            consulta = self._analizar(pregunta, id_sesion)
-            diagnostico["etapas"]["analisis_ms"] = int((time.perf_counter() - marca) * 1000)
-
-            marca = time.perf_counter()
-            senales = self.retriever.estimar_confianza(consulta, max(self.top_k, 2))
-            confianza = self._confianza(senales)
-            diagnostico["etapas"]["confianza_ms"] = int((time.perf_counter() - marca) * 1000)
-            diagnostico["senales"] = senales.model_dump(mode="python")
-
-            if self.politica_abstencion is None:
-                return self._abstener("generico", confianza, latencia(), diagnostico=diagnostico)
-            decision_dominio = self.politica_abstencion.decidir_dominio(consulta, senales)
-            if decision_dominio is not None:
-                diagnostico["decision"] = decision_dominio.__dict__
-                return self._abstener("fuera_dominio", confianza, latencia(), diagnostico=diagnostico)
-
-            marca = time.perf_counter()
-            candidatos = self._completar_premisa(consulta, self._recuperar(consulta))
-            diagnostico["etapas"]["recuperacion_ms"] = int((time.perf_counter() - marca) * 1000)
-            diagnostico["candidatos"] = [
-                {
-                    "chunk_id": candidato.chunk.chunk_id,
-                    "score": candidato.score,
-                    "signals": candidato.signals.model_dump(mode="python"),
-                }
-                for candidato in candidatos
-            ]
-            if not candidatos:
-                return self._abstener("sin_fragmentos", confianza, latencia(), diagnostico=diagnostico)
-
-            decision = self.politica_abstencion.decidir(consulta, senales, candidatos)
-            diagnostico["decision"] = decision.__dict__
-            if decision.abstiene:
-                motivo_mensaje = "premisa" if decision.motivo == "premisa" else "generico"
-                return self._abstener(
-                    motivo_mensaje,
-                    confianza,
-                    latencia(),
-                    entidad_texto=decision.entidad_texto,
-                    diagnostico=diagnostico,
-                )
-
-            marca = time.perf_counter()
-            evidencias = self.extractor.extraer(consulta, candidatos)
-            validas, errores = self.verificador.verificar(evidencias, candidatos)
-            diagnostico["etapas"]["evidencia_ms"] = int((time.perf_counter() - marca) * 1000)
-            if not validas:
-                diagnostico["advertencias"].extend(errores)
-                return self._abstener("guardia", confianza, latencia(), diagnostico=diagnostico)
-            diagnostico["evidencias"] = [
-                evidencia.model_dump(mode="python") for evidencia in evidencias
-            ]
-
-            por_chunk = {c.chunk.chunk_id: c for c in candidatos}
-            payloads = [
-                payload_desde_evidencia(evidencia, por_chunk[evidencia.chunk_id].chunk)
-                for evidencia in evidencias
-            ]
-            if decision.resultado == "relacionado":
-                texto = redactar_zona_gris(
-                    payloads,
-                    plantillas=self.plantillas,
-                    cfg_redaccion=self.configuracion_redaccion,
-                )
-                estado = AssistantState.RELACIONADO
-                plan = "zona_gris"
-            else:
-                respaldo_solicitud = verificar_respaldo_dato_solicitado(
-                    pregunta,
-                    payloads,
-                )
-                if not respaldo_solicitud.fiel:
-                    diagnostico["advertencias"].extend(respaldo_solicitud.motivos)
-                    return self._abstener(
-                        "guardia",
-                        confianza,
-                        latencia(),
-                        diagnostico=diagnostico,
-                    )
-                texto = redactar(
-                    payloads,
-                    plantillas=self.plantillas,
-                    cfg_redaccion=self.configuracion_redaccion,
-                )
-                estado = AssistantState.RESPUESTA_DIRECTA
-                plan = "extractivo"
-            fidelidad = verificar_fidelidad(texto, payloads)
-            if not fidelidad.fiel:
-                diagnostico["advertencias"].extend(fidelidad.motivos)
-                return self._abstener("guardia", confianza, latencia(), diagnostico=diagnostico)
-
-            return self._resultado(
-                estado=estado,
-                motivo=decision.motivo,
-                mensaje=texto,
-                confianza=confianza,
-                latencia_ms=latencia(),
-                plan=plan,
-                evidencias=evidencias,
-                fragmentos_http=self._fragmentos_http(evidencias, candidatos),
-                diagnostico=diagnostico,
-            )
+            for etapa in pendientes:
+                self._ejecutar_etapa(etapa, ctx)
+                if ctx.resultado is not None:
+                    return ctx.resultado
+            raise RuntimeError("ninguna etapa produjo un resultado")
         finally:
             if self.control_admision is not None:
                 self.control_admision.liberar()
 
 
-__all__ = ["Motor", "MotorNoListo", "MotorSaturado"]
+def etapas_por_defecto(motor: "Motor") -> list:
+    """Cascada vigente (layered_v1), en orden."""
+    from rag.consulta.etapas.analisis import EtapaAnalisis
+    from rag.consulta.etapas.conversacional import EtapaConversacional
+    from rag.consulta.etapas.filtros import EtapaFiltros
+    from rag.consulta.etapas.politica import EtapaPolitica
+    from rag.consulta.etapas.recuperacion import EtapaRecuperacion, EtapaSenales
+    from rag.consulta.etapas.redaccion import EtapaRedaccion
+    from rag.consulta.etapas.seleccion import EtapaEvidencia
+    from rag.consulta.etapas.verificacion import EtapaVerificacion
+
+    clases = [EtapaConversacional, EtapaAnalisis, EtapaSenales, EtapaFiltros, EtapaRecuperacion,
+              EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
+    return [clase(motor) for clase in clases]
+
+
+__all__ = ["Motor", "MotorNoListo", "MotorSaturado", "etapas_por_defecto"]

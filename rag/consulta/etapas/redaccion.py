@@ -8,6 +8,8 @@ from __future__ import annotations
 import zlib
 from copy import deepcopy
 
+from rag.consulta.etapas.base import _Etapa
+
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
 # ==========================================================================
@@ -262,3 +264,28 @@ def construir_mensaje_abstencion(
     if motivo == "premisa" and entidad_texto:
         return textos["premisa_no_encontrada"].format(entidad=entidad_texto)
     return textos["generico"]
+
+
+class EtapaRedaccion(_Etapa):
+    """Arma el texto con plantillas: respuesta directa o pasajes relacionados."""
+
+    nombre = "redaccion"
+
+    def ejecutar(self, ctx) -> None:
+        from rag.consulta.etapas.verificacion import verificar_respaldo_dato_solicitado
+        from rag.nucleo.esquemas import AssistantState
+
+        m = self.motor
+        if ctx.decision.resultado == "relacionado":
+            ctx.texto = redactar_zona_gris(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
+            ctx.estado = AssistantState.RELACIONADO
+            ctx.plan = "zona_gris"
+            return
+        respaldo = verificar_respaldo_dato_solicitado(ctx.pregunta, ctx.payloads)
+        if not respaldo.fiel:
+            ctx.diagnostico["advertencias"].extend(respaldo.motivos)
+            ctx.resultado = m._abstener("guardia", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+            return
+        ctx.texto = redactar(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
+        ctx.estado = AssistantState.RESPUESTA_DIRECTA
+        ctx.plan = "extractivo"

@@ -8,6 +8,7 @@ from __future__ import annotations
 import functools
 import re
 
+from rag.consulta.etapas.base import _Etapa
 from rag.consulta.etapas.redaccion import _cargar_plantillas, _elegir_variante
 
 # ==========================================================================
@@ -69,3 +70,27 @@ def respuesta_conversacional(
     if isinstance(opciones, str):
         return opciones
     return _elegir_variante(opciones, pregunta)
+
+
+class EtapaConversacional(_Etapa):
+    """Saludos y charla trivial: respuesta fija, antes de recuperar nada."""
+
+    nombre = "conversacional"
+    requiere_admision = False
+
+    def ejecutar(self, ctx) -> None:
+        from rag.nucleo.esquemas import AssistantState
+
+        m = self.motor
+        categoria = detectar_conversacional(ctx.pregunta, m.plantillas)
+        if categoria is None:
+            return
+        ctx.resultado = m._resultado(
+            estado=AssistantState.CONVERSACIONAL,
+            motivo=f"conversacional:{categoria}",
+            mensaje=m.respuesta_conversacional(categoria, ctx.pregunta),
+            confianza={"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None},
+            latencia_ms=ctx.latencia_ms(),
+            plan="conversacional",
+            diagnostico={"etapas": {}},
+        )

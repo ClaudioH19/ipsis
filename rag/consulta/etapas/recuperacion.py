@@ -10,6 +10,7 @@ import functools
 import os
 from typing import Any
 
+from rag.consulta.etapas.base import _Etapa
 from rag.nucleo.esquemas import (
     FiltroEntidad, QueryAnalysis, RetrievalCandidate, RetrievalSignals, SenalesRecuperacion,
 )
@@ -135,4 +136,36 @@ class RetrieverQdrant:
             cerrar()
 
 
-__all__ = ["RetrieverQdrant"]
+class EtapaSenales(_Etapa):
+    """Señales de confianza de la recuperación (coseno denso del mejor pasaje)."""
+
+    nombre = "confianza"
+
+    def ejecutar(self, ctx) -> None:
+        m = self.motor
+        ctx.senales = m.retriever.estimar_confianza(ctx.consulta, max(m.top_k, 2))
+        ctx.confianza = m._confianza(ctx.senales)
+        ctx.diagnostico["senales"] = ctx.senales.model_dump(mode="python")
+
+
+class EtapaRecuperacion(_Etapa):
+    """Candidatos de producción más la recuperación dirigida por entidad."""
+
+    nombre = "recuperacion"
+
+    def ejecutar(self, ctx) -> None:
+        m = self.motor
+        ctx.candidatos = m._completar_premisa(ctx.consulta, m._recuperar(ctx.consulta))
+        ctx.diagnostico["candidatos"] = [
+            {
+                "chunk_id": candidato.chunk.chunk_id,
+                "score": candidato.score,
+                "signals": candidato.signals.model_dump(mode="python"),
+            }
+            for candidato in ctx.candidatos
+        ]
+        if not ctx.candidatos:
+            ctx.resultado = m._abstener("sin_fragmentos", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+
+
+__all__ = ["EtapaRecuperacion", "EtapaSenales", "RetrieverQdrant"]

@@ -19,6 +19,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from rag.consulta.etapas.base import _Etapa
 from rag.lenguaje.entidades import extraer_entidades
 from rag.lenguaje.texto import dividir_oraciones, terminos
 
@@ -276,3 +277,24 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     payloads_ordenados = [payloads_recortados[i] for i in orden]
     scores_ordenados = [scores_recuperacion[i] for i in orden]
     return payloads_ordenados, scores_ordenados
+
+
+class EtapaEvidencia(_Etapa):
+    """Selecciona el tramo literal de cada candidato y verifica sus offsets."""
+
+    nombre = "evidencia"
+
+    def ejecutar(self, ctx) -> None:
+        from rag.indice.payload import payload_desde_evidencia
+
+        m = self.motor
+        evidencias = m.extractor.extraer(ctx.consulta, ctx.candidatos)
+        validas, errores = m.verificador.verificar(evidencias, ctx.candidatos)
+        if not validas:
+            ctx.diagnostico["advertencias"].extend(errores)
+            ctx.resultado = m._abstener("guardia", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+            return
+        ctx.evidencias = evidencias
+        ctx.diagnostico["evidencias"] = [e.model_dump(mode="python") for e in evidencias]
+        por_chunk = {c.chunk.chunk_id: c for c in ctx.candidatos}
+        ctx.payloads = [payload_desde_evidencia(e, por_chunk[e.chunk_id].chunk) for e in evidencias]
