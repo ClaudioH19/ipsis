@@ -7,7 +7,7 @@ A propósito, NINGUNO de estos tests requiere el corpus real ni el índice
 Qdrant: usan ``TestClient(app)`` SIN el context manager (``with``), que en
 FastAPI/Starlette es lo que dispara el evento ``startup`` -- así corren
 siempre, en cualquier máquina, sin depender de que ``rag indexar``
-se haya corrido antes (a diferencia de ``tests/test_api.py``, que sí lo
+se haya corrido antes (a diferencia de ``tests/integracion/test_caracterizacion.py``, que sí lo
 necesita y se salta si falta). Esto es posible porque la seguridad de borde
 (clave de widget + límite de peticiones) se resuelve como una dependencia de
 FastAPI que corre ANTES que el cuerpo de la ruta -- ver
@@ -116,7 +116,7 @@ def test_limite_de_peticiones_dispara_despues_de_n_llamadas(monkeypatch: pytest.
     peticiones se admiten y la 4ª se rechaza con 429 + Retry-After --
     criterio de cierre 2 del encargo, verificado contra el endpoint HTTP
     real (no solo contra LimitadorPeticiones en aislamiento, ver
-    tests/test_seguridad.py)."""
+    tests/servicio/test_seguridad.py)."""
     monkeypatch.setattr(estado, "claves_widget", [])
     monkeypatch.setattr(estado, "limitador", LimitadorPeticiones(capacidad=3, tasa_por_segundo=1e-9))
 

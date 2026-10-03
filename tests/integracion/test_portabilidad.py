@@ -8,7 +8,7 @@ organizaciones ni personas reales), en un directorio temporal **fuera del
 pytest, porque ``pytest.ini::addopts`` fija ``--basetemp=.cache/pytest_tmp``,
 que sigue viviendo DENTRO de ``rag-extractivo/``.
 
-Por qué esto es necesario y ``tests/test_cli.py`` no alcanza: ese archivo
+Por qué esto es necesario y ``tests/cli/test_cli.py`` no alcanza: ese archivo
 corre en el MISMO proceso de pytest (con el intérprete, las cachés de
 módulos y el `cwd` original ya cargados) y, antes de la corrección de esta
 tanda, copiaba a mano ``configuracion/dominios/_generico/`` y ``configuracion/dominios/idiomas/`` a la
@@ -32,7 +32,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from tests.test_parsear_multiformato import _combinar_con_outline, _pdf_pagina_con_texto, _pdf_pagina_vacia
+from apoyo import _combinar_con_outline, _pdf_pagina_con_texto, _pdf_pagina_vacia
 
 PYTHON = sys.executable
 
@@ -68,7 +68,7 @@ def proyecto_externo():
 def _construir_documentos(destino: Path) -> dict[str, Path]:
     """Documentos FICTICIOS de un dominio sintético (equipo X100), inventados
     para este test -- sin nombres de organizaciones ni personas reales.
-    Reusa los constructores de PDF mínimo de ``tests/test_parsear_multiformato.py``
+    Reusa los constructores de PDF mínimo de ``tests/ingesta/test_parsear.py``
     en vez de reimplementarlos (regla del proyecto: una sola implementación
     de cada cosa)."""
     manual = destino / "manual_x100.md"
@@ -190,7 +190,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         # del documento (`texto_completo`) -- NO de los bytes crudos del
         # .md, que traen sintaxis ('# ', líneas en blanco) que el parser ya
         # normaliza; es el mismo criterio que usan
-        # tests/test_parsear.py y tests/test_parsear_multiformato.py.
+        # tests/ingesta/test_parsear_docx.py y tests/ingesta/test_parsear.py.
         from rag.ingesta.parsear import parsear_markdown
         doc_manual = parsear_markdown(str(docs["manual"]), doc_id="x", doc_titulo="x", version="1")
         frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)

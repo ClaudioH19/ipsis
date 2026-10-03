@@ -4,14 +4,13 @@ from pathlib import Path
 
 import pytest
 
+from apoyo import BANCO_SINTETICO, CORPUS
 from rag.evaluacion.banco import cargar_banco
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
 from rag.evaluacion.metricas import ObservacionEvaluacion, calibrar_observaciones_dev, evaluar_observaciones
 from rag.ingesta.parsear import parsear_markdown
 
-RAIZ = Path(__file__).parent
-MANIFIESTO = RAIZ / "evaluacion" / "sintetico" / "manifiesto.json"
-CORPUS = RAIZ / "caracterizacion" / "corpus"
+MANIFIESTO = BANCO_SINTETICO
 
 
 def _documentos():

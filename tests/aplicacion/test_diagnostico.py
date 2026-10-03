@@ -1,7 +1,7 @@
 """Tests de ``rag/aplicacion/diagnostico.py`` -- chequeos de CORS vacío con claves de widget configuradas, y
 ``configuracion/textos.yaml`` faltante. No existían tests directos de este
 módulo antes de esta tanda (se probaba solo indirectamente vía
-``rag doctor`` en ``tests/test_cli.py``); estos son unitarios sobre las
+``rag doctor`` en ``tests/cli/test_cli.py``); estos son unitarios sobre las
 funciones de chequeo mismas, en un directorio temporal aislado."""
 from __future__ import annotations
 

@@ -301,14 +301,14 @@ def test_motor_no_emite_ok_si_piden_precio_sin_importe_en_evidencia():
 
 
 def test_corte_en_memoria_no_importa_dependencias_pesadas():
-    raiz = Path(__file__).resolve().parents[1]
+    raiz = Path(__file__).resolve().parents[2]
     script = """
 import runpy
 import sys
 
 for nombre in ('qdrant_client', 'torch', 'transformers', 'sentence_transformers'):
     sys.modules[nombre] = None
-ns = runpy.run_path('tests/test_intercambio_componentes.py')
+ns = runpy.run_path('tests/consulta/test_intercambio.py')
 resultado = ns['_crear_motor']('responde').consultar('¿Qué incluye el equipo?', 'aislado')
 assert resultado.estado.value == 'respuesta_directa'
 """

@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from apoyo import BANCO_SINTETICO, CORPUS, RAIZ_REPO
 from rag.evaluacion.banco import (
     CasoEvaluacion,
     CategoriaPregunta,
@@ -15,9 +16,7 @@ from rag.evaluacion.banco import (
 )
 from rag.ingesta.parsear import parsear_markdown
 
-RAIZ = Path(__file__).parent
-MANIFIESTO = RAIZ / "evaluacion" / "sintetico" / "manifiesto.json"
-CORPUS = RAIZ / "caracterizacion" / "corpus"
+MANIFIESTO = BANCO_SINTETICO
 
 
 def _documentos() -> dict[str, str]:
@@ -107,7 +106,7 @@ def test_loader_rechaza_version_de_caso_distinta(tmp_path):
 
 
 def test_golden_manual_permanece_separado_y_sin_datos_ficticios():
-    ruta = RAIZ.parent / "data" / "golden"
+    ruta = RAIZ_REPO / "data" / "golden"
 
     assert (ruta / "README.md").is_file()
     assert not (ruta / "golden.jsonl").exists()

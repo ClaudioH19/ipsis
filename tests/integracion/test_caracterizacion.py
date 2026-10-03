@@ -11,7 +11,7 @@ contrato HTTP, no de la estructura interna del servicio.
 
 Regenerar el archivo esperado (revisar el diff antes de hacer commit)::
 
-    RAG_ACTUALIZAR_CARACTERIZACION=1 python -m pytest tests/test_caracterizacion_consultar.py
+    RAG_ACTUALIZAR_CARACTERIZACION=1 python -m pytest tests/integracion/test_caracterizacion.py
 """
 from __future__ import annotations
 
@@ -27,11 +27,11 @@ from pathlib import Path
 
 import httpx
 import pytest
+from apoyo import CARACTERIZACION, CORPUS
 
 pytestmark = pytest.mark.slow
 
-DIR = Path(__file__).parent / "caracterizacion"
-ESPERADO = DIR / "consultar_esperado.json"
+ESPERADO = CARACTERIZACION / "light.json"
 ACTUALIZAR = os.environ.get("RAG_ACTUALIZAR_CARACTERIZACION") == "1"
 
 # Tolerancia para los puntajes: absorbe diferencias numéricas entre CPUs y
@@ -80,7 +80,7 @@ def url_servicio():
     try:
         _rag(["init", "--nombre-asistente", "Asistente Aqualis",
               "--descripcion-dominio", "los manuales del purificador Aqualis"], proyecto)
-        _rag(["cargar", str(DIR / "corpus")], proyecto)
+        _rag(["cargar", str(CORPUS)], proyecto)
         _rag(["indexar"], proyecto)
 
         puerto = _puerto_libre()
@@ -183,7 +183,7 @@ def test_respuestas_son_texto_literal_del_corpus(observado):
     from rag.ingesta.parsear import parsear_markdown
 
     textos = {}
-    for ruta in (DIR / "corpus").glob("*.md"):
+    for ruta in CORPUS.glob("*.md"):
         doc = parsear_markdown(str(ruta), doc_id="x", doc_titulo="x", version="1")
         textos[ruta.stem] = doc.texto_completo
     for pregunta, resumen in observado.items():
