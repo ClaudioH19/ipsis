@@ -1,5 +1,5 @@
-"""Tests de las utilidades de indexación Qdrant: vocabulario BM25 disperso y
-nombrado versionado de colecciones.
+"""Tests de las utilidades de indexación Qdrant: vector BM25 disperso,
+estadísticas del índice y nombrado versionado de colecciones.
 
 No requieren un servidor Qdrant: son funciones puras de Python. La
 integración real (indexar + consultar) la cubren las pruebas marcadas
@@ -7,13 +7,49 @@ integración real (indexar + consultar) la cubren las pruebas marcadas
 """
 import pytest
 
+from rag.indice.estadisticas import EstadisticasLexicas
 from rag.indice.qdrant import (
-    tokenizar_bm25,
-    construir_vocabulario_bm25,
-    texto_a_vector_sparse,
-    nombre_coleccion_versionada,
+    cargar_estadisticas,
     crear_cliente_qdrant,
+    nombre_coleccion_versionada,
+    paquete_del_indice,
+    ruta_estadisticas,
+    vector_disperso,
 )
+from rag.lenguaje.lexico import bm25_consulta, bm25_doc, id_termino
+from rag.lenguaje.paquete import cargar_paquete
+from rag.lenguaje.texto import terminos
+
+
+# ---------------------------------------------------------------------------
+# BM25 disperso con términos del proyecto
+# ---------------------------------------------------------------------------
+
+def test_vector_disperso_usa_ids_por_hash_y_tf_saturado():
+    est = EstadisticasLexicas.construir(["hola mundo", "hola feliz"])
+    pesos = bm25_doc(terminos("hola hola mundo"), est)
+    vector = vector_disperso(pesos)
+    assert set(vector.indices) == {id_termino("hola"), id_termino("mundo")}
+    assert pesos[id_termino("hola")] > pesos[id_termino("mundo")]
+
+
+def test_consulta_con_terminos_fuera_del_corpus_no_falla():
+    vector = vector_disperso(bm25_consulta(terminos("palabra desconocida")))
+    assert len(vector.indices) == 2 and set(vector.values) == {1.0}
+
+
+def test_la_consulta_usa_el_stemmer_con_que_se_indexo():
+    es = cargar_paquete("es")
+    est = EstadisticasLexicas.construir(["Los documentos vigentes"], es)
+    assert terminos("documento", paquete_del_indice(est)) == terminos("documentos", es)
+
+
+def test_estadisticas_se_guardan_junto_a_la_coleccion(tmp_path):
+    est = EstadisticasLexicas.construir(["hola mundo"])
+    est.guardar(ruta_estadisticas("col_v1", str(tmp_path)))
+    assert cargar_estadisticas("col_v1", str(tmp_path)) == est
+    with pytest.raises(FileNotFoundError, match="rag indexar"):
+        cargar_estadisticas("otra_v1", str(tmp_path))
 
 
 # ---------------------------------------------------------------------------
@@ -56,48 +92,6 @@ def test_crear_cliente_qdrant_modo_por_env_var(monkeypatch):
     # se ignora -- se usa la URL del servidor, sin abrir el path on-disk.
     client = crear_cliente_qdrant(qdrant_path="ruta/que/no/se/usa")
     assert client is not None
-
-
-def test_tokenizar_bm25_basico():
-    assert tokenizar_bm25("El plazo es de 15 días hábiles.") == ["el", "plazo", "es", "de", "15", "días", "hábiles"]
-
-
-def test_construir_vocabulario_bm25_orden_determinista():
-    textos = ["hola mundo", "mundo feliz", "hola feliz mundo"]
-    vocab = construir_vocabulario_bm25(textos)
-    assert vocab == {"hola": 0, "mundo": 1, "feliz": 2}
-
-
-def test_construir_vocabulario_bm25_reproducible():
-    textos = ["a b c", "c d e", "e f a"]
-    v1 = construir_vocabulario_bm25(textos)
-    v2 = construir_vocabulario_bm25(textos)
-    assert v1 == v2
-
-
-def test_texto_a_vector_sparse_conteos():
-    vocab = {"hola": 0, "mundo": 1, "feliz": 2}
-    sparse = texto_a_vector_sparse("hola hola mundo", vocab)
-    pares = dict(zip(sparse.indices, sparse.values))
-    assert pares[vocab["hola"]] == 2.0
-    assert pares[vocab["mundo"]] == 1.0
-    assert vocab["feliz"] not in pares
-
-
-def test_texto_a_vector_sparse_ignora_oov():
-    """Tokens fuera del vocabulario del índice se descartan (limitación
-    documentada del diseño, no un error)."""
-    vocab = {"hola": 0}
-    sparse = texto_a_vector_sparse("hola palabra_desconocida", vocab)
-    assert sparse.indices == [0]
-    assert sparse.values == [1.0]
-
-
-def test_texto_a_vector_sparse_vacio_sin_coincidencias():
-    vocab = {"hola": 0}
-    sparse = texto_a_vector_sparse("otra cosa distinta", vocab)
-    assert sparse.indices == []
-    assert sparse.values == []
 
 
 def test_nombre_coleccion_versionada_formato():

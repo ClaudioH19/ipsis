@@ -42,18 +42,25 @@ class DenseEncoderSentenceTransformers:
 
 
 class SparseEncoderBM25:
-    def __init__(self, vocabulario: dict[str, int] | None = None) -> None:
-        self.vocabulario = vocabulario or {}
+    """BM25 con los términos del proyecto; requiere las estadísticas del índice."""
+
+    def __init__(self, estadisticas=None, paquete=None) -> None:
+        self.estadisticas = estadisticas
+        self.paquete = paquete
 
     def codificar_documentos(self, textos: Sequence[str]):
-        from rag.indice.qdrant import texto_a_vector_sparse
+        from rag.indice.qdrant import vector_disperso
+        from rag.lenguaje.lexico import bm25_doc
+        from rag.lenguaje.texto import terminos
 
-        return [texto_a_vector_sparse(texto, self.vocabulario) for texto in textos]
+        return [vector_disperso(bm25_doc(terminos(t, self.paquete), self.estadisticas)) for t in textos]
 
     def codificar_consulta(self, texto: str):
-        from rag.indice.qdrant import texto_a_vector_sparse
+        from rag.indice.qdrant import vector_disperso
+        from rag.lenguaje.lexico import bm25_consulta
+        from rag.lenguaje.texto import terminos
 
-        return texto_a_vector_sparse(texto, self.vocabulario)
+        return vector_disperso(bm25_consulta(terminos(texto, self.paquete)))
 
 
 class FusionRRF:

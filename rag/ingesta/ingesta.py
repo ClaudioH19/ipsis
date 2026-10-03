@@ -14,8 +14,8 @@ from rag.indice.qdrant import (
     construir_inventario_entidades,
     guardar_estadisticas_lexico_dominio,
     guardar_inventario_entidades,
-    guardar_vocabulario_bm25,
     indexar_qdrant,
+    ruta_estadisticas,
 )
 
 
@@ -158,11 +158,11 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     if solo_validar:
         return ResumenIngesta(resumen_docs, len(chunks), errores, advertencias, time.perf_counter() - t0)
 
-    _client, _modelo_st, vocab, nombre_col = indexar_qdrant(
+    _client, _modelo_st, estadisticas_lexicas, nombre_col = indexar_qdrant(
         payloads, modelo, coleccion, qdrant_path, usar_texto_embebido=con_header,
         n_version=version_coleccion, sufijo_coleccion=sufijo_coleccion,
     )
-    guardar_vocabulario_bm25(vocab, nombre_col)
+    estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
     inventario = construir_inventario_entidades(payloads)
     guardar_inventario_entidades(inventario, nombre_col)
     estadisticas = construir_estadisticas_lexico_dominio(payloads, con_header)
@@ -170,6 +170,6 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
 
     return ResumenIngesta(
         documentos=resumen_docs, n_chunks=len(chunks), errores_validacion=errores, advertencias=advertencias,
-        tiempo_seg=time.perf_counter() - t0, nombre_coleccion=nombre_col, n_vocab_bm25=len(vocab),
+        tiempo_seg=time.perf_counter() - t0, nombre_coleccion=nombre_col, n_vocab_bm25=len(estadisticas_lexicas.df),
         n_entidades_inventario=len(inventario), n_terminos_lexico=len(estadisticas),
     )

@@ -188,6 +188,12 @@ def verificar_indice() -> ResultadoChequeo:
     if not existe:
         return ResultadoChequeo("índice Qdrant", False,
                                  f"la colección {nombre_col!r} no existe todavía (modo {modo!r})", "rag indexar")
+    from rag.indice.qdrant import ruta_estadisticas
+
+    if not ruta_estadisticas(nombre_col).is_file():
+        return ResultadoChequeo("índice Qdrant", False,
+                                 f"la colección {nombre_col!r} es de una versión anterior (sin estadísticas léxicas)",
+                                 "rag indexar")
     return ResultadoChequeo("índice Qdrant", True, f"colección {nombre_col!r} existe (modo {modo!r})")
 
 
