@@ -29,7 +29,6 @@ def cmd_init(args: argparse.Namespace) -> int:
         RUTA_DOMINIO,
         inicializar_asistente_si_falta,
         inicializar_estilos_si_falta,
-        inicializar_plantillas_si_falta,
         inicializar_proyecto_si_falta,
         slug_coleccion,
     )
@@ -74,7 +73,6 @@ def cmd_init(args: argparse.Namespace) -> int:
         coleccion_base=slug_coleccion(nuevo["nombre_asistente"])
     )
     creo_dominio = inicializar_dominio_si_falta(descripcion_dominio=nuevo["descripcion_dominio"])
-    inicializar_plantillas_si_falta()  # configuracion/textos.yaml: genérico, no necesita mensaje aparte
     if inicializar_estilos_si_falta():
         print("configuracion/estilos.yaml creado: ahí se cambia TODO el diseño del widget "
               "(colores, tipografía, formas, sombras y animaciones), sin tocar código.")
@@ -242,7 +240,6 @@ def _completar_proyecto_existente() -> None:
     from rag.configuracion.carga import (
         cargar_dominio,
         inicializar_estilos_si_falta,
-        inicializar_plantillas_si_falta,
         inicializar_proyecto_si_falta,
         slug_coleccion,
     )
@@ -256,7 +253,6 @@ def _completar_proyecto_existente() -> None:
     inicializar_dominio_si_falta(
         descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados")
     )
-    inicializar_plantillas_si_falta()
     inicializar_estilos_si_falta()
     ruta_catalogo = Path(CATALOGO_PATH)
     if not ruta_catalogo.is_file():

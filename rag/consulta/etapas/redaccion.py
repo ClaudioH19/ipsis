@@ -5,65 +5,69 @@ citas declarados en la configuración del proyecto.
 """
 from __future__ import annotations
 
-import functools
 import zlib
-from pathlib import Path
-
-import yaml
-
-from rag.configuracion import rutas
+from copy import deepcopy
 
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
 # ==========================================================================
-def cargar_plantillas(ruta: str | Path, dominio: dict | None = None) -> dict:
-    """Carga ``configuracion/textos.yaml`` y sustituye las variables de dominio
-    (``{nombre_asistente}``/``{descripcion_dominio}``) en los textos
-    conversacionales fijos, usando ``configuracion/asistente.yaml`` (Etapa Plugin,
-    Tarea C) -- así el mismo YAML de plantillas sirve para cualquier
-    dominio, sin nombrar ningún corpus en el texto fijo. Cacheado (mismo
-    criterio que el resto del módulo): se lee una vez por proceso."""
-    datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
-    if dominio is None:
-        from rag.configuracion.carga import cargar_dominio
+def cargar_plantillas(paquete, dominio: dict | None = None) -> dict:
+    """Textos fijos del asistente a partir del paquete de idioma.
 
-        dominio = cargar_dominio()
+    Devuelve conectores, mensajes de abstención y textos conversacionales.
+    Con ``dominio`` (``configuracion/asistente.yaml``) sustituye
+    ``{nombre_asistente}`` y ``{descripcion_dominio}`` en las respuestas
+    conversacionales y aplica las contracciones del idioma (``descripcion_dominio``
+    puede empezar con artículo: «de el manual» -> «del manual»).
+    """
+    mensajes = paquete.mensajes
+    datos = {
+        "conectores": deepcopy(mensajes.conectores),
+        "abstencion": {
+            "generico": mensajes.sin_respuesta,
+            "premisa_no_encontrada": mensajes.premisa_no_encontrada,
+            "zona_gris_intro": mensajes.relacionado_intro,
+            "foco_ausente": mensajes.relacionado_foco_ausente,
+        },
+        "conversacional": paquete.conversacional.model_dump(mode="python"),
+    }
+    if dominio is None:
+        return datos
     variables = {
         "nombre_asistente": dominio.get("nombre_asistente", "el asistente"),
         "descripcion_dominio": dominio.get("descripcion_dominio", "los documentos cargados"),
     }
+
     def sustituir(texto: str) -> str:
-        """Sustituye las variables de dominio y arregla las contracciones.
-
-        ``descripcion_dominio`` la escribe el usuario en
-        ``configuracion/asistente.yaml`` y puede empezar con articulo ("el
-        manual..."), asi que una plantilla que diga "de
-        {descripcion_dominio}" puede producir "de el manual". Las dos
-        contracciones obligatorias del castellano se aplican aqui, una vez,
-        en vez de obligar a que cada plantilla esquive el problema."""
         salida = texto.format(**variables)
-        return salida.replace(" de el ", " del ").replace(" a el ", " al ")
+        for forma, contraccion in paquete.contracciones.items():
+            salida = salida.replace(forma, contraccion)
+        return salida
 
-    respuestas = datos.get("conversacional", {}).get("respuestas", {})
+    respuestas = datos["conversacional"].get("respuestas", {})
     for categoria, valor in respuestas.items():
-        # Cada categoria puede declarar un texto suelto o varias variantes.
-        if isinstance(valor, str):
-            respuestas[categoria] = sustituir(valor)
-        else:
-            respuestas[categoria] = [sustituir(t) for t in valor]
+        # Cada categoría puede declarar un texto suelto o varias variantes.
+        respuestas[categoria] = sustituir(valor) if isinstance(valor, str) else [sustituir(t) for t in valor]
     return datos
 
 
-@functools.lru_cache(maxsize=1)
-def _cargar_plantillas(ruta: str = rutas.TEXTOS) -> dict:
-    """Compatibilidad para llamadas fuera de ``Motor``."""
-    return cargar_plantillas(ruta)
+def _cargar_plantillas() -> dict:
+    """Textos del idioma activo (o español) para llamadas fuera de ``Motor``.
+
+    Sustituye las variables con ``configuracion/asistente.yaml`` del directorio
+    actual, igual que el motor.
+    """
+    from rag.configuracion.carga import cargar_dominio
+    from rag.lenguaje.entidades import idioma_activo
+    from rag.lenguaje.paquete import cargar_paquete
+
+    return cargar_plantillas(idioma_activo() or cargar_paquete("es"), cargar_dominio())
 
 
 def _elegir_variante(opciones: list[str], semilla: str, evitar: set[str] | None = None) -> str:
     """Elige una de varias formulaciones FIJAS de forma determinista.
 
-    Consume: la lista declarada en ``configuracion/textos.yaml``, una cadena
+    Consume: la lista declarada en el paquete de idioma, una cadena
     que sirve de semilla (el ``chunk_id`` del fragmento, o la pregunta) y,
     opcionalmente, las variantes ya usadas en esta misma respuesta. Produce:
     una de las opciones.
@@ -148,7 +152,7 @@ def _ensamblar_fragmentos_con_citas(
 ) -> str:
     """Concatena el texto LITERAL de cada fragmento (nunca lo reescribe) con
     su cita y, entre fragmentos, un conector FIJO de
-    ``configuracion/textos.yaml`` -- la unica "redaccion" permitida.
+    los ``mensajes`` del paquete de idioma -- la unica "redaccion" permitida.
 
     La CATEGORIA del conector la decide metadata determinista calculada en
     la ingesta (``tiene_excepcion``/``tiene_condicion``), nunca un modelo;
@@ -230,7 +234,7 @@ def redactar_zona_gris(
     -- con citas literales y el encuadre explícito, mostrar texto
     relacionado no es una afirmación directa.
     Sigue siendo texto literal + cita; el único agregado es la frase de
-    encabezado fija (``configuracion/textos.yaml::abstencion.zona_gris_intro``).
+    encabezado fija (``mensajes.relacionado_intro`` del paquete de idioma).
     Configurable: ``configuracion/motor.yaml::abstencion.zona_gris.modo`` en
     {"relacionado" (default), "abstenerse"} -- dominios de costo de error
     ALTO pueden volver a "abstenerse" por configuración, sin tocar código."""

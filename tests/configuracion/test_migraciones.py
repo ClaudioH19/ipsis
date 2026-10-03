@@ -70,3 +70,23 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
 
 def test_sin_proyecto_no_hace_nada(tmp_path: Path):
     assert migrar_proyecto(tmp_path) == []
+
+
+def test_textos_personalizados_pasan_a_idioma_yaml(tmp_path: Path):
+
+    conf = tmp_path / "configuracion"
+    conf.mkdir()
+    (conf / "asistente.yaml").write_text("config_version: 3\nidioma: es\n", encoding="utf-8")
+    (conf / "textos.yaml").write_text(
+        "abstencion:\n  generico: Nada por aquí.\n"
+        "  premisa_no_encontrada: \"No encontré información sobre \\\"{entidad}\\\" en los documentos disponibles. "
+        "Puede que no exista o que esté fuera de lo que cubren tus documentos.\"\n",
+        encoding="utf-8",
+    )
+
+    cambios = migrar_proyecto(tmp_path)
+
+    assert not (conf / "textos.yaml").exists()
+    idioma = yaml.safe_load((conf / "idioma.yaml").read_text(encoding="utf-8"))
+    assert idioma == {"mensajes": {"sin_respuesta": "Nada por aquí."}}
+    assert any("idioma.yaml" in c for c in cambios)

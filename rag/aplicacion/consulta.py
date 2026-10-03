@@ -4,7 +4,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from rag.configuracion import rutas
 from rag.consulta.etapas.redaccion import cargar_plantillas
 from rag.consulta.motor import Motor
 from rag.lenguaje.paquete import cargar_paquete
@@ -16,7 +15,6 @@ def construir_motor(
     *,
     cfg_dominio: dict[str, Any] | None = None,
     registro: RegistroComponentes | None = None,
-    ruta_plantillas: str | Path | None = None,
 ) -> Motor:
     """Construye el motor completo desde la selección declarativa.
 
@@ -48,8 +46,7 @@ def construir_motor(
     cfg_dominio = cfg_dominio or cargar_dominio()
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
-    ruta_textos = Path(ruta_plantillas or rutas.TEXTOS).resolve()
-    plantillas = cargar_plantillas(ruta_textos, cfg_dominio)
+    plantillas = cargar_plantillas(idioma, cfg_dominio)
     palabras_generales = cargar_palabras_generales(cfg_dominio.get("idioma", "es"))
     cfg_rec = config_recuperacion(cfg)
     cfg_abs = config_abstencion(cfg, retriever=componentes["retriever"])
