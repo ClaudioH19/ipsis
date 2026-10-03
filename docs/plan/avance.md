@@ -39,7 +39,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P5.1 | ✅ | 2026-10-03 | — | Licencias, parámetros y archivos ONNX verificados con la API de Hugging Face (tabla en modelos-y-perfiles.md §2). ⛔ Decisión del usuario pendiente: xlm-roberta-large-squad2 no tiene ONNX confiable; heavy usa mdeberta con leer_m=4 mientras tanto. e5 se usa en fp32 porque su int8 publicado exige AVX-512 VNNI. |
 | P5.2 | ✅ | 2026-10-03 | 6 nuevas | ModeloSpec con ONNX por arquitectura (x86_64/arm64) y caché global en formato huggingface_hub; ruta_local() falla con 'rag modelos descargar'. huggingface-hub declarado como dependencia. |
 | P5.3 | ✅ | 2026-10-03 | 398 rápidas + 3 modelos | ModeloOnnx (sesión única, tokenizador, entradas) y CodificadorDenso con prefijos y pooling promedio. Verificado: vectores idénticos a sentence-transformers (coseno 1,0). Registrado como dense_encoder: onnx. onnxruntime y tokenizers declarados. |
-| P5.4 | ⬜ | | | |
+| P5.4 | ✅ | 2026-10-03 | 429 (suite completa con modelos) | Indexación y consulta con CodificadorDenso ONNX: los pasajes llevan 'passage: ' (corrige el defecto de E5). Manifiesto por colección con modelo, dimensión, stemmer, hash del corpus, versión del payload e inventario de entidades (reemplaza el archivo de inventario). Prefijos fuera de la configuración: los define el catálogo. Caracterización regenerada: solo cambian los cosenos top1 (±0,01), ningún estado ni texto. rag doctor revisa el modelo en la caché global. |
 | P5.5 | ⬜ | | | |
 | P5.6 | ⬜ | | | |
 | P6.1 | ⬜ | | | |

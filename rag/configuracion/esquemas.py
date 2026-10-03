@@ -29,8 +29,6 @@ class AsistenteConfig(ConfiguracionEstricta):
 
 class RecuperacionConfig(ConfiguracionEstricta):
     modelo: str = Field(min_length=1)
-    prefijo_query: str = "query: "
-    prefijo_documento: str = "passage: "
     estrategia_chunking: str = Field(min_length=1)
     con_header: bool = False
     modo: Literal["vectorial", "hibrida"] = "hibrida"
@@ -150,6 +148,9 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             if nombre == "motor":
                 (salida.get("redaccion") or {}).pop("metodo_seleccion", None)
                 recuperacion = salida.get("recuperacion") or {}
+                # Los prefijos del modelo los define el catálogo (rag/modelos/catalogo.py).
+                recuperacion.pop("prefijo_query", None)
+                recuperacion.pop("prefijo_documento", None)
                 if recuperacion.get("qdrant_path") == ".cache/qdrant_local":
                     recuperacion["qdrant_path"] = ".rag/indice/qdrant"
             salida["config_version"] = 3
