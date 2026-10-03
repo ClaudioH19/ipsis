@@ -81,7 +81,7 @@ def verificar_config_recuperacion() -> ResultadoChequeo:
 def verificar_politica_abstencion() -> ResultadoChequeo:
     """La política configurada existe y acepta las opciones de abstención."""
     from rag.nucleo.registro import RegistroComponentes
-    from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_abstencion
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
     from rag.configuracion.perfiles import perfil_efectivo
     from rag.aplicacion.registro_base import registrar_componentes_base
 
@@ -90,17 +90,14 @@ def verificar_politica_abstencion() -> ResultadoChequeo:
         nombre = cfg["componentes"]["abstention_policy"]
         registro = registrar_componentes_base(RegistroComponentes())
         factory = registro.obtener("abstention_policy", nombre)
-        retriever = cfg["componentes"]["retriever"]
-        cfg_abs = config_abstencion(cfg, retriever=retriever)
-        if cfg_abs is not None:
-            perfil = perfil_efectivo(cargar_dominio().get("perfil", "light"), cfg.get("ajustes_perfil"))
-            factory(configuracion=cfg_abs, umbrales=perfil.umbrales_por_defecto)
+        perfil = perfil_efectivo(cargar_dominio().get("perfil", "light"), cfg.get("ajustes_perfil"))
+        factory(umbrales=perfil.umbrales_por_defecto)
     except Exception as e:  # noqa: BLE001 -- diagnóstico accionable
         return ResultadoChequeo(
             "política de abstención",
             False,
             f"no se pudo resolver componentes.abstention_policy: {e}",
-            "revisa componentes.abstention_policy y abstencion en configuracion/motor.yaml",
+            "revisa componentes.abstention_policy en configuracion/motor.yaml y los umbrales del perfil",
         )
     return ResultadoChequeo(
         "política de abstención",

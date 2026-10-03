@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from rag.consulta.etapas.politica import DecisionAbstencion, LayeredV1
+from rag.consulta.etapas.politica import CascadaV1, DecisionAbstencion
 from rag.nucleo.esquemas import (
     AssistantState,
     ChunkRecord,
@@ -109,16 +109,13 @@ class PoliticaForzada:
     def __init__(self, resultado: str):
         self.resultado = resultado
 
-    def decidir_dominio(self, _consulta, _senales):
+    def decidir_contexto(self, _ctx):
         if self.resultado == "fuera_dominio":
             return DecisionAbstencion(
                 resultado="abstiene",
                 motivo="fuera_dominio",
                 capa_decisora="fuera_dominio",
             )
-        return None
-
-    def decidir(self, _consulta, _senales, _candidatos):
         if self.resultado == "premisa":
             return DecisionAbstencion(
                 resultado="abstiene",
@@ -129,13 +126,13 @@ class PoliticaForzada:
         if self.resultado == "relacionado":
             return DecisionAbstencion(
                 resultado="relacionado",
-                motivo="zona_gris",
-                capa_decisora="zona_gris",
+                motivo="relacionado",
+                capa_decisora="relacionado",
             )
         return DecisionAbstencion(
             resultado="responde",
-            motivo="confianza_alta",
-            capa_decisora="confianza_alta",
+            motivo="lector",
+            capa_decisora="ok_lector",
         )
 
 
@@ -207,23 +204,20 @@ def test_contrato_retriever_orden_filtro_senales_e_inventarios():
 
 
 def test_contrato_politica_es_determinista_para_la_misma_entrada():
-    politica = LayeredV1(
-        configuracion={
-            "capa_a_fuera_dominio": {
-                "umbral": 0.4,
-                "grounding_lexico": {"oov_max": 0.5},
-            },
-            "confianza_alta": {"umbral": 0.8},
-            "zona_gris": {"modo": "relacionado"},
-        },
-    )
-    consulta = AnalizadorMemoria().analizar("pregunta general")
-    senales = SenalesRecuperacion(confianza_top1=0.9, margen_top1_top2=0.1)
-    candidatos = [_candidato()]
+    from types import SimpleNamespace
 
-    assert politica.decidir(consulta, senales, candidatos) == politica.decidir(
-        consulta, senales, candidatos
-    )
+    politica = CascadaV1(umbrales={"oov": 0.6, "dominio": 0.3, "relacionado": 0.5, "foco": 0.5, "ok": 0.8, "cov": 0.6})
+
+    def contexto():
+        return SimpleNamespace(
+            pregunta="pregunta general",
+            consulta=AnalizadorMemoria().analizar("pregunta general"),
+            senales=SenalesRecuperacion(confianza_top1=0.9, margen_top1_top2=0.1),
+            candidatos=[_candidato()], lexicas=None, puntajes_rerank=None, lecturas=None,
+            terminos_foco=[], diagnostico={},
+        )
+
+    assert politica.decidir_contexto(contexto()) == politica.decidir_contexto(contexto())
 
 
 def test_contrato_selector_produce_texto_literal_y_offsets_exactos():
@@ -277,8 +271,7 @@ def test_motor_intercambia_politicas_y_conserva_resultado_estable(decision, esta
     diagnostico = _validar_diagnostico(primero)
     assert diagnostico.backend == "memoria"
     assert set(diagnostico.etapas) >= {"analisis_ms", "confianza_ms"}
-    if decision in {"responde", "relacionado", "premisa"}:
-        assert diagnostico.decision is not None
+    assert diagnostico.decision is not None
 
 
 def test_motor_conversacional_en_memoria_no_exige_componentes():
@@ -289,17 +282,6 @@ def test_motor_conversacional_en_memoria_no_exige_componentes():
     assert resultado.estado == AssistantState.CONVERSACIONAL
     assert resultado.mensaje_usuario == "Hola desde memoria."
     assert _validar_diagnostico(resultado).backend == "sin_configurar"
-
-
-def test_motor_no_emite_ok_si_piden_precio_sin_importe_en_evidencia():
-    resultado = _crear_motor("responde").consultar(
-        "¿Cuánto cuesta el equipo?",
-        "s-precio",
-    )
-
-    assert resultado.estado == AssistantState.SIN_RESPUESTA
-    diagnostico = _validar_diagnostico(resultado)
-    assert any("importe monetario" in aviso for aviso in diagnostico.advertencias)
 
 
 def test_corte_en_memoria_no_importa_dependencias_pesadas():

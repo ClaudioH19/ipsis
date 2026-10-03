@@ -44,23 +44,12 @@ redaccion:
   cita_en_texto: "breve"
   incluir_apertura: true
 
+# Los umbrales de la política viven en el perfil (rag perfil mostrar) y, tras
+# calibrar, en configuracion/calibracion.yaml.
 abstencion:
-  version: "plantilla_sin_calibrar"
-  capa_a_fuera_dominio:
-    senal: "score_top1_denso"
-    umbral: 0.80
-    grounding_lexico:
-      oov_max: 0.5
-  confianza_alta:
-    senal: "score_top1_denso"
-    umbral: 0.85
-  capa_b_premisa:
-    activa: true
-    recuperacion_dirigida: true
-    max_fragmentos_adicionales: 2
-    tipos_entidad_cerrada: [decimal, porcentaje, plazo, fecha, articulo]
-  zona_gris:
-    modo: "relacionado"
+  # Si la pregunta cita una entidad (p. ej. «artículo 9») que existe en el corpus
+  # pero no en los candidatos, se buscan hasta N fragmentos que la contengan.
+  max_fragmentos_adicionales: 2
 criterios_aceptacion:
   E2_embeddings_chunking_recuperacion:
     recall_at_3_min: 0.85

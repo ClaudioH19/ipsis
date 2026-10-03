@@ -112,27 +112,6 @@ def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perf
     return recuperacion
 
 
-def config_abstencion(
-    cfg: dict | None = None,
-    ruta: str = RUTA_PROYECTO,
-    retriever: str | None = None,
-) -> dict | None:
-    cfg = cfg if cfg is not None else cargar_proyecto(ruta)
-    original = cfg.get("abstencion")
-    if original is None:
-        return None
-    salida = deepcopy(original)
-    perfiles = salida.pop("perfiles_retriever", {})
-    perfil = perfiles.get(retriever) if retriever is not None else None
-    if perfil is not None:
-        salida["version"] = perfil.get("version", salida.get("version"))
-        salida["capa_a_fuera_dominio"]["senal"] = perfil["senal"]
-        salida["capa_a_fuera_dominio"]["umbral"] = perfil["umbral_fuera_dominio"]
-        salida["confianza_alta"]["senal"] = perfil["senal"]
-        salida["confianza_alta"]["umbral"] = perfil["umbral_confianza_alta"]
-    return salida
-
-
 def config_servicio(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     return cfg.get("servicio", {"concurrencia_maxima": 4})

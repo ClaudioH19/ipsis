@@ -4,16 +4,12 @@ Funciones puras, sin Qdrant ni modelos reales.
 """
 from __future__ import annotations
 
-import pytest
-
 from rag.consulta.admision import ConfiguracionAdmision, ControlAdmision
 from rag.consulta.etapas.redaccion import redactar, redactar_zona_gris, construir_mensaje_abstencion
-from rag.consulta.etapas.verificacion import verificar_fidelidad, verificar_respaldo_dato_solicitado
+from rag.consulta.etapas.verificacion import verificar_fidelidad
 from rag.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
 from rag.consulta.etapas.politica import (
     separar_entidades_ausentes,
-    tiene_grounding_dominio,
-    tiene_grounding_lexico,
     verificar_premisa_textos,
 )
 
@@ -205,45 +201,6 @@ def test_verificar_fidelidad_falla_si_aparece_una_entidad_no_respaldada():
     assert resultado.fiel is False
 
 
-@pytest.mark.parametrize(
-    ("pregunta", "texto"),
-    [
-        ("¿Cuánto cuesta el equipo?", "El precio es $499.990 impuestos incluidos."),
-        ("¿Cuántos filtros usa?", "El equipo usa tres filtros reemplazables."),
-        ("¿En cuántos días se paga?", "El pago se procesa en 10 días hábiles."),
-        ("¿Cada cuánto se cambia?", "Se cambia cada 6 meses."),
-    ],
-)
-def test_guardia_dato_solicitado_acepta_evidencia_del_tipo_correcto(pregunta, texto):
-    assert verificar_respaldo_dato_solicitado(pregunta, [_fragmento(texto)]).fiel is True
-
-
-def test_guardia_dato_solicitado_rechaza_precio_sin_importe_monetario():
-    fragmentos = [_fragmento("Se cobra un recargo del 15% sobre la tarifa de visita.")]
-
-    resultado = verificar_respaldo_dato_solicitado("¿Cuánto cuesta el equipo?", fragmentos)
-
-    assert resultado.fiel is False
-    assert "importe monetario" in resultado.motivos[0]
-
-
-def test_guardia_dato_solicitado_rechaza_cantidad_sin_objetivo_numerado():
-    fragmentos = [_fragmento("El equipo incluye filtros reemplazables.")]
-
-    resultado = verificar_respaldo_dato_solicitado("¿Cuántos filtros usa?", fragmentos)
-
-    assert resultado.fiel is False
-
-
-def test_guardia_dato_solicitado_no_bloquea_pregunta_no_cuantitativa():
-    resultado = verificar_respaldo_dato_solicitado(
-        "¿Cómo se instala el equipo?",
-        [_fragmento("El equipo se instala bajo el lavaplatos.")],
-    )
-
-    assert resultado.fiel is True
-
-
 # ---------------------------------------------------------------------------
 # Etapa C, punto 1: separar entidades ausentes del top-k en "existe en el
 # corpus" (candidata a recuperación dirigida) vs "genuinamente ausente".
@@ -298,49 +255,6 @@ def test_respuesta_conversacional_no_esta_vacia_para_cada_categoria():
     for categoria in ("saludo", "agradecimiento", "despedida", "capacidad"):
         texto = respuesta_conversacional(categoria)
         assert isinstance(texto, str) and len(texto) > 0
-
-
-# ---------------------------------------------------------------------------
-# Etapa D, punto 1: grounding léxico rediseñado (IDF/frecuencia general en
-# vez de "¿está en el vocabulario?" a secas). Estadísticas sintéticas, sin
-# tocar ningún corpus real.
-# ---------------------------------------------------------------------------
-
-def _est(*textos):
-    from rag.indice.estadisticas import EstadisticasLexicas
-    from rag.lenguaje.paquete import cargar_paquete
-
-    return EstadisticasLexicas.construir(textos, cargar_paquete("es"))
-
-
-def _es():
-    from rag.lenguaje.paquete import cargar_paquete
-
-    return cargar_paquete("es")
-
-
-def test_grounding_no_cuenta_si_casi_todo_el_vocabulario_falta_del_corpus():
-    """«preparar» aparece por azar en el corpus, pero «asado» no: la mayor parte
-    de la masa IDF de la pregunta es ajena al dominio (s_oov alto)."""
-    est = _est("Para preparar el equipo, lea el manual.", "El filtro se cambia cada mes.")
-    assert tiene_grounding_lexico("¿Cómo se prepara un asado?", est, paquete=_es()) is False
-
-
-def test_grounding_cuenta_si_el_vocabulario_de_la_pregunta_esta_en_el_corpus():
-    est = _est("La bitácora se entrega cada semana.", "El filtro se cambia cada mes.")
-    assert tiene_grounding_lexico("¿Cuándo se entrega la bitacora?", est, paquete=_es()) is True
-
-
-def test_grounding_sin_estadisticas_o_sin_terminos_es_falso():
-    assert tiene_grounding_lexico("¿Cuándo?", None, paquete=_es()) is False
-    assert tiene_grounding_lexico("¿y?", _est("texto"), paquete=_es()) is False
-
-
-def test_tiene_grounding_dominio_combina_entidad_y_lexico():
-    inventario = {"articulo_2"}
-    est = _est("El filtro se cambia cada mes.")
-    assert tiene_grounding_dominio("¿cómo se prepara un asado?", inventario, est, paquete=_es()) is False
-    assert tiene_grounding_dominio("¿qué dice el artículo 2?", inventario, est, paquete=_es()) is True
 
 
 def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():

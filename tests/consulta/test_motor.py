@@ -175,14 +175,11 @@ def test_motor_orquesta_recuperacion_dirigida_y_etapas_tipadas():
             return None
 
     class _Politica:
-        def decidir_dominio(self, _consulta, _senales):
-            return None
-
-        def decidir(self, _consulta, _senales, _candidatos):
+        def decidir_contexto(self, _ctx):
             return DecisionAbstencion(
                 resultado="responde",
-                motivo="confianza_alta",
-                capa_decisora="confianza_alta",
+                motivo="lector",
+                capa_decisora="ok_lector",
             )
 
     retriever = _Retriever()
@@ -201,7 +198,7 @@ def test_motor_orquesta_recuperacion_dirigida_y_etapas_tipadas():
     assert resultado.estado == AssistantState.RESPUESTA_DIRECTA
     assert retriever.filtros == [None, valor_entidad]
     assert [e.chunk_id for e in resultado.evidencias] == ["c9", "c8"]
-    assert resultado.diagnostico["decision"]["motivo"] == "confianza_alta"
+    assert resultado.diagnostico["decision"]["motivo"] == "lector"
     assert set(resultado.diagnostico["etapas"]) >= {
         "analisis_ms", "confianza_ms", "recuperacion_ms", "evidencia_ms",
     }

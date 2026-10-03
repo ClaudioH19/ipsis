@@ -11,6 +11,7 @@ from rag.configuracion.perfiles import perfil_efectivo
 from rag.consulta.etapas.politica import CascadaV1, EtapaPolitica, forma_en_pregunta
 from rag.lenguaje.paquete import cargar_paquete
 from rag.lenguaje.texto import terminos
+from rag.nucleo.contratos import AbstentionPolicy
 from rag.nucleo.esquemas import (
     ChunkRecord,
     LecturaQA,
@@ -137,10 +138,11 @@ def test_sin_umbrales_completos_falla():
 @pytest.mark.parametrize("perfil, con_lector", [("light", False), ("medium", True), ("heavy", True)])
 def test_cada_perfil_se_registra_y_decide(perfil, con_lector, tmp_path):
     umbrales = perfil_efectivo(perfil, ruta_calibracion=tmp_path / "no_existe.yaml").umbrales_por_defecto
-    politica = registrar_componentes_base(RegistroComponentes()).crear(
-        "abstention_policy", "cascada_v1", configuracion={}, umbrales=umbrales)
+    registro = registrar_componentes_base(RegistroComponentes())
+    politica = registro.crear("abstention_policy", "cascada_v1", umbrales=umbrales)
     senales = {"p_rr": 0.95, "s_qa": 0.95} if con_lector else {"s_ret": 0.95}
-    assert politica.decidir_dominio(None, None) is None
+    assert isinstance(politica, AbstentionPolicy)
+    assert registro.disponibles("abstention_policy") == ["cascada_v1"]
     assert politica.decidir_contexto(_ctx(**senales)).resultado == "responde"
 
 
