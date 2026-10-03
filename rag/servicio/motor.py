@@ -122,7 +122,7 @@ class Motor:
         falla durante el arranque, incluso si corresponde a otra fase como
         ingesta.
         """
-        from rag.configuracion import (
+        from rag.configuracion.carga import (
             cargar_dominio,
             config_abstencion,
             config_recuperacion,

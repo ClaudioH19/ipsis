@@ -660,7 +660,7 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     secciones"."""
     import time
 
-    from rag.configuracion import config_recuperacion
+    from rag.configuracion.carga import config_recuperacion
 
     t0 = time.perf_counter()
     cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()

@@ -518,7 +518,7 @@ def cargar_plantillas(ruta: str | Path, dominio: dict | None = None) -> dict:
     criterio que el resto del módulo): se lee una vez por proceso."""
     datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8"))
     if dominio is None:
-        from rag.configuracion import cargar_dominio
+        from rag.configuracion.carga import cargar_dominio
 
         dominio = cargar_dominio()
     variables = {
@@ -652,7 +652,7 @@ def _ensamblar_fragmentos_con_citas(
 
     Compartida por ``redactar`` (estado ``ok``) y ``redactar_zona_gris``
     (estado ``relacionado``)."""
-    from rag.configuracion import config_redaccion
+    from rag.configuracion.carga import config_redaccion
 
     plantillas = plantillas or _cargar_plantillas()
     conectores = plantillas["conectores"]

@@ -5,9 +5,9 @@ from pydantic import ValidationError
 
 from rag import __version__
 from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion import configuracion_efectiva, guardar_snapshot_configuracion
+from rag.configuracion.carga import configuracion_efectiva, guardar_snapshot_configuracion
 from rag.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
-from rag.esquemas_configuracion import validar_asistente, validar_motor
+from rag.configuracion.esquemas import validar_asistente, validar_motor
 
 
 def test_registro_crea_y_enumera_componentes():
@@ -100,7 +100,7 @@ def test_configuracion_rechaza_version_futura():
 
 
 def test_abstencion_selecciona_umbrales_propios_del_retriever_sin_mutar_base():
-    from rag.configuracion import config_abstencion
+    from rag.configuracion.carga import config_abstencion
 
     cfg = {
         "abstencion": {

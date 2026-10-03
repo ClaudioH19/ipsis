@@ -207,7 +207,7 @@ def evaluar_backend_activo(
     from pathlib import Path
 
     from rag.banco_evaluacion import cargar_banco
-    from rag.configuracion import cargar_dominio, cargar_proyecto
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
     from rag.nucleo.esquemas import QueryAnalysis
     from rag.parsear import parsear_documento
     from rag.servicio.motor import Motor

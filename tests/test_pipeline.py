@@ -180,7 +180,7 @@ def test_estilo_de_cita_en_el_texto(monkeypatch):
     def con_estilo(estilo, apertura=False):
         monkeypatch.setattr(pipeline, "config_redaccion", None, raising=False)
         monkeypatch.setattr(
-            "rag.configuracion.config_redaccion",
+            "rag.configuracion.carga.config_redaccion",
             lambda *a, **k: {"cita_en_texto": estilo, "incluir_apertura": apertura,
                              "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.6},
         )
@@ -201,7 +201,7 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
     """Dos fragmentos que se suman al primero no deben abrir los dos con el
     mismo conector: `_elegir_variante` desplaza al siguiente candidato."""
     monkeypatch.setattr(
-        "rag.configuracion.config_redaccion",
+        "rag.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 3, "score_relativo_minimo": 0.0},
     )
@@ -230,7 +230,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     """Un fragmento posterior al primero entra solo si su score alcanza la
     fracción configurada, y con un tope duro de cuántos caben."""
     monkeypatch.setattr(
-        "rag.configuracion.config_redaccion",
+        "rag.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 3, "score_relativo_minimo": 0.6},
     )
@@ -242,7 +242,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     assert "Ruido de otra seccion." not in texto
 
     monkeypatch.setattr(
-        "rag.configuracion.config_redaccion",
+        "rag.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 1, "score_relativo_minimo": 0.0},
     )
