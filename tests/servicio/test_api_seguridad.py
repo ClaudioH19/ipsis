@@ -173,6 +173,8 @@ def test_config_devuelve_los_textos_del_dominio():
     # sustituidas (nunca la plantilla cruda con '{nombre_asistente}' sin
     # rellenar) -- misma función que responde un "hola" real.
     assert "{" not in body["saludo"]
+    assert body["interfaz"]["placeholder"]
+    assert body["interfaz"]["error_red"]
 
 
 def test_config_no_exige_clave_de_widget(monkeypatch: pytest.MonkeyPatch):

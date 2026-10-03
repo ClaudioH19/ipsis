@@ -79,6 +79,30 @@
   var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
   var POSICION = opcion("posicion", "posicion", "abajo-derecha") === "abajo-izquierda" ? "izquierda" : "derecha";
   var CABECERA_CLAVE_WIDGET = "X-Rag-Widget-Key";
+  // Textos de la interfaz. Estos valores en español son el respaldo si
+  // /config no responde; normalmente llegan del paquete de idioma del
+  // servicio (campo `interfaz` de /config).
+  var TEXTOS = {
+    abrir: "Abrir chat de {titulo}",
+    subtitulo: "Responde citando el documento",
+    cerrar: "Cerrar chat",
+    etiqueta_pregunta: "Escribe tu pregunta",
+    placeholder: "Escribe tu pregunta...",
+    enviar: "Enviar pregunta",
+    no_directa: "No es una respuesta directa",
+    esperando: "Buscando en el documento",
+    error_limite: "Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.",
+    error_origen: "Este sitio no está autorizado para usar el asistente.",
+    error_http: "El servicio no pudo responder (HTTP {estado}).",
+    error_red: "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.",
+  };
+  function texto(clave, variables) {
+    var valor = String(TEXTOS[clave] || "");
+    Object.keys(variables || {}).forEach(function (nombre) {
+      valor = valor.split("{" + nombre + "}").join(String(variables[nombre]));
+    });
+    return valor;
+  }
   var PRESENTACION = {
     densidad: "comoda",
     citas: "acordeon",
@@ -348,7 +372,7 @@
   boton.type = "button";
   boton.setAttribute("aria-haspopup", "dialog");
   boton.setAttribute("aria-expanded", "false");
-  boton.setAttribute("aria-label", "Abrir chat de " + TITULO_INICIAL);
+  boton.setAttribute("aria-label", texto("abrir", { titulo: TITULO_INICIAL }));
   // Dos iconos fijos: el CSS muestra uno u otro segun aria-expanded, asi
   // el mismo boton abre y cierra sin que nada dependa de la API.
   boton.appendChild(icono("chat", "rw-icono-chat"));
@@ -382,7 +406,7 @@
   var puntoVivo = document.createElement("span");
   puntoVivo.className = "rw-punto-vivo";
   var subtituloTexto = document.createElement("span");
-  subtituloTexto.textContent = "Responde citando el documento";
+  subtituloTexto.textContent = texto("subtitulo");
   subtitulo.appendChild(puntoVivo);
   subtitulo.appendChild(subtituloTexto);
   cabeceraTextos.appendChild(tituloEl);
@@ -391,7 +415,7 @@
   var botonCerrar = document.createElement("button");
   botonCerrar.type = "button";
   botonCerrar.className = "rw-cerrar";
-  botonCerrar.setAttribute("aria-label", "Cerrar chat");
+  botonCerrar.setAttribute("aria-label", texto("cerrar"));
   botonCerrar.appendChild(icono("cerrar"));
 
   cabecera.appendChild(avatar);
@@ -411,16 +435,16 @@
   var etiquetaInput = document.createElement("label");
   etiquetaInput.className = "rw-sr-solo";
   etiquetaInput.setAttribute("for", "rw-input");
-  etiquetaInput.textContent = "Escribe tu pregunta";
+  etiquetaInput.textContent = texto("etiqueta_pregunta");
   var input = document.createElement("input");
   input.id = "rw-input";
   input.type = "text";
   input.autocomplete = "off";
-  input.placeholder = "Escribe tu pregunta...";
+  input.placeholder = texto("placeholder");
   var botonEnviar = document.createElement("button");
   botonEnviar.type = "submit";
   botonEnviar.className = "rw-enviar";
-  botonEnviar.setAttribute("aria-label", "Enviar pregunta");
+  botonEnviar.setAttribute("aria-label", texto("enviar"));
   botonEnviar.appendChild(icono("enviar"));
   form.appendChild(etiquetaInput);
   form.appendChild(input);
@@ -446,7 +470,7 @@
 
   var ETIQUETAS_ESTADO = {
     ok: null,
-    relacionado: "No es una respuesta directa",
+    relacionado: texto("no_directa"),
     sin_respuesta: null,
     conversacional: null,
   };
@@ -514,7 +538,7 @@
     if (burbujaEspera) return;
     burbujaEspera = document.createElement("div");
     burbujaEspera.className = "rw-escribiendo";
-    burbujaEspera.setAttribute("aria-label", "Buscando en el documento");
+    burbujaEspera.setAttribute("aria-label", texto("esperando"));
     for (var i = 0; i < 3; i++) {
       var punto = document.createElement("span");
       punto.className = "rw-punto";
@@ -549,6 +573,19 @@
     return cab;
   }
 
+  function aplicarInterfaz(interfaz) {
+    if (!interfaz || typeof interfaz !== "object") return;
+    Object.keys(TEXTOS).forEach(function (clave) {
+      if (typeof interfaz[clave] === "string" && interfaz[clave]) TEXTOS[clave] = interfaz[clave];
+    });
+    subtituloTexto.textContent = texto("subtitulo");
+    botonCerrar.setAttribute("aria-label", texto("cerrar"));
+    etiquetaInput.textContent = texto("etiqueta_pregunta");
+    input.placeholder = texto("placeholder");
+    botonEnviar.setAttribute("aria-label", texto("enviar"));
+    ETIQUETAS_ESTADO.relacionado = texto("no_directa");
+  }
+
   function cargarConfigServidor() {
     fetch(API_BASE + "/config", { headers: cabecerasComunes() })
       .then(function (r) {
@@ -562,10 +599,11 @@
         PRESENTACION.mostrarEtiquetaEstado = cfg.mostrar_etiqueta_estado !== false;
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
         if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
+        aplicarInterfaz(cfg.interfaz);
         if (cfg.nombre_asistente) {
           tituloEl.textContent = cfg.nombre_asistente;
           panel.setAttribute("aria-label", cfg.nombre_asistente);
-          boton.setAttribute("aria-label", "Abrir chat de " + cfg.nombre_asistente);
+          boton.setAttribute("aria-label", texto("abrir", { titulo: cfg.nombre_asistente }));
         }
         if (cfg.saludo && mensajes.children.length === 0) {
           agregarMensajeAsistente({ estado: "conversacional", respuesta: cfg.saludo });
@@ -596,13 +634,13 @@
     })
       .then(function (r) {
         if (r.status === 429) {
-          throw new Error("Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.");
+          throw new Error(texto("error_limite"));
         }
         if (r.status === 401) {
-          throw new Error("Este sitio no está autorizado para usar el asistente.");
+          throw new Error(texto("error_origen"));
         }
         if (!r.ok) {
-          throw new Error("El servicio no pudo responder (HTTP " + r.status + ").");
+          throw new Error(texto("error_http", { estado: r.status }));
         }
         return r.json();
       })
@@ -616,8 +654,8 @@
         // HTTP creados arriba sí son deliberados y se conservan; un TypeError
         // de fetch recibe un mensaje estable para quien usa el widget.
         var mensajeError = err instanceof TypeError
-          ? "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo."
-          : (err && err.message ? err.message : "No se pudo contactar al asistente.");
+          ? texto("error_red")
+          : (err && err.message ? err.message : texto("error_red"));
         agregarMensajeError(mensajeError);
         emitir("rag:error", { mensaje: mensajeError });
       })
