@@ -48,7 +48,7 @@ class CodificadorFalso:
 
 
 def _payloads() -> list[dict]:
-    taxonomia = yaml.safe_load(leer_plantilla("categorias.yaml"))
+    taxonomia = yaml.safe_load(leer_plantilla("dominio.yaml"))["taxonomia"]
     payloads = []
     for ruta in sorted(CORPUS.glob("*.md")):
         doc = parsear_markdown(str(ruta), doc_id=ruta.stem, doc_titulo=ruta.stem, version="1")

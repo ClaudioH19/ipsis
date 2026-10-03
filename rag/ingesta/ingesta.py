@@ -139,7 +139,7 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     qdrant_path = qdrant_path or cfg_rec["qdrant_path"]
     version_coleccion = cfg_rec["version_coleccion"] if version_coleccion is None else version_coleccion
 
-    taxonomia = cargar_taxonomia("configuracion/categorias.yaml")
+    taxonomia = cargar_taxonomia()
     docs = parsear_corpus(carpeta_corpus)
     resumen_docs = [ResumenDocumento(d.doc_id, len(d.bloques), len(d.texto_completo)) for d in docs]
 

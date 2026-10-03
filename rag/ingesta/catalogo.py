@@ -1,6 +1,8 @@
 """Catálogo de documentos del proyecto (``documentos/catalogo.yaml``)."""
 from __future__ import annotations
 
+from rag.configuracion import rutas
+
 import json
 import pathlib
 import hashlib
@@ -14,7 +16,7 @@ from pathlib import Path
 from rag.ingesta.parsear import parsear_documento, DocumentoParseado, EXTENSIONES_SOPORTADAS
 
 
-CATALOGO_PATH = "documentos/catalogo.yaml"
+CATALOGO_PATH = rutas.CATALOGO
 
 
 def cargar_catalogo(ruta: str = CATALOGO_PATH) -> list[dict]:

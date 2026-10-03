@@ -8,22 +8,23 @@ from copy import deepcopy
 
 import yaml
 
+from rag.configuracion import rutas
 from rag.recursos import leer_plantilla
 from rag.configuracion.esquemas import (
     CONFIG_VERSION,
+    migrar_asistente,
     validar_asistente,
     validar_motor,
 )
 
-RUTA_PROYECTO = "configuracion/motor.yaml"
-RUTA_DOMINIO = "configuracion/asistente.yaml"
+RUTA_PROYECTO = rutas.MOTOR
+RUTA_DOMINIO = rutas.ASISTENTE
 
 _DOMINIO_POR_DEFECTO = {
     "config_version": CONFIG_VERSION,
     "nombre_asistente": "Asistente documental",
     "descripcion_dominio": "los documentos cargados",
     "idioma": "es",
-    "perfil": "_generico",
     "cors_origenes": [],
     "claves_widget": [],
 }
@@ -50,7 +51,9 @@ def cargar_dominio(ruta: str = RUTA_DOMINIO) -> dict:
     p = Path(ruta)
     if not p.exists():
         return dict(_DOMINIO_POR_DEFECTO)
-    datos = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    # Se migra antes de aplicar los valores por defecto: si no, un archivo
+    # antiguo sin config_version recibiría la versión vigente sin migrarse.
+    datos = migrar_asistente(yaml.safe_load(p.read_text(encoding="utf-8")) or {})
     salida = {**_DOMINIO_POR_DEFECTO, **datos}
     for clave, por_defecto in _DOMINIO_POR_DEFECTO.items():
         if salida.get(clave) is None:
@@ -77,7 +80,7 @@ def configuracion_efectiva(
 
 
 def guardar_snapshot_configuracion(
-    ruta: str = ".cache/configuracion-efectiva.yaml",
+    ruta: str = rutas.SNAPSHOT,
     *,
     ruta_motor: str = RUTA_PROYECTO,
     ruta_dominio: str = RUTA_DOMINIO,
@@ -154,7 +157,7 @@ def config_seguridad(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict
 
 
 CLAVES_DOMINIO_VALIDAS = {
-    "nombre_asistente", "descripcion_dominio", "idioma", "perfil",
+    "nombre_asistente", "descripcion_dominio", "idioma",
     "cors_origenes", "claves_widget",
 }
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
@@ -198,13 +201,13 @@ def inicializar_proyecto_si_falta(
 
 
 def inicializar_plantillas_si_falta(
-    ruta: str = "configuracion/textos.yaml",
+    ruta: str = rutas.TEXTOS,
 ) -> bool:
     return _crear_desde_recurso_si_falta(ruta, "textos.yaml")
 
 
 def inicializar_estilos_si_falta(
-    ruta: str = "configuracion/estilos.yaml", origen: str | None = None
+    ruta: str = rutas.ESTILOS, origen: str | None = None
 ) -> bool:
     """Crea el tema editable; ``origen`` se conserva para compatibilidad."""
     destino = Path(ruta)
@@ -217,3 +220,14 @@ def inicializar_estilos_si_falta(
             destino.write_text(fuente.read_text(encoding="utf-8"), encoding="utf-8")
             return True
     return _crear_desde_recurso_si_falta(ruta, "estilos.yaml")
+
+
+def inicializar_dominio_si_falta(descripcion_dominio: str, ruta: str = rutas.DOMINIO) -> bool:
+    """Crea ``configuracion/dominio.yaml`` desde la plantilla si no existe."""
+    destino = Path(ruta)
+    if destino.exists():
+        return False
+    texto = leer_plantilla("dominio.yaml").replace("{descripcion_dominio}", descripcion_dominio)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(texto, encoding="utf-8")
+    return True

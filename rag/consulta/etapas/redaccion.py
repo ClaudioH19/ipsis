@@ -11,6 +11,8 @@ from pathlib import Path
 
 import yaml
 
+from rag.configuracion import rutas
+
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
 # ==========================================================================
@@ -53,7 +55,7 @@ def cargar_plantillas(ruta: str | Path, dominio: dict | None = None) -> dict:
 
 
 @functools.lru_cache(maxsize=1)
-def _cargar_plantillas(ruta: str = "configuracion/textos.yaml") -> dict:
+def _cargar_plantillas(ruta: str = rutas.TEXTOS) -> dict:
     """Compatibilidad para llamadas fuera de ``Motor``."""
     return cargar_plantillas(ruta)
 

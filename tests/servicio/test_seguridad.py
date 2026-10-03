@@ -135,4 +135,3 @@ def test_clave_escrita_sin_valor_cae_a_lista_vacia(tmp_path):
     cfg = cargar_dominio(str(ruta))
     assert cfg["cors_origenes"] == []
     assert cfg["claves_widget"] == []
-    assert cfg["perfil"] == "_generico"

@@ -38,7 +38,7 @@ services:
   # Ingesta de UNA SOLA CORRIDA (el servicio NO necesita `documentos/` en
   # runtime). Es el ÚNICO contenedor que monta el corpus -- indexa contra el
   # Qdrant del propio compose y persiste el vocabulario BM25 como artefacto
-  # compartido (`.cache/vocab_bm25/`, mismo volumen que monta
+  # compartido (`.rag/indice/`, mismo volumen que monta
   # `rag-extractivo` más abajo, de solo lectura). Termina y sale (no queda
   # sirviendo nada); `rag-extractivo` espera a que termine BIEN
   # (`service_completed_successfully`) antes de arrancar.
@@ -56,7 +56,7 @@ services:
     volumes:
       - ./documentos:/app/documentos:ro
       - ./configuracion:/app/configuracion:ro
-      - vocab_bm25:/app/.cache/vocab_bm25
+      - indice:/app/.rag/indice
       - modelos:/app/.cache/huggingface
     command: ["python", "-m", "rag.cli", "indexar"]
     restart: "no"
@@ -84,7 +84,7 @@ services:
       # (texto, offsets, sección, doc_titulo) viaja en el payload que
       # Qdrant ya devuelve con cada resultado de búsqueda.
       - ./configuracion:/app/configuracion:ro
-      - vocab_bm25:/app/.cache/vocab_bm25:ro
+      - indice:/app/.rag/indice:ro
       - modelos:/app/.cache/huggingface
     ports:
       - "8000:8000"
@@ -93,5 +93,5 @@ services:
 volumes:
   # Volúmenes con nombre: evitan problemas de permisos al ejecutar la imagen
   # con un usuario sin privilegios y conservan los artefactos entre reinicios.
-  vocab_bm25:
+  indice:
   modelos:

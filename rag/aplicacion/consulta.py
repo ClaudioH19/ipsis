@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from rag.configuracion import rutas
 from rag.consulta.etapas.redaccion import cargar_plantillas
 from rag.consulta.motor import Motor
 from rag.nucleo.registro import RegistroComponentes
@@ -44,8 +45,8 @@ def construir_motor(
             registro.obtener(tipo, nombre)
 
     cfg_dominio = cfg_dominio or cargar_dominio()
-    perfil = cargar_perfil(cfg_dominio["perfil"])
-    ruta_textos = Path(ruta_plantillas or "configuracion/textos.yaml").resolve()
+    perfil = cargar_perfil()
+    ruta_textos = Path(ruta_plantillas or rutas.TEXTOS).resolve()
     plantillas = cargar_plantillas(ruta_textos, cfg_dominio)
     palabras_generales = cargar_palabras_generales(cfg_dominio.get("idioma", "es"))
     cfg_rec = config_recuperacion(cfg)

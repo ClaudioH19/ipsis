@@ -52,8 +52,8 @@ def test_configuracion_agrega_version_y_prefijo_documento_compatibles():
             "coleccion_base": "demo",
         }
     })
-    assert asistente["config_version"] == 2
-    assert motor["config_version"] == 2
+    assert asistente["config_version"] == 3
+    assert motor["config_version"] == 3
     assert motor["recuperacion"]["prefijo_documento"] == "passage: "
 
 
@@ -73,7 +73,7 @@ def test_configuracion_migra_version_cero_de_forma_idempotente():
     primero = validar_motor(datos)
     segundo = validar_motor(primero)
     assert primero == segundo
-    assert primero["config_version"] == 2
+    assert primero["config_version"] == 3
 
 
 def test_configuracion_v1_unifica_reranker_en_componentes():
@@ -89,7 +89,7 @@ def test_configuracion_v1_unifica_reranker_en_componentes():
 
     migrado = validar_motor(datos)
 
-    assert migrado["config_version"] == 2
+    assert migrado["config_version"] == 3
     assert "reranker" not in migrado["recuperacion"]
     assert migrado["componentes"]["reranker"] == "cross_encoder"
 

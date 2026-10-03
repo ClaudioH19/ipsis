@@ -17,11 +17,13 @@ documento: es presentación pura.
 """
 from __future__ import annotations
 
+from rag.configuracion import rutas
+
 from pathlib import Path
 
 import yaml
 
-RUTA_ESTILOS = "configuracion/estilos.yaml"
+RUTA_ESTILOS = rutas.ESTILOS
 
 # Cada entrada mapea una clave del YAML a la variable CSS que el widget ya
 # consume. Lo que no esté declarado en el YAML simplemente no se emite, y el

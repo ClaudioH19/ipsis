@@ -19,7 +19,11 @@ import re
 from collections import Counter
 from dataclasses import dataclass, field
 
+from pathlib import Path
+
 import yaml
+
+from rag.configuracion import rutas
 
 from rag.lenguaje.entidades import extraer_entidades, tiene_marcador
 from rag.ingesta.chunking import Chunk
@@ -36,32 +40,19 @@ _STOPWORDS_ES = {
 }
 
 
-def cargar_taxonomia(ruta: str = "configuracion/categorias.yaml") -> dict:
-    with open(ruta, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+def cargar_taxonomia(ruta: str = rutas.DOMINIO) -> dict:
+    """Taxonomía del proyecto: sección ``taxonomia`` de ``configuracion/dominio.yaml``.
 
-
-# `id: otro` es obligatorio (no una convención): `clasificar_categoria`
-# degrada a esa categoría cuando ningún gatillo/descripción matchea, y
-# `validar_chunk` rechaza cualquier chunk cuya categoría no
-# esté en `categorias[].id` -- sin "otro" declarado, un documento genérico
-# sin vocabulario específico fallaría la validación de ingesta completa.
-def inicializar_taxonomia_si_falta(descripcion_dominio: str, ruta: str = "configuracion/categorias.yaml") -> bool:
-    """Crea ``configuracion/categorias.yaml`` con la plantilla genérica mínima de
-    arriba SI todavía no existe -- nunca sobrescribe una taxonomía real ya
-    adaptada a un dominio. Devuelve ``True`` si la creó, ``False`` si ya
-    existía."""
-    from pathlib import Path
-
+    Si el archivo o la sección faltan, usa la taxonomía genérica de la
+    plantilla. ``id: otro`` es obligatorio: ``clasificar_categoria`` degrada a
+    esa categoría y ``validar_chunk`` rechaza cualquier categoría no declarada.
+    """
     p = Path(ruta)
-    if p.exists():
-        return False
-    p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(
-        leer_plantilla("categorias.yaml").format(descripcion_dominio=descripcion_dominio),
-        encoding="utf-8",
-    )
-    return True
+    datos = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
+    if datos.get("taxonomia"):
+        return datos["taxonomia"]
+    plantilla = yaml.safe_load(leer_plantilla("dominio.yaml"))
+    return plantilla["taxonomia"]
 
 
 @dataclass
@@ -81,7 +72,7 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
     las palabras gatillo de esa categoría.
 
     Las palabras gatillo viven en
-    ``configuracion/categorias.yaml::categorias[].palabras_gatillo`` -- antes eran
+    ``configuracion/dominio.yaml::taxonomia.categorias[].palabras_gatillo`` -- antes eran
     un diccionario ``GATILLOS`` fijo en este módulo, lo que acoplaba el
     núcleo a un dominio particular. El YAML de categorías es
     configuración por dominio (categorías, descripciones): las palabras
