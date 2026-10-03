@@ -32,7 +32,7 @@ include = ["rag*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-"rag.recursos" = ["plantillas/*.yaml", "plantillas/dominios/*/*.yaml", "despliegue/*"]
+"rag.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "despliegue/*"]
 "rag.servicio" = ["estaticos/*.js", "estaticos/*.html"]
 
 [tool.pytest.ini_options]

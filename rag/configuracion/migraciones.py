@@ -99,6 +99,14 @@ def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
         _escribir_yaml(motor, datos_motor, _encabezado(motor))
         cambios.append(f"{rutas.MOTOR}: config_version 3")
 
+    # Las palabras de idioma viven en el paquete de idioma desde P3.1.
+    carpeta_dominios = raiz / rutas.CONFIGURACION / "dominios"
+    if (carpeta_dominios / "idiomas").is_dir():
+        shutil.rmtree(carpeta_dominios / "idiomas")
+        cambios.append("configuracion/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)")
+    if carpeta_dominios.is_dir() and not any(carpeta_dominios.iterdir()):
+        carpeta_dominios.rmdir()
+
     _mover(raiz / ".cache" / "qdrant_local", raiz / rutas.QDRANT, cambios, raiz)
     _mover(raiz / ".cache" / "vocab_bm25", raiz / rutas.INDICE, cambios, raiz)
     _mover(raiz / "data" / "golden", raiz / rutas.GOLDEN_BANCO, cambios, raiz)

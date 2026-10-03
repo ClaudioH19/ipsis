@@ -90,7 +90,7 @@ def test_init_crea_configuracion_minima(proyecto_temporal: Path):
     # Corrección de esta tanda (revisión independiente, DEFECTO 1): en un
     # directorio VACÍO, 'rag init' debe ESCRIBIR el andamiaje del perfil y
     # del recurso de idioma, no asumir que ya existen.
-    assert (proyecto_temporal / "configuracion" / "dominios" / "idiomas" / "es.yaml").exists()
+    assert not (proyecto_temporal / "configuracion" / "dominios").exists()
 
     dominio = yaml.safe_load((proyecto_temporal / "configuracion" / "asistente.yaml").read_text(encoding="utf-8"))
     assert dominio["nombre_asistente"] == "Asistente X100"

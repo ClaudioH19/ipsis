@@ -41,15 +41,15 @@ def verificar_config_dominio() -> ResultadoChequeo:
             f"configuracion/dominio.yaml no se pudo cargar: {e}",
             "revisa la sintaxis de configuracion/dominio.yaml",
         )
-    # El recurso de idioma (configuracion/dominios/idiomas/<idioma>.yaml) es OPCIONAL por
-    # diseño: `rag/lenguaje/texto.py::cargar_palabras_generales` ya tolera que no
-    # exista (el chequeo de grounding léxico queda más permisivo, no roto) --
-    # así que su ausencia es informativa, nunca una falla que bloquee
-    # 'rag doctor'. Para idioma='es' (el default), 'rag init' ya lo escribe
-    # desde una plantilla embebida; para otros idiomas puede no haber un
-    # recurso curado todavía, y eso es esperable, no un error.
-    recurso_idioma = Path("configuracion/dominios/idiomas") / f"{cfg.get('idioma', 'es')}.yaml"
-    nota_idioma = "" if recurso_idioma.exists() else f" (sin recurso de idioma en {recurso_idioma}, opcional)"
+    from rag.lenguaje.paquete import idiomas_disponibles
+
+    if cfg.get("idioma", "es") not in idiomas_disponibles():
+        return ResultadoChequeo(
+            "configuración de dominio", False,
+            f"no hay paquete para el idioma {cfg.get('idioma')!r} (disponibles: {idiomas_disponibles()})",
+            "rag configurar idioma=es",
+        )
+    nota_idioma = ""
     return ResultadoChequeo(
         "configuración de dominio", True,
         f"reglas propias={len(perfil.reglas)}, idioma={cfg.get('idioma')!r}, "

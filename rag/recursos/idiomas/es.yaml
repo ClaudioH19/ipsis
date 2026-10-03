@@ -1,0 +1,333 @@
+# Paquete de idioma: español. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en configuracion/idioma.yaml.
+codigo: es
+nombre: Español
+stemmer: spanish
+stopwords:
+- a
+- al
+- asi
+- cada
+- como
+- con
+- cual
+- cuales
+- cuando
+- cuanta
+- cuantas
+- cuanto
+- cuantos
+- de
+- debe
+- deben
+- debera
+- del
+- desde
+- donde
+- durante
+- e
+- el
+- ella
+- ellas
+- ellos
+- en
+- entre
+- es
+- esa
+- esas
+- ese
+- esos
+- esta
+- estas
+- este
+- estos
+- fue
+- ha
+- haber
+- han
+- hasta
+- hay
+- la
+- las
+- le
+- les
+- lo
+- los
+- mas
+- mi
+- muy
+- 'no'
+- nos
+- o
+- otra
+- otras
+- otro
+- otros
+- para
+- pero
+- podra
+- por
+- puede
+- que
+- quien
+- quienes
+- se
+- ser
+- sera
+- seran
+- si
+- sin
+- sobre
+- son
+- su
+- sus
+- tambien
+- tiene
+- tienen
+- toda
+- todas
+- todo
+- todos
+- tu
+- tus
+- u
+- un
+- una
+- unas
+- unos
+- y
+- ya
+- yo
+palabras_generales:
+- a
+- al
+- algo
+- como
+- con
+- cual
+- cuando
+- de
+- del
+- donde
+- el
+- ella
+- en
+- es
+- esta
+- este
+- hacer
+- hay
+- la
+- las
+- lo
+- los
+- me
+- mi
+- necesito
+- 'no'
+- para
+- por
+- prepara
+- preparar
+- que
+- se
+- si
+- sobre
+- son
+- su
+- un
+- una
+- y
+numeros:
+  un: 1
+  una: 1
+  uno: 1
+  dos: 2
+  tres: 3
+  cuatro: 4
+  cinco: 5
+  seis: 6
+  siete: 7
+  ocho: 8
+  nueve: 9
+  diez: 10
+  once: 11
+  doce: 12
+  catorce: 14
+  quince: 15
+  veinte: 20
+  veinticuatro: 24
+  treinta: 30
+ordinales:
+  primer: 1
+  primera: 1
+  segundo: 2
+  segunda: 2
+  tercer: 3
+  tercera: 3
+  cuarto: 4
+  cuarta: 4
+  quinto: 5
+  quinta: 5
+meses:
+- enero
+- febrero
+- marzo
+- abril
+- mayo
+- junio
+- julio
+- agosto
+- septiembre
+- octubre
+- noviembre
+- diciembre
+dias_semana:
+- lunes
+- martes
+- miércoles
+- miercoles
+- jueves
+- viernes
+- sábado
+- sabado
+- domingo
+unidades_tiempo:
+  dia:
+  - día
+  - días
+  - dia
+  - dias
+  semana:
+  - semana
+  - semanas
+  hora:
+  - hora
+  - horas
+  minuto:
+  - minuto
+  - minutos
+  mes:
+  - mes
+  - meses
+calificadores_plazo:
+  habiles:
+  - hábiles
+  - habiles
+  corridos:
+  - corridos
+referencias_documento:
+  articulo:
+  - artículo
+  - artículos
+  - articulo
+  - articulos
+  anexo:
+  - anexo
+  capitulo:
+  - capítulo
+  - capitulo
+marcadores:
+  excepcion:
+  - salvo
+  - excepto
+  - a menos que
+  - sin perjuicio de
+  condicion:
+  - siempre que
+  - en caso de
+  - cuando
+  - si
+conversacional:
+  categorias:
+  - saludo
+  - agradecimiento
+  - despedida
+  - capacidad
+  patrones:
+    saludo:
+    - ^\s*hola\b
+    - ^\s*buenos? d[ií]as\b
+    - ^\s*buenas tardes\b
+    - ^\s*buenas noches\b
+    - ^\s*qu[eé] tal\b
+    - ^\s*hey\b
+    - ^\s*buenas\b
+    agradecimiento:
+    - \bgracias\b
+    despedida:
+    - ^\s*chao\b
+    - ^\s*adi[oó]s\b
+    - ^\s*nos vemos\b
+    - ^\s*hasta luego\b
+    - ^\s*bye\b
+    capacidad:
+    - qu[eé] puedes hacer
+    - qui[eé]n eres
+    - para qu[eé] sirves
+    - c[oó]mo funcionas
+    - qu[eé] eres t[uú]
+  respuestas:
+    saludo:
+    - ¡Hola! Soy {nombre_asistente}. Respondo preguntas sobre {descripcion_dominio} citando el texto exacto
+      del documento. ¿Qué necesitas saber?
+    - '¡Hola! Pregúntame lo que necesites sobre {descripcion_dominio}: busco la respuesta en el documento
+      y te muestro de dónde la saqué.'
+    agradecimiento:
+    - De nada. Si tienes otra pregunta sobre {descripcion_dominio}, aquí estoy.
+    - Con gusto. Cualquier otra duda sobre {descripcion_dominio}, dime.
+    despedida:
+    - Hasta luego.
+    - Nos vemos. Vuelve cuando necesites consultar el documento.
+    capacidad:
+    - Soy {nombre_asistente}. Respondo preguntas sobre {descripcion_dominio} citando el texto exacto del
+      documento. Si la información no está, te lo digo en vez de inventar una respuesta.
+    - Busco en {descripcion_dominio} y te devuelvo texto literal con su fuente.
+mensajes:
+  sin_respuesta: No encontré esa información en los documentos disponibles.
+  premisa_no_encontrada: No encontré información sobre "{entidad}" en los documentos disponibles. Puede
+    que no exista o que esté fuera de lo que cubren tus documentos.
+  relacionado_intro: 'No encontré una respuesta directa. Esto es lo que dicen los documentos sobre el
+    tema:'
+  relacionado_foco_ausente: 'No encontré información específica sobre «{termino}». Esto es lo más cercano:'
+  conectores:
+    apertura:
+    - 'Esto es lo que dice el documento:'
+    - 'Encontré esto en el documento:'
+    - 'El documento lo plantea así:'
+    - 'Según el texto cargado:'
+    complemento:
+    - 'A esto se suma lo siguiente:'
+    - 'El documento agrega, en otra sección:'
+    - 'También dice esto:'
+    - 'Y lo complementa así:'
+    condicion:
+    - 'Esto aplica bajo una condición:'
+    - 'Hay una condición asociada:'
+    - 'El documento la condiciona así:'
+    excepcion:
+    - 'Con una excepción:'
+    - 'Hay una salvedad:'
+    - 'El documento contempla una excepción:'
+    secuencia:
+    - Primero
+    - Luego
+    - Por último
+    contraste_version:
+    - En la versión {v1}…; en la {v2}…
+interfaz:
+  titulo: Asistente
+  saludo: Hola, ¿en qué puedo ayudarte?
+  subtitulo: Responde citando el documento
+  abrir: Abrir chat de {titulo}
+  cerrar: Cerrar chat
+  etiqueta_pregunta: Escribe tu pregunta
+  placeholder: Escribe tu pregunta...
+  enviar: Enviar pregunta
+  no_directa: No es una respuesta directa
+  esperando: Buscando en el documento
+  error_limite: Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.
+  error_origen: Este sitio no está autorizado para usar el asistente.
+  error_http: El servicio no pudo responder (HTTP {estado}).
+  error_red: No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.
