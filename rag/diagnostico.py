@@ -25,7 +25,7 @@ def verificar_config_dominio() -> ResultadoChequeo:
     """``configuracion/asistente.yaml`` existe (o cae a los valores por defecto), su
     ``perfil`` existe en ``dominios/`` y su ``idioma`` tiene recurso en
     ``configuracion/dominios/idiomas/``."""
-    from rag.configuracion import cargar_dominio
+    from rag.configuracion.carga import cargar_dominio
     from rag.dominio import RUTA_DOMINIOS, _perfiles_disponibles
 
     try:
@@ -60,7 +60,7 @@ def verificar_config_dominio() -> ResultadoChequeo:
 def verificar_config_recuperacion() -> ResultadoChequeo:
     """``configuracion/motor.yaml`` existe y trae la sección ``recuperacion:``
     que leen tanto la ingesta como el servicio."""
-    from rag.configuracion import cargar_proyecto, config_recuperacion
+    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
 
     try:
         cfg = cargar_proyecto()
@@ -81,7 +81,7 @@ def verificar_config_recuperacion() -> ResultadoChequeo:
 def verificar_politica_abstencion() -> ResultadoChequeo:
     """La política configurada existe y acepta las opciones de abstención."""
     from rag.nucleo.registro import RegistroComponentes
-    from rag.configuracion import cargar_proyecto, config_abstencion
+    from rag.configuracion.carga import cargar_proyecto, config_abstencion
     from rag.aplicacion.registro_base import registrar_componentes_base
 
     try:
@@ -110,7 +110,7 @@ def verificar_politica_abstencion() -> ResultadoChequeo:
 def verificar_modelo_descargado() -> ResultadoChequeo:
     """El modelo de embeddings de ``recuperacion.modelo`` está en la caché
     local de HuggingFace -- chequeo de solo lectura, nunca descarga nada."""
-    from rag.configuracion import cargar_proyecto, config_recuperacion
+    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
 
     try:
         cfg = cargar_proyecto()
@@ -143,7 +143,7 @@ def verificar_indice() -> ResultadoChequeo:
     Qdrant responde, porque no se puede comprobar lo primero sin lo segundo."""
     import os
 
-    from rag.configuracion import cargar_proyecto, config_recuperacion
+    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
     from rag.corpus import crear_cliente_qdrant, nombre_coleccion_versionada
 
     try:
@@ -239,12 +239,12 @@ def verificar_estilos() -> ResultadoChequeo:
 def verificar_cors() -> ResultadoChequeo:
     """``configuracion/asistente.yaml::cors_origenes``: vacía
     por defecto a propósito (nunca ``"*"`` de fábrica, ver
-    ``rag/configuracion.py``). Solo se marca como FALLA -- algo accionable,
+    ``rag/configuracion/carga.py``). Solo se marca como FALLA -- algo accionable,
     no una advertencia genérica -- cuando la lista está vacía Y ya hay
     claves de widget configuradas: es la señal concreta de que alguien
     preparó el widget para un sitio real y se olvidó de abrirle CORS, así
     que el navegador bloqueará sus peticiones aunque la clave sea válida."""
-    from rag.configuracion import cargar_dominio
+    from rag.configuracion.carga import cargar_dominio
 
     cfg = cargar_dominio()
     origenes = cfg.get("cors_origenes") or []

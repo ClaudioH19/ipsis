@@ -18,7 +18,7 @@ sin modificar el YAML de origen.
 La configuración ya validada puede cargarse desde Python:
 
 ```python
-from rag.configuracion import cargar_dominio, cargar_proyecto
+from rag.configuracion.carga import cargar_dominio, cargar_proyecto
 
 motor = cargar_proyecto()
 dominio = cargar_dominio()
@@ -103,7 +103,7 @@ rag snapshot-config --salida .cache/config-produccion.yaml
 También está disponible desde Python:
 
 ```python
-from rag.configuracion import configuracion_efectiva
+from rag.configuracion.carga import configuracion_efectiva
 
 snapshot = configuracion_efectiva()
 ```

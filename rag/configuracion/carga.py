@@ -9,7 +9,7 @@ from copy import deepcopy
 import yaml
 
 from rag.recursos import leer_plantilla
-from rag.esquemas_configuracion import (
+from rag.configuracion.esquemas import (
     CONFIG_VERSION,
     validar_asistente,
     validar_motor,

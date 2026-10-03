@@ -122,7 +122,7 @@ def test_todas_las_variables_del_yaml_existen_en_el_widget():
 def test_init_deja_el_archivo_de_estilos(tmp_path: Path, monkeypatch):
     """`rag init` tiene que dejar el tema en el proyecto nuevo, con sus
     comentarios: son la documentación de cada clave."""
-    from rag.configuracion import inicializar_estilos_si_falta
+    from rag.configuracion.carga import inicializar_estilos_si_falta
 
     origen = Path(RUTA_ESTILOS).resolve()
     monkeypatch.chdir(tmp_path)

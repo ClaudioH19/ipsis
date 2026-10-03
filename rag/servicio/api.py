@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from rag import __version__
-from rag.configuracion import cargar_dominio, cargar_proyecto, config_seguridad
+from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_seguridad
 from rag.servicio.motor import Motor, MotorNoListo, MotorSaturado
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,

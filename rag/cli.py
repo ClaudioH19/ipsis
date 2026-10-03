@@ -7,7 +7,7 @@ Regla de diseño de este módulo, no negociable: **cada comando es una función
 corta que solo orquesta lo que ya vive en `rag/` y `servicio/`.** Si algo
 necesita lógica nueva, esa lógica se escribe en un módulo de `rag/` (ver
 `rag/corpus.py::agregar_documentos_al_catalogo`/`ejecutar_ingesta`,
-`rag/configuracion.py::actualizar_dominio`, `rag/diagnostico.py`,
+`rag/configuracion/carga.py::actualizar_dominio`, `rag/diagnostico.py`,
 `rag/metricas_banco.py::evaluar_backend_activo`), nunca aquí. Los argumentos
 se arman con ``argparse`` de la biblioteca estándar -- sin dependencias
 nuevas para la CLI, el plugin ya arrastra modelos pesados.
@@ -25,7 +25,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 def cmd_init(args: argparse.Namespace) -> int:
-    from rag.configuracion import (
+    from rag.configuracion.carga import (
         RUTA_DOMINIO, actualizar_dominio, inicializar_asistente_si_falta,
         inicializar_estilos_si_falta,
         inicializar_plantillas_si_falta, inicializar_proyecto_si_falta,
@@ -162,7 +162,7 @@ def cmd_cargar(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def cmd_configurar(args: argparse.Namespace) -> int:
-    from rag.configuracion import actualizar_dominio
+    from rag.configuracion.carga import actualizar_dominio
 
     pares: dict[str, str] = {}
     for par in args.pares:
@@ -189,7 +189,7 @@ def cmd_configurar(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def cmd_indexar(args: argparse.Namespace) -> int:
-    from rag.configuracion import cargar_dominio, cargar_proyecto, config_recuperacion
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_recuperacion
     from rag.corpus import ejecutar_ingesta
     from rag.dominio import cargar_perfil
     from rag.reglas_extraccion import configurar_perfil
@@ -248,7 +248,7 @@ def _argumentos_init_automatico() -> argparse.Namespace:
 
 def _completar_proyecto_existente() -> None:
     """Añade archivos faltantes usando defaults sin sobrescribir personalizaciones."""
-    from rag.configuracion import (
+    from rag.configuracion.carga import (
         cargar_dominio,
         inicializar_estilos_si_falta,
         inicializar_plantillas_si_falta,
@@ -409,7 +409,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
 
 
 def cmd_snapshot_config(args: argparse.Namespace) -> int:
-    from rag.configuracion import guardar_snapshot_configuracion
+    from rag.configuracion.carga import guardar_snapshot_configuracion
 
     try:
         ruta = guardar_snapshot_configuracion(args.salida)

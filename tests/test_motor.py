@@ -7,7 +7,7 @@ import pytest
 from pydantic import BaseModel
 
 from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion import cargar_dominio, cargar_proyecto
+from rag.configuracion.carga import cargar_dominio, cargar_proyecto
 from rag.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
 from rag.abstencion import DecisionAbstencion
 from rag.nucleo.esquemas import (

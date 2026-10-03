@@ -124,7 +124,7 @@ def test_clave_escrita_sin_valor_cae_a_lista_vacia(tmp_path):
     problema. El valor de repuesto es la lista vacía -- falla CERRADO: una
     configuración a medio escribir nunca debe terminar abriendo el servicio.
     """
-    from rag.configuracion import cargar_dominio
+    from rag.configuracion.carga import cargar_dominio
 
     ruta = tmp_path / "dominio.yaml"
     ruta.write_text(

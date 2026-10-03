@@ -10,7 +10,7 @@ instalación nueva interprete opciones desconocidas como si fueran válidas.
 
 Se usan contratos Python pequeños en `rag.nucleo.contratos`, un
 `RegistroComponentes` explícito y schemas Pydantic estrictos en
-`rag.esquemas_configuracion`.
+`rag.configuracion.esquemas`.
 
 La selección se declara bajo `componentes` en `motor.yaml`. Las factories se
 resuelven por nombre y pueden recibir opciones. Los cambios de formato pasan
