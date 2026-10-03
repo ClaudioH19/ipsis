@@ -23,21 +23,16 @@ from pathlib import Path
 import yaml
 
 from rag.configuracion import rutas
-from rag.lenguaje.texto import tokenizar
+from rag.lenguaje.texto import normalizar, tokenizar
 
 from rag.lenguaje.entidades import extraer_entidades, idioma_activo, tiene_marcador
 from rag.ingesta.chunking import Chunk
 from rag.recursos import leer_plantilla
 
-_STOPWORDS_ES = {
-    "de", "la", "que", "el", "en", "y", "a", "los", "del", "se", "las", "por",
-    "un", "para", "con", "no", "una", "su", "al", "lo", "como", "más", "o",
-    "pero", "sus", "le", "ya", "este", "esta", "entre", "cuando", "muy", "sin",
-    "sobre", "también", "me", "hasta", "hay", "donde", "quien", "desde", "todo",
-    "durante", "cada", "cual", "les", "si", "así", "mismo", "aunque", "otro",
-    "otra", "ser", "es", "son", "ha", "han", "será", "fue", "estar", "está",
-    "e", "u", "cuyo", "cuya", "cualquier", "dicho", "dicha", "podrá", "deberá",
-}
+def _stopwords() -> set[str]:
+    """Stopwords del idioma activo, normalizadas (sin tildes en escritura latina)."""
+    paquete = idioma_activo()
+    return {normalizar(p) for p in paquete.stopwords} if paquete is not None else set()
 
 
 def cargar_taxonomia(ruta: str = rutas.DOMINIO) -> dict:
@@ -78,7 +73,8 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
     configuración por dominio (categorías, descripciones): las palabras
     configuración por dominio y las palabras gatillo se declaran ahí mismo.
     """
-    palabras_texto = set(_tokenizar(texto)) - _STOPWORDS_ES
+    stop = _stopwords()
+    palabras_texto = {w for w in _tokenizar(texto) if normalizar(w) not in stop}
 
     mejor_cat = "otro"
     mejor_score = 0.0
@@ -108,7 +104,8 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
 def extraer_keywords(texto: str, top_k: int = 5) -> list[str]:
     """Extracción de palabras clave por frecuencia (simplificación determinista
     y reproducible de YAKE/KeyBERT — documentada en ESTADO.md)."""
-    palabras = [w for w in _tokenizar(texto) if w not in _STOPWORDS_ES]
+    stop = _stopwords()
+    palabras = [w for w in _tokenizar(texto) if normalizar(w) not in stop]
     conteo = Counter(palabras)
     return [w for w, _ in conteo.most_common(top_k)]
 

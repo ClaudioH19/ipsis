@@ -8,22 +8,30 @@ stopwords:
 - a
 - al
 - asi
+- así
+- aunque
 - cada
 - como
 - con
 - cual
 - cuales
+- cualquier
 - cuando
 - cuanta
 - cuantas
 - cuanto
 - cuantos
+- cuya
+- cuyo
 - de
 - debe
 - deben
 - debera
+- deberá
 - del
 - desde
+- dicha
+- dicho
 - donde
 - durante
 - e
@@ -39,9 +47,11 @@ stopwords:
 - ese
 - esos
 - esta
+- estar
 - estas
 - este
 - estos
+- está
 - fue
 - ha
 - haber
@@ -55,8 +65,11 @@ stopwords:
 - lo
 - los
 - mas
+- me
 - mi
+- mismo
 - muy
+- más
 - 'no'
 - nos
 - o
@@ -67,6 +80,7 @@ stopwords:
 - para
 - pero
 - podra
+- podrá
 - por
 - puede
 - que
@@ -76,6 +90,7 @@ stopwords:
 - ser
 - sera
 - seran
+- será
 - si
 - sin
 - sobre
@@ -83,6 +98,7 @@ stopwords:
 - su
 - sus
 - tambien
+- también
 - tiene
 - tienen
 - toda
@@ -334,6 +350,7 @@ mensajes:
     - Por último
     contraste_version:
     - En la versión {v1}…; en la {v2}…
+  sin_seccion: (sin sección)
 interfaz:
   titulo: Asistente
   saludo: Hola, ¿en qué puedo ayudarte?

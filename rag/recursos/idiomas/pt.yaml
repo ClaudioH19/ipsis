@@ -1,0 +1,295 @@
+# Paquete de idioma: portugués. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en configuracion/idioma.yaml.
+codigo: pt
+nombre: Português
+stemmer: portuguese
+stopwords:
+- a
+- ao
+- aos
+- aquela
+- aquele
+- as
+- cada
+- com
+- como
+- da
+- das
+- de
+- deve
+- do
+- dos
+- e
+- em
+- essa
+- esse
+- esta
+- este
+- foi
+- há
+- isso
+- isto
+- já
+- mais
+- mas
+- muito
+- na
+- nas
+- 'no'
+- nos
+- não
+- o
+- onde
+- os
+- ou
+- para
+- pela
+- pelo
+- pode
+- por
+- quais
+- qual
+- quando
+- que
+- quem
+- se
+- sem
+- ser
+- seu
+- seus
+- sim
+- sua
+- suas
+- são
+- tem
+- toda
+- todas
+- todo
+- todos
+- têm
+- um
+- uma
+- umas
+- uns
+- é
+palabras_generales:
+- preciso
+- fazer
+- saber
+- sobre
+- coisa
+- algo
+- informação
+- pergunta
+- ajuda
+- funciona
+- usar
+- quero
+numeros:
+  um: 1
+  uma: 1
+  dois: 2
+  duas: 2
+  três: 3
+  tres: 3
+  quatro: 4
+  cinco: 5
+  seis: 6
+  sete: 7
+  oito: 8
+  nove: 9
+  dez: 10
+  onze: 11
+  doze: 12
+  quinze: 15
+  vinte: 20
+  trinta: 30
+ordinales:
+  primeiro: 1
+  primeira: 1
+  segundo: 2
+  segunda: 2
+  terceiro: 3
+  terceira: 3
+  quarto: 4
+  quarta: 4
+  quinto: 5
+  quinta: 5
+meses:
+- janeiro
+- fevereiro
+- março
+- abril
+- maio
+- junho
+- julho
+- agosto
+- setembro
+- outubro
+- novembro
+- dezembro
+dias_semana:
+  '1':
+  - segunda-feira
+  '2':
+  - terça-feira
+  - terca-feira
+  '3':
+  - quarta-feira
+  '4':
+  - quinta-feira
+  '5':
+  - sexta-feira
+  '6':
+  - sábado
+  - sabado
+  '7':
+  - domingo
+unidades_tiempo:
+  dia:
+  - dia
+  - dias
+  semana:
+  - semana
+  - semanas
+  hora:
+  - hora
+  - horas
+  minuto:
+  - minuto
+  - minutos
+  mes:
+  - mês
+  - mes
+  - meses
+calificadores_plazo:
+  habiles:
+  - úteis
+  - uteis
+  corridos:
+  - corridos
+referencias_documento:
+  articulo:
+  - artigo
+  - artigos
+  anexo:
+  - anexo
+  - anexos
+  capitulo:
+  - capítulo
+  - capitulo
+  - capítulos
+conectores_rango:
+  y:
+  - e
+  a:
+  - a
+conectores_fecha:
+- de
+conectores_fecha_relativa:
+- de
+marcadores:
+  excepcion:
+  - exceto
+  - salvo
+  - a menos que
+  - com exceção de
+  condicion:
+  - desde que
+  - caso
+  - quando
+  - se
+conversacional:
+  categorias:
+  - saludo
+  - agradecimiento
+  - despedida
+  - capacidad
+  patrones:
+    saludo:
+    - ^\s*ol[aá]\b
+    - ^\s*oi\b
+    - ^\s*bom dia\b
+    - ^\s*boa (tarde|noite)\b
+    agradecimiento:
+    - \bobrigad[oa]\b
+    - \bvaleu\b
+    despedida:
+    - ^\s*tchau\b
+    - ^\s*at[eé] logo\b
+    - ^\s*adeus\b
+    capacidad:
+    - o que voc[eê] pode fazer
+    - quem [eé] voc[eê]
+    - como voc[eê] funciona
+  respuestas:
+    saludo:
+    - Olá! Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato
+      do documento. O que você precisa saber?
+    - 'Olá! Pergunte o que precisar sobre {descripcion_dominio}: busco a resposta no documento e mostro
+      de onde a tirei.'
+    agradecimiento:
+    - De nada. Se tiver outra pergunta sobre {descripcion_dominio}, estou aqui.
+    - Com prazer. Qualquer outra dúvida sobre {descripcion_dominio}, é só dizer.
+    despedida:
+    - Até logo.
+    - Até mais. Volte quando precisar consultar o documento.
+    capacidad:
+    - Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do
+      documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.
+    - Busco em {descripcion_dominio} e devolvo texto literal com a fonte.
+mensajes:
+  sin_respuesta: Não encontrei essa informação nos documentos disponíveis.
+  premisa_no_encontrada: Não encontrei informação sobre "{entidad}" nos documentos disponíveis. Talvez
+    não exista ou esteja fora do que seus documentos cobrem.
+  relacionado_intro: 'Não encontrei uma resposta direta. Isto é o que os documentos dizem sobre o tema:'
+  relacionado_foco_ausente: 'Não encontrei informação específica sobre «{termino}». Isto é o mais próximo:'
+  conectores:
+    apertura:
+    - 'Isto é o que diz o documento:'
+    - 'Encontrei isto no documento:'
+    - 'O documento coloca assim:'
+    - 'Segundo o texto carregado:'
+    complemento:
+    - 'Soma-se a isto o seguinte:'
+    - 'O documento acrescenta, em outra seção:'
+    - 'Também diz isto:'
+    - 'E complementa assim:'
+    condicion:
+    - 'Isto se aplica sob uma condição:'
+    - 'Há uma condição associada:'
+    - 'O documento condiciona assim:'
+    excepcion:
+    - 'Com uma exceção:'
+    - 'Há uma ressalva:'
+    - 'O documento prevê uma exceção:'
+    secuencia:
+    - Primeiro
+    - Depois
+    - Por último
+    contraste_version:
+    - Na versão {v1}…; na {v2}…
+  sin_seccion: (sem seção)
+interfaz:
+  titulo: Assistente
+  saludo: Olá, como posso ajudar?
+  subtitulo: Responde citando o documento
+  abrir: Abrir chat de {titulo}
+  cerrar: Fechar chat
+  etiqueta_pregunta: Escreva sua pergunta
+  placeholder: Escreva sua pergunta...
+  enviar: Enviar pergunta
+  no_directa: Não é uma resposta direta
+  esperando: Buscando no documento
+  error_limite: Muitas perguntas seguidas. Espere alguns segundos e tente de novo.
+  error_origen: Este site não está autorizado a usar o assistente.
+  error_http: O serviço não conseguiu responder (HTTP {estado}).
+  error_red: Não foi possível contatar o assistente. Verifique sua conexão e tente de novo.
+contracciones:
+  ' de o ': ' do '
+  ' de a ': ' da '
+  ' de os ': ' dos '
+  ' de as ': ' das '
+  ' em o ': ' no '
+  ' em a ': ' na '

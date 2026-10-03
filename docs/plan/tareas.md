@@ -186,7 +186,7 @@ No cambia el comportamiento. Al final de P1, la caracterización (lenta) sigue 1
 
 ## P3. Multilenguaje
 
-Referencia: [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §6. Al terminar P3, `rg -n "[áéíóúñ¿¡]" rag --glob "*.py"` solo encuentra comentarios y docstrings.
+Referencia: [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §6. Al terminar P3 no quedan en Python reglas, patrones ni textos para el usuario final atados a un idioma. Los mensajes para quien opera (CLI, `rag doctor`, errores de configuración) siguen en español. Quedan pendientes, con su tarea: el tokenizador de BM25 (P4.3), `STOPWORDS_ES` de `palabras_contenido` (P4.4/P4.5) y la guardia regex (P8.3).
 
 ### P3.1 Paquetes de idioma
 

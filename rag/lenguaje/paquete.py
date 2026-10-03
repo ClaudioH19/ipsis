@@ -38,6 +38,7 @@ class Mensajes(_Estricto):
     premisa_no_encontrada: str
     relacionado_intro: str
     relacionado_foco_ausente: str
+    sin_seccion: str
     conectores: dict[str, list[str]] = Field(default_factory=dict)
 
 
