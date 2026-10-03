@@ -25,7 +25,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P2.4 | ✅ | 2026-10-03 | 304 | docs: README con mapa, guia/ (configuracion, web, golden), metodologia/. ejemplos con un solo README. docker-compose pasa a rag/recursos/despliegue/. data/ eliminado. .dockerignore actualizado. |
 | P3.1 | ✅ | 2026-10-03 | 308 + 21 lentas | es.yaml generado desde los datos del código para una migración exacta. palabras_generales se conserva como clave transitoria hasta P4.4 (sin 'curso' ni 'universidad'). Corrige un defecto: YAML 1.1 leía 'no' como false. La migración borra configuracion/dominios/idiomas. 'rag configurar idioma=' también valida el paquete. |
 | P3.2 | ✅ | 2026-10-03 | 322 + 21 lentas | Corrige un defecto: la selección de oraciones perdía el texto anterior a un punto no seguido de espacio (p. ej. «1.5»). La división en oraciones de chunking no afectaba el resultado (solo armaba un conjunto de palabras) y se eliminó. Orden de terminos(): casefold, quitar tildes latinas y luego stem, para que «garantía» y «garantias» coincidan. Caracterización sin cambios. |
-| P3.3 | ⬜ | | | |
+| P3.3 | ✅ | 2026-10-03 | 351 (suite completa) | fecha (numérica, normalizada a ISO) y monto (símbolo o código ISO 4217 de una lista cerrada; grupos de tres dígitos = miles). Un punto final de oración no bloquea la coincidencia. Caracterización sin cambios. Requiere reindexar para que el inventario incluya los nuevos tipos. |
 | P3.4 | ⬜ | | | |
 | P3.5 | ⬜ | | | |
 | P3.6 | ⬜ | | | |
