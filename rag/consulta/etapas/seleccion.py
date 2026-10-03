@@ -241,7 +241,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     seleccionado -- el resto de los campos (``doc_titulo``, ``seccion_path``,
     ``tiene_excepcion``, ``tiene_condicion``, ``chunk_id``, ``version``...)
     se conservan intactos para que la cita y los conectores de
-    ``rag/servicio/pipeline.py::redactar`` sigan funcionando igual.
+    ``rag/consulta/etapas/redaccion.py::redactar`` sigan funcionando igual.
 
     ``entidades_pregunta``: si se entrega, prioriza la
     oración que contiene LITERALMENTE una de esas entidades como ancla,

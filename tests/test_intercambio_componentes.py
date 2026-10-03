@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from rag.abstencion import DecisionAbstencion, LayeredV1
+from rag.consulta.etapas.politica import DecisionAbstencion, LayeredV1
 from rag.nucleo.esquemas import (
     AssistantState,
     ChunkRecord,
@@ -20,7 +20,7 @@ from rag.nucleo.esquemas import (
     SenalesRecuperacion,
 )
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
-from rag.servicio.motor import Motor
+from rag.consulta.motor import Motor
 
 
 def _candidato(
