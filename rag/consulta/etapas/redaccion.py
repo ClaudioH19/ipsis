@@ -226,6 +226,7 @@ def redactar_zona_gris(
     *,
     plantillas: dict | None = None,
     cfg_redaccion: dict | None = None,
+    termino_ausente: str | None = None,
 ) -> str:
     """Estado propio ``"relacionado"`` (Etapa C, punto 2 del encargo del
     coordinador -- ACTIVO por defecto desde esta etapa): cuando la pregunta
@@ -241,7 +242,11 @@ def redactar_zona_gris(
     {"relacionado" (default), "abstenerse"} -- dominios de costo de error
     ALTO pueden volver a "abstenerse" por configuración, sin tocar código."""
     plantillas = plantillas or _cargar_plantillas()
-    intro = plantillas["abstencion"]["zona_gris_intro"]
+    # Si falta el término de foco, el mensaje lo nombra («No encontré información sobre «X»»).
+    if termino_ausente:
+        intro = plantillas["abstencion"]["foco_ausente"].format(termino=termino_ausente)
+    else:
+        intro = plantillas["abstencion"]["zona_gris_intro"]
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
@@ -277,7 +282,9 @@ class EtapaRedaccion(_Etapa):
 
         m = self.motor
         if ctx.decision.resultado == "relacionado":
-            ctx.texto = redactar_zona_gris(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
+            termino = ctx.decision.entidad_texto if ctx.decision.motivo == "foco_ausente" else None
+            ctx.texto = redactar_zona_gris(ctx.payloads, plantillas=m.plantillas,
+                                           cfg_redaccion=m.configuracion_redaccion, termino_ausente=termino)
             ctx.estado = AssistantState.RELACIONADO
             ctx.plan = "zona_gris"
             return

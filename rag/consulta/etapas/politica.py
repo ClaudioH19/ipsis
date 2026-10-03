@@ -151,6 +151,7 @@ class LayeredV1:
         inventario_entidades: set[str] | None = None,
         estadisticas_lexico=None,
         paquete=None,
+        **_ignoradas,
     ) -> None:
         try:
             capa_a = configuracion["capa_a_fuera_dominio"]
@@ -224,6 +225,113 @@ class LayeredV1:
         )
 
 
+UMBRALES_CASCADA = ("oov", "dominio", "relacionado", "foco", "ok", "cov")
+
+
+@dataclass(frozen=True)
+class SenalesPolitica:
+    """Señales que lee ``cascada_v1``; ``None`` si la etapa que las produce no corrió."""
+
+    s_ret: float
+    s_oov: float
+    s_foco: float
+    s_cov: float
+    acuerdo: float | None
+    s_rr: float | None
+    s_qa: float | None
+
+    @property
+    def dominio(self) -> float:
+        """Señal de dominio: el reranker si existe; si no, la recuperación."""
+        return self.s_rr if self.s_rr is not None else self.s_ret
+
+
+def senales_de_contexto(ctx) -> SenalesPolitica:
+    from rag.consulta.etapas.reranking import sigmoide
+
+    lex = ctx.lexicas
+    return SenalesPolitica(
+        s_ret=float(ctx.senales.confianza_top1) if ctx.senales is not None else 0.0,
+        s_oov=lex.s_oov if lex is not None else 0.0,
+        # Sin términos de foco no hay nada que exigir: s_foco neutro.
+        s_foco=lex.s_foco if lex is not None and lex.s_foco is not None else 1.0,
+        s_cov=lex.s_cov if lex is not None and lex.s_cov is not None else 0.0,
+        acuerdo=lex.acuerdo if lex is not None else None,
+        s_rr=sigmoide(ctx.puntajes_rerank[0]) if ctx.puntajes_rerank else None,
+        s_qa=max((lec.s_qa for lec in ctx.lecturas), default=0.0) if ctx.lecturas is not None else None,
+    )
+
+
+def forma_en_pregunta(pregunta: str, termino: str, paquete=None) -> str:
+    """Palabra de la pregunta cuyo término (stem) es ``termino``; para el mensaje."""
+    from rag.lenguaje.texto import terminos, tokenizar
+
+    for palabra in tokenizar(pregunta, normalizado=False):
+        if terminos(palabra, paquete) == [termino]:
+            return palabra
+    return termino
+
+
+class CascadaV1:
+    """Decide con todas las señales de la cascada (arquitectura.md §2.1).
+
+    Reglas en orden; la primera que se cumple decide:
+
+    1. La premisa falla (pide una entidad que no está) → sin_respuesta.
+    2. ``s_oov ≥ τ_oov`` y dominio < ``τ_dominio`` → fuera_dominio.
+    3. ``s_foco ≥ τ_foco`` y (con lector: ``s_qa ≥ τ_ok``; sin lector:
+       ``s_ret ≥ τ_ok``, ``s_cov ≥ τ_cov`` y ``acuerdo ≥ 0,5``) → ok.
+    4. dominio ≥ ``τ_relacionado`` → relacionado (con el término ausente si
+       falló el foco).
+    5. Si no → sin_respuesta.
+
+    Los umbrales vienen del perfil (y de la calibración, si coincide).
+    """
+
+    def __init__(self, configuracion: dict | None = None, *, umbrales: dict[str, float] | None = None,
+                 paquete=None, **_ignoradas) -> None:
+        faltantes = [u for u in UMBRALES_CASCADA if u not in (umbrales or {})]
+        if faltantes:
+            raise ValueError(f"abstention_policy/cascada_v1 requiere los umbrales {faltantes}")
+        self.umbrales = {k: float(v) for k, v in umbrales.items()}
+        self.paquete = paquete
+
+    def decidir_dominio(self, consulta: QueryAnalysis, senales: SenalesRecuperacion) -> None:
+        """Sin salida temprana: el filtro de dominio usa señales posteriores."""
+        return None
+
+    def decidir(self, consulta, senales, candidatos) -> DecisionAbstencion:
+        raise NotImplementedError("cascada_v1 decide con el contexto completo (decidir_contexto)")
+
+    def decidir_contexto(self, ctx) -> DecisionAbstencion:
+        u = self.umbrales
+        s = senales_de_contexto(ctx)
+        ctx.diagnostico["senales_politica"] = {k: v for k, v in s.__dict__.items()} | {"dominio": s.dominio}
+        candidato = ctx.candidatos[0].chunk.chunk_id if ctx.candidatos else None
+
+        def decision(resultado: Resultado, motivo: str, regla: str, entidad: str | None = None) -> DecisionAbstencion:
+            return DecisionAbstencion(resultado=resultado, motivo=motivo, entidad_texto=entidad,
+                                      capa_decisora=regla, confianza_utilizada=s.dominio, candidato_id=candidato)
+
+        premisa = verificar_premisa_candidatos(ctx.consulta, ctx.candidatos)
+        if premisa.entidades_ausentes:
+            return decision("abstiene", "premisa", "premisa", premisa.entidades_ausentes[0]["texto"])
+        if s.s_oov >= u["oov"] and s.dominio < u["dominio"]:
+            return decision("abstiene", "fuera_dominio", "fuera_dominio")
+        foco_ok = s.s_foco >= u["foco"]
+        if foco_ok and s.s_qa is not None and s.s_qa >= u["ok"]:
+            return decision("responde", "lector", "ok_lector")
+        if (foco_ok and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]
+                and (s.acuerdo is None or s.acuerdo >= 0.5)):
+            return decision("responde", "lexico", "ok_lexico")
+        if s.dominio >= u["relacionado"]:
+            if not foco_ok and ctx.terminos_foco:
+                termino = forma_en_pregunta(ctx.pregunta, ctx.terminos_foco[0], self.paquete)
+                return decision("relacionado", "foco_ausente", "relacionado", termino)
+            return decision("relacionado", "relacionado", "relacionado")
+        return decision("abstiene", "generico", "sin_respuesta")
+
+
 class EtapaPolitica(_Etapa):
     """Decisión de la política: responder, relacionado o abstenerse."""
 
@@ -231,7 +339,11 @@ class EtapaPolitica(_Etapa):
 
     def ejecutar(self, ctx) -> None:
         m = self.motor
-        decision = m.politica_abstencion.decidir(ctx.consulta, ctx.senales, ctx.candidatos)
+        politica = m.politica_abstencion
+        if hasattr(politica, "decidir_contexto"):
+            decision = politica.decidir_contexto(ctx)
+        else:
+            decision = politica.decidir(ctx.consulta, ctx.senales, ctx.candidatos)
         if ctx.discordancia and decision.resultado == "responde":
             from dataclasses import replace
 
@@ -240,7 +352,7 @@ class EtapaPolitica(_Etapa):
         ctx.diagnostico["decision"] = decision.__dict__
         ctx.diagnostico["regla"] = decision.capa_decisora or decision.motivo
         if decision.abstiene:
-            motivo = "premisa" if decision.motivo == "premisa" else "generico"
+            motivo = decision.motivo if decision.motivo in {"premisa", "fuera_dominio"} else "generico"
             ctx.resultado = m._abstener(
                 motivo, ctx.confianza, ctx.latencia_ms(),
                 entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico,
@@ -248,11 +360,15 @@ class EtapaPolitica(_Etapa):
 
 
 __all__ = [
+    "CascadaV1",
     "DecisionAbstencion",
     "EtapaPolitica",
     "decidir_capas",
     "LayeredV1",
     "ResultadoPremisa",
+    "SenalesPolitica",
+    "forma_en_pregunta",
+    "senales_de_contexto",
     "separar_entidades_ausentes",
     "tiene_grounding_dominio",
     "tiene_grounding_lexico",

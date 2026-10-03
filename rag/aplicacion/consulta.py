@@ -77,6 +77,7 @@ def construir_motor(
             inventario_entidades=retriever.inventario_entidades(),
             estadisticas_lexico=retriever.estadisticas_lexico(),
             paquete=idioma,
+            umbrales=perfil_instalacion.umbrales_por_defecto,
         )
     extractor = registro.crear(
         "answer_extractor",

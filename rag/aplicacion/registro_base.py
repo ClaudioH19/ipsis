@@ -240,9 +240,10 @@ def registrar_componentes_base(
     destino.registrar("reranker", "onnx", _crear_reranker_onnx, reemplazar=True)
     destino.registrar("answer_reader", "onnx", _crear_lector_onnx, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
-    from rag.consulta.etapas.politica import LayeredV1
+    from rag.consulta.etapas.politica import CascadaV1, LayeredV1
 
     destino.registrar("abstention_policy", "layered_v1", LayeredV1, reemplazar=True)
+    destino.registrar("abstention_policy", "cascada_v1", CascadaV1, reemplazar=True)
     destino.registrar("fusion", "rrf", FusionRRF, reemplazar=True)
     destino.registrar("answer_extractor", "sentence_selector", SentenceSelectorExtractor, reemplazar=True)
     destino.registrar("evidence_verifier", "literal_offsets", LiteralOffsetsVerifier, reemplazar=True)
