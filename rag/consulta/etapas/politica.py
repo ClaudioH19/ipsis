@@ -232,6 +232,10 @@ class EtapaPolitica(_Etapa):
     def ejecutar(self, ctx) -> None:
         m = self.motor
         decision = m.politica_abstencion.decidir(ctx.consulta, ctx.senales, ctx.candidatos)
+        if ctx.discordancia and decision.resultado == "responde":
+            from dataclasses import replace
+
+            decision = replace(decision, resultado="relacionado", motivo="discordancia", capa_decisora="concordancia")
         ctx.decision = decision
         ctx.diagnostico["decision"] = decision.__dict__
         ctx.diagnostico["regla"] = decision.capa_decisora or decision.motivo

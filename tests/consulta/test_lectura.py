@@ -91,3 +91,16 @@ def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
     EtapaEvidencia(motor).ejecutar(ctx)
     assert ctx.evidencias[0].texto == "El filtro se cambia cada 6 meses."
     assert ctx.lexicas.s_foco == 0.0
+
+
+def test_concordancia_detecta_plazos_distintos_en_pasajes_distintos():
+    from rag.consulta.etapas.lectura import hay_discordancia
+
+    def lec(i, texto, p=0.95):
+        return LecturaQA(indice_pasaje=i, inicio=0, fin=len(texto), texto=texto,
+                         prob_respuesta=p, prob_sin_respuesta=1 - p)
+
+    assert hay_discordancia([lec(0, "6 meses"), lec(1, "12 meses")])
+    assert not hay_discordancia([lec(0, "6 meses"), lec(1, "6 meses")])
+    assert not hay_discordancia([lec(0, "6 meses"), lec(0, "12 meses")])  # mismo pasaje
+    assert not hay_discordancia([lec(0, "6 meses"), lec(1, "12 meses", p=0.6)])  # el segundo no es confiable
