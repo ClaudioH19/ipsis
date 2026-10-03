@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from rag.abstencion import LayeredV1
+from rag.consulta.etapas.politica import LayeredV1
 from rag.nucleo.contratos import AbstentionPolicy
 from rag.nucleo.registro import RegistroComponentes
 from rag.nucleo.esquemas import (

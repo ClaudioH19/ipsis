@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field
 
 from rag import __version__
 from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_seguridad
-from rag.servicio.motor import Motor, MotorNoListo, MotorSaturado
+from rag.consulta.motor import Motor, MotorNoListo, MotorSaturado
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
     LimitadorPeticiones,

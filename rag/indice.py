@@ -128,7 +128,7 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
     usa tal cual y se salta la codificación (`latencia_encode_ms` queda en
     0.0) -- permite que un llamador que necesita dos consultas para la MISMA
     pregunta (p.ej. el servicio: una vectorial para la señal de abstención y
-    una híbrida para los fragmentos a mostrar, ver `rag/servicio/pipeline.py`)
+    una híbrida para los fragmentos a mostrar, ver `rag/consulta/motor.py`)
     codifique una sola vez y reuse el vector, en vez de pagar el costo de
     `modelo_st.encode` dos veces por petición.
     """

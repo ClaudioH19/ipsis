@@ -210,7 +210,7 @@ def evaluar_backend_activo(
     from rag.configuracion.carga import cargar_dominio, cargar_proyecto
     from rag.nucleo.esquemas import QueryAnalysis
     from rag.parsear import parsear_documento
-    from rag.servicio.motor import Motor
+    from rag.consulta.motor import Motor
 
     ruta = Path(ruta_manifiesto).resolve()
     banco = cargar_banco(ruta)

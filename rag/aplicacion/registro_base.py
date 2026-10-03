@@ -107,7 +107,7 @@ class SentenceSelectorExtractor:
     def extraer(self, consulta, candidatos: Sequence[RetrievalCandidate]) -> list[EvidenceSpan]:
         from rag.payload import payload_desde_chunk
         from rag.lenguaje.entidades import extraer_entidades
-        from rag.seleccion_fragmento import (
+        from rag.consulta.etapas.seleccion import (
             ordenar_por_pertinencia_global,
             recortar_payload_a_texto_pertinente,
         )
@@ -189,7 +189,7 @@ class TemplatesResponseRenderer:
 
 
 def _crear_retriever_qdrant(*args: Any, **kwargs: Any):
-    from rag.recuperacion_qdrant import RetrieverQdrant
+    from rag.consulta.etapas.recuperacion import RetrieverQdrant
 
     if "coleccion" in kwargs:
         coleccion = kwargs.pop("coleccion")
@@ -207,7 +207,7 @@ def registrar_componentes_base(
     destino.registrar("dense_encoder", "sentence_transformers", DenseEncoderSentenceTransformers, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
-    from rag.abstencion import LayeredV1
+    from rag.consulta.etapas.politica import LayeredV1
 
     destino.registrar("abstention_policy", "layered_v1", LayeredV1, reemplazar=True)
     destino.registrar("fusion", "rrf", FusionRRF, reemplazar=True)

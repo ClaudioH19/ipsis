@@ -8,7 +8,7 @@ import pytest
 from rag.nucleo.registro import RegistroComponentes
 from rag.configuracion.carga import cargar_dominio, cargar_proyecto
 from rag.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
-from rag.abstencion import DecisionAbstencion
+from rag.consulta.etapas.politica import DecisionAbstencion
 from rag.nucleo.esquemas import (
     ChunkRecord,
     RetrievalCandidate,
@@ -17,7 +17,7 @@ from rag.nucleo.esquemas import (
 )
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
 from rag.lenguaje.entidades import extraer_entidades
-from rag.servicio.motor import Motor
+from rag.consulta.motor import Motor
 
 
 def test_endpoint_consultar_delega_en_motor():

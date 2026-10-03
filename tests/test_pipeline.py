@@ -1,19 +1,16 @@
-"""Tests de ``rag/servicio/pipeline.py`` — admisión, abstención en dos capas
-(Etapa B), redacción y guardia. Funciones puras, sin Qdrant ni modelos
-reales (el método "denso" de selección de oraciones y las consultas a
-Qdrant se prueban aparte, contra el índice real, en ``tests/test_api.py``).
+"""Pruebas de redacción, admisión, conversación y verificación de ``rag/consulta``.
+
+Funciones puras, sin Qdrant ni modelos reales.
 """
 from __future__ import annotations
 
 import pytest
 
-from rag.servicio.pipeline import (
-    ConfiguracionAdmision, ControlAdmision,
-    redactar, redactar_zona_gris, construir_mensaje_abstencion,
-    verificar_fidelidad, verificar_respaldo_dato_solicitado,
-    detectar_conversacional, respuesta_conversacional,
-)
-from rag.abstencion import (
+from rag.consulta.admision import ConfiguracionAdmision, ControlAdmision
+from rag.consulta.etapas.redaccion import redactar, redactar_zona_gris, construir_mensaje_abstencion
+from rag.consulta.etapas.verificacion import verificar_fidelidad, verificar_respaldo_dato_solicitado
+from rag.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
+from rag.consulta.etapas.politica import (
     separar_entidades_ausentes,
     tiene_grounding_dominio,
     tiene_grounding_lexico,
@@ -110,7 +107,7 @@ def test_estilo_de_cita_en_el_texto(monkeypatch):
     prosa. La ruta de sección solo aparece en el estilo "completa"; en los
     tres estilos la cita exacta sigue viajando en el campo `fragmentos` de
     la respuesta HTTP, que este test no toca."""
-    import rag.servicio.pipeline as pipeline
+    import rag.consulta.etapas.redaccion as pipeline
 
     frag = _fragmento("El plazo es de quince días hábiles.")
 
@@ -146,7 +143,7 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
              _fragmento("Segundo.", chunk_id="b"),
              _fragmento("Tercero.", chunk_id="c")]
     texto = redactar(frags)
-    from rag.servicio.pipeline import _cargar_plantillas
+    from rag.consulta.etapas.redaccion import _cargar_plantillas
     usados = [c for c in _cargar_plantillas()["conectores"]["complemento"] if c in texto]
     assert len(usados) == 2, f"se esperaban dos conectores distintos, hubo {usados}"
 
@@ -156,7 +153,7 @@ def test_ningun_conector_es_subordinante(monkeypatch):
     ("Siempre que", "Salvo que") y producían frases rotas del tipo
     "Siempre que, El equipo X100 tiene..." al anteponerlos a una
     cita literal. Ahora todos cierran en dos puntos."""
-    from rag.servicio.pipeline import _cargar_plantillas
+    from rag.consulta.etapas.redaccion import _cargar_plantillas
     conectores = _cargar_plantillas()["conectores"]
     for categoria in ("apertura", "complemento", "condicion", "excepcion"):
         for frase in conectores[categoria]:
@@ -362,7 +359,7 @@ def test_zona_gris_no_apila_dos_encabezados():
     frase de apertura no debe agregarse encima. Antes producía "No encontré
     una respuesta directa. Esto es lo que dicen los documentos sobre el
     tema: Encontré esto en el documento:"."""
-    from rag.servicio.pipeline import _cargar_plantillas
+    from rag.consulta.etapas.redaccion import _cargar_plantillas
     frag = _fragmento("Texto pertinente sobre el tema.")
     texto = redactar_zona_gris([frag])
     for apertura in _cargar_plantillas()["conectores"]["apertura"]:
@@ -374,7 +371,7 @@ def test_contraccion_castellana_en_los_textos_conversacionales():
     usuario y puede empezar con artículo ("el manual de..."), así que
     una plantilla que diga "de {descripcion_dominio}" producía "de el
     manual"."""
-    from rag.servicio.pipeline import _cargar_plantillas
+    from rag.consulta.etapas.redaccion import _cargar_plantillas
     respuestas = _cargar_plantillas()["conversacional"]["respuestas"]
     for categoria, valor in respuestas.items():
         textos = [valor] if isinstance(valor, str) else valor

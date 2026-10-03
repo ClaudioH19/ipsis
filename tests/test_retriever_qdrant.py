@@ -68,7 +68,7 @@ def retriever(payloads):
 
     from rag.corpus import indexar_qdrant
     from rag.indice import ColeccionQdrant
-    from rag.recuperacion_qdrant import RetrieverQdrant
+    from rag.consulta.etapas.recuperacion import RetrieverQdrant
 
     codificador = CodificadorFalso()
     client, modelo, vocab, nombre = indexar_qdrant(
@@ -154,7 +154,7 @@ def test_expone_inventarios_y_tamano(retriever, payloads):
 
 
 def test_modo_invalido_falla_al_construir(retriever):
-    from rag.recuperacion_qdrant import RetrieverQdrant
+    from rag.consulta.etapas.recuperacion import RetrieverQdrant
 
     with pytest.raises(ValueError, match="modo desconocido"):
         RetrieverQdrant(retriever.coleccion, modo="magico")

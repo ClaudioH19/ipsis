@@ -124,7 +124,7 @@ def cargar_vocabulario_bm25(nombre_coleccion: str, directorio: str = ".cache/voc
 # ---------------------------------------------------------------------------
 # Inventario de entidades del corpus COMPLETO (Etapa C, 2026-09-19, punto 1
 # del ajuste del coordinador): antes, la capa (b) de abstención
-# (`rag/servicio/pipeline.py::verificar_premisa`) solo podía comprobar si una
+# (`rag/consulta/etapas/politica.py::verificar_premisa_textos`) solo podía comprobar si una
 # entidad de la pregunta aparecía en los 3 fragmentos RECUPERADOS -- si la
 # evidencia real existía en el corpus pero no llegó al top-3 (Recall@3=0.84,
 # no 1.00), la capa (b) la trataba como "ausente" y se abstenía de más,

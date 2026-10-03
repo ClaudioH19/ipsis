@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from rag.abstencion import verificar_premisa_candidatos, separar_entidades_ausentes
+from rag.consulta.etapas.politica import verificar_premisa_candidatos, separar_entidades_ausentes
 from rag.nucleo.contratos import (
     AbstentionPolicy,
     AnswerExtractor,
@@ -25,16 +25,14 @@ from rag.nucleo.esquemas import (
     RetrievalCandidate,
 )
 from rag.payload import payload_desde_evidencia
-from rag.servicio.pipeline import (
+from rag.consulta.etapas.redaccion import (
     construir_mensaje_abstencion,
     cargar_plantillas,
-    detectar_conversacional,
     redactar,
     redactar_zona_gris,
-    respuesta_conversacional,
-    verificar_fidelidad,
-    verificar_respaldo_dato_solicitado,
 )
+from rag.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
+from rag.consulta.etapas.verificacion import verificar_fidelidad, verificar_respaldo_dato_solicitado
 
 class MotorNoListo(RuntimeError):
     pass
@@ -115,7 +113,7 @@ class Motor:
         )
         from rag.lenguaje.dominio import cargar_perfil
         from rag.aplicacion.registro_base import registrar_componentes_base
-        from rag.servicio.pipeline import ConfiguracionAdmision, ControlAdmision
+        from rag.consulta.admision import ConfiguracionAdmision, ControlAdmision
         from rag.lenguaje.texto import cargar_palabras_generales
 
         componentes = dict(cfg.get("componentes") or {})

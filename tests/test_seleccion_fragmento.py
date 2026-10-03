@@ -1,11 +1,11 @@
-"""Tests de ``rag/seleccion_fragmento.py`` (evita respuestas demasiado
+"""Tests de ``rag/consulta/etapas/seleccion.py`` (evita respuestas demasiado
 largas). Funciones puras, sin modelos ni
 red -- el método "denso" se prueba aparte solo donde hace falta un
 ``modelo_st`` real (ninguno de estos tests lo necesita: `metodo="lexico"`
 por defecto cubre todo el algoritmo de selección/expansión)."""
 from __future__ import annotations
 
-from rag.seleccion_fragmento import (
+from rag.consulta.etapas.seleccion import (
     dividir_en_unidades,
     seleccionar_texto_pertinente,
     recortar_payload_a_texto_pertinente,
