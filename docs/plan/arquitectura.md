@@ -171,6 +171,14 @@ Reglas, en orden (la primera que se cumple decide):
 
    → `ok`.
 4. Señal de dominio ≥ `τ_rel` → `relacionado`. Si `s_foco < τ_foco`, el mensaje nombra el término foco ausente.
+
+**La decisión de la política manda sobre el lector.** En `relacionado`, el
+tramo del lector **nunca** se presenta como respuesta: no hay
+`respuesta_exacta` y el texto muestra los pasajes bajo el encabezado de
+«no encontré una respuesta directa». En `ok`, la oración que responde va
+**primero**. El contexto va después, a la derecha, y a la izquierda solo si
+queda presupuesto: la presentación nunca debe hacer parecer que otra cifra es
+la respuesta.
 5. Si no → `sin_respuesta`.
 
 Todos los `τ` vienen de `configuracion/calibracion.yaml` (`rag calibrar`).

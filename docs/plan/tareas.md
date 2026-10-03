@@ -414,6 +414,30 @@ Referencia: [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §2–§5.
 - **Pasos:** crea `tests/datos/banco` v1.1.0 con casos «mismo tema, dato ausente» en español e inglés (garantía vs. filtro, dónde comprar repuestos, quién autoriza el reembolso, cuándo vence la garantía y si sirve para agua de pozo), con al menos 30% sin respuesta.
 - **Aceptación:** `rag evaluar` con `medium` y con `light` da 0 falsos `ok`. Anota la cobertura de `ok` de cada perfil en [avance.md](avance.md).
 
+### P8.5 Presentación de la evidencia
+
+- **Pasos:**
+  - Sin entidad en la pregunta, la ventana de `seleccionar_texto_pertinente`
+    pone la oración ancla **primero**: expande a la derecha y a la izquierda
+    solo si queda presupuesto. La ancla es la que usa `oracion_ancla` para
+    `s_foco`.
+  - Prueba que en `relacionado` el contrato HTTP no trae `respuesta_exacta` y
+    el texto lleva el encabezado de no-respuesta.
+- **Aceptación:**
+  - Con light, «¿En cuántos días hábiles se paga el reembolso?» empieza por la
+    oración del Artículo 8.
+  - Caracterización regenerada y diferencias documentadas.
+  - `PYTEST` en verde.
+
+### P8.6 Conservar las paráfrasis difíciles
+
+- **Pasos:** `test_portabilidad` mantiene dos casos:
+  - el literal («¿Cuántos meses cubre…?» → `ok`);
+  - la paráfrasis («¿Cuánto dura la garantía del equipo X100?» → hoy
+    `relacionado`), cuyos fragmentos deben seguir conteniendo «18 meses».
+- **Aceptación:** si una regresión hace que la paráfrasis pierda la evidencia,
+  la suite falla. `PYTEST` en verde.
+
 ---
 
 ## P9. Golden set estándar
@@ -422,17 +446,35 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ### P9.1 Lectura e importación
 
-- **Pasos:** en `rag/evaluacion/golden.py`: `FilaGolden`, `leer_csv` (`utf-8-sig`), `leer_jsonl`, `leer_squad2`, `ubicar_respuesta` (exacta y luego con espacios colapsados, con mapeo a los offsets originales), `separar_dev_test` y `a_banco`. La categoría `exacta`/`parafrasis` se decide con `s_cov`.
+- **Pasos:** en `rag/evaluacion/golden.py`: `FilaGolden`, `leer_csv` (`utf-8-sig`), `leer_jsonl`, `leer_squad2`, `ubicar_respuesta` (exacta y luego con espacios colapsados, con mapeo a los offsets originales), `separar_dev_test` y `a_banco`. La categoría `exacta`/`parafrasis` se decide con `s_cov`. Acepta la columna opcional `subtipo` (`trampa_mismo_tema`) y `par` (id de la fila respondible con la que forma un par mínimo); ambas son metadata de evaluación. SQuAD 2.0 se acepta como formato de intercambio, no como datos de entrenamiento.
 - **Aceptación:** pruebas de offsets, texto ausente o repetido, separación estable al reimportar y avisos de tamaño y balance. `PYTEST` en verde.
 
 ### P9.2 Plantilla para el cliente
 
-- **Pasos:** `generar_plantilla(corpus, est, paquete, n=40)` usa MMR sobre TF-IDF para elegir secciones diversas, llena `terminos_clave`, agrega 35% de filas trampa y 3 conversacionales, y escribe `LEEME.txt`. Agrega `golden_instrucciones` a los paquetes es, en y pt.
-- **Aceptación:** prueba: con `n=20` aparecen todos los documentos, alrededor de 35% de filas son trampa y el CSV se puede releer con `leer_csv`.
+- **Pasos:** `generar_plantilla(corpus, est, paquete, n=40)` usa MMR sobre TF-IDF para elegir secciones diversas, llena `terminos_clave`, agrega 35% de filas trampa como **pares mínimos** (`subtipo: trampa_mismo_tema`, `par` = fila respondible de la misma sección) y 3 conversacionales, y escribe `LEEME.txt`. Agrega `golden_instrucciones` a los paquetes es, en y pt.
+- **Aceptación:** prueba: con `n=20` aparecen todos los documentos, alrededor de 35% de filas son trampa, cada trampa tiene `par` y el CSV se puede releer con `leer_csv`.
 
 ### P9.3 Comandos `rag golden`
 
 - **Aceptación:** prueba de ida y vuelta: plantilla → completar 2 filas → importar → exportar squad2 → importar squad2 → mismo banco.
+
+### P9.4 Banco universal de regresión (solo CI)
+
+- **Pasos:**
+  - Crea `tests/datos/banco_universal/` con microdocumentos ficticios propios
+    de dominios variados (garantía, reembolsos, manual técnico, riego,
+    horarios, logística, protocolo de laboratorio, reglamento, ficha de
+    maquinaria, precios) en es, en y pt.
+  - Unos 90 casos: 30 por idioma. Por idioma: 10 literales, 5 paráfrasis,
+    10 «mismo tema, dato ausente» en pares mínimos, 3 fuera de dominio y 2
+    ambiguas o con premisa falsa.
+  - Un proyecto por idioma (sin cruce de idiomas).
+  - **Nunca se usa para entrenar ni para calibrar**: detecta optimizaciones
+    que solo funcionan con el corpus de `tests/datos/corpus`.
+- **Aceptación:**
+  - `rag evaluar` con light y medium en cada idioma: falsos `ok` y cobertura
+    por categoría anotados en [avance.md](avance.md).
+  - Prueba lenta (`modelos`) que falla si aparece un falso `ok`.
 
 ---
 
@@ -440,13 +482,43 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ### P10.1 Señales y cota de riesgo en las métricas
 
-- **Pasos:** las observaciones guardan todas las señales de la política. Implementa `cota_superior_clopper_pearson(x, n, confianza)` con la CDF binomial y bisección.
-- **Aceptación:** `x=0, n=50` → 0,0582 ± 0,001; un segundo valor coincide con una tabla de referencia (anota la fuente). `PYTEST` en verde.
+- **Pasos:**
+  - Las observaciones guardan todas las señales de la política.
+  - Implementa `cota_superior_clopper_pearson(x, n, confianza)` con la CDF
+    binomial y bisección, y `n_minimo(errores, alfa, confianza)`.
+  - El reporte agrega, en global y **por categoría** (exacta, parafrasis,
+    trampa_mismo_tema, sin_respuesta, premisa_falsa, ambigua):
+    - `tasa_falsos_ok`, `cobertura_directa` (respondibles con `ok`) y
+      `cobertura_relacionada`;
+    - `recall_sin_respuesta`, `coincidencia_tramo_exacto` y literalidad;
+    - p50 y p95.
+- **Aceptación:**
+  - `x=0, n=50` → 0,0582 ± 0,001; `x=0, n=59` → 0,0495 ± 0,001;
+    `n_minimo(0, 0.05, 0.95) == 59`.
+  - Un segundo valor coincide con una tabla de referencia (anota la fuente).
+  - `PYTEST` en verde.
 
 ### P10.2 Calibración
 
-- **Pasos:** `rag/evaluacion/calibracion.py::calibrar(observaciones, alfa)` según §4, con `escribir_calibracion` y `cargar_calibracion` (validan la procedencia). Borra `calibrar_umbral`.
-- **Aceptación:** pruebas: elige el umbral más bajo que cumple, devuelve 1,01 si ninguno cumple y rechaza otra procedencia. `PYTEST` en verde.
+- **Pasos:**
+  - `rag/evaluacion/calibracion.py::calibrar(observaciones, alfa)` según
+    [comandos-y-golden.md](comandos-y-golden.md) §4. Devuelve
+    `CALIBRADO`, `MUESTRA_INSUFICIENTE` o `SIN_UMBRAL_SEGURO`.
+  - Agrega `escribir_calibracion` y `cargar_calibracion`, que validan la
+    procedencia.
+  - Separa el umbral `oov` en `oov_dominio` (regla 2) y `oov_ok` (regla 3) en
+    `cascada_v1`, en los perfiles y en la migración.
+  - Borra `calibrar_umbral`.
+  - Solo selecciona umbrales escalares entre valores observados: sin pesos,
+    sin cambiar modelos ni índices.
+- **Aceptación:**
+  - Pruebas: elige el umbral más bajo que cumple; devuelve
+    `SIN_UMBRAL_SEGURO` (y `τ_ok = 1,01`) si ninguno cumple con muestra
+    suficiente; devuelve `MUESTRA_INSUFICIENTE` y no aplica nada si n < `n_minimo`;
+    rechaza otra procedencia.
+  - Con el banco v1.1.0, se anota en [avance.md](avance.md) si separar
+    `oov_ok` mejora la cobertura de paráfrasis sin falsos `ok`.
+  - `PYTEST` en verde.
 
 ### P10.3 `rag calibrar`
 
@@ -455,12 +527,16 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 ### P10.4 Benchmark por perfiles
 
 - **Pasos:** `rag benchmark --perfiles bm25,light,medium,heavy` ejecuta cada perfil sobre el mismo banco y reporta métricas, p50/p95 por etapa y cumplimiento del presupuesto. Termina con código ≠ 0 si alguno lo incumple o supera el límite de falsos `ok`.
-- **Aceptación:** reporte JSON + Markdown en `golden/reportes/`, con la tabla copiada a [avance.md](avance.md).
+- **Aceptación:** reporte JSON + Markdown en `golden/reportes/`, con la tabla copiada a [avance.md](avance.md). El reporte muestra juntas seguridad, cobertura, latencia y memoria/modelos por perfil: no se elige un perfil solo por precisión.
 
 ### P10.5 Experimento: chunking `texttiling_v1`
 
 - **Pasos:** implementa el chunker de [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) §5 como opción, y compáralo con el actual con `rag benchmark` sobre el banco v1.1.0.
-- **Aceptación:** la decisión (adoptar o descartar) queda en [avance.md](avance.md) con los números. Si se descarta, borra el código.
+- **Aceptación:**
+  - Se adopta solo si mejora la calidad, no empeora los falsos `ok` y
+    mantiene el presupuesto de latencia.
+  - La decisión queda en [avance.md](avance.md) con los números.
+  - Si se descarta, borra el código.
 
 ---
 
@@ -545,8 +621,8 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 Con el corpus real de un cliente:
 
-- [ ] Golden set real de ≥ 50 preguntas, con ≥ 30% sin respuesta o premisa falsa, curado por una persona.
-- [ ] `rag calibrar --alfa 0.05` aplicado; en `test`, la cota superior al 95% de falsos `ok` es ≤ 5%.
+- [ ] Golden set real curado por una persona, con ≥ 30% sin respuesta o premisa falsa y pares mínimos «mismo tema».
+- [ ] `rag calibrar --alfa 0.05` da `CALIBRADO`: en `test`, la cota superior al 95% de falsos `ok` es ≤ 5% (con 0 errores exige ≥ 59 respuestas aceptadas en `test`). Si da `MUESTRA_INSUFICIENTE`, se lanza con los umbrales del perfil y sin afirmar el 5%.
 - [ ] `rag benchmark` cumple los presupuestos en la máquina de producción (light ≤ 150 ms, medium ≤ 1 s y heavy ≤ 5 s de p95).
 - [ ] CI en verde (requiere push).
 - [ ] Licencia del proyecto decidida.

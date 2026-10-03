@@ -55,9 +55,12 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P8.2 | ✅ | 2026-10-03 | 502 (suite completa) | Perfiles con cascada_v1 (config v4 migra layered_v1→cascada_v1; plantilla y default actualizados) y politica después de evidencia. Caracterización por perfil: light.json y medium.json (medium si sus modelos están en caché). Cambios de estado deliberados — light: reembolso tras instalar ok→relacionado (s_cov 0,20: el tramo no cubre la pregunta), precio sin_respuesta→relacionado (muestra lo cercano con encabezado de no-respuesta). medium vs. light anterior: visita, recargo art. 4 y presión 4,0 bar relacionado→ok (tramos correctos del lector), reembolso tras instalar ok→relacionado (s_qa 0,76 < 0,8), precio sin_respuesta→relacionado. Sin falsos ok en la caracterización; ver hallazgos (s_ret normalizado, dominio = max(s_ret, s_rr), falso ok conocido «¿Qué incluye la garantía?»). |
 | P8.3 | ✅ | 2026-10-03 | 481 (suite completa) | Borrados LayeredV1, decidir_capas, tiene_grounding_*, verificar_respaldo_dato_solicitado y sus regex (precio/duración/cantidad en español), config_abstencion y test_politica.py (lo cubre test_cascada.py). El protocolo AbstentionPolicy queda en decidir_contexto(ctx); EtapaFiltros ya no decide dominio. motor.yaml::abstencion queda en max_fragmentos_adicionales (la migración v3→v4 poda capa_a/confianza_alta/zona_gris/perfiles_retriever). Caracterización light/medium sin cambios: la guardia ya no decidía nada con cascada_v1. El rg de aceptación no devuelve nada. |
 | P8.4 | ✅ | 2026-10-03 | 484 (suite completa) | Banco v1.1.0: 27 casos, 15 sin respuesta (56%): 12 trampas «mismo tema, dato ausente» (garantía del filtro, repuestos, quién autoriza el reembolso, agua de pozo, qué incluye la garantía, litros por hora, teléfono, domingos; 3 en inglés) y 4 respondibles nuevos (vencimiento de garantía, presión, sábados, una en inglés). Falsos ok: light 0/19, medium 0/19. Cobertura de ok en respondibles: light 2/8, medium 4/8. Para llegar a 0: s_foco/s_cov se miden en la oración ancla (light medía la ventana entera) y ok exige s_oov < τ_oov (ver hallazgos). Caracterización: medium «¿Qué pasa si no estoy en la visita?» ok→relacionado (s_oov 0,84). |
+| P8.5 | ⬜ | | | |
+| P8.6 | ⬜ | | | |
 | P9.1 | ⬜ | | | |
 | P9.2 | ⬜ | | | |
 | P9.3 | ⬜ | | | |
+| P9.4 | ⬜ | | | |
 | P10.1 | ⬜ | | | |
 | P10.2 | ⬜ | | | |
 | P10.3 | ⬜ | | | |
@@ -110,5 +113,14 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   (`oracion_foco` en el diagnóstico); falta mostrarla primero, sin expandir hacia la
   izquierda, como ya ocurre cuando la ancla es una entidad. Pendiente para P10
   (métrica de literalidad).
+- **Revisión externa (2026-10-03, Codex), adoptada en el plan.**
+  - Restricción de producto: no se entrena nada (README).
+  - Estadística: con 0 errores hacen falta ≥ 59 aceptados para certificar
+    α = 0,05. Tres estados de calibración (comandos-y-golden.md §4.1).
+  - Tareas nuevas: P8.5 (presentación), P8.6 (paráfrasis en pruebas) y P9.4
+    (banco universal es/en/pt, solo CI).
+  - Pares mínimos en el golden; `oov_dominio`/`oov_ok` separados en P10.2.
+  - Heavy conserva mdeberta (modelos-y-perfiles.md).
+  - El verificador de respuesta no se evalúa antes de P10.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

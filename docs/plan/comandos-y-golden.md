@@ -88,9 +88,15 @@ como entrada y salida para interoperar.
 1. Elige secciones **diversas** con MMR sobre vectores TF-IDF, garantizando
    que aparezca cada documento. Escribe una fila por sección con
    `documento`, `fragmento_sugerido` y `terminos_clave` (top TF-IDF).
-2. Agrega un 35% de filas `sin_respuesta` cuya nota usa los términos clave de
-   una sección: *«Escribe una pregunta sobre «garantía» cuya respuesta NO esté
-   en los documentos»*. Así salen preguntas trampa del mismo tema.
+2. Agrega un 35% de filas trampa en **pares mínimos**. Junto a la fila
+   respondible de una sección va una fila `sin_respuesta` con
+   `subtipo: trampa_mismo_tema` y una nota que usa sus términos clave: *«Escribe
+   otra pregunta sobre «garantía» cuya respuesta NO esté en los documentos (p.
+   ej. qué incluye, quién la autoriza)»*. Es la clase de error más importante:
+   la misma entidad, el mismo pasaje tentador y otra relación pedida («¿Cuándo
+   vence la garantía?» frente a «¿Qué incluye la garantía?»). Los negativos
+   ajenos al corpus aportan poco. `subtipo` es metadata de evaluación, no un
+   tipo público nuevo.
 3. Agrega 3 filas `conversacional` ya completas en el idioma del proyecto.
 4. Escribe `golden/LEEME.txt` con `golden_instrucciones` del paquete de idioma.
 
@@ -100,15 +106,59 @@ como entrada y salida para interoperar.
   después con espacios colapsados, mapeando de vuelta a los offsets
   originales. Si el texto aparece más de una vez y la fila no indica
   `documento`, avisa.
-- Exige al menos 30 filas. Advierte si hay menos de 30% de
-  `sin_respuesta` + `premisa_falsa`, porque con menos no se puede medir el
-  riesgo (con 0 errores en n casos, la cota al 95% es ≈ 3/n).
+- Exige al menos 30 filas para importar, y advierte si hay menos de 30% de
+  `sin_respuesta` + `premisa_falsa`. **Con ese tamaño el golden sirve de ajuste
+  práctico**: detecta errores evidentes, compara perfiles y explora umbrales,
+  pero **no certifica** un riesgo de 5% (ver §4.1). `importar` informa cuántos
+  casos haría falta para certificar.
 - Separa `dev`/`test` 50/50, estratificado por tipo y determinista por hash
   del `id`.
 - Guarda el hash del corpus. `golden validar` y `doctor` avisan si el corpus
   cambió.
 
 ## 4. Calibración con control de riesgo
+
+La calibración **solo selecciona umbrales escalares** entre los valores
+observados de señales ya calculadas:
+
+- no entrena, no aprende pesos ni cambia modelos;
+- no toca índices;
+- conserva la procedencia (hashes de banco, corpus y modelos).
+
+Sin calibración, el perfil usa sus umbrales conservadores.
+
+### 4.1 Tamaño de muestra: tres resultados posibles
+
+Con 0 falsos `ok` entre n respuestas aceptadas, la cota superior unilateral
+de Clopper-Pearson al 95% es `1 − 0,05^(1/n)`:
+
+| n aceptadas | 20 | 30 | 40 | 50 | 58 | **59** | 100 |
+|---|---|---|---|---|---|---|---|
+| cota (0 errores) | 13,9% | 9,5% | 7,2% | 5,82% | 5,03% | **4,95%** | 2,95% |
+
+Para certificar α = 0,05 con 95% de confianza hacen falta **al menos 59
+respuestas aceptadas sin error** en el split donde se mide (más si hay
+errores). Un golden de 30-40 filas separado 50/50 no puede lograrlo, aunque
+no tenga ningún error. Por eso `rag calibrar` distingue tres resultados:
+
+| Estado | Significa | Qué hace |
+|---|---|---|
+| `CALIBRADO` | Hay muestra suficiente y un umbral cumple α | Escribe los umbrales (con `--aplicar`) |
+| `MUESTRA_INSUFICIENTE` | Los resultados pueden ser buenos, pero n no permite certificar α | Mantiene los umbrales del perfil, reporta la exploración como **no certificada** e informa cuántas observaciones aceptadas faltan (`n_minimo(errores, α, confianza)`) |
+| `SIN_UMBRAL_SEGURO` | Hay muestra suficiente, pero ningún umbral cumple α | Mantiene los umbrales del perfil y lo reporta |
+
+`MUESTRA_INSUFICIENTE` **no** significa que el perfil sea inseguro, ni hace
+fallar el producto. Ejemplo:
+
+```text
+Calibración no certificable todavía.
+Aceptadas sin falso ok: 37
+Mínimo con 0 errores para α=0,05 al 95%: 59
+Faltan al menos 22 observaciones aceptadas.
+Se mantienen los umbrales del perfil.
+```
+
+### 4.2 Algoritmo
 
 1. Ejecuta el perfil sobre `dev` y guarda las señales de cada caso.
 2. Para cada `τ_ok` candidato (los valores observados), cuenta los falsos
@@ -117,8 +167,15 @@ como entrada y salida para interoperar.
    scipy.
 3. Elige el `τ_ok` más bajo cuya cota sea ≤ α (por defecto 0,05). Si ninguno
    cumple, `τ_ok = 1,01`: el perfil nunca responde `ok`, y el reporte lo dice.
-4. Repite para `τ_foco`, `τ_rel`, `τ_dominio` y `τ_oov` con su propio error
-   (`relacionado` mostrado ante una pregunta fuera de dominio).
+4. Repite para `τ_foco`, `τ_rel`, `τ_dominio`, `τ_oov_dominio` y `τ_oov_ok`
+   con su propio error (`relacionado` mostrado ante una pregunta fuera de
+   dominio). Los dos usos de `s_oov` se separan:
+   - `s_oov` alto con recuperación baja suele indicar fuera de dominio;
+   - `s_oov` alto con recuperación y QA fuertes puede ser una paráfrasis
+     legítima o «mismo tema, otra relación».
+
+   Se mide si separar `τ_oov_ok` mejora la cobertura de paráfrasis sin
+   introducir falsos `ok`.
 5. Verifica en `test`.
 6. Con `--aplicar` escribe `configuracion/calibracion.yaml`:
 
@@ -133,9 +190,10 @@ procedencia:
   manifiesto_indice: "…"
   modelos: {denso: …, reranker: …, lector: …}
 alfa: 0.05
-umbrales: {oov: 0.58, dominio: 0.27, relacionado: 0.48, foco: 0.5, ok: 0.71}
+estado: CALIBRADO      # o MUESTRA_INSUFICIENTE / SIN_UMBRAL_SEGURO
+umbrales: {oov_dominio: 0.58, oov_ok: 0.6, dominio: 0.27, relacionado: 0.48, foco: 0.5, ok: 0.71}
 resultado_test:
-  falsos_ok: {observado: 0.0, cota_superior_95: 0.06, n: 48}
+  falsos_ok: {observado: 0.0, cota_superior_95: 0.045, n: 66}
   cobertura_ok: 0.62
 ```
 
