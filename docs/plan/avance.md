@@ -32,7 +32,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P3.7 | ✅ | 2026-10-03 | 404 (suite completa) | en.yaml y pt.yaml completos; 52 pruebas parametrizadas (≥3 casos por regla e idioma) confirman el mismo valor_norm en los tres idiomas. Además: stopwords de palabras clave y la etiqueta «(sin sección)» pasan al paquete. Criterio de P3 precisado: los mensajes al operador quedan en español. |
 | P4.1 | ✅ | 2026-10-03 | 11 nuevas | EstadisticasLexicas con df, largo medio y forma de superficie; escritura atómica. |
 | P4.2 | ✅ | 2026-10-03 | (mismo commit) | lexico.py puro: id por crc32, BM25 doc/consulta/puntaje, TF-IDF, coseno y MMR. Recibe las estadísticas por Protocol para no depender de la capa indice. |
-| P4.3 | ⬜ | | | |
+| P4.3 | ✅ | 2026-10-03 | 413 (suite completa) | Vector disperso = bm25_doc(terminos()) con id crc32; Qdrant aplica IDF. Sin vocabulario: las estadísticas se guardan por colección en .rag/indice/<colección>.estadisticas.json (el benchmark crea varias colecciones). La consulta usa el stemmer guardado en las estadísticas, no la configuración. Desvío: el inventario de entidades y las estadísticas de grounding siguen en archivos propios hasta P4.4/P5.4. BM25 solo recupera el chunk correcto en 3/3 preguntas de prueba; caracterización sin cambios. |
 | P4.4 | ⬜ | | | |
 | P4.5 | ⬜ | | | |
 | P4.6 | ⬜ | | | |

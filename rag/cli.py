@@ -214,7 +214,7 @@ def cmd_indexar(args: argparse.Namespace) -> int:
     for a in resumen.advertencias:
         print(f"  [!] {a}")
     print(f"Indexado en la colección {resumen.nombre_coleccion!r}: "
-          f"vocabulario BM25 ({resumen.n_vocab_bm25} términos), "
+          f"BM25 ({resumen.n_vocab_bm25} términos), "
           f"inventario de entidades ({resumen.n_entidades_inventario} valores), "
           f"estadísticas léxicas ({resumen.n_terminos_lexico} términos).")
     print(f"Tiempo total: {resumen.tiempo_seg:.1f}s")

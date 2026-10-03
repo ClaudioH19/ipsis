@@ -71,11 +71,11 @@ def retriever(payloads):
     from rag.consulta.etapas.recuperacion import RetrieverQdrant
 
     codificador = CodificadorFalso()
-    client, modelo, vocab, nombre = indexar_qdrant(
+    client, modelo, estadisticas, nombre = indexar_qdrant(
         payloads, "falso", "prueba", qdrant_path="", usar_texto_embebido=False,
         modelo_st=codificador, client=QdrantClient(":memory:"),
     )
-    coleccion = ColeccionQdrant(client=client, modelo_st=modelo, vocab=vocab, nombre=nombre, qdrant_path="")
+    coleccion = ColeccionQdrant(client=client, modelo_st=modelo, estadisticas=estadisticas, nombre=nombre, qdrant_path="")
     return RetrieverQdrant(coleccion, inventario_entidades={"articulo_4"}, estadisticas_lexico={"filtro": 0.2})
 
 
@@ -165,3 +165,28 @@ def test_registry_expone_qdrant_como_unico_retriever_base():
     from rag.aplicacion.registro_base import registrar_componentes_base
 
     assert registrar_componentes_base(RegistroComponentes()).disponibles("retriever") == ["qdrant"]
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize(("pregunta", "fragmento"), [
+    ("¿Cada cuánto se cambia el filtro de sedimentos?", "filtro de sedimentos"),
+    ("¿Cuánto dura la garantía?", "garantía"),
+    ("¿En cuántos días hábiles se paga el reembolso?", "reembolso"),
+])
+def test_bm25_solo_recupera_el_chunk_correcto(payloads, pregunta, fragmento):
+    """El vector disperso por sí solo (sin denso) encuentra el pasaje: BM25 con
+    stemmer del español, ids por hash e IDF aplicado por Qdrant."""
+    from qdrant_client import QdrantClient
+
+    from rag.indice.qdrant import indexar_qdrant, paquete_del_indice, vector_disperso
+    from rag.lenguaje.lexico import bm25_consulta
+    from rag.lenguaje.paquete import cargar_paquete
+    from rag.lenguaje.texto import terminos
+
+    client, _modelo, estadisticas, nombre = indexar_qdrant(
+        payloads, "falso", "bm25", qdrant_path="", usar_texto_embebido=False,
+        modelo_st=CodificadorFalso(), client=QdrantClient(":memory:"), paquete=cargar_paquete("es"),
+    )
+    consulta = vector_disperso(bm25_consulta(terminos(pregunta, paquete_del_indice(estadisticas))))
+    resultado = client.query_points(nombre, query=consulta, using="bm25", limit=1, with_payload=True)
+    assert fragmento in resultado.points[0].payload["texto"].lower()

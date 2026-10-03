@@ -43,7 +43,7 @@ class RetrieverQdrant:
         from rag.indice.qdrant import (
             cargar_estadisticas_lexico_dominio,
             cargar_inventario_entidades,
-            cargar_vocabulario_bm25,
+            cargar_estadisticas,
             crear_cliente_qdrant,
             nombre_coleccion_versionada,
         )
@@ -65,7 +65,7 @@ class RetrieverQdrant:
 
         coleccion = ColeccionQdrant(
             client=client, modelo_st=SentenceTransformer(recuperacion["modelo"], device="cpu"),
-            vocab=cargar_vocabulario_bm25(nombre), nombre=nombre,
+            estadisticas=cargar_estadisticas(nombre), nombre=nombre,
             qdrant_path=recuperacion["qdrant_path"],
         )
         return cls(

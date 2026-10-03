@@ -7,11 +7,15 @@ La búsqueda usa la fusión RRF nativa de Qdrant (``query_points`` con
 from __future__ import annotations
 
 from rag.configuracion import rutas
+from rag.indice.estadisticas import EstadisticasLexicas
+from rag.lenguaje.entidades import idioma_activo
+from rag.lenguaje.lexico import bm25_consulta, bm25_doc
+from rag.lenguaje.texto import terminos
 
 import pathlib
-import re
-from collections import Counter
 import time
+from pathlib import Path
+from types import SimpleNamespace
 from dataclasses import dataclass
 
 
@@ -19,7 +23,7 @@ from dataclasses import dataclass
 class ColeccionQdrant:
     client: object
     modelo_st: object
-    vocab: dict
+    estadisticas: EstadisticasLexicas
     nombre: str
     qdrant_path: str
 
@@ -42,13 +46,13 @@ def construir_coleccion(payloads: list[dict], modelo_nombre: str, coleccion_base
     exclusivo de la carpeta de almacenamiento; para crear muchas colecciones
     en la misma corrida hay que reusar un único cliente por `qdrant_path` o
     por servidor)."""
-    client, modelo, vocab, nombre_col = indexar_qdrant(
+    client, modelo, estadisticas, nombre_col = indexar_qdrant(
         payloads, modelo_nombre, coleccion_base, qdrant_path,
         usar_texto_embebido=con_header, modelo_st=modelo_st,
         n_version=n_version, sufijo_coleccion=sufijo_coleccion, client=client,
         modo=modo, url_servidor=url_servidor,
     )
-    return ColeccionQdrant(client=client, modelo_st=modelo, vocab=vocab, nombre=nombre_col,
+    return ColeccionQdrant(client=client, modelo_st=modelo, estadisticas=estadisticas, nombre=nombre_col,
                             qdrant_path=qdrant_path)
 
 
@@ -136,7 +140,7 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
             query_filter=query_filter,
         )
     elif modo == "hibrida":
-        sparse_q = texto_a_vector_sparse(pregunta, col.vocab)
+        sparse_q = vector_disperso(bm25_consulta(terminos(pregunta, paquete_del_indice(col.estadisticas))))
         resp = col.client.query_points(
             collection_name=col.nombre,
             prefetch=[
@@ -158,87 +162,34 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
 
 
 # ---------------------------------------------------------------------------
-# Vocabulario BM25 disperso (sección 3.2: sparse_vectors_config con Modifier.IDF).
-# Qdrant calcula el IDF internamente a partir de los conteos de término que le
-# entregamos; nosotros solo tokenizamos y contamos, de forma 100% determinista
-# y reproducible (mismo tokenizador para indexar y para consultar).
+# BM25 disperso: términos de ``rag.lenguaje.texto.terminos`` con id por hash.
+# La parte del documento (TF saturado) se calcula aquí y Qdrant aplica el IDF
+# (``Modifier.IDF``). No hay vocabulario que guardar: las estadísticas del
+# corpus (``EstadisticasLexicas``) bastan para reproducir cualquier puntaje.
 # ---------------------------------------------------------------------------
-
-_RE_TOKEN = re.compile(r"[a-záéíóúñü0-9]+")
-
-
-def tokenizar_bm25(texto: str) -> list[str]:
-    return _RE_TOKEN.findall(texto.lower())
-
-
-def construir_vocabulario_bm25(textos: list[str]) -> dict[str, int]:
-    """Vocabulario determinista: id = orden de primera aparición sobre la
-    lista de textos, en el orden dado (reproducible entre corridas)."""
-    vocab: dict[str, int] = {}
-    for t in textos:
-        for tok in tokenizar_bm25(t):
-            if tok not in vocab:
-                vocab[tok] = len(vocab)
-    return vocab
-
-
-def texto_a_vector_sparse(texto: str, vocab: dict[str, int]):
-    """Conteos de término (no normalizados) restringidos al vocabulario del
-    índice. Tokens fuera de vocabulario (OOV) se descartan: es una limitación
-    documentada, no una aproximación oculta."""
+def vector_disperso(pesos: dict[int, float]):
     from qdrant_client import models
 
-    conteos = Counter(tok for tok in tokenizar_bm25(texto) if tok in vocab)
-    if not conteos:
-        return models.SparseVector(indices=[], values=[])
-    indices = [vocab[t] for t in conteos]
-    valores = [float(c) for c in conteos.values()]
-    return models.SparseVector(indices=indices, values=valores)
+    return models.SparseVector(indices=list(pesos), values=list(pesos.values()))
 
 
-# ---------------------------------------------------------------------------
-# Persistencia del vocabulario BM25 como artefacto de INGESTA (Etapa B,
-# 2026-09-19). Antes, el servicio reconstruía el vocabulario leyendo
-# `documentos/` en cada arranque -- lo obligaba a tener el corpus
-# disponible en runtime, lo que impide un despliegue real (el corpus
-# institucional no debería vivir dentro del contenedor del servicio). El
-# vocabulario es solo un `dict[str, int]` (token -> índice, determinista,
-# reproducible desde el corpus con `construir_vocabulario_bm25`) — se guarda
-# como JSON junto al resto de artefactos de ingesta y el servicio lo carga
-# de ahí, sin tocar el corpus para nada.
-# ---------------------------------------------------------------------------
-def ruta_vocabulario_bm25(nombre_coleccion: str, directorio: str = rutas.INDICE) -> str:
-    return str(pathlib.Path(directorio) / f"{nombre_coleccion}.json")
+def ruta_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> Path:
+    return Path(directorio) / f"{nombre_coleccion}.estadisticas.json"
 
 
-def guardar_vocabulario_bm25(vocab: dict[str, int], nombre_coleccion: str,
-                              directorio: str = rutas.INDICE) -> str:
-    """Escribe el vocabulario BM25 como artefacto de ingesta (JSON, un dict
-    token->índice). Devuelve la ruta escrita."""
-    import json
-
-    ruta = ruta_vocabulario_bm25(nombre_coleccion, directorio)
-    pathlib.Path(directorio).mkdir(parents=True, exist_ok=True)
-    with open(ruta, "w", encoding="utf-8") as f:
-        json.dump(vocab, f, ensure_ascii=False)
-    return ruta
-
-
-def cargar_vocabulario_bm25(nombre_coleccion: str, directorio: str = rutas.INDICE) -> dict[str, int]:
-    """Lee el vocabulario BM25 persistido por `guardar_vocabulario_bm25`
-    (creado por ``rag indexar``). Falla fuerte y explícito (`FileNotFoundError`
-    con el comando a correr) si el artefacto no existe -- nunca se inventa
-    un vocabulario vacío ni se cae de vuelta a reconstruirlo desde el corpus."""
-    import json
-
-    ruta = ruta_vocabulario_bm25(nombre_coleccion, directorio)
-    if not pathlib.Path(ruta).exists():
+def cargar_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> EstadisticasLexicas:
+    ruta = ruta_estadisticas(nombre_coleccion, directorio)
+    if not ruta.is_file():
         raise FileNotFoundError(
-            f"no existe el vocabulario BM25 persistido en {ruta!r}. Corré "
-            f"'rag indexar' primero (deja este artefacto junto al índice)."
+            f"no existen las estadísticas léxicas del índice en {str(ruta)!r}. "
+            f"Corré 'rag indexar' para reconstruir el índice."
         )
-    with open(ruta, encoding="utf-8") as f:
-        return json.load(f)
+    return EstadisticasLexicas.cargar(ruta)
+
+
+def paquete_del_indice(est: EstadisticasLexicas):
+    """Lo mínimo que ``terminos()`` necesita para tokenizar como el índice."""
+    return SimpleNamespace(stemmer=est.stemmer)
 
 
 # ---------------------------------------------------------------------------
@@ -315,13 +266,13 @@ def cargar_inventario_entidades(nombre_coleccion: str,
 # (``rag/lenguaje/texto.py::PALABRAS_GENERALES_ES``) en el chequeo real.
 # ---------------------------------------------------------------------------
 def construir_estadisticas_lexico_dominio(payloads: list[dict], con_header: bool) -> dict[str, float]:
-    from rag.lenguaje.texto import sin_acentos
+    from rag.lenguaje.texto import tokenizar
 
     textos = [p["texto_embebido"] if con_header else p["texto"] for p in payloads]
     n = len(textos)
     df: dict[str, int] = {}
     for t in textos:
-        vistos = {sin_acentos(tok).lower() for tok in tokenizar_bm25(t)}
+        vistos = set(tokenizar(t))
         for tok in vistos:
             df[tok] = df.get(tok, 0) + 1
     return {tok: d / n for tok, d in df.items()} if n else {}
@@ -403,7 +354,8 @@ def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None
 def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdrant_path: str,
                     usar_texto_embebido: bool = True, batch_size: int = 32,
                     modelo_st=None, n_version: int = 1, sufijo_coleccion: str | None = None,
-                    client=None, modo: str | None = None, url_servidor: str | None = None):
+                    client=None, modo: str | None = None, url_servidor: str | None = None,
+                    paquete=None):
     """Codifica los textos con `modelo_nombre` (sentence-transformers, CPU) e
     indexa en una colección Qdrant on-disk local **real** (no numpy en
     memoria). Crea la colección con vector denso COSENO + vector sparse BM25
@@ -411,9 +363,9 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
     la colección como ``{coleccion}_{modelo}_v{n}`` para no mezclar nunca
     vectores de modelos distintos.
 
-    Devuelve ``(client, modelo, vocab_bm25, nombre_coleccion)``: el
-    vocabulario BM25 es necesario para codificar preguntas en tiempo de
-    consulta exactamente igual que se codificó el corpus.
+    Devuelve ``(client, modelo, estadisticas, nombre_coleccion)``. Las
+    estadísticas léxicas (con el stemmer usado) permiten codificar las
+    preguntas exactamente igual que el corpus.
     """
     from qdrant_client import QdrantClient, models
     from sentence_transformers import SentenceTransformer
@@ -455,12 +407,14 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
     vectores = modelo.encode(textos, batch_size=batch_size, show_progress_bar=False,
                               convert_to_numpy=True, normalize_embeddings=True)
 
-    vocab = construir_vocabulario_bm25(textos)
+    paquete = paquete if paquete is not None else idioma_activo()
+    terminos_por_chunk = [terminos(t, paquete) for t in textos]
+    estadisticas = EstadisticasLexicas.construir(textos, paquete)
     puntos = []
     for i, (p, v) in enumerate(zip(payloads, vectores)):
-        sparse = texto_a_vector_sparse(textos[i], vocab)
+        sparse = vector_disperso(bm25_doc(terminos_por_chunk[i], estadisticas))
         puntos.append(models.PointStruct(
             id=i, vector={"denso": v.tolist(), "bm25": sparse}, payload=p,
         ))
     client.upsert(collection_name=nombre_col, points=puntos)
-    return client, modelo, vocab, nombre_col
+    return client, modelo, estadisticas, nombre_col
