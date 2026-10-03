@@ -64,7 +64,7 @@ def test_plazo_no_infiere_unidad():
 
 def test_fecha_relativa():
     entidades = extraer_fechas("vence el segundo viernes de enero de cada año")
-    assert entidades[0].valor_norm == "2_viernes_de_enero"
+    assert entidades[0].valor_norm == "2_dow5_m01"
 
 
 def test_articulo_y_anexo():

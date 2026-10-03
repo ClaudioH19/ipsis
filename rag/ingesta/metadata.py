@@ -25,7 +25,7 @@ import yaml
 from rag.configuracion import rutas
 from rag.lenguaje.texto import tokenizar
 
-from rag.lenguaje.entidades import extraer_entidades, tiene_marcador
+from rag.lenguaje.entidades import extraer_entidades, idioma_activo, tiene_marcador
 from rag.ingesta.chunking import Chunk
 from rag.recursos import leer_plantilla
 
@@ -163,8 +163,10 @@ def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool
     """Construye el payload completo de un chunk (esquema sección 3.3)."""
     entidades = extraer_entidades(chunk.texto)
     cat = clasificar_categoria(chunk.texto, taxonomia)
-    tiene_exc = tiene_marcador(chunk.texto, taxonomia.get("marcadores_excepcion", []))
-    tiene_cond = tiene_marcador(chunk.texto, taxonomia.get("marcadores_condicion", []))
+    paquete = idioma_activo()
+    marcadores = paquete.marcadores if paquete is not None else None
+    tiene_exc = tiene_marcador(chunk.texto, marcadores.excepcion if marcadores else [])
+    tiene_cond = tiene_marcador(chunk.texto, marcadores.condicion if marcadores else [])
     keywords = extraer_keywords(chunk.texto)
     hash_texto = "sha256:" + hashlib.sha256(chunk.texto.encode("utf-8")).hexdigest()
 
