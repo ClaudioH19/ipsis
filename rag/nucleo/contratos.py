@@ -65,20 +65,12 @@ class Retriever(Protocol):
 
 @runtime_checkable
 class AbstentionPolicy(Protocol):
-    """Decide si continuar, responder, relacionar o abstenerse."""
+    """Decide responder, relacionar o abstenerse con las señales del contexto.
 
-    def decidir_dominio(
-        self,
-        consulta: QueryAnalysis,
-        senales: SenalesRecuperacion,
-    ) -> DecisionAbstencion | None: ...
+    ``ctx`` es el ``ContextoConsulta`` que llenaron las etapas anteriores.
+    """
 
-    def decidir(
-        self,
-        consulta: QueryAnalysis,
-        senales: SenalesRecuperacion,
-        candidatos: Sequence[RetrievalCandidate],
-    ) -> DecisionAbstencion: ...
+    def decidir_contexto(self, ctx: Any) -> DecisionAbstencion: ...
 
 
 @runtime_checkable

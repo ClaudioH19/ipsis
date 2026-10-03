@@ -238,9 +238,7 @@ def redactar_zona_gris(
     relacionado no es una afirmación directa.
     Sigue siendo texto literal + cita; el único agregado es la frase de
     encabezado fija (``mensajes.relacionado_intro`` del paquete de idioma).
-    Configurable: ``configuracion/motor.yaml::abstencion.zona_gris.modo`` en
-    {"relacionado" (default), "abstenerse"} -- dominios de costo de error
-    ALTO pueden volver a "abstenerse" por configuración, sin tocar código."""
+    Lo decide ``cascada_v1`` (regla «relacionado»)."""
     plantillas = plantillas or _cargar_plantillas()
     # Si falta el término de foco, el mensaje lo nombra («No encontré información sobre «X»»).
     if termino_ausente:
@@ -277,7 +275,6 @@ class EtapaRedaccion(_Etapa):
     nombre = "redaccion"
 
     def ejecutar(self, ctx) -> None:
-        from rag.consulta.etapas.verificacion import verificar_respaldo_dato_solicitado
         from rag.nucleo.esquemas import AssistantState
 
         m = self.motor
@@ -287,11 +284,6 @@ class EtapaRedaccion(_Etapa):
                                            cfg_redaccion=m.configuracion_redaccion, termino_ausente=termino)
             ctx.estado = AssistantState.RELACIONADO
             ctx.plan = "zona_gris"
-            return
-        respaldo = verificar_respaldo_dato_solicitado(ctx.pregunta, ctx.payloads)
-        if not respaldo.fiel:
-            ctx.diagnostico["advertencias"].extend(respaldo.motivos)
-            ctx.resultado = m._abstener("guardia", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
             return
         ctx.texto = redactar(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
         ctx.estado = AssistantState.RESPUESTA_DIRECTA

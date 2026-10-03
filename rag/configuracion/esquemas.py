@@ -166,12 +166,23 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             salida["config_version"] = 3
             version = 3
         elif version == 3:
-            # v4: la política por capas (layered_v1) se reemplaza por cascada_v1,
-            # que decide con las señales de la cascada y los umbrales del perfil.
+            # v4: la política por capas de v3 (su única política) se reemplaza por
+            # cascada_v1, que decide con las señales de la cascada y los umbrales
+            # del perfil.
             if nombre == "motor":
                 componentes = salida.get("componentes") or {}
-                if componentes.get("abstention_policy") == "layered_v1":
+                if componentes.get("abstention_policy") is not None:
                     componentes["abstention_policy"] = "cascada_v1"
+                # Los umbrales viven en el perfil y en calibracion.yaml; de la
+                # abstención solo queda la recuperación dirigida por premisa.
+                abstencion = salida.get("abstencion")
+                if isinstance(abstencion, dict):
+                    premisa = abstencion.get("capa_b_premisa") or {}
+                    salida["abstencion"] = {
+                        "max_fragmentos_adicionales": int(
+                            abstencion.get("max_fragmentos_adicionales", premisa.get("max_fragmentos_adicionales", 2))
+                        ),
+                    }
             salida["config_version"] = 4
             version = 4
         else:  # protección para que añadir versiones futuras no cree bucles

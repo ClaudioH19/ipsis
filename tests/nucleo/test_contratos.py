@@ -99,39 +99,6 @@ def test_configuracion_rechaza_version_futura():
         validar_asistente({"config_version": 99})
 
 
-def test_abstencion_selecciona_umbrales_propios_del_retriever_sin_mutar_base():
-    from rag.configuracion.carga import config_abstencion
-
-    cfg = {
-        "abstencion": {
-            "version": "densa_sin_calibrar",
-            "capa_a_fuera_dominio": {
-                "senal": "score_top1_denso",
-                "umbral": 0.8,
-                "grounding_lexico": {"oov_max": 0.5},
-            },
-            "confianza_alta": {"senal": "score_top1_denso", "umbral": 0.85},
-            "perfiles_retriever": {
-                "alternativo": {
-                    "version": "alternativa_sin_calibrar",
-                    "senal": "senal_alternativa",
-                    "umbral_fuera_dominio": 0.25,
-                    "umbral_confianza_alta": 0.7,
-                }
-            },
-        }
-    }
-
-    densa = config_abstencion(cfg, retriever="qdrant")
-    alternativa = config_abstencion(cfg, retriever="alternativo")
-
-    assert densa["capa_a_fuera_dominio"]["umbral"] == 0.8
-    assert alternativa["capa_a_fuera_dominio"]["umbral"] == 0.25
-    assert alternativa["confianza_alta"]["umbral"] == 0.7
-    assert alternativa["confianza_alta"]["senal"] == "senal_alternativa"
-    assert "perfiles_retriever" in cfg["abstencion"]
-
-
 def test_registry_resuelve_nombre_y_opciones():
     registro = RegistroComponentes()
     registro.registrar("fusion", "rrf", lambda k=0: {"k": k})
@@ -200,3 +167,24 @@ def test_el_nucleo_no_importa_dependencias_pesadas():
     )
     salida = subprocess.run([sys.executable, "-c", codigo], capture_output=True, text=True, check=True)
     assert salida.stdout.strip() == ""
+
+
+def test_configuracion_v3_pasa_a_cascada_y_poda_la_abstencion_por_capas():
+    datos = {
+        "config_version": 3,
+        "componentes": {"abstention_policy": "politica_v3"},
+        "recuperacion": {"modelo": "m", "estrategia_chunking": "c", "coleccion_base": "demo"},
+        "abstencion": {
+            "capa_a_fuera_dominio": {"umbral": 0.8},
+            "confianza_alta": {"umbral": 0.85},
+            "capa_b_premisa": {"max_fragmentos_adicionales": 3},
+            "zona_gris": {"modo": "relacionado"},
+        },
+    }
+
+    migrado = validar_motor(datos)
+
+    assert migrado["config_version"] == 4
+    assert migrado["componentes"]["abstention_policy"] == "cascada_v1"
+    assert migrado["abstencion"] == {"max_fragmentos_adicionales": 3}
+    assert validar_motor(migrado) == migrado

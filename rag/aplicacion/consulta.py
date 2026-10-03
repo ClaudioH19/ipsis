@@ -27,7 +27,6 @@ def construir_motor(
     """
     from rag.configuracion.carga import (
         cargar_dominio,
-        config_abstencion,
         config_recuperacion,
         config_redaccion,
         config_servicio,
@@ -58,7 +57,6 @@ def construir_motor(
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
     plantillas = cargar_plantillas(idioma, cfg_dominio)
     cfg_rec = config_recuperacion(cfg)
-    cfg_abs = config_abstencion(cfg, retriever=componentes["retriever"])
     cfg_red = config_redaccion(cfg)
     cfg_srv = config_servicio(cfg)
 
@@ -69,18 +67,13 @@ def construir_motor(
         qdrant=cfg.get("qdrant", {}),
     )
     analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
-    politica = None
-    if cfg_abs is not None:
-        politica = registro.crear(
-            "abstention_policy",
-            componentes["abstention_policy"],
-            configuracion=cfg_abs,
-            inventario_entidades=retriever.inventario_entidades(),
-            estadisticas_lexico=retriever.estadisticas_lexico(),
-            paquete=idioma,
-            umbrales=perfil_instalacion.umbrales_por_defecto,
-            piso_coseno=obtener_modelo(perfil_instalacion.modelos.denso).coseno_piso,
-        )
+    politica = registro.crear(
+        "abstention_policy",
+        componentes["abstention_policy"],
+        umbrales=perfil_instalacion.umbrales_por_defecto,
+        paquete=idioma,
+        piso_coseno=obtener_modelo(perfil_instalacion.modelos.denso).coseno_piso,
+    )
     extractor = registro.crear(
         "answer_extractor",
         componentes["answer_extractor"],
@@ -107,15 +100,8 @@ def construir_motor(
         plantillas=plantillas,
         configuracion_redaccion=cfg_red,
         top_k=cfg_rec["top_k"],
-        max_fragmentos_adicionales=(
-            cfg_abs.get("capa_b_premisa", {}).get("max_fragmentos_adicionales", 2)
-            if cfg_abs is not None
-            else 2
-        ),
-        abstencion_calibrada=(
-            cfg_abs is not None
-            and "sin_calibrar" not in str(cfg_abs.get("version", ""))
-        ),
+        max_fragmentos_adicionales=(cfg.get("abstencion") or {}).get("max_fragmentos_adicionales", 2),
+        abstencion_calibrada=perfil_instalacion.origen_umbrales == "calibracion",
     )
     motor.perfil_instalacion = perfil_instalacion
     if perfil_instalacion.modelos.reranker and "reranking" in perfil_instalacion.etapas:
