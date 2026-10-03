@@ -4,7 +4,6 @@ from copy import deepcopy
 from typing import Any
 
 import pytest
-from pydantic import BaseModel
 
 from rag.nucleo.registro import RegistroComponentes
 from rag.configuracion.carga import cargar_dominio, cargar_proyecto
@@ -19,62 +18,6 @@ from rag.nucleo.esquemas import (
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
 from rag.lenguaje.entidades import extraer_entidades
 from rag.servicio.motor import Motor
-
-
-class _RespuestaLegacy(BaseModel):
-    estado: str
-    nivel_servicio: str = "normal"
-    respuesta: str = "dato literal"
-    plan: str = "extractivo"
-    fragmentos: list[dict[str, Any]] = []
-    confianza: dict[str, Any] = {"top1": 0.9, "margen": 0.1, "acuerdo_bm25": None}
-    latencia_ms: int = 7
-
-
-def test_motor_envuelve_flujo_legacy_en_assistant_result():
-    llamadas: list[tuple[str, str]] = []
-
-    def ejecutar(pregunta: str, id_sesion: str) -> _RespuestaLegacy:
-        llamadas.append((pregunta, id_sesion))
-        return _RespuestaLegacy(
-            estado="ok",
-            fragmentos=[{
-                "chunk_id": "c1",
-                "doc_titulo": "Manual",
-                "seccion": "Uso > Encendido",
-                "version": "1",
-                "pagina": None,
-                "offset_inicio": 10,
-                "offset_fin": 14,
-                "texto": "dato",
-                "score": 0.9,
-            }],
-        )
-
-    resultado = Motor.desde_ejecutor_legacy(ejecutar).consultar("pregunta", "s1")
-
-    assert llamadas == [("pregunta", "s1")]
-    assert isinstance(resultado, AssistantResult)
-    assert resultado.estado == AssistantState.RESPUESTA_DIRECTA
-    assert resultado.mensaje_usuario == "dato literal"
-    assert resultado.evidencias[0].texto == "dato"
-    assert resultado.evidencias[0].seccion_path == ["Uso", "Encendido"]
-    assert resultado.diagnostico["contrato_http"]["latencia_ms"] == 7
-
-
-@pytest.mark.parametrize(
-    ("estado_legacy", "estado_interno"),
-    [
-        ("relacionado", AssistantState.RELACIONADO),
-        ("conversacional", AssistantState.CONVERSACIONAL),
-        ("sin_respuesta", AssistantState.SIN_RESPUESTA),
-        ("degradado", AssistantState.DEGRADADO),
-        ("saturado", AssistantState.SATURADO),
-    ],
-)
-def test_motor_mapea_estados_legacy(estado_legacy: str, estado_interno: AssistantState):
-    motor = Motor(lambda _pregunta, _sesion: _RespuestaLegacy(estado=estado_legacy))
-    assert motor.consultar("p", "s").estado == estado_interno
 
 
 def test_endpoint_consultar_delega_en_motor():

@@ -299,7 +299,7 @@ def calibrar_observaciones_dev(
     fpr_objetivo: float = 0.0,
 ) -> CalibracionDev:
     """Calibra solo con dev; test no participa en la elección del umbral."""
-    from rag.servicio.pipeline import calibrar_umbral
+    from rag.evaluacion.calibracion import calibrar_umbral
 
     por_id = {observacion.caso_id: observacion for observacion in observaciones}
     positivas = []

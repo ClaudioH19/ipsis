@@ -1,28 +1,4 @@
 # Textos globales del asistente. Se copian a cada proyecto con `rag init`.
-planes:
-  definicion:
-    slots_requeridos: [termino, definicion]
-    plantilla_base: "{termino} se refiere a {definicion}."
-  dato_puntual:
-    slots_requeridos: [valor, unidad]
-    slots_opcionales: [condicion]
-    plantilla_base: "El {concepto} es de {valor} {unidad}{condicion_sufijo}."
-  requisito:
-    slots_requeridos: [lista_requisitos]
-    plantilla_base: "Para {accion} necesitas: {lista}."
-  procedimiento:
-    slots_requeridos: [pasos_ordenados]
-    plantilla_base: "Primero, {p1}. Después, {p2}. Por último, {pn}."
-  excepcion:
-    slots_requeridos: [regla, excepcion]
-    plantilla_base: "{regla}. Sin embargo, {excepcion}."
-  comparacion:
-    slots_requeridos: [a, b, atributo]
-    plantilla_base: "En {a}, {atributo} es {val_a}; en cambio, en {b} es {val_b}."
-  sin_respuesta:
-    slots_requeridos: []
-    plantilla_base: "No encontré esa información en los documentos disponibles."
-
 conectores:
   apertura:
     - "Esto es lo que dice el documento:"
