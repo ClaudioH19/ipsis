@@ -58,9 +58,14 @@ class CasoEvaluacion(BaseModel):
     respuesta_literal: str | None = None
     evidencias: list[EvidenciaEsperada] = Field(default_factory=list)
     notas: str | None = None
+    # Metadata de evaluación: «mismo tema, dato ausente» y su par respondible.
+    subtipo: Literal["trampa_mismo_tema"] | None = None
+    par: str | None = None
 
     @model_validator(mode="after")
     def validar_semantica(self):
+        if self.subtipo and self.categoria not in {CategoriaPregunta.SIN_RESPUESTA, CategoriaPregunta.PREMISA_FALSA}:
+            raise ValueError("trampa_mismo_tema solo aplica a sin_respuesta o premisa_falsa")
         respondibles = {CategoriaPregunta.EXACTA, CategoriaPregunta.PARAFRASIS}
         if self.categoria in respondibles:
             if not self.respondible or not self.evidencias or not self.respuesta_literal:
