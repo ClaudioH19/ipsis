@@ -56,8 +56,8 @@ componentes:
 El registry se puede usar desde una integración:
 
 ```python
-from rag.componentes import RegistroComponentes
-from rag.registro import registrar_componentes_base
+from rag.nucleo.contratos import RegistroComponentes
+from rag.aplicacion.registro_base import registrar_componentes_base
 
 registro = registrar_componentes_base(RegistroComponentes())
 fusion = registro.crear("fusion", "rrf", k=60)

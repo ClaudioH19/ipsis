@@ -15,8 +15,8 @@ import pytest
 import yaml
 
 from rag.chunking import ESTRATEGIAS
-from rag.componentes import Retriever
-from rag.esquemas import FiltroEntidad, QueryAnalysis
+from rag.nucleo.contratos import Retriever
+from rag.nucleo.esquemas import FiltroEntidad, QueryAnalysis
 from rag.metadata import construir_payload
 from rag.parsear import parsear_markdown
 from rag.payload import chunk_desde_payload, payload_desde_chunk
@@ -161,7 +161,7 @@ def test_modo_invalido_falla_al_construir(retriever):
 
 
 def test_registry_expone_qdrant_como_unico_retriever_base():
-    from rag.componentes import RegistroComponentes
-    from rag.registro import registrar_componentes_base
+    from rag.nucleo.registro import RegistroComponentes
+    from rag.aplicacion.registro_base import registrar_componentes_base
 
     assert registrar_componentes_base(RegistroComponentes()).disponibles("retriever") == ["qdrant"]

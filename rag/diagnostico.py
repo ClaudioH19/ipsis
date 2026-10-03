@@ -80,9 +80,9 @@ def verificar_config_recuperacion() -> ResultadoChequeo:
 
 def verificar_politica_abstencion() -> ResultadoChequeo:
     """La política configurada existe y acepta las opciones de abstención."""
-    from rag.componentes import RegistroComponentes
+    from rag.nucleo.registro import RegistroComponentes
     from rag.configuracion import cargar_proyecto, config_abstencion
-    from rag.registro import registrar_componentes_base
+    from rag.aplicacion.registro_base import registrar_componentes_base
 
     try:
         cfg = cargar_proyecto()

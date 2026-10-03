@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from rag.componentes import AnswerExtractor, EvidenceVerifier
-from rag.esquemas import (
+from rag.nucleo.contratos import AnswerExtractor, EvidenceVerifier
+from rag.nucleo.esquemas import (
     ChunkRecord,
     EvidenceSpan,
     QueryAnalysis,
@@ -9,7 +9,7 @@ from rag.esquemas import (
     RetrievalSignals,
 )
 from rag.payload import payload_desde_evidencia
-from rag.registro import LiteralOffsetsVerifier, SentenceSelectorExtractor
+from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
 
 
 def _candidato(

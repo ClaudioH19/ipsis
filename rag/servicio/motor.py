@@ -7,16 +7,16 @@ from pathlib import Path
 from typing import Any
 
 from rag.abstencion import verificar_premisa_candidatos, separar_entidades_ausentes
-from rag.componentes import (
+from rag.nucleo.contratos import (
     AbstentionPolicy,
     AnswerExtractor,
     EvidenceVerifier,
     IntentClassifier,
-    RegistroComponentes,
     ResponseRenderer,
     Retriever,
 )
-from rag.esquemas import (
+from rag.nucleo.registro import RegistroComponentes
+from rag.nucleo.esquemas import (
     AssistantResult,
     AssistantState,
     EvidenceSpan,
@@ -130,7 +130,7 @@ class Motor:
             config_servicio,
         )
         from rag.dominio import cargar_perfil
-        from rag.registro import registrar_componentes_base
+        from rag.aplicacion.registro_base import registrar_componentes_base
         from rag.servicio.pipeline import ConfiguracionAdmision, ControlAdmision
         from rag.texto_util import cargar_palabras_generales
 

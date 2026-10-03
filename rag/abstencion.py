@@ -7,33 +7,23 @@ volver a evaluarla con el conjunto ampliado.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, Sequence
+from typing import Sequence
 
-from rag.esquemas import QueryAnalysis, RetrievalCandidate, SenalesRecuperacion
+from rag.nucleo.esquemas import (
+    DecisionAbstencion,
+    QueryAnalysis,
+    Resultado,
+    RetrievalCandidate,
+    SenalesRecuperacion,
+)
 from rag.reglas_extraccion import extraer_entidades
 from rag.texto_util import PALABRAS_GENERALES_ES, palabras_contenido
-
-Resultado = Literal["responde", "relacionado", "abstiene"]
 
 
 @dataclass(frozen=True)
 class ResultadoPremisa:
     premisa_valida: bool
     entidades_ausentes: list[dict]
-
-
-@dataclass(frozen=True)
-class DecisionAbstencion:
-    resultado: Resultado
-    motivo: str
-    entidad_texto: str | None = None
-    capa_decisora: str = ""
-    confianza_utilizada: float | None = None
-    candidato_id: str | None = None
-
-    @property
-    def abstiene(self) -> bool:
-        return self.resultado == "abstiene"
 
 
 def verificar_premisa_textos(pregunta: str, textos: Sequence[str]) -> ResultadoPremisa:

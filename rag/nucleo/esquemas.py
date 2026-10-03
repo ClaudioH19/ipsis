@@ -1,6 +1,7 @@
 """Esquemas versionados que conectarán las etapas de la tubería V2."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Literal
 
@@ -198,3 +199,20 @@ __all__ = [
     "FiltroEntidad", "QueryAnalysis", "QueryDiagnostic", "RetrievalCandidate",
     "RetrievalSignals", "SenalesRecuperacion",
 ]
+
+
+Resultado = Literal["responde", "relacionado", "abstiene"]
+
+
+@dataclass(frozen=True)
+class DecisionAbstencion:
+    resultado: Resultado
+    motivo: str
+    entidad_texto: str | None = None
+    capa_decisora: str = ""
+    confianza_utilizada: float | None = None
+    candidato_id: str | None = None
+
+    @property
+    def abstiene(self) -> bool:
+        return self.resultado == "abstiene"

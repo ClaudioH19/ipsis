@@ -1,6 +1,6 @@
 """Retriever sobre Qdrant: embeddings densos + BM25 sparse con fusión RRF.
 
-Adapta ``rag.indice`` al contrato ``rag.componentes.Retriever`` sin cambiar
+Adapta ``rag.indice`` al contrato ``rag.nucleo.contratos.Retriever`` sin cambiar
 cómo se consulta Qdrant. Qdrant y sentence-transformers se importan solo al
 construir el retriever desde la configuración.
 """
@@ -10,7 +10,7 @@ import functools
 import os
 from typing import Any
 
-from rag.esquemas import (
+from rag.nucleo.esquemas import (
     FiltroEntidad, QueryAnalysis, RetrievalCandidate, RetrievalSignals, SenalesRecuperacion,
 )
 from rag.indice import ColeccionQdrant, buscar, construir_filtro_entidad
