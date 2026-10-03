@@ -317,7 +317,7 @@ class Motor:
 
 
 def etapas_por_defecto(motor: "Motor") -> list:
-    """Cascada vigente (layered_v1), en orden."""
+    """Etapas del perfil light, en orden (la política decide tras la evidencia)."""
     from rag.consulta.etapas.analisis import EtapaAnalisis
     from rag.consulta.etapas.conversacional import EtapaConversacional
     from rag.consulta.etapas.filtros import EtapaFiltros
@@ -328,7 +328,7 @@ def etapas_por_defecto(motor: "Motor") -> list:
     from rag.consulta.etapas.verificacion import EtapaVerificacion
 
     clases = [EtapaConversacional, EtapaAnalisis, EtapaSenales, EtapaFiltros, EtapaRecuperacion,
-              EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
+              EtapaEvidencia, EtapaPolitica, EtapaRedaccion, EtapaVerificacion]
     return [clase(motor) for clase in clases]
 
 

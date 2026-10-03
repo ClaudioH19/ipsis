@@ -7,7 +7,8 @@ esperado y el cambio se documenta en ``docs/plan/avance.md``.
 
 El servidor corre en un subproceso con ``rag servir`` sobre el corpus sintético
 de ``tests/datos/corpus``, de modo que la prueba solo depende del
-contrato HTTP, no de la estructura interna del servicio.
+contrato HTTP, no de la estructura interna del servicio. Corre con ``light`` y,
+si sus modelos están en caché, con ``medium`` (un archivo esperado por perfil).
 
 Regenerar el archivo esperado (revisar el diff antes de hacer commit)::
 
@@ -31,7 +32,8 @@ from apoyo import CARACTERIZACION, CORPUS
 
 pytestmark = pytest.mark.slow
 
-ESPERADO = CARACTERIZACION / "light.json"
+MEDIUM = pytest.param("medium", marks=pytest.mark.modelos(
+    "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"))
 ACTUALIZAR = os.environ.get("RAG_ACTUALIZAR_CARACTERIZACION") == "1"
 
 # Tolerancia para los puntajes: absorbe diferencias numéricas entre CPUs y
@@ -73,13 +75,18 @@ def _rag(args: list[str], cwd: Path, timeout: float = 300.0) -> None:
     assert r.returncode == 0, f"rag {' '.join(args)}:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
 
 
+@pytest.fixture(scope="module", params=["light", MEDIUM])
+def perfil(request) -> str:
+    return request.param
+
+
 @pytest.fixture(scope="module")
-def url_servicio():
+def url_servicio(perfil):
     proyecto = Path(tempfile.mkdtemp(prefix="rag_caracterizacion_"))
     proceso = None
     try:
         _rag(["init", "--nombre-asistente", "Asistente Aqualis",
-              "--descripcion-dominio", "los manuales del purificador Aqualis", "--perfil", "light"], proyecto)
+              "--descripcion-dominio", "los manuales del purificador Aqualis", "--perfil", perfil], proyecto)
         _rag(["cargar", str(CORPUS)], proyecto)
         _rag(["indexar"], proyecto)
 
@@ -137,7 +144,7 @@ def _resumen(datos: dict) -> dict:
 
 
 @pytest.fixture(scope="module")
-def observado(url_servicio):
+def observado(url_servicio, perfil):
     salida = {}
     for pregunta in PREGUNTAS:
         r = httpx.post(f"{url_servicio}/consultar",
@@ -145,7 +152,7 @@ def observado(url_servicio):
         assert r.status_code == 200, r.text
         salida[pregunta] = _resumen(r.json())
     if ACTUALIZAR:
-        ESPERADO.write_text(json.dumps(salida, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        (CARACTERIZACION / f"{perfil}.json").write_text(json.dumps(salida, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return salida
 
 
@@ -158,10 +165,10 @@ def _sin_scores(resumen: dict) -> dict:
 
 
 @pytest.mark.parametrize("pregunta", PREGUNTAS)
-def test_consultar_no_cambia(observado, pregunta):
+def test_consultar_no_cambia(observado, perfil, pregunta):
     if ACTUALIZAR:
         pytest.skip("archivo esperado regenerado")
-    esperado = json.loads(ESPERADO.read_text(encoding="utf-8"))[pregunta]
+    esperado = json.loads((CARACTERIZACION / f"{perfil}.json").read_text(encoding="utf-8"))[pregunta]
     actual = observado[pregunta]
 
     assert _sin_scores(actual) == _sin_scores(esperado)

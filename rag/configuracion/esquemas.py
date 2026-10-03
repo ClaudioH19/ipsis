@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-CONFIG_VERSION = 3
+CONFIG_VERSION = 4
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
@@ -57,7 +57,7 @@ class ComponentesConfig(ConfiguracionEstricta):
     answer_extractor: str = Field(default="sentence_selector", min_length=1)
     evidence_verifier: str = Field(default="literal_offsets", min_length=1)
     response_renderer: str = Field(default="templates", min_length=1)
-    abstention_policy: str = Field(default="layered_v1", min_length=1)
+    abstention_policy: str = Field(default="cascada_v1", min_length=1)
 
 
 class QdrantConfig(ConfiguracionEstricta):
@@ -165,6 +165,15 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                     recuperacion["qdrant_path"] = ".rag/indice/qdrant"
             salida["config_version"] = 3
             version = 3
+        elif version == 3:
+            # v4: la política por capas (layered_v1) se reemplaza por cascada_v1,
+            # que decide con las señales de la cascada y los umbrales del perfil.
+            if nombre == "motor":
+                componentes = salida.get("componentes") or {}
+                if componentes.get("abstention_policy") == "layered_v1":
+                    componentes["abstention_policy"] = "cascada_v1"
+            salida["config_version"] = 4
+            version = 4
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(f"no existe migración de {nombre} versión {version}")
     return salida
