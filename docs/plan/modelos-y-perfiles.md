@@ -37,7 +37,7 @@ ONNX que descarga `rag modelos descargar`.
 | Denso | [intfloat/multilingual-e5-base](https://huggingface.co/intfloat/multilingual-e5-base) | MIT | 278M | `onnx/model.onnx` (1,1 GB, fp32) | heavy |
 | Reranker | [cross-encoder/mmarco-mMiniLMv2-L12-H384-v1](https://huggingface.co/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1) | Apache-2.0 | 118M | `onnx/model_quint8_avx2.onnx` (119 MB; en ARM `model_qint8_arm64.onnx`) | medium |
 | Reranker | [onnx-community/bge-reranker-v2-m3-ONNX](https://huggingface.co/onnx-community/bge-reranker-v2-m3-ONNX) (exportación de [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3), Apache-2.0) | Apache-2.0 (del modelo base; la exportación no declara licencia propia) | 568M | `onnx/model_int8.onnx` (571 MB) | heavy |
-| Lector QA | [dewdev/mdeberta-v3-base-squad2-onnx](https://huggingface.co/dewdev/mdeberta-v3-base-squad2-onnx) (exportación de [timpal0l/mdeberta-v3-base-squad2](https://huggingface.co/timpal0l/mdeberta-v3-base-squad2)) | MIT | 278M | `onnx/model_int8.onnx` (317 MB) | medium |
+| Lector QA | [dewdev/mdeberta-v3-base-squad2-onnx](https://huggingface.co/dewdev/mdeberta-v3-base-squad2-onnx) (exportación de [timpal0l/mdeberta-v3-base-squad2](https://huggingface.co/timpal0l/mdeberta-v3-base-squad2)) | MIT | 278M | `onnx/model.onnx` (1,1 GB, fp32). La variante int8 publicada da logits planos (inservible) y la int16 no carga: medido en P7.2 | medium |
 | Lector QA | ⛔ [deepset/xlm-roberta-large-squad2](https://huggingface.co/deepset/xlm-roberta-large-squad2) | CC-BY-4.0 | 560M | **sin ONNX oficial**; la única exportación ([holisticon](https://huggingface.co/holisticon/xlm-roberta-large-squad2-onnx)) no declara licencia y tiene 11 descargas | heavy (decisión pendiente) |
 
 Descartados: `jinaai/jina-reranker-v2-base-multilingual` (licencia no
@@ -63,7 +63,8 @@ saturado en el cliente e IDF aplicado en Qdrant (`modifier: idf`). Ver
 
 ### Cuantización
 
-- **Reranker y lector:** se usan las variantes int8 publicadas.
+- **Reranker:** se usa la variante int8 publicada.
+- **Lector:** fp32, porque la cuantización dinámica degrada DeBERTa-v3 (verificado en P7.2).
 - **Codificador e5:** se usa fp32. Su int8 publicado (`qint8_avx512_vnni`)
   exige AVX-512 VNNI. Como solo codifica la pregunta en línea, el costo es
   bajo; la indexación es la que más lo nota.

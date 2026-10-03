@@ -75,7 +75,9 @@ CATALOGO: dict[str, ModeloSpec] = {
         ModeloSpec(
             id_hf="dewdev/mdeberta-v3-base-squad2-onnx",
             tarea="lector", licencia="MIT (timpal0l/mdeberta-v3-base-squad2)", parametros=278_220_802,
-            archivos_onnx={"*": "onnx/model_int8.onnx"},
+            # fp32: la variante int8 publicada pierde la señal (logits planos) y
+            # la int16 no carga en onnxruntime. Verificado en P7.2.
+            archivos_onnx={"*": "onnx/model.onnx"},
         ),
     ]
 }
