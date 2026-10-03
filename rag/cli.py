@@ -26,11 +26,14 @@ from pathlib import Path
 
 def cmd_init(args: argparse.Namespace) -> int:
     from rag.configuracion.carga import (
-        RUTA_DOMINIO, actualizar_dominio, inicializar_asistente_si_falta,
+        RUTA_DOMINIO,
+        inicializar_asistente_si_falta,
         inicializar_estilos_si_falta,
-        inicializar_plantillas_si_falta, inicializar_proyecto_si_falta,
+        inicializar_plantillas_si_falta,
+        inicializar_proyecto_si_falta,
         slug_coleccion,
     )
+    from rag.aplicacion.proyecto import actualizar_dominio
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
     from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
     from rag.ingesta.metadata import inicializar_taxonomia_si_falta
@@ -162,7 +165,7 @@ def cmd_cargar(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def cmd_configurar(args: argparse.Namespace) -> int:
-    from rag.configuracion.carga import actualizar_dominio
+    from rag.aplicacion.proyecto import actualizar_dominio
 
     pares: dict[str, str] = {}
     for par in args.pares:
@@ -430,7 +433,7 @@ _MANIFIESTO_GOLDEN = "data/golden/manifiesto.json"
 def cmd_evaluar(args: argparse.Namespace) -> int:
     import json
 
-    from rag.evaluacion.metricas import evaluar_backend_activo
+    from rag.aplicacion.evaluacion import evaluar_backend_activo
 
     ruta = Path(args.banco)
     if not ruta.exists():
@@ -465,7 +468,7 @@ def cmd_evaluar(args: argparse.Namespace) -> int:
 
 
 def cmd_comparar(args: argparse.Namespace) -> int:
-    from rag.evaluacion.benchmark import cargar_artefacto, comparar_artefactos
+    from rag.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
 
     try:
         informe = comparar_artefactos([cargar_artefacto(ruta) for ruta in args.artefactos])
@@ -488,10 +491,10 @@ def cmd_comparar(args: argparse.Namespace) -> int:
 
 
 def cmd_benchmark(args: argparse.Namespace) -> int:
-    from rag.evaluacion.benchmark import ejecutar_benchmark
+    from rag.aplicacion.evaluacion import ejecutar_benchmark
 
     try:
-        ruta = ejecutar_benchmark(args.banco, args.salida)
+        ruta = ejecutar_benchmark(args.banco, args.salida, main)
     except Exception as e:  # noqa: BLE001
         print(f"No se pudo ejecutar el benchmark: {e}")
         return 1
@@ -501,7 +504,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 
 def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
-    from rag.servicio.widget import listar_presets
+    from rag.aplicacion.widget import listar_presets
 
     for nombre, descripcion in listar_presets().items():
         print(f"{nombre}: {descripcion}")
@@ -511,7 +514,7 @@ def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
 def cmd_widget_tema_aplicar(args: argparse.Namespace) -> int:
     import yaml
 
-    from rag.servicio.widget import aplicar_preset
+    from rag.aplicacion.widget import aplicar_preset
 
     try:
         aplicar_preset(args.preset, args.ruta)
@@ -526,7 +529,7 @@ def cmd_widget_tema_aplicar(args: argparse.Namespace) -> int:
 def cmd_widget_tema_vista_previa(args: argparse.Namespace) -> int:
     import yaml
 
-    from rag.servicio.widget import generar_vista_previa
+    from rag.aplicacion.widget import generar_vista_previa
 
     try:
         salida = generar_vista_previa(args.salida, args.ruta)
@@ -538,7 +541,7 @@ def cmd_widget_tema_vista_previa(args: argparse.Namespace) -> int:
 
 
 def cmd_widget_exportar(args: argparse.Namespace) -> int:
-    from rag.servicio.widget import exportar_widget
+    from rag.aplicacion.widget import exportar_widget
 
     try:
         salida = exportar_widget(args.carpeta, api=args.api, posicion=args.posicion)

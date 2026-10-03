@@ -6,11 +6,7 @@ import pytest
 
 from rag.evaluacion.banco import cargar_banco
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
-from rag.evaluacion.metricas import (
-    ObservacionEvaluacion,
-    calibrar_observaciones_dev,
-    evaluar_observaciones,
-)
+from rag.evaluacion.metricas import ObservacionEvaluacion, calibrar_observaciones_dev, evaluar_observaciones
 from rag.ingesta.parsear import parsear_markdown
 
 RAIZ = Path(__file__).parent

@@ -2,15 +2,13 @@
 from __future__ import annotations
 
 import math
-import hashlib
-import json
 from collections import Counter, defaultdict
 from statistics import mean
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from rag.evaluacion.banco import BancoEvaluacion, CasoEvaluacion, hash_banco
+from rag.evaluacion.banco import BancoEvaluacion, CasoEvaluacion
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
 
 
@@ -196,102 +194,6 @@ def evaluar_observaciones(
     )
 
 
-def evaluar_backend_activo(
-    ruta_manifiesto: str,
-    *,
-    k: int | None = None,
-    limite_respuesta_chars: int = 500,
-) -> ArtefactoEvaluacion:
-    """Ejecuta recuperación y motor actuales contra un banco completo."""
-    import time
-    from pathlib import Path
-
-    from rag.evaluacion.banco import cargar_banco
-    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
-    from rag.nucleo.esquemas import QueryAnalysis
-    from rag.ingesta.parsear import parsear_documento
-    from rag.consulta.motor import Motor
-
-    ruta = Path(ruta_manifiesto).resolve()
-    banco = cargar_banco(ruta)
-    cfg = cargar_proyecto()
-    k = k or cfg["recuperacion"]["top_k"]
-    directorio = (ruta.parent / banco.manifiesto.corpus.directorio).resolve()
-    documentos = {}
-    for archivo in banco.manifiesto.corpus.archivos:
-        documento = parsear_documento(
-            str(directorio / archivo.ruta),
-            doc_id=archivo.doc_id,
-            doc_titulo=archivo.doc_id,
-            version="1",
-        )
-        documentos[archivo.doc_id] = documento.texto_completo
-
-    motor = Motor.desde_configuracion(cfg, cfg_dominio=cargar_dominio())
-    etiqueta_backend = (
-        f"qdrant_{cfg['recuperacion']['modo']}"
-        if motor.backend == "qdrant"
-        else motor.backend
-    )
-    observaciones = []
-    try:
-        motor.calentar()
-        for caso in banco.casos:
-            consulta = QueryAnalysis(
-                pregunta_original=caso.pregunta,
-                pregunta_normalizada=" ".join(caso.pregunta.lower().split()),
-            )
-            candidatos = motor.retriever.recuperar(consulta, k)
-            inicio = time.perf_counter()
-            resultado = motor.consultar(caso.pregunta, f"evaluacion:{caso.id}")
-            latencia = int((time.perf_counter() - inicio) * 1000)
-            observaciones.append(ObservacionEvaluacion(
-                caso_id=caso.id,
-                backend=etiqueta_backend,
-                estado=resultado.estado.value,
-                respuesta=resultado.mensaje_usuario,
-                candidatos=[candidato.chunk for candidato in candidatos],
-                evidencias=resultado.evidencias,
-                latencia_ms=latencia,
-                etapas_ms=dict(resultado.diagnostico.get("etapas") or {}),
-                confianza_top1=float(resultado.confianza.get("top1", 0.0)),
-                metodo_confianza=(resultado.diagnostico.get("senales") or {}).get("metodo_confianza"),
-            ))
-        retriever = motor.retriever
-        if hasattr(retriever, "indice"):
-            indice = retriever.indice.manifiesto.model_dump(mode="json")
-        else:
-            indice = {
-                "coleccion": getattr(getattr(retriever, "coleccion", None), "nombre", None),
-                "modelo": cfg["recuperacion"].get("modelo"),
-                "modo": cfg["recuperacion"].get("modo"),
-                "version_coleccion": cfg["recuperacion"].get("version_coleccion"),
-            }
-    finally:
-        motor.cerrar()
-    reporte = evaluar_observaciones(
-        banco,
-        observaciones,
-        documentos,
-        k=k,
-        limite_respuesta_chars=limite_respuesta_chars,
-    )
-    calibracion = calibrar_observaciones_dev(banco, observaciones)
-    config_json = json.dumps(cfg, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return ArtefactoEvaluacion(
-        backend=etiqueta_backend,
-        dataset_id=banco.manifiesto.dataset_id,
-        dataset_version=banco.manifiesto.dataset_version,
-        dataset_sha256=hash_banco(banco),
-        configuracion_sha256=hashlib.sha256(config_json.encode("utf-8")).hexdigest(),
-        configuracion=cfg,
-        indice=indice,
-        calibracion_dev=calibracion,
-        reporte=reporte,
-        observaciones=observaciones,
-    )
-
-
 def calibrar_observaciones_dev(
     banco: BancoEvaluacion,
     observaciones: list[ObservacionEvaluacion],
@@ -327,5 +229,5 @@ def calibrar_observaciones_dev(
 __all__ = [
     "ArtefactoEvaluacion", "CalibracionDev", "ObservacionEvaluacion",
     "ReporteMetricas", "ResumenGrupo", "calibrar_observaciones_dev",
-    "evaluar_backend_activo", "evaluar_observaciones",
+    "evaluar_observaciones",
 ]

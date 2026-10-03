@@ -2,12 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from rag.evaluacion.benchmark import comparar_artefactos
-from rag.evaluacion.metricas import (
-    ArtefactoEvaluacion,
-    CalibracionDev,
-    ReporteMetricas,
-)
+from rag.evaluacion.comparacion import comparar_artefactos
+from rag.evaluacion.metricas import ArtefactoEvaluacion, CalibracionDev, ReporteMetricas
 
 
 def _artefacto(backend: str, *, dataset_sha256: str = "a" * 64):

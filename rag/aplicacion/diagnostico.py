@@ -221,8 +221,8 @@ def verificar_estilos() -> ResultadoChequeo:
             "rag init  # lo crea con todas las claves comentadas; no pisa el resto de tu configuracion",
         )
     try:
-        from rag.servicio.estilos import cargar_estilos, render_css
-        from rag.servicio.widget import validar_tema
+        from rag.aplicacion.estilos import cargar_estilos, render_css
+        from rag.aplicacion.widget import validar_tema
 
         tema = cargar_estilos()
         validar_tema(tema)

@@ -1,4 +1,4 @@
-"""Tests de ``rag/servicio/estilos.py`` y del endpoint ``/estilos.css``.
+"""Tests de ``rag/aplicacion/estilos.py`` y del endpoint ``/estilos.css``.
 
 La promesa que verifican: `configuracion/estilos.yaml` es el ÚNICO
 archivo que hay que tocar para repintar el widget entero, y borrar
@@ -13,7 +13,7 @@ import yaml
 from fastapi.testclient import TestClient
 
 from rag.servicio.api import app
-from rag.servicio.estilos import RUTA_ESTILOS, cargar_estilos, render_css
+from rag.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
 
 client = TestClient(app)
 

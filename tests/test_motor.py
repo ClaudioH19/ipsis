@@ -18,6 +18,7 @@ from rag.nucleo.esquemas import (
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
 from rag.lenguaje.entidades import extraer_entidades
 from rag.consulta.motor import Motor
+from rag.aplicacion.consulta import construir_motor
 
 
 def test_endpoint_consultar_delega_en_motor():
@@ -281,7 +282,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
     registro.registrar("evidence_verifier", "fake", object)
     registro.registrar("response_renderer", "fake", object)
 
-    motor = Motor.desde_configuracion(
+    motor = construir_motor(
         cfg,
         cfg_dominio=cargar_dominio(),
         registro=registro,
@@ -307,4 +308,4 @@ def test_motor_desde_configuracion_rechaza_nombre_desconocido_antes_de_construir
     cfg["componentes"]["response_renderer"] = "inexistente"
 
     with pytest.raises(KeyError, match="response_renderer/inexistente"):
-        Motor.desde_configuracion(cfg, cfg_dominio=cargar_dominio())
+        construir_motor(cfg, cfg_dominio=cargar_dominio())
