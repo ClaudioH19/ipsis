@@ -288,7 +288,11 @@ class EtapaEvidencia(_Etapa):
         from rag.indice.payload import payload_desde_evidencia
 
         m = self.motor
-        evidencias = m.extractor.extraer(ctx.consulta, ctx.candidatos)
+        # Con lector, la evidencia es la oración que contiene su tramo.
+        if ctx.evidencia_lector is not None:
+            evidencias = [ctx.evidencia_lector]
+        else:
+            evidencias = m.extractor.extraer(ctx.consulta, ctx.candidatos)
         validas, errores = m.verificador.verificar(evidencias, ctx.candidatos)
         if not validas:
             ctx.diagnostico["advertencias"].extend(errores)

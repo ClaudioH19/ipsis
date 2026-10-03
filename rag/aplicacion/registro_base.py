@@ -196,6 +196,13 @@ def _crear_reranker_onnx(modelo: str, **opciones: Any):
     return RerankerOnnx(obtener(modelo), **opciones)
 
 
+def _crear_lector_onnx(modelo: str, **opciones: Any):
+    from rag.modelos.catalogo import obtener
+    from rag.modelos.lector import LectorOnnx
+
+    return LectorOnnx(obtener(modelo), **opciones)
+
+
 def _crear_codificador_onnx(modelo: str = "intfloat/multilingual-e5-small", **opciones: Any):
     from rag.modelos.catalogo import obtener
     from rag.modelos.denso import CodificadorDenso
@@ -207,6 +214,7 @@ def _clases_etapa() -> list:
     from rag.consulta.etapas.analisis import EtapaAnalisis
     from rag.consulta.etapas.conversacional import EtapaConversacional
     from rag.consulta.etapas.filtros import EtapaFiltros
+    from rag.consulta.etapas.lectura import EtapaLectura
     from rag.consulta.etapas.politica import EtapaPolitica
     from rag.consulta.etapas.recuperacion import EtapaRecuperacion, EtapaSenales
     from rag.consulta.etapas.redaccion import EtapaRedaccion
@@ -215,7 +223,7 @@ def _clases_etapa() -> list:
     from rag.consulta.etapas.verificacion import EtapaVerificacion
 
     return [EtapaConversacional, EtapaAnalisis, EtapaSenales, EtapaFiltros, EtapaRecuperacion,
-            EtapaReranking, EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
+            EtapaReranking, EtapaLectura, EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
 
 
 def registrar_componentes_base(
@@ -230,6 +238,7 @@ def registrar_componentes_base(
     for clase in _clases_etapa():
         destino.registrar("etapa", clase.nombre, clase, reemplazar=True)
     destino.registrar("reranker", "onnx", _crear_reranker_onnx, reemplazar=True)
+    destino.registrar("answer_reader", "onnx", _crear_lector_onnx, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
     from rag.consulta.etapas.politica import LayeredV1
 
