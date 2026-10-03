@@ -32,9 +32,9 @@ def cmd_init(args: argparse.Namespace) -> int:
         slug_coleccion,
     )
     from rag.corpus import CATALOGO_PATH, plantilla_catalogo_vacio
-    from rag.dominio import escribir_perfil_generico_si_falta
+    from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
     from rag.metadata import inicializar_taxonomia_si_falta
-    from rag.texto_util import escribir_idioma_es_si_falta
+    from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     ruta_dominio = Path(RUTA_DOMINIO)
     if ruta_dominio.exists() and not args.force:
@@ -191,8 +191,8 @@ def cmd_configurar(args: argparse.Namespace) -> int:
 def cmd_indexar(args: argparse.Namespace) -> int:
     from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_recuperacion
     from rag.corpus import ejecutar_ingesta
-    from rag.dominio import cargar_perfil
-    from rag.reglas_extraccion import configurar_perfil
+    from rag.lenguaje.dominio import cargar_perfil
+    from rag.lenguaje.entidades import configurar_perfil
 
     try:
         cfg_dominio = cargar_dominio()
@@ -256,9 +256,9 @@ def _completar_proyecto_existente() -> None:
         slug_coleccion,
     )
     from rag.corpus import CATALOGO_PATH, plantilla_catalogo_vacio
-    from rag.dominio import escribir_perfil_generico_si_falta
+    from rag.lenguaje.dominio import escribir_perfil_generico_si_falta
     from rag.metadata import inicializar_taxonomia_si_falta
-    from rag.texto_util import escribir_idioma_es_si_falta
+    from rag.lenguaje.texto import escribir_idioma_es_si_falta
 
     dominio = cargar_dominio()
     if dominio.get("perfil", "_generico") == "_generico":

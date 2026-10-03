@@ -8,8 +8,8 @@ numerados. Antes de la corrección de esta tanda (revisión independiente),
 `configuracion/dominios/idiomas/es.yaml` ya existían en el directorio de trabajo -- lo que
 solo funcionaba DENTRO de una copia de este repo, no como librería
 reutilizable. Ahora `rag init` los ESCRIBE desde plantillas embebidas en
-Python (`rag/dominio.py::escribir_perfil_generico_si_falta`,
-`rag/texto_util.py::escribir_idioma_es_si_falta`), así que este fixture ya
+Python (`rag/lenguaje/dominio.py::escribir_perfil_generico_si_falta`,
+`rag/lenguaje/texto.py::escribir_idioma_es_si_falta`), así que este fixture ya
 NO los copia a mano -- si algún test de este archivo fallara por su
 ausencia, sería una señal real de que la corrección se rompió. La prueba
 DEFINITIVA de portabilidad, por subprocesos y fuera del árbol de este
@@ -30,13 +30,13 @@ RAIZ = Path(__file__).resolve().parent.parent
 @pytest.fixture(autouse=True)
 def _restaurar_perfil_activo():
     """``rag indexar``/``rag cargar`` configuran el perfil de dominio activo
-    como estado de PROCESO (``rag.reglas_extraccion.configurar_perfil``,
+    como estado de PROCESO (``rag.lenguaje.entidades.configurar_perfil``,
     mismo criterio que ``rag/servicio/api.py::startup`` -- ver
     ``tests/conftest.py``). Sin restaurarlo, un test de este archivo que
     indexa con el perfil ``_generico`` dejaría ese perfil activo para el
     resto de la sesión de pytest, rompiendo tests de otros archivos que
     dependen del perfil que fija la fixture de sesión."""
-    from rag.reglas_extraccion import configurar_perfil, perfil_activo
+    from rag.lenguaje.entidades import configurar_perfil, perfil_activo
 
     anterior = perfil_activo()
     yield

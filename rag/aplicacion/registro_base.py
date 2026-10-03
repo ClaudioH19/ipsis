@@ -106,7 +106,7 @@ class SentenceSelectorExtractor:
 
     def extraer(self, consulta, candidatos: Sequence[RetrievalCandidate]) -> list[EvidenceSpan]:
         from rag.payload import payload_desde_chunk
-        from rag.reglas_extraccion import extraer_entidades
+        from rag.lenguaje.entidades import extraer_entidades
         from rag.seleccion_fragmento import (
             ordenar_por_pertinencia_global,
             recortar_payload_a_texto_pertinente,

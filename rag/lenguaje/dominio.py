@@ -18,7 +18,7 @@ motor genérico:
 
 El núcleo sigue extrayendo, sin depender de ningún perfil, las entidades
 GENÉRICAS de un documento normativo/técnico cualquiera: números, porcentajes,
-fechas, plazos, decimales, artículos y numerales (``rag/reglas_extraccion.py``).
+fechas, plazos, decimales, artículos y numerales (``rag/lenguaje/entidades.py``).
 """
 from __future__ import annotations
 
@@ -108,9 +108,9 @@ class PerfilDominio:
 
     def extraer_entidades_extra(self, texto: str) -> list:
         """Entidades específicas de este dominio, en el mismo formato que
-        ``rag/reglas_extraccion.py::Entidad`` (import tardío para evitar un
+        ``rag/lenguaje/entidades.py::Entidad`` (import tardío para evitar un
         ciclo: ``reglas_extraccion`` no necesita conocer esta clase)."""
-        from rag.reglas_extraccion import Entidad
+        from rag.lenguaje.entidades import Entidad
 
         crudas: list[tuple[str, str, str, int]] = []
         for regla in self.reglas:
@@ -122,7 +122,7 @@ class PerfilDominio:
         """Nombres de tipo de entidad que este perfil agrega por encima de
         los genéricos del núcleo: el ``tipo`` de cada regla declarada, más
         ``"organismo"`` si el perfil trae una lista cerrada de organismos.
-        La usa ``rag/reglas_extraccion.py::tipos_con_regla`` para que ningún
+        La usa ``rag/lenguaje/entidades.py::tipos_con_regla`` para que ningún
         módulo de evaluación tenga que hardcodear los tipos de UN perfil en particular."""
         tipos = {r.tipo for r in self.reglas}
         if self.organismos:

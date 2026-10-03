@@ -192,10 +192,10 @@ def cargar_inventario_entidades(nombre_coleccion: str,
 # palabra que aparece en muy pocos chunks por simple azar (típico en un
 # corpus de 38 chunks) no es, solo por eso, evidencia de dominio; hace
 # falta combinarlo con la lista de palabras de alta frecuencia general
-# (``rag/texto_util.py::PALABRAS_GENERALES_ES``) en el chequeo real.
+# (``rag/lenguaje/texto.py::PALABRAS_GENERALES_ES``) en el chequeo real.
 # ---------------------------------------------------------------------------
 def construir_estadisticas_lexico_dominio(payloads: list[dict], con_header: bool) -> dict[str, float]:
-    from rag.texto_util import sin_acentos
+    from rag.lenguaje.texto import sin_acentos
 
     textos = [p["texto_embebido"] if con_header else p["texto"] for p in payloads]
     n = len(textos)

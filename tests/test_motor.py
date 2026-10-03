@@ -17,7 +17,7 @@ from rag.nucleo.esquemas import (
     SenalesRecuperacion,
 )
 from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
-from rag.reglas_extraccion import extraer_entidades
+from rag.lenguaje.entidades import extraer_entidades
 from rag.servicio.motor import Motor
 
 

@@ -12,7 +12,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P0.3 | ✅ | 2026-10-03 | 312 | `--import-mode=importlib` se pospone a P2.1 (requiere quitar `tests/__init__.py` y el import cruzado de `test_portabilidad`). La marca es `modelos("org/nombre", ...)`; la caché se busca en `RAG_MODELOS_DIR` o `~/.cache/rag-extractivo/modelos` con la estructura de huggingface_hub. |
 | P1.1 | ✅ | 2026-10-03 | 313 | DecisionAbstencion y Resultado pasan a nucleo/esquemas para que nucleo no dependa de consulta. Prueba nueva: el núcleo no importa dependencias pesadas. |
 | P1.2 | ✅ | 2026-10-03 | 313 | Sin desvíos. |
-| P1.3 | ⬜ | | | |
+| P1.3 | ✅ | 2026-10-03 | 313 | Sin desvíos. |
 | P1.4 | ⬜ | | | |
 | P1.5 | ⬜ | | | |
 | P1.6 | ⬜ | | | |

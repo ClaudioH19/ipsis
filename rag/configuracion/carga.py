@@ -174,7 +174,7 @@ def _encabezado_comentarios(ruta: Path) -> str:
 
 
 def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
-    from rag.dominio import RUTA_DOMINIOS, _perfiles_disponibles
+    from rag.lenguaje.dominio import RUTA_DOMINIOS, _perfiles_disponibles
 
     desconocidas = set(pares) - CLAVES_DOMINIO_VALIDAS
     if desconocidas:

@@ -1,7 +1,7 @@
 """Pruebas de extractores genéricos, independientes de cualquier dominio."""
 import pytest
 
-from rag.reglas_extraccion import (
+from rag.lenguaje.entidades import (
     extraer_articulos,
     extraer_decimales,
     extraer_entidades,

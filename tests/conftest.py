@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 from docx import Document
 
-from rag.dominio import cargar_perfil_generico
-from rag.reglas_extraccion import configurar_perfil
+from rag.lenguaje.dominio import cargar_perfil_generico
+from rag.lenguaje.entidades import configurar_perfil
 
 
 @pytest.hookimpl(tryfirst=True)

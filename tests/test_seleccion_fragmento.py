@@ -140,7 +140,7 @@ def test_ordenar_por_pertinencia_global_no_pierde_fragmentos():
 def test_seleccionar_texto_pertinente_prioriza_oracion_con_entidad_literal():
     """Caso real: "3,9" tokeniza a fragmentos de 1
     carácter para el solapamiento léxico (ambos números son < 4 caracteres,
-    el mínimo de rag/texto_util.py::palabras_contenido), así que el score de
+    el mínimo de rag/lenguaje/texto.py::palabras_contenido), así que el score de
     similitud NUNCA prioriza de forma confiable la oración con "3,9" -- hace
     falta la entidad exacta."""
     texto = (

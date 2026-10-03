@@ -371,7 +371,7 @@ def parsear_texto_plano(ruta: str, doc_id: str, doc_titulo: str, version: str) -
 # ---------------------------------------------------------------------------
 
 # Umbral heurístico (no una métrica medida: un parámetro del algoritmo de
-# detección, igual en naturaleza a `largo_min` de rag/texto_util.py) para
+# detección, igual en naturaleza a `largo_min` de rag/lenguaje/texto.py) para
 # distinguir un PDF con capa de texto real de uno escaneado: si el promedio
 # de caracteres extraídos por página cae por debajo de esto, se asume que no
 # hay texto extraíble (imagen sin OCR) y se rechaza en vez de indexar vacío.

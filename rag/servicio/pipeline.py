@@ -50,8 +50,8 @@ from typing import Literal
 
 import yaml
 
-from rag.reglas_extraccion import extraer_entidades
-from rag.texto_util import sin_acentos
+from rag.lenguaje.entidades import extraer_entidades
+from rag.lenguaje.texto import sin_acentos
 
 
 # ==========================================================================
@@ -196,7 +196,7 @@ class ControlAdmision:
 #   (b) PREMISA DE LA PREGUNTA -- verificar_premisa: determinista, sin
 #       umbral. Si la pregunta menciona una entidad concreta y cerrada del
 #       dominio (plazo, fecha, artículo, organismo, porcentaje, nota u otra
-#       entidad aportada por un perfil -- `rag/reglas_extraccion.py`)
+#       entidad aportada por un perfil -- `rag/lenguaje/entidades.py`)
 #       que NO aparece en NINGÚN LUGAR DEL CORPUS (Etapa C, punto 1: ya no
 #       basta con que falte en los fragmentos recuperados -- ver
 #       `separar_entidades_ausentes` y `rag/servicio/api.py`, que primero
@@ -238,7 +238,7 @@ class ResultadoPremisa:
 def verificar_premisa(pregunta: str, fragmentos: list[dict]) -> ResultadoPremisa:
     """Capa (b): chequeo de premisa determinista, sin umbral. Extrae toda
     entidad cerrada del dominio presente en la PREGUNTA
-    (``rag/reglas_extraccion.py::extraer_entidades`` -- nota, porcentaje,
+    (``rag/lenguaje/entidades.py::extraer_entidades`` -- nota, porcentaje,
     plazo, fecha, artículo, saber, semana relativa, organismo, práctica) y
     exige que cada una tenga respaldo LITERAL en el texto de los fragmentos
     recuperados. Si la pregunta no menciona ninguna entidad cerrada, la
@@ -289,9 +289,9 @@ def tiene_grounding_lexico(pregunta: str, estadisticas_lexico: dict[str, float],
     dominio).
 
     Ahora una palabra de contenido de la pregunta (sin stopwords,
-    ``rag/texto_util.py::palabras_contenido``) cuenta como evidencia de
+    ``rag/lenguaje/texto.py::palabras_contenido``) cuenta como evidencia de
     dominio solo si, TODAS a la vez:
-      1. No está en ``rag/texto_util.py::PALABRAS_GENERALES_ES`` (lista
+      1. No está en ``rag/lenguaje/texto.py::PALABRAS_GENERALES_ES`` (lista
          curada de verbos/sustantivos de alta frecuencia general del
          español y vocabulario frecuente que no identifica un dominio).
       2. Aparece en el vocabulario del corpus (sin acentos) con una
@@ -307,7 +307,7 @@ def tiene_grounding_lexico(pregunta: str, estadisticas_lexico: dict[str, float],
     ``palabras_generales`` (Etapa Plugin, Tarea C): si se entrega, se usa en
     vez del recurso "es" por defecto -- permite que el servicio cargue el
     recurso del IDIOMA configurado en ``configuracion/asistente.yaml`` en vez de
-    asumir siempre español (``rag/texto_util.py::cargar_palabras_generales``).
+    asumir siempre español (``rag/lenguaje/texto.py::cargar_palabras_generales``).
     Si es ``None`` (compatibilidad hacia atrás, tests unitarios), cae al
     conjunto por defecto en español."""
     from rag.abstencion import tiene_grounding_lexico as tiene_grounding
@@ -852,7 +852,7 @@ def verificar_respaldo_dato_solicitado(
 def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> ResultadoFidelidad:
     """Guardia real (no un stub): toda entidad determinista (nota,
     porcentaje, plazo, fecha, artículo, saber, semana, organismo —
-    ``rag/reglas_extraccion.py``) presente en ``respuesta_generada`` debe
+    ``rag/lenguaje/entidades.py``) presente en ``respuesta_generada`` debe
     estar también, literalmente, en el texto fuente (los fragmentos
     recuperados, más su cita determinista: título del documento y ruta de
     sección, que también se copian del corpus vía ``documentos/catalogo.yaml`` /
