@@ -108,32 +108,24 @@ def verificar_politica_abstencion() -> ResultadoChequeo:
 
 
 def verificar_modelo_descargado() -> ResultadoChequeo:
-    """El modelo de embeddings de ``recuperacion.modelo`` está en la caché
-    local de HuggingFace -- chequeo de solo lectura, nunca descarga nada."""
+    """El modelo denso de ``recuperacion.modelo`` está en la caché de modelos.
+    Solo lectura: nunca descarga nada."""
     from rag.configuracion.carga import cargar_proyecto, config_recuperacion
+    from rag.modelos.catalogo import obtener
+    from rag.modelos.descarga import esta_en_cache, ruta_cache
 
     try:
-        cfg = cargar_proyecto()
-        cfg_rec = config_recuperacion(cfg)
+        modelo = config_recuperacion(cargar_proyecto())["modelo"]
+        spec = obtener(modelo)
+    except KeyError as e:
+        return ResultadoChequeo("modelo de embeddings", False, str(e), "revisa recuperacion.modelo en configuracion/motor.yaml")
     except Exception as e:  # noqa: BLE001
         return ResultadoChequeo("modelo de embeddings", False, f"no se pudo leer la configuración: {e}", "rag init")
-
-    modelo = cfg_rec["modelo"]
-    try:
-        from huggingface_hub import scan_cache_dir
-        cache = scan_cache_dir()
-        repos = {r.repo_id for r in cache.repos}
-    except Exception as e:  # noqa: BLE001 -- caché inaccesible no debe tumbar el doctor
+    if not esta_en_cache(spec):
         return ResultadoChequeo("modelo de embeddings", False,
-                                 f"no se pudo inspeccionar la caché local de HuggingFace: {e}", None)
-
-    if modelo not in repos:
-        return ResultadoChequeo(
-            "modelo de embeddings", False, f"{modelo!r} no está en la caché local de HuggingFace",
-            f'python -c "from sentence_transformers import SentenceTransformer as S; S({modelo!r})"  '
-            f"(descarga ~500MB, requiere red la primera vez)",
-        )
-    return ResultadoChequeo("modelo de embeddings", True, f"{modelo!r} ya está descargado")
+                                 f"{modelo!r} no está en la caché de modelos ({ruta_cache()})",
+                                 "rag modelos descargar")
+    return ResultadoChequeo("modelo de embeddings", True, f"{modelo!r} está en la caché")
 
 
 def verificar_indice() -> ResultadoChequeo:
@@ -188,9 +180,10 @@ def verificar_indice() -> ResultadoChequeo:
     if not existe:
         return ResultadoChequeo("índice Qdrant", False,
                                  f"la colección {nombre_col!r} no existe todavía (modo {modo!r})", "rag indexar")
+    from rag.indice.manifiesto import ruta_manifiesto
     from rag.indice.qdrant import ruta_estadisticas
 
-    if not ruta_estadisticas(nombre_col).is_file():
+    if not ruta_estadisticas(nombre_col).is_file() or not ruta_manifiesto(nombre_col).is_file():
         return ResultadoChequeo("índice Qdrant", False,
                                  f"la colección {nombre_col!r} es de una versión anterior (sin estadísticas léxicas)",
                                  "rag indexar")

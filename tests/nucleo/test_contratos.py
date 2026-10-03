@@ -54,7 +54,7 @@ def test_configuracion_agrega_version_y_prefijo_documento_compatibles():
     })
     assert asistente["config_version"] == 3
     assert motor["config_version"] == 3
-    assert motor["recuperacion"]["prefijo_documento"] == "passage: "
+    assert "prefijo_documento" not in motor["recuperacion"]  # lo define el catálogo de modelos
 
 
 def test_configuracion_rechaza_claves_desconocidas():

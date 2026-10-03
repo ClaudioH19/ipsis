@@ -20,14 +20,13 @@ MODOS = ("vectorial", "hibrida")
 
 
 class RetrieverQdrant:
-    def __init__(self, coleccion: ColeccionQdrant, *, modo: str = "hibrida", prefijo_query: str = "",
+    def __init__(self, coleccion: ColeccionQdrant, *, modo: str = "hibrida",
                  inventario_entidades: set[str] | None = None,
                  cache_consultas: int = 256) -> None:
         if modo not in MODOS:
             raise ValueError(f"modo desconocido: {modo!r}; disponibles: {', '.join(MODOS)}")
         self.coleccion = coleccion
         self.modo = modo
-        self.prefijo_query = prefijo_query
         self._inventario = set(inventario_entidades or ())
         # Una petición consulta la misma pregunta hasta tres veces (señal,
         # recuperación y recuperación dirigida); se codifica una sola vez.
@@ -39,7 +38,6 @@ class RetrieverQdrant:
         """Conecta con la colección que dejó ``rag indexar`` y carga sus
         artefactos. Falla si la colección no existe: nunca sirve un índice vacío."""
         from rag.indice.qdrant import (
-            cargar_inventario_entidades,
             cargar_estadisticas,
             crear_cliente_qdrant,
             nombre_coleccion_versionada,
@@ -52,24 +50,26 @@ class RetrieverQdrant:
                                       url_servidor=url_servidor)
         nombre = nombre_coleccion_versionada(recuperacion["coleccion_base"], recuperacion["modelo"],
                                              recuperacion["version_coleccion"])
+        from rag.indice.manifiesto import cargar_manifiesto
+        from rag.modelos.catalogo import obtener
+        from rag.modelos.denso import CodificadorDenso
+
         if not client.collection_exists(nombre):
             raise RuntimeError(
                 f"la colección Qdrant {nombre!r} no existe todavía. Corré 'rag indexar' primero "
                 f"(lee la misma configuracion/motor.yaml::recuperacion que este servicio)."
             )
 
-        from sentence_transformers import SentenceTransformer
-
+        manifiesto = cargar_manifiesto(nombre)
         coleccion = ColeccionQdrant(
-            client=client, modelo_st=SentenceTransformer(recuperacion["modelo"], device="cpu"),
+            client=client, codificador=CodificadorDenso(obtener(recuperacion["modelo"])),
             estadisticas=cargar_estadisticas(nombre), nombre=nombre,
             qdrant_path=recuperacion["qdrant_path"],
         )
         return cls(
             coleccion,
             modo=opciones.pop("modo", recuperacion.get("modo", "hibrida")),
-            prefijo_query=opciones.pop("prefijo_query", recuperacion.get("prefijo_query", "")),
-            inventario_entidades=cargar_inventario_entidades(nombre),
+            inventario_entidades=set(manifiesto.inventario_entidades),
             **opciones,
         )
 
@@ -77,11 +77,10 @@ class RetrieverQdrant:
     def codificador(self):
         """Modelo denso cargado, reutilizable por otras etapas (selección de
         oraciones)."""
-        return self.coleccion.modelo_st
+        return self.coleccion.codificador
 
     def _codificar(self, texto: str):
-        return self.coleccion.modelo_st.encode([self.prefijo_query + texto], convert_to_numpy=True,
-                                               normalize_embeddings=True)[0]
+        return self.coleccion.codificador.codificar_consultas([texto])[0]
 
     def estimar_confianza(self, consulta: QueryAnalysis, limite: int = 2) -> SenalesRecuperacion:
         """Coseno denso del mejor chunk y su margen sobre el segundo.

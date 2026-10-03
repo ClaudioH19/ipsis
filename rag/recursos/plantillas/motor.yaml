@@ -3,8 +3,6 @@
 config_version: 3
 recuperacion:
   modelo: "intfloat/multilingual-e5-small"
-  prefijo_query: "query: "
-  prefijo_documento: "passage: "
   estrategia_chunking: "CH-F256"
   con_header: false
   modo: "hibrida"

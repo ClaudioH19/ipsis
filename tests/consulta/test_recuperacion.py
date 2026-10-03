@@ -32,11 +32,16 @@ class CodificadorFalso:
     def __init__(self) -> None:
         self.llamadas = 0
 
-    def get_sentence_embedding_dimension(self) -> int:
-        return DIM
+    dimension = DIM
 
-    def encode(self, textos, **_kwargs):
+    def codificar_documentos(self, textos):
+        return self._vectores(textos)
+
+    def codificar_consultas(self, textos):
         self.llamadas += 1
+        return self._vectores(textos)
+
+    def _vectores(self, textos):
         salida = np.zeros((len(textos), DIM), dtype=np.float32)
         for i, texto in enumerate(textos):
             for palabra in re.findall(r"\w+", texto.lower()):
@@ -73,9 +78,9 @@ def retriever(payloads):
     codificador = CodificadorFalso()
     client, modelo, estadisticas, nombre = indexar_qdrant(
         payloads, "falso", "prueba", qdrant_path="", usar_texto_embebido=False,
-        modelo_st=codificador, client=QdrantClient(":memory:"),
+        codificador=codificador, client=QdrantClient(":memory:"),
     )
-    coleccion = ColeccionQdrant(client=client, modelo_st=modelo, estadisticas=estadisticas, nombre=nombre, qdrant_path="")
+    coleccion = ColeccionQdrant(client=client, codificador=modelo, estadisticas=estadisticas, nombre=nombre, qdrant_path="")
     return RetrieverQdrant(coleccion, inventario_entidades={"articulo_4"})
 
 
@@ -138,7 +143,7 @@ def test_senales_usan_el_coseno_denso(retriever):
 
 
 def test_la_pregunta_se_codifica_una_sola_vez_por_texto(retriever):
-    codificador = retriever.coleccion.modelo_st
+    codificador = retriever.coleccion.codificador
     antes = codificador.llamadas
     consulta = _consulta("¿cuánto dura la membrana?")
     retriever.estimar_confianza(consulta, limite=2)
@@ -185,7 +190,7 @@ def test_bm25_solo_recupera_el_chunk_correcto(payloads, pregunta, fragmento):
 
     client, _modelo, estadisticas, nombre = indexar_qdrant(
         payloads, "falso", "bm25", qdrant_path="", usar_texto_embebido=False,
-        modelo_st=CodificadorFalso(), client=QdrantClient(":memory:"), paquete=cargar_paquete("es"),
+        codificador=CodificadorFalso(), client=QdrantClient(":memory:"), paquete=cargar_paquete("es"),
     )
     consulta = vector_disperso(bm25_consulta(terminos(pregunta, paquete_del_indice(estadisticas))))
     resultado = client.query_points(nombre, query=consulta, using="bm25", limit=1, with_payload=True)

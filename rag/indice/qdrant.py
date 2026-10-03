@@ -12,7 +12,6 @@ from rag.lenguaje.entidades import idioma_activo
 from rag.lenguaje.lexico import bm25_consulta, bm25_doc
 from rag.lenguaje.texto import terminos
 
-import pathlib
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -22,38 +21,10 @@ from dataclasses import dataclass
 @dataclass
 class ColeccionQdrant:
     client: object
-    modelo_st: object
+    codificador: object  # CodificadorDenso: codificar_consultas / codificar_documentos
     estadisticas: EstadisticasLexicas
     nombre: str
     qdrant_path: str
-
-
-def construir_coleccion(payloads: list[dict], modelo_nombre: str, coleccion_base: str,
-                         qdrant_path: str, con_header: bool, modelo_st=None,
-                         n_version: int = 1, sufijo_coleccion: str | None = None,
-                         client=None, modo: str | None = None,
-                         url_servidor: str | None = None) -> ColeccionQdrant:
-    """Indexa `payloads` en una colección Qdrant real (denso + sparse BM25).
-    Devuelve el envoltorio con todo lo necesario para consultar.
-
-    `modo` en {"local", "servidor"} (por defecto, configuración de
-    `configuracion/motor.yaml` o la variable de entorno ``QDRANT_MODO`` -- ver
-    `rag/indice/qdrant.py::crear_cliente_qdrant`). En modo "local"
-    `qdrant_path` es la carpeta on-disk; en modo "servidor" se ignora y se usa
-    `url_servidor` (o ``QDRANT_URL``).
-
-    `client`, si se pasa, se reutiliza (el cliente local toma un lock
-    exclusivo de la carpeta de almacenamiento; para crear muchas colecciones
-    en la misma corrida hay que reusar un único cliente por `qdrant_path` o
-    por servidor)."""
-    client, modelo, estadisticas, nombre_col = indexar_qdrant(
-        payloads, modelo_nombre, coleccion_base, qdrant_path,
-        usar_texto_embebido=con_header, modelo_st=modelo_st,
-        n_version=n_version, sufijo_coleccion=sufijo_coleccion, client=client,
-        modo=modo, url_servidor=url_servidor,
-    )
-    return ColeccionQdrant(client=client, modelo_st=modelo, estadisticas=estadisticas, nombre=nombre_col,
-                            qdrant_path=qdrant_path)
 
 
 def construir_filtro_entidad(valor_norm: str):
@@ -70,17 +41,6 @@ def construir_filtro_entidad(valor_norm: str):
     return models.Filter(must=[
         models.FieldCondition(key="entidades[].valor_norm", match=models.MatchValue(value=valor_norm))
     ])
-
-
-def codificar_pregunta(col: ColeccionQdrant, pregunta: str, prefijo_query: str = ""):
-    """Codifica la pregunta una sola vez (mismo modelo/normalización que usa
-    `buscar` internamente). Pensado para el servicio (Etapa A): cuando hace
-    falta consultar dos veces la MISMA pregunta (p.ej. vectorial para la
-    señal de abstención + híbrida para los fragmentos), se codifica una vez
-    aquí y se reusa con `buscar(..., vector_precomputado=vq)` en ambas
-    llamadas, evitando pagar el costo de `encode` dos veces por petición."""
-    return col.modelo_st.encode([prefijo_query + pregunta], convert_to_numpy=True,
-                                 normalize_embeddings=True)[0]
 
 
 @dataclass
@@ -102,11 +62,10 @@ class ResultadoBusqueda:
 
 
 def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
-           prefijo_query: str = "", query_filter=None, vector_precomputado=None) -> ResultadoBusqueda:
+           query_filter=None, vector_precomputado=None) -> ResultadoBusqueda:
     """Busca en Qdrant real (nunca en memoria). `modo` en {"vectorial","hibrida"}.
 
-    Mide, por separado, la latencia de codificar la pregunta (sentence-
-    transformers) y la latencia de la llamada a Qdrant (`query_points`),
+    Mide, por separado, la latencia de codificar la pregunta y la latencia de la llamada a Qdrant (`query_points`),
     tal como exige la tarea 1.4. `query_filter` (opcional) es un
     `models.Filter` de Qdrant real (p.ej. filtro duro por `categoria`),
     resuelto por Qdrant, no en Python.
@@ -117,7 +76,7 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
     pregunta (p.ej. el servicio: una vectorial para la señal de abstención y
     una híbrida para los fragmentos a mostrar, ver `rag/consulta/motor.py`)
     codifique una sola vez y reuse el vector, en vez de pagar el costo de
-    `modelo_st.encode` dos veces por petición.
+    codificar dos veces por petición.
     """
     from qdrant_client import models
 
@@ -126,8 +85,7 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
         latencia_encode_ms = 0.0
     else:
         t0 = time.perf_counter()
-        vq = col.modelo_st.encode([prefijo_query + pregunta], convert_to_numpy=True,
-                                   normalize_embeddings=True)[0]
+        vq = col.codificador.codificar_consultas([pregunta])[0]
         latencia_encode_ms = (time.perf_counter() - t0) * 1000
 
     t0 = time.perf_counter()
@@ -192,68 +150,6 @@ def paquete_del_indice(est: EstadisticasLexicas):
     return SimpleNamespace(stemmer=est.stemmer)
 
 
-# ---------------------------------------------------------------------------
-# Inventario de entidades del corpus COMPLETO (Etapa C, 2026-09-19, punto 1
-# del ajuste del coordinador): antes, la capa (b) de abstención
-# (`rag/consulta/etapas/politica.py::verificar_premisa_textos`) solo podía comprobar si una
-# entidad de la pregunta aparecía en los 3 fragmentos RECUPERADOS -- si la
-# evidencia real existía en el corpus pero no llegó al top-3 (Recall@3=0.84,
-# no 1.00), la capa (b) la trataba como "ausente" y se abstenía de más,
-# aunque el corpus sí la cubriera. El inventario -- ya
-# calculado gratis, `entidades` va en el payload de cada chunk desde E1 --
-# permite distinguir "no existe en el corpus" (abstención correcta) de
-# "existe, pero no llegó al top-3" (dispara una recuperación dirigida, ver
-# `rag/indice/qdrant.py::construir_filtro_entidad`).
-# ---------------------------------------------------------------------------
-def construir_inventario_entidades(payloads: list[dict]) -> list[str]:
-    """Todos los `valor_norm` de entidades presentes en algún chunk del
-    corpus (unión, sin duplicar) -- se calcula desde el mismo campo
-    `entidades` que ya construye `rag/ingesta/metadata.py::construir_payload` para
-    cada chunk, no se reextrae nada."""
-    valores: set[str] = set()
-    for p in payloads:
-        for e in p.get("entidades", []):
-            valores.add(e["valor_norm"])
-    return sorted(valores)
-
-
-def ruta_inventario_entidades(nombre_coleccion: str, directorio: str = rutas.INDICE) -> str:
-    return str(pathlib.Path(directorio) / f"{nombre_coleccion}.entidades.json")
-
-
-def guardar_inventario_entidades(inventario: list[str], nombre_coleccion: str,
-                                  directorio: str = rutas.INDICE) -> str:
-    """Escribe el inventario de entidades como artefacto de ingesta (JSON,
-    lista de `valor_norm`), junto al vocabulario BM25 (mismo directorio, un
-    solo lugar de artefactos de ingesta que el servicio necesita en
-    runtime). Devuelve la ruta escrita."""
-    import json
-
-    ruta = ruta_inventario_entidades(nombre_coleccion, directorio)
-    pathlib.Path(directorio).mkdir(parents=True, exist_ok=True)
-    with open(ruta, "w", encoding="utf-8") as f:
-        json.dump(inventario, f, ensure_ascii=False)
-    return ruta
-
-
-def cargar_inventario_entidades(nombre_coleccion: str,
-                                 directorio: str = rutas.INDICE) -> set[str]:
-    """Lee el inventario de entidades persistido por
-    `guardar_inventario_entidades` durante ``rag indexar``. Falla fuerte
-    y explícito si el artefacto no existe -- mismo criterio que
-    `cargar_vocabulario_bm25`."""
-    import json
-
-    ruta = ruta_inventario_entidades(nombre_coleccion, directorio)
-    if not pathlib.Path(ruta).exists():
-        raise FileNotFoundError(
-            f"no existe el inventario de entidades persistido en {ruta!r}. Corré "
-            f"'rag indexar' primero (deja este artefacto junto al índice)."
-        )
-    with open(ruta, encoding="utf-8") as f:
-        return set(json.load(f))
-
-
 def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_version: int = 1,
                                  sufijo: str | None = None) -> str:
     """Nombre de colección exigido por la sección 3.2 del molde:
@@ -298,26 +194,29 @@ def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None
 
 
 def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdrant_path: str,
-                    usar_texto_embebido: bool = True, batch_size: int = 32,
-                    modelo_st=None, n_version: int = 1, sufijo_coleccion: str | None = None,
+                    usar_texto_embebido: bool = True,
+                    codificador=None, n_version: int = 1, sufijo_coleccion: str | None = None,
                     client=None, modo: str | None = None, url_servidor: str | None = None,
                     paquete=None):
-    """Codifica los textos con `modelo_nombre` (sentence-transformers, CPU) e
-    indexa en una colección Qdrant on-disk local **real** (no numpy en
-    memoria). Crea la colección con vector denso COSENO + vector sparse BM25
+    """Codifica los textos con el codificador ONNX de ``modelo_nombre`` (con el
+    prefijo de pasaje que exige el modelo, p. ej. ``passage: `` en E5) e
+    indexa en una colección Qdrant real. Crea la colección con vector denso COSENO + vector sparse BM25
     (``Modifier.IDF``) más los índices de payload de la sección 3.2, y nombra
     la colección como ``{coleccion}_{modelo}_v{n}`` para no mezclar nunca
     vectores de modelos distintos.
 
-    Devuelve ``(client, modelo, estadisticas, nombre_coleccion)``. Las
+    Devuelve ``(client, codificador, estadisticas, nombre_coleccion)``. Las
     estadísticas léxicas (con el stemmer usado) permiten codificar las
     preguntas exactamente igual que el corpus.
     """
-    from qdrant_client import QdrantClient, models
-    from sentence_transformers import SentenceTransformer
+    from qdrant_client import models
 
-    modelo = modelo_st if modelo_st is not None else SentenceTransformer(modelo_nombre, device="cpu")
-    dim = modelo.get_sentence_embedding_dimension()
+    if codificador is None:
+        from rag.modelos.catalogo import obtener
+        from rag.modelos.denso import CodificadorDenso
+
+        codificador = CodificadorDenso(obtener(modelo_nombre))
+    dim = codificador.dimension
 
     nombre_col = nombre_coleccion_versionada(coleccion, modelo_nombre, n_version, sufijo_coleccion)
 
@@ -350,8 +249,7 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
             client.create_payload_index(nombre_col, campo.replace("[]", ""), tipo)
 
     textos = [p["texto_embebido"] if usar_texto_embebido else p["texto"] for p in payloads]
-    vectores = modelo.encode(textos, batch_size=batch_size, show_progress_bar=False,
-                              convert_to_numpy=True, normalize_embeddings=True)
+    vectores = codificador.codificar_documentos(textos)
 
     paquete = paquete if paquete is not None else idioma_activo()
     terminos_por_chunk = [terminos(t, paquete) for t in textos]
@@ -363,4 +261,4 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
             id=i, vector={"denso": v.tolist(), "bm25": sparse}, payload=p,
         ))
     client.upsert(collection_name=nombre_col, points=puntos)
-    return client, modelo, estadisticas, nombre_col
+    return client, codificador, estadisticas, nombre_col
