@@ -60,7 +60,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P9.1 | ✅ | 2026-10-03 | 500 (suite completa) | rag/evaluacion/golden.py: leer_csv (BOM, coma o punto y coma, ignora filas vacías de la plantilla), leer_jsonl, leer_squad2 (is_impossible → sin_respuesta; extensiones rag_tipo/rag_subtipo/rag_par), ubicar_respuesta (literal y con espacios colapsados, mapeo a offsets originales, alias de documento, aviso si se repite), oracion_de (evidencia = oración de la línea), separar_dev_test (50/50 estratificado, orden por hash), avisos_de_tamano (mínimo 30, balance 30%, sin trampa_mismo_tema, «no certifica» si < 59 respondibles en test) y a_banco (exacta/parafrasis por s_cov ≥ 0,6; junta todos los errores con su fila). CasoEvaluacion gana subtipo y par opcionales. ambigua → necesita_aclaracion (formato del banco); su métrica se revisa en P10.1. |
 | P9.2 | ✅ | 2026-10-03 | 506 (suite completa) | generar_plantilla(corpus, paquete, n) en rag/evaluacion/golden.py, sin modelos ni LLM. Secciones = bloques consecutivos con la misma ruta, partidas a 1200 caracteres. TF-IDF con IDF sobre las secciones (no se recibe est: con IDF de chunks/documentos los términos clave salían como cifras); se omiten cifras sueltas. MMR elige secciones diversas y garantiza primero una por documento. ~35% de trampas (7 de 20) en pares mínimos: id r001 + t001 (subtipo trampa_mismo_tema, par=r001, mismo documento y fragmento). Se mantiene par en vez de un pair_id nuevo: ya sobrevive al import desde P9.1. 3 conversacionales completas por idioma (verificadas contra los patrones del paquete). escribir_plantilla escribe golden.csv (UTF-8 con BOM) y LEEME.txt. golden_instrucciones pasa a ser un bloque estructurado (leeme, nota_respondible, nota_trampa, conversacionales) en es, en y pt, con ejemplos bien/mal de trampa y el tamaño necesario para certificar. Importar: una trampa cuyo par quedó sin completar es aviso (se mide sin par), no error. |
 | P9.3 | ✅ | 2026-10-03 | 514 (suite completa) | rag golden plantilla [--n] [--force] | importar <csv|jsonl|json> | validar | exportar --formato squad2|csv [--salida]. CLI fina → rag/aplicacion/golden.py → rag/evaluacion/golden.py; sin modelos ni red. plantilla no pisa golden.csv sin --force (convención de 'rag init --force'). importar: lista todos los errores con archivo:fila y no escribe nada si hay errores; banco con escritura atómica (temporal + os.replace, manifiesto al final) y procedencia {formato, archivo} sin fecha. validar: solo lectura; detecta corpus cambiado (hash), documento faltante y offsets. SQuAD 2.0: context = párrafo de la evidencia, answer_start relativo y verificado; al importar, context+answer_start fijan la ocurrencia. Extensión opcional 'rag' {tipo, subtipo, par, notas}: par y subtipo sobreviven; un SQuAD externo sin ella importa igual. Pérdidas documentadas: conversacionales no se exportan; premisa_falsa/ambigua son is_impossible en el estándar (el tipo vuelve por la extensión); trampas sin par van con context vacío. Ida y vuelta por squad2 = mismo contenido QA (plan actualizado); por CSV = mismo banco. Desvíos: (1) menos de 30 filas pasa a aviso, no error (la falta de muestra no es error; la ida y vuelta exigida usa 2 filas); (2) las instrucciones de la plantilla van en la columna 'instrucciones' (se ignora al importar), así 'notas' queda libre; (3) validar_evidencias_contra_corpus junta todos los errores. |
-| P9.4 | ⬜ | | | |
+| P9.4 | ✅ | 2026-10-03 | 527 (suite completa) | tests/datos/banco_universal/{es,en,pt}: 90 casos (30 por idioma: 10 exactas, 5 paráfrasis, 10 trampas mismo tema en par, 3 fuera de dominio, 1 premisa falsa, 1 ambigua), 5 microdocumentos por idioma, 10 capacidades. Multilingüe, no cross-lingual. Fuentes (corpus/*.md, casos.yaml) → construir.py → banco.jsonl + manifiesto.json en el formato interno; una prueba verifica que coinciden. Manifiesto con uso: regresion; exigir_calibrable lo rechaza. Línea base en linea_base.json (light y medium; tabla en Hallazgos). Prueba lenta: falla si hay un falso ok nuevo respecto de la línea base (no exige 0: los 4 de hoy van a P10 sin corregir). Desvío: 1 premisa + 1 ambigua por idioma. linea_base.evaluar restaura el idioma y el perfil globales que rag indexar cambia (contaminaba las pruebas posteriores). |
 | P10.1 | ⬜ | | | |
 | P10.2 | ⬜ | | | |
 | P10.3 | ⬜ | | | |
@@ -122,5 +122,38 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - Pares mínimos en el golden; `oov_dominio`/`oov_ok` separados en P10.2.
   - Heavy conserva mdeberta (modelos-y-perfiles.md).
   - El verificador de respuesta no se evalúa antes de P10.
+- **P9.4 — línea base del banco universal** (90 casos: 30 por idioma, 45 sin
+  respuesta; `tests/datos/banco_universal/linea_base.json`). Las respondibles
+  dan `ok` o `relacionado`, nunca abstención; toda respuesta `ok` muestra la
+  respuesta literal.
+
+  | Perfil | Falsos ok (de 45) | Exactas con ok | Paráfrasis con ok | Respondibles en relacionado | Trampas rechazadas |
+  |---|---|---|---|---|---|
+  | light | 1 (es 1, en 0, pt 0) | 22/30 (es 8, en 5, pt 9) | 0/15 | 23/45 | 29/30 |
+  | medium | 3 (es 2, en 1, pt 0) | 30/30 | 2/15 (es 1, en 1, pt 0) | 13/45 | 28/30 |
+
+  Falsos ok, que van a P10 sin corregir:
+  - light `es-trampa-009`: «¿Cuántas muestras se rechazan cada mes?» →
+    «Una muestra se rechaza si el tubo llega sin etiqueta…».
+  - medium `es-trampa-001`: «¿Cuánto cuesta extender la garantía…?» →
+    «…dura 24 meses…».
+  - medium `en-trampa-004`: «Who approves the refund request?» → «The refund
+    is paid within 10 business days after the request is approved».
+  - medium `es-ambigua-001`: «¿Cuánto dura?» → «…dura 24 meses…».
+
+  Los cuatro son la clase difícil: la misma entidad, un pasaje tentador y otra
+  relación pedida (o una pregunta ambigua respondida con la primera duración).
+- **P9.4 — las paráfrasis casi nunca dan ok** (light 0/15, medium 2/15).
+  Quedan en `relacionado`, que muestra el pasaje correcto. Es el costo de
+  `s_oov < τ_oov` y de las señales léxicas. P10.2 mide si `oov_ok` separado
+  sube esta cobertura sin falsos `ok`.
+- **P9.4 — light en inglés:** 5/10 exactas con ok, frente a 8-9 en es y pt.
+  Revisar en P10 el stemmer, las stopwords del paquete `en` y el piso de
+  coseno.
+- **P9.4 — fuera de dominio en portugués:** un caso da `relacionado` en light
+  y en medium, en vez de abstención. No es falso ok.
+- **P9.4 — i18n de la cita:** en inglés la respuesta cita «(Fuente: …)». La
+  etiqueta de la fuente no sale del paquete de idioma. Va junto con los
+  mensajes de la CLI (P11/P13).
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

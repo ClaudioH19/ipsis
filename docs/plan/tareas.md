@@ -469,13 +469,21 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
   - Unos 90 casos: 30 por idioma. Por idioma: 10 literales, 5 paráfrasis,
     10 «mismo tema, dato ausente» en pares mínimos, 3 fuera de dominio y 2
     ambiguas o con premisa falsa.
+  - Un banco por idioma (`es/`, `en/`, `pt/`): el formato tiene un corpus por
+    manifiesto. Fuentes editables (`corpus/*.md`, `casos.yaml`) y derivados
+    (`banco.jsonl`, `manifiesto.json`) que genera `construir.py`. La categoría
+    la fija el autor (no `s_cov`).
+  - El manifiesto declara `uso: regresion`; `exigir_calibrable` lo rechaza
+    (P10 lo llama antes de calibrar).
   - Un proyecto por idioma (sin cruce de idiomas).
   - **Nunca se usa para entrenar ni para calibrar**: detecta optimizaciones
     que solo funcionan con el corpus de `tests/datos/corpus`.
 - **Aceptación:**
   - `rag evaluar` con light y medium en cada idioma: falsos `ok` y cobertura
     por categoría anotados en [avance.md](avance.md).
-  - Prueba lenta (`modelos`) que falla si aparece un falso `ok`.
+  - Prueba lenta (`modelos`) que falla si aparece un falso `ok` **nuevo**
+    respecto de `linea_base.json`. P9.4 mide el estado actual y no corrige:
+    los falsos `ok` de hoy quedan registrados para P10.
 
 ---
 

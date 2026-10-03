@@ -1,0 +1,117 @@
+# Casos del banco universal (fuente). La categoría sale del id; las evidencias
+# y offsets los calcula construir.py. Ver ../README.md.
+- id: es-exacta-001
+  documento: garantia_cafetera.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura la garantía de la cafetera Brío C2?
+  respuesta: 24 meses desde la fecha de compra
+- id: es-trampa-001
+  par: es-exacta-001
+  pregunta: ¿Cuánto cuesta extender la garantía de la cafetera Brío C2?
+- id: es-exacta-002
+  documento: garantia_cafetera.md
+  capacidad: lista
+  pregunta: ¿Qué defectos cubre la garantía?
+  respuesta: defectos del motor, de la bomba y del calentador
+- id: es-trampa-002
+  par: es-exacta-002
+  pregunta: ¿Quién autoriza las reparaciones de la garantía?
+- id: es-parafrasis-001
+  documento: garantia_cafetera.md
+  capacidad: procedimiento
+  pregunta: ¿Qué tengo que hacer si mi cafetera se descompone?
+  respuesta: lleve la cafetera y la boleta a cualquier tienda Brío
+- id: es-trampa-003
+  par: es-parafrasis-001
+  pregunta: ¿Cuántos días tarda la tienda en reparar la cafetera?
+- id: es-parafrasis-002
+  documento: garantia_cafetera.md
+  capacidad: si_no
+  pregunta: ¿Me cubren si se me cae la cafetera al suelo?
+  respuesta: no cubre daños por caídas
+- id: es-exacta-003
+  documento: reembolsos.md
+  capacidad: fecha
+  pregunta: ¿Hasta cuándo puedo pedir el reembolso?
+  respuesta: hasta 30 días después de recibir el pedido
+- id: es-exacta-004
+  documento: reembolsos.md
+  capacidad: duracion
+  pregunta: ¿En cuántos días hábiles se paga el reembolso?
+  respuesta: 10 días hábiles
+- id: es-trampa-004
+  par: es-exacta-004
+  pregunta: ¿Quién aprueba la solicitud de reembolso?
+- id: es-exacta-005
+  documento: reembolsos.md
+  capacidad: condicion
+  pregunta: ¿Cuándo es gratuito el envío de la devolución?
+  respuesta: Si el producto llega dañado
+- id: es-trampa-005
+  par: es-exacta-005
+  pregunta: ¿Qué empresa de transporte retira la devolución?
+- id: es-parafrasis-003
+  documento: reembolsos.md
+  capacidad: causa
+  pregunta: ¿Por qué no se pueden devolver los cepillos de dientes?
+  respuesta: por razones sanitarias
+- id: es-exacta-006
+  documento: riego_invernadero.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos litros por hora entrega cada gotero?
+  respuesta: 4 litros por hora
+- id: es-trampa-006
+  par: es-exacta-006
+  pregunta: ¿Cuántos goteros tiene el invernadero?
+- id: es-exacta-007
+  documento: riego_invernadero.md
+  capacidad: fecha
+  pregunta: ¿A qué hora funciona el riego por goteo?
+  respuesta: a las 7:00 y a las 19:00
+- id: es-trampa-007
+  par: es-exacta-007
+  pregunta: ¿Qué tipo de fertilizante se agrega al riego?
+- id: es-parafrasis-004
+  documento: riego_invernadero.md
+  capacidad: condicion
+  pregunta: ¿Cuándo se riega una tercera vez en los meses de calor?
+  respuesta: si la temperatura supera los 30 °C
+- id: es-exacta-008
+  documento: laboratorio.md
+  capacidad: persona
+  pregunta: ¿Quién es la responsable del registro de muestras?
+  respuesta: la técnica Marta Rojas
+- id: es-trampa-008
+  par: es-exacta-008
+  pregunta: ¿Quién firma los resultados de las muestras?
+- id: es-exacta-009
+  documento: laboratorio.md
+  capacidad: causa
+  pregunta: ¿Por qué se rechaza una muestra sin etiqueta?
+  respuesta: porque no se puede asegurar su origen
+- id: es-trampa-009
+  par: es-exacta-009
+  pregunta: ¿Cuántas muestras se rechazan cada mes?
+- id: es-parafrasis-005
+  documento: laboratorio.md
+  capacidad: duracion
+  pregunta: ¿Por cuánto tiempo se pueden conservar las muestras de sangre?
+  respuesta: 72 horas
+- id: es-exacta-010
+  documento: biblioteca.md
+  capacidad: ubicacion
+  pregunta: ¿En qué piso está la biblioteca?
+  respuesta: en el segundo piso del edificio B
+- id: es-trampa-010
+  par: es-exacta-010
+  pregunta: ¿Tiene ascensor el edificio B?
+- id: es-premisa-001
+  pregunta: ¿Qué pasa si el estanque baja del 50 %?
+- id: es-ambigua-001
+  pregunta: ¿Cuánto dura?
+- id: es-fuera-001
+  pregunta: ¿Cuál es la capital de Mongolia?
+- id: es-fuera-002
+  pregunta: ¿Cómo se prepara un pan de masa madre?
+- id: es-fuera-003
+  pregunta: ¿Quién ganó el mundial de fútbol de 1998?

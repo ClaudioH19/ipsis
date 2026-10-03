@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "dataset_id": "universal_es",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafetera.md",
+        "doc_id": "garantia-cafetera"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "riego_invernadero.md",
+        "doc_id": "riego-invernadero"
+      }
+    ],
+    "sha256": "81ba717de2cfc708ba64ae4130a7ad3d9e5f007270ffad054d1afb0140f5535a"
+  },
+  "categorias_requeridas": [
+    "ambigua",
+    "exacta",
+    "parafrasis",
+    "premisa_falsa",
+    "sin_respuesta"
+  ],
+  "uso": "regresion"
+}

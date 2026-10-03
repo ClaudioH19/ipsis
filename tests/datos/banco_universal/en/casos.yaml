@@ -1,0 +1,117 @@
+# Casos del banco universal (fuente). La categoría sale del id; las evidencias
+# y offsets los calcula construir.py. Ver ../README.md.
+- id: en-exacta-001
+  documento: coffee_maker_warranty.md
+  capacidad: duracion
+  pregunta: How long does the warranty for the Brio C2 coffee maker last?
+  respuesta: 24 months from the date of purchase
+- id: en-trampa-001
+  par: en-exacta-001
+  pregunta: How much does it cost to extend the warranty for the Brio C2 coffee maker?
+- id: en-exacta-002
+  documento: coffee_maker_warranty.md
+  capacidad: lista
+  pregunta: What defects does the warranty cover?
+  respuesta: defects in the motor, the pump and the heater
+- id: en-trampa-002
+  par: en-exacta-002
+  pregunta: Who authorizes warranty repairs?
+- id: en-parafrasis-001
+  documento: coffee_maker_warranty.md
+  capacidad: procedimiento
+  pregunta: What should I do if my coffee maker breaks down?
+  respuesta: bring the coffee maker and the receipt to any Brio store
+- id: en-trampa-003
+  par: en-parafrasis-001
+  pregunta: How many days does the store take to repair the coffee maker?
+- id: en-parafrasis-002
+  documento: coffee_maker_warranty.md
+  capacidad: si_no
+  pregunta: Am I covered if I drop the coffee maker on the floor?
+  respuesta: does not cover damage from drops
+- id: en-exacta-003
+  documento: refunds.md
+  capacidad: fecha
+  pregunta: Until when can I request a refund?
+  respuesta: up to 30 days after receiving the order
+- id: en-exacta-004
+  documento: refunds.md
+  capacidad: duracion
+  pregunta: Within how many business days is the refund paid?
+  respuesta: 10 business days
+- id: en-trampa-004
+  par: en-exacta-004
+  pregunta: Who approves the refund request?
+- id: en-exacta-005
+  documento: refunds.md
+  capacidad: condicion
+  pregunta: When is return shipping free?
+  respuesta: If the product arrives damaged
+- id: en-trampa-005
+  par: en-exacta-005
+  pregunta: Which carrier picks up the return?
+- id: en-parafrasis-003
+  documento: refunds.md
+  capacidad: causa
+  pregunta: Why can't toothbrushes be returned?
+  respuesta: for sanitary reasons
+- id: en-exacta-006
+  documento: greenhouse_irrigation.md
+  capacidad: cantidad
+  pregunta: How many liters per hour does each dripper deliver?
+  respuesta: 4 liters per hour
+- id: en-trampa-006
+  par: en-exacta-006
+  pregunta: How many drippers does the greenhouse have?
+- id: en-exacta-007
+  documento: greenhouse_irrigation.md
+  capacidad: fecha
+  pregunta: At what time does drip irrigation run?
+  respuesta: at 7:00 and at 19:00
+- id: en-trampa-007
+  par: en-exacta-007
+  pregunta: What type of fertilizer is added to the irrigation?
+- id: en-parafrasis-004
+  documento: greenhouse_irrigation.md
+  capacidad: condicion
+  pregunta: When are the plants watered a third time during the hot months?
+  respuesta: if the temperature exceeds 30 °C
+- id: en-exacta-008
+  documento: lab_protocol.md
+  capacidad: persona
+  pregunta: Who is in charge of sample registration?
+  respuesta: the technician Marta Rojas
+- id: en-trampa-008
+  par: en-exacta-008
+  pregunta: Who signs the sample results?
+- id: en-exacta-009
+  documento: lab_protocol.md
+  capacidad: causa
+  pregunta: Why is a sample without a label rejected?
+  respuesta: because its origin cannot be guaranteed
+- id: en-trampa-009
+  par: en-exacta-009
+  pregunta: How many samples are rejected each month?
+- id: en-parafrasis-005
+  documento: lab_protocol.md
+  capacidad: duracion
+  pregunta: For how long can blood samples be stored?
+  respuesta: 72 hours
+- id: en-exacta-010
+  documento: library_hours.md
+  capacidad: ubicacion
+  pregunta: On which floor is the library?
+  respuesta: on the second floor of building B
+- id: en-trampa-010
+  par: en-exacta-010
+  pregunta: Does building B have an elevator?
+- id: en-premisa-001
+  pregunta: What happens if the tank drops below 50 %?
+- id: en-ambigua-001
+  pregunta: How long does it last?
+- id: en-fuera-001
+  pregunta: What is the capital of Mongolia?
+- id: en-fuera-002
+  pregunta: How do you make sourdough bread?
+- id: en-fuera-003
+  pregunta: Who won the 1998 football World Cup?

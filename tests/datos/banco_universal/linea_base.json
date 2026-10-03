@@ -1,0 +1,331 @@
+{
+  "light": {
+    "en": {
+      "falsos_ok": [],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 5,
+          "ok_literal": 5,
+          "relacionado": 5
+        },
+        "fuera_de_dominio": {
+          "abstiene": 3,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 5
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 9
+        }
+      }
+    },
+    "es": {
+      "falsos_ok": [
+        "es-trampa-009"
+      ],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 8,
+          "ok_literal": 8,
+          "relacionado": 2
+        },
+        "fuera_de_dominio": {
+          "abstiene": 3,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 5
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 1,
+          "falsos_ok": 1,
+          "n": 10,
+          "ok": 1,
+          "ok_literal": 0,
+          "relacionado": 8
+        }
+      }
+    },
+    "pt": {
+      "falsos_ok": [],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 9,
+          "ok_literal": 9,
+          "relacionado": 1
+        },
+        "fuera_de_dominio": {
+          "abstiene": 2,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 5
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 10
+        }
+      }
+    }
+  },
+  "medium": {
+    "en": {
+      "falsos_ok": [
+        "en-trampa-004"
+      ],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 10,
+          "ok_literal": 10,
+          "relacionado": 0
+        },
+        "fuera_de_dominio": {
+          "abstiene": 3,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 1,
+          "ok_literal": 1,
+          "relacionado": 4
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 1,
+          "falsos_ok": 1,
+          "n": 10,
+          "ok": 1,
+          "ok_literal": 0,
+          "relacionado": 8
+        }
+      }
+    },
+    "es": {
+      "falsos_ok": [
+        "es-ambigua-001",
+        "es-trampa-001"
+      ],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 1,
+          "n": 1,
+          "ok": 1,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 10,
+          "ok_literal": 10,
+          "relacionado": 0
+        },
+        "fuera_de_dominio": {
+          "abstiene": 3,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 1,
+          "ok_literal": 1,
+          "relacionado": 4
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 1,
+          "falsos_ok": 1,
+          "n": 10,
+          "ok": 1,
+          "ok_literal": 0,
+          "relacionado": 8
+        }
+      }
+    },
+    "pt": {
+      "falsos_ok": [],
+      "grupos": {
+        "ambigua": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "exacta": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 10,
+          "ok_literal": 10,
+          "relacionado": 0
+        },
+        "fuera_de_dominio": {
+          "abstiene": 2,
+          "falsos_ok": 0,
+          "n": 3,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 1
+        },
+        "parafrasis": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 5,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 5
+        },
+        "premisa_falsa": {
+          "abstiene": 1,
+          "falsos_ok": 0,
+          "n": 1,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 0
+        },
+        "trampa_mismo_tema": {
+          "abstiene": 0,
+          "falsos_ok": 0,
+          "n": 10,
+          "ok": 0,
+          "ok_literal": 0,
+          "relacionado": 10
+        }
+      }
+    }
+  }
+}

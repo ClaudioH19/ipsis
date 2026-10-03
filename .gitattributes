@@ -2,3 +2,4 @@
 # fin de línea al hacer checkout en Windows los desplazaría.
 tests/datos/corpus/** text eol=lf
 tests/datos/caracterizacion/*.json text eol=lf
+tests/datos/banco_universal/** text eol=lf
