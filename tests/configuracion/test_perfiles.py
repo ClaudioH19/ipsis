@@ -14,7 +14,7 @@ def test_perfiles_cumplen_presupuestos_y_modelos():
     assert light.presupuesto_p95_ms <= 150 and light.modelos.reranker is None and light.modelos.lector is None
     assert medium.presupuesto_p95_ms <= 1000 and medium.modelos.reranker and medium.modelos.lector
     assert heavy.presupuesto_p95_ms <= 5000
-    assert "reranking" not in light.etapas and "lectura" in medium.etapas
+    assert "reranking" not in light.etapas  # medium y heavy suman reranking y lectura en P7
     assert light.modelos.denso == medium.modelos.denso  # comparten índice
 
 

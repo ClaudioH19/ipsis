@@ -19,12 +19,13 @@ cascada:
 etapas:
 - conversacional
 - analisis
-- recuperacion
+- confianza
 - filtros
-- seleccion
+- recuperacion
 - politica
-- verificacion
+- evidencia
 - redaccion
+- verificacion
 lexico:
   k1: 1.2
   b: 0.75

@@ -323,3 +323,57 @@ assert resultado.estado.value == 'respuesta_directa'
     )
 
     assert proceso.returncode == 0, proceso.stdout + proceso.stderr
+
+
+# ---------------------------------------------------------------------------
+# Etapas desde el perfil y salida temprana léxica
+# ---------------------------------------------------------------------------
+class _EtapaConModelo:
+    nombre = "modelo_falso"
+    requiere_admision = True
+    usa_modelos = True
+
+    def __init__(self):
+        self.llamadas = 0
+
+    def ejecutar(self, ctx):
+        self.llamadas += 1
+
+
+def _motor_con_etapa_de_modelo():
+    from rag.lenguaje.paquete import cargar_paquete
+
+    from rag.indice.estadisticas import EstadisticasLexicas
+
+    es = cargar_paquete("es")
+    motor = _crear_motor()
+    motor.idioma = es
+    estadisticas = EstadisticasLexicas.construir(["El equipo incluye un filtro.", "Garantía de dos años."], es)
+    motor.retriever.estadisticas_lexico = lambda: estadisticas
+    falsa = _EtapaConModelo()
+    posicion = [e.nombre for e in motor.etapas].index("recuperacion") + 1
+    motor.etapas.insert(posicion, falsa)
+    return motor, falsa
+
+
+def test_salida_temprana_salta_las_etapas_con_modelos_sin_terminos_foco():
+    motor, falsa = _motor_con_etapa_de_modelo()
+    # El foco «filtro» aparece en el candidato: se ejecutan los modelos.
+    motor.consultar("¿Qué filtro incluye?", "s1")
+    assert falsa.llamadas == 1
+    # Ningún candidato menciona «filtro»: salida temprana, los modelos no corren.
+    motor.retriever.general = [_candidato(texto="Garantía de dos años.")]
+    motor.consultar("¿Qué filtro incluye?", "s2")
+    assert falsa.llamadas == 1
+
+
+def test_perfil_con_etapa_desconocida_falla_al_construir(monkeypatch):
+    from copy import deepcopy
+
+    from rag.aplicacion.consulta import construir_motor
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
+
+    cfg = deepcopy(cargar_proyecto())
+    cfg["ajustes_perfil"] = {"etapas": ["conversacional", "no_existe"]}
+    with pytest.raises(ValueError, match="no_existe"):
+        construir_motor(cfg, cfg_dominio=cargar_dominio())

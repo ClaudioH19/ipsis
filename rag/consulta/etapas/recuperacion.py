@@ -166,6 +166,15 @@ class EtapaRecuperacion(_Etapa):
         ]
         if not ctx.candidatos:
             ctx.resultado = m._abstener("sin_fragmentos", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+            return
+        perfil = getattr(m, "perfil_instalacion", None)
+        if ctx.terminos_foco and (perfil is None or perfil.cascada.salida_temprana_sin_foco):
+            from rag.lenguaje.texto import terminos
+
+            presentes = set()
+            for candidato in ctx.candidatos:
+                presentes.update(terminos(candidato.chunk.texto_fuente, m.idioma))
+            ctx.saltar_modelos = not any(t in presentes for t in ctx.terminos_foco)
 
 
 __all__ = ["EtapaRecuperacion", "EtapaSenales", "RetrieverQdrant"]
