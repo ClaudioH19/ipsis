@@ -39,14 +39,22 @@ def construir_chunks_y_payloads(docs: list[DocumentoParseado], estrategia: str,
     payloads: list[dict] = []
     hashes_vistos: dict[str, str] = {}
 
-    for doc, entrada in zip(docs, cargar_catalogo()):
-        chunks = chunk_fn(doc)
+    from rag.indice.estadisticas import EstadisticasLexicas
+    from rag.lenguaje.entidades import idioma_activo
+
+    por_documento = [(chunk_fn(doc), entrada) for doc, entrada in zip(docs, cargar_catalogo())]
+    # Las palabras clave usan el IDF del corpus completo.
+    estadisticas = EstadisticasLexicas.construir(
+        [ch.texto for chunks, _ in por_documento for ch in chunks], idioma_activo()
+    )
+    for chunks, entrada in por_documento:
         todos_chunks.extend(chunks)
         for i, ch in enumerate(chunks):
             texto_embebido = construir_texto_embebido(entrada["doc_titulo"], ch.seccion_path, ch.texto) \
                 if con_header else ch.texto
             payload = construir_payload(ch, entrada["doc_titulo"], entrada["version"],
-                                         entrada["vigente"], taxonomia, texto_embebido)
+                                         entrada["vigente"], taxonomia, texto_embebido,
+                                         estadisticas=estadisticas)
             payload["chunk_prev"] = chunks[i - 1].chunk_id if i > 0 else None
             payload["chunk_next"] = chunks[i + 1].chunk_id if i < len(chunks) - 1 else None
 
