@@ -25,7 +25,7 @@ import re
 from dataclasses import dataclass
 
 from rag.lenguaje.entidades import extraer_entidades
-from rag.lenguaje.texto import solapamiento_lexico
+from rag.lenguaje.texto import dividir_oraciones, solapamiento_lexico
 
 # Una "unidad" es una línea completa (fila de tabla, ya unida por
 # `rag/ingesta/parsear.py::_fila_a_texto` con " | " entre celdas) o una oración
@@ -34,7 +34,6 @@ from rag.lenguaje.texto import solapamiento_lexico
 # así que su presencia es una señal determinista de "esto es una fila", no
 # una heurística inventada aquí.
 _RE_LINEA = re.compile(r"[^\n]+")
-_RE_ORACION = re.compile(r"[^.!?]+(?:[.!?]+(?=\s|$)|$)")
 
 
 @dataclass
@@ -69,16 +68,11 @@ def dividir_en_unidades(texto_chunk: str) -> list[Unidad]:
                 es_fila_tabla=True,
             ))
             continue
-        for m_ora in _RE_ORACION.finditer(linea):
-            frag = m_ora.group(0)
-            texto = frag.strip()
-            if not texto:
-                continue
-            ini_rel = frag.index(texto)
+        for ini, fin in dividir_oraciones(linea):
             unidades.append(Unidad(
-                texto=texto,
-                offset_inicio=m_linea.start() + m_ora.start() + ini_rel,
-                offset_fin=m_linea.start() + m_ora.start() + ini_rel + len(texto),
+                texto=linea[ini:fin],
+                offset_inicio=m_linea.start() + ini,
+                offset_fin=m_linea.start() + fin,
                 es_fila_tabla=False,
             ))
     return unidades

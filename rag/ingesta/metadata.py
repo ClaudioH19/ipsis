@@ -15,15 +15,15 @@ que E1 confirme exactitud >= umbral_categoria_filtro_duro.
 from __future__ import annotations
 
 import hashlib
-import re
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from pathlib import Path
 
 import yaml
 
 from rag.configuracion import rutas
+from rag.lenguaje.texto import tokenizar
 
 from rag.lenguaje.entidades import extraer_entidades, tiene_marcador
 from rag.ingesta.chunking import Chunk
@@ -63,7 +63,7 @@ class ResultadoCategoria:
 
 
 def _tokenizar(texto: str) -> list[str]:
-    return [w.lower() for w in re.findall(r"[a-záéíóúñü]{3,}", texto.lower())]
+    return [t for t in tokenizar(texto, normalizado=False) if len(t) >= 3 and t.isalpha()]
 
 
 def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:

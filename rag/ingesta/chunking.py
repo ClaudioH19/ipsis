@@ -191,16 +191,6 @@ def chunking_por_seccion(doc: DocumentoParseado, max_tokens: int = 400) -> list[
 # consecutivas mientras compartan al menos `umbral_jaccard` de palabras clave
 # con la oración anterior; si cae por debajo, se corta.
 # ---------------------------------------------------------------------------
-import re as _re
-
-_RE_ORACION = _re.compile(r"(?<=[\.\?\!;:])\s+")
-
-
-def _oraciones(texto: str) -> list[str]:
-    partes = _RE_ORACION.split(texto)
-    return [p.strip() for p in partes if p.strip()]
-
-
 def _jaccard(a: set[str], b: set[str]) -> float:
     if not a or not b:
         return 0.0
@@ -226,8 +216,7 @@ def chunking_por_oraciones(doc: DocumentoParseado, umbral_jaccard: float = 0.08,
         tokens_acum = 0
 
     for b in bloques:
-        oraciones = _oraciones(b.texto) or [b.texto]
-        palabras_bloque = set(w.lower() for o in oraciones for w in o.split())
+        palabras_bloque = set(w.lower() for w in b.texto.split())
         nt = _n_tokens(b.texto)
         corta = False
         if grupo:
