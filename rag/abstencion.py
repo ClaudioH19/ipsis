@@ -16,8 +16,8 @@ from rag.nucleo.esquemas import (
     RetrievalCandidate,
     SenalesRecuperacion,
 )
-from rag.reglas_extraccion import extraer_entidades
-from rag.texto_util import PALABRAS_GENERALES_ES, palabras_contenido
+from rag.lenguaje.entidades import extraer_entidades
+from rag.lenguaje.texto import PALABRAS_GENERALES_ES, palabras_contenido
 
 
 @dataclass(frozen=True)

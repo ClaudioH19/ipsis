@@ -7,7 +7,7 @@ texto irrelevante del mismo chunk.
 Determinista por diseño, dos métodos elegibles por configuración
 (``configuracion/motor.yaml::redaccion.metodo_seleccion``):
   - ``"lexico"``: solapamiento léxico pregunta-unidad
-    (``rag/texto_util.py::solapamiento_lexico``, ya probado — no se
+    (``rag/lenguaje/texto.py::solapamiento_lexico``, ya probado — no se
     reimplementa).
   - ``"denso"``: coseno entre el embedding de la pregunta y el de cada
     unidad, con el modelo YA CARGADO por el servicio (``e5-small``) — no se
@@ -24,8 +24,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from rag.reglas_extraccion import extraer_entidades
-from rag.texto_util import solapamiento_lexico
+from rag.lenguaje.entidades import extraer_entidades
+from rag.lenguaje.texto import solapamiento_lexico
 
 # Una "unidad" es una línea completa (fila de tabla, ya unida por
 # `rag/parsear.py::_fila_a_texto` con " | " entre celdas) o una oración
@@ -50,7 +50,7 @@ def dividir_en_unidades(texto_chunk: str) -> list[Unidad]:
     narrativa, en oraciones — con offsets EXACTOS dentro de ``texto_chunk``.
 
     Invariante verificada por test (mismo criterio que
-    ``rag/reglas_extraccion.py``): para toda unidad ``u``,
+    ``rag/lenguaje/entidades.py``): para toda unidad ``u``,
     ``texto_chunk[u.offset_inicio:u.offset_fin] == u.texto``.
     """
     unidades: list[Unidad] = []
@@ -86,11 +86,11 @@ def dividir_en_unidades(texto_chunk: str) -> list[Unidad]:
 
 def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]) -> list[int]:
     """Índices de las unidades que contienen, LITERALMENTE (mismo criterio
-    determinista de ``rag/reglas_extraccion.py``, no substring ingenuo), al
+    determinista de ``rag/lenguaje/entidades.py``, no substring ingenuo), al
     menos una de las entidades de la pregunta. Caso real que motivó esto:
     "¿Qué pasa si saco un 3,9?" -- "3,9" tokeniza a
     fragmentos de 1 carácter para el solapamiento léxico
-    (``rag/texto_util.py::palabras_contenido`` exige largo >= 4), así que
+    (``rag/lenguaje/texto.py::palabras_contenido`` exige largo >= 4), así que
     NINGÚN método de score (léxico o denso) prioriza de forma confiable la
     oración "Reprobará asimismo con nota final 3,9..." frente a otras del
     mismo chunk o de otros fragmentos -- hace falta una señal exacta de
@@ -147,7 +147,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     solo existía el paso 2, el score de similitud, que es ciego a
     entidades cortas como "3,9"):
       1. Si ``entidades_pregunta`` no es vacío y alguna unidad contiene
-         LITERALMENTE una de esas entidades (``rag/reglas_extraccion.py``,
+         LITERALMENTE una de esas entidades (``rag/lenguaje/entidades.py``,
          mismo criterio que la capa de premisa), esa unidad es el ancla --
          la coincidencia exacta de una entidad manda sobre cualquier score
          de similitud, léxica o densa.

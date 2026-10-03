@@ -129,10 +129,10 @@ class Motor:
             config_redaccion,
             config_servicio,
         )
-        from rag.dominio import cargar_perfil
+        from rag.lenguaje.dominio import cargar_perfil
         from rag.aplicacion.registro_base import registrar_componentes_base
         from rag.servicio.pipeline import ConfiguracionAdmision, ControlAdmision
-        from rag.texto_util import cargar_palabras_generales
+        from rag.lenguaje.texto import cargar_palabras_generales
 
         componentes = dict(cfg.get("componentes") or {})
         if not componentes:
@@ -420,7 +420,7 @@ class Motor:
     def consultar(self, pregunta: str, id_sesion: str) -> AssistantResult:
         if self.perfil is None:
             return self._consultar_en_contexto(pregunta, id_sesion)
-        from rag.reglas_extraccion import usar_perfil
+        from rag.lenguaje.entidades import usar_perfil
 
         with usar_perfil(self.perfil):
             return self._consultar_en_contexto(pregunta, id_sesion)

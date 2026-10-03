@@ -205,7 +205,7 @@ TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "articulo"}
 # relativas... lo que antes eran extraer_saberes/extraer_semanas/
 # extraer_organismos/extraer_practicas en este mismo modulo) ya NO viven
 # aqui -- se declaran en configuracion/dominios/<nombre>/perfil.yaml y las interpreta
-# rag/dominio.py. Este modulo solo necesita saber que existe un objeto con
+# rag/lenguaje/dominio.py. Este modulo solo necesita saber que existe un objeto con
 # .extraer_entidades_extra(texto), configurado UNA VEZ al arrancar el
 # proceso (la CLI de indexación y el arranque del servicio).
 # Sin perfil configurado (None, el valor por defecto), extraer_entidades
@@ -223,7 +223,7 @@ _perfil_contextual: ContextVar = ContextVar(
 def configurar_perfil(perfil) -> None:
     """Fija el perfil de dominio activo para todo el proceso. Se llama una
     sola vez al arrancar (nunca por peticion): la ingesta, el servicio y la
-    CLI cargan su perfil con rag/dominio.py::cargar_perfil y lo registran
+    CLI cargan su perfil con rag/lenguaje/dominio.py::cargar_perfil y lo registran
     aqui antes de procesar el primer documento o la primera consulta."""
     global _perfil_activo
     _perfil_activo = perfil
@@ -250,7 +250,7 @@ def tipos_con_regla() -> set[str]:
     """Tipos de entidad con una regla de extraccion DETERMINISTA disponible:
     los genericos del nucleo (TIPOS_GENERICOS, los que cubre EXTRACTORES) mas
     los que aporta el perfil de dominio activo, si hay uno configurado (ver
-    rag/dominio.py::PerfilDominio.tipos_aportados). Sin perfil activo,
+    rag/lenguaje/dominio.py::PerfilDominio.tipos_aportados). Sin perfil activo,
     devuelve solo los genericos -- nunca falla por falta de perfil, mismo
     criterio que extraer_entidades. Asi ningun modulo de evaluacion
     necesita conocer los tipos de un perfil en particular."""

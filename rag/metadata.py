@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 
 import yaml
 
-from rag.reglas_extraccion import extraer_entidades, tiene_marcador
+from rag.lenguaje.entidades import extraer_entidades, tiene_marcador
 from rag.chunking import Chunk
 from rag.recursos import leer_plantilla
 

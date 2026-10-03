@@ -26,7 +26,7 @@ def verificar_config_dominio() -> ResultadoChequeo:
     ``perfil`` existe en ``dominios/`` y su ``idioma`` tiene recurso en
     ``configuracion/dominios/idiomas/``."""
     from rag.configuracion.carga import cargar_dominio
-    from rag.dominio import RUTA_DOMINIOS, _perfiles_disponibles
+    from rag.lenguaje.dominio import RUTA_DOMINIOS, _perfiles_disponibles
 
     try:
         cfg = cargar_dominio()
@@ -42,7 +42,7 @@ def verificar_config_dominio() -> ResultadoChequeo:
             "rag configurar perfil=_generico",
         )
     # El recurso de idioma (configuracion/dominios/idiomas/<idioma>.yaml) es OPCIONAL por
-    # diseño: `rag/texto_util.py::cargar_palabras_generales` ya tolera que no
+    # diseño: `rag/lenguaje/texto.py::cargar_palabras_generales` ya tolera que no
     # exista (el chequeo de grounding léxico queda más permisivo, no roto) --
     # así que su ausencia es informativa, nunca una falla que bloquee
     # 'rag doctor'. Para idioma='es' (el default), 'rag init' ya lo escribe

@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.dominio import cargar_perfil, cargar_perfil_generico
-from rag.reglas_extraccion import extraer_decimales, extraer_porcentajes
+from rag.lenguaje.dominio import cargar_perfil, cargar_perfil_generico
+from rag.lenguaje.entidades import extraer_decimales, extraer_porcentajes
 
 
 @pytest.fixture()
