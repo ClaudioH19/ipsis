@@ -7,9 +7,9 @@ texto" sea directa: ``texto[offset:offset+len(texto_entidad)]``
 debe ser igual a ``texto_entidad``.
 
 Ninguna de estas reglas usa modelos: son regex + normalización de superficie.
-El campo `valor_norm` es la forma canónica usada para comparar hechos_clave
-en el evaluador factual (``rag/metricas.py``) — por eso es intencionalmente
-literal y no requiere NLU.
+El campo `valor_norm` es la forma canónica con la que se comparan entidades
+entre pregunta, evidencia e inventario del índice — por eso es
+intencionalmente literal y no requiere NLU.
 """
 from __future__ import annotations
 

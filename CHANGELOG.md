@@ -30,12 +30,23 @@ sea 0.x, un cambio menor puede romper compatibilidad y se indica como tal.
 - El backend experimental SQLite FTS5 se retira antes de publicar. Aunque se
   implementó y verificó técnicamente, en C.3 produjo un falso `ok` bloqueante
   ante una pregunta ambigua. Qdrant queda como único backend soportado.
+  Línea base de esa comparación (banco `aqualis_sintetico@1.0.0`, 12 casos):
+
+  | Backend | Recall@3 | MRR | Falsos `ok` | Exactitud de estado | p95 |
+  |---|---:|---:|---:|---:|---:|
+  | `sqlite_fts` (descartado) | 1,000 | 1,000 | 0,125 | 0,500 | 9 ms |
+  | `qdrant_vectorial` | 1,000 | 0,750 | 0,000 | 0,583 | 22 ms |
+  | `qdrant_hibrida` | 1,000 | 0,750 | 0,000 | 0,583 | 13 ms |
+- Planes y bitácoras anteriores (`PLAN_V2.md`, `docs/ruta.md`,
+  `docs/avance.md`, `docs/arquitectura.md`), `requirements*.txt` y el
+  evaluador del golden antiguo (`rag/evaluacion.py`, `rag/metricas.py`). Los
+  reemplaza el plan V3 en `docs/plan/`.
 
 ### Agregado
 
 - Contratos de componentes, esquemas versionados y registry
   (`rag.componentes`, `rag.esquemas`, `rag.registro`), conectados
-  progresivamente al pipeline; ver `docs/ruta.md`.
+  progresivamente al pipeline; ver `docs/plan/`.
 - Protocolo `AbstentionPolicy` e implementación `layered_v1`, seleccionable
   desde `componentes.abstention_policy`, con decisiones estructuradas y
   validación temprana en el arranque y en `rag doctor`.
@@ -90,8 +101,7 @@ sea 0.x, un cambio menor puede romper compatibilidad y se indica como tal.
 - `rag snapshot-config`: escribe la configuración efectiva con defaults.
 - CI en GitHub Actions: pruebas rápidas en Linux y Windows, integración con
   modelo real y prueba del wheel en un entorno limpio.
-- Documentación: arquitectura, ADR, metodología de recuperación, ruta de
-  trabajo y bitácora de avance.
+- Documentación: ADR, metodología de recuperación y plan V3 (`docs/plan/`).
 
 ## [0.7.0]
 

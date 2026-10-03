@@ -12,8 +12,8 @@
 
 services:
   qdrant:
-    # Pineado a la misma versión MAYOR.MENOR que qdrant-client==1.19.1 de
-    # requirements.txt (el cliente advierte de incompatibilidad si difieren
+    # Pineado a la misma versión MAYOR.MENOR que qdrant-client (ver
+    # pyproject.toml) (el cliente advierte de incompatibilidad si difieren
     # en más de una versión menor -- verificado en esta máquina).
     image: qdrant/qdrant:v1.19.1
     container_name: rag-extractivo-qdrant

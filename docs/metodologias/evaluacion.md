@@ -52,7 +52,7 @@ no debe incorporar documentos sensibles al repositorio.
 ## Estado
 
 El formato y el banco sintético `aqualis_sintetico@1.0.0` están activos. Su
-línea base comparativa queda en `data/reportes/aqualis_sintetico_v1/`.
+línea base comparativa está resumida en `CHANGELOG.md`.
 
 ## Métricas de C.2
 
@@ -79,7 +79,7 @@ Para producir los tres artefactos y la tabla comparable desde un solo comando:
 ```bash
 rag benchmark \
   --banco tests/evaluacion/sintetico/manifiesto.json \
-  --salida data/reportes/aqualis_sintetico_v1
+  --salida reportes/aqualis_sintetico_v1
 ```
 
 El benchmark inicializa un proyecto temporal, carga el corpus declarado una
@@ -97,9 +97,9 @@ comparar artefactos existentes sin repetir consultas:
 
 ```bash
 rag comparar \
-  data/reportes/aqualis_sintetico_v1/qdrant_vectorial.json \
-  data/reportes/aqualis_sintetico_v1/qdrant_hibrida.json \
-  --salida data/reportes/aqualis_sintetico_v1/comparacion.json
+  reportes/aqualis_sintetico_v1/qdrant_vectorial.json \
+  reportes/aqualis_sintetico_v1/qdrant_hibrida.json \
+  --salida reportes/aqualis_sintetico_v1/comparacion.json
 ```
 
 El comparador exige igual hash, versión y `k`, y no admite backends repetidos.

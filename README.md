@@ -122,7 +122,7 @@ seleccionar las implementaciones registradas sin cambiar el pipeline.
 Para evaluar el backend activo contra un banco versionado y guardar el reporte:
 
 ```bash
-rag evaluar --banco data/golden/manifiesto.json --salida data/reportes/actual.json
+rag evaluar --banco data/golden/manifiesto.json --salida reporte.json
 ```
 
 El comando devuelve código distinto de cero si detecta algún falso `ok`.
@@ -132,7 +132,7 @@ banco sintético incluido:
 
 ```bash
 rag benchmark --banco tests/evaluacion/sintetico/manifiesto.json \
-  --salida data/reportes/aqualis_sintetico_v1
+  --salida reportes/benchmark
 ```
 
 El resultado registra configuración, índice, dataset, calibración de `dev` y
@@ -255,14 +255,13 @@ pip install dist/rag_extractivo-*.whl
 La prueba decisiva es ejecutar `rag init` desde una carpeta vacía usando una
 instalación normal, no el checkout del repositorio.
 
-## Documentación de la V2
+## Documentación
 
-- [Arquitectura y contratos](docs/arquitectura.md)
+- [Plan V3: arquitectura, tareas y avance](docs/plan/README.md)
 - [Referencia de configuración](docs/referencia/configuracion.md)
 - [Metodologías implementadas](docs/metodologias/README.md)
 - [Metodología de recuperación actual](docs/metodologias/recuperacion.md)
 - [Instalación en sitios web](docs/referencia/instalacion-web.md)
-- [Plan de evolución V2](PLAN_V2.md)
 
 Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 2` y
 se validan estrictamente al cargarse. Esto permite detectar errores de nombre

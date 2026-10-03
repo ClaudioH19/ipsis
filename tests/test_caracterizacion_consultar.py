@@ -1,9 +1,9 @@
 """Caracterización de ``POST /consultar``: congela el comportamiento actual.
 
-Sirve de red de seguridad para la Fase A de ``docs/ruta.md``: la refactorización
-del pipeline no debe cambiar ninguna respuesta. Congela también respuestas
-malas conocidas (ver ``docs/avance.md``, "Hallazgos"); mejorarlas es trabajo de
-fases posteriores, y cuando ocurra se regenera el archivo esperado a propósito.
+Sirve de red de seguridad para las refactorizaciones de ``docs/plan/``: mover
+código no debe cambiar ninguna respuesta. Congela también respuestas malas
+conocidas; cuando una tarea las corrija a propósito, se regenera el archivo
+esperado y el cambio se documenta en ``docs/plan/avance.md``.
 
 El servidor corre en un subproceso con ``rag servir`` sobre el corpus sintético
 de ``tests/caracterizacion/corpus``, de modo que la prueba solo depende del

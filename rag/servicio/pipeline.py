@@ -860,12 +860,9 @@ def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> Resu
     respuesta no tiene respaldo literal, la guardia falla y ``api.py`` debe
     abstenerse en vez de responder.
 
-    A propósito NO usa ``rag.metricas.evaluar_exactitud_factual``: esa
-    función compara contra una ``respuesta_referencia`` y ``hechos_clave``
-    del golden set — información de EVALUACIÓN que no existe en tiempo de
-    inferencia real (no hay "respuesta correcta" con la que comparar una
-    pregunta real de un usuario). Aquí la única fuente de verdad son los
-    fragmentos que el propio sistema recuperó."""
+    No compara contra un golden set: en inferencia real no existe una
+    "respuesta correcta". La única fuente de verdad son los fragmentos que el
+    propio sistema recuperó."""
     entidades_respuesta = {e["valor_norm"] for e in extraer_entidades(respuesta_generada)}
     texto_fuente = _texto_fuente(fragmentos)
     entidades_fuente = {e["valor_norm"] for e in extraer_entidades(texto_fuente)}

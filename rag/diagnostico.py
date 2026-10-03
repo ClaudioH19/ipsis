@@ -268,7 +268,7 @@ def verificar_cors() -> ResultadoChequeo:
 def verificar_golden_set() -> ResultadoChequeo:
     """No es un requisito para operar (a diferencia de los chequeos de
     arriba) -- informativo, para que ``rag evaluar`` no sea una sorpresa."""
-    candidatos = ["data/golden/golden.jsonl"]
+    candidatos = ["data/golden/manifiesto.json"]
     existentes = [c for c in candidatos if Path(c).exists()]
     if not existentes:
         return ResultadoChequeo("golden set", True, "no hay golden set todavía ('rag evaluar' lo dirá y no fallará)")

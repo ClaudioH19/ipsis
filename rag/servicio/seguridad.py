@@ -59,7 +59,7 @@ def verificar_clave_widget(clave_recibida: str | None, claves_validas: list[str]
 # réplicas del contenedor) cada uno lleva su propia cuenta -- N procesos
 # permiten hasta N veces la tasa configurada en total. Un límite COMPARTIDO
 # de verdad exigiría un almacén externo (Redis, típicamente), que este
-# proyecto no usa (ver requirements.txt / restricción de "sin dependencias
+# proyecto no usa (ver pyproject.toml / restricción de "sin dependencias
 # nuevas"). Para el caso de uso previsto -- un solo proceso uvicorn detrás de
 # un único despliegue pequeño -- es exacto; para escalar horizontalmente hay
 # que reemplazar este limitador, no solo subir la cifra.

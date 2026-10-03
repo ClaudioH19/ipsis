@@ -7,8 +7,8 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 
 | Tarea | Estado | Fecha | Pruebas | Notas |
 |---|---|---|---|---|
-| P0.1 | ⬜ | | | |
-| P0.2 | ⬜ | | | |
+| P0.1 | ✅ | 2026-10-03 | 323 | Commits `d2b234e` (estado previo) y `855d4b3` (plan). |
+| P0.2 | ✅ | 2026-10-03 | 312 | −11 pruebas del evaluador antiguo. `.cache/` conserva carpetas bloqueadas por OneDrive (ignoradas por git). |
 | P0.3 | ⬜ | | | |
 | P1.1 | ⬜ | | | |
 | P1.2 | ⬜ | | | |
