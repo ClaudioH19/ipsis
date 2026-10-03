@@ -21,45 +21,24 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent
 IDIOMAS = ("es", "en", "pt")
 ARCHIVO = RAIZ / "linea_base.json"
-ESTADOS_OK = {"respuesta_directa", "respuesta_parcial"}
 GRUPOS = ("exacta", "parafrasis", "trampa_mismo_tema", "fuera_de_dominio", "premisa_falsa", "ambigua")
 
 
-def grupo(caso) -> str:
-    if caso.subtipo == "trampa_mismo_tema":
-        return "trampa_mismo_tema"
-    if caso.estado_esperado == "fuera_dominio":
-        return "fuera_de_dominio"
-    return caso.categoria.value
+def resumir(artefacto) -> dict:
+    """Resumen compacto de ``reporte.cobertura`` (las métricas de
+    ``rag.evaluacion.metricas``): por grupo, casos, ok, relacionado,
+    abstenciones, falsos ok y ok con la respuesta literal."""
+    cobertura = artefacto.reporte.cobertura
+    grupos = {}
+    for nombre in GRUPOS:
+        g = cobertura.por_grupo[nombre]
+        grupos[nombre] = {"n": g.n, "ok": g.directas, "relacionado": g.relacionadas, "abstiene": g.abstenciones,
+                          "falsos_ok": g.falsos_ok, "ok_literal": g.directas - g.directas_sin_literal
+                          if nombre in ("exacta", "parafrasis") else 0}
+    return {"grupos": grupos, "falsos_ok": sorted(f.caso_id for f in cobertura.casos if f.falso_ok)}
 
 
-def resumir(banco, observaciones) -> dict:
-    """Por grupo: casos, ok, relacionado, abstenciones, falsos ok y, en las
-    respondibles con ok, cuántas muestran la respuesta literal."""
-    por_id = {o.caso_id: o for o in observaciones}
-    salida = {g: {"n": 0, "ok": 0, "relacionado": 0, "abstiene": 0, "falsos_ok": 0, "ok_literal": 0}
-              for g in GRUPOS}
-    falsos = []
-    for caso in banco.casos:
-        obs = por_id[caso.id]
-        fila = salida[grupo(caso)]
-        fila["n"] += 1
-        if obs.estado in ESTADOS_OK:
-            fila["ok"] += 1
-            if caso.respondible:
-                textos = [obs.respuesta] + [e.texto for e in obs.evidencias]
-                fila["ok_literal"] += any(caso.respuesta_literal in t for t in textos)
-            else:
-                fila["falsos_ok"] += 1
-                falsos.append(caso.id)
-        elif obs.estado == "relacionado":
-            fila["relacionado"] += 1
-        else:
-            fila["abstiene"] += 1
-    return {"grupos": salida, "falsos_ok": sorted(falsos)}
-
-
-def evaluar(idioma: str, perfil: str) -> dict:
+def evaluar_artefacto(idioma: str, perfil: str):
     """Proyecto temporal ``rag init --perfil --idioma`` con el corpus del idioma."""
     from rag.aplicacion.evaluacion import evaluar_backend_activo
     from rag.cli import main
@@ -68,7 +47,7 @@ def evaluar(idioma: str, perfil: str) -> dict:
     from rag.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
 
     manifiesto = RAIZ / idioma / "manifiesto.json"
-    banco = cargar_banco(manifiesto)
+    cargar_banco(manifiesto)  # valida el banco antes de indexar
     anterior = Path.cwd()
     # ``rag indexar`` fija el idioma y el perfil de dominio del proceso: se
     # restauran para no contaminar a quien llame después (p. ej. otras pruebas).
@@ -85,7 +64,11 @@ def evaluar(idioma: str, perfil: str) -> dict:
             os.chdir(anterior)
             configurar_idioma(idioma_previo)
             configurar_perfil(perfil_previo)
-    return resumir(banco, artefacto.observaciones)
+    return artefacto
+
+
+def evaluar(idioma: str, perfil: str) -> dict:
+    return resumir(evaluar_artefacto(idioma, perfil))
 
 
 def registrar(perfiles: list[str]) -> dict:

@@ -492,7 +492,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 ### P10.1 Señales y cota de riesgo en las métricas
 
 - **Pasos:**
-  - Las observaciones guardan todas las señales de la política.
+  - Las observaciones guardan todas las señales de la política (`SenalesObservadas`, tal como decidió; `None` si no aplica), la regla, el idioma y el tramo del lector.
   - Implementa `cota_superior_clopper_pearson(x, n, confianza)` con la CDF
     binomial y bisección, y `n_minimo(errores, alfa, confianza)`.
   - El reporte agrega, en global y **por categoría** (exacta, parafrasis,

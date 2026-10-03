@@ -61,7 +61,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P9.2 | ✅ | 2026-10-03 | 506 (suite completa) | generar_plantilla(corpus, paquete, n) en rag/evaluacion/golden.py, sin modelos ni LLM. Secciones = bloques consecutivos con la misma ruta, partidas a 1200 caracteres. TF-IDF con IDF sobre las secciones (no se recibe est: con IDF de chunks/documentos los términos clave salían como cifras); se omiten cifras sueltas. MMR elige secciones diversas y garantiza primero una por documento. ~35% de trampas (7 de 20) en pares mínimos: id r001 + t001 (subtipo trampa_mismo_tema, par=r001, mismo documento y fragmento). Se mantiene par en vez de un pair_id nuevo: ya sobrevive al import desde P9.1. 3 conversacionales completas por idioma (verificadas contra los patrones del paquete). escribir_plantilla escribe golden.csv (UTF-8 con BOM) y LEEME.txt. golden_instrucciones pasa a ser un bloque estructurado (leeme, nota_respondible, nota_trampa, conversacionales) en es, en y pt, con ejemplos bien/mal de trampa y el tamaño necesario para certificar. Importar: una trampa cuyo par quedó sin completar es aviso (se mide sin par), no error. |
 | P9.3 | ✅ | 2026-10-03 | 514 (suite completa) | rag golden plantilla [--n] [--force] | importar <csv|jsonl|json> | validar | exportar --formato squad2|csv [--salida]. CLI fina → rag/aplicacion/golden.py → rag/evaluacion/golden.py; sin modelos ni red. plantilla no pisa golden.csv sin --force (convención de 'rag init --force'). importar: lista todos los errores con archivo:fila y no escribe nada si hay errores; banco con escritura atómica (temporal + os.replace, manifiesto al final) y procedencia {formato, archivo} sin fecha. validar: solo lectura; detecta corpus cambiado (hash), documento faltante y offsets. SQuAD 2.0: context = párrafo de la evidencia, answer_start relativo y verificado; al importar, context+answer_start fijan la ocurrencia. Extensión opcional 'rag' {tipo, subtipo, par, notas}: par y subtipo sobreviven; un SQuAD externo sin ella importa igual. Pérdidas documentadas: conversacionales no se exportan; premisa_falsa/ambigua son is_impossible en el estándar (el tipo vuelve por la extensión); trampas sin par van con context vacío. Ida y vuelta por squad2 = mismo contenido QA (plan actualizado); por CSV = mismo banco. Desvíos: (1) menos de 30 filas pasa a aviso, no error (la falta de muestra no es error; la ida y vuelta exigida usa 2 filas); (2) las instrucciones de la plantilla van en la columna 'instrucciones' (se ignora al importar), así 'notas' queda libre; (3) validar_evidencias_contra_corpus junta todos los errores. |
 | P9.4 | ✅ | 2026-10-03 | 527 (suite completa) | tests/datos/banco_universal/{es,en,pt}: 90 casos (30 por idioma: 10 exactas, 5 paráfrasis, 10 trampas mismo tema en par, 3 fuera de dominio, 1 premisa falsa, 1 ambigua), 5 microdocumentos por idioma, 10 capacidades. Multilingüe, no cross-lingual. Fuentes (corpus/*.md, casos.yaml) → construir.py → banco.jsonl + manifiesto.json en el formato interno; una prueba verifica que coinciden. Manifiesto con uso: regresion; exigir_calibrable lo rechaza. Línea base en linea_base.json (light y medium; tabla en Hallazgos). Prueba lenta: falla si hay un falso ok nuevo respecto de la línea base (no exige 0: los 4 de hoy van a P10 sin corregir). Desvío: 1 premisa + 1 ambigua por idioma. linea_base.evaluar restaura el idioma y el perfil globales que rag indexar cambia (contaminaba las pruebas posteriores). |
-| P10.1 | ⬜ | | | |
+| P10.1 | ✅ | 2026-10-03 | 545 (suite completa) | metricas.py: SenalesObservadas (s_ret, s_oov, s_foco, s_cov, s_lex, acuerdo, s_rr, s_qa, dominio tal como decidió la política; None si no aplica). ObservacionEvaluacion gana idioma, regla, senales y respuesta_exacta, que evaluar_backend_activo llena desde el diagnóstico real. FilaCaso (vista por caso). ResumenCobertura: cobertura directa y relacionada, recall sin respuesta, falsos ok, tasa sobre no respondibles y directas sin literal. Global, por grupo (exacta, parafrasis, trampa_mismo_tema, sin_respuesta, fuera_de_dominio, premisa_falsa, ambigua) y por idioma, en ReporteMetricas.cobertura. riesgo_aceptadas (n = respuestas ok, x = falsos ok + directas sin literal) con cota_superior_clopper_pearson (CDF binomial + bisección, sin SciPy) y n_minimo. Falso ok unificado: no respondible y no conversacional. linea_base.py resume desde el reporte formal y coincide con la línea base de P9.4. Sin cambios en política, umbrales ni modelos. Definiciones, referencias y hallazgos en Hallazgos. Una corrida completa tuvo 1 fallo intermitente que no se reprodujo (ni aislado ni en una segunda corrida completa). |
 | P10.2 | ⬜ | | | |
 | P10.3 | ⬜ | | | |
 | P10.4 | ⬜ | | | |
@@ -155,5 +155,65 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
 - **P9.4 — i18n de la cita:** en inglés la respuesta cita «(Fuente: …)». La
   etiqueta de la fuente no sale del paquete de idioma. Va junto con los
   mensajes de la CLI (P11/P13).
+- **P10.1 — definiciones de las métricas** (`rag/evaluacion/metricas.py`).
+  - **Falso ok:** respuesta directa (`respuesta_directa`/`respuesta_parcial`)
+    en un caso no respondible: sin_respuesta, trampa_mismo_tema,
+    fuera_de_dominio, premisa_falsa o ambigua. Las conversacionales no
+    cuentan; es la misma definición en las métricas viejas y en las nuevas.
+  - **Directa sin literal:** una respondible contestada sin mostrar su
+    respuesta literal. Es otro error, contado aparte del falso ok.
+  - **`tasa_falsos_ok_no_respondibles`** = falsos ok / no respondibles:
+    «¿en cuántos casos donde no debía contestar, contestó?».
+  - **`riesgo_aceptadas`** = P(error | el sistema respondió ok).
+    - `n` = respuestas directas emitidas (no el total del banco).
+    - `x` = falsos ok + directas sin literal.
+    - Lleva su cota de Clopper-Pearson; `None` si n = 0.
+  - **`cobertura_directa`** = respondibles con ok / respondibles.
+    **`cobertura_relacionada`** = respondibles en relacionado / respondibles.
+- **P10.1 — Clopper-Pearson.**
+  - `cota_superior_clopper_pearson(0, 50, 0.95)` = 0,05816.
+  - Referencia externa: R `binom.test(1, 10)` da el intervalo exacto al 95%
+    [0,002528579; 0,445016117]. Su límite superior es la cota unilateral al
+    97,5%, y la función da 0,4450161 (verificado también con el cuantil Beta
+    de SciPy, sin usarlo en el código).
+  - `n_minimo(0, 0,05)` = 59, porque n = 58 da 5,03%. Sale de la función, no
+    de una constante.
+- **P10.1 — banco universal con las métricas formales** (es+en+pt; coincide
+  con `linea_base.json`). Ninguna respondible queda sin respuesta.
+
+  | Perfil | Cobertura directa | Exacta | Paráfrasis | Relacionada | Falsos ok (de 45) | Trampas con falso ok | Riesgo aceptadas x/n (observado; cota 95%) |
+  |---|---|---|---|---|---|---|---|
+  | light | 22/45 (0,489) | 22/30 | 0/15 | 23/45 | 1 | 1/30 | 1/23 (0,043; 0,190) |
+  | medium | 32/45 (0,711) | 30/30 | 2/15 | 13/45 | 3 | 2/30 | 3/35 (0,086; 0,207) |
+
+  Por idioma, cobertura directa:
+  - light: es 0,533, en 0,333, pt 0,600.
+  - medium: es 0,733, en 0,733, pt 0,667.
+
+  Estas cotas validan la herramienta. **No certifican** a ningún cliente: el
+  banco universal no representa su corpus.
+- **P10.1 — señales de los falsos ok conocidos** (`τ_ok` 0,8, `τ_foco` 0,5).
+  - light `es-trampa-009`: `ok_lexico`, `s_ret` 0,515, `s_oov` 0,
+    `s_foco` 0,5 (en el umbral), `s_cov` 0,667.
+  - medium `es-trampa-001`: `ok_lector`, `s_qa` 0,833, `s_oov` 0,473,
+    `s_cov` 0,527, `s_rr` 0,457.
+  - medium `en-trampa-004`: `ok_lector`, `s_qa` 0,821, `s_oov` 0, `s_cov` 1,
+    `s_rr` 0,159.
+  - medium `es-ambigua-001`: `ok_lector`, `s_qa` 0,9999, `s_oov` 0,
+    `s_rr` 0,088.
+
+  Tres de los cuatro están a menos de 0,04 de su umbral (s_qa 0,82/0,83;
+  s_foco 0,5). Lo usa P10.2.
+- **P10.1 — `acuerdo` y `s_lex` nunca llegan a la política.**
+  - `acuerdo` (denso vs. BM25) siempre es `None`, así que la condición
+    «acuerdo ≥ 0,5» de light es inerte.
+  - `s_lex` solo existe por oración, en la selección.
+
+  No se corrige aquí: se decide en P10.2.
+- **P10.1 — light en inglés:** de las 5 exactas que no dan ok, 4 tienen
+  `s_oov` 0 y `s_cov` entre 0,67 y 1, pero `s_ret` normalizado entre 0,40 y
+  0,50 (< τ_ok 0,5). La quinta tiene `s_cov` 0,53 (< τ_cov 0,6). La pérdida
+  viene del coseno de e5 en inglés, no del stemmer. Se analiza en P10.2 o
+  después.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.
