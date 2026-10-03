@@ -44,16 +44,20 @@ Descartados: `jinaai/jina-reranker-v2-base-multilingual` (licencia no
 comercial) y `BAAI/bge-m3` como denso (su ONNX trae los pesos en un archivo
 externo de 2,2 GB; demasiado para CPU sin una ganancia medida).
 
-**Decisión pendiente para `heavy` (la toma el usuario):** opciones para el lector:
+**Decisión para `heavy` (2026-10-03):** usa el mismo lector que medium
+(mdeberta fp32) leyendo más pasajes (`leer_m: 4`), con el codificador y el
+reranker grandes y la concordancia. Un perfil significa **más cómputo y más
+comprobaciones**, no necesariamente un modelo distinto en cada etapa. No se
+introduce una exportación dudosa solo para diferenciar perfiles.
 
-1. Usar el mismo lector de medium (mdeberta int8) leyendo más pasajes
-   (`leer_m: 4`), con el reranker y el codificador grandes. Es la opción
-   recomendada: no requiere exportar nada.
-2. Exportar `deepset/xlm-roberta-large-squad2` con `rag modelos exportar`
-   (extra `[exportar]`, requiere torch una vez) y publicar el ONNX en un
-   repositorio propio. Implica atribución CC-BY-4.0.
+Un lector nuevo, o un cuarto modelo «verificador de respuesta», entra solo si:
 
-Mientras tanto, `heavy` usa la opción 1.
+- está preentrenado, es multilingüe y tiene licencia compatible;
+- tiene ONNX para CPU y no requiere fine-tuning;
+- mejora el benchmark de P10 de forma significativa;
+- respeta el presupuesto del perfil (medium solo tiene ~114 ms de margen p95).
+
+No se evalúa antes de P10.
 
 ### Disperso: BM25 propio
 

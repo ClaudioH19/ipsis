@@ -18,6 +18,33 @@ instalación:
 | `medium` | ≤ 1 s | Lo anterior + reranker cross-encoder + lector QA extractivo |
 | `heavy` | ≤ 5 s | Modelos grandes, más candidatos, recuperación dirigida y concordancia |
 
+### Restricción de producto: sin entrenamiento
+
+Es un **producto instalable**: `init → modelos descargar → cargar → indexar →
+servir` funciona sin golden set, con los umbrales conservadores del perfil.
+**Ningún cliente entrena, afina ni reentrena modelos.** Esto excluye:
+
+- fine-tuning, LoRA y adapters;
+- clasificadores por cliente y pesos aprendidos para combinar señales;
+- reglas obligatorias por dominio;
+- PyTorch en producción.
+
+El golden set es opcional y solo **selecciona umbrales escalares** entre
+valores observados.
+
+Una mejora entra al pipeline solo si cumple todo esto:
+
+- es independiente del dominio y del cliente;
+- no crea ni modifica pesos;
+- respeta el presupuesto CPU del perfil;
+- es auditable: qué evidencia eligió, qué señales vio, qué regla decidió y con
+  qué umbral;
+- mejora el banco sin introducir regresiones ocultas.
+
+El producto es **multilingüe** (un proyecto por idioma: es, en, pt…), no
+**cross-lingual**: preguntar en un idioma distinto al del corpus no da `ok`, y
+no se anuncia como soportado hasta que exista un benchmark específico.
+
 El repositorio queda **mínimo, entendible y auditable**: 12 carpetas con
 nombre de dominio dentro de `rag/`, pruebas que reflejan esa estructura,
 una prueba que hace cumplir las dependencias entre capas, y cada decisión
@@ -31,7 +58,7 @@ reconstruible desde archivos legibles.
 | [lexico-y-multilenguaje.md](lexico-y-multilenguaje.md) | BM25 y TF-IDF: estadísticas, señales, salidas tempranas; inventario de reglas atadas al español y paquetes de idioma |
 | [modelos-y-perfiles.md](modelos-y-perfiles.md) | Runtime ONNX, modelos candidatos con licencias y definición de perfiles |
 | [comandos-y-golden.md](comandos-y-golden.md) | Todos los comandos, formato del golden set y algoritmo de calibración |
-| [tareas.md](tareas.md) | 69 tareas en 14 fases, cada una con criterios de aceptación |
+| [tareas.md](tareas.md) | Tareas en 14 fases, cada una con criterios de aceptación |
 | [avance.md](avance.md) | Bitácora que va llenando quien ejecuta |
 
 ## Instrucciones para quien ejecuta
