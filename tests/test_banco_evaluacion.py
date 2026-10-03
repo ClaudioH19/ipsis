@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from rag.banco_evaluacion import (
+from rag.evaluacion.banco import (
     CasoEvaluacion,
     CategoriaPregunta,
     cargar_banco,

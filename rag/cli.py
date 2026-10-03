@@ -7,8 +7,8 @@ Regla de diseño de este módulo, no negociable: **cada comando es una función
 corta que solo orquesta lo que ya vive en `rag/` y `servicio/`.** Si algo
 necesita lógica nueva, esa lógica se escribe en un módulo de `rag/` (ver
 `rag/ingesta/catalogo.py::agregar_documentos_al_catalogo`/`rag/ingesta/ingesta.py::ejecutar_ingesta`,
-`rag/configuracion/carga.py::actualizar_dominio`, `rag/diagnostico.py`,
-`rag/metricas_banco.py::evaluar_backend_activo`), nunca aquí. Los argumentos
+`rag/configuracion/carga.py::actualizar_dominio`, `rag/aplicacion/diagnostico.py`,
+`rag/evaluacion/metricas.py::evaluar_backend_activo`), nunca aquí. Los argumentos
 se arman con ``argparse`` de la biblioteca estándar -- sin dependencias
 nuevas para la CLI, el plugin ya arrastra modelos pesados.
 """
@@ -308,7 +308,7 @@ def _preparar_carpeta_para_servir(carpeta: str, *, reindexar: bool = False) -> P
             raise RuntimeError("no se pudieron cargar los documentos")
     catalogo_despues = catalogo.read_bytes() if catalogo.is_file() else b""
 
-    from rag.diagnostico import verificar_indice
+    from rag.aplicacion.diagnostico import verificar_indice
 
     indice = verificar_indice()
     if reindexar or catalogo_antes != catalogo_despues or not indice.ok:
@@ -392,7 +392,7 @@ def cmd_preguntar(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def cmd_doctor(_args: argparse.Namespace) -> int:
-    from rag.diagnostico import ejecutar_diagnostico
+    from rag.aplicacion.diagnostico import ejecutar_diagnostico
 
     resultados = ejecutar_diagnostico()
     hay_fallas = False
@@ -430,7 +430,7 @@ _MANIFIESTO_GOLDEN = "data/golden/manifiesto.json"
 def cmd_evaluar(args: argparse.Namespace) -> int:
     import json
 
-    from rag.metricas_banco import evaluar_backend_activo
+    from rag.evaluacion.metricas import evaluar_backend_activo
 
     ruta = Path(args.banco)
     if not ruta.exists():
@@ -465,7 +465,7 @@ def cmd_evaluar(args: argparse.Namespace) -> int:
 
 
 def cmd_comparar(args: argparse.Namespace) -> int:
-    from rag.comparacion import cargar_artefacto, comparar_artefactos
+    from rag.evaluacion.benchmark import cargar_artefacto, comparar_artefactos
 
     try:
         informe = comparar_artefactos([cargar_artefacto(ruta) for ruta in args.artefactos])
@@ -488,7 +488,7 @@ def cmd_comparar(args: argparse.Namespace) -> int:
 
 
 def cmd_benchmark(args: argparse.Namespace) -> int:
-    from rag.benchmark import ejecutar_benchmark
+    from rag.evaluacion.benchmark import ejecutar_benchmark
 
     try:
         ruta = ejecutar_benchmark(args.banco, args.salida)
@@ -501,7 +501,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 
 def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
-    from rag.temas_widget import listar_presets
+    from rag.servicio.widget import listar_presets
 
     for nombre, descripcion in listar_presets().items():
         print(f"{nombre}: {descripcion}")
@@ -511,7 +511,7 @@ def cmd_widget_tema_listar(_args: argparse.Namespace) -> int:
 def cmd_widget_tema_aplicar(args: argparse.Namespace) -> int:
     import yaml
 
-    from rag.temas_widget import aplicar_preset
+    from rag.servicio.widget import aplicar_preset
 
     try:
         aplicar_preset(args.preset, args.ruta)
@@ -526,7 +526,7 @@ def cmd_widget_tema_aplicar(args: argparse.Namespace) -> int:
 def cmd_widget_tema_vista_previa(args: argparse.Namespace) -> int:
     import yaml
 
-    from rag.temas_widget import generar_vista_previa
+    from rag.servicio.widget import generar_vista_previa
 
     try:
         salida = generar_vista_previa(args.salida, args.ruta)
@@ -538,7 +538,7 @@ def cmd_widget_tema_vista_previa(args: argparse.Namespace) -> int:
 
 
 def cmd_widget_exportar(args: argparse.Namespace) -> int:
-    from rag.exportar_widget import exportar_widget
+    from rag.servicio.widget import exportar_widget
 
     try:
         salida = exportar_widget(args.carpeta, api=args.api, posicion=args.posicion)

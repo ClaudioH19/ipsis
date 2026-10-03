@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from rag.banco_evaluacion import cargar_banco
+from rag.evaluacion.banco import cargar_banco
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
-from rag.metricas_banco import (
+from rag.evaluacion.metricas import (
     ObservacionEvaluacion,
     calibrar_observaciones_dev,
     evaluar_observaciones,

@@ -9,7 +9,7 @@ cambios son mejoras o regresiones.
 ## Formato versionado
 
 Cada banco tiene un `manifiesto.json` y un archivo JSONL de casos. El esquema
-vigente es `1`, validado por `rag.banco_evaluacion`.
+vigente es `1`, validado por `rag.evaluacion.banco`.
 
 El manifiesto identifica:
 

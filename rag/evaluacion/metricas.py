@@ -10,7 +10,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from rag.banco_evaluacion import BancoEvaluacion, CasoEvaluacion, hash_banco
+from rag.evaluacion.banco import BancoEvaluacion, CasoEvaluacion, hash_banco
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
 
 
@@ -206,7 +206,7 @@ def evaluar_backend_activo(
     import time
     from pathlib import Path
 
-    from rag.banco_evaluacion import cargar_banco
+    from rag.evaluacion.banco import cargar_banco
     from rag.configuracion.carga import cargar_dominio, cargar_proyecto
     from rag.nucleo.esquemas import QueryAnalysis
     from rag.ingesta.parsear import parsear_documento

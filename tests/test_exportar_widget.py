@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from rag.cli import main
-from rag.exportar_widget import exportar_widget
+from rag.servicio.widget import exportar_widget
 
 
 def test_exporta_web_component_y_snippet(tmp_path):
