@@ -422,7 +422,7 @@ def cmd_evaluar(args: argparse.Namespace) -> int:
 
     ruta = Path(args.banco)
     if not ruta.exists():
-        print("No hay golden set en data/golden/ todavía -- no se puede evaluar.")
+        print("No hay golden set en golden/banco/ todavía -- no se puede evaluar.")
         print("El formato versionado usa manifiesto.json + golden.jsonl con pregunta, "
               "categoría, split, estado esperado y evidencia literal con offsets.")
         print("Consulta README.md para el formato y las recomendaciones de evaluación.")
@@ -615,7 +615,7 @@ def _construir_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("evaluar", help="Corre una evaluación rápida si hay golden set.")
     p.add_argument("--banco", default=_MANIFIESTO_GOLDEN,
-                   help="Manifiesto versionado del banco (por defecto: data/golden/manifiesto.json).")
+                   help="Manifiesto versionado del banco (por defecto: golden/banco/manifiesto.json).")
     p.add_argument("--salida", default=None,
                    help="Ruta opcional para guardar el reporte JSON.")
     p.set_defaults(func=cmd_evaluar)

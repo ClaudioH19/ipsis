@@ -1,11 +1,13 @@
-# Golden set manual
+# Golden set del cliente
 
-Este directorio está reservado para el banco manual del dominio real y no se
-mezcla con el conjunto sintético de pruebas ubicado en
-`tests/evaluacion/sintetico/`.
+El golden set es el banco de preguntas reales del cliente con el que se mide
+y calibra el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
+se mezcla con el banco sintético de las pruebas (`tests/datos/banco/`).
 
-El archivo final será `golden.jsonl`, acompañado por un `manifiesto.json` con
-el esquema definido en `rag.banco_evaluacion`. Debe contener entre 30 y 50
+El banco versionado queda en `golden/banco/` (`manifiesto.json` más los casos
+en JSONL) con el esquema de `rag.evaluacion.banco`. Los comandos
+`rag golden plantilla` e `rag golden importar` (plan V3, fase P9) generan y
+cargan ese banco a partir de un CSV simple. Debe contener entre 30 y 50
 preguntas revisadas por una persona conocedora del corpus, cubrir las seis
 categorías (`exacta`, `parafrasis`, `sin_respuesta`, `premisa_falsa`,
 `ambigua`, `conversacional`) y separar casos `dev` y `test` antes de calibrar.

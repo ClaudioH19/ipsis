@@ -122,7 +122,7 @@ seleccionar las implementaciones registradas sin cambiar el pipeline.
 Para evaluar el backend activo contra un banco versionado y guardar el reporte:
 
 ```bash
-rag evaluar --banco data/golden/manifiesto.json --salida reporte.json
+rag evaluar --banco golden/banco/manifiesto.json --salida reporte.json
 ```
 
 El comando devuelve código distinto de cero si detecta algún falso `ok`.
@@ -131,7 +131,7 @@ Para reproducir una comparación aislada entre Qdrant denso e híbrido con el
 banco sintético incluido:
 
 ```bash
-rag benchmark --banco tests/evaluacion/sintetico/manifiesto.json \
+rag benchmark --banco tests/datos/banco/manifiesto.json \
   --salida reportes/benchmark
 ```
 
@@ -258,10 +258,11 @@ instalación normal, no el checkout del repositorio.
 ## Documentación
 
 - [Plan V3: arquitectura, tareas y avance](docs/plan/README.md)
-- [Referencia de configuración](docs/referencia/configuracion.md)
-- [Metodologías implementadas](docs/metodologias/README.md)
-- [Metodología de recuperación actual](docs/metodologias/recuperacion.md)
-- [Instalación en sitios web](docs/referencia/instalacion-web.md)
+- [Referencia de configuración](docs/guia/configuracion.md)
+- [Metodologías implementadas](docs/metodologia/README.md)
+- [Metodología de recuperación actual](docs/metodologia/recuperacion.md)
+- [Instalación en sitios web](docs/guia/web.md)
+- [Golden set del cliente](docs/guia/golden.md)
 
 Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 2` y
 se validan estrictamente al cargarse. Esto permite detectar errores de nombre

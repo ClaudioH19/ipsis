@@ -6,7 +6,7 @@ conocidas; cuando una tarea las corrija a propósito, se regenera el archivo
 esperado y el cambio se documenta en ``docs/plan/avance.md``.
 
 El servidor corre en un subproceso con ``rag servir`` sobre el corpus sintético
-de ``tests/caracterizacion/corpus``, de modo que la prueba solo depende del
+de ``tests/datos/corpus``, de modo que la prueba solo depende del
 contrato HTTP, no de la estructura interna del servicio.
 
 Regenerar el archivo esperado (revisar el diff antes de hacer commit)::

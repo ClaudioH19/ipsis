@@ -17,8 +17,10 @@ dist
 *.egg-info
 
 tests
-data
-documentos
+docs
+ejemplos
+graphify-out
+.rag
 
 .env
 .env.*
@@ -29,5 +31,3 @@ documentos
 .DS_Store
 Thumbs.db
 
-PLAN_V2.md
-docker-compose*.yml

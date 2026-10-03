@@ -385,7 +385,7 @@ def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None
       NO tiene efecto en este modo (advertencia del propio cliente) -- solo
       sirve para evaluación rápida sin Docker.
     - "servidor": ``QdrantClient(url=url_servidor)``, contra el Qdrant real
-      levantado con ``docker compose up -d qdrant`` (ver docker-compose.yml
+      levantado con ``docker compose up -d qdrant`` (ver rag/recursos/despliegue/docker-compose.yml.plantilla
       y README.md). Aquí los índices de payload SÍ toman efecto.
     """
     import os
