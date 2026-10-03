@@ -1,7 +1,7 @@
 """Retriever sobre Qdrant: embeddings densos + BM25 sparse con fusión RRF.
 
 Adapta ``rag.indice.qdrant`` al contrato ``rag.nucleo.contratos.Retriever`` sin cambiar
-cómo se consulta Qdrant. Qdrant y sentence-transformers se importan solo al
+cómo se consulta Qdrant. Qdrant y onnxruntime se importan solo al
 construir el retriever desde la configuración.
 """
 from __future__ import annotations

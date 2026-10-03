@@ -32,7 +32,7 @@ La sección `componentes` selecciona implementaciones por nombre:
 componentes:
   parser: builtin
   chunker: builtin
-  dense_encoder: sentence_transformers
+  dense_encoder: onnx
   sparse_encoder: bm25
   retriever: qdrant
   fusion: rrf
@@ -64,7 +64,7 @@ fusion = registro.crear("fusion", "rrf", k=60)
 ```
 
 Los adaptadores base disponibles no descargan modelos durante el registro.
-`sentence_transformers` carga el modelo solo al crear el encoder. La conexión
+`onnx` abre la sesión del modelo solo al usarlo por primera vez. La conexión
 a Qdrant y los rerankers se configura desde el servicio porque depende del
 índice, la colección y los recursos disponibles.
 

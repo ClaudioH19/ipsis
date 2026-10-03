@@ -40,7 +40,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P5.2 | ✅ | 2026-10-03 | 6 nuevas | ModeloSpec con ONNX por arquitectura (x86_64/arm64) y caché global en formato huggingface_hub; ruta_local() falla con 'rag modelos descargar'. huggingface-hub declarado como dependencia. |
 | P5.3 | ✅ | 2026-10-03 | 398 rápidas + 3 modelos | ModeloOnnx (sesión única, tokenizador, entradas) y CodificadorDenso con prefijos y pooling promedio. Verificado: vectores idénticos a sentence-transformers (coseno 1,0). Registrado como dense_encoder: onnx. onnxruntime y tokenizers declarados. |
 | P5.4 | ✅ | 2026-10-03 | 429 (suite completa con modelos) | Indexación y consulta con CodificadorDenso ONNX: los pasajes llevan 'passage: ' (corrige el defecto de E5). Manifiesto por colección con modelo, dimensión, stemmer, hash del corpus, versión del payload e inventario de entidades (reemplaza el archivo de inventario). Prefijos fuera de la configuración: los define el catálogo. Caracterización regenerada: solo cambian los cosenos top1 (±0,01), ningún estado ni texto. rag doctor revisa el modelo en la caché global. |
-| P5.5 | ⬜ | | | |
+| P5.5 | ✅ | 2026-10-03 | 429 (suite completa) | Sin sentence-transformers ni torch: dense_encoder por defecto 'onnx' (la migración v2→v3 convierte 'sentence_transformers'). Extra [exportar] con optimum y torch solo para desarrollo. Dockerfile y CI sin torch. Verificado en un venv limpio (229 MB): init → cargar → indexar → consulta funcionan, torch no está instalado ni cargado. |
 | P5.6 | ⬜ | | | |
 | P6.1 | ⬜ | | | |
 | P6.2 | ⬜ | | | |

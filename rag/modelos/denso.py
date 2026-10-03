@@ -2,7 +2,7 @@
 
 Aplica los prefijos que el modelo exige (E5: ``query: `` y ``passage: ``),
 promedia los estados ocultos con la máscara de atención y normaliza a norma
-1, como hace sentence-transformers para E5.
+1 (el pooling que usa E5).
 """
 from __future__ import annotations
 
