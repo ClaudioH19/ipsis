@@ -298,7 +298,7 @@ def avisos_de_tamano(filas: list[FilaGolden], minimo: int = MINIMO_FILAS) -> tup
     return errores, avisos
 
 
-def _validar_fila(fila: FilaGolden, ids_respondibles: set[str]) -> list[str]:
+def _validar_fila(fila: FilaGolden, ids_respondibles: set[str], ids: set[str]) -> list[str]:
     errores = []
     if fila.tipo not in TIPOS:
         errores.append(f"{fila.origen}: tipo {fila.tipo!r} inválido; usa {', '.join(TIPOS)}")
@@ -311,7 +311,7 @@ def _validar_fila(fila: FilaGolden, ids_respondibles: set[str]) -> list[str]:
             errores.append(f"{fila.origen}: subtipo {fila.subtipo!r} inválido; usa {', '.join(SUBTIPOS)}")
         elif fila.tipo not in {"sin_respuesta", "premisa_falsa"}:
             errores.append(f"{fila.origen}: 'trampa_mismo_tema' solo aplica a sin_respuesta o premisa_falsa")
-    if fila.par is not None and fila.par not in ids_respondibles:
+    if fila.par is not None and fila.par in ids and fila.par not in ids_respondibles:
         errores.append(f"{fila.origen}: par {fila.par!r} no es el id de una fila respondible")
     return errores
 
@@ -337,8 +337,12 @@ def a_banco(
     errores_tamano, avisos = avisos_de_tamano(filas, minimo)
     errores += errores_tamano
     ids_respondibles = {f.id for f in filas if f.tipo == "respondible"}
+    ids = {f.id for f in filas}
     for fila in filas:
-        errores += _validar_fila(fila, ids_respondibles)
+        errores += _validar_fila(fila, ids_respondibles, ids)
+        if fila.par is not None and fila.par not in ids:
+            avisos.append(f"{fila.origen}: su par {fila.par!r} quedó sin completar; se mide sin par")
+            fila.par = None
     if errores:
         raise ErrorGolden(errores)
 
@@ -379,8 +383,164 @@ def a_banco(
     return ResultadoImportacion(BancoEvaluacion(manifiesto=manifiesto, casos=casos), avisos)
 
 
+# ---------------------------------------------------------------------------
+# Plantilla para el cliente (``rag golden plantilla``)
+# ---------------------------------------------------------------------------
+PROPORCION_TRAMPAS = 0.35
+LARGO_MAXIMO_SECCION = 1200
+LARGO_MINIMO_SECCION = 40
+LARGO_FRAGMENTO = 240
+TERMINOS_CLAVE = 5
+
+
+@dataclass(frozen=True)
+class Seccion:
+    doc_id: str
+    titulo: str  # ruta de sección («Garantía > Exclusiones»), puede ser vacía
+    texto: str
+
+
+@dataclass
+class Plantilla:
+    filas: list[dict]
+    leeme: str
+    avisos: list[str] = field(default_factory=list)
+
+
+def secciones_de(documento) -> list[Seccion]:
+    """Bloques consecutivos con la misma ruta de sección; las secciones largas
+    se parten por bloques para que cada fila apunte a un fragmento abarcable."""
+    secciones: list[Seccion] = []
+    actual: list[str] = []
+    ruta: list[str] | None = None
+
+    def cerrar():
+        texto = "\n".join(actual).strip()
+        if len(texto) >= LARGO_MINIMO_SECCION:
+            secciones.append(Seccion(documento.doc_id, " > ".join(ruta or []), texto))
+        actual.clear()
+
+    for bloque in documento.bloques:
+        if bloque.tipo_contenido == "titulo":
+            continue
+        if bloque.seccion_path != ruta or sum(map(len, actual)) + len(bloque.texto) > LARGO_MAXIMO_SECCION:
+            cerrar()
+            ruta = bloque.seccion_path
+        actual.append(bloque.texto)
+    cerrar()
+    return secciones
+
+
+def _fragmento(texto: str) -> str:
+    plano = _RE_ESPACIOS.sub(" ", texto).strip()
+    if len(plano) <= LARGO_FRAGMENTO:
+        return plano
+    return plano[:LARGO_FRAGMENTO].rsplit(" ", 1)[0] + " …"
+
+
+def _terminos_clave(texto: str, est, paquete) -> list[str]:
+    from rag.lenguaje.lexico import terminos_pregunta, tfidf_vector
+
+    vector = tfidf_vector(terminos_pregunta(texto, paquete), est)
+    # Las cifras sueltas no dicen de qué trata la sección.
+    candidatos = [t for t in vector if any(c.isalpha() for c in t)]
+    mejores = sorted(candidatos, key=lambda t: (-vector[t], t))[:TERMINOS_CLAVE]
+    superficie = getattr(est, "superficie", {}) or {}
+    return [superficie.get(t, t) for t in mejores]
+
+
+def elegir_secciones(secciones: list[Seccion], k: int, est, paquete) -> list[int]:
+    """``k`` secciones diversas (MMR sobre TF-IDF) que cubren todos los documentos.
+
+    Se ordena todo el corpus por MMR; primero entra la mejor sección de cada
+    documento (en ese orden) y luego el resto, siguiendo el orden de MMR.
+    """
+    from rag.lenguaje.lexico import mmr, terminos_pregunta, tfidf_vector
+
+    vectores = [tfidf_vector(terminos_pregunta(s.texto, paquete), est) for s in secciones]
+    orden = mmr(vectores, k=len(vectores))
+    elegidos: list[int] = []
+    for doc_id in dict.fromkeys(secciones[i].doc_id for i in orden):
+        elegidos.append(next(i for i in orden if secciones[i].doc_id == doc_id))
+    elegidos += [i for i in orden if i not in elegidos]
+    return sorted(elegidos[:k], key=orden.index)
+
+
+def generar_plantilla(corpus, paquete, n: int = 40) -> Plantilla:
+    """Filas de ``golden.csv`` para que el cliente complete.
+
+    ~35% son trampas «mismo tema, dato ausente», cada una en par con una fila
+    respondible de la misma sección; 3 son conversacionales ya completas; el
+    resto son respondibles de secciones diversas. No usa modelos ni genera
+    preguntas: solo elige secciones y escribe instrucciones.
+
+    El TF-IDF se calcula sobre las secciones (no sobre los chunks del índice):
+    así los términos clave distinguen una sección de las demás.
+    """
+    from rag.indice.estadisticas import EstadisticasLexicas
+
+    textos = paquete.golden_instrucciones if paquete is not None else None
+    if textos is None:
+        from rag.lenguaje.paquete import cargar_paquete
+
+        textos = cargar_paquete("en").golden_instrucciones
+    secciones = [s for documento in corpus for s in secciones_de(documento)]
+    if not secciones:
+        raise ErrorGolden(["no hay texto indexable en los documentos: carga documentos antes de generar la plantilla"])
+    est = EstadisticasLexicas.construir([s.texto for s in secciones], paquete)
+    avisos: list[str] = []
+    n_conversacionales = len(textos.conversacionales)
+    n_trampas = round(n * PROPORCION_TRAMPAS)
+    n_respondibles = n - n_conversacionales - n_trampas
+    if len(secciones) < n_respondibles:
+        avisos.append(f"el corpus tiene {len(secciones)} secciones: se generan menos filas que las {n} pedidas")
+        n_respondibles = len(secciones)
+        # ~35% del total, contando las conversacionales; nunca más trampas que pares.
+        n_trampas = min(n_respondibles, round((n_respondibles + n_conversacionales) * PROPORCION_TRAMPAS
+                                              / (1 - PROPORCION_TRAMPAS)))
+    elegidas = elegir_secciones(secciones, n_respondibles, est, paquete)
+    documentos = {d.doc_id for d in corpus}
+    cubiertos = {secciones[i].doc_id for i in elegidas}
+    if documentos - cubiertos:
+        avisos.append(f"sin filas para: {', '.join(sorted(documentos - cubiertos))} (n demasiado chico)")
+
+    filas: list[dict] = []
+    for numero, i in enumerate(elegidas, start=1):
+        seccion = secciones[i]
+        clave = ", ".join(_terminos_clave(seccion.texto, est, paquete))
+        comunes = {"documento": seccion.doc_id, "fragmento_sugerido": _fragmento(seccion.texto),
+                   "terminos_clave": clave}
+        id_respondible = f"r{numero:03d}"
+        filas.append({"id": id_respondible, "tipo": "respondible", **comunes,
+                      "notas": textos.nota_respondible.format(documento=seccion.doc_id, terminos=clave,
+                                                              par=id_respondible)})
+        if numero <= n_trampas:
+            filas.append({"id": f"t{numero:03d}", "tipo": "sin_respuesta", "subtipo": "trampa_mismo_tema",
+                          "par": id_respondible, **comunes,
+                          "notas": textos.nota_trampa.format(documento=seccion.doc_id, terminos=clave,
+                                                             par=id_respondible)})
+    for numero, pregunta in enumerate(textos.conversacionales, start=1):
+        filas.append({"id": f"c{numero:03d}", "pregunta": pregunta, "tipo": "conversacional"})
+    return Plantilla([{c: fila.get(c, "") for c in COLUMNAS} for fila in filas], textos.leeme, avisos)
+
+
+def escribir_plantilla(plantilla: Plantilla, carpeta: str | Path) -> tuple[Path, Path]:
+    """Escribe ``golden.csv`` (UTF-8 con BOM, para que Excel respete las tildes)
+    y ``LEEME.txt`` en ``carpeta``."""
+    carpeta = Path(carpeta)
+    carpeta.mkdir(parents=True, exist_ok=True)
+    ruta_csv, ruta_leeme = carpeta / "golden.csv", carpeta / "LEEME.txt"
+    with ruta_csv.open("w", encoding="utf-8-sig", newline="") as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS)
+        escritor.writeheader()
+        escritor.writerows(plantilla.filas)
+    ruta_leeme.write_text(plantilla.leeme, encoding="utf-8")
+    return ruta_csv, ruta_leeme
+
+
 __all__ = [
     "ACEPTADAS_PARA_CERTIFICAR", "COLUMNAS", "ErrorGolden", "FilaGolden", "MINIMO_FILAS", "ResultadoImportacion",
     "SUBTIPOS", "TIPOS", "Ubicacion", "a_banco", "asignar_ids", "avisos_de_tamano", "leer_csv", "leer_golden",
     "leer_jsonl", "leer_squad2", "oracion_de", "separar_dev_test", "ubicar_respuesta",
+    "Plantilla", "Seccion", "elegir_secciones", "escribir_plantilla", "generar_plantilla", "secciones_de",
 ]

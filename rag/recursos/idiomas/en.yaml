@@ -282,3 +282,35 @@ interfaz:
   error_http: The service could not answer (HTTP {estado}).
   error_red: Could not reach the assistant. Check your connection and try again.
 contracciones: {}
+golden_instrucciones:
+  nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).
+    In respuesta_literal copy the minimal answer exactly as written.'
+  nota_trampa: Write a question about the SAME topic ({terminos}) and the same entity as row {par}, but asking for
+    information that is NOT in any document. Leave respuesta_literal empty.
+  conversacionales:
+  - hello
+  - thanks
+  - What can you do?
+  leeme: "GOLDEN SET: TEST QUESTIONS FOR THE ASSISTANT\n============================================\n\nThis file\
+    \ explains how to fill in golden.csv. It measures whether the\nassistant answers correctly, and whether it abstains\
+    \ when the documents do\nnot contain the answer. It is optional: the assistant works without a\ngolden set.\
+    \ No model is trained: results are only measured and thresholds\nadjusted.\n\nHOW TO FILL IT IN\n-----------------\n\
+    1. Open golden.csv with Excel, LibreOffice or a text editor.\n2. In each row write a question in the «pregunta»\
+    \ column, the way a real\n   user would.\n3. Do not change the «id», «tipo», «par» or «subtipo» columns.\n4.\
+    \ Rows left without a question are ignored.\n5. You can add new rows (leave «id» empty; it is generated).\n\
+    6. Save as CSV UTF-8.\n\nROW TYPES\n---------\nrespondible\n  The answer EXISTS literally in the documents.\
+    \ In «respuesta_literal»\n  copy the minimal answer exactly as written.\n    Question:       How long is the\
+    \ warranty?\n    Literal answer: 18 months\n\nsin_respuesta («trampa_mismo_tema» rows)\n  A question about the\
+    \ SAME topic and entity as its paired row («par»\n  column) that asks for information NOT present in any document.\
+    \ Leave\n  «respuesta_literal» empty.\n    GOOD: the document says how long the warranty lasts, but not who\n\
+    \          approves it  ->  Who approves the warranty?\n    BAD:  What is the capital of Japan?  (unrelated\
+    \ to the documents: it\n          tests nothing useful)\n  These are the most important rows: they check that\
+    \ the assistant does\n  not answer with a similar passage that lacks the information.\n\npremisa_falsa (optional,\
+    \ add rows)\n  Assumes something that does not exist: «What does article 99 say?» when\n  there is no article\
+    \ 99.\n\nambigua (optional, add rows)\n  Cannot be answered without clarification: «How long does it last?».\n\
+    \nconversacional\n  Greetings and courtesy; already filled in.\n\nHELPERS\n-------\n«fragmento_sugerido» and\
+    \ «terminos_clave» show which section each row\ncomes from. «documento» names the file; use it if the same text\
+    \ appears in\nseveral documents.\n\nSIZE\n----\n30 to 60 questions are enough to tune and compare profiles.\
+    \ To CERTIFY\nstatistically a false-answer risk below 5%, at least 59 accepted answers\nwithout error are needed\
+    \ in the test split (over 120 answerable questions\nin total). The assistant warns on import if the size is\
+    \ not enough.\n\nNext: rag golden importar golden/golden.csv\n"

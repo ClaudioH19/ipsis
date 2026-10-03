@@ -160,7 +160,7 @@ def test_a_banco_junta_todos_los_errores():
     filas = [
         FilaGolden(id="a", pregunta="¿Precio?", tipo="respondible", origen="g.csv:2"),
         FilaGolden(id="b", pregunta="¿Otra?", tipo="inventado", origen="g.csv:3"),
-        FilaGolden(id="c", pregunta="¿Qué?", tipo="sin_respuesta", par="zzz", origen="g.csv:4"),
+        FilaGolden(id="c", pregunta="¿Qué?", tipo="sin_respuesta", par="b", origen="g.csv:4"),
         FilaGolden(id="d", pregunta="¿Cuánto?", tipo="respondible", respuesta_literal="99 meses", origen="g.csv:5"),
     ]
     with pytest.raises(ErrorGolden) as exc:
@@ -169,3 +169,115 @@ def test_a_banco_junta_todos_los_errores():
     assert "g.csv:2" in texto and "g.csv:3" in texto and "g.csv:4" in texto
     with pytest.raises(ErrorGolden, match="g.csv:5"):
         a_banco([filas[3]], DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+
+
+def test_par_sin_completar_es_aviso_no_error():
+    est, es = _est()
+    filas = [FilaGolden(id="t1", pregunta="¿Qué incluye la garantía?", tipo="sin_respuesta",
+                        subtipo="trampa_mismo_tema", par="r9", origen="g.csv:2")]
+    resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es, minimo=1)
+    assert resultado.banco.casos[0].par is None
+    assert any("r9" in a and "sin completar" in a for a in resultado.avisos)
+
+
+# --- plantilla (P9.2) ------------------------------------------------------------
+TEMAS = {
+    "garantia": ["garantía cubre meses compra", "exclusiones daños golpes humedad", "boleta número serie reclamo",
+                 "extensión garantía pago anual", "servicio técnico autorizado reparación", "reemplazo equipo falla"],
+    "riego": ["riego goteo caudal litros hora", "presión bomba válvula filtro", "frecuencia riego verano invierno",
+              "fertilizante dosis semana", "sensor humedad suelo lectura", "mantención mangueras limpieza"],
+    "envios": ["envío regiones plazo días hábiles", "costo despacho tarifa peso", "seguimiento código pedido",
+               "devolución producto dañado", "retiro tienda horario", "embalaje frágil recargo"],
+}
+
+
+def _corpus_sintetico():
+    from rag.ingesta.parsear import Bloque, DocumentoParseado
+
+    documentos = []
+    for doc_id, temas in TEMAS.items():
+        bloques, texto, pos = [], "", 0
+        for i, tema in enumerate(temas):
+            parrafo = f"La sección {i} trata de {tema}. Detalle: {tema} según el manual de {doc_id}."
+            bloques.append(Bloque(indice=i, seccion_path=[f"{doc_id} {i}"], seccion_nivel=1,
+                                  tipo_contenido="narrativo", texto=parrafo, offset_inicio=pos,
+                                  offset_fin=pos + len(parrafo)))
+            texto += parrafo + "\n"
+            pos = len(texto)
+        documentos.append(DocumentoParseado(doc_id=doc_id, doc_titulo=doc_id, version="1", ruta_origen="",
+                                            texto_completo=texto, bloques=bloques))
+    return documentos
+
+
+def test_plantilla_cubre_documentos_con_pares_y_35_por_ciento_de_trampas():
+    from rag.evaluacion.golden import generar_plantilla
+
+    plantilla = generar_plantilla(_corpus_sintetico(), cargar_paquete("es"), n=20)
+    filas = plantilla.filas
+    assert len(filas) == 20 and plantilla.avisos == []
+    assert {f["documento"] for f in filas if f["documento"]} == set(TEMAS)
+    trampas = [f for f in filas if f["tipo"] == "sin_respuesta"]
+    assert len(trampas) == 7  # 35% de 20
+    respondibles = {f["id"]: f for f in filas if f["tipo"] == "respondible"}
+    for trampa in trampas:
+        assert trampa["subtipo"] == "trampa_mismo_tema"
+        par = respondibles[trampa["par"]]  # cada trampa apunta a una respondible…
+        assert par["documento"] == trampa["documento"]  # …de la misma sección
+        assert par["fragmento_sugerido"] == trampa["fragmento_sugerido"]
+        assert trampa["par"] in trampa["notas"]
+    conversacionales = [f for f in filas if f["tipo"] == "conversacional"]
+    assert [f["pregunta"] for f in conversacionales] == ["hola", "gracias", "¿Qué puedes hacer?"]
+    assert all(f["terminos_clave"] and not any(t.strip().isdigit() for t in f["terminos_clave"].split(","))
+               for f in respondibles.values())
+
+
+def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
+    from rag.evaluacion.golden import escribir_plantilla, generar_plantilla
+
+    corpus = _corpus_sintetico()
+    ruta_csv, ruta_leeme = escribir_plantilla(generar_plantilla(corpus, cargar_paquete("es"), n=20), tmp_path)
+    assert "trampa_mismo_tema" in ruta_leeme.read_text(encoding="utf-8")
+    assert ruta_csv.read_bytes().startswith(b"\xef\xbb\xbf")  # BOM: Excel respeta las tildes
+    assert [f.tipo for f in leer_csv(ruta_csv)] == ["conversacional"] * 3  # sin completar se ignoran
+
+    # El cliente completa un par: la respondible y su trampa.
+    import csv
+
+    with ruta_csv.open(encoding="utf-8-sig", newline="") as archivo:
+        filas = list(csv.DictReader(archivo))
+    respondible = next(f for f in filas if f["id"] == "r001")
+    trampa = next(f for f in filas if f["par"] == "r001")
+    documento = next(d for d in corpus if d.doc_id == respondible["documento"])
+    respondible["pregunta"] = "¿De qué trata la sección?"
+    respondible["respuesta_literal"] = documento.texto_completo.split(". ")[0].split(" de ", 1)[1]
+    trampa["pregunta"] = "¿Quién aprueba eso?"
+    with ruta_csv.open("w", encoding="utf-8-sig", newline="") as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=list(filas[0]))
+        escritor.writeheader()
+        escritor.writerows(filas)
+
+    leidas = leer_csv(ruta_csv)
+    assert len(leidas) == 5
+    textos = {d.doc_id: d.texto_completo for d in corpus}
+    est = EstadisticasLexicas.construir(list(textos.values()), cargar_paquete("es"))
+    resultado = a_banco(leidas, textos, CORPUS, estadisticas=est, paquete=cargar_paquete("es"), minimo=1)
+    casos = {c.id: c for c in resultado.banco.casos}
+    assert casos[trampa["id"]].par == "r001" and casos[trampa["id"]].subtipo == "trampa_mismo_tema"
+    assert casos["r001"].respondible
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_plantilla_en_cada_idioma(idioma):
+    from rag.evaluacion.golden import generar_plantilla
+
+    paquete = cargar_paquete(idioma)
+    plantilla = generar_plantilla(_corpus_sintetico(), paquete, n=20)
+    assert plantilla.leeme == paquete.golden_instrucciones.leeme
+    assert "{" not in "".join(f["notas"] for f in plantilla.filas)  # sin variables sin reemplazar
+    assert [f["pregunta"] for f in plantilla.filas if f["tipo"] == "conversacional"] == \
+        paquete.golden_instrucciones.conversacionales
+    import re
+
+    patrones = paquete.conversacional.patrones
+    for pregunta in paquete.golden_instrucciones.conversacionales:  # el motor las reconoce como conversacionales
+        assert any(re.search(p, pregunta.lower()) for lista in patrones.values() for p in lista), pregunta

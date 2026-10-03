@@ -42,6 +42,20 @@ class Mensajes(_Estricto):
     conectores: dict[str, list[str]] = Field(default_factory=dict)
 
 
+class GoldenInstrucciones(_Estricto):
+    """Textos de ``rag golden plantilla`` (ver docs/plan/comandos-y-golden.md §3).
+
+    ``nota_*`` admiten ``{terminos}`` (términos clave de la sección),
+    ``{documento}`` y ``{par}``. ``conversacionales`` son tres preguntas ya
+    completas.
+    """
+
+    leeme: str
+    nota_respondible: str
+    nota_trampa: str
+    conversacionales: list[str] = Field(min_length=3, max_length=3)
+
+
 class PaqueteIdioma(_Estricto):
     codigo: str = Field(min_length=2)
     nombre: str = Field(min_length=1)
@@ -64,7 +78,7 @@ class PaqueteIdioma(_Estricto):
     # Contracciones obligatorias al insertar variables en un texto fijo
     # (en español: «de el» -> «del»).
     contracciones: dict[str, str] = Field(default_factory=dict)
-    golden_instrucciones: str | None = None
+    golden_instrucciones: GoldenInstrucciones | None = None
 
 
 def _carpeta_paquetes():
