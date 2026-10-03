@@ -56,6 +56,7 @@ class Motor:
         max_fragmentos_adicionales: int = 2,
         abstencion_calibrada: bool | None = None,
         etapas: list | None = None,
+        reranker: Any = None,
     ) -> None:
         if top_k < 1:
             raise ValueError("top_k debe ser mayor que cero")
@@ -84,6 +85,7 @@ class Motor:
         )
         self.etapas = etapas if etapas is not None else etapas_por_defecto(self)
         self.perfil_instalacion = None
+        self.reranker = reranker
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         valores.setdefault("backend", self.backend)
@@ -104,8 +106,14 @@ class Motor:
         return self.analizador.analizar(pregunta, {"id_sesion": id_sesion})
 
     def calentar(self) -> None:
+        """Carga los modelos antes de aceptar tráfico: una falta de modelo se
+        detecta al arrancar, no en la primera pregunta."""
         self._validar_listo()
         self.retriever.calentar()
+        for modelo in (self.reranker,):
+            calentar = getattr(modelo, "calentar", None)
+            if callable(calentar):
+                calentar()
 
     def n_chunks(self) -> int:
         self._validar_listo()
@@ -124,7 +132,10 @@ class Motor:
             cerrar()
 
     def _recuperar(self, consulta: QueryAnalysis) -> list[RetrievalCandidate]:
-        return self.retriever.recuperar(consulta, self.top_k)
+        # Con reranker se recuperan más candidatos y él elige los mejores.
+        perfil = self.perfil_instalacion
+        limite = perfil.cascada.recuperar_n if self.reranker is not None and perfil is not None else self.top_k
+        return self.retriever.recuperar(consulta, limite)
 
     def _completar_premisa(
         self,

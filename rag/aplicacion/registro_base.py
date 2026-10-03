@@ -189,6 +189,13 @@ def _crear_retriever_qdrant(*args: Any, **kwargs: Any):
     return RetrieverQdrant.desde_configuracion(*args, **kwargs)
 
 
+def _crear_reranker_onnx(modelo: str, **opciones: Any):
+    from rag.modelos.catalogo import obtener
+    from rag.modelos.reranker import RerankerOnnx
+
+    return RerankerOnnx(obtener(modelo), **opciones)
+
+
 def _crear_codificador_onnx(modelo: str = "intfloat/multilingual-e5-small", **opciones: Any):
     from rag.modelos.catalogo import obtener
     from rag.modelos.denso import CodificadorDenso
@@ -203,11 +210,12 @@ def _clases_etapa() -> list:
     from rag.consulta.etapas.politica import EtapaPolitica
     from rag.consulta.etapas.recuperacion import EtapaRecuperacion, EtapaSenales
     from rag.consulta.etapas.redaccion import EtapaRedaccion
+    from rag.consulta.etapas.reranking import EtapaReranking
     from rag.consulta.etapas.seleccion import EtapaEvidencia
     from rag.consulta.etapas.verificacion import EtapaVerificacion
 
     return [EtapaConversacional, EtapaAnalisis, EtapaSenales, EtapaFiltros, EtapaRecuperacion,
-            EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
+            EtapaReranking, EtapaPolitica, EtapaEvidencia, EtapaRedaccion, EtapaVerificacion]
 
 
 def registrar_componentes_base(
@@ -221,6 +229,7 @@ def registrar_componentes_base(
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
     for clase in _clases_etapa():
         destino.registrar("etapa", clase.nombre, clase, reemplazar=True)
+    destino.registrar("reranker", "onnx", _crear_reranker_onnx, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
     from rag.consulta.etapas.politica import LayeredV1
 

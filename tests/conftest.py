@@ -72,7 +72,7 @@ def proyecto_suite(tmp_path_factory: pytest.TempPathFactory) -> Path:
     anterior = Path.cwd()
     os.chdir(carpeta)
     try:
-        assert main(["init"]) == 0
+        assert main(["init", "--perfil", "light"]) == 0
     finally:
         os.chdir(anterior)
     return carpeta

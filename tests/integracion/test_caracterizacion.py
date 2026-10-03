@@ -79,7 +79,7 @@ def url_servicio():
     proceso = None
     try:
         _rag(["init", "--nombre-asistente", "Asistente Aqualis",
-              "--descripcion-dominio", "los manuales del purificador Aqualis"], proyecto)
+              "--descripcion-dominio", "los manuales del purificador Aqualis", "--perfil", "light"], proyecto)
         _rag(["cargar", str(CORPUS)], proyecto)
         _rag(["indexar"], proyecto)
 
