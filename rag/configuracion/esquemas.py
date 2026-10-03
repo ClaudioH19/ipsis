@@ -23,12 +23,13 @@ class AsistenteConfig(ConfiguracionEstricta):
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
     descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
     idioma: str = Field(default="es", min_length=2)
+    perfil: Literal["light", "medium", "heavy"] = "light"
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):
-    modelo: str = Field(min_length=1)
+    modelo: str | None = None  # si falta, el modelo denso del perfil
     estrategia_chunking: str = Field(min_length=1)
     con_header: bool = False
     modo: Literal["vectorial", "hibrida"] = "hibrida"
@@ -96,6 +97,8 @@ class MotorConfig(ConfiguracionEstricta):
     abstencion: dict[str, Any] | None = None
     criterios_aceptacion: dict[str, Any] = Field(default_factory=dict)
     pipeline_version: str = "ingesta-0.1.0"
+    # Sobrescrituras del perfil de instalación (ver rag/configuracion/perfiles.py).
+    ajustes_perfil: dict[str, Any] = Field(default_factory=dict)
 
 
 def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
@@ -144,7 +147,11 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             # de dominio con nombre, y los artefactos pasan de .cache/ a .rag/.
             # Los archivos los mueve rag.configuracion.migraciones.
             if nombre == "asistente":
+                # En v2, «perfil» era el perfil de dominio; en v3 es el perfil de
+                # instalación. Los proyectos existentes conservan el comportamiento
+                # sin modelos adicionales: light.
                 salida.pop("perfil", None)
+                salida["perfil"] = "light"
             if nombre == "motor":
                 (salida.get("redaccion") or {}).pop("metodo_seleccion", None)
                 componentes = salida.get("componentes") or {}

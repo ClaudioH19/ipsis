@@ -56,6 +56,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "nombre_asistente": args.nombre_asistente or "Asistente documental",
         "descripcion_dominio": args.descripcion_dominio or "los documentos cargados",
         "idioma": idioma,
+        "perfil": args.perfil or "medium",
     }
     try:
         nuevo = actualizar_dominio(pares)
@@ -80,7 +81,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f"Dominio inicializado en {RUTA_DOMINIO}:")
     print(f"  nombre_asistente = {nuevo['nombre_asistente']!r}")
     print(f"  descripcion_dominio = {nuevo['descripcion_dominio']!r}")
-    print(f"  idioma = {nuevo['idioma']!r}")
+    print(f"  idioma = {nuevo['idioma']!r}, perfil = {nuevo['perfil']!r}")
     print(f"Corpus vacío listo en documentos/ (catálogo en {CATALOGO_PATH}).")
     if creo_proyecto:
         print("configuracion/motor.yaml creado con umbrales genéricos de partida. "
@@ -230,6 +231,7 @@ def _argumentos_init_automatico() -> argparse.Namespace:
         nombre_asistente=None,
         descripcion_dominio=None,
         idioma=None,
+        perfil=None,
         force=False,
     )
 
@@ -546,6 +548,8 @@ def _construir_parser() -> argparse.ArgumentParser:
                          "(por defecto: 'los documentos cargados').")
     p.add_argument("--idioma", default=None,
                     help="Código del paquete de idioma: textos, patrones y reglas (por defecto: 'es').")
+    p.add_argument("--perfil", choices=["light", "medium", "heavy"], default=None,
+                    help="Perfil de instalación: light (sin modelos extra), medium o heavy (por defecto: medium).")
     p.add_argument("--force", action="store_true", help="Reinicia configuracion/asistente.yaml si ya existe.")
     p.set_defaults(func=cmd_init)
 

@@ -94,7 +94,7 @@ def test_init_crea_configuracion_minima(proyecto_temporal: Path):
 
     dominio = yaml.safe_load((proyecto_temporal / "configuracion" / "asistente.yaml").read_text(encoding="utf-8"))
     assert dominio["nombre_asistente"] == "Asistente X100"
-    assert "perfil" not in dominio
+    assert dominio["perfil"] == "medium"  # perfil de instalación por defecto
     motor = yaml.safe_load((proyecto_temporal / "configuracion" / "motor.yaml").read_text(encoding="utf-8"))
     assert motor["recuperacion"]["coleccion_base"] == "asistente_x100"
 

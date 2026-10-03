@@ -30,6 +30,12 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
         else:
             nuevo[clave] = valor
 
+    if "perfil" in pares:
+        from rag.configuracion.perfiles import PERFILES_INSTALABLES
+
+        if nuevo["perfil"] not in PERFILES_INSTALABLES:
+            raise ValueError(f"perfil desconocido {nuevo['perfil']!r} (disponibles: {list(PERFILES_INSTALABLES)})")
+
     if "idioma" in pares:
         from rag.lenguaje.paquete import idiomas_disponibles
 

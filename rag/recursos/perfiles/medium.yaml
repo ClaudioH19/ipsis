@@ -1,0 +1,39 @@
+# Perfil de instalación «medium». Un proyecto lo ajusta en
+# configuracion/motor.yaml (sección ajustes_perfil) y `rag calibrar`
+# reemplaza los umbrales por defecto. Ver docs/plan/modelos-y-perfiles.md.
+perfil: medium
+descripcion: Light más reranker cross-encoder y lector QA extractivo.
+presupuesto_p95_ms: 1000
+modelos:
+  denso: intfloat/multilingual-e5-small
+  reranker: cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
+  lector: dewdev/mdeberta-v3-base-squad2-onnx
+cascada:
+  recuperar_n: 20
+  rerank_k: 4
+  leer_m: 2
+  max_tokens_pasaje: 384
+  stride: 128
+  salida_temprana_sin_foco: true
+etapas:
+- conversacional
+- analisis
+- recuperacion
+- filtros
+- reranking
+- lectura
+- seleccion
+- politica
+- verificacion
+- redaccion
+lexico:
+  k1: 1.2
+  b: 0.75
+  max_terminos_foco: 2
+umbrales_por_defecto:
+  oov: 0.6
+  dominio: 0.3
+  relacionado: 0.5
+  foco: 0.5
+  ok: 0.8
+  cov: 0.6
