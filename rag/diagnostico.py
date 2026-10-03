@@ -139,12 +139,12 @@ def verificar_modelo_descargado() -> ResultadoChequeo:
 def verificar_indice() -> ResultadoChequeo:
     """El índice Qdrant de producción existe y corresponde al modelo
     configurado (mismo nombre de colección que arma
-    ``rag/corpus.py::nombre_coleccion_versionada``) -- de paso confirma que
+    ``rag/indice/qdrant.py::nombre_coleccion_versionada``) -- de paso confirma que
     Qdrant responde, porque no se puede comprobar lo primero sin lo segundo."""
     import os
 
     from rag.configuracion.carga import cargar_proyecto, config_recuperacion
-    from rag.corpus import crear_cliente_qdrant, nombre_coleccion_versionada
+    from rag.indice.qdrant import crear_cliente_qdrant, nombre_coleccion_versionada
 
     try:
         cfg = cargar_proyecto()

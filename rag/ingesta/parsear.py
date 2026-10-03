@@ -86,7 +86,7 @@ class DocumentoParseado:
     # Advertencias accionables de la ingesta: p.ej.
     # "este documento no tiene estructura de secciones" -- degrada los
     # filtros por seccion_path pero no impide indexar. `rag indexar` las
-    # junta e imprime al final (ver rag/corpus.py::ejecutar_ingesta).
+    # junta e imprime al final (ver rag/ingesta/ingesta.py::ejecutar_ingesta).
     advertencias: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -478,7 +478,7 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
 
 # ---------------------------------------------------------------------------
 # Despacho por extensión: punto de entrada único que
-# el resto del proyecto (rag/corpus.py::parsear_corpus, la CLI) debe usar en
+# el resto del proyecto (rag/ingesta/ingesta.py::parsear_corpus, la CLI) debe usar en
 # vez de llamar a un parser de formato concreto.
 # ---------------------------------------------------------------------------
 

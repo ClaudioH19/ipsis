@@ -180,7 +180,7 @@ def test_caracterizacion_cubre_todos_los_estados(observado):
 def test_respuestas_son_texto_literal_del_corpus(observado):
     """Invariante que la refactorización debe preservar: cada fragmento citado
     es una subcadena exacta del corpus parseado, en los offsets declarados."""
-    from rag.parsear import parsear_markdown
+    from rag.ingesta.parsear import parsear_markdown
 
     textos = {}
     for ruta in (DIR / "corpus").glob("*.md"):

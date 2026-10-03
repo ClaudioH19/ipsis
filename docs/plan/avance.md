@@ -15,7 +15,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P1.3 | ✅ | 2026-10-03 | 313 | Sin desvíos. |
 | P1.4 | ✅ | 2026-10-03 | 300 | −13 pruebas: 7 duplicaban tests/test_abstencion.py (capas y umbral) y 6 cubrían el adaptador legado. Las 4 de premisa siguen, ahora sobre verificar_premisa_textos. |
 | P1.5 | ✅ | 2026-10-03 | 300 | Conversación importa _cargar_plantillas/_elegir_variante de redaccion (dependencia dentro de consulta). |
-| P1.6 | ⬜ | | | |
+| P1.6 | ✅ | 2026-10-03 | 300 | rag/indice.py se fusionó en rag/indice/qdrant.py. Las etiquetas históricas en comentarios se limpian en P13.1 (criterio agregado). |
 | P1.7 | ⬜ | | | |
 | P1.8 | ⬜ | | | |
 | P1.9 | ⬜ | | | |

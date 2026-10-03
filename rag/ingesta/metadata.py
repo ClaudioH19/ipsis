@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 import yaml
 
 from rag.lenguaje.entidades import extraer_entidades, tiene_marcador
-from rag.chunking import Chunk
+from rag.ingesta.chunking import Chunk
 from rag.recursos import leer_plantilla
 
 _STOPWORDS_ES = {

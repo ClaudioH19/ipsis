@@ -1,6 +1,6 @@
 """Retriever sobre Qdrant: embeddings densos + BM25 sparse con fusión RRF.
 
-Adapta ``rag.indice`` al contrato ``rag.nucleo.contratos.Retriever`` sin cambiar
+Adapta ``rag.indice.qdrant`` al contrato ``rag.nucleo.contratos.Retriever`` sin cambiar
 cómo se consulta Qdrant. Qdrant y sentence-transformers se importan solo al
 construir el retriever desde la configuración.
 """
@@ -13,8 +13,8 @@ from typing import Any
 from rag.nucleo.esquemas import (
     FiltroEntidad, QueryAnalysis, RetrievalCandidate, RetrievalSignals, SenalesRecuperacion,
 )
-from rag.indice import ColeccionQdrant, buscar, construir_filtro_entidad
-from rag.payload import chunk_desde_payload
+from rag.indice.qdrant import ColeccionQdrant, buscar, construir_filtro_entidad
+from rag.indice.payload import chunk_desde_payload
 
 MODOS = ("vectorial", "hibrida")
 
@@ -40,9 +40,12 @@ class RetrieverQdrant:
                             **opciones: Any) -> "RetrieverQdrant":
         """Conecta con la colección que dejó ``rag indexar`` y carga sus
         artefactos. Falla si la colección no existe: nunca sirve un índice vacío."""
-        from rag.corpus import (
-            cargar_estadisticas_lexico_dominio, cargar_inventario_entidades,
-            cargar_vocabulario_bm25, crear_cliente_qdrant, nombre_coleccion_versionada,
+        from rag.indice.qdrant import (
+            cargar_estadisticas_lexico_dominio,
+            cargar_inventario_entidades,
+            cargar_vocabulario_bm25,
+            crear_cliente_qdrant,
+            nombre_coleccion_versionada,
         )
 
         qdrant = qdrant or {}

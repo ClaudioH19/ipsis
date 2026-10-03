@@ -15,21 +15,21 @@ from rag.nucleo.esquemas import EvidenceSpan, RetrievalCandidate
 
 class ParserBuiltin:
     def parsear(self, ruta: str, **metadata: Any):
-        from rag.parsear import parsear_documento
+        from rag.ingesta.parsear import parsear_documento
 
         return parsear_documento(ruta, **metadata)
 
 
 class ChunkerBuiltin:
     def __init__(self, estrategia: str = "CH-SEC") -> None:
-        from rag.chunking import ESTRATEGIAS
+        from rag.ingesta.chunking import ESTRATEGIAS
 
         if estrategia not in ESTRATEGIAS:
             raise ValueError(f"estrategia de chunking desconocida: {estrategia}")
         self.estrategia = estrategia
 
     def fragmentar(self, documento):
-        from rag.chunking import ESTRATEGIAS
+        from rag.ingesta.chunking import ESTRATEGIAS
 
         return ESTRATEGIAS[self.estrategia](documento)
 
@@ -46,12 +46,12 @@ class SparseEncoderBM25:
         self.vocabulario = vocabulario or {}
 
     def codificar_documentos(self, textos: Sequence[str]):
-        from rag.corpus import texto_a_vector_sparse
+        from rag.indice.qdrant import texto_a_vector_sparse
 
         return [texto_a_vector_sparse(texto, self.vocabulario) for texto in textos]
 
     def codificar_consulta(self, texto: str):
-        from rag.corpus import texto_a_vector_sparse
+        from rag.indice.qdrant import texto_a_vector_sparse
 
         return texto_a_vector_sparse(texto, self.vocabulario)
 
@@ -105,7 +105,7 @@ class SentenceSelectorExtractor:
         self.prefijo_query = prefijo_query
 
     def extraer(self, consulta, candidatos: Sequence[RetrievalCandidate]) -> list[EvidenceSpan]:
-        from rag.payload import payload_desde_chunk
+        from rag.indice.payload import payload_desde_chunk
         from rag.lenguaje.entidades import extraer_entidades
         from rag.consulta.etapas.seleccion import (
             ordenar_por_pertinencia_global,

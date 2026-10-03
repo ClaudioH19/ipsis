@@ -1,6 +1,6 @@
 """Conversión entre el payload de un chunk indexado y ``ChunkRecord``.
 
-El payload es el diccionario que produce ``rag.metadata.construir_payload`` y
+El payload es el diccionario que produce ``rag.ingesta.metadata.construir_payload`` y
 que el índice guarda junto a cada chunk. ``ChunkRecord`` es su forma tipada en
 el contrato de componentes. La ida y vuelta es exacta para cualquier payload
 completo: los campos sin equivalente tipado viajan en ``metadata``.

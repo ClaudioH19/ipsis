@@ -7,7 +7,7 @@ integración real (indexar + consultar) la cubren las pruebas marcadas
 """
 import pytest
 
-from rag.corpus import (
+from rag.indice.qdrant import (
     tokenizar_bm25,
     construir_vocabulario_bm25,
     texto_a_vector_sparse,

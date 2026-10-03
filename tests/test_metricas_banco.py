@@ -11,7 +11,7 @@ from rag.metricas_banco import (
     calibrar_observaciones_dev,
     evaluar_observaciones,
 )
-from rag.parsear import parsear_markdown
+from rag.ingesta.parsear import parsear_markdown
 
 RAIZ = Path(__file__).parent
 MANIFIESTO = RAIZ / "evaluacion" / "sintetico" / "manifiesto.json"

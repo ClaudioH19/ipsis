@@ -14,12 +14,12 @@ import numpy as np
 import pytest
 import yaml
 
-from rag.chunking import ESTRATEGIAS
+from rag.ingesta.chunking import ESTRATEGIAS
 from rag.nucleo.contratos import Retriever
 from rag.nucleo.esquemas import FiltroEntidad, QueryAnalysis
-from rag.metadata import construir_payload
-from rag.parsear import parsear_markdown
-from rag.payload import chunk_desde_payload, payload_desde_chunk
+from rag.ingesta.metadata import construir_payload
+from rag.ingesta.parsear import parsear_markdown
+from rag.indice.payload import chunk_desde_payload, payload_desde_chunk
 from rag.recursos import leer_plantilla
 
 CORPUS = Path(__file__).parent / "caracterizacion" / "corpus"
@@ -66,8 +66,8 @@ def payloads() -> list[dict]:
 def retriever(payloads):
     from qdrant_client import QdrantClient
 
-    from rag.corpus import indexar_qdrant
-    from rag.indice import ColeccionQdrant
+    from rag.indice.qdrant import indexar_qdrant
+    from rag.indice.qdrant import ColeccionQdrant
     from rag.consulta.etapas.recuperacion import RetrieverQdrant
 
     codificador = CodificadorFalso()
