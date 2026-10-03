@@ -14,7 +14,7 @@ recuperacion:
 componentes:
   parser: "builtin"
   chunker: "builtin"
-  dense_encoder: "sentence_transformers"
+  dense_encoder: "onnx"
   sparse_encoder: "bm25"
   retriever: "qdrant"
   fusion: "rrf"

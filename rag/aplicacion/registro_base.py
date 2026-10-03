@@ -34,13 +34,6 @@ class ChunkerBuiltin:
         return ESTRATEGIAS[self.estrategia](documento)
 
 
-class DenseEncoderSentenceTransformers:
-    def __new__(cls, modelo: str = "intfloat/multilingual-e5-small", **kwargs: Any):
-        from sentence_transformers import SentenceTransformer
-
-        return SentenceTransformer(modelo, **kwargs)
-
-
 class SparseEncoderBM25:
     """BM25 con los términos del proyecto; requiere las estadísticas del índice."""
 
@@ -210,7 +203,6 @@ def registrar_componentes_base(
     destino = registro or registro_componentes
     destino.registrar("parser", "builtin", ParserBuiltin, reemplazar=True)
     destino.registrar("chunker", "builtin", ChunkerBuiltin, reemplazar=True)
-    destino.registrar("dense_encoder", "sentence_transformers", DenseEncoderSentenceTransformers, reemplazar=True)
     destino.registrar("dense_encoder", "onnx", _crear_codificador_onnx, reemplazar=True)
     destino.registrar("sparse_encoder", "bm25", SparseEncoderBM25, reemplazar=True)
     destino.registrar("retriever", "qdrant", _crear_retriever_qdrant, reemplazar=True)
@@ -226,7 +218,7 @@ def registrar_componentes_base(
 
 
 __all__ = [
-    "ChunkerBuiltin", "DenseEncoderSentenceTransformers", "FusionRRF",
+    "ChunkerBuiltin", "FusionRRF",
     "LiteralOffsetsVerifier", "ParserBuiltin", "RulesIntentClassifier",
     "SentenceSelectorExtractor", "SparseEncoderBM25", "TemplatesResponseRenderer",
     "registrar_componentes_base",

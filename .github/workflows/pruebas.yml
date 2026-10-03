@@ -25,12 +25,9 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
           cache-dependency-path: pyproject.toml
-      # torch desde el índice CPU: sin esto, en Linux pip descarga la
-      # variante CUDA (~2 GB), que el proyecto no usa.
       - name: Instalar
         run: |
           python -m pip install --upgrade pip
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e ".[test]"
       - name: Pruebas rápidas
         run: python -m pytest -m "not slow and not browser" -q
@@ -51,7 +48,6 @@ jobs:
       - name: Instalar
         run: |
           python -m pip install --upgrade pip
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e ".[browser]"
           python -m playwright install --with-deps chromium
       - name: Pruebas del widget
@@ -81,7 +77,6 @@ jobs:
       - name: Instalar
         run: |
           python -m pip install --upgrade pip
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e ".[test]"
       - name: Pruebas lentas
         run: python -m pytest -m slow -q
@@ -106,7 +101,6 @@ jobs:
       - name: Instalar y probar rag init
         run: |
           python -m venv /tmp/venv
-          /tmp/venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           mkdir /tmp/artefacto
           cp dist/*.whl /tmp/artefacto/
           mkdir /tmp/vacio && cd /tmp/vacio

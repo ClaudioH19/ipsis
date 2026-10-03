@@ -47,7 +47,7 @@ class ComponentesConfig(ConfiguracionEstricta):
 
     parser: str = Field(default="builtin", min_length=1)
     chunker: str = Field(default="builtin", min_length=1)
-    dense_encoder: str = Field(default="sentence_transformers", min_length=1)
+    dense_encoder: str = Field(default="onnx", min_length=1)
     sparse_encoder: str = Field(default="bm25", min_length=1)
     retriever: str = Field(default="qdrant", min_length=1)
     fusion: str = Field(default="rrf", min_length=1)
@@ -147,6 +147,9 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                 salida.pop("perfil", None)
             if nombre == "motor":
                 (salida.get("redaccion") or {}).pop("metodo_seleccion", None)
+                componentes = salida.get("componentes") or {}
+                if componentes.get("dense_encoder") == "sentence_transformers":
+                    componentes["dense_encoder"] = "onnx"  # sin torch desde el plan V3
                 recuperacion = salida.get("recuperacion") or {}
                 # Los prefijos del modelo los define el catálogo (rag/modelos/catalogo.py).
                 recuperacion.pop("prefijo_query", None)

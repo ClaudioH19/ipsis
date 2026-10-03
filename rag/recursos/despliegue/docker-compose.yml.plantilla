@@ -65,8 +65,8 @@ services:
   # Microservicio Python (rag-extractivo). `/consultar` responde con
   # recuperación real (ver rag/servicio/api.py, rag/servicio/pipeline.py) -- sigue
   # sin levantarse con `docker compose up` a secas, se pide explícito con
-  # `--profile servicio`, para no obligar a reconstruir la imagen (torch +
-  # transformers, pesada) en cada `up` de Qdrant solo.
+  # `--profile servicio`, para no obligar a reconstruir la imagen en cada
+  # `up` de Qdrant solo.
   rag-extractivo:
     build:
       context: .
