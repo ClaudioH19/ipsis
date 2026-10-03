@@ -37,7 +37,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P4.5 | ✅ | 2026-10-03 | 417 (suite completa) | Las unidades se puntúan con s_lex usando las estadísticas del índice (o tf-isf local si faltan) y el stemmer del idioma activo. Se eliminan Jaccard, la ruta densa, palabras_contenido, STOPWORDS_ES y redaccion.metodo_seleccion (la migración v2→v3 lo retira). terminos_pregunta() queda en lexico.py como único lugar. Caracterización sin cambios. |
 | P4.6 | ✅ | 2026-10-03 | 417 (suite completa) | Palabras clave = mayor TF-IDF con el IDF del corpus completo (calculado antes de armar los payloads), devueltas en su forma original. Categorías comparan términos con stem: plurales y tildes ya no impiden coincidir con palabras gatillo. |
 | P5.1 | ✅ | 2026-10-03 | — | Licencias, parámetros y archivos ONNX verificados con la API de Hugging Face (tabla en modelos-y-perfiles.md §2). ⛔ Decisión del usuario pendiente: xlm-roberta-large-squad2 no tiene ONNX confiable; heavy usa mdeberta con leer_m=4 mientras tanto. e5 se usa en fp32 porque su int8 publicado exige AVX-512 VNNI. |
-| P5.2 | ⬜ | | | |
+| P5.2 | ✅ | 2026-10-03 | 6 nuevas | ModeloSpec con ONNX por arquitectura (x86_64/arm64) y caché global en formato huggingface_hub; ruta_local() falla con 'rag modelos descargar'. huggingface-hub declarado como dependencia. |
 | P5.3 | ⬜ | | | |
 | P5.4 | ⬜ | | | |
 | P5.5 | ⬜ | | | |
