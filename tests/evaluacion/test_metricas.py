@@ -7,7 +7,7 @@ import pytest
 from apoyo import BANCO_SINTETICO, CORPUS
 from rag.evaluacion.banco import cargar_banco
 from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
-from rag.evaluacion.metricas import ObservacionEvaluacion, calibrar_observaciones_dev, evaluar_observaciones
+from rag.evaluacion.metricas import ObservacionEvaluacion, evaluar_observaciones
 from rag.ingesta.parsear import parsear_markdown
 
 MANIFIESTO = BANCO_SINTETICO
@@ -126,18 +126,3 @@ def test_rechaza_observaciones_incompletas():
 
     with pytest.raises(ValueError, match="no coinciden exactamente"):
         evaluar_observaciones(banco, observaciones[:-1], _documentos())
-
-
-def test_calibracion_usa_dev_y_no_mira_test():
-    banco, observaciones = _observaciones_perfectas()
-    primera = calibrar_observaciones_dev(banco, observaciones)
-    for caso in banco.casos:
-        if caso.split == "test":
-            next(o for o in observaciones if o.caso_id == caso.id).confianza_top1 = 99.0
-
-    segunda = calibrar_observaciones_dev(banco, observaciones)
-
-    assert primera == segunda
-    assert primera.split == "dev"
-    assert primera.n_respondibles == 4
-    assert primera.n_no_respondibles == 8

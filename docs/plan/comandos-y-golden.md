@@ -195,42 +195,58 @@ Se mantienen los umbrales del perfil.
 
 ### 4.2 Algoritmo
 
-1. Ejecuta el perfil sobre `dev` y guarda las señales de cada caso.
-2. Para cada `τ_ok` candidato (los valores observados), cuenta los falsos
-   `ok` entre los casos aceptados y calcula la **cota superior de
-   Clopper-Pearson al 95%**: CDF binomial con `math.comb` + bisección, sin
-   scipy.
-3. Elige el `τ_ok` más bajo cuya cota sea ≤ α (por defecto 0,05). Si ninguno
-   cumple, `τ_ok = 1,01`: el perfil nunca responde `ok`, y el reporte lo dice.
-4. Repite para `τ_foco`, `τ_rel`, `τ_dominio`, `τ_oov_dominio` y `τ_oov_ok`
-   con su propio error (`relacionado` mostrado ante una pregunta fuera de
-   dominio). Los dos usos de `s_oov` se separan:
-   - `s_oov` alto con recuperación baja suele indicar fuera de dominio;
-   - `s_oov` alto con recuperación y QA fuertes puede ser una paráfrasis
-     legítima o «mismo tema, otra relación».
+Implementado en `rag/evaluacion/calibracion.py::calibrar` (P10.2):
 
-   Se mide si separar `τ_oov_ok` mejora la cobertura de paráfrasis sin
-   introducir falsos `ok`.
-5. Verifica en `test`.
-6. Con `--aplicar` escribe `configuracion/calibracion.yaml`:
+1. Ejecuta el perfil sobre el golden y guarda las señales de cada caso
+   (`ObservacionEvaluacion.senales`, tal como decidió la política).
+2. `exigir_calibrable`: el banco universal (`uso: regresion`) se rechaza.
+3. **Solo `dev` elige.** Los candidatos son los valores observados en `dev`
+   más el del perfil:
+   - `τ_ok`: `s_qa`, o `s_ret` sin lector;
+   - `τ_foco`: `s_foco`;
+   - `τ_oov_ok`: `s_oov` + ε, porque se compara con «<».
+4. Búsqueda **conjunta** de (`τ_foco`, `τ_oov_ok`) × `τ_ok`:
+   - Para cada par, ordena los casos elegibles por su puntaje y barre `τ_ok`
+     acumulando `n` (respuestas aceptadas) y `x` (falsos ok + directas sin
+     respuesta literal).
+   - Una combinación es segura si la cota superior de Clopper-Pearson de
+     `x/n` es ≤ α.
+   - De las seguras, elige la de **mayor cobertura directa**. En empate, la
+     más estricta.
+   - Sin modelos: re-decide con `regla_cascada`, la misma función que en
+     producción.
+5. `τ_oov_dominio`, `τ_dominio`, `τ_relacionado` y `τ_cov` quedan en el valor
+   del perfil: no cambian el riesgo de una respuesta aceptada. Se reportan el
+   recall de fuera de dominio y de premisa falsa.
+6. La combinación final se **verifica con la política completa** en `dev` y
+   luego se reporta en `test`, aparte (`cumple`, `excede` o
+   `muestra_insuficiente`). `test` nunca elige.
+7. Estado según §4.1:
+   - `CALIBRADO` si hay una combinación segura.
+   - `MUESTRA_INSUFICIENTE` si ni la combinación más permisiva llega a
+     `n_minimo(0, α)` respuestas. Informa cuántas respuestas sin error hay y
+     cuántas faltan.
+   - Si no, `SIN_UMBRAL_SEGURO`.
+   - En los dos últimos casos se mantienen los umbrales del perfil y no se
+     fuerza `τ_ok = 1,01`.
+8. `escribir_calibracion` escribe `configuracion/calibracion.yaml` en
+   cualquier estado (para auditoría):
 
 ```yaml
 version: 1
-perfil: medium
-fecha: 2026-11-02T10:00:00Z
+estado: calibrado          # o muestra_insuficiente / sin_umbral_seguro
+alfa: 0.05
+confianza: 0.95
 procedencia:
+  perfil: medium
+  modelos: {denso: …, reranker: …, lector: …}
+  hash_corpus: "sha256:…"   # del manifiesto del índice
   banco: golden@1.0.0
   hash_banco: "…"
-  hash_corpus: "…"
-  manifiesto_indice: "…"
-  modelos: {denso: …, reranker: …, lector: …}
-alfa: 0.05
-estado: CALIBRADO      # o MUESTRA_INSUFICIENTE / SIN_UMBRAL_SEGURO
-umbrales: {oov_dominio: 0.58, oov_ok: 0.6, dominio: 0.27, relacionado: 0.48, foco: 0.5, ok: 0.71}
-resultado_test:
-  falsos_ok: {observado: 0.0, cota_superior_95: 0.045, n: 66}
-  cobertura_ok: 0.62
+umbrales: {oov_dominio: 0.6, oov_ok: 0.75, dominio: 0.33, relacionado: 0.33, foco: 0.5, ok: 0.71, cov: 0.6}
+resultado: {mensaje: …, dev: …, test: …, verificacion_test: cumple}
 ```
 
-El motor solo usa la calibración si su `procedencia` coincide con el perfil,
-los modelos y el índice actuales.
+El motor solo aplica la calibración si está en estado `calibrado` y su
+`procedencia` coincide con el perfil, los modelos y el `hash_corpus` del
+índice abierto. Si algo cambió, la ignora y usa los umbrales del perfil.

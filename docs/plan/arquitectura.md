@@ -137,7 +137,7 @@ pregunta
  [1] conversacional ── patrón del paquete de idioma ─────────────────▶ respuesta fija
  [2] analisis ──────── términos (stem), entidades, términos foco (IDF)
  [3] recuperacion ──── Qdrant: denso e5 + BM25 (TF cliente, IDF servidor), RRF → top N
-                       señales: s_ret, acuerdo
+                       señales: s_ret
  [4] filtros ───────── premisa (entidad pedida que no existe) ───────▶ sin_respuesta
                        s_oov alto + s_ret bajo ─────────────────────▶ sin_respuesta (fuera de dominio)
                        ningún candidato contiene un término foco ──▶ salta [5] y [6]
@@ -155,7 +155,7 @@ pregunta
 | Señal | Origen | Perfiles |
 |---|---|---|
 | `s_ret` | Score top-1 de recuperación, normalizado | todos |
-| `acuerdo` | Coincidencia entre los top de denso y BM25 | todos |
+| `acuerdo` | Coincidencia entre los top de denso y BM25. **No se calcula** (P10.2): la función existe, ninguna etapa la usa; cablearla se evalúa en P10.4 | — |
 | `s_oov` | Masa IDF de la pregunta ausente del corpus | todos |
 | `s_cov`, `s_foco` | Cobertura IDF y términos foco en la oración elegida | todos |
 | `s_rr` | Sigmoide del logit del reranker | medium, heavy |
@@ -164,13 +164,18 @@ pregunta
 Reglas, en orden (la primera que se cumple decide):
 
 1. Premisa falla → `sin_respuesta` (`premisa`).
-2. `s_oov ≥ τ_oov` y señal de dominio < `τ_dominio` → `sin_respuesta` (`fuera_dominio`). La señal de dominio es max(`s_ret`, `s_rr`): el reranker confirma el dominio pero no lo niega (sus logits no son una escala absoluta). `s_ret` es el coseno normalizado con el piso del modelo denso.
-3. `s_foco ≥ τ_foco` **y** `s_oov < τ_oov` (el vocabulario de la pregunta existe en el corpus) **y**:
+2. `s_oov ≥ τ_oov_dominio` y señal de dominio < `τ_dominio` → `sin_respuesta` (`fuera_dominio`). La señal de dominio es max(`s_ret`, `s_rr`): el reranker confirma el dominio pero no lo niega (sus logits no son una escala absoluta). `s_ret` es el coseno normalizado con el piso del modelo denso.
+3. `s_foco ≥ τ_foco` **y** `s_oov < τ_oov_ok` (el vocabulario de la pregunta existe en el corpus) **y**:
    - con lector: `s_qa ≥ τ_ok`;
-   - sin lector (light): `s_ret ≥ τ_ok` y `s_cov ≥ τ_cov` y `acuerdo ≥ 0,5`;
+   - sin lector (light): `s_ret ≥ τ_ok` y `s_cov ≥ τ_cov`;
 
    → `ok`.
 4. Señal de dominio ≥ `τ_rel` → `relacionado`. Si `s_foco < τ_foco`, el mensaje nombra el término foco ausente.
+
+Las reglas están en `regla_cascada` (`consulta/etapas/politica.py`), una función pura que usan la
+política y la calibración: la calibración re-decide con señales guardadas y otros umbrales sin
+volver a correr modelos, y ambas no pueden divergir. `τ_oov_dominio` y `τ_oov_ok` son dos umbrales
+(un `oov` de configuraciones anteriores vale para los dos).
 
 **La decisión de la política manda sobre el lector.** En `relacionado`, el
 tramo del lector **nunca** se presenta como respuesta: no hay

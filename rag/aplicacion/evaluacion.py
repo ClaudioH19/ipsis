@@ -15,7 +15,6 @@ from rag.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
 from rag.evaluacion.metricas import (
     ArtefactoEvaluacion,
     ObservacionEvaluacion,
-    calibrar_observaciones_dev,
     evaluar_observaciones,
 )
 
@@ -109,7 +108,6 @@ def evaluar_backend_activo(
         k=k,
         limite_respuesta_chars=limite_respuesta_chars,
     )
-    calibracion = calibrar_observaciones_dev(banco, observaciones)
     config_json = json.dumps(cfg, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return ArtefactoEvaluacion(
         backend=etiqueta_backend,
@@ -119,7 +117,6 @@ def evaluar_backend_activo(
         configuracion_sha256=hashlib.sha256(config_json.encode("utf-8")).hexdigest(),
         configuracion=cfg,
         indice=indice,
-        calibracion_dev=calibracion,
         reporte=reporte,
         observaciones=observaciones,
     )

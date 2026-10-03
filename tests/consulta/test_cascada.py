@@ -98,13 +98,11 @@ def test_cada_regla(senales, resultado, regla):
     # τ_foco
     ({"s_qa": 0.9, "s_foco": 0.5}, "ok_lector"),
     ({"s_qa": 0.9, "s_foco": 0.49}, "relacionado"),
-    # τ_ok, τ_cov y acuerdo sin lector
+    # τ_ok y τ_cov sin lector
     ({"s_ret": 0.8}, "ok_lexico"),
     ({"s_ret": 0.79}, "relacionado"),
     ({"s_cov": 0.6}, "ok_lexico"),
     ({"s_cov": 0.59}, "relacionado"),
-    ({"acuerdo": 0.5}, "ok_lexico"),
-    ({"acuerdo": 0.4}, "relacionado"),
     # τ_relacionado
     ({"s_ret": 0.5, "s_cov": 0.0}, "relacionado"),
     ({"s_ret": 0.49, "s_cov": 0.0}, "sin_respuesta"),

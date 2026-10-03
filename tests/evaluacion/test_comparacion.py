@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from rag.evaluacion.comparacion import comparar_artefactos
-from rag.evaluacion.metricas import ArtefactoEvaluacion, CalibracionDev, ReporteMetricas
+from rag.evaluacion.metricas import ArtefactoEvaluacion, ReporteMetricas
 
 
 def _artefacto(backend: str, *, dataset_sha256: str = "a" * 64):
@@ -36,15 +36,6 @@ def _artefacto(backend: str, *, dataset_sha256: str = "a" * 64):
         configuracion_sha256=("b" if backend == "qdrant_vectorial" else "c") * 64,
         configuracion={"componentes": {"retriever": backend}},
         indice={"version": 1},
-        calibracion_dev=CalibracionDev(
-            metodo_confianza="cosine_top1_v1",
-            fpr_objetivo=0.0,
-            umbral=0.5,
-            falsa_respuesta_dev=0.0,
-            falsa_abstencion_dev=0.0,
-            n_respondibles=2,
-            n_no_respondibles=2,
-        ),
         reporte=reporte,
     )
 
@@ -60,7 +51,6 @@ def test_compara_sin_elegir_ganador_y_conserva_procedencia():
     assert informe.dataset_version == "1.0.0"
     assert informe.decisiones == []
     assert all(fila.configuracion_sha256 for fila in informe.filas)
-    assert all(fila.calibracion_dev.split == "dev" for fila in informe.filas)
 
 
 def test_rechaza_comparar_corpus_distintos():

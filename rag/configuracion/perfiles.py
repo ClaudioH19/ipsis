@@ -86,28 +86,31 @@ def cargar_perfil_instalacion(nombre: str) -> PerfilInstalacion:
     return PerfilInstalacion.model_validate(_datos_perfil(nombre))
 
 
-def _calibracion_aplicable(perfil: PerfilInstalacion, ruta: Path) -> dict[str, float] | None:
-    """Umbrales calibrados, solo si se calcularon con este perfil y estos modelos."""
-    if not ruta.is_file():
-        return None
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
-    procedencia = datos.get("procedencia") or {}
-    if datos.get("perfil") != perfil.perfil:
-        return None
-    if (procedencia.get("modelos") or {}) != perfil.modelos.model_dump():
-        return None
-    umbrales = datos.get("umbrales")
-    return dict(umbrales) if isinstance(umbrales, dict) else None
-
-
 def perfil_efectivo(
     nombre: str,
     ajustes: dict[str, Any] | None = None,
     ruta_calibracion: str | Path = rutas.CALIBRACION,
+    hash_corpus: str | None = None,
 ) -> PerfilInstalacion:
-    """Perfil ← ajustes del proyecto ← calibración vigente."""
-    perfil = PerfilInstalacion.model_validate(_fusionar(_datos_perfil(nombre), ajustes or {}))
-    calibrados = _calibracion_aplicable(perfil, Path(ruta_calibracion))
+    """Perfil ← ajustes del proyecto ← calibración vigente.
+
+    La calibración solo se aplica si está en estado ``calibrado`` y se hizo
+    con este perfil, estos modelos y este corpus indexado (``hash_corpus`` del
+    manifiesto del índice). Sin ``hash_corpus`` (p. ej. antes de abrir el
+    índice) nunca se aplica.
+    """
+    from rag.configuracion.calibracion import normalizar_umbrales, umbrales_aplicables
+
+    # Un «oov» anterior en los ajustes del proyecto se traduce antes de fusionar,
+    # para que reemplace a los dos umbrales del perfil y no quede ignorado.
+    ajustes = dict(ajustes or {})
+    if isinstance(ajustes.get("umbrales_por_defecto"), dict):
+        ajustes["umbrales_por_defecto"] = normalizar_umbrales(ajustes["umbrales_por_defecto"])
+    datos = _fusionar(_datos_perfil(nombre), ajustes)
+    datos["umbrales_por_defecto"] = normalizar_umbrales(datos.get("umbrales_por_defecto"))
+    perfil = PerfilInstalacion.model_validate(datos)
+    calibrados = umbrales_aplicables(ruta_calibracion, perfil=perfil.perfil, modelos=perfil.modelos.model_dump(),
+                                     hash_corpus=hash_corpus)
     if calibrados:
         perfil = perfil.model_copy(update={
             "umbrales_por_defecto": {**perfil.umbrales_por_defecto, **calibrados},

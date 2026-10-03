@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
-from rag.evaluacion.metricas import ArtefactoEvaluacion, CalibracionDev
+from rag.evaluacion.metricas import ArtefactoEvaluacion
 
 
 
@@ -27,7 +27,6 @@ class FilaComparacion(BaseModel):
     exactitud_offsets: float
     latencia_media_ms: float
     latencia_p95_ms: float
-    calibracion_dev: CalibracionDev
 
 
 class InformeComparativo(BaseModel):
@@ -81,7 +80,6 @@ def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeCompara
             exactitud_offsets=artefacto.reporte.exactitud_offsets,
             latencia_media_ms=artefacto.reporte.latencia_media_ms,
             latencia_p95_ms=artefacto.reporte.latencia_p95_ms,
-            calibracion_dev=artefacto.calibracion_dev,
         )
         for artefacto in artefactos
     ]
