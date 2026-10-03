@@ -104,3 +104,30 @@ def test_concordancia_detecta_plazos_distintos_en_pasajes_distintos():
     assert not hay_discordancia([lec(0, "6 meses"), lec(1, "6 meses")])
     assert not hay_discordancia([lec(0, "6 meses"), lec(0, "12 meses")])  # mismo pasaje
     assert not hay_discordancia([lec(0, "6 meses"), lec(1, "12 meses", p=0.6)])  # el segundo no es confiable
+
+
+def test_el_lector_recibe_solo_la_ventana_pertinente_y_los_offsets_vuelven_al_pasaje():
+    largo = "Texto de relleno sin relación. " * 40 + TEXTO
+
+    class _LectorQueAnota(_LectorFalso):
+        def leer(self, pregunta, pasajes):
+            self.leidos = pasajes
+            return super().leer(pregunta, pasajes)
+
+    class _Perfil:
+        class cascada:  # noqa: N801
+            leer_m = 1
+            concordancia = False
+            max_caracteres_lectura = 120
+
+    lector = _LectorQueAnota("6 meses")
+    motor = _Motor(lector)
+    motor.perfil_instalacion = _Perfil()
+    candidato = _candidato()
+    candidato.chunk.texto_fuente = largo
+    candidato.chunk.offset_fin = candidato.chunk.offset_inicio + len(largo)
+    ctx = ContextoConsulta(pregunta="¿Cada cuánto se cambia el filtro?", id_sesion="s")
+    ctx.candidatos = [candidato]
+    EtapaLectura(motor).ejecutar(ctx)
+    assert len(lector.leidos[0]) <= 120
+    assert largo[ctx.lecturas[0].inicio:ctx.lecturas[0].fin] == "6 meses"

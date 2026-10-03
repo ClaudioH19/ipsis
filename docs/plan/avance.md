@@ -50,7 +50,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P7.3 | ✅ | 2026-10-03 | 451 (suite completa) | Etapa lectura (usa_modelos): lee leer_m candidatos; la evidencia es la oración que contiene el tramo y el contrato HTTP gana respuesta_exacta opcional (solo aparece si existe). medium/heavy incluyen la etapa. Medido con medium en el corpus sintético: filtro → «6 meses», garantía → «24 meses», reembolso → «10»; repuestos → relacionado; precio → sin_respuesta. Latencia ~1,2-1,3 s: la lectura toma ~1 s porque lee pasajes completos de ~256 tokens; se optimiza en P7.6. |
 | P7.4 | ✅ | 2026-10-03 | 452 (suite completa) | La etapa de evidencia calcula s_foco y s_cov sobre la oración que se mostrará (la del tramo del lector o la elegida en light) y los guarda en ctx.lexicas y en el diagnóstico. Prueba: «6 meses» del pasaje del filtro ante la pregunta por la garantía → s_foco = 0. |
 | P7.5 | ✅ | 2026-10-03 | 453 (suite completa) | Concordancia en heavy (cascada.concordancia): si los dos mejores tramos confiables de pasajes distintos traen entidades del mismo tipo con valores distintos, la decisión baja a relacionado (motivo discordancia). La recuperación dirigida por entidad ya existía para todos los perfiles. |
-| P7.6 | ⬜ | | | |
+| P7.6 | ✅ | 2026-10-03 | 454 (suite completa) | rag benchmark --solo-latencia (20 rep. light/medium, 10 heavy, corpus sintético, CPU local): light p50 70 / p95 82 ms (presup. 150); medium p50 749 / p95 886 ms (presup. 1000; reranking ~146, lectura ~548); heavy p50 1951 / p95 2221 ms (presup. 4000; reranking ~1103, lectura ~844). El lector lee una ventana de max_caracteres_lectura (600 medium, 1200 heavy) elegida por s_lex en vez del pasaje completo. |
 | P8.1 | ⬜ | | | |
 | P8.2 | ⬜ | | | |
 | P8.3 | ⬜ | | | |

@@ -174,3 +174,70 @@ def ejecutar_benchmark(
             return ruta_informe
         finally:
             os.chdir(anterior)
+
+
+def _percentil(valores: list[float], q: float) -> float:
+    ordenados = sorted(valores)
+    if not ordenados:
+        return 0.0
+    posicion = (len(ordenados) - 1) * q
+    abajo = int(posicion)
+    arriba = min(abajo + 1, len(ordenados) - 1)
+    return ordenados[abajo] + (ordenados[arriba] - ordenados[abajo]) * (posicion - abajo)
+
+
+def medir_latencia(
+    ruta_banco: str,
+    perfiles: list[str],
+    main: Callable[[list[str]], int],
+    repeticiones: int = 20,
+) -> dict:
+    """p50 y p95 por etapa y totales de cada perfil, con las preguntas del banco.
+
+    Crea un proyecto temporal por perfil (heavy usa otro modelo denso e índice),
+    calienta el motor y repite cada pregunta ``repeticiones`` veces.
+    """
+    from rag.aplicacion.consulta import construir_motor
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
+    from rag.configuracion.perfiles import cargar_perfil_instalacion
+
+    manifiesto = Path(ruta_banco).resolve()
+    banco = cargar_banco(manifiesto)
+    corpus = (manifiesto.parent / banco.manifiesto.corpus.directorio).resolve()
+    preguntas = [caso.pregunta for caso in banco.casos]
+    informe: dict = {"banco": banco.manifiesto.dataset_id, "repeticiones": repeticiones, "perfiles": {}}
+    anterior = Path.cwd()
+    for perfil in perfiles:
+        with tempfile.TemporaryDirectory(prefix=f"rag_latencia_{perfil}_") as temporal:
+            try:
+                os.chdir(temporal)
+                if main(["init", "--perfil", perfil]) != 0:
+                    raise RuntimeError(f"falló rag init --perfil {perfil}")
+                for archivo in banco.manifiesto.corpus.archivos:
+                    main(["cargar", str(corpus / archivo.ruta)])
+                if main(["indexar"]) != 0:
+                    raise RuntimeError(f"falló la indexación del perfil {perfil}")
+                motor = construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
+                motor.calentar()
+                totales: list[float] = []
+                por_etapa: dict[str, list[float]] = {}
+                for _ in range(repeticiones):
+                    for pregunta in preguntas:
+                        resultado = motor.consultar(pregunta, "latencia")
+                        totales.append(resultado.diagnostico["contrato_http"]["latencia_ms"])
+                        for etapa, ms in resultado.diagnostico.get("etapas", {}).items():
+                            por_etapa.setdefault(etapa.removesuffix("_ms"), []).append(ms)
+                motor.cerrar()
+            finally:
+                os.chdir(anterior)
+        presupuesto = cargar_perfil_instalacion(perfil).presupuesto_p95_ms
+        p95 = _percentil(totales, 0.95)
+        informe["perfiles"][perfil] = {
+            "presupuesto_p95_ms": presupuesto,
+            "total": {"p50": round(_percentil(totales, 0.5), 1), "p95": round(p95, 1)},
+            "etapas": {e: {"p50": round(_percentil(v, 0.5), 1), "p95": round(_percentil(v, 0.95), 1)}
+                       for e, v in por_etapa.items()},
+            "cumple_presupuesto": p95 <= presupuesto,
+        }
+    return informe
+

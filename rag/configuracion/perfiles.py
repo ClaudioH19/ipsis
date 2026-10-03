@@ -47,6 +47,9 @@ class CascadaPerfil(_Estricto):
     salida_temprana_sin_foco: bool = True
     # Si los dos mejores tramos dan valores distintos del mismo tipo, no se responde «ok».
     concordancia: bool = False
+    # El lector lee la ventana más pertinente (por s_lex) de cada pasaje, no el
+    # pasaje entero: su costo crece con la longitud.
+    max_caracteres_lectura: int = Field(default=600, ge=100)
 
 
 class PerfilInstalacion(_Estricto):

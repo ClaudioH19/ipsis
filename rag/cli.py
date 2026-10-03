@@ -470,6 +470,24 @@ def cmd_comparar(args: argparse.Namespace) -> int:
 
 
 def cmd_benchmark(args: argparse.Namespace) -> int:
+    if args.solo_latencia:
+        import json
+
+        from rag.aplicacion.evaluacion import medir_latencia
+
+        perfiles = [p.strip() for p in args.perfiles.split(",") if p.strip()]
+        informe = medir_latencia(args.banco, perfiles, main, repeticiones=args.repeticiones)
+        salida = Path(args.salida)
+        salida.mkdir(parents=True, exist_ok=True)
+        (salida / "latencia.json").write_text(json.dumps(informe, indent=2, ensure_ascii=False), encoding="utf-8")
+        for perfil, datos in informe["perfiles"].items():
+            marca = "ok" if datos["cumple_presupuesto"] else "EXCEDE"
+            print(f"{perfil}: p50 {datos['total']['p50']} ms, p95 {datos['total']['p95']} ms "
+                  f"(presupuesto {datos['presupuesto_p95_ms']} ms) [{marca}]")
+            for etapa, valores in datos["etapas"].items():
+                print(f"    {etapa:15} p50 {valores['p50']:7} ms   p95 {valores['p95']:7} ms")
+        return 0 if all(d["cumple_presupuesto"] for d in informe["perfiles"].values()) else 1
+
     from rag.aplicacion.evaluacion import ejecutar_benchmark
 
     try:
@@ -622,8 +640,14 @@ def _construir_parser() -> argparse.ArgumentParser:
                    help="Ruta del informe consolidado.")
     p.set_defaults(func=cmd_comparar)
 
-    p = sub.add_parser("benchmark", help="Compara Qdrant vectorial e híbrido.")
+    p = sub.add_parser("benchmark", help="Compara Qdrant vectorial e híbrido, o mide la latencia por perfil.")
     p.add_argument("--banco", required=True, help="Manifiesto versionado a evaluar.")
+    p.add_argument("--solo-latencia", action="store_true",
+                   help="Mide p50/p95 por etapa de cada perfil frente a su presupuesto.")
+    p.add_argument("--perfiles", default="light,medium",
+                   help="Perfiles a medir con --solo-latencia, separados por coma (por defecto: light,medium).")
+    p.add_argument("--repeticiones", type=int, default=20,
+                   help="Veces que se repite cada pregunta con --solo-latencia (por defecto: 20).")
     p.add_argument("--salida", default="reportes/benchmark",
                    help="Directorio para artefactos e informe comparativo.")
     p.set_defaults(func=cmd_benchmark)
