@@ -19,7 +19,7 @@ from rag.cli.comandos.modelos import grupo_modelos
 from rag.cli.comandos.operacion import ComandoAuditar, ComandoDoctor, ComandoSnapshotConfig
 from rag.cli.comandos.personalidad import grupo_personalidad
 from rag.cli.comandos.proyecto import ComandoConfigurar, ComandoInit, grupo_perfil
-from rag.cli.comandos.web import grupo_widget
+from rag.cli.comandos.web import grupo_desplegar, grupo_widget
 
 
 def registro_de_comandos() -> list[Comando | Grupo]:
@@ -30,7 +30,7 @@ def registro_de_comandos() -> list[Comando | Grupo]:
         ComandoServir(init, cargar, indexar), ComandoPreguntar(),
         ComandoDoctor(), ComandoAuditar(), ComandoSnapshotConfig(),
         ComandoEvaluar(), ComandoCalibrar(), ComandoComparar(), ComandoBenchmark(main),
-        grupo_golden(), grupo_widget(),
+        grupo_golden(), grupo_widget(), grupo_desplegar(),
     ]
 
 

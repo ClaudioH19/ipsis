@@ -20,7 +20,7 @@ COMANDOS_ACTUALES = {
     ("snapshot-config",), ("evaluar",), ("calibrar",), ("comparar",), ("benchmark",),
     ("golden", "plantilla"), ("golden", "importar"), ("golden", "validar"), ("golden", "exportar"),
     ("widget", "tema", "listar"), ("widget", "tema", "aplicar"), ("widget", "tema", "vista-previa"),
-    ("widget", "exportar"), ("widget", "snippet"),
+    ("widget", "exportar"), ("widget", "snippet"), ("desplegar", "preparar"),
 }
 
 

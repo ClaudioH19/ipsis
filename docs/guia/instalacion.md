@@ -4,9 +4,6 @@ Cómo instalar rag-extractivo, elegir un perfil, descargar los modelos y
 ponerlo en un servidor propio (VPS) con HTTPS. El uso diario y la referencia
 de comandos están en [uso.md](uso.md).
 
-> Las partes marcadas **(P12.x)** están planificadas y todavía no existen;
-> cada una se documenta en detalle cuando se implementa.
-
 ## Requisitos
 
 - Python 3.11 o 3.12.
@@ -145,17 +142,53 @@ rag configurar claves_widget=clave-publica-del-sitio   # opcional
 
 ### 3. Docker
 
+Una imagen por perfil, con los modelos incluidos; en ejecución no usa la red:
+
 ```bash
-docker build -t rag-extractivo .
+docker build --build-arg PERFIL=light -t rag-extractivo:light .
 ```
 
-La imagen instala el wheel sin torch, corre con un usuario no root y expone
-el puerto 8000 con un healthcheck a `/ready`, que da 503 si algo bloquea
-(con la acción en `proyecto.bloqueante`). La configuración del proyecto
-se monta en `/app/configuracion`. Pendiente **(P12.12)**: una imagen por
-perfil, con los modelos incluidos y sin red. **(P12.13)**:
-`rag desplegar preparar`, que genera `docker-compose.yml` con un servicio
-Caddy opcional.
+- Instala el mismo wheel que se distribuye (con `avatar.js`, avatares y
+  tonos) y descarga los modelos del perfil al construir (el único paso con
+  red).
+- Corre como usuario no root (uid 10001), con `HF_HUB_OFFLINE=1` y
+  `RAG_MODO=produccion`.
+- Sin `RAG_ADMIN_TOKEN`, `/admin` no existe; defínelo al ejecutar.
+- Healthcheck a `/ready`, que da 503 si algo bloquea (con la acción en
+  `proyecto.bloqueante`). La imagen sola no trae índice: monta tu proyecto
+  sobre `/app`.
+
+### 4. `rag desplegar preparar`
+
+Genera una carpeta lista para copiar al VPS:
+
+```bash
+rag desplegar preparar --dominio asistente.tu-dominio.cl
+```
+
+`dist/` incluye:
+- la configuración (con `personalidad.yaml`, `estilos.yaml`, la calibración
+  y los avatares importados), los documentos y el índice;
+- `Dockerfile`, `docker-compose.yml` (con un Caddy opcional, perfil `https`,
+  ya declarado como proxy confiable), `Caddyfile` y `.env.ejemplo`;
+- `LEEME_despliegue.md` en el idioma del proyecto, con el snippet del widget
+  y cómo activar `/admin`.
+
+Los registros de consultas y los secretos no se copian.
+
+- **Versión exacta:** sin `--wheel`, la imagen instala la versión actual del
+  repositorio público. Para fijar la tuya, construye el wheel
+  (`python -m pip wheel . --no-deps`) y pásalo con `--wheel`.
+- **Regenerar:** `--forzar` reemplaza una carpeta preparada antes. Nunca
+  borra una carpeta que no haya generado este comando.
+
+En el servidor:
+
+```bash
+cp .env.ejemplo .env
+sudo chown -R 10001:10001 configuracion .rag
+docker compose --profile https up -d --build
+```
 
 ## Modos de ejecución: desarrollo y producción
 
