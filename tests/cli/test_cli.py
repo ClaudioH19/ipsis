@@ -175,6 +175,27 @@ def test_cargar_archivo_modificado_no_sobrescribe_la_version_anterior(
     assert (proyecto_temporal / "documentos" / catalogo[1]["archivo"]).is_file()
 
 
+def test_cargar_avisa_el_homonimo_y_vigente_false_lo_saca_del_indice(proyecto_temporal: Path, capsys):
+    from rag.ingesta.ingesta import parsear_corpus
+
+    main(["init"])
+    md = _doc_prueba_md(proyecto_temporal)
+    assert main(["cargar", str(md)]) == 0
+    md.write_text(md.read_text(encoding="utf-8") + "\nVersión nueva.\n", encoding="utf-8")
+    capsys.readouterr()
+    assert main(["cargar", str(md)]) == 0
+    salida = capsys.readouterr().out
+    assert "ya había un documento con ese nombre" in salida and "vigente: false" in salida
+    assert len(parsear_corpus("documentos")) == 2  # mientras no se retire, se indexan ambos
+
+    ruta = proyecto_temporal / "documentos" / "catalogo.yaml"
+    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    datos["documentos"][0]["vigente"] = False
+    ruta.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    vigentes = parsear_corpus("documentos")
+    assert [d.doc_id for d in vigentes] == [datos["documentos"][1]["doc_id"]]
+
+
 def test_cargar_formato_no_soportado_falla_sin_tocar_catalogo(proyecto_temporal: Path):
     main(["init"])
     ruta = proyecto_temporal / "archivo.rtf"

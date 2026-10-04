@@ -27,7 +27,8 @@ dependencies = [
 test = ["pytest>=8,<10"]
 browser = ["pytest>=8,<10", "playwright>=1.55,<2"]
 # Solo desarrollo: convertir un modelo a ONNX (rag modelos exportar).
-exportar = ["optimum[onnxruntime]>=1.20", "torch>=2.2"]
+# optimum 2.x movió el exportador ONNX a optimum-onnx; este fija transformers < 4.58.
+exportar = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
 
 [project.scripts]
 rag = "rag.cli:main"

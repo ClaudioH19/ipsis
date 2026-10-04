@@ -39,12 +39,9 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
             raise ValueError(f"perfil desconocido {nuevo['perfil']!r} (disponibles: {list(PERFILES_INSTALABLES)})")
 
     if "idioma" in pares:
-        from rag.lenguaje.paquete import idiomas_disponibles
+        from rag.lenguaje.paquete import validar_codigo_idioma
 
-        if nuevo["idioma"] not in idiomas_disponibles():
-            raise ValueError(
-                f"no hay paquete de idioma {nuevo['idioma']!r} (disponibles: {idiomas_disponibles()})"
-            )
+        validar_codigo_idioma(nuevo["idioma"])  # sin paquete propio, rige el respaldo
 
     ruta_p.parent.mkdir(parents=True, exist_ok=True)
     # Temporal + os.replace: un fallo a mitad nunca deja asistente.yaml cortado.
@@ -99,7 +96,7 @@ def inicializar_proyecto(
         slug_coleccion,
     )
     from rag.ingesta.catalogo import CATALOGO_PATH, plantilla_catalogo_vacio
-    from rag.lenguaje.paquete import idiomas_disponibles
+    from rag.lenguaje.paquete import validar_codigo_idioma
 
     ruta_dominio = Path(RUTA_DOMINIO)
     if ruta_dominio.exists() and not forzar:
@@ -107,9 +104,7 @@ def inicializar_proyecto(
     if ruta_dominio.exists():
         ruta_dominio.unlink()  # --force: parte de los valores por defecto, no fusiona con lo viejo
 
-    idioma = idioma or "es"
-    if idioma not in idiomas_disponibles():
-        raise ValueError(f"no hay paquete de idioma {idioma!r}. Disponibles: {', '.join(idiomas_disponibles())}.")
+    idioma = validar_codigo_idioma(idioma or "es")
 
     inicializar_asistente_si_falta()
     nuevo = actualizar_dominio({
@@ -210,6 +205,7 @@ class EstadoIndice:
     hash_corpus: str | None = None
     stemmer: str | None = None  # con qué stemmer se construyeron sus estadísticas léxicas
     n_chunks: int | None = None
+    hash_archivos: str | None = None
 
 
 @dataclass(frozen=True)
@@ -242,6 +238,13 @@ class CambioPerfil:
     @property
     def requiere_reindexar(self) -> bool:
         return self.cambio_real and self.indice.estado == "incompatible"
+
+
+def idioma_con_respaldo(codigo: str) -> bool:
+    """El idioma no tiene paquete propio: rigen las reglas universales y los textos en inglés."""
+    from rag.lenguaje.paquete import cargar_paquete
+
+    return cargar_paquete(codigo).respaldo
 
 
 def validar_perfil_instalable(nombre: str) -> str:
@@ -282,7 +285,8 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
         manifiesto = ManifiestoIndice.model_validate(json.loads(propio.read_text(encoding="utf-8")))
         compatible = es_compatible(manifiesto, modelo, stemmer=stemmer, dimension=obtener(modelo).dimension)
         return EstadoIndice("compatible" if compatible else "incompatible", modelo, manifiesto.modelo_denso,
-                            nombre, manifiesto.hash_corpus, manifiesto.stemmer, manifiesto.n_chunks)
+                            nombre, manifiesto.hash_corpus, manifiesto.stemmer, manifiesto.n_chunks,
+                            manifiesto.hash_archivos)
     otros = []
     for ruta in sorted(Path(rutas.INDICE).glob("*.manifiesto.json")):
         manifiesto = ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
@@ -314,17 +318,22 @@ def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibr
     return EstadoCalibracionPerfil("obsoleta", motivo)
 
 
-def _perfil_instalacion(nombre: str):
+def perfil_de_instalacion(nombre: str):
+    """Perfil ``nombre`` con los ``ajustes_perfil`` del proyecto (si hay uno), sin
+    calibración: lo que importa para modelos, índice y presupuesto. Valida los
+    ajustes (``ValueError`` si no sirven para ese perfil)."""
+    from rag.configuracion import rutas
     from rag.configuracion.carga import cargar_proyecto
     from rag.configuracion.perfiles import perfil_efectivo
 
-    return perfil_efectivo(nombre, cargar_proyecto().get("ajustes_perfil"))
+    ajustes = cargar_proyecto().get("ajustes_perfil") if Path(rutas.MOTOR).is_file() else None
+    return perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
 
 
 def resumen_perfil() -> ResumenPerfil:
     """Perfil activo, sus modelos y presupuesto, y si el índice y la calibración le sirven."""
     nombre = cargar_dominio().get("perfil", "light")
-    instalacion = _perfil_instalacion(nombre)
+    instalacion = perfil_de_instalacion(nombre)
     indice = estado_indice(nombre)
     return ResumenPerfil(
         perfil=nombre, descripcion=instalacion.descripcion, presupuesto_p95_ms=instalacion.presupuesto_p95_ms,
@@ -343,7 +352,7 @@ def cambiar_perfil(destino: str) -> CambioPerfil:
     """
     destino = validar_perfil_instalable(destino)
     anterior = cargar_dominio().get("perfil", "light")
-    instalacion = _perfil_instalacion(destino)  # valida los ajustes del proyecto antes de escribir
+    instalacion = perfil_de_instalacion(destino)  # valida los ajustes del proyecto antes de escribir
     if anterior != destino:
         actualizar_dominio({"perfil": destino})
     indice = estado_indice(destino)

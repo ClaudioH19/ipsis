@@ -132,6 +132,17 @@ def test_separacion_estratificada_y_estable():
         assert splits.count("dev") == splits.count("test")
 
 
+def test_separacion_por_estrato_reparte_exactas_y_parafrasis():
+    """P10.3: con solo el tipo público, 3 exactas podían quedar todas en test."""
+    filas = _filas(n_respondibles=6, n_trampas=0)
+    estratos = {f.id: ("exacta" if i < 3 else "parafrasis") for i, f in enumerate(filas)}
+    split = separar_dev_test(filas, estratos)
+    for estrato in ("exacta", "parafrasis"):
+        splits = {split[i] for i, e in estratos.items() if e == estrato}
+        assert splits == {"dev", "test"}, estrato
+    assert split == separar_dev_test(list(reversed(filas)), estratos)
+
+
 def test_avisos_de_tamano_balance_y_certificacion():
     avisos = avisos_de_tamano(_filas(10, 2))
     assert any("prueba rápida" in a and "30" in a for a in avisos)  # chico: aviso, no error

@@ -35,6 +35,13 @@ def cargar_catalogo(ruta: str = CATALOGO_PATH) -> list[dict]:
     return datos.get("documentos") or []
 
 
+def entradas_vigentes(ruta: str = CATALOGO_PATH) -> list[dict]:
+    """Entradas del catálogo que se indexan: las que no tienen ``vigente: false``."""
+    if not pathlib.Path(ruta).is_file():
+        return []
+    return [e for e in cargar_catalogo(ruta) if e.get("vigente", True) is not False]
+
+
 # ---------------------------------------------------------------------------
 # `rag cargar` (Etapa Plugin, Tarea A): copia un documento al corpus y lo
 # registra en `documentos/catalogo.yaml`. La lógica vive aquí (no en la CLI) por
@@ -151,6 +158,9 @@ class DocumentoCargado:
     hash_contenido: str
     ya_existia: bool = False
     advertencias: list[str] = field(default_factory=list)
+    # Otro documento del catálogo con el mismo nombre de archivo y distinto contenido:
+    # el nuevo se agrega aparte y el anterior sigue vigente hasta que se retire.
+    homonimo_de: str | None = None
 
 
 def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "documentos",
@@ -200,6 +210,8 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "docu
         titulo = inferir_titulo(doc_parseado, ruta_origen.name)
 
         destino = Path(carpeta_corpus) / ruta_origen.name
+        homonimo = next((e["doc_id"] for e in catalogo_actual
+                         if e["archivo"] == ruta_origen.name and e.get("vigente", True) is not False), None)
         if destino.is_file() and hashlib.sha256(destino.read_bytes()).hexdigest() != hash_contenido:
             destino = destino.with_name(
                 f"{destino.stem}-{hash_contenido[:6]}{destino.suffix}"
@@ -219,5 +231,6 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "docu
         resultado.append(DocumentoCargado(
             archivo=entrada["archivo"], doc_id=doc_id, doc_titulo=titulo, version="1",
             vigente=True, hash_contenido=hash_contenido, advertencias=list(doc_parseado.advertencias),
+            homonimo_de=homonimo,
         ))
     return resultado

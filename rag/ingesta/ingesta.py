@@ -8,7 +8,7 @@ from pathlib import Path
 from rag.ingesta.parsear import parsear_documento, DocumentoParseado
 from rag.ingesta.chunking import ESTRATEGIAS, construir_texto_embebido, Chunk
 from rag.ingesta.metadata import cargar_taxonomia, construir_payload, validar_chunk
-from rag.ingesta.catalogo import cargar_catalogo
+from rag.ingesta.catalogo import entradas_vigentes
 from rag.indice.manifiesto import ManifiestoIndice, guardar_manifiesto, hash_corpus, inventario_entidades
 from rag.indice.qdrant import (
     indexar_qdrant,
@@ -23,7 +23,7 @@ def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
     tenga que saber cuál es cuál."""
     docs = []
-    for entrada in cargar_catalogo():
+    for entrada in entradas_vigentes():
         ruta = str(Path(carpeta_corpus) / entrada["archivo"])
         doc = parsear_documento(ruta, doc_id=entrada["doc_id"], doc_titulo=entrada["doc_titulo"],
                                  version=entrada["version"])
@@ -41,7 +41,8 @@ def construir_chunks_y_payloads(docs: list[DocumentoParseado], estrategia: str,
     from rag.indice.estadisticas import EstadisticasLexicas
     from rag.lenguaje.entidades import idioma_activo
 
-    por_documento = [(chunk_fn(doc), entrada) for doc, entrada in zip(docs, cargar_catalogo())]
+    entradas = {e["doc_id"]: e for e in entradas_vigentes()}
+    por_documento = [(chunk_fn(doc), entradas[doc.doc_id]) for doc in docs]
     # Las palabras clave usan el IDF del corpus completo.
     estadisticas = EstadisticasLexicas.construir(
         [ch.texto for chunks, _ in por_documento for ch in chunks], idioma_activo()
@@ -105,6 +106,22 @@ class ResumenIngesta:
     @property
     def n_documentos(self) -> int:
         return len(self.documentos)
+
+
+def huella_archivos(carpeta_corpus: str = "documentos", cfg_rec: dict | None = None) -> str:
+    """Huella de lo que se indexaría, sin parsear: bytes de cada documento vigente
+    y la configuración de fragmentado. Igual huella ⇒ igual ``hash_corpus``."""
+    import hashlib
+
+    from rag.configuracion.carga import config_recuperacion
+
+    cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
+    digest = hashlib.sha256(f"{cfg_rec['estrategia_chunking']}|{cfg_rec['con_header']}".encode("utf-8"))
+    for entrada in sorted(entradas_vigentes(), key=lambda e: e["doc_id"]):
+        contenido = (Path(carpeta_corpus) / entrada["archivo"]).read_bytes()
+        digest.update(f"\n{entrada['doc_id']}|{entrada['doc_titulo']}|{entrada['version']}|".encode("utf-8"))
+        digest.update(hashlib.sha256(contenido).digest())
+    return "sha256:" + digest.hexdigest()
 
 
 def huella_corpus(carpeta_corpus: str = "documentos", cfg_rec: dict | None = None) -> str:
@@ -185,6 +202,7 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     guardar_manifiesto(ManifiestoIndice(
         coleccion=nombre_col, modelo_denso=modelo, dimension=_codificador.dimension,
         stemmer=estadisticas_lexicas.stemmer, hash_corpus=huella, n_chunks=len(payloads),
+        hash_archivos=huella_archivos(carpeta_corpus, {"estrategia_chunking": estrategia, "con_header": con_header}),
         inventario_entidades=inventario,
     ))
 

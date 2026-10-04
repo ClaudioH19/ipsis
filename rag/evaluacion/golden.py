@@ -308,16 +308,21 @@ def asignar_ids(filas: list[FilaGolden]) -> list[str]:
     return errores
 
 
-def separar_dev_test(filas: list[FilaGolden]) -> dict[str, str]:
-    """``id → split``: 50/50 estratificado por tipo, determinista por hash del id.
+def separar_dev_test(filas: list[FilaGolden], estratos: dict[str, str] | None = None) -> dict[str, str]:
+    """``id → split``: 50/50 estratificado, determinista por hash del id.
 
-    Dentro de cada tipo se ordena por hash y se alterna dev/test: reimportar el
-    mismo archivo da la misma separación.
+    El estrato es ``estratos[id]`` si se da (``a_banco`` usa la categoría
+    interna, p. ej. exacta/paráfrasis, y el subtipo) y si no, el tipo público.
+    Dentro de cada estrato se ordena por hash y se alterna dev/test:
+    reimportar el mismo archivo da la misma separación.
     """
+    estratos = estratos or {}
+    grupos: dict[str, list[str]] = {}
+    for f in filas:
+        grupos.setdefault(estratos.get(f.id, f.tipo), []).append(f.id)
     split: dict[str, str] = {}
-    for tipo in TIPOS:
-        grupo = sorted((f.id for f in filas if f.tipo == tipo), key=_hash)
-        for i, id_ in enumerate(grupo):
+    for estrato in sorted(grupos):
+        for i, id_ in enumerate(sorted(grupos[estrato], key=_hash)):
             split[id_] = "dev" if i % 2 == 0 else "test"
     return split
 
@@ -397,12 +402,11 @@ def a_banco(
             avisos.append(f"{fila.origen}: su par {fila.par!r} quedó sin completar; se mide sin par")
             fila.par = None
 
-    split = separar_dev_test(filas)
-    casos = []
+    pendientes = []  # (comunes sin split, datos del caso); el split va al final, ya con la categoría
     for fila in filas:
         if fila.id in invalidas:  # ya reportada; se siguen revisando las demás
             continue
-        comunes = dict(schema_version=1, dataset_version=dataset_version, id=fila.id, split=split[fila.id],
+        comunes = dict(schema_version=1, dataset_version=dataset_version, id=fila.id,
                        pregunta=fila.pregunta, notas=fila.notas, subtipo=fila.subtipo, par=fila.par)
         if fila.tipo == "respondible":
             ubicacion, avisos_fila = ubicar_en_contexto(fila, documentos, alias), []
@@ -424,14 +428,20 @@ def a_banco(
             cobertura = s_cov(terminos_pregunta(fila.pregunta, paquete), terminos(evidencia.texto, paquete),
                               estadisticas)
             categoria = CategoriaPregunta.EXACTA if cobertura >= UMBRAL_EXACTA else CategoriaPregunta.PARAFRASIS
-            casos.append(CasoEvaluacion(**comunes, categoria=categoria, estado_esperado="respuesta_directa",
-                                        respondible=True, respuesta_literal=ubicacion.texto,
-                                        evidencias=[evidencia]))
+            pendientes.append((comunes, dict(categoria=categoria, estado_esperado="respuesta_directa",
+                                             respondible=True, respuesta_literal=ubicacion.texto,
+                                             evidencias=[evidencia])))
         else:
             categoria, estado = _CATEGORIA_Y_ESTADO[fila.tipo]
-            casos.append(CasoEvaluacion(**comunes, categoria=categoria, estado_esperado=estado, respondible=False))
+            pendientes.append((comunes, dict(categoria=categoria, estado_esperado=estado, respondible=False)))
     if errores:
         raise ErrorGolden(errores)
+
+    # Estrato = categoría interna (+ subtipo): con bancos chicos, estratificar solo
+    # por tipo público podía dejar todas las exactas en test (P10.3).
+    estratos = {c["id"]: "/".join(filter(None, (d["categoria"].value, c["subtipo"]))) for c, d in pendientes}
+    split = separar_dev_test([f for f in filas if f.id in estratos], estratos)
+    casos = [CasoEvaluacion(**comunes, split=split[comunes["id"]], **datos) for comunes, datos in pendientes]
 
     manifiesto = ManifiestoBanco(
         dataset_id=dataset_id, dataset_version=dataset_version, tipo="manual",

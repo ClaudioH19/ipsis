@@ -29,6 +29,10 @@ class ManifiestoIndice(BaseModel):
     dimension: int
     stemmer: str | None = None
     hash_corpus: str
+    # Huella barata de los archivos indexados (bytes + configuración de fragmentado):
+    # si coincide, el corpus no cambió sin tener que parsearlo. Opcional: los
+    # manifiestos anteriores no la tienen.
+    hash_archivos: str | None = None
     version_payload: int = SCHEMA_VERSION
     n_chunks: int = Field(ge=0)
     inventario_entidades: list[str] = Field(default_factory=list)

@@ -114,6 +114,16 @@ def test_elige_el_umbral_mas_permisivo_que_cumple():
     assert resultado.dev.cobertura_directa == pytest.approx(70 / 75)
 
 
+def test_ante_empate_conserva_el_valor_del_perfil():
+    """P10.3: con todos los s_oov en 0 y s_foco en 1, dev no distingue oov_ok ni foco;
+    antes el desempate «más estricto» los llevaba a ~0 y a 1,0 sin evidencia."""
+    respondibles = [0.71 + i * 0.004 for i in range(70)] + [0.60] * 5
+    casos, obs = _escenario(respondibles, [0.70] * 10)
+    resultado = calibrar(_banco(casos), obs, BASE)
+    assert resultado.umbrales["oov_ok"] == BASE["oov_ok"] and resultado.umbrales["foco"] == BASE["foco"]
+    assert resultado.umbrales["ok"] == pytest.approx(0.71)  # ok sí lo mueve la evidencia
+
+
 def test_sin_umbral_seguro_si_las_trampas_puntuan_mas_alto():
     casos, obs = _escenario([0.80 + i * 0.002 for i in range(70)], [0.99] * 10)
     resultado = calibrar(_banco(casos), obs, BASE)

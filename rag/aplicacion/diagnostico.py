@@ -236,26 +236,23 @@ def _perfil(ctx: _Contexto) -> ChequeoDoctor:
 
 
 def _idioma(ctx: _Contexto) -> ChequeoDoctor:
-    from rag.lenguaje.paquete import cargar_paquete, idiomas_disponibles
+    from rag.lenguaje.paquete import IDIOMA_RESPALDO, cargar_paquete, idiomas_disponibles
 
     if ctx.dominio is None:
         return _no_evaluado("idioma", rutas.ASISTENTE)
     codigo = ctx.dominio.get("idioma", "es")
-    disponibles = idiomas_disponibles()
-    if codigo not in disponibles:
-        # El plan prevé un respaldo (reglas universales y textos en inglés), pero
-        # el código no lo implementa: con este idioma el motor no arranca.
-        return _chequeo("idioma", Estado.ERROR,
-                        f"{codigo}: no hay paquete de idioma (disponibles: {', '.join(disponibles)}); "
-                        "el motor no puede arrancar sin uno",
-                        [f"rag configurar idioma=<{'|'.join(disponibles)}>"], idioma=codigo)
     try:
         ctx.paquete = cargar_paquete(codigo, proyecto=Path.cwd())
     except Exception as e:  # noqa: BLE001
         return _chequeo("idioma", Estado.ERROR,
                         f"{codigo}: el paquete con las sobrescrituras de {rutas.IDIOMA} no es válido: {_breve(e)}",
                         [f"corrige {rutas.IDIOMA} o bórralo para usar los textos del paquete"], idioma=codigo)
-    return _chequeo("idioma", Estado.OK, f"{codigo} ({ctx.paquete.nombre})", idioma=codigo)
+    if ctx.paquete.respaldo:
+        return _chequeo("idioma", Estado.AVISO,
+                        f"{codigo}: no hay un paquete específico (disponibles: {', '.join(idiomas_disponibles())}); "
+                        f"se usan las reglas universales, términos sin stem y los textos de '{IDIOMA_RESPALDO}' "
+                        f"(tradúcelos en {rutas.IDIOMA})", idioma=codigo, respaldo=True)
+    return _chequeo("idioma", Estado.OK, f"{codigo} ({ctx.paquete.nombre})", idioma=codigo, respaldo=False)
 
 
 def _stemmer(ctx: _Contexto) -> ChequeoDoctor:
@@ -310,9 +307,9 @@ def _modelos(ctx: _Contexto) -> ChequeoDoctor:
 
 
 def _documentos_cargados() -> int:
-    from rag.ingesta.catalogo import cargar_catalogo
+    from rag.ingesta.catalogo import entradas_vigentes
 
-    return len(cargar_catalogo(rutas.CATALOGO)) if Path(rutas.CATALOGO).is_file() else 0
+    return len(entradas_vigentes(rutas.CATALOGO))
 
 
 def _indice(ctx: _Contexto) -> ChequeoDoctor:
@@ -344,15 +341,23 @@ def _indice(ctx: _Contexto) -> ChequeoDoctor:
     fisico = verificar_indice()
     if fisico.bloqueante:
         return _chequeo("indice", Estado.ERROR, fisico.mensaje, fisico.acciones, estado="incompatible")
-    from rag.ingesta.ingesta import huella_corpus
-
-    actual = huella_corpus(rutas.DOCUMENTOS, config_recuperacion(ctx.motor, perfil=perfil))
-    if actual != indice.hash_corpus:
+    if _corpus_cambio(indice, config_recuperacion(ctx.motor, perfil=perfil)):
         return _chequeo("indice", Estado.ERROR, "los documentos cambiaron desde la última indexación",
                         ["rag indexar"], estado="corpus_cambiado")
     return _chequeo("indice", Estado.OK,
                     f"compatible ({indice.modelo_indice}, {indice.n_chunks} fragmentos, corpus sin cambios)",
                     estado="compatible")
+
+
+def _corpus_cambio(indice, cfg_rec: dict) -> bool:
+    """Compara el corpus actual con el indexado. Si la huella de archivos coincide
+    no hace falta parsear; si difiere o falta (manifiesto anterior), se recalcula
+    el ``hash_corpus`` exacto, que es lo que decide."""
+    from rag.ingesta.ingesta import huella_archivos, huella_corpus
+
+    if indice.hash_archivos and huella_archivos(rutas.DOCUMENTOS, cfg_rec) == indice.hash_archivos:
+        return False
+    return huella_corpus(rutas.DOCUMENTOS, cfg_rec) != indice.hash_corpus
 
 
 def _calibracion(ctx: _Contexto) -> ChequeoDoctor:

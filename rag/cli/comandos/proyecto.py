@@ -8,10 +8,15 @@ from rag.aplicacion.proyecto import (
     ProyectoExistente,
     actualizar_dominio,
     cambiar_perfil,
+    idioma_con_respaldo,
     inicializar_proyecto,
     resumen_perfil,
 )
 from rag.cli.base import Comando, Grupo
+
+
+_NOTA_RESPALDO = ("  Nota: no hay un paquete para {idioma!r}: se usan las reglas universales, términos sin stem "
+                  "y los textos en inglés (tradúcelos en configuracion/idioma.yaml).")
 
 
 class ComandoInit(Comando):
@@ -25,7 +30,8 @@ class ComandoInit(Comando):
                             help="Descripción corta del dominio, p.ej. 'el manual de mi equipo' "
                                  "(por defecto: 'los documentos cargados').")
         parser.add_argument("--idioma", default=None,
-                            help="Código del paquete de idioma: textos, patrones y reglas (por defecto: 'es').")
+                            help="Código del idioma (por defecto: 'es'). es, en y pt tienen paquete propio; otro código "
+                                 "usa las reglas universales, sin stem, y los textos en inglés.")
         parser.add_argument("--perfil", choices=["light", "medium", "heavy"], default=None,
                             help="Perfil de instalación: light (sin modelos extra), medium o heavy "
                                  "(por defecto: medium).")
@@ -52,6 +58,8 @@ class ComandoInit(Comando):
         print(f"  nombre_asistente = {nuevo['nombre_asistente']!r}")
         print(f"  descripcion_dominio = {nuevo['descripcion_dominio']!r}")
         print(f"  idioma = {nuevo['idioma']!r}, perfil = {nuevo['perfil']!r}")
+        if idioma_con_respaldo(nuevo["idioma"]):
+            print(_NOTA_RESPALDO.format(idioma=nuevo["idioma"]))
         print(f"Corpus vacío listo en documentos/ (catálogo en {inicio.ruta_catalogo}).")
         if inicio.creo_motor:
             print("configuracion/motor.yaml creado con umbrales genéricos de partida. "
@@ -94,6 +102,8 @@ class ComandoConfigurar(Comando):
         print("configuracion/asistente.yaml actualizado:")
         for clave in pares:
             print(f"  {clave} = {nuevo[clave]!r}")
+        if "idioma" in pares and idioma_con_respaldo(nuevo["idioma"]):
+            print(_NOTA_RESPALDO.format(idioma=nuevo["idioma"]))
         return 0
 
 

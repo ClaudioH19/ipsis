@@ -194,8 +194,20 @@ def _barrer_ok(pares: list[Par], umbrales: dict[str, float],
 
 
 def _conservadora(umbrales: dict[str, float]) -> tuple:
-    """Desempate determinista: entre combinaciones iguales, la más estricta."""
+    """Último desempate determinista: la más estricta."""
     return (umbrales["ok"], -umbrales["oov_ok"], umbrales["foco"])
+
+
+def _preferencia(r: int, x: int, umbrales: dict[str, float], base: dict[str, float]) -> tuple:
+    """Orden entre combinaciones que ya cumplen la cota (mayor es mejor).
+
+    Primero más respuestas directas correctas en dev y menos errores. Ante
+    empate, la más cercana al perfil: si dev no distingue dos valores, no hay
+    evidencia para mover el umbral (antes se iba al extremo más estricto, p. ej.
+    ``oov_ok`` a ~0 con todos los ``s_oov`` en 0). Recién después, la más estricta.
+    """
+    movidos = [abs(umbrales[k] - base[k]) for k in CALIBRABLES]
+    return (r, -x, -sum(d > 1e-12 for d in movidos), -sum(movidos), _conservadora(umbrales))
 
 
 def calibrar(
@@ -243,7 +255,7 @@ def _calibrar_pares(pares: list[Par], umbrales_perfil: dict[str, float], alfa: f
                 if n == 0 or cota_superior_clopper_pearson(x, n, confianza) > alfa:
                     continue
                 elegido = {**umbrales, "ok": ok}
-                clave = (r, _conservadora(elegido))
+                clave = _preferencia(r, x, elegido, base)
                 if mejor is None or clave > mejor[0]:
                     mejor = (clave, elegido)
 

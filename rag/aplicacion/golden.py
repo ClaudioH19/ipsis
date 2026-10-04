@@ -41,10 +41,10 @@ def _paquete():
 def _corpus() -> _Corpus:
     """Documentos del catálogo, ya parseados, y su descripción para el manifiesto."""
     from rag.evaluacion.banco import ArchivoCorpus, CorpusBanco, hash_archivos_corpus
-    from rag.ingesta.catalogo import cargar_catalogo
+    from rag.ingesta.catalogo import entradas_vigentes
     from rag.ingesta.ingesta import parsear_corpus
 
-    catalogo = cargar_catalogo(rutas.CATALOGO) if Path(rutas.CATALOGO).is_file() else []
+    catalogo = entradas_vigentes(rutas.CATALOGO)
     if not catalogo:
         raise ErrorGolden(["no hay documentos en el catálogo: agrégalos con 'rag cargar <archivo|carpeta>'"])
     documentos = parsear_corpus(rutas.DOCUMENTOS)
