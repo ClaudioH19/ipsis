@@ -5,8 +5,8 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-> El panel gráfico `/admin/panel` llega en P12.7; el avatar «Folio» y su
-> animación en el widget, en P12.9 y P12.10.
+> El avatar «Folio» y su animación en el widget llegan en P12.9 y P12.10.
+> Mientras tanto, el widget muestra el ícono.
 
 ## Configuración: `configuracion/personalidad.yaml`
 
@@ -133,11 +133,36 @@ personalidad y el widget sin terminal (ver modos y seguridad en
 | `POST /admin/personalidad/vista-previa` | `{"tono": "formal", "situacion": "sin_respuesta"}` → las variantes con las variables del proyecto |
 | `GET /admin/avatares` · `POST /admin/avatares` | Lista, o importa `{"nombre": "mi-avatar", "definicion": {…}}` |
 | `GET /admin/estilos` · `PUT /admin/estilos` | Tema y ubicación del widget (`estilos.yaml`), con la misma validación que la terminal |
+| `GET /admin/estilos/presets` · `POST /admin/estilos/preset` | Lista los presets visuales, o aplica uno: `{"nombre": "editorial"}` (`clasico`, `minimal`, `editorial`, `contraste`) |
 
 Los cambios, por HTTP o por terminal, se ven sin reiniciar:
 - el servicio revisa la fecha de `personalidad.yaml`, `idioma.yaml` y
   `asistente.yaml` en cada consulta, y el motor toma las plantillas nuevas;
 - `/config` entrega al widget la microcopia y el avatar vigentes.
+
+## Panel gráfico (`/admin/panel`)
+
+Es la misma API, con formularios. Abre `https://tu-dominio/admin/panel`
+(o `http://127.0.0.1:8000/admin/panel` en tu máquina) y pega el token.
+
+| Pestaña | Qué hace |
+|---|---|
+| **Tono** | Elige el tono y la variedad. Por situación, muestra las 5 variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
+| **Avatar** | Importa un `.avatar.json` (se valida antes de guardar), elige el avatar, sus colores, ubicación y tamaño, y asigna cada evento a una animación. El botón ▶ dispara el evento en la vista previa |
+| **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas |
+
+- **Vista previa:** el widget real, servido por tu servicio. Se recarga sola
+  tras cada cambio guardado.
+- **Token:** se guarda solo en la pestaña del navegador (`sessionStorage`).
+  Se borra al cerrarla o con «Salir».
+- **Seguridad:**
+  - el panel no carga nada de otros dominios;
+  - su política de contenido (CSP) prohíbe scripts en línea;
+  - sigue las mismas reglas de transporte que la API: en producción, HTTPS
+    salvo desde la propia máquina;
+  - sin `RAG_ADMIN_TOKEN`, el panel no existe (404).
+- Sus archivos no tienen datos: todo lo que muestra llega por la API con el
+  token.
 
 ## Neutralidad de los tonos incluidos
 

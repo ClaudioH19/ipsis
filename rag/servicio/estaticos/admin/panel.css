@@ -1,0 +1,36 @@
+:root{--acento:#2563eb;--fondo:#f4f5f7;--superficie:#fff;--texto:#15181d;--suave:#5b6472;--borde:#e3e6ea;--error:#b42318;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--texto);background:var(--fondo);}
+@media (prefers-color-scheme:dark){:root{--fondo:#12151b;--superficie:#1b1f27;--texto:#eceff4;--suave:#9aa4b2;--borde:#2b323d;--error:#ff8a80;}}
+*{box-sizing:border-box;}
+body{margin:0;}
+.cabecera{padding:16px 24px;background:var(--superficie);border-bottom:1px solid var(--borde);}
+.cabecera h1{margin:0;font-size:20px;}
+main{padding:16px;max-width:1280px;margin:0 auto;}
+.tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:12px;padding:16px;margin-bottom:16px;}
+.tarjeta h2{margin-top:0;font-size:17px;}
+label{display:block;margin:10px 0 4px;font-size:14px;}
+.fila{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:10px 0;}
+.fila label{margin:0;}
+input,select,textarea,button{font:inherit;}
+input[type=text],input[type=password],input[type=number],select,textarea{width:100%;max-width:420px;padding:7px 9px;
+  border:1px solid var(--borde);border-radius:8px;background:var(--fondo);color:var(--texto);}
+textarea{max-width:100%;}
+button{background:var(--acento);color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;margin-top:8px;}
+button.secundario{background:transparent;color:var(--texto);border:1px solid var(--borde);}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acento);outline-offset:2px;}
+.pestanas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.pestanas [role=tab]{background:var(--superficie);color:var(--texto);border:1px solid var(--borde);}
+.pestanas [role=tab][aria-selected=true]{background:var(--acento);color:#fff;}
+.columnas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:16px;align-items:start;}
+@media (max-width:900px){.columnas{grid-template-columns:1fr;}}
+.vista iframe{width:100%;height:680px;border:1px solid var(--borde);border-radius:8px;background:#fff;}
+.variantes li{margin:6px 0;}
+.nota{color:var(--suave);font-size:13px;}
+.estado{color:var(--suave);min-height:1.2em;}
+.error{color:var(--error);}
+.error ul{margin:6px 0;}
+table.eventos{width:100%;border-collapse:collapse;font-size:14px;}
+table.eventos th,table.eventos td{border-bottom:1px solid var(--borde);padding:6px;text-align:left;}
+table.eventos select{max-width:220px;}
+footer{padding:16px 24px;font-size:13px;}
+footer a{color:var(--acento);}

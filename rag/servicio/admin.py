@@ -60,6 +60,16 @@ class _Bloqueos:
             self._fallos.pop(ip, None)
 
 
+def transporte_permitido(modo: ModoServicio, request: Request) -> str | None:
+    """Motivo de rechazo por IP o transporte (``None`` si se permite). Lo comparten la API y el panel."""
+    ip = request.client.host if request.client else "desconocida"
+    if modo.admin_ips and ip not in modo.admin_ips:
+        return "IP no permitida para /admin"
+    if not modo.desarrollo and request.url.scheme != "https" and not _es_loopback(ip):
+        return "/admin exige HTTPS en producción (o un proxy declarado en RAG_PROXY_CONFIABLE)"
+    return None
+
+
 def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], None] | None = None,
                        reloj: Callable[[], float] = time.monotonic) -> APIRouter:
     """Router de ``/admin``. ``al_cambiar`` se llama tras cada escritura (recarga en caliente)."""
@@ -72,17 +82,14 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         resumen_admin,
     )
     from rag.aplicacion.registro import registrar_admin
-    from rag.aplicacion.widget import actualizar_estilos, cargar_estilos
+    from rag.aplicacion.widget import actualizar_estilos, aplicar_preset, cargar_estilos, listar_presets
 
     bloqueos = _Bloqueos()
 
     async def verificar(request: Request) -> str:
         ip = request.client.host if request.client else "desconocida"
-        if modo.admin_ips and ip not in modo.admin_ips:
-            raise HTTPException(status_code=403, detail="IP no permitida para /admin")
-        if not modo.desarrollo and request.url.scheme != "https" and not _es_loopback(ip):
-            raise HTTPException(status_code=403, detail="/admin exige HTTPS en producción "
-                                                        "(o un proxy declarado en RAG_PROXY_CONFIABLE)")
+        if motivo := transporte_permitido(modo, request):
+            raise HTTPException(status_code=403, detail=motivo)
         ahora = reloj()
         if bloqueos.bloqueada(ip, ahora):
             raise HTTPException(status_code=429, detail="demasiados intentos; espera 15 minutos",
@@ -167,7 +174,63 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         _cambio(request, "estilos", list(cambios))
         return tema
 
+    @router.get("/estilos/presets")
+    def presets():
+        return listar_presets()
+
+    @router.post("/estilos/preset")
+    def cambiar_preset(request: Request, cuerpo: dict = Body(...)):
+        try:
+            tema = aplicar_preset(str(cuerpo.get("nombre", "")))
+        except ValueError as e:
+            raise _invalido(e) from e
+        _cambio(request, "preset", [str(cuerpo.get("nombre", ""))])
+        return tema
+
     return router
 
 
-__all__ = ["BLOQUEO_S", "INTENTOS_MAXIMOS", "LIMITE_CUERPO", "crear_router_admin"]
+# --- panel gráfico (/admin/panel): archivos estáticos; los datos van por la API con token ---------
+DIR_PANEL = "admin"
+ARCHIVOS_PANEL = {"panel.html": "text/html; charset=utf-8", "panel.js": "application/javascript; charset=utf-8",
+                  "panel.css": "text/css; charset=utf-8", "vista-previa.html": "text/html; charset=utf-8"}
+CSP_PANEL = ("default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; "
+             "frame-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'")
+# La vista previa carga el widget real: su <style> en el Shadow DOM es inline y el
+# motor del avatar valida con ajv (``unsafe-eval``). Solo se enmarca desde el panel.
+CSP_VISTA_PREVIA = ("default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; "
+                    "connect-src 'self'; img-src 'self' data:; frame-ancestors 'self'; base-uri 'none'; "
+                    "form-action 'none'")
+
+
+def crear_router_panel(modo: ModoServicio, carpeta) -> APIRouter:
+    """``/admin/panel`` y sus archivos. Sin token (no traen datos), con las mismas reglas de transporte."""
+    from fastapi.responses import FileResponse
+
+    router = APIRouter()
+
+    def _archivo(nombre: str, request: Request):
+        if motivo := transporte_permitido(modo, request):
+            raise HTTPException(status_code=403, detail=motivo)
+        if nombre not in ARCHIVOS_PANEL:
+            raise HTTPException(status_code=404, detail="no existe")
+        respuesta = FileResponse(carpeta / DIR_PANEL / nombre, media_type=ARCHIVOS_PANEL[nombre])
+        respuesta.headers["Content-Security-Policy"] = (CSP_VISTA_PREVIA if nombre == "vista-previa.html"
+                                                        else CSP_PANEL)
+        respuesta.headers["X-Content-Type-Options"] = "nosniff"
+        respuesta.headers["Referrer-Policy"] = "no-referrer"
+        return respuesta
+
+    @router.get("/admin/panel")
+    def panel(request: Request):
+        return _archivo("panel.html", request)
+
+    @router.get("/admin/panel/{nombre}")
+    def archivo_panel(nombre: str, request: Request):
+        return _archivo(nombre, request)
+
+    return router
+
+
+__all__ = ["BLOQUEO_S", "CSP_PANEL", "CSP_VISTA_PREVIA", "INTENTOS_MAXIMOS", "LIMITE_CUERPO", "crear_router_admin", "crear_router_panel",
+           "transporte_permitido"]
