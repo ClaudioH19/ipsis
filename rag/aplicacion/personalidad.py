@@ -335,6 +335,8 @@ def config_avatar_publica() -> dict:
         "ubicacion": a.ubicacion, "tamano": a.tamano, "en_lanzador": a.en_lanzador,
         "mirada": a.mirada.model_dump(), "inactividad_min": a.inactividad_min,
         "eventos": estado.claves,
+        # Respaldo de cada evento: el widget lo usa si la definición no trae la clave.
+        "respaldos": {evento: respaldo for evento, (_, respaldo) in EVENTOS.items() if respaldo in EVENTOS},
     }
 
 

@@ -5,10 +5,6 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-> El avatar «Folio» y sus reacciones a cada evento llegan en P12.10.
-> Mientras tanto, un avatar importado se muestra con su animación
-> `inactivo` (ver [web.md](web.md#avatar)).
-
 ## Configuración: `configuracion/personalidad.yaml`
 
 `rag init` lo crea con comentarios. Se edita a mano o con `rag personalidad …`
@@ -48,6 +44,45 @@ rag personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
   Así cualquier avatar funciona, aunque no defina todas las animaciones.
 - **Si el avatar falta o no es válido,** el widget muestra el ícono y
   `rag doctor` lo marca como aviso: no bloquea el servicio.
+
+### Folio, el avatar por defecto
+
+Una hoja de papel viva: ladeada, con la esquina que se levanta y dos ojos de
+tinta. No tiene boca: expresa con los ojos y el giro. Es lo que hace el
+proyecto: lee, mira la cita antes de afirmar y no exagera.
+- `contento` es sobrio: primero mira hacia las citas y después se alegra.
+- En `dudoso` y `apenado` nunca hay gesto de éxito.
+- Colores: papel `#f5f1e8` y tinta `#1e293b`; se cambian con
+  `rag personalidad avatar colores`.
+
+Para revisar todas sus animaciones, desde la raíz del repositorio:
+`python -m http.server 8765` y abre
+`http://127.0.0.1:8765/herramientas/avatar/muestra.html`.
+
+### Cómo reacciona el avatar
+
+| Evento | Cuándo | Tipo |
+|---|---|---|
+| `inactivo` | panel cerrado | persistente |
+| `atento` | panel abierto, sin escribir | persistente |
+| `escribiendo` | mientras se teclea; vuelve a `atento` 1,2 s después | persistente |
+| `pensando` · `pensando_largo` | esperando la respuesta; «largo» pasados 3 s | persistente |
+| `somnoliento` | sin actividad durante `avatar.inactividad_min` minutos | persistente |
+| `saludo` · `despedida` | primera apertura · al cerrar | transitorio |
+| `enviado` | al enviar la pregunta | transitorio |
+| `respuesta_ok` · `respuesta_relacionada` · `sin_respuesta` · `conversacional` | según el estado de la respuesta | transitorio |
+| `error` | falla de red o del servicio | transitorio |
+| `despertar` | primera actividad tras `somnoliento` | transitorio |
+
+- Un transitorio suena una vez y vuelve al persistente vigente. Uno de mayor
+  prioridad interrumpe a otro: el error gana a todo, y las respuestas ganan
+  a `enviado`.
+- **Mirada:** con `avatar.mirada.activa`, los ojos y la cabeza siguen al
+  puntero en reposo (`inactivo` o `atento`). Hay una zona muerta al centro
+  (`zona_muerta`, en px) y vuelve al centro tras 1,5 s quieto. Con
+  «reducir movimiento» del sistema no sigue el puntero.
+- La pestaña oculta pausa la animación.
+- En el teléfono el avatar mide 40 px y se oculta con el teclado abierto.
 
 ## Tonos incluidos
 

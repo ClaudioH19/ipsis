@@ -226,12 +226,15 @@ def test_importar_asignar_y_probar_un_evento(servidor, pagina, proyecto):
     guardado = ruta.read_text(encoding="utf-8")
     assert "definicion: mi-avatar" in guardado and "respuesta_ok: contento" in guardado, guardado
 
-    # El motor del avatar llega en P12.9: se sustituye RagChat.avatar en la vista previa.
+    # La vista previa monta el avatar real; el botón ▶ le dispara el evento con la clave asignada.
     page.wait_for_selector("#vista-previa[data-lista=true]", state="attached")
+    _esperar(page, "(() => { const w = document.getElementById('vista-previa').contentWindow;"
+                   " return w.RagChat && w.RagChat.avatar.estado().listo; })()")
     page.evaluate("""(() => { const w = document.getElementById('vista-previa').contentWindow;
-        w.__disparados = []; w.RagChat.avatar = {disparar: e => w.__disparados.push(e)}; })()""")
+        w.__eventos = []; w.document.addEventListener('rag:avatar', e => w.__eventos.push(e.detail)); })()""")
     page.click("button[data-probar=respuesta_ok]")
-    assert page.evaluate("document.getElementById('vista-previa').contentWindow.__disparados") == ["respuesta_ok"]
+    eventos = page.evaluate("document.getElementById('vista-previa').contentWindow.__eventos")
+    assert {"estado": "evento", "evento": "respuesta_ok", "clave": "contento"} in eventos, eventos
     assert not errores, errores
 
 

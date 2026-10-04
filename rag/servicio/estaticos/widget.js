@@ -430,7 +430,8 @@
     "      env(safe-area-inset-left);animation:rw-aparecer var(--rw-dur-panel) ease-out;}",
     "  .rw-msg{max-width:92%;}",
     "  .rw-raiz{--rw-avatar-tamano:40px !important;}",
-    "  .rw-avatar-esquina[data-esquina='esquina-superior']{top:8px;right:56px;}}",
+    "  .rw-avatar-esquina[data-esquina='esquina-superior']{top:8px;right:56px;}",
+    "  .rw-raiz.rw-teclado .rw-avatar.rw-avatar-vivo,.rw-raiz.rw-teclado .rw-avatar-esquina{display:none;}}",
     // Contraste alto del sistema (Windows): bordes visibles y el tramo marcado.
     "@media (forced-colors:active){",
     "  .rw-boton,.rw-enviar,.rw-cerrar{border:2px solid ButtonText;}",
@@ -587,6 +588,7 @@
   botonEnviar.className = "rw-enviar";
   botonEnviar.setAttribute("aria-label", texto("enviar"));
   botonEnviar.appendChild(icono("enviar"));
+  input.addEventListener("input", function () { avatarAlTeclear(); });
   form.appendChild(etiquetaInput);
   form.appendChild(input);
   form.appendChild(botonEnviar);
@@ -861,6 +863,7 @@
       .then(function (respuesta) {
         agregarMensajeAsistente(respuesta);
         emitir("rag:respuesta", { estado: respuesta.estado, respuesta: respuesta });
+        avatarAlResponder(respuesta.estado);
       })
       .catch(function (err) {
         // Los navegadores describen los fallos de transporte con textos
@@ -872,6 +875,7 @@
           : (err && err.message ? err.message : micro("error_red"));
         agregarMensajeError(mensajeError);
         emitir("rag:error", { mensaje: mensajeError });
+        avatarAlFallar();
       })
       .finally(function () {
         ocultarEscribiendo();
@@ -886,6 +890,7 @@
     var texto = input.value.trim();
     if (!texto) return;
     emitir("rag:pregunta", { pregunta: texto });
+    avatarAlEnviar();
     enviarPregunta(texto);
   });
 
@@ -908,6 +913,8 @@
     if (!vv) return;
     contenedor.style.setProperty("--rw-vv-alto", vv.height + "px");
     contenedor.style.setProperty("--rw-vv-arriba", vv.offsetTop + "px");
+    // Teléfono con el teclado abierto: el avatar cede su espacio al campo.
+    contenedor.classList.toggle("rw-teclado", window.innerWidth <= 480 && vv.height < window.innerHeight * 0.75);
   }
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", ajustarViewport);
@@ -929,6 +936,7 @@
     document.addEventListener("keydown", manejarTeclado, true);
     cargarAvatar();
     ubicarAvatar();
+    if (AVATAR.controlador) avatarAlAbrir();
     emitir("rag:abierto");
   }
 
@@ -938,6 +946,7 @@
     boton.setAttribute("aria-expanded", "false");
     document.removeEventListener("keydown", manejarTeclado, true);
     ubicarAvatar();
+    if (AVATAR.controlador) avatarAlCerrar();
     if (elementoFocoPrevio && typeof elementoFocoPrevio.focus === "function") {
       elementoFocoPrevio.focus();
     } else {
@@ -1031,21 +1040,28 @@
     lienzo.className = "rw-avatar-lienzo";
     // Decorativo: los estados ya tienen texto y etiqueta propios.
     lienzo.setAttribute("aria-hidden", "true");
+    var ajustes = AVATAR.config.mirada || {};
+    if (ajustes.activa) {
+      definicion = conMirada(definicion, Number(ajustes.amplitud_ojos) || 0, Number(ajustes.amplitud_cabeza) || 0);
+    }
+    AVATAR.definicion = definicion;
     var opciones = {
       definition: definicion,
       size: "100%",
       ariaLabel: "",
       onError: function (e) { emitir("rag:avatar", { estado: "error", mensaje: e.message }); }
     };
-    var inicial = AVATAR.config.eventos && AVATAR.config.eventos.inactivo;
-    if (inicial && definicion.animations && definicion.animations[inicial]) opciones.defaultAnimation = inicial;
+    var inicial = claveDe("inactivo");
+    if (definicion.animations && definicion.animations[inicial]) opciones.defaultAnimation = inicial;
     // createAvatar valida la definición (y lanza si no es válida): recién
     // con el avatar montado se reemplaza el ícono.
     AVATAR.controlador = motor.createAvatar(lienzo, opciones);
-    AVATAR.definicion = definicion;
     AVATAR.lienzo = lienzo;
+    maquina.ultimoPersistente = inicial;
     ubicarAvatar();
     emitir("rag:avatar", { estado: "listo", nombre: AVATAR.config.nombre });
+    reiniciarInactividad(false);
+    if (INCRUSTADO || !panel.hidden) avatarAlAbrir();
   }
 
   // Lleva el lienzo a donde corresponde: el lanzador con el panel cerrado
@@ -1080,6 +1096,270 @@
     if (cfg.en_lanzador) boton.classList.add("rw-con-avatar");
   }
 
+  // --- 6.1 Máquina de estados ------------------------------------------
+  // Persistentes: inactivo, atento, escribiendo, pensando, pensando_largo y
+  // somnoliento; se repiten (loop) mientras dure la situación. Transitorios:
+  // el resto; suenan una vez (≥ 600 ms) y vuelven al persistente vigente.
+  // Un transitorio de mayor prioridad interrumpe a otro; uno de menor
+  // prioridad espera a que termine el actual o se descarta.
+  var PRIORIDAD = {
+    error: 6, respuesta_ok: 5, respuesta_relacionada: 5, sin_respuesta: 5, conversacional: 5,
+    enviado: 4, despertar: 3, saludo: 2, despedida: 2, lanzador: 1
+  };
+  var PERSISTENTES = {
+    inactivo: 1, atento: 1, escribiendo: 1, pensando: 1, pensando_largo: 1, somnoliento: 1
+  };
+  var DURACION_MINIMA_MS = 600;
+  var RETRASO_TECLEO_MS = 1200;
+  var PENSANDO_LARGO_MS = 3000;
+  var maquina = {
+    persistente: "inactivo", transitorio: null, prioridad: 0, temporizador: null,
+    tecleo: null, largo: null, inactividad: null, ultimoPersistente: null, saludado: false
+  };
+
+  function existe(clave) {
+    var d = AVATAR.definicion;
+    return !!(d && clave && ((d.animations && d.animations[clave]) || (d.expressions && d.expressions[clave])));
+  }
+
+  // Clave efectiva de un evento: la de /config; si el avatar no la tiene,
+  // la del evento de respaldo en cadena, y al final la expresión neutral.
+  function claveDe(evento) {
+    var cfg = AVATAR.config || {}, eventos = cfg.eventos || {}, respaldos = cfg.respaldos || {};
+    var vistos = {};
+    while (evento && !vistos[evento]) {
+      vistos[evento] = true;
+      if (existe(eventos[evento])) return eventos[evento];
+      evento = respaldos[evento];
+    }
+    return "neutral";
+  }
+
+  // Reproduce una clave: animación si existe como tal, si no expresión.
+  function reproducir(clave) {
+    var c = AVATAR.controlador, d = AVATAR.definicion;
+    if (!c) return;
+    if (d.animations && d.animations[clave]) c.play(clave);
+    else c.setExpression(clave);
+  }
+
+  function duracionDe(clave) {
+    var anim = AVATAR.definicion && AVATAR.definicion.animations && AVATAR.definicion.animations[clave];
+    if (!anim || anim.playbackMode !== "once") return 1200;
+    var total = 0;
+    anim.steps.forEach(function (paso) { total += (paso.transitionMs || 0) + (paso.holdMs || 0); });
+    return Math.max(DURACION_MINIMA_MS, total);
+  }
+
+  function aplicarPersistente() {
+    if (maquina.transitorio) return;
+    var clave = claveDe(maquina.persistente);
+    if (clave === maquina.ultimoPersistente) return;
+    maquina.ultimoPersistente = clave;
+    reproducir(clave);
+    emitir("rag:avatar", { estado: "evento", evento: maquina.persistente, clave: clave });
+  }
+
+  function persistir(estado) {
+    maquina.persistente = estado;
+    if (estado !== "pensando" && estado !== "pensando_largo") {
+      clearTimeout(maquina.largo);
+      maquina.largo = null;
+    }
+    aplicarPersistente();
+  }
+
+  function transitar(evento) {
+    var prioridad = PRIORIDAD[evento] || 1;
+    if (maquina.transitorio && prioridad < maquina.prioridad) return;
+    clearTimeout(maquina.temporizador);
+    var clave = claveDe(evento);
+    maquina.transitorio = evento;
+    maquina.prioridad = prioridad;
+    maquina.ultimoPersistente = null;
+    reproducir(clave);
+    emitir("rag:avatar", { estado: "evento", evento: evento, clave: clave });
+    maquina.temporizador = setTimeout(function () {
+      maquina.transitorio = null;
+      maquina.prioridad = 0;
+      aplicarPersistente();
+    }, duracionDe(clave));
+  }
+
+  // Punto único de entrada: lo usan el widget, el panel /admin y los sitios.
+  function disparar(evento) {
+    if (!AVATAR.controlador) return false;
+    reiniciarInactividad(evento !== "somnoliento");
+    if (PERSISTENTES[evento]) persistir(evento);
+    else transitar(evento);
+    return true;
+  }
+
+  // --- 6.2 Inactividad y visibilidad ------------------------------------
+  function reiniciarInactividad(despertar) {
+    clearTimeout(maquina.inactividad);
+    if (despertar && maquina.persistente === "somnoliento") {
+      maquina.persistente = (INCRUSTADO || !panel.hidden) ? "atento" : "inactivo";
+      transitar("despertar");
+    }
+    var minutos = Number((AVATAR.config || {}).inactividad_min) || 2;
+    maquina.inactividad = setTimeout(function () { persistir("somnoliento"); }, minutos * 60000);
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    var c = AVATAR.controlador;
+    if (!c) return;
+    if (document.hidden) {
+      c.pause();
+    } else {
+      maquina.ultimoPersistente = null;
+      aplicarPersistente();
+    }
+  });
+
+  // --- 6.3 Enlace con el chat -------------------------------------------
+  function avatarAlAbrir() {
+    if (!maquina.saludado) {
+      maquina.saludado = true;
+      maquina.persistente = "atento";
+      transitar("saludo");
+    } else {
+      persistir("atento");
+    }
+  }
+  function avatarAlCerrar() {
+    maquina.persistente = "inactivo";
+    transitar("despedida");
+  }
+  function avatarAlTeclear() {
+    if (!AVATAR.controlador) return;
+    reiniciarInactividad(true);
+    if (maquina.persistente !== "pensando" && maquina.persistente !== "pensando_largo") persistir("escribiendo");
+    clearTimeout(maquina.tecleo);
+    maquina.tecleo = setTimeout(function () {
+      if (maquina.persistente === "escribiendo") persistir("atento");
+    }, RETRASO_TECLEO_MS);
+  }
+  function avatarAlEnviar() {
+    if (!AVATAR.controlador) return;
+    clearTimeout(maquina.tecleo);
+    maquina.persistente = "pensando";
+    transitar("enviado");
+    clearTimeout(maquina.largo);
+    maquina.largo = setTimeout(function () {
+      if (maquina.persistente === "pensando") persistir("pensando_largo");
+    }, PENSANDO_LARGO_MS);
+  }
+  var EVENTO_DE_ESTADO = {
+    ok: "respuesta_ok", relacionado: "respuesta_relacionada", sin_respuesta: "sin_respuesta",
+    conversacional: "conversacional"
+  };
+  function avatarAlResponder(estado) {
+    if (!AVATAR.controlador) return;
+    maquina.persistente = "atento";
+    clearTimeout(maquina.largo);
+    transitar(EVENTO_DE_ESTADO[estado] || "respuesta_relacionada");
+  }
+  function avatarAlFallar() {
+    if (!AVATAR.controlador) return;
+    maquina.persistente = "atento";
+    clearTimeout(maquina.largo);
+    transitar("error");
+  }
+
+  // --- 6.4 Mirada: grilla de 5 × 3 expresiones derivadas de neutral -------
+  // El widget sigue al puntero cambiando de expresión (la librería no trae
+  // seguimiento). Zona muerta al centro, histéresis contra el temblor y
+  // vuelta al centro tras 1,5 s quieto. Solo en reposo (inactivo o atento) y
+  // nunca con prefers-reduced-motion.
+  var COLUMNAS = 5, FILAS = 3, HISTERESIS_PX = 6, QUIETO_MS = 1500;
+  function claveMirada(col, fila) { return "mirada-c" + col + "-f" + fila; }
+
+  function conMirada(definicion, amplitudOjos, amplitudCabeza) {
+    var neutral = definicion.expressions && definicion.expressions.neutral;
+    var total = Object.keys(definicion.expressions || {}).length;
+    if (!neutral || total + COLUMNAS * FILAS > 128) return definicion;
+    var expresiones = {}, orden = (definicion.expressionOrder || []).slice();
+    Object.keys(definicion.expressions).forEach(function (k) { expresiones[k] = definicion.expressions[k]; });
+    for (var col = 0; col < COLUMNAS; col++) {
+      for (var fila = 0; fila < FILAS; fila++) {
+        var dx = (col - 2) / 2, dy = fila - 1, e = JSON.parse(JSON.stringify(neutral));
+        ["left", "right"].forEach(function (lado) {
+          e.eyes[lado].x = e.eyes[lado].x + dx * amplitudOjos * 2;
+          e.eyes[lado].y = e.eyes[lado].y + dy * amplitudOjos * 1.5;
+        });
+        e.head.y = e.head.y + dx * amplitudCabeza * 2;
+        e.head.x = e.head.x - dy * amplitudCabeza;
+        expresiones[claveMirada(col, fila)] = e;
+        orden.push(claveMirada(col, fila));
+      }
+    }
+    var salida = {};
+    Object.keys(definicion).forEach(function (k) { salida[k] = definicion[k]; });
+    salida.expressions = expresiones;
+    salida.expressionOrder = orden;
+    return salida;
+  }
+
+  // Nivel (0, 1 o 2) de |d| con histéresis respecto del nivel actual.
+  function nivel(d, actual, zona) {
+    var limites = [zona, zona * 6], n = 0;
+    for (var i = 0; i < limites.length; i++) {
+      var limite = limites[i] + (actual > i ? -HISTERESIS_PX : HISTERESIS_PX);
+      if (Math.abs(d) >= limite) n = i + 1;
+    }
+    return n;
+  }
+
+  var mirada = { col: 2, fila: 1, quieto: null, pendiente: null };
+  function celdaPara(dx, dy, zona) {
+    var nx = nivel(dx, Math.abs(mirada.col - 2), zona), ny = Math.min(1, nivel(dy, Math.abs(mirada.fila - 1), zona));
+    return { col: 2 + (dx < 0 ? -nx : nx), fila: 1 + (dy < 0 ? -ny : ny) };
+  }
+
+  function puedeMirar() {
+    var cfg = AVATAR.config;
+    if (!AVATAR.controlador || !cfg || !cfg.mirada || !cfg.mirada.activa) return false;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (maquina.transitorio) return false;
+    return maquina.persistente === "inactivo" || maquina.persistente === "atento";
+  }
+
+  function mirarHacia(x, y) {
+    if (!puedeMirar() || !AVATAR.lienzo || !AVATAR.lienzo.isConnected) return;
+    var caja = AVATAR.lienzo.getBoundingClientRect();
+    if (!caja.width) return;
+    var zona = Number(AVATAR.config.mirada.zona_muerta);
+    if (!(zona >= 0)) zona = 24;
+    var celda = celdaPara(x - (caja.left + caja.width / 2), y - (caja.top + caja.height / 2), zona);
+    clearTimeout(mirada.quieto);
+    mirada.quieto = setTimeout(volverAlCentro, QUIETO_MS);
+    if (celda.col === mirada.col && celda.fila === mirada.fila) return;
+    mirada.col = celda.col;
+    mirada.fila = celda.fila;
+    maquina.ultimoPersistente = null;
+    AVATAR.controlador.setExpression(claveMirada(celda.col, celda.fila));
+  }
+
+  function volverAlCentro() {
+    if (mirada.col === 2 && mirada.fila === 1) return;
+    mirada.col = 2;
+    mirada.fila = 1;
+    if (puedeMirar()) {
+      maquina.ultimoPersistente = null;
+      aplicarPersistente();
+    }
+  }
+
+  document.addEventListener("pointermove", function (ev) {
+    if (mirada.pendiente) return;
+    var x = ev.clientX, y = ev.clientY;
+    mirada.pendiente = window.requestAnimationFrame(function () {
+      mirada.pendiente = null;
+      mirarHacia(x, y);
+    });
+  }, { passive: true });
+
   cargarConfigServidor();
 
   // API del sitio (se supone un widget por página): abrir y cerrar desde un
@@ -1087,6 +1367,14 @@
   window.RagChat = {
     abrir: abrirPanel,
     cerrar: cerrarPanel,
+    // Avatar: disparar(evento) devuelve false si todavía no hay avatar montado.
+    avatar: {
+      disparar: disparar,
+      estado: function () {
+        return { listo: !!AVATAR.controlador, persistente: maquina.persistente, transitorio: maquina.transitorio,
+                 mirada: AVATAR.controlador ? claveMirada(mirada.col, mirada.fila) : null };
+      }
+    },
     estado: function () {
       return {
         abierto: !panel.hidden,

@@ -170,9 +170,17 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
     assert malo.status_code == 422
 
 
-def test_sin_avatar_config_lo_marca_inactivo(proyecto):
+def test_folio_por_defecto_y_avatar_faltante_inactivo(proyecto):
+    c = _cliente(ModoServicio())
+    avatar = c.get("/config").json()["avatar"]
+    assert avatar["activo"] and avatar["url_definicion"] == "/avatares/folio.avatar.json"  # incluido
+    assert c.get("/avatares/folio.avatar.json").json()["name"] == "Folio"
+    assert c.get("/avatar.js").headers["content-type"].startswith("text/javascript")
+    texto = Path("configuracion/personalidad.yaml").read_text(encoding="utf-8")
+    Path("configuracion/personalidad.yaml").write_text(texto.replace("definicion: folio", "definicion: nadie"),
+                                                       encoding="utf-8")
     avatar = _cliente(ModoServicio()).get("/config").json()["avatar"]
-    assert avatar["activo"] is False and avatar["url_definicion"] is None  # Folio llega en P12.10
+    assert avatar["activo"] is False and avatar["url_definicion"] is None  # el widget muestra el ícono
 
 
 # --- modos -------------------------------------------------------------------------------------

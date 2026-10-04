@@ -51,7 +51,7 @@ def test_init_crea_personalidad_por_defecto_y_mostrar_la_resume(proyecto, capsys
     assert main(["personalidad", "mostrar"]) == 0
     salida = capsys.readouterr().out
     assert "Tono: cordial (variedad rotativa" in salida
-    assert "Avatar: folio -- falta" in salida and "ícono" in salida  # Folio llega en P12.10
+    assert "Avatar: folio -- ok" in salida  # Folio viene incluido
 
 
 def test_sin_proyecto_pide_rag_init(tmp_path, monkeypatch, capsys):
