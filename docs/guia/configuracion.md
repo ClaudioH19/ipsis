@@ -103,6 +103,55 @@ Repetir el perfil activo no hace nada.
   los umbrales del perfil. El archivo se conserva para auditoría. Para
   recuperarla: `rag calibrar --aplicar`.
 
+### Modelos
+
+Los modelos ONNX viven en una caché global por usuario, compartida por todos
+los proyectos. Por defecto es `~/.cache/rag-extractivo/modelos`, y se cambia
+con `RAG_MODELOS_DIR`. Usa el formato de `huggingface_hub`. Nada se descarga
+dentro del proyecto. Con `HF_HUB_OFFLINE=1` nunca se usa la red.
+
+```
+rag modelos listar                     # modelos del perfil activo
+rag modelos descargar                  # descarga los que falten del perfil activo
+rag modelos descargar --perfil heavy   # prepara otro perfil sin activarlo
+rag modelos verificar                  # archivos completos e inferencia de prueba
+rag modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
+```
+
+- **`listar`** muestra, para cada modelo del perfil activo:
+  - rol, repositorio, licencia (y atribución, si el catálogo la registra) y
+    parámetros;
+  - el ONNX que corresponde a la CPU actual (x86_64 o arm64);
+  - si está en la caché, y cuánto ocupa.
+
+  Todo sale del catálogo (`rag/modelos/catalogo.py`). light usa solo el
+  denso; medium y heavy usan denso, reranker y lector.
+- **`descargar`** baja solo lo que falta. Un modelo compartido entre perfiles,
+  como e5-small (light y medium) o el lector (medium y heavy), se descarga una
+  sola vez.
+  - Con `--perfil` no cambia el perfil activo, y funciona fuera de un
+    proyecto.
+  - Sin `--perfil` necesita el proyecto (`rag init`).
+  - `bm25` no es instalable.
+- **`verificar`** solo revisa el perfil activo y nunca descarga. Por modelo:
+  - los archivos requeridos (ONNX, `tokenizer.json`, `config.json`);
+  - que la sesión de onnxruntime cargue;
+  - una inferencia mínima: vector normalizado de la dimensión esperada,
+    logit finito o lectura válida.
+
+  El estado de cada modelo es `OK`, `FALTA` (acción: `rag modelos
+  descargar`), `NO CARGA` (archivo presente pero inválido) o `FALLA`
+  (inferencia inválida). Termina con 0 solo si todos dan `OK`.
+- **`exportar`** es solo para desarrollo. Necesita el extra `[exportar]`
+  (`pip install "rag-extractivo[exportar]"`, con `optimum` y `torch`). La
+  producción corre sin torch.
+  - Deja `exportados/<org>--<modelo>/model.onnx` en la carpeta actual y, con
+    `--int8`, también `model_int8.onnx`. Ese archivo usa la cuantización
+    dinámica post-entrenamiento de onnxruntime (`quantize_dynamic`).
+  - No pisa una exportación anterior ni toca la caché.
+  - No registra el modelo en el catálogo ni en los perfiles: adoptarlo es
+    otro paso.
+
 ## Presentación del widget
 
 `configuracion/estilos.yaml` admite un `preset` y opciones independientes del
