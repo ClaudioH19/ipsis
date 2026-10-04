@@ -246,5 +246,18 @@ def escribir_reporte_benchmark(reporte: ReporteBenchmark, salida: str | Path) ->
     return json_ruta, md_ruta
 
 
-__all__ = ["OK_EXPERIMENTAL_MEDIUM", "PERFILES_BENCHMARK", "ejecutar_benchmark_perfiles",
+def benchmark_perfiles(manifiestos: list[str], perfiles: list[str], main, salida: str | Path | None = None, *,
+                       experimentos: bool = False):
+    """``rag benchmark --perfiles``: ejecuta, escribe los reportes y decide la
+    salida. Devuelve ``(reporte, ruta_json, ruta_md, carpeta, codigo)``."""
+    from rag.configuracion import rutas
+    from rag.evaluacion.benchmark import codigo_salida
+
+    carpeta = Path(salida or rutas.GOLDEN_REPORTES)
+    reporte = ejecutar_benchmark_perfiles(manifiestos, perfiles, main, carpeta, experimentos=experimentos)
+    ruta_json, ruta_md = escribir_reporte_benchmark(reporte, carpeta)
+    return reporte, ruta_json, ruta_md, carpeta, codigo_salida(reporte)
+
+
+__all__ = ["OK_EXPERIMENTAL_MEDIUM", "PERFILES_BENCHMARK", "benchmark_perfiles", "ejecutar_benchmark_perfiles",
            "escribir_reporte_benchmark"]

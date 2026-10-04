@@ -68,7 +68,7 @@ nucleo ◀── configuracion ◀── lenguaje ◀── ingesta · modelos �
 - Un módulo solo importa de su capa o de capas a su izquierda.
 - `nucleo`, `configuracion` y `lenguaje` no importan librerías pesadas
   (`onnxruntime`, `qdrant_client`, `fastapi`).
-- `cli` y `servicio` solo llaman a `aplicacion` (y a `nucleo` para los tipos). Esta regla estricta se activa en P11.1; hasta entonces rige solo el orden de capas.
+- `cli` y `servicio` solo importan `aplicacion`, `nucleo` y `recursos` (activa desde P11.1; la verifica `tests/test_arquitectura.py`). Lo que necesiten de otras capas lo exponen los casos de uso de `aplicacion`.
 - `tests/test_arquitectura.py` analiza los imports con `ast` y falla si se
   rompe una regla. La arquitectura se audita sola en cada CI.
 

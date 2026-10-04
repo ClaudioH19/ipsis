@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from rag.configuracion import rutas
+from rag.evaluacion.golden import ErrorGolden
 
 FORMATOS_EXPORTACION = {"squad2": "exportado.squad2.json", "csv": "exportado.csv"}
 
@@ -40,7 +41,6 @@ def _paquete():
 def _corpus() -> _Corpus:
     """Documentos del catálogo, ya parseados, y su descripción para el manifiesto."""
     from rag.evaluacion.banco import ArchivoCorpus, CorpusBanco, hash_archivos_corpus
-    from rag.evaluacion.golden import ErrorGolden
     from rag.ingesta.catalogo import cargar_catalogo
     from rag.ingesta.ingesta import parsear_corpus
 
@@ -112,7 +112,6 @@ def importar_golden(ruta: str | Path) -> ResumenBanco:
 def _cargar_banco_vigente():
     """El banco importado, solo si sigue siendo válido para el corpus actual."""
     from rag.evaluacion.banco import cargar_banco, validar_evidencias_contra_corpus
-    from rag.evaluacion.golden import ErrorGolden
 
     manifiesto = Path(rutas.GOLDEN_MANIFIESTO)
     if not manifiesto.is_file():
@@ -175,6 +174,7 @@ def exportar_golden(formato: str, salida: str | Path | None = None) -> tuple[Pat
 
 
 __all__ = [
+    "ErrorGolden",
     "FORMATOS_EXPORTACION", "ResumenBanco", "exportar_golden", "generar_plantilla_golden", "importar_golden",
     "validar_golden",
 ]

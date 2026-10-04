@@ -17,9 +17,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from rag import __version__
-from rag.configuracion.carga import cargar_dominio, cargar_proyecto, config_seguridad
-from rag.consulta.motor import Motor, MotorNoListo, MotorSaturado
-from rag.aplicacion.consulta import construir_motor
+from rag.aplicacion.consulta import Motor, MotorNoListo, MotorSaturado, construir_motor_del_proyecto
+from rag.aplicacion.proyecto import configuracion_asistente, interfaz_del_idioma, limite_de_peticiones
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
     LimitadorPeticiones,
@@ -108,7 +107,7 @@ class EstadoAplicacion:
 
 
 def _construir_motor_produccion() -> Motor:
-    return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
+    return construir_motor_del_proyecto()
 
 
 def _estado(request: Request) -> EstadoAplicacion:
@@ -142,8 +141,8 @@ def crear_app(
     Antes del lifespan queda un motor vacío que permite probar la capa HTTP
     y resolver conversación sin abrir modelos ni índices.
     """
-    cfg_dominio = cargar_dominio()
-    cfg_limite = config_seguridad()["limite_peticiones"]
+    cfg_dominio = configuracion_asistente()
+    cfg_limite = limite_de_peticiones()
     estado = EstadoAplicacion(
         motor=motor or Motor(),
         constructor_motor=(constructor_motor or _construir_motor_produccion) if motor is None else None,
@@ -214,10 +213,9 @@ def crear_app(
     @aplicacion.get("/config", response_model=ConfigWidget)
     def configuracion_widget(request: Request):
         from rag.aplicacion.estilos import cargar_estilos
-        from rag.lenguaje.paquete import cargar_paquete
 
-        dominio = cargar_dominio()
-        interfaz = cargar_paquete(dominio.get("idioma", "es"), proyecto=Path.cwd()).interfaz
+        dominio = configuracion_asistente()
+        interfaz = interfaz_del_idioma(dominio.get("idioma", "es"))
         estilos = cargar_estilos()
         presentacion = estilos.get("presentacion") or {}
         return ConfigWidget(

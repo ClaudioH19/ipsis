@@ -325,3 +325,12 @@ def calibrar_proyecto(
     )
     ruta = escribir_calibracion(resultado, procedencia, rutas.CALIBRACION) if aplicar else None
     return CalibracionProyecto(resultado, procedencia, ruta)
+
+
+def comparar_reportes(rutas_artefactos: list[str], salida: str | Path):
+    """Compara artefactos de ``rag evaluar`` y escribe el informe en ``salida``."""
+    informe = comparar_artefactos([cargar_artefacto(ruta) for ruta in rutas_artefactos])
+    destino = Path(salida)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(informe.model_dump_json(indent=2), encoding="utf-8")
+    return informe, destino
