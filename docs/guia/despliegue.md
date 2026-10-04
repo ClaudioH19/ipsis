@@ -48,21 +48,19 @@ rag configurar claves_widget=clave-publica-del-sitio   # opcional
 
 ## 3. Docker
 
-Una imagen por perfil, con los modelos incluidos; en ejecución no usa la red:
+La imagen la genera `rag desplegar preparar` (siguiente sección) junto con
+tu proyecto: un `Dockerfile` por perfil, con los modelos incluidos, y un
+`docker-compose.yml`. En ejecución no usa la red.
 
-```bash
-docker build --build-arg PERFIL=light -t rag-extractivo:light .
-```
-
-- Instala el mismo wheel que se distribuye (con `avatar.js`, avatares y
-  tonos) y descarga los modelos del perfil al construir (el único paso con
-  red).
+- Instala el paquete (tu wheel con `--wheel`, o el del repositorio) y
+  descarga los modelos del perfil al construir (el único paso con red).
 - Corre como usuario no root (uid 10001), con `HF_HUB_OFFLINE=1` y
   `RAG_MODO=produccion`.
 - Sin `RAG_ADMIN_TOKEN`, `/admin` no existe; defínelo al ejecutar.
 - Healthcheck a `/ready`, que da 503 si algo bloquea (con la acción en
-  `proyecto.bloqueante`). La imagen sola no trae índice: monta tu proyecto
-  sobre `/app`.
+  `proyecto.bloqueante`).
+- El proyecto (`configuracion/`, `documentos/` y `.rag/`) se monta desde la
+  carpeta generada: los cambios de configuración no exigen reconstruir.
 
 ## 4. `rag desplegar preparar`
 
@@ -154,5 +152,6 @@ publica; ningún comando la marca solo.
   puede lanzar con los umbrales del perfil, sin afirmar el 5%.
 - [ ] **Latencia:** `rag benchmark` cumple el presupuesto del perfil en la
   máquina de producción (light ≤ 150 ms, medium ≤ 1 s y heavy ≤ 5 s de p95).
-- [ ] **CI en verde** sobre la versión que se despliega.
+- [ ] **Pruebas en verde** sobre la versión que se despliega
+  (`python -m pytest`).
 - [x] **Licencia:** AGPL-3.0-only.

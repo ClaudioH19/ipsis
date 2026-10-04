@@ -82,7 +82,14 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         resumen_admin,
     )
     from rag.aplicacion.registro import registrar_admin
-    from rag.aplicacion.widget import actualizar_estilos, aplicar_preset, cargar_estilos, listar_presets
+    from rag.aplicacion.widget import (
+        actualizar_estilos,
+        aplicar_preset,
+        cambiar_estilo,
+        cargar_estilos,
+        estilo_plano,
+        listar_presets,
+    )
 
     bloqueos = _Bloqueos()
 
@@ -172,6 +179,23 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         except ValueError as e:
             raise _invalido(e) from e
         _cambio(request, "estilos", list(cambios))
+        return tema
+
+    @router.get("/estilos/plano")
+    def estilos_plano():
+        """Cada valor editable como ``seccion.clave`` (lo del proyecto sobre la plantilla)."""
+        return [{"clave": clave, "valor": valor} for clave, valor in estilo_plano()]
+
+    @router.post("/estilos/cambiar")
+    def cambiar_estilos_planos(request: Request, cuerpo: dict = Body(...)):
+        asignaciones = cuerpo.get("asignaciones")
+        if not isinstance(asignaciones, list) or not all(isinstance(a, str) for a in asignaciones):
+            raise HTTPException(status_code=422, detail={"errores": ["se esperaba {asignaciones: ['seccion.clave=valor', …]}"]})
+        try:
+            tema = cambiar_estilo(asignaciones)
+        except ValueError as e:
+            raise _invalido(e) from e
+        _cambio(request, "estilos", [a.partition("=")[0] for a in asignaciones])
         return tema
 
     @router.get("/estilos/presets")

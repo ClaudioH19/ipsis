@@ -165,3 +165,37 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert all(len(v) == 5 for v in cfg["microcopia"].values())
     assert "{" not in " ".join(sum(cfg["microcopia"].values(), []))  # variables reemplazadas
     assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget
+
+
+# --- rag widget estilo: cada valor, por consola ----------------------------------------------
+def test_estilo_mostrar_y_cambiar_por_consola(tmp_path, monkeypatch, capsys):
+    from pathlib import Path
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "--perfil", "light"]) == 0
+    capsys.readouterr()
+    assert main(["widget", "estilo", "mostrar", "--seccion", "colores"]) == 0
+    salida = capsys.readouterr().out
+    assert "colores.acento = #2563eb" in salida and "forma." not in salida
+
+    assert main(["widget", "estilo", "cambiar", "colores.acento=#0ea5e9", "forma.radio_panel=10px",
+                 "animaciones.activadas=false", "ubicacion.desplazamiento_x=40"]) == 0
+    tema = yaml.safe_load(Path("configuracion/estilos.yaml").read_text(encoding="utf-8"))
+    assert tema["colores"]["acento"] == "#0ea5e9" and tema["forma"]["radio_panel"] == "10px"
+    assert tema["animaciones"]["activadas"] is False and tema["ubicacion"]["desplazamiento_x"] == 40
+
+
+def test_estilo_rechaza_erratas_tipos_y_css_peligroso(tmp_path, monkeypatch, capsys):
+    from pathlib import Path
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "--perfil", "light"]) == 0
+    antes = Path("configuracion/estilos.yaml").read_text(encoding="utf-8")
+    capsys.readouterr()
+    for malo, mensaje in (("colores.acentto=#fff", "clave desconocida"), ("coloress.acento=#fff", "sección desconocida"),
+                          ("acento=#fff", "seccion.clave=valor"), ("colores.acento=red;x", "no permitidos"),
+                          ("animaciones.activadas=quizas", "true o false"),
+                          ("ubicacion.desplazamiento_x=mucho", "entero")):
+        assert main(["widget", "estilo", "cambiar", malo]) == 1, malo
+        assert mensaje in capsys.readouterr().out, malo
+    assert Path("configuracion/estilos.yaml").read_text(encoding="utf-8") == antes  # nada se escribió

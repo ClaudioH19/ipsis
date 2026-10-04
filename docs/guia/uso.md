@@ -126,6 +126,8 @@ Detalle en [web.md](web.md).
 | `rag widget tema listar` | Presets visuales disponibles |
 | `rag widget tema aplicar <preset> [--ruta RUTA]` | Aplica un preset a `configuracion/estilos.yaml` |
 | `rag widget tema vista-previa [--ruta RUTA] [--salida RUTA]` | Genera un HTML para ver el tema |
+| `rag widget estilo mostrar [--seccion S]` | Cada valor de estilo: `presentacion`, `ubicacion`, `colores`, `colores_oscuro`, `tipografia`, `forma`, `sombras` y `animaciones` |
+| `rag widget estilo cambiar seccion.clave=valor …` | Cambia uno o más valores (p. ej. `colores.acento=#0ea5e9 forma.radio_panel=10px`). Rechaza claves inexistentes y caracteres CSS peligrosos; si algo falla, no escribe nada |
 | `rag widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js`, `snippet.html`, el motor del avatar (`avatar.js` y sus licencias) y la definición del avatar activo, para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
 | `rag widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `estilos.yaml::ubicacion` |
 

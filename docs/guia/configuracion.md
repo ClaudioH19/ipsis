@@ -375,8 +375,10 @@ presentacion:
   mostrar_etiqueta_estado: true
 ```
 
-Los presets se administran con `rag widget tema` o desde el panel
-`/admin/panel`. `/config` expone estos valores para que el widget los aplique
+Los presets se administran con `rag widget tema`, y cada valor con
+`rag widget estilo mostrar|cambiar` (por ejemplo
+`rag widget estilo cambiar colores.acento=#0ea5e9`), o desde el panel
+`/admin/panel` (pestaña Widget, «Estilo completo»). `/config` expone estos valores para que el widget los aplique
 y no admite escritura; los cambios por HTTP pasan por `/admin`, con token (ver
 [personalidad.md](personalidad.md)). La clave pública del widget autoriza
 consultas y no sirve para administrar.

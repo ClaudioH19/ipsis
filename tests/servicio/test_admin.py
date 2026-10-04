@@ -238,3 +238,16 @@ def test_doctor_informa_el_modo(proyecto, monkeypatch):
     monkeypatch.setenv("RAG_ADMIN_TOKEN", "corto")
     chequeo = diagnosticar().chequeo("modo")
     assert chequeo.estado.value == "error" and "secrets.token_urlsafe" in chequeo.acciones[0]
+
+
+def test_estilo_plano_y_cambiar_por_admin(proyecto):
+    c = _cliente(PRODUCCION)
+    plano = {f["clave"]: f["valor"] for f in c.get("/admin/estilos/plano", headers=_auth()).json()}
+    assert plano["colores.acento"] == "#2563eb" and plano["animaciones.activadas"] is True
+    r = c.post("/admin/estilos/cambiar", headers=_auth(),
+               json={"asignaciones": ["colores.acento=#0ea5e9", "forma.radio_panel=10px"]})
+    assert r.status_code == 200 and r.json()["colores"]["acento"] == "#0ea5e9"
+    malo = c.post("/admin/estilos/cambiar", headers=_auth(), json={"asignaciones": ["colores.acentto=#fff"]})
+    assert malo.status_code == 422 and "clave desconocida" in malo.json()["detail"]["errores"][0]
+    assert c.post("/admin/estilos/cambiar", json={"asignaciones": []}).status_code == 401
+    assert "estilos" in Path(".rag/registros/admin.jsonl").read_text(encoding="utf-8")

@@ -275,10 +275,6 @@ class CambioPerfil:
     indice: EstadoIndice
     calibracion: EstadoCalibracionPerfil
 
-    @property
-    def requiere_reindexar(self) -> bool:
-        return self.cambio_real and self.indice.estado == "incompatible"
-
 
 def idioma_con_respaldo(codigo: str) -> bool:
     """El idioma no tiene paquete propio: rigen las reglas universales y los textos en inglés."""

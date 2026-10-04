@@ -53,15 +53,6 @@ class RegistroComponentes:
         tipo_n = self._normalizar(tipo, "tipo")
         return sorted(self._factories.get(tipo_n, {}))
 
-    def limpiar(self) -> None:
-        """Vacía el registro. Destinado principalmente a aislamiento de tests."""
-        self._factories.clear()
-
-    def registrar_mapa(self, tipo: str, factories: dict[str, Factory], *, reemplazar: bool = False) -> None:
-        """Registra un conjunto de implementaciones de forma determinista."""
-        for nombre in sorted(factories):
-            self.registrar(tipo, nombre, factories[nombre], reemplazar=reemplazar)
-
     def resolver_configuracion(self, seleccion: dict[str, Any]) -> dict[str, Any]:
         """Resuelve una selección declarativa ``tipo -> nombre/opciones``."""
         resultado: dict[str, Any] = {}

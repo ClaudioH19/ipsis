@@ -43,8 +43,8 @@ pip install "rag-extractivo @ git+https://github.com/ClaudioH19/Deterministic-Re
 rag --version
 ```
 
-**Sin instalar Python:** la imagen Docker trae todo, con los modelos del
-perfil incluidos (ver [despliegue.md](despliegue.md#3-docker)).
+**En un servidor con Docker:** `rag desplegar preparar` genera la imagen y el
+compose de tu proyecto (ver [despliegue.md](despliegue.md#3-docker)).
 
 ### Para desarrollar
 

@@ -49,12 +49,13 @@ queda en git, en la etiqueta `plan-v3`; las decisiones, en `docs/decisiones/` y 
 - **Administración:** API `/admin` y panel `/admin/panel` con token, HTTPS en
   producción, bloqueo tras intentos fallidos y auditoría; modos `desarrollo` y
   `produccion`.
-- **Despliegue:** imagen Docker por perfil con los modelos incluidos,
-  `rag desplegar preparar` (proyecto, índice, compose con Caddy y LEEME en el
-  idioma del proyecto) y `/ready` con el diagnóstico del proyecto.
-- CI: pruebas en Linux y Windows, navegador, build reproducible del motor del
-  avatar, wheel limpio e imagen sin red.
+- **Despliegue:** `rag desplegar preparar` genera la imagen Docker del
+  perfil (con los modelos incluidos), el compose con Caddy y un LEEME en el
+  idioma del proyecto; `/ready` publica el diagnóstico del proyecto.
 - `rag --version`.
+- Estilo del widget clave por clave: `rag widget estilo mostrar|cambiar` y el
+  editor «Estilo completo» del panel (colores, tipografía, formas, sombras,
+  animaciones, ubicación y presentación).
 - Documentación: [arquitectura](docs/arquitectura.md) con diagramas, guía de
   despliegue, fichas metodológicas, capturas, `CONTRIBUTING.md`,
   `SECURITY.md`, código de conducta y plantillas de issues y pull requests.
@@ -86,6 +87,10 @@ queda en git, en la etiqueta `plan-v3`; las decisiones, en `docs/decisiones/` y 
   desarrollo `[exportar]`).
 - La política `layered_v1` (los proyectos migran a `cascada_v1`).
 - Planes y bitácoras anteriores, `requirements*.txt` y el evaluador antiguo.
+- GitHub Actions y Dependabot: es una librería que se instala; las pruebas
+  se corren localmente.
+- El `Dockerfile` de la raíz y el compose antiguo con Qdrant servidor: la
+  imagen la genera `rag desplegar preparar`.
 
 ### Descartado tras medirlo
 

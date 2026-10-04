@@ -5,7 +5,16 @@ import argparse
 
 import yaml
 
-from rag.aplicacion.widget import aplicar_preset, exportar_widget, generar_vista_previa, listar_presets, snippet_widget
+from rag.aplicacion.widget import (
+    SECCIONES_EDITABLES,
+    aplicar_preset,
+    cambiar_estilo,
+    estilo_plano,
+    exportar_widget,
+    generar_vista_previa,
+    listar_presets,
+    snippet_widget,
+)
 from rag.cli.base import Comando, Grupo
 
 
@@ -101,11 +110,52 @@ class ComandoWidgetSnippet(Comando):
         return 0
 
 
+class ComandoEstiloMostrar(Comando):
+    nombre = "mostrar"
+    ayuda = "Muestra cada valor de estilo del widget (colores, tipografía, forma, ubicación…)."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--seccion", choices=SECCIONES_EDITABLES, default=None, help="Solo una sección.")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        try:
+            valores = estilo_plano()
+        except (OSError, yaml.YAMLError) as exc:
+            print(f"No se pudo leer configuracion/estilos.yaml: {exc}")
+            return 1
+        for clave, valor in valores:
+            if args.seccion is None or clave.startswith(args.seccion + "."):
+                print(f"{clave} = {str(valor).lower() if isinstance(valor, bool) else valor}")
+        print("Para cambiar: rag widget estilo cambiar seccion.clave=valor")
+        return 0
+
+
+class ComandoEstiloCambiar(Comando):
+    nombre = "cambiar"
+    ayuda = "Cambia valores de estilo del widget, p. ej. colores.acento=#0ea5e9 forma.radio_panel=10px."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("asignaciones", nargs="+", metavar="seccion.clave=valor",
+                            help="Uno o más cambios (ver 'rag widget estilo mostrar').")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        try:
+            cambiar_estilo(args.asignaciones)
+        except (OSError, ValueError, yaml.YAMLError) as exc:
+            print(f"No se cambió nada: {exc}")
+            return 1
+        print(f"Estilo actualizado en configuracion/estilos.yaml ({len(args.asignaciones)} cambio(s)).")
+        print("El servicio lo aplica sin reiniciar; para verlo: rag widget tema vista-previa")
+        return 0
+
+
 def grupo_widget() -> Grupo:
     tema = Grupo("tema", "Administra presets visuales.", "Operación sobre el tema visual.",
                  [ComandoTemaListar(), ComandoTemaAplicar(), ComandoTemaVistaPrevia()])
+    estilo = Grupo("estilo", "Muestra o cambia cada valor de estilo.", "Operación sobre el estilo.",
+                   [ComandoEstiloMostrar(), ComandoEstiloCambiar()])
     return Grupo("widget", "Configura y exporta el widget embebible.", "Operación sobre el widget.",
-                 [tema, ComandoWidgetExportar(), ComandoWidgetSnippet()])
+                 [tema, estilo, ComandoWidgetExportar(), ComandoWidgetSnippet()])
 
 
 

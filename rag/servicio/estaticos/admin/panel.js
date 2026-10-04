@@ -130,24 +130,28 @@
 
   // --- carga ------------------------------------------------------------
   function cargarTodo() {
-    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos"), api("GET", "/estilos/presets")])
+    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos"), api("GET", "/estilos/presets"),
+                        api("GET", "/estilos/plano")])
       .then(function (r) {
         estado.datos = r[0];
         estado.estilos = r[1];
         pintarAvatar();
         pintarWidget(r[2]);
+        pintarEstilo(r[3]);
         mostrarErrores([]);
         return pintarTono();
       });
   }
   function recargarDatos() {
-    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos")]).then(function (r) {
-      estado.datos = r[0];
-      estado.estilos = r[1];
-      pintarAvatar();
-      pintarWidget(null);
-      return pintarTono();
-    });
+    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos"), api("GET", "/estilos/plano")])
+      .then(function (r) {
+        estado.datos = r[0];
+        estado.estilos = r[1];
+        pintarAvatar();
+        pintarWidget(null);
+        pintarEstilo(r[2]);
+        return pintarTono();
+      });
   }
 
   function guardado(texto) {
@@ -372,6 +376,53 @@
       ubicacion: { posicion: $("posicion").value, tamano: $("tamano").value, lanzador: $("lanzador").value },
       presentacion: { citas: $("citas").value }
     }).then(function () { return guardado(); }, fallo);
+  });
+
+  // --- estilo completo: un campo por cada «seccion.clave» de estilos.yaml ----
+  var HEX = /^#[0-9a-fA-F]{6}$/;
+  var originales = {};
+
+  function pintarEstilo(campos) {
+    var caja = $("campos-estilo");
+    vaciar(caja);
+    originales = {};
+    var seccionActual = null;
+    campos.forEach(function (campo) {
+      var seccion = campo.clave.split(".")[0];
+      if (seccion !== seccionActual) {
+        caja.appendChild(elemento("h4", seccion));
+        seccionActual = seccion;
+      }
+      var valor = campo.valor;
+      var etiqueta = elemento("label", campo.clave.split(".")[1] + " ");
+      var entrada = elemento("input", null, { "data-clave": campo.clave });
+      if (typeof valor === "boolean") {
+        entrada.type = "checkbox";
+        entrada.checked = valor;
+        originales[campo.clave] = String(valor);
+      } else if (typeof valor === "string" && HEX.test(valor)) {
+        entrada.type = "color";
+        entrada.value = valor.toLowerCase();
+        originales[campo.clave] = entrada.value;
+      } else {
+        entrada.type = "text";
+        entrada.value = String(valor);
+        originales[campo.clave] = entrada.value;
+      }
+      etiqueta.appendChild(entrada);
+      caja.appendChild(etiqueta);
+    });
+  }
+
+  $("guardar-estilo").addEventListener("click", function () {
+    var asignaciones = [];
+    Array.prototype.forEach.call($("campos-estilo").querySelectorAll("input[data-clave]"), function (entrada) {
+      var clave = entrada.getAttribute("data-clave");
+      var valor = entrada.type === "checkbox" ? String(entrada.checked) : entrada.value;
+      if (valor !== originales[clave]) asignaciones.push(clave + "=" + valor);
+    });
+    if (!asignaciones.length) { avisar(textos.sinCambios); return; }
+    api("POST", "/estilos/cambiar", { asignaciones: asignaciones }).then(function () { return guardado(); }, fallo);
   });
 
   // --- arranque ---------------------------------------------------------

@@ -22,4 +22,4 @@ se audita cada decisión, con diagramas.
 | `ejemplos/` | Integraciones web probadas: HTML, React y WordPress |
 | `herramientas/avatar/` | Build reproducible del motor del avatar y Folio (solo desarrollo) |
 | `docs/` | Esta documentación |
-| `.github/` | Integración continua |
+| `.github/` | Formularios de issues y plantilla de pull request |

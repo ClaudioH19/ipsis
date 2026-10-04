@@ -7,7 +7,7 @@ corre sin red y nunca entrena ni calibra.
 |---|---|---|
 | Prueba | El software: capacidades generales | La instalación de un cliente sobre su corpus |
 | Corpus | Microdocumentos sintéticos de este repositorio | Los documentos del cliente |
-| Uso | Pruebas, CI, regresión, comparación entre versiones | Evaluación y calibración de umbrales |
+| Uso | Pruebas, regresión, comparación entre versiones | Evaluación y calibración de umbrales |
 | Manifiesto | `uso: regresion` (`exigir_calibrable` lo rechaza) | `uso: evaluacion` |
 
 El sistema no se ajusta para pasar este banco: si falla, se registra en la

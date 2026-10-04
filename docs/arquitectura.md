@@ -63,7 +63,7 @@ flowchart RL
     servicio["servicio"] --> aplicacion
 ```
 
-Reglas, verificadas en cada CI:
+Reglas, verificadas por `tests/test_arquitectura.py`:
 
 - un módulo solo importa de su capa o de las anteriores;
 - `nucleo`, `configuracion` y `lenguaje` no cargan `onnxruntime`,

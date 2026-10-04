@@ -9,5 +9,3 @@ rag/servicio/estaticos/avatar.js.LICENSE.txt -text
 rag/servicio/estaticos/avatar.js.sha256 -text
 # Plantillas de despliegue e imagen: se usan en Linux (CRLF rompe RUN con \ y valores de .env).
 rag/recursos/despliegue/** text eol=lf
-Dockerfile text eol=lf
-.github/workflows/*.yml text eol=lf

@@ -39,7 +39,8 @@ python -m pytest                                 # todo; las lentas descargan o 
 - Las etapas del motor se prueban con dobles en memoria, sin modelos.
 - Si un cambio altera respuestas a propósito, regenera la caracterización
   y explica el porqué en el commit.
-- La CI corre en Linux y Windows con Python 3.11 y 3.12.
+- Corre las pruebas en Python 3.11 o 3.12 antes de abrir el pull request:
+  el repositorio no tiene integración continua.
 
 ## El motor del avatar
 

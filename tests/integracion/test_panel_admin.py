@@ -232,7 +232,11 @@ def test_importar_asignar_y_probar_un_evento(servidor, pagina, proyecto):
     _esperar(page, "document.getElementById('estado').textContent.includes('mi-avatar')")
     assert (proyecto / "configuracion/avatares/mi-avatar.avatar.json").is_file()
 
+    page.evaluate("document.getElementById('estado').textContent = ''")
     page.select_option("#avatar-activo-sel", "mi-avatar")
+    # Cada cambio guarda y recarga la vista previa: se espera el «Guardado» de este
+    # antes del siguiente, o el siguiente podría confundirse con este.
+    _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
     page.wait_for_selector("tr[data-evento=respuesta_ok] option[value=contento]", state="attached")
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.select_option("tr[data-evento=respuesta_ok] select", "contento")
@@ -277,3 +281,30 @@ def test_preset_y_ubicacion_del_widget(servidor, pagina, proyecto):
     page.reload()
     page.wait_for_selector("#contenido:not([hidden])")
     assert not errores, errores
+
+
+@pytest.mark.browser
+def test_estilo_completo_desde_el_panel(servidor, pagina, proyecto):
+    page, errores = pagina
+    _entrar(page, servidor)
+    page.wait_for_selector("#contenido:not([hidden])")
+    page.click("#pestana-widget")
+    page.click("#estilo-completo summary")
+    page.wait_for_selector("input[data-clave='colores.acento']")
+    assert page.get_attribute("input[data-clave='colores.acento']", "type") == "color"
+    assert page.get_attribute("input[data-clave='animaciones.activadas']", "type") == "checkbox"
+    page.fill("input[data-clave='colores.acento']", "#0ea5e9")
+    page.fill("input[data-clave='forma.radio_panel']", "10px")
+    page.uncheck("input[data-clave='animaciones.activadas']")
+    page.evaluate("document.getElementById('estado').textContent = ''")
+    page.click("#guardar-estilo")
+    _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
+    estilos = (proyecto / "configuracion/estilos.yaml").read_text(encoding="utf-8")
+    assert "acento: '#0ea5e9'" in estilos and "radio_panel: 10px" in estilos and "activadas: false" in estilos
+    page.evaluate("document.getElementById('estado').textContent = ''")
+    page.click("#guardar-estilo")  # sin cambios: no escribe y lo dice
+    _esperar(page, "document.getElementById('estado').textContent.includes('No hay cambios')")
+    page.fill("input[data-clave='forma.radio_panel']", "10px;color:red")
+    page.click("#guardar-estilo")
+    _esperar(page, "document.getElementById('errores').textContent.includes('no permitidos')")
+    assert not [e for e in errores if "422" not in e], errores  # solo el rechazo esperado

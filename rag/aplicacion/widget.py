@@ -316,3 +316,63 @@ def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
     temporal.write_text(yaml.safe_dump(tema, allow_unicode=True, sort_keys=False), encoding="utf-8")
     os.replace(temporal, destino)
     return tema
+
+
+# --- estilo clave por clave (rag widget estilo, panel /admin) ---------------------------------
+SECCIONES_EDITABLES = ("presentacion", "ubicacion", "colores", "colores_oscuro", "tipografia", "forma", "sombras",
+                       "animaciones")
+
+
+def _tema_base() -> dict:
+    return yaml.safe_load(leer_plantilla("estilos.yaml")) or {}
+
+
+def estilo_plano(tema: dict | None = None) -> list[tuple[str, Any]]:
+    """Cada valor editable como ``seccion.clave`` → valor: lo del proyecto sobre la plantilla."""
+    tema = _fusionar(_tema_base(), tema if tema is not None else cargar_estilos())
+    return [(f"{seccion}.{clave}", valor)
+            for seccion in SECCIONES_EDITABLES for clave, valor in (tema.get(seccion) or {}).items()]
+
+
+def _convertir(texto: str, ejemplo: Any) -> Any:
+    """El valor de ``rag widget estilo cambiar`` con el tipo de la plantilla."""
+    if isinstance(ejemplo, bool):
+        if texto.lower() in ("true", "si", "sí", "1"):
+            return True
+        if texto.lower() in ("false", "no", "0"):
+            return False
+        raise ValueError(f"se esperaba true o false, no {texto!r}")
+    if isinstance(ejemplo, int):
+        try:
+            return int(texto)
+        except ValueError as e:
+            raise ValueError(f"se esperaba un número entero, no {texto!r}") from e
+    return texto
+
+
+def cambiar_estilo(asignaciones: list[str], ruta: str = RUTA_ESTILOS) -> dict:
+    """Aplica ``seccion.clave=valor`` sobre ``estilos.yaml``. Solo acepta claves que
+    existen en la plantilla, para que una errata no se guarde en silencio, y valida
+    el tema completo antes de escribir."""
+    base = _tema_base()
+    cambios: dict[str, dict] = {}
+    for asignacion in asignaciones:
+        clave, separador, valor = asignacion.partition("=")
+        seccion, punto, nombre = clave.strip().partition(".")
+        if not separador or not punto:
+            raise ValueError(f"{asignacion!r}: usa seccion.clave=valor, p. ej. colores.acento=#0ea5e9")
+        if seccion not in SECCIONES_EDITABLES:
+            raise ValueError(f"sección desconocida {seccion!r}; válidas: {', '.join(SECCIONES_EDITABLES)}")
+        validas = base.get(seccion) or {}
+        if nombre not in validas:
+            raise ValueError(f"clave desconocida {clave!r}; en {seccion}: {', '.join(validas)}")
+        try:
+            cambios.setdefault(seccion, {})[nombre] = _convertir(valor.strip(), validas[nombre])
+        except ValueError as e:
+            raise ValueError(f"{clave}: {e}") from e
+    if not cambios:
+        raise ValueError("indica al menos un cambio: seccion.clave=valor")
+    return actualizar_estilos(cambios, ruta)
+
+
+__all__ += ["SECCIONES_EDITABLES", "cambiar_estilo", "estilo_plano"]

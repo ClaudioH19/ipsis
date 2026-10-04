@@ -135,6 +135,22 @@ Los valores anteriores siguen funcionando: `abiertas` equivale a `lista`, y
 - **Seguridad:** ningún texto de la API se inserta como HTML; todo usa
   `textContent`.
 
+## Estilo
+
+Todo el aspecto vive en `configuracion/estilos.yaml` y se aplica sin
+reiniciar el servicio:
+
+- **Presets:** `rag widget tema listar` y `rag widget tema aplicar editorial`
+  (`clasico`, `minimal`, `editorial`, `contraste`).
+- **Cada valor:** `rag widget estilo mostrar` y, por ejemplo,
+  `rag widget estilo cambiar colores.acento=#0ea5e9 forma.radio_panel=10px
+  tipografia.familia="Inter, sans-serif"`. Secciones: `colores`,
+  `colores_oscuro`, `tipografia`, `forma`, `sombras`, `animaciones`,
+  `ubicacion` y `presentacion`.
+- **Sin terminal:** el panel `/admin/panel`, pestaña Widget, «Estilo
+  completo» (ver [personalidad.md](personalidad.md#panel-gráfico-adminpanel)).
+- **Vista previa sin servicio:** `rag widget tema vista-previa`.
+
 ## CSP de tu sitio
 
 Si tu sitio usa Content Security Policy, permite el dominio del asistente:

@@ -7,16 +7,6 @@ from __future__ import annotations
 
 import threading
 from dataclasses import dataclass
-from enum import Enum
-
-# ==========================================================================
-# ADMISION (sección 7, alcance recortado — ver docstring del módulo)
-# ==========================================================================
-class NivelServicio(str, Enum):
-    NORMAL = "normal"
-    MEDIA = "media"     # FASE 5 completa — no implementado en esta etapa
-    ALTA = "alta"        # FASE 5 completa — no implementado en esta etapa
-    SATURADO = "saturado"
 
 
 @dataclass
@@ -53,14 +43,3 @@ class ControlAdmision:
     def liberar(self) -> None:
         with self._lock:
             self._en_curso = max(0, self._en_curso - 1)
-
-    def nivel_actual(self) -> NivelServicio:
-        with self._lock:
-            if self._en_curso >= self.config.concurrencia_maxima:
-                return NivelServicio.SATURADO
-            return NivelServicio.NORMAL
-
-    @property
-    def en_curso(self) -> int:
-        with self._lock:
-            return self._en_curso

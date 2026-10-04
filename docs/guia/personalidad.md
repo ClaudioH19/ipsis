@@ -187,7 +187,7 @@ Es la misma API, con formularios. Abre `https://tu-dominio/admin/panel`
 |---|---|
 | **Tono** | Elige el tono y la variedad. Por situación, muestra las 5 variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
 | **Avatar** | Importa un `.avatar.json` (se valida antes de guardar), elige el avatar, sus colores, ubicación y tamaño, y asigna cada evento a una animación. El botón ▶ dispara el evento en la vista previa |
-| **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas |
+| **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas. «Estilo completo» edita cada valor de `estilos.yaml`: colores claros y oscuros, tipografía, formas, sombras y animaciones |
 
 - **Vista previa:** el widget real, servido por tu servicio. Se recarga sola
   tras cada cambio guardado.

@@ -122,6 +122,12 @@
             </label>
           </div>
           <button type="button" id="guardar-widget">Guardar</button>
+          <details id="estilo-completo">
+            <summary>Estilo completo: colores, tipografía, formas, sombras y animaciones</summary>
+            <p class="nota">Cada valor de <code>estilos.yaml</code>. Solo se guardan los que cambies; se validan antes de escribir.</p>
+            <div id="campos-estilo" class="campos-estilo"></div>
+            <button type="button" id="guardar-estilo">Guardar estilo</button>
+          </details>
         </section>
       </div>
 
@@ -144,7 +150,8 @@
   data-sin-avatar="La vista previa todavía no tiene un avatar animado; se guardó la asignación."
   data-sugerida="(sugerida)"
   data-sin-sesion="La sesión terminó o el token cambió. Vuelve a entrar."
-  data-error-red="No se pudo conectar con el servicio."></div>
+  data-error-red="No se pudo conectar con el servicio."
+  data-sin-cambios="No hay cambios de estilo para guardar."></div>
 <script src="/admin/panel/panel.js"></script>
 </body>
 </html>

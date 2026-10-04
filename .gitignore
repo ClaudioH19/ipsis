@@ -1,51 +1,27 @@
-# Entornos y cachés de Python
+# Python
 .venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-
-# Metadata generada por 'pip install -e .' (Etapa Plugin, Tarea A)
 *.egg-info/
-
-# Corpus del usuario (potencialmente sensible). Solo se versiona el catálogo
-# vacío que documenta el esquema inicial.
-documentos/**
-!documentos/catalogo.yaml
-/base_de_conocimiento/
-
-# Artefactos de empaquetado
 build/
 dist/
-
-# Índices y modelos descargados
-qdrant_storage/
-qdrant_local/
-*.qdrant/
-modelos_local/
-.cache/
-hf_cache/
-
-# Salidas locales de evaluación con datos crudos (los reportes .md sí se versionan)
-data/reportes/*.tmp
 .cache/
 
-# Instrumento de revisión humana del golden set (Etapa 2b): incrusta texto
-# literal del corpus institucional -- nunca se publica ni se versiona.
-# Las decisiones exportadas también quedan fuera (pueden citar texto
-# corregido a mano por el revisor a partir del corpus).
+# Lo que generan los comandos `rag` si se ejecutan dentro del clon
+.rag/
+.rag-extractivo/
+exportados/
 
-# Paquete de revisión externa (Etapa 2b, parte 2): los lotes Markdown y las
-# respuestas guardadas incrustan texto literal del corpus institucional --
-# igual criterio que revision.html. El mapa de etiquetas (solo ids/offsets,
-# sin texto) SÍ va en git: no está bajo esta carpeta a propósito.
+# Herramientas y ejemplos con npm
+node_modules/
+ejemplos/react/dist/
 
-# Sistema
+# Sistema y editores
 .DS_Store
 Thumbs.db
-onnx_scratch/
+.idea/
+.vscode/
 
 # Grafo de conocimiento local (graphify)
 graphify-out/
-
-# Herramientas de desarrollo (npm)
-herramientas/*/node_modules/

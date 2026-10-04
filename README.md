@@ -5,7 +5,6 @@
   <img alt="rag-extractivo: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-claro.svg" width="100%">
 </picture>
 
-[![CI](https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat/actions/workflows/ci.yml/badge.svg)](https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat/actions/workflows/ci.yml)
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
 [![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/guia/instalacion.md)
 [![Versión 0.8.0](https://img.shields.io/badge/versi%C3%B3n-0.8.0-0f172a)](CHANGELOG.md)
