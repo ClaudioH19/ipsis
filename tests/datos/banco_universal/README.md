@@ -10,8 +10,9 @@ corre sin red y nunca entrena ni calibra.
 | Uso | Pruebas, CI, regresión, comparación entre versiones | Evaluación y calibración de umbrales |
 | Manifiesto | `uso: regresion` (`exigir_calibrable` lo rechaza) | `uso: evaluacion` |
 
-El sistema no se ajusta para pasar este banco: si falla, se registra y se
-analiza en P10.
+El sistema no se ajusta para pasar este banco: si falla, se registra en la
+línea base y se analiza con `rag benchmark` (ver
+[docs/metodologia/evaluacion.md](../../../docs/metodologia/evaluacion.md)).
 
 ## Contenido
 

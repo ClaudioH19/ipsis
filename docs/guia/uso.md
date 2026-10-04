@@ -1,8 +1,8 @@
 # Uso
 
 El ciclo de trabajo de un asistente y la referencia de todos los comandos.
-La instalación, los perfiles, el VPS y los modos están en
-[instalacion.md](instalacion.md). El detalle de cada archivo de configuración
+La instalación y los perfiles están en [instalacion.md](instalacion.md); el
+VPS, Docker y los modos, en [despliegue.md](despliegue.md). El detalle de cada archivo de configuración
 está en [configuracion.md](configuracion.md).
 
 ## Ciclo de trabajo
@@ -76,7 +76,7 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS y personalidad. Cada error trae su acción. Sale con 0 si no hay errores |
+| `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS, personalidad y modo. Cada error trae su acción. Sale con 0 si no hay errores |
 | `rag auditar [--desde FECHA] [--hasta FECHA]` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--desde`/`--hasta` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. El registro se activa con `rag configurar registro.activo=true` |
 
 ### Personalidad
@@ -126,7 +126,7 @@ Detalle en [web.md](web.md).
 | `rag widget tema listar` | Presets visuales disponibles |
 | `rag widget tema aplicar <preset> [--ruta RUTA]` | Aplica un preset a `configuracion/estilos.yaml` |
 | `rag widget tema vista-previa [--ruta RUTA] [--salida RUTA]` | Genera un HTML para ver el tema |
-| `rag widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js` y `snippet.html` para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
+| `rag widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js`, `snippet.html`, el motor del avatar (`avatar.js` y sus licencias) y la definición del avatar activo, para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
 | `rag widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `estilos.yaml::ubicacion` |
 
 ### Despliegue
@@ -154,3 +154,5 @@ Detalle en [web.md](web.md).
 | Índice incompatible tras cambiar de perfil | `rag indexar` |
 | Los documentos cambiaron | `rag indexar` (`rag doctor` lo detecta) |
 | El navegador bloquea el widget | Agrega el origen exacto del sitio con `rag configurar cors_origenes=https://…` |
+| El widget muestra un ícono en vez del avatar | La CSP de tu sitio no permite `'unsafe-eval'` (lo necesita el motor del avatar), o el avatar no es válido: `rag personalidad validar`. El chat funciona igual |
+| `/ready` responde 503 | Lee `proyecto.bloqueante`: trae el chequeo que falla y el comando que lo arregla (lo mismo que `rag doctor`) |

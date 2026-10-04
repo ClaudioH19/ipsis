@@ -29,14 +29,17 @@ def test_los_enlaces_relativos_de_la_documentacion_existen():
     import re
 
     raiz = GUIA.parents[2]
-    archivos = [raiz / "README.md", raiz / "CHANGELOG.md", *sorted((raiz / "docs").rglob("*.md")),
+    archivos = [raiz / "README.md", raiz / "CHANGELOG.md", raiz / "CONTRIBUTING.md", raiz / "SECURITY.md",
+                raiz / "CODE_OF_CONDUCT.md", raiz / ".github" / "PULL_REQUEST_TEMPLATE.md",
+                raiz / "tests" / "datos" / "banco_universal" / "README.md", *sorted((raiz / "docs").rglob("*.md")),
                 *sorted((raiz / "ejemplos").rglob("*.md")), raiz / "herramientas" / "avatar" / "LEEME.md"]
     rotos = []
     for archivo in archivos:
         if not archivo.is_file() or "node_modules" in archivo.parts:
             continue
         texto = re.sub(r"```.*?```", "", archivo.read_text(encoding="utf-8"), flags=re.S)
-        for destino in re.findall(r"\]\(([^)\s]+)\)", texto):
+        enlaces = re.findall(r"\]\(([^)\s]+)\)", texto) + re.findall(r'(?:src|srcset|href)="([^"]+)"', texto)
+        for destino in enlaces:
             if re.match(r"^[a-z]+:|^#|^mailto:", destino):
                 continue
             ruta = destino.split("#")[0]
