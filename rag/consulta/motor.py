@@ -90,7 +90,8 @@ class Motor:
         self.lector = lector
         from rag.consulta.variantes import SelectorVariantes
 
-        self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial")
+        self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial",
+                                                    fija=(plantillas or {}).get("variedad") == "fija")
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
         from rag.consulta.variantes import usadas

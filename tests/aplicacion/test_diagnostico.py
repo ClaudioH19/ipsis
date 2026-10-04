@@ -149,7 +149,8 @@ def test_proyecto_sano_sin_golden_ni_calibracion_esta_listo(proyecto):
     r = reporte()
     assert [c.clave for c in r.chequeos] == list(ORDEN)
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "ok",
-                          "indice": "ok", "calibracion": "aviso", "golden": "aviso", "cors": "ok"}
+                          "indice": "ok", "calibracion": "aviso", "golden": "aviso", "cors": "ok",
+                          "personalidad": "aviso"}  # avatar Folio: llega en P12.10
     assert r.listo and r.errores == [] and r.perfil == "medium"
     assert r.chequeo("modelos").datos["faltantes"] == []
     assert r.chequeo("calibracion").acciones == () and r.chequeo("golden").acciones == ()
@@ -160,8 +161,9 @@ def test_proyecto_sano_con_calibracion_y_golden_vigentes_queda_todo_ok(proyecto)
     huella = sano("light")
     importar_golden()
     calibracion("light", huella)
+    editar("configuracion/personalidad.yaml", avatar={"activo": False})  # sin avatar: el ícono, sin aviso
     r = reporte()
-    assert set(estados(r).values()) == {"ok"}
+    assert set(estados(r).values()) == {"ok"}, estados(r)
     assert "vigente" in r.chequeo("calibracion").mensaje and "vigente" in r.chequeo("golden").mensaje
 
 
@@ -177,7 +179,8 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     editar("configuracion/asistente.yaml", claves_widget=["clave-sitio"])
     r = reporte()
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
-                          "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error"}
+                          "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
+                          "personalidad": "aviso"}
     assert r.chequeo("modelos").datos["faltantes"] == [MMARCO, LECTOR]
     assert r.chequeo("modelos").acciones == ("rag modelos descargar",)
     assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("rag indexar",)
@@ -405,9 +408,10 @@ def test_cli_resume_y_no_repite_acciones(proyecto, capsys):
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
     assert "[ERROR]   Modelos" in salida and "[ERROR]   Índice" in salida and "[AVISO]   Golden" in salida
-    assert "3 errores, 2 avisos. El proyecto no está listo." in salida
+    assert "3 errores, 3 avisos. El proyecto no está listo." in salida
     resumen = salida.split("Acciones:\n")[1].splitlines()
-    assert resumen == ["  rag modelos descargar", "  rag indexar", "  rag configurar cors_origenes=https://tu-sitio.cl"]
+    assert resumen[:3] == ["  rag modelos descargar", "  rag indexar", "  rag configurar cors_origenes=https://tu-sitio.cl"]
+    assert resumen[3:] == ["  rag personalidad avatar importar <archivo.avatar.json>"]
 
 
 def test_cli_sano_sale_con_cero(proyecto, capsys):
@@ -415,7 +419,7 @@ def test_cli_sano_sale_con_cero(proyecto, capsys):
     sano("light")
     capsys.readouterr()
     assert main(["doctor"]) == 0
-    assert "0 errores, 2 avisos. El proyecto puede funcionar." in capsys.readouterr().out
+    assert "0 errores, 3 avisos. El proyecto puede funcionar." in capsys.readouterr().out
 
 
 def test_doctor_no_usa_red_ni_onnx_ni_escribe(proyecto, monkeypatch):

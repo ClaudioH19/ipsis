@@ -70,6 +70,8 @@ def configuracion_efectiva(
     La salida contiene defaults aplicados y separa configuración del motor y
     del dominio. No incluye secretos derivados ni muta los objetos cargados.
     """
+    from rag.configuracion.personalidad import cargar_personalidad
+
     motor = deepcopy(cargar_proyecto(ruta_motor))
     dominio = deepcopy(cargar_dominio(ruta_dominio))
     return {
@@ -77,6 +79,7 @@ def configuracion_efectiva(
         "config_version": CONFIG_VERSION,
         "motor": motor,
         "dominio": dominio,
+        "personalidad": cargar_personalidad(Path(ruta_motor).parent.parent).model_dump(mode="json"),
     }
 
 
@@ -175,6 +178,10 @@ def _crear_desde_recurso_si_falta(ruta: str, recurso: str, **variables: str) -> 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(texto, encoding="utf-8")
     return True
+
+
+def inicializar_personalidad_si_falta(ruta: str = rutas.PERSONALIDAD) -> bool:
+    return _crear_desde_recurso_si_falta(ruta, "personalidad.yaml")
 
 
 def inicializar_asistente_si_falta(ruta: str = RUTA_DOMINIO) -> bool:

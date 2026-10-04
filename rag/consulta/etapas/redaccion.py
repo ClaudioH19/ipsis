@@ -30,15 +30,19 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
     """
     from pathlib import Path
 
+    from rag.configuracion.personalidad import cargar_personalidad
     from rag.lenguaje.tonos import cargar_tono
 
+    personalidad = cargar_personalidad(Path.cwd())
     if tono is None:
-        tono = cargar_tono(paquete.codigo, proyecto=Path.cwd(), sobrescrituras=paquete.plantillas_legado)
+        tono = cargar_tono(paquete.codigo, personalidad.tono.activo, proyecto=Path.cwd(),
+                           sobrescrituras=paquete.plantillas_legado)
     conectores = deepcopy(paquete.mensajes.conectores)  # secuencia y contraste_version
     for categoria in ("apertura", "complemento", "condicion", "excepcion"):
         conectores[categoria] = tono.variantes(categoria)
     datos = {
         "tono": tono.tono,
+        "variedad": personalidad.tono.variedad,
         "conectores": conectores,
         "abstencion": {
             "generico": tono.variantes("sin_respuesta"),

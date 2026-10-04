@@ -17,6 +17,7 @@ from rag.cli.comandos.evaluacion import ComandoBenchmark, ComandoCalibrar, Coman
 from rag.cli.comandos.golden import grupo_golden
 from rag.cli.comandos.modelos import grupo_modelos
 from rag.cli.comandos.operacion import ComandoAuditar, ComandoDoctor, ComandoSnapshotConfig
+from rag.cli.comandos.personalidad import grupo_personalidad
 from rag.cli.comandos.proyecto import ComandoConfigurar, ComandoInit, grupo_perfil
 from rag.cli.comandos.web import grupo_widget
 
@@ -25,7 +26,7 @@ def registro_de_comandos() -> list[Comando | Grupo]:
     """Registro explícito, en el orden en que aparecen en ``rag --help``."""
     init, cargar, indexar = ComandoInit(), ComandoCargar(), ComandoIndexar()
     return [
-        init, cargar, ComandoConfigurar(), grupo_perfil(), grupo_modelos(), indexar,
+        init, cargar, ComandoConfigurar(), grupo_perfil(), grupo_modelos(), grupo_personalidad(), indexar,
         ComandoServir(init, cargar, indexar), ComandoPreguntar(),
         ComandoDoctor(), ComandoAuditar(), ComandoSnapshotConfig(),
         ComandoEvaluar(), ComandoCalibrar(), ComandoComparar(), ComandoBenchmark(main),

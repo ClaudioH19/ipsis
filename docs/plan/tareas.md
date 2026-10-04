@@ -919,8 +919,10 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
 
 - **Además:**
   - `rag doctor` gana el chequeo `personalidad`:
-    - error si el archivo es inválido o el avatar no carga;
-    - aviso si al avatar le faltan claves del mapa.
+    - error si el archivo o una plantilla propia son inválidos, porque el
+      motor no arranca;
+    - aviso si el avatar falta o no carga (el widget muestra el ícono) o si
+      le faltan claves del mapa.
   - Escritura atómica.
   - `rag snapshot-config` incluye la personalidad.
   - La personalización del avatar es elegir o importar la definición,

@@ -12,6 +12,10 @@ RAIZ = Path(__file__).resolve().parents[2]
 COMANDOS_ACTUALES = {
     ("init",), ("cargar",), ("configurar",), ("perfil", "mostrar"), ("perfil", "cambiar"), ("indexar",),
     ("modelos", "listar"), ("modelos", "descargar"), ("modelos", "verificar"), ("modelos", "exportar"),
+    ("personalidad", "mostrar"), ("personalidad", "validar"), ("personalidad", "tono", "listar"),
+    ("personalidad", "tono", "aplicar"), ("personalidad", "tono", "probar"), ("personalidad", "avatar", "listar"),
+    ("personalidad", "avatar", "importar"), ("personalidad", "avatar", "aplicar"), ("personalidad", "avatar", "eventos"),
+    ("personalidad", "avatar", "asignar"), ("personalidad", "avatar", "colores"),
     ("servir",), ("preguntar",), ("doctor",), ("auditar",),
     ("snapshot-config",), ("evaluar",), ("calibrar",), ("comparar",), ("benchmark",),
     ("golden", "plantilla"), ("golden", "importar"), ("golden", "validar"), ("golden", "exportar"),
