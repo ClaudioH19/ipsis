@@ -190,11 +190,20 @@ def limite_de_peticiones() -> dict:
     return config_seguridad()["limite_peticiones"]
 
 
-def interfaz_del_idioma(idioma: str) -> dict:
-    """Textos de la interfaz del widget en el idioma del proyecto."""
-    from rag.lenguaje.paquete import cargar_paquete
+# Microcopia del widget que ahora es del tono: clave de la interfaz ← situación.
+_MICROCOPIA = {"saludo": "bienvenida", "esperando": "esperando", "error_red": "error_red",
+               "error_limite": "error_limite", "error_servicio": "error_servicio",
+               "invitacion_citas": "invitacion_citas"}
 
-    return cargar_paquete(idioma, proyecto=Path.cwd()).interfaz
+
+def interfaz_del_idioma(idioma: str) -> dict:
+    """Textos de la interfaz del widget: los fijos del idioma más la microcopia del tono."""
+    from rag.lenguaje.paquete import cargar_paquete
+    from rag.lenguaje.tonos import cargar_tono
+
+    paquete = cargar_paquete(idioma, proyecto=Path.cwd())
+    tono = cargar_tono(idioma, proyecto=Path.cwd(), sobrescrituras=paquete.plantillas_legado)
+    return {**paquete.interfaz, **{clave: tono.variantes(s)[0] for clave, s in _MICROCOPIA.items()}}
 
 
 # ---------------------------------------------------------------------------

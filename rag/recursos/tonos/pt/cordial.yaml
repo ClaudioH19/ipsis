@@ -1,0 +1,113 @@
+# Tom cordial (padrão): gentil e claro. A primeira variante de cada situação
+# é o texto anterior aos tons.
+tono: cordial
+descripcion: Gentil e claro; o tom padrão.
+situaciones:
+  saludo:
+  - Olá! Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do documento. O que você precisa saber?
+  - 'Olá! Pergunte o que precisar sobre {descripcion_dominio}: busco a resposta no documento e mostro de onde a tirei.'
+  - Olá! Aqui é {nombre_asistente}. Conte o que você procura em {descripcion_dominio} e eu mostro o que diz o texto.
+  - Oi, sou {nombre_asistente}. O que você gostaria de consultar sobre {descripcion_dominio}?
+  - Que bom te ver! Pergunte o que quiser sobre {descripcion_dominio} e eu mostro a citação exata.
+  agradecimiento:
+  - De nada. Se tiver outra pergunta sobre {descripcion_dominio}, estou aqui.
+  - Com prazer. Qualquer outra dúvida sobre {descripcion_dominio}, é só dizer.
+  - Foi um prazer! Se quiser revisar mais alguma coisa de {descripcion_dominio}, pergunte.
+  - Não há de quê. Continuo aqui para o que precisar sobre {descripcion_dominio}.
+  - Que bom que ajudou. Mais alguma coisa sobre {descripcion_dominio}?
+  despedida:
+  - Até logo.
+  - Até mais. Volte quando precisar consultar o documento.
+  - Tudo de bom! Estarei aqui quando precisar revisar os documentos.
+  - Até breve. Quando quiser, seguimos consultando.
+  - Tchau, e obrigado por perguntar.
+  capacidad:
+  - Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.
+  - Busco em {descripcion_dominio} e devolvo texto literal com a fonte.
+  - 'Sou {nombre_asistente}: encontro em {descripcion_dominio} o trecho que responde sua pergunta e mostro como está, com a citação.'
+  - Respondo só com o que diz {descripcion_dominio}, citado ao pé da letra. Se algo não estiver lá, eu digo.
+  - 'Pergunte sobre {descripcion_dominio}: mostro o texto exato e onde aparece, sem inventar nada.'
+  apertura:
+  - 'Isto é o que diz o documento:'
+  - 'Encontrei isto no documento:'
+  - 'O documento coloca assim:'
+  - 'Segundo o texto carregado:'
+  - 'Aqui está o que encontrei:'
+  complemento:
+  - 'Soma-se a isto o seguinte:'
+  - 'O documento acrescenta, em outra seção:'
+  - 'Também diz isto:'
+  - 'E complementa assim:'
+  - 'Além disso, encontrei isto:'
+  condicion:
+  - 'Isto se aplica sob uma condição:'
+  - 'Há uma condição associada:'
+  - 'O documento condiciona assim:'
+  - 'Leve em conta esta condição:'
+  - 'Para que se aplique, o documento indica:'
+  excepcion:
+  - 'Com uma exceção:'
+  - 'Há uma ressalva:'
+  - 'O documento prevê uma exceção:'
+  - 'Atenção a esta exceção:'
+  - 'Não se aplica no seguinte caso:'
+  relacionado_intro:
+  - 'Não encontrei uma resposta direta. Isto é o que os documentos dizem sobre o tema:'
+  - 'Não há uma resposta direta nos documentos, mas isto é o mais relacionado:'
+  - 'Não encontrei exatamente o que você procura. Isto é o mais próximo nos documentos:'
+  - 'Não vejo uma resposta direta; mostro o que os documentos dizem sobre o tema:'
+  - 'O que você pergunta não aparece de forma direta. Isto é o relacionado que encontrei:'
+  foco_ausente:
+  - 'Não encontrei informação específica sobre «{termino}». Isto é o mais próximo:'
+  - 'Os documentos não falam especificamente de «{termino}». Isto é o mais parecido:'
+  - 'Não há nada pontual sobre «{termino}», mas isto está relacionado:'
+  - 'Não encontrei «{termino}» nos documentos. Mostro o mais próximo:'
+  - 'Sobre «{termino}» não há uma resposta direta. Isto é o relacionado:'
+  sin_respuesta:
+  - Não encontrei essa informação nos documentos disponíveis.
+  - Essa informação não aparece nos documentos disponíveis.
+  - Procurei nos documentos e não encontrei nada sobre isso.
+  - 'Não tenho essa informação: ela não está nos documentos carregados.'
+  - Desculpe, isso não consta nos documentos disponíveis.
+  premisa_no_encontrada:
+  - Não encontrei informação sobre "{entidad}" nos documentos disponíveis. Talvez não exista ou esteja fora do que seus documentos cobrem.
+  - Os documentos não mencionam "{entidad}". Talvez esteja fora do que eles cobrem.
+  - Não encontrei "{entidad}" nos documentos disponíveis.
+  - Não há informação sobre "{entidad}" nos seus documentos; talvez não faça parte deles.
+  - Procurei "{entidad}" e não aparece nos documentos disponíveis.
+  bienvenida:
+  - Olá, como posso ajudar?
+  - Olá! Pergunte o que precisar sobre os documentos.
+  - Olá, sou {nombre_asistente}. O que você quer consultar?
+  - O que você gostaria de saber? Respondo citando o documento.
+  - Olá! Escreva sua pergunta e eu busco a resposta no texto.
+  esperando:
+  - Buscando no documento
+  - Revisando os documentos
+  - Buscando a citação exata
+  - Um momento, estou lendo
+  - Buscando a resposta no texto
+  invitacion_citas:
+  - Você pode conferir na citação abaixo.
+  - O texto original está abaixo para você verificar.
+  - Veja a citação abaixo para saber de onde vem.
+  - A fonte exata está logo abaixo.
+  - Confira você mesmo na citação abaixo.
+  error_red:
+  - Não foi possível contatar o assistente. Verifique sua conexão e tente de novo.
+  - Parece que não há conexão com o assistente. Tente novamente em um momento.
+  - Não consegui me conectar. Verifique sua conexão e tente de novo.
+  - A conexão com o assistente caiu. Tente novamente.
+  - Não consegui falar com o serviço. Tente outra vez em alguns segundos.
+  error_limite:
+  - Muitas perguntas seguidas. Espere alguns segundos e tente de novo.
+  - Estamos indo um pouco rápido. Espere alguns segundos antes da próxima pergunta.
+  - Recebi muitas perguntas juntas. Me dê alguns segundos e tente de novo.
+  - Preciso de uma pausa breve. Tente de novo em alguns segundos.
+  - Espere um momento antes de perguntar outra vez.
+  error_servicio:
+  - O assistente não está disponível agora. Tente de novo mais tarde.
+  - O serviço está se preparando. Tente novamente em um momento.
+  - Agora não consigo responder. Tente outra vez daqui a pouco.
+  - O assistente está ocupado. Tente de novo em alguns segundos.
+  - Houve um problema no serviço. Tente novamente mais tarde.

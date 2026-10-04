@@ -262,48 +262,8 @@ conversacional:
     - para qu[eé] sirves
     - c[oó]mo funcionas
     - qu[eé] eres t[uú]
-  respuestas:
-    saludo:
-    - ¡Hola! Soy {nombre_asistente}. Respondo preguntas sobre {descripcion_dominio} citando el texto exacto
-      del documento. ¿Qué necesitas saber?
-    - '¡Hola! Pregúntame lo que necesites sobre {descripcion_dominio}: busco la respuesta en el documento
-      y te muestro de dónde la saqué.'
-    agradecimiento:
-    - De nada. Si tienes otra pregunta sobre {descripcion_dominio}, aquí estoy.
-    - Con gusto. Cualquier otra duda sobre {descripcion_dominio}, dime.
-    despedida:
-    - Hasta luego.
-    - Nos vemos. Vuelve cuando necesites consultar el documento.
-    capacidad:
-    - Soy {nombre_asistente}. Respondo preguntas sobre {descripcion_dominio} citando el texto exacto del
-      documento. Si la información no está, te lo digo en vez de inventar una respuesta.
-    - Busco en {descripcion_dominio} y te devuelvo texto literal con su fuente.
 mensajes:
-  sin_respuesta: No encontré esa información en los documentos disponibles.
-  premisa_no_encontrada: No encontré información sobre "{entidad}" en los documentos disponibles. Puede
-    que no exista o que esté fuera de lo que cubren tus documentos.
-  relacionado_intro: 'No encontré una respuesta directa. Esto es lo que dicen los documentos sobre el
-    tema:'
-  relacionado_foco_ausente: 'No encontré información específica sobre «{termino}». Esto es lo más cercano:'
   conectores:
-    apertura:
-    - 'Esto es lo que dice el documento:'
-    - 'Encontré esto en el documento:'
-    - 'El documento lo plantea así:'
-    - 'Según el texto cargado:'
-    complemento:
-    - 'A esto se suma lo siguiente:'
-    - 'El documento agrega, en otra sección:'
-    - 'También dice esto:'
-    - 'Y lo complementa así:'
-    condicion:
-    - 'Esto aplica bajo una condición:'
-    - 'Hay una condición asociada:'
-    - 'El documento la condiciona así:'
-    excepcion:
-    - 'Con una excepción:'
-    - 'Hay una salvedad:'
-    - 'El documento contempla una excepción:'
     secuencia:
     - Primero
     - Luego
@@ -313,7 +273,6 @@ mensajes:
   sin_seccion: (sin sección)
 interfaz:
   titulo: Asistente
-  saludo: Hola, ¿en qué puedo ayudarte?
   subtitulo: Responde citando el documento
   abrir: Abrir chat de {titulo}
   cerrar: Cerrar chat
@@ -321,11 +280,8 @@ interfaz:
   placeholder: Escribe tu pregunta...
   enviar: Enviar pregunta
   no_directa: No es una respuesta directa
-  esperando: Buscando en el documento
-  error_limite: Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.
   error_origen: Este sitio no está autorizado para usar el asistente.
   error_http: El servicio no pudo responder (HTTP {estado}).
-  error_red: No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.
 contracciones:
   ' de el ': ' del '
   ' a el ': ' al '

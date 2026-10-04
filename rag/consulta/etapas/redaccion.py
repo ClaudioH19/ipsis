@@ -13,25 +13,38 @@ from rag.consulta.etapas.base import _Etapa
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
 # ==========================================================================
-def cargar_plantillas(paquete, dominio: dict | None = None) -> dict:
-    """Textos fijos del asistente a partir del paquete de idioma.
+def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
+    """Textos fijos del asistente: los del tono más los estructurales del idioma.
 
     Devuelve conectores, mensajes de abstención y textos conversacionales.
-    Con ``dominio`` (``configuracion/asistente.yaml``) sustituye
-    ``{nombre_asistente}`` y ``{descripcion_dominio}`` en las respuestas
-    conversacionales y aplica las contracciones del idioma (``descripcion_dominio``
-    puede empezar con artículo: «de el manual» -> «del manual»).
+    ``tono`` es un ``PaqueteTono``; si falta, el tono por defecto con las
+    sobrescrituras del proyecto del directorio actual. Con ``dominio``
+    (``configuracion/asistente.yaml``) sustituye ``{nombre_asistente}`` y
+    ``{descripcion_dominio}`` en las respuestas conversacionales y aplica las
+    contracciones del idioma («de el manual» -> «del manual»).
     """
-    mensajes = paquete.mensajes
+    from pathlib import Path
+
+    from rag.lenguaje.tonos import cargar_tono
+
+    if tono is None:
+        tono = cargar_tono(paquete.codigo, proyecto=Path.cwd(), sobrescrituras=paquete.plantillas_legado)
+    conectores = deepcopy(paquete.mensajes.conectores)  # secuencia y contraste_version
+    for categoria in ("apertura", "complemento", "condicion", "excepcion"):
+        conectores[categoria] = tono.variantes(categoria)
     datos = {
-        "conectores": deepcopy(mensajes.conectores),
+        "tono": tono.tono,
+        "conectores": conectores,
         "abstencion": {
-            "generico": mensajes.sin_respuesta,
-            "premisa_no_encontrada": mensajes.premisa_no_encontrada,
-            "zona_gris_intro": mensajes.relacionado_intro,
-            "foco_ausente": mensajes.relacionado_foco_ausente,
+            "generico": tono.variantes("sin_respuesta")[0],
+            "premisa_no_encontrada": tono.variantes("premisa_no_encontrada")[0],
+            "zona_gris_intro": tono.variantes("relacionado_intro")[0],
+            "foco_ausente": tono.variantes("foco_ausente")[0],
         },
-        "conversacional": paquete.conversacional.model_dump(mode="python"),
+        "conversacional": {
+            **paquete.conversacional.model_dump(mode="python"),
+            "respuestas": {c: tono.variantes(c) for c in ("saludo", "agradecimiento", "despedida", "capacidad")},
+        },
     }
     if dominio is None:
         return datos

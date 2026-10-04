@@ -210,47 +210,8 @@ conversacional:
     - o que voc[eê] pode fazer
     - quem [eé] voc[eê]
     - como voc[eê] funciona
-  respuestas:
-    saludo:
-    - Olá! Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato
-      do documento. O que você precisa saber?
-    - 'Olá! Pergunte o que precisar sobre {descripcion_dominio}: busco a resposta no documento e mostro
-      de onde a tirei.'
-    agradecimiento:
-    - De nada. Se tiver outra pergunta sobre {descripcion_dominio}, estou aqui.
-    - Com prazer. Qualquer outra dúvida sobre {descripcion_dominio}, é só dizer.
-    despedida:
-    - Até logo.
-    - Até mais. Volte quando precisar consultar o documento.
-    capacidad:
-    - Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do
-      documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.
-    - Busco em {descripcion_dominio} e devolvo texto literal com a fonte.
 mensajes:
-  sin_respuesta: Não encontrei essa informação nos documentos disponíveis.
-  premisa_no_encontrada: Não encontrei informação sobre "{entidad}" nos documentos disponíveis. Talvez
-    não exista ou esteja fora do que seus documentos cobrem.
-  relacionado_intro: 'Não encontrei uma resposta direta. Isto é o que os documentos dizem sobre o tema:'
-  relacionado_foco_ausente: 'Não encontrei informação específica sobre «{termino}». Isto é o mais próximo:'
   conectores:
-    apertura:
-    - 'Isto é o que diz o documento:'
-    - 'Encontrei isto no documento:'
-    - 'O documento coloca assim:'
-    - 'Segundo o texto carregado:'
-    complemento:
-    - 'Soma-se a isto o seguinte:'
-    - 'O documento acrescenta, em outra seção:'
-    - 'Também diz isto:'
-    - 'E complementa assim:'
-    condicion:
-    - 'Isto se aplica sob uma condição:'
-    - 'Há uma condição associada:'
-    - 'O documento condiciona assim:'
-    excepcion:
-    - 'Com uma exceção:'
-    - 'Há uma ressalva:'
-    - 'O documento prevê uma exceção:'
     secuencia:
     - Primeiro
     - Depois
@@ -260,7 +221,6 @@ mensajes:
   sin_seccion: (sem seção)
 interfaz:
   titulo: Assistente
-  saludo: Olá, como posso ajudar?
   subtitulo: Responde citando o documento
   abrir: Abrir chat de {titulo}
   cerrar: Fechar chat
@@ -268,11 +228,8 @@ interfaz:
   placeholder: Escreva sua pergunta...
   enviar: Enviar pergunta
   no_directa: Não é uma resposta direta
-  esperando: Buscando no documento
-  error_limite: Muitas perguntas seguidas. Espere alguns segundos e tente de novo.
   error_origen: Este site não está autorizado a usar o assistente.
   error_http: O serviço não conseguiu responder (HTTP {estado}).
-  error_red: Não foi possível contatar o assistente. Verifique sua conexão e tente de novo.
 contracciones:
   ' de o ': ' do '
   ' de a ': ' da '

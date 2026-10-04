@@ -33,18 +33,19 @@ class Marcadores(_Estricto):
 
 
 class Conversacional(_Estricto):
+    """Cómo se reconoce una pregunta conversacional; las respuestas son del tono."""
+
     categorias: list[str] = Field(default_factory=list)
     patrones: dict[str, list[str]] = Field(default_factory=dict)
-    respuestas: dict[str, list[str] | str] = Field(default_factory=dict)
 
 
 class Mensajes(_Estricto):
-    sin_respuesta: str
-    premisa_no_encontrada: str
-    relacionado_intro: str
-    relacionado_foco_ausente: str
+    """Textos estructurales del idioma. Los que varían con el tono (abstención,
+    conectores de apertura, complemento, condición y excepción) viven en
+    ``rag/recursos/tonos/``."""
+
     sin_seccion: str
-    conectores: dict[str, list[str]] = Field(default_factory=dict)
+    conectores: dict[str, list[str]] = Field(default_factory=dict)  # secuencia, contraste_version
 
 
 class GoldenInstrucciones(_Estricto):
@@ -89,6 +90,9 @@ class PaqueteIdioma(_Estricto):
     contracciones: dict[str, str] = Field(default_factory=dict)
     golden_instrucciones: GoldenInstrucciones | None = None
     respaldo: bool = False  # True: no hay paquete para este idioma (ver docstring del módulo)
+    # Textos de configuracion/idioma.yaml anteriores a los tonos, ya traducidos a
+    # situaciones de tono (``rag.lenguaje.tonos.extraer_legado``).
+    plantillas_legado: dict[str, list[str]] = Field(default_factory=dict)
 
 
 def _carpeta_paquetes():
@@ -140,12 +144,16 @@ def _paquete_base(codigo: str) -> dict[str, Any]:
 
 def cargar_paquete(codigo: str, proyecto: str | Path | None = None) -> PaqueteIdioma:
     """Paquete del idioma ``codigo``, con las sobrescrituras del proyecto si existen."""
+    from rag.lenguaje.tonos import extraer_legado
+
     datos = _paquete_base(codigo)
+    legado: dict[str, list[str]] = {}
     if proyecto is not None:
         ruta = Path(proyecto) / rutas.IDIOMA
         if ruta.is_file():
-            datos = _fusionar(datos, yaml.safe_load(ruta.read_text(encoding="utf-8")) or {})
-    return PaqueteIdioma.model_validate(datos)
+            propios, legado = extraer_legado(yaml.safe_load(ruta.read_text(encoding="utf-8")) or {})
+            datos = _fusionar(datos, propios)
+    return PaqueteIdioma.model_validate({**datos, "plantillas_legado": legado})
 
 
 __all__ = ["IDIOMA_RESPALDO", "PaqueteIdioma", "cargar_paquete", "idiomas_disponibles", "validar_codigo_idioma"]
