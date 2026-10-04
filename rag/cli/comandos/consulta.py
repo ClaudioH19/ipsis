@@ -112,8 +112,14 @@ class ComandoPreguntar(Comando):
                             help="Base del servicio a consultar (por defecto: 'http://127.0.0.1:8000').")
         parser.add_argument("--timeout", type=float, default=30.0,
                             help="Segundos de espera máxima por una respuesta antes de fallar (por defecto: 30).")
+        parser.add_argument("--diagnostico", action="store_true",
+                            help="Ejecuta la pregunta con el motor del proyecto en este proceso (sin el servicio) y "
+                                 "muestra etapas con su latencia, señales, términos foco, la regla que decidió y el "
+                                 "tramo exacto. En modo Qdrant local, detén 'rag servir' antes.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
+        if args.diagnostico:
+            return self._diagnostico(args.pregunta)
         import httpx
 
         url = f"{args.url.rstrip('/')}/consultar"
@@ -141,6 +147,52 @@ class ComandoPreguntar(Comando):
                 print(f"  - {f['doc_titulo']} > {f['seccion']} "
                       f"(offsets {f['offset_inicio']}-{f['offset_fin']}, score={f['score']:.3f})")
         return 0
+
+
+    @staticmethod
+    def _diagnostico(pregunta: str) -> int:
+        from rag.aplicacion.consulta import MotorNoListo, diagnosticar_pregunta
+
+        try:
+            d = diagnosticar_pregunta(pregunta)
+        except MotorNoListo as e:
+            print(f"El motor no está listo: {e}")
+            print("  Acción: rag doctor")
+            return 1
+        except Exception as e:  # noqa: BLE001 -- índice bloqueado, modelo faltante, configuración inválida...
+            print(f"No se pudo ejecutar el motor del proyecto: {e}")
+            print("  Acción: rag doctor")
+            return 1
+        print(ETIQUETA_ESTADO.get(d.estado, f"[{d.estado.upper()}]"))
+        print(d.respuesta)
+        print(f"\nRegla: {d.regla or '—'} (motivo: {d.motivo}; perfil: {d.perfil or '—'})")
+        print("Etapas (ms):")
+        for nombre, ms in d.etapas:
+            print(f"  {nombre:16} {ms:>6}")
+        print(f"  {'total':16} {d.total_ms:>6}" + ("   (salida temprana: sin modelos)" if d.salto_modelos else ""))
+        if d.senales:
+            print("Señales:")
+            print("  " + "  ".join(f"{k}={_valor(v)}" for k, v in d.senales.items()))
+        print(f"Términos foco: encontrados: {', '.join(d.foco_encontrados) or '—'}; "
+              f"ausentes: {', '.join(d.foco_ausentes) or '—'}")
+        if d.ausentes_del_corpus:
+            print(f"Términos que no están en el corpus: {', '.join(d.ausentes_del_corpus)}")
+        if d.oracion_foco:
+            print(f"Oración evaluada: «{d.oracion_foco}»")
+        if d.tramo:
+            print(f"Tramo exacto: «{d.tramo['texto']}» ({d.tramo['chunk_id']}, "
+                  f"offsets {d.tramo['offset_inicio']}-{d.tramo['offset_fin']})")
+        else:
+            print("Tramo exacto: —")
+        for e in d.evidencias:
+            print(f"Evidencia: {e['doc_id']} offsets {e['offset_inicio']}-{e['offset_fin']}")
+        for a in d.advertencias:
+            print(f"Advertencia: {a}")
+        return 0
+
+
+def _valor(v) -> str:
+    return f"{v:.3f}" if isinstance(v, float) else str(v)
 
 
 __all__ = ["ComandoPreguntar", "ComandoServir", "ETIQUETA_ESTADO"]
