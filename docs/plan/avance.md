@@ -76,6 +76,16 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P12.2 | ⬜ | | | |
 | P12.3 | ⬜ | | | |
 | P12.4 | ⬜ | | | |
+| P12.5 | ⬜ | | | |
+| P12.6 | ⬜ | | | |
+| P12.7 | ⬜ | | | |
+| P12.8 | ⬜ | | | |
+| P12.9 | ⬜ | | | |
+| P12.10 | ⬜ | | | |
+| P12.11 | ⬜ | | | |
+| P12.12 | ⬜ | | | |
+| P12.13 | ⬜ | | | |
+| P12.14 | ⬜ | | | |
 | P13.1 | ⬜ | | | |
 | P13.2 | ⬜ | | | |
 | P13.3 | ⬜ | | | |
@@ -542,7 +552,7 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - **Estructura:** `aplicacion/diagnostico.py` devuelve un `ReporteDoctor`
     con `ChequeoDoctor` (clave, estado, mensaje, acciones, detalles y datos)
     en un orden fijo. Los estados son ok, aviso, error y no_evaluado; `listo`
-    significa que no hay errores. Está pensado para que `/ready` (P12.4) lo
+    significa que no hay errores. Está pensado para que `/ready` (P12.11) lo
     reutilice.
   - **Composición:** reutiliza `estado_indice`, `estado_calibracion`,
     `estado_modelos`, `cargar_banco`, `cargar_paquete` y `terminos()`, sin

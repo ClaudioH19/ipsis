@@ -53,7 +53,7 @@ rag/
 │                    # registro_base (raíz de composición)
 ├── cli/             # __init__.py (main), base.py (Comando), comandos/<grupo>.py
 ├── servicio/        # api.py, seguridad.py, estaticos/
-└── recursos/        # plantillas/ (proyecto), idiomas/, perfiles/, despliegue/
+└── recursos/        # plantillas/ (proyecto), idiomas/, tonos/<idioma>/, avatares/, perfiles/, despliegue/
 ```
 
 Hoy hay 30 módulos sueltos en `rag/`. Quedan 12 carpetas con nombres de
@@ -112,7 +112,9 @@ mi-asistente/
 ├── configuracion/
 │   ├── asistente.yaml     # identidad, idioma, perfil, seguridad, CORS
 │   ├── motor.yaml         # solo las sobrescrituras del perfil (casi siempre vacío)
-│   ├── estilos.yaml       # presentación del widget
+│   ├── estilos.yaml       # presentación del widget: tema, ubicación, tamaño, lanzador
+│   ├── personalidad.yaml  # tono de las respuestas y avatar (solo presentación; P12)
+│   ├── avatares/          # opcional: definiciones .avatar.json importadas
 │   ├── dominio.yaml       # opcional: reglas regex y categorías propias (une perfil.yaml + categorias.yaml)
 │   ├── idioma.yaml        # opcional: sobrescribe mensajes del paquete de idioma
 │   └── calibracion.yaml   # generado por `rag calibrar`, con procedencia

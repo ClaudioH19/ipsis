@@ -580,31 +580,550 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ---
 
-## P12. Despliegue y CI
+## P12. Personalidad, widget, avatar y despliegue
 
-### P12.1 Imagen Docker por perfil
+P12 agrega la capa de presentación: tonos de respuesta con varias formulaciones
+por situación, un widget embebible y responsive, y un avatar animado que
+reacciona a lo que pasa en el chat. Todo se configura primero por terminal,
+después por API y al final con un panel gráfico que solo llama a esa API.
+Cierra con el despliegue (imagen, `rag desplegar`, CI y `/ready`).
 
-- **Pasos:** `ARG PERFIL=medium`; instala el wheel, ejecuta `rag modelos descargar --perfil $PERFIL` y define `HF_HUB_OFFLINE=1`. Usuario no root.
-- **Aceptación:** `docker build --build-arg PERFIL=light .` funciona y `/health` responde sin red.
+### Decisiones del usuario antes de empezar
 
-### P12.2 `rag desplegar preparar`
+Estas decisiones bloquean las tareas indicadas; las demás pueden avanzar.
 
-- **Aceptación:** genera en `dist/` la configuración, la calibración, el índice, `Dockerfile`, `docker-compose.yml` (desde `rag/recursos/despliegue/`) y un `LEEME_despliegue.md` en el idioma del proyecto. Prueba de CLI.
+- **D1. Licencia del avatar (bloquea P12.9 y P12.10).**
+  - `@bible-strong/avatar-web` y `@bible-strong/avatar-core` 0.1.0 (de
+    [bible-strong-avatar-lab](https://github.com/smontlouis/bible-strong-avatar-lab))
+    son **AGPL-3.0-only**.
+  - Servir ese código a los navegadores de los visitantes es distribuirlo:
+    obliga a ofrecer su código fuente y, si el widget forma con él una obra
+    combinada, a licenciar el widget como AGPL.
+  - Hoy el proyecto no declara licencia.
+  - Opciones:
+    - (a) licenciar el proyecto, o al menos el widget, como AGPL-3.0;
+    - (b) pedir al autor una licencia comercial;
+    - (c) usar otra librería de avatar con licencia permisiva.
+  - Conviene una revisión legal: este plan no es asesoría legal.
+- **D2. Avatar por defecto (bloquea P12.10).** El avatar se diseña en el
+  Studio ([avatars.bible-strong.app](https://avatars.bible-strong.app)) y se
+  exporta como `.avatar.json`. Opciones:
+  - (a) el usuario lo diseña con el contrato de claves de P12.10;
+  - (b) el agente escribe la definición a mano y la valida con la propia
+    librería.
+- **D3. Tono «agresivo».** Se implementa como `directo`: seco, imperativo y
+  sin cortesías, pero nunca insulta, ni culpa al usuario, ni usa sarcasmo,
+  mayúsculas sostenidas o amenazas. Un widget público con tono hostil es un
+  riesgo de marca.
+- **D4. Panel de administración (bloquea P12.7).** Hay que decidir si se
+  sirve solo en local (`127.0.0.1`) o también en remoto, con token y HTTPS
+  obligatorio.
 
-### P12.3 CI
+### Invariantes de toda la fase
+
+1. **Extractivo.** Una plantilla solo enmarca: el texto del corpus va
+   literal, en su propio bloque, y la verificación de fidelidad no cambia.
+   Ninguna plantilla afirma algo del contenido.
+2. **Citas siempre abajo.**
+   - Toda respuesta con evidencias muestra, debajo del mensaje: documento,
+     sección, offsets y el texto literal, con el tramo exacto resaltado.
+   - Ninguna opción estética oculta las citas ni la etiqueta de estado.
+3. **Estados honestos.** Las plantillas de `relacionado` y `sin_respuesta`
+   nunca sugieren que hubo una respuesta directa.
+4. **Presentación, no decisión.**
+   - Tono, avatar y estilos no cambian el estado, la regla, las señales, los
+     umbrales, el índice, la calibración ni el golden.
+   - Por eso cambiar el tono no exige reindexar ni recalibrar.
+   - `rag evaluar` da los mismos estados y la misma literalidad con
+     cualquier tono.
+5. **Auditable.**
+   - La variante se elige de forma determinista: misma sesión, turno y
+     situación dan la misma variante.
+   - El `plantilla_id` (p. ej. `cordial.sin_respuesta.3`) queda en el
+     diagnóstico y en el registro de consultas.
+6. **Sin texto de un idioma en Python ni en JavaScript.**
+   - Los tonos viven por idioma en `rag/recursos/tonos/<idioma>/`.
+   - Un idioma con respaldo usa los de `en`.
+7. **Seguridad web.**
+   - Todo texto de la API se pinta con `textContent`, nunca con
+     `innerHTML`.
+   - La administración está apagada por defecto.
+8. **Primero CLI, después API, al final interfaz gráfica.**
+
+### Catálogo de situaciones
+
+Cada tono tiene **5 variantes por situación**. Con 18 situaciones son 90 por
+tono e idioma.
+
+| # | Situación | Dónde | Variables permitidas | Regla propia |
+|---|---|---|---|---|
+| 1 | `saludo` | motor (conversacional) | `{nombre_asistente}`, `{descripcion_dominio}` | ofrece ayuda; no promete respuestas |
+| 2 | `agradecimiento` | motor | `{descripcion_dominio}` | — |
+| 3 | `despedida` | motor | — | — |
+| 4 | `capacidad` | motor | `{nombre_asistente}`, `{descripcion_dominio}` | dice que cita el texto exacto del documento |
+| 5 | `apertura` | motor, antes del texto literal | — | termina en «:»; no anticipa contenido |
+| 6 | `complemento` | motor, entre fragmentos | — | termina en «:» |
+| 7 | `condicion` | motor | — | termina en «:» |
+| 8 | `excepcion` | motor | — | termina en «:» |
+| 9 | `relacionado_intro` | motor, estado relacionado | — | dice que no es una respuesta directa; termina en «:» |
+| 10 | `foco_ausente` | motor, relacionado | `{termino}` | ídem, y nombra `{termino}` |
+| 11 | `sin_respuesta` | motor | — | dice que no está en los documentos; no sugiere fuentes externas |
+| 12 | `premisa_no_encontrada` | motor | `{entidad}` | ídem, y nombra `{entidad}` |
+| 13 | `bienvenida` | widget, al abrir | `{nombre_asistente}` | — |
+| 14 | `esperando` | widget, mientras responde | — | breve |
+| 15 | `invitacion_citas` | widget, sobre el bloque de citas | — | invita a comprobar la cita |
+| 16 | `error_red` | widget | — | — |
+| 17 | `error_limite` | widget (429) | — | pide esperar unos segundos |
+| 18 | `error_servicio` | widget (503) | — | — |
+
+Los conectores `secuencia` y `contraste_version`, los encabezados de cita y
+las etiquetas de estado son estructurales: siguen siendo únicos por idioma y
+no varían con el tono.
+
+**Reglas para todas las plantillas** (las comprueba un linter en las
+pruebas):
+- forma: una línea, ≤ 180 caracteres;
+- contenido prohibido: dígitos, URLs, HTML, Markdown y emojis;
+- solo las variables permitidas de su situación;
+- variedad: las 5 variantes son distintas entre sí tras normalizar y
+  ninguna se repite en otra situación del mismo tono;
+- en el tono `directo`, nada de la lista prohibida de D3.
+
+### Tonos
+
+| Tono | Carácter | Ejemplo para `sin_respuesta` |
+|---|---|---|
+| `cordial` (por defecto) | el actual: amable y claro | «No encontré esa información en los documentos disponibles.» |
+| `formal` | «usted», sin exclamaciones | «Lamentablemente, esa información no figura en los documentos disponibles.» |
+| `serio` | sobrio, frases cortas | «Esa información no está en los documentos.» |
+| `animoso` | entusiasta, positivo sin exagerar hechos | «¡Busqué a fondo, pero eso no aparece en los documentos! Prueba con otra pregunta.» |
+| `cercano` | tuteo, coloquial suave | «Uy, eso no lo encuentro en tus documentos.» |
+| `empatico` | reconoce lo que el usuario necesita | «Entiendo que lo necesitas; no aparece en los documentos disponibles.» |
+| `directo` | tajante, imperativo («agresivo» de D3) | «No está en los documentos. Pregunta otra cosa.» |
+
+Son 7 tonos × 3 idiomas × 90 = 1.890 plantillas. Los ejemplos son
+ilustrativos; los textos finales salen de P12.3.
+
+### Eventos del avatar
+
+El widget tiene una máquina de estados. Cada evento se asigna a una clave de
+animación o de expresión del avatar; si el avatar no la define, rige la
+columna «Si falta».
+
+| Evento | Disparador | Tipo | Prioridad | Clave sugerida | Si falta |
+|---|---|---|---|---|---|
+| `inactivo` | panel abierto sin actividad | persistente (loop) | 0 | `inactivo` | expresión `neutral` |
+| `lanzador` | panel cerrado (avatar en el botón, opcional) | persistente | 0 | `inactivo` | ícono actual |
+| `saludo` | primera apertura de la sesión | transitorio (once) | 3 | `saludo` | `inactivo` |
+| `atento` | foco en el campo de texto | persistente | 1 | `atento` | `inactivo` |
+| `escribiendo` | tecleo, que se apaga 1,2 s después del último | persistente | 2 | `escuchando` | `atento` |
+| `enviado` | se envía la pregunta | transitorio | 4 | `asentir` | `pensando` |
+| `pensando` | esperando la respuesta | persistente | 3 | `pensando` | `inactivo` |
+| `pensando_largo` | más de 3 s sin respuesta | persistente | 3 | `pensando-largo` | `pensando` |
+| `respuesta_ok` | estado `ok` | transitorio | 5 | `contento` | `inactivo` |
+| `respuesta_relacionada` | estado `relacionado` | transitorio | 5 | `dudoso` | `inactivo` |
+| `sin_respuesta` | estado `sin_respuesta` | transitorio | 5 | `apenado` | `inactivo` |
+| `conversacional` | estado `conversacional` (saludo o agradecimiento) | transitorio | 5 | `amable` | `contento` |
+| `despedida` | respuesta de despedida o cierre del panel | transitorio | 3 | `despedida` | `inactivo` |
+| `error` | error de red, 429 o 503 | transitorio | 6 | `preocupado` | `apenado` |
+| `mirando_citas` | foco, paso del puntero o despliegue de una cita | transitorio | 4 | expresión `mirar-abajo` | inclinación CSS |
+| `seguir_puntero` | el puntero se mueve (panel abierto, sin táctil ni movimiento reducido) | continuo | — | expresiones `mirar-izquierda`, `mirar-derecha`, `mirar-arriba`, `mirar-abajo` | inclinación CSS ≤ 6° y desplazamiento ≤ 4 px |
+| `somnoliento` | sin actividad por N minutos (2 por defecto) | persistente | 0 | `somnoliento` | `inactivo` |
+| `despertar` | actividad después de `somnoliento` | transitorio | 2 | `despertar` | `atento` |
+| `oculto` | la pestaña se oculta | sistema | — | `pause()` al ocultarse, reanuda al volver | — |
+| `movimiento_reducido` | `prefers-reduced-motion` | sistema | — | expresión estática por estado; sin loops ni seguir el puntero | — |
+
+Reglas de la máquina de estados:
+- **Prioridad:** gana el evento de mayor prioridad.
+- **Transitorios:**
+  - vuelven al persistente vigente al terminar (`onAnimationEnd`) o tras
+    un tope de 4 s;
+  - se muestran al menos 600 ms;
+  - mientras duran, se suspende el seguimiento del puntero.
+- **Puntero:** el seguimiento usa `requestAnimationFrame`, a lo sumo 30
+  veces por segundo, y solo escucha mientras el panel está abierto.
+- **Una sola instancia:** un controlador por widget, y se destruye al
+  desmontar.
+- **Integración con el sitio:** cada cambio emite `rag:avatar`
+  `{evento, clave}`.
+
+La librería no trae seguimiento de mirada: `seguir_puntero` se aproxima con
+expresiones discretas, o con una transformación CSS si el avatar no las
+tiene.
+
+### P12.1 Contrato de tonos
+
+- **Pasos:**
+  1. `rag/lenguaje/tonos.py`:
+     - `cargar_tono(idioma, tono, proyecto)`: `rag/recursos/tonos/<idioma>/<tono>.yaml`
+       con las sobrescrituras de `configuracion/personalidad.yaml::tono.plantillas`;
+     - `situaciones()` y `tonos_disponibles(idioma)`.
+     Un idioma con respaldo usa `en`.
+  2. Esquema Pydantic estricto por tono: las 18 situaciones con 5 variantes
+     o más cada una. Linter con las reglas del catálogo; también se aplica a
+     las sobrescrituras del proyecto.
+  3. Migración exacta: los textos actuales de `mensajes`, `conectores` y
+     `conversacional.respuestas` pasan al tono `cordial` y dejan el paquete
+     de idioma (que conserva patrones, interfaz fija y estructura).
+     Completar `cordial` hasta 5 variantes por situación.
+  4. Capas: `lenguaje/tonos.py` (lenguaje) y el esquema en
+     `configuracion/personalidad.py`. `rag/recursos/tonos/*/*.yaml` entra en
+     `package-data`.
+- **Aceptación:**
+  - el linter rechaza cada infracción con un caso sintético por regla;
+  - la caracterización no cambia con `cordial`, salvo variantes nuevas
+    declaradas en `avance.md`;
+  - `PYTEST` en verde.
+
+### P12.2 Redacción con tonos
+
+- **Pasos:**
+  1. `EtapaRedaccion` usa el tono activo.
+  2. Elección de variante:
+     - determinista por `(id_sesion, turno, situación)`;
+     - sin repetir la última variante de esa situación en la sesión;
+     - la memoria es acotada (LRU de sesiones), solo guarda ids y no
+       persiste;
+     - sin sesión (`evaluar`, benchmark), la semilla es la pregunta, como
+       hoy.
+  3. `plantilla_id` y `tono` van al diagnóstico, a
+     `rag preguntar --diagnostico` y al registro de consultas.
+  4. Contrato HTTP, campo opcional y aditivo: `categoria_conversacional`
+     (saludo, agradecimiento, despedida, capacidad), para el avatar.
+  5. `rag auditar` muestra el conteo por tono.
+  6. `incluir_apertura` pasa a `true` por defecto, porque la apertura es
+     parte del tono. La caracterización se regenera y el cambio se declara
+     en `avance.md`.
+  7. Los artefactos de `rag evaluar` y `rag benchmark` registran el tono.
+  8. Con varios procesos (workers) la memoria anti-repetición es por
+     proceso: se acepta, porque es solo variedad, no corrección.
+- **Aceptación:**
+  - una sesión de 6 preguntas que caen en `sin_respuesta` no repite
+    variante entre turnos seguidos;
+  - mismos `id_sesion` y turno dan el mismo texto;
+  - la verificación de fidelidad pasa con los 7 tonos;
+  - `rag evaluar` sobre el banco universal da estados y literalidad
+    idénticos con cada tono (prueba parametrizada con motor falso; la
+    real, lenta);
+  - toda respuesta con evidencias trae `fragmentos` con texto literal y
+    offsets.
+
+### P12.3 Redactar los siete tonos
+
+- **Pasos:**
+  1. Redactar `formal`, `serio`, `animoso`, `cercano`, `empatico` y
+     `directo` en `es`, `en` y `pt`: 90 variantes por tono e idioma.
+  2. Para revisarlos: `rag personalidad tono probar` (P12.4) imprime las
+     variantes con las variables del proyecto.
+  3. Lista de revisión humana en `docs/guia/personalidad.md`:
+     - tono reconocible;
+     - honestidad en `relacionado` y `sin_respuesta`;
+     - nada que se lea como contenido del documento;
+     - naturalidad en cada idioma.
+- **Aceptación:**
+  - el linter pasa en los 21 archivos;
+  - la revisión del usuario sobre una muestra (2 situaciones por tono)
+    queda anotada en `avance.md`.
+
+### P12.4 `configuracion/personalidad.yaml` y CLI
+
+- **Archivo** (esquema estricto, `config_version: 1`; `rag init` lo crea
+  comentado):
+
+  ```yaml
+  tono:
+    activo: cordial            # cordial | formal | serio | animoso | cercano | empatico | directo
+    variedad: rotativa         # rotativa | fija (siempre la primera variante)
+    plantillas: {}             # sobrescrituras por situación, validadas con el linter
+  avatar:
+    activo: true
+    definicion: asistente      # rag/recursos/avatares/<n>.avatar.json o configuracion/avatares/<n>.avatar.json
+    ubicacion: cabecera        # cabecera | esquina-superior | esquina-inferior
+    tamano: 56                 # px, 32 a 160
+    en_lanzador: true
+    seguir_puntero: true
+    inactividad_min: 2
+    colores: {}                # {cuerpo: "#rrggbb", ojos: "#rrggbb"}; se aplican al servir la definición
+    eventos: {}                # sobrescrituras evento → clave (tabla de eventos)
+  ```
+
+- **Comandos** (patrón Command; la lógica en `aplicacion/personalidad.py`):
+
+  ```text
+  rag personalidad mostrar | validar
+  rag personalidad tono listar | aplicar <tono> | probar [--tono T] [--situacion S]
+  rag personalidad avatar listar | importar <archivo.avatar.json> [--nombre N] | aplicar <nombre>
+  rag personalidad avatar eventos            # mapa efectivo y claves que le faltan al avatar
+  rag personalidad avatar asignar <evento> <clave>
+  rag personalidad avatar colores [--cuerpo #rrggbb] [--ojos #rrggbb]
+  ```
+
+- **Además:**
+  - `rag doctor` gana el chequeo `personalidad`:
+    - error si el archivo es inválido o el avatar no carga;
+    - aviso si al avatar le faltan claves del mapa.
+  - Escritura atómica.
+  - `rag snapshot-config` incluye la personalidad.
+  - La personalización del avatar es elegir o importar la definición,
+    ubicarla, darle tamaño, colores y mapa de eventos. Los colores se
+    fusionan sobre `colors.body` y `colors.eyes` al servir, sin modificar
+    el archivo original.
+  - Guía nueva `docs/guia/personalidad.md`: tonos, situaciones, avatar y
+    eventos.
+- **Aceptación:**
+  - pruebas de CLI por comando: válido, inválido sin escribir nada, y
+    `probar` imprime 5 variantes;
+  - `importar` rechaza un JSON de más de 256 KiB, con claves duplicadas, sin
+    `expressions.neutral` o con claves que no cumplen
+    `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`;
+  - un cambio de tono no toca índice ni calibración, y `doctor` sigue igual.
+
+### P12.5 Widget embebible y responsive
+
+- **Pasos:**
+  1. Ubicación, en `estilos.yaml::ubicacion` y por atributo:
+     - `posicion`: las 4 esquinas, o `incrustado` dentro de un contenedor
+       del sitio (`<rag-extractivo-chat modo="incrustado">`);
+     - `desplazamiento` x e y, `z_index` y `tamano`
+       (compacto / normal / amplio);
+     - `lanzador`: burbuja, pestaña u oculto. Con `oculto`, el sitio abre
+       el chat con `window.RagChat.abrir()`.
+     - Los atributos actuales (`data-posicion`, `data-color`, `data-titulo`
+       y `data-saludo`) siguen funcionando.
+  2. Responsive:
+     - ≤ 480 px: hoja a pantalla completa, con `safe-area-inset`, ajuste
+       al teclado virtual (`visualViewport`) y apaisado;
+     - de 481 a 1024 px: panel adaptado;
+     - ≥ 1024 px: panel flotante.
+     Además: modo oscuro, `prefers-reduced-motion` y contraste alto
+     (`forced-colors`).
+  3. Bloque de citas bajo cada respuesta con evidencias:
+     - arriba, la línea `invitacion_citas` del tono;
+     - por cada cita: documento, sección, offsets y texto literal;
+     - el tramo exacto resaltado con un `<mark>` creado por DOM.
+     La presentación solo elige `acordeon` o `lista`; no hay opción para
+     ocultar las citas.
+  4. Microcopia del tono (`bienvenida`, `esperando` y errores) desde
+     `/config`. `esperando` y los errores se anuncian por una región
+     `aria-live`. `invitacion_citas` solo aparece si hay citas.
+  5. API JS del sitio: `window.RagChat.abrir()`, `cerrar()` y
+     `estado()`. Se supone un widget por página.
+  6. `rag widget exportar` incluye todo lo necesario para servir el widget
+     estático: `avatar.js`, la definición del avatar y su configuración.
+  7. `rag widget snippet`: imprime la etiqueta `<script>` (o el Web
+     Component) según `estilos.yaml`.
+  8. Guía de inserción con CSP: el sitio debe permitir `script-src` y
+     `connect-src` del servidor del asistente.
+- **Aceptación:**
+  - pruebas de navegador (marcador `browser`): 3 viewports (360×640,
+    768×1024 y 1280×800) × 4 esquinas + modo incrustado, sin
+    desbordamiento horizontal y con el campo visible con el teclado
+    abierto;
+  - foco atrapado y Escape;
+  - prueba estática: `widget.js` no usa `innerHTML`, `outerHTML` ni
+    `insertAdjacentHTML`;
+  - la pantalla con citas muestra el `<mark>` exacto;
+  - `widget.js` sin el avatar pesa ≤ 40 KB gzip.
+
+### P12.6 API de personalidad
+
+- **Públicos** (sin token):
+  - `GET /config` ahora incluye la microcopia del tono y la configuración
+    del avatar (activo, URLs de definición y motor, ubicación, tamaño,
+    mapa de eventos, seguimiento e inactividad);
+  - `GET /avatares/<nombre>.avatar.json`: el nombre se valida con el
+    patrón de clave, solo se buscan las dos carpetas permitidas y se
+    aplican los colores del proyecto;
+  - `GET /avatar.js`.
+- **Administración** (`/admin/...`):
+  - endpoints:
+    - `GET/PUT /admin/personalidad` (fusión parcial validada; responde con
+      la configuración efectiva);
+    - `POST /admin/personalidad/vista-previa` `{tono, situacion?}`;
+    - `GET/POST /admin/avatares`;
+    - `GET/PUT /admin/estilos`.
+  - solo existen si `RAG_ADMIN_TOKEN` está definido (≥ 32 caracteres); si
+    no, responden 404;
+  - autenticación `Authorization: Bearer`, comparada con
+    `hmac.compare_digest`;
+  - sin CORS: el middleware no aplica a `/admin`;
+  - límites: cuerpo ≤ 256 KiB y limitador de peticiones;
+  - auditoría en `.rag/registros/admin.jsonl`: fecha, acción y claves
+    cambiadas, nunca el token;
+  - según D4, solo `127.0.0.1` salvo que se habilite el modo remoto.
+- **Recarga en caliente:**
+  - el servicio relee `personalidad.yaml` y `estilos.yaml` si cambió su
+    mtime (un `stat` por petición, sin reiniciar);
+  - el motor cambia sus plantillas de forma atómica, sin cortar consultas
+    en curso.
+- **Aceptación:** pruebas de API:
+  - sin token da 404;
+  - token incorrecto da 401;
+  - un cuerpo inválido da 422 y no escribe nada;
+  - tras un `PUT` válido, la siguiente `/consultar` usa el tono nuevo;
+  - un cambio por CLI también se ve sin reiniciar;
+  - el `Origin` de un sitio con CORS permitido no obtiene encabezados CORS
+    en `/admin`;
+  - `/avatares/../motor.yaml` da 404.
+
+### P12.7 Panel gráfico `/admin`
+
+- **Pasos:**
+  1. Página estática servida por el servicio, en vanilla JS: solo llama a
+     la API de P12.6 y nunca usa `innerHTML` con datos. CSP estricta
+     (`default-src 'self'`).
+  2. El token se pide al entrar y vive en `sessionStorage`. Los archivos
+     del panel entran en `package-data`.
+  3. Pestañas:
+     - **Tono:** selector, vista previa de las 5 variantes por situación y
+       editor de sobrescrituras con los errores del linter.
+     - **Avatar:** selector, subida de `.avatar.json`, colores de cuerpo y
+       ojos, mapa evento → clave con las claves del avatar, y botones que
+       disparan cada evento en la vista previa en vivo con
+       `RagChat.avatar.disparar`.
+     - **Widget:** preset, colores, posición, tamaño y lanzador, con vista
+       previa del widget real en un `iframe` de la demo.
+- **Aceptación:** pruebas de navegador:
+  - cambiar el tono actualiza la vista previa;
+  - asignar un evento y dispararlo llama a `play` o `setExpression` con
+    la clave (avatar falso);
+  - un JSON inválido muestra el error sin guardar;
+  - sin token no se ve nada.
+
+### P12.8 Licencia del avatar (D1)
+
+- **Pasos:** aplicar la opción elegida en D1:
+  - `LICENSE` del proyecto;
+  - aviso y enlace al código fuente de la librería en
+    `/avatar.js.LICENSE.txt` y en la guía;
+  - si aplica, oferta del código fuente del widget.
+- **Aceptación:** `docs/guia/web.md` explica la licencia del avatar, y el
+  paquete incluye los textos de licencia.
+
+### P12.9 Motor del avatar empaquetado
+
+- **Pasos:**
+  1. `herramientas/avatar/` (solo desarrollo, fuera del wheel):
+     - `package.json` con `@bible-strong/avatar-web` en versión exacta
+       `0.1.0` y `package-lock.json`;
+     - script de esbuild que genera un solo ESM minificado en
+       `rag/servicio/estaticos/avatar.js`, con su aviso de licencia y el
+       sha256 en `avatar.js.sha256`.
+  2. El widget carga `avatar.js` con `import()` dinámico, solo si
+     `avatar.activo`:
+     - al abrir el panel por primera vez;
+     - o, con `en_lanzador: true`, cuando el navegador está ocioso
+       (`requestIdleCallback`), para no frenar la carga del sitio. Lo monta dentro
+     del Shadow DOM (`createAvatar(elemento, …)`).
+  3. Si `avatar.js` o la definición fallan (red, CSP sin `unsafe-eval`
+     porque `avatar-core` compila con ajv, o JSON inválido), queda el
+     ícono actual y se emite `rag:avatar` con el error. El chat nunca se
+     rompe.
+  4. `avatar.js`, `avatar.js.LICENSE.txt` y `rag/recursos/avatares/`
+     entran en `package-data`.
+  5. Presupuesto de tamaño medido y anotado. Objetivo: ≤ 150 KB gzip,
+     cargado bajo demanda.
+- **Aceptación:**
+  - el build es reproducible: el CI compara el sha256;
+  - prueba de navegador con el avatar real en una página con CSP estricta,
+    donde se ve el ícono de respaldo y el chat funciona;
+  - prueba con CSP permisiva, donde se monta el avatar.
+
+### P12.10 Avatar por defecto y máquina de estados
+
+- **Pasos:**
+  1. Contrato de claves:
+     - animaciones: `inactivo`, `saludo`, `atento`, `escuchando`,
+       `asentir`, `pensando`, `pensando-largo`, `contento`, `dudoso`,
+       `apenado`, `amable`, `despedida`, `preocupado`, `somnoliento` y
+       `despertar`;
+     - expresiones: `neutral`, `mirar-izquierda`, `mirar-derecha`,
+       `mirar-arriba` y `mirar-abajo`.
+  2. `rag/recursos/avatares/asistente.avatar.json` (según D2), validado con
+     `parseAvatarDefinition` de la librería en un script de
+     `herramientas/avatar/`.
+  3. Máquina de estados en `widget.js`, con la tabla de eventos, sus
+     prioridades y sus reglas. El mapa efectivo viene de `/config`.
+     `window.RagChat.avatar.disparar(evento)` lo usan el panel y los sitios
+     que quieran reaccionar a sus propios eventos.
+  4. Móvil (≤ 480 px):
+     - el avatar baja a 40 px;
+     - con el teclado abierto se oculta para no quitar espacio al campo;
+     - en pantallas táctiles no se sigue el puntero.
+  5. Accesibilidad:
+     - el avatar es decorativo (`aria-hidden`); los estados ya tienen
+       texto y etiqueta;
+     - ninguna animación parpadea más de 3 veces por segundo (WCAG 2.3.1).
+- **Aceptación:** pruebas de navegador con un `avatar.js` falso que registra
+  las llamadas:
+  - la secuencia de cada evento de la tabla;
+  - las prioridades: un error durante `pensando` gana, y un transitorio
+    vuelve al persistente;
+  - el tecleo con su retraso;
+  - la inactividad acelerada con el reloj falso de Playwright;
+  - `visibilitychange` pausa;
+  - con `prefers-reduced-motion` no se sigue el puntero;
+  - una clave faltante cae a su respaldo.
+
+### P12.11 `/ready` informa el estado del proyecto
+
+- **Pasos:** `/ready` reutiliza el `ReporteDoctor` (P11.4). Informa perfil,
+  modelos, compatibilidad del índice, calibración y personalidad, y separa
+  lo que bloquea de lo opcional.
+- **Aceptación:** pruebas de API: sano; índice incompatible (`listo: false`
+  con la acción); sin calibración (`listo: true` con aviso).
+
+### P12.12 Imagen Docker por perfil
+
+- **Pasos:**
+  - `ARG PERFIL=medium`;
+  - instala el wheel (que incluye `avatar.js`, avatares y tonos);
+  - ejecuta `rag modelos descargar --perfil $PERFIL` y define
+    `HF_HUB_OFFLINE=1`;
+  - usuario no root;
+  - `RAG_ADMIN_TOKEN` sin definir: la administración queda apagada.
+- **Aceptación:** `docker build --build-arg PERFIL=light .` funciona, y
+  `/health` y `/widget.js` responden sin red.
+
+### P12.13 `rag desplegar preparar`
+
+- **Aceptación:**
+  - genera en `dist/`, sin dejar fuera nada de esta lista:
+    - la configuración, incluidas `personalidad.yaml` y `estilos.yaml`;
+    - los avatares importados, la calibración y el índice;
+    - `Dockerfile` y `docker-compose.yml` (desde
+      `rag/recursos/despliegue/`);
+    - un `LEEME_despliegue.md` en el idioma del proyecto, con el snippet
+      del widget y cómo activar `/admin`;
+  - prueba de CLI.
+
+### P12.14 CI
 
 - **Pasos:** `.github/workflows/ci.yml` (reemplaza `pruebas.yml`) con:
   - pruebas rápidas en Linux y Windows con Python 3.11 y 3.12, sin torch;
+  - linter de tonos;
   - job `modelos` con caché de `RAG_MODELOS_DIR`;
-  - wheel en entorno limpio;
+  - job `web` con Node:
+    - build reproducible de `avatar.js` (compara el sha256);
+    - validación de los avatares con la librería;
+    - pruebas de navegador del widget y del panel;
+  - wheel en un entorno limpio, que debe contener tonos, avatares y
+    estáticos;
   - imagen `light` con `/health`;
   - ejemplos web.
-- **Aceptación:** el YAML es válido. La primera ejecución real requiere push, que decide el usuario.
+- **Aceptación:** el YAML es válido. La primera ejecución real requiere
+  push, que decide el usuario.
 
-### P12.4 API y widget
+### Orden sugerido
 
-- **Pasos:** `/ready` informa perfil, modelos, compatibilidad del índice y calibración. El widget resalta `respuesta_exacta` con un `<mark>` creado por DOM, nunca con `innerHTML`.
-- **Aceptación:** pruebas de API y de navegador.
+```text
+P12.1 → P12.2 → P12.3        (tonos)
+P12.4                        (CLI de personalidad; necesita P12.1)
+P12.5                        (widget; independiente de los tonos salvo la microcopia)
+P12.6 → P12.7                (API y luego panel; P12.7 necesita D4)
+D1 → P12.8 → P12.9 → P12.10  (avatar; necesita D1 y D2)
+P12.11 → P12.12 → P12.13 → P12.14
+```
 
 ---
 
