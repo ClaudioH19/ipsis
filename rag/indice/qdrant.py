@@ -63,7 +63,10 @@ class ResultadoBusqueda:
 
 def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
            query_filter=None, vector_precomputado=None) -> ResultadoBusqueda:
-    """Busca en Qdrant real (nunca en memoria). `modo` en {"vectorial","hibrida"}.
+    """Busca en Qdrant real (nunca en memoria). `modo` en {"vectorial","hibrida","dispersa"}.
+
+    «dispersa» usa solo BM25: la usa el perfil de diagnóstico ``bm25`` para
+    medir cuánto aporta el denso a la recuperación.
 
     Mide, por separado, la latencia de codificar la pregunta y la latencia de la llamada a Qdrant (`query_points`),
     tal como exige la tarea 1.4. `query_filter` (opcional) es un
@@ -107,6 +110,15 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
             ],
             query=models.FusionQuery(fusion=models.Fusion.RRF),
             limit=limit,
+        )
+    elif modo == "dispersa":
+        sparse_q = vector_disperso(bm25_consulta(terminos(pregunta, paquete_del_indice(col.estadisticas))))
+        resp = col.client.query_points(
+            collection_name=col.nombre,
+            query=sparse_q,
+            using="bm25",
+            limit=limit,
+            query_filter=query_filter,
         )
     else:
         raise ValueError(f"modo desconocido: {modo!r}")

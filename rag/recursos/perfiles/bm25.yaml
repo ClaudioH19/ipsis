@@ -2,7 +2,8 @@
 # configuracion/motor.yaml (sección ajustes_perfil) y `rag calibrar`
 # reemplaza los umbrales por defecto. Ver docs/plan/modelos-y-perfiles.md.
 perfil: bm25
-descripcion: 'Diagnóstico de benchmark: solo léxico. No se instala.'
+descripcion: 'Diagnóstico de rag benchmark: recupera solo con BM25 (sin el vector
+  denso). La señal de dominio s_ret sigue siendo el coseno denso. No se instala.'
 presupuesto_p95_ms: 100
 modelos:
   denso: intfloat/multilingual-e5-small
@@ -37,3 +38,4 @@ umbrales_por_defecto:
   foco: 0.5
   ok: 0.5
   cov: 0.6
+recuperacion_modo: dispersa

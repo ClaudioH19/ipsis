@@ -43,7 +43,7 @@ a un caso de uso de `rag/aplicacion/`.
 | golden | ★ `rag golden exportar --formato squad2\|csv` | Exporta el banco |
 | evaluacion | `rag evaluar [--split test]` | Métricas con cota de falsos `ok`. Termina con código ≠ 0 si supera el límite |
 | evaluacion | ★ `rag calibrar [--alfa 0.05] [--aplicar]` | Umbrales con control de riesgo (§4) |
-| evaluacion | `rag benchmark [--perfiles bm25,light,medium,heavy] [--solo-latencia]` | Compara perfiles con el mismo banco y frente a su presupuesto |
+| evaluacion | `rag benchmark --banco M [--banco M2…] [--perfiles bm25,light,medium,heavy] [--experimentos] [--solo-latencia]` | Compara perfiles con los mismos bancos: seguridad, cobertura, latencia y costo (`golden/reportes/benchmark-perfiles.{json,md}`). Sale ≠ 0 si un perfil excede su presupuesto p95 o, con el golden del cliente, da falsos ok (la guardia de `rag evaluar`) |
 | evaluacion | `rag comparar <a.json> <b.json>` | Compara dos reportes |
 | operacion | `rag doctor` | Configuración, perfil, modelos, índice, calibración, idioma, golden y CORS |
 | operacion | ★ `rag auditar [--desde fecha]` | Verifica que cada evidencia del registro de consultas es literal del corpus vigente y resume estados y reglas |

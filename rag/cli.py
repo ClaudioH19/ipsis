@@ -525,15 +525,41 @@ def cmd_comparar(args: argparse.Namespace) -> int:
     return 0
 
 
+def _benchmark_perfiles(args: argparse.Namespace) -> int:
+    from rag.aplicacion.benchmark import ejecutar_benchmark_perfiles, escribir_reporte_benchmark
+    from rag.configuracion import rutas
+    from rag.evaluacion.benchmark import codigo_salida
+
+    perfiles = [p.strip() for p in args.perfiles.split(",") if p.strip()]
+    salida = Path(args.salida or rutas.GOLDEN_REPORTES)
+    try:
+        reporte = ejecutar_benchmark_perfiles(args.banco, perfiles, main, salida, experimentos=args.experimentos)
+    except (ValueError, RuntimeError) as e:
+        print(f"No se pudo ejecutar el benchmark: {e}")
+        return 1
+    ruta_json, ruta_md = escribir_reporte_benchmark(reporte, salida)
+    print(reporte.nota)
+    for p in reporte.perfiles:
+        c = p.cobertura.total
+        marca = "" if p.variante else (" [cumple]" if p.cumple_presupuesto else " [EXCEDE el presupuesto]")
+        print(f"{p.nombre:16} cobertura directa {c.cobertura_directa or 0:.1%}  falsos ok {c.falsos_ok}/"
+              f"{c.no_respondibles}  p50 {p.latencia.p50} ms  p95 {p.latencia.p95} ms "
+              f"(presupuesto {p.presupuesto_p95_ms}){marca}")
+    print(f"Reporte en {ruta_md} y {ruta_json}; artefactos por perfil para 'rag comparar' en {salida}.")
+    return codigo_salida(reporte)
+
+
 def cmd_benchmark(args: argparse.Namespace) -> int:
+    if args.perfiles and not args.solo_latencia:
+        return _benchmark_perfiles(args)
     if args.solo_latencia:
         import json
 
         from rag.aplicacion.evaluacion import medir_latencia
 
-        perfiles = [p.strip() for p in args.perfiles.split(",") if p.strip()]
-        informe = medir_latencia(args.banco, perfiles, main, repeticiones=args.repeticiones)
-        salida = Path(args.salida)
+        perfiles = [p.strip() for p in (args.perfiles or "light,medium").split(",") if p.strip()]
+        informe = medir_latencia(args.banco[0], perfiles, main, repeticiones=args.repeticiones)
+        salida = Path(args.salida or "reportes/benchmark")
         salida.mkdir(parents=True, exist_ok=True)
         (salida / "latencia.json").write_text(json.dumps(informe, indent=2, ensure_ascii=False), encoding="utf-8")
         for perfil, datos in informe["perfiles"].items():
@@ -547,7 +573,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     from rag.aplicacion.evaluacion import ejecutar_benchmark
 
     try:
-        ruta = ejecutar_benchmark(args.banco, args.salida, main)
+        ruta = ejecutar_benchmark(args.banco[0], args.salida or "reportes/benchmark", main)
     except Exception as e:  # noqa: BLE001
         print(f"No se pudo ejecutar el benchmark: {e}")
         return 1
@@ -783,16 +809,20 @@ def _construir_parser() -> argparse.ArgumentParser:
                    help="Ruta del informe consolidado.")
     p.set_defaults(func=cmd_comparar)
 
-    p = sub.add_parser("benchmark", help="Compara Qdrant vectorial e híbrido, o mide la latencia por perfil.")
-    p.add_argument("--banco", required=True, help="Manifiesto versionado a evaluar.")
+    p = sub.add_parser("benchmark", help="Compara perfiles (calidad, seguridad, latencia y costo), modos de "
+                                          "recuperación o solo la latencia.")
+    p.add_argument("--banco", required=True, action="append",
+                   help="Manifiesto versionado a evaluar; repetible (p. ej. un banco por idioma).")
     p.add_argument("--solo-latencia", action="store_true",
                    help="Mide p50/p95 por etapa de cada perfil frente a su presupuesto.")
-    p.add_argument("--perfiles", default="light,medium",
-                   help="Perfiles a medir con --solo-latencia, separados por coma (por defecto: light,medium).")
+    p.add_argument("--perfiles", default=None,
+                   help="Perfiles a comparar (bm25,light,medium,heavy). Con --solo-latencia, por defecto light,medium.")
+    p.add_argument("--experimentos", action="store_true",
+                   help="Agrega variantes experimentales (medium con τ_ok 0,85; light con acuerdo).")
     p.add_argument("--repeticiones", type=int, default=20,
                    help="Veces que se repite cada pregunta con --solo-latencia (por defecto: 20).")
-    p.add_argument("--salida", default="reportes/benchmark",
-                   help="Directorio para artefactos e informe comparativo.")
+    p.add_argument("--salida", default=None,
+                   help="Directorio de salida (por defecto: golden/reportes con --perfiles, si no reportes/benchmark).")
     p.set_defaults(func=cmd_benchmark)
 
     p_golden = sub.add_parser("golden", help="Golden set del cliente: plantilla, importar, validar y exportar.")

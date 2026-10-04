@@ -535,7 +535,7 @@ Referencia: [comandos-y-golden.md](comandos-y-golden.md) §3.
 
 ### P10.4 Benchmark por perfiles
 
-- **Pasos:** `rag benchmark --perfiles bm25,light,medium,heavy` ejecuta cada perfil sobre el mismo banco y reporta métricas, p50/p95 por etapa y cumplimiento del presupuesto. Termina con código ≠ 0 si alguno lo incumple o supera el límite de falsos `ok`.
+- **Pasos:** `rag benchmark --perfiles bm25,light,medium,heavy` ejecuta cada perfil sobre el mismo banco y reporta métricas, p50/p95 por etapa y cumplimiento del presupuesto. Termina con código ≠ 0 si alguno lo incumple o, con un banco de evaluación del cliente, da falsos `ok` (la guardia de `rag evaluar`, que exige 0). Un banco de regresión no tiene límite propio de falsos `ok`: lo vigila su línea base. Las variantes experimentales (`--experimentos`) nunca cortan.
 - **Aceptación:** reporte JSON + Markdown en `golden/reportes/`, con la tabla copiada a [avance.md](avance.md). El reporte muestra juntas seguridad, cobertura, latencia y memoria/modelos por perfil: no se elige un perfil solo por precisión.
 
 ### P10.5 Experimento: chunking `texttiling_v1`
