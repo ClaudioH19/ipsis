@@ -611,6 +611,45 @@ Cierra con el despliegue (imagen, `rag desplegar`, CI y `/ready`).
 - **Seguir el puntero:** la librería no lo trae, así que lo implementa el
   widget con mirada real (ver «Eventos del avatar»).
 
+### Modos de ejecución: desarrollo y producción
+
+El servicio corre en uno de dos modos, con `rag servir --modo` o
+`RAG_MODO`. **Por defecto es `produccion`**: seguro sin configurar nada.
+
+| Aspecto | `desarrollo` | `produccion` |
+|---|---|---|
+| `/admin` por HTTP plano | permitido desde cualquier IP, con aviso en consola, en el panel y en `rag doctor` | solo desde loopback; desde fuera exige HTTPS (403 si no) |
+| Token de `/admin` | obligatorio; si falta `RAG_ADMIN_TOKEN`, `rag servir` genera uno temporal por ejecución y lo imprime | obligatorio; sin `RAG_ADMIN_TOKEN`, `/admin` no existe (404) |
+| Encabezados del proxy (`X-Forwarded-*`) | se aceptan de loopback | solo del proxy en `RAG_PROXY_CONFIABLE` |
+| `/docs` (OpenAPI) | habilitado | deshabilitado salvo `RAG_DOCS=1` |
+| Estáticos (`widget.js`, `avatar.js`, panel) | `Cache-Control: no-store`; cambios visibles al recargar | caché larga con versión en la URL |
+| Detalle de errores 500 | en la respuesta | solo en el log; la respuesta trae un id |
+| `/widget/demo.html` | disponible | disponible solo con `RAG_DEMO=1` |
+| `/health` y `/ready` | informan `modo: desarrollo` | informan `modo: produccion` |
+
+En los dos modos se mantienen: CORS según `cors_origenes` (nunca `*`),
+claves de widget, limitador de peticiones, registro de consultas apagado por
+defecto e invariantes extractivos. El modo no cambia ninguna respuesta del
+asistente.
+
+`rag doctor` gana el chequeo `modo`:
+- aviso si el servicio está configurado en `desarrollo`;
+- error en `produccion` con `/admin` activo si `RAG_PROXY_CONFIABLE` no está
+  definido y el host no es loopback. Acción: configurar el proxy o
+  `--host 127.0.0.1`.
+
+### Documentación de la fase
+
+Cada tarea de P12 actualiza, en el mismo commit, las guías que tocan sus
+comandos y opciones:
+- `docs/guia/instalacion.md`: instalación, perfiles, modelos, VPS, HTTPS y
+  modos;
+- `docs/guia/uso.md`: ciclo de trabajo y referencia de todos los comandos;
+- además, `configuracion.md`, `web.md` y `personalidad.md`.
+
+Una prueba (`tests/test_documentacion.py`) recorre el árbol de comandos de
+la CLI y falla si alguno no aparece en `docs/guia/uso.md`.
+
 ### Invariantes de toda la fase
 
 1. **Extractivo.** Una plantilla solo enmarca: el texto del corpus va
@@ -978,6 +1017,9 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
     - lista opcional de IPs en `RAG_ADMIN_IPS`;
     - bloqueo de 15 min por IP tras 5 tokens incorrectos;
     - la guía explica cómo rotar el token.
+- **Modos:** las reglas de HTTPS, proxy, `/docs`, caché y errores siguen
+  la tabla «Modos de ejecución»: `rag servir --modo desarrollo|produccion`
+  y `RAG_MODO`.
 - **Recarga en caliente:**
   - el servicio relee `personalidad.yaml` y `estilos.yaml` si cambió su
     mtime (un `stat` por petición, sin reiniciar);
@@ -992,7 +1034,11 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
   - el `Origin` de un sitio con CORS permitido no obtiene encabezados CORS
     en `/admin`;
   - `/avatares/../motor.yaml` da 404;
-  - por HTTP plano desde una IP no local da 403;
+  - por HTTP plano desde una IP no local da 403 en `produccion` y 200 en
+    `desarrollo`;
+  - en `desarrollo` sin `RAG_ADMIN_TOKEN` se imprime un token temporal que
+    funciona solo en esa ejecución;
+  - `/docs` responde en `desarrollo` y da 404 en `produccion`;
   - el sexto token incorrecto da 429 aunque el séptimo sea correcto.
 
 ### P12.7 Panel gráfico `/admin`
@@ -1155,7 +1201,8 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
   - ejecuta `rag modelos descargar --perfil $PERFIL` y define
     `HF_HUB_OFFLINE=1`;
   - usuario no root;
-  - `RAG_ADMIN_TOKEN` sin definir: la administración queda apagada.
+  - `RAG_ADMIN_TOKEN` sin definir: la administración queda apagada;
+  - `RAG_MODO=produccion` explícito.
 - **Aceptación:** `docker build --build-arg PERFIL=light .` funciona, y
   `/health` y `/widget.js` responden sin red.
 
