@@ -20,7 +20,7 @@ from typing import Mapping
 
 MODOS = ("produccion", "desarrollo")
 LARGO_MINIMO_TOKEN = 32
-URL_FUENTE_POR_DEFECTO = "https://github.com/Claudiobiovision/rag-extractivo"
+URL_FUENTE_POR_DEFECTO = "https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat"
 
 
 def _lista(valor: str | None) -> tuple[str, ...]:

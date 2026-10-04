@@ -1,4 +1,4 @@
-"""Estrategias de chunking (sección 3.5) sobre la salida de ``parsear.py``.
+"""Estrategias de chunking sobre la salida de ``parsear.py``.
 
 Todas las estrategias operan sobre la lista de :class:`~ingesta.parsear.Bloque`
 de un :class:`~ingesta.parsear.DocumentoParseado` y devuelven una lista de
