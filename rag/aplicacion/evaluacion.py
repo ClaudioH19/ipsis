@@ -247,3 +247,90 @@ def medir_latencia(
         }
     return informe
 
+
+
+# ---------------------------------------------------------------------------
+# rag calibrar
+# ---------------------------------------------------------------------------
+class ErrorCalibracion(ValueError):
+    """La calibración no puede correr; ``errores`` dice qué hacer."""
+
+    def __init__(self, errores: list[str]) -> None:
+        super().__init__("\n".join(errores))
+        self.errores = errores
+
+
+class CalibracionProyecto:
+    """Resultado de ``rag calibrar`` para el proyecto activo."""
+
+    def __init__(self, resultado, procedencia, ruta: Path | None) -> None:
+        self.resultado = resultado  # rag.evaluacion.calibracion.ResultadoCalibracion
+        self.procedencia = procedencia  # ProcedenciaCalibracion
+        self.ruta = ruta  # configuracion/calibracion.yaml si se aplicó
+
+
+def hash_corpus_del_indice(cfg: dict) -> str:
+    """``hash_corpus`` del manifiesto del índice que abre el proyecto: la
+    identidad oficial del corpus indexado (la misma que comprueba el motor)."""
+    from rag.configuracion.carga import config_recuperacion
+    from rag.indice.manifiesto import cargar_manifiesto
+    from rag.indice.qdrant import nombre_coleccion_versionada
+
+    cfg_rec = config_recuperacion(cfg)
+    nombre = nombre_coleccion_versionada(cfg_rec["coleccion_base"], cfg_rec["modelo"], cfg_rec["version_coleccion"])
+    try:
+        return cargar_manifiesto(nombre).hash_corpus
+    except FileNotFoundError as e:
+        raise ErrorCalibracion([f"no hay un índice válido para el proyecto ({nombre}). Ejecuta 'rag indexar' "
+                                "antes de calibrar"]) from e
+
+
+def calibrar_proyecto(
+    alfa: float = 0.05,
+    aplicar: bool = False,
+    evaluar: Callable[[str], ArtefactoEvaluacion] | None = None,
+) -> CalibracionProyecto:
+    """Evalúa el perfil sobre el golden importado y calibra sus umbrales.
+
+    No entrena nada: ``calibrar`` elige umbrales escalares en ``dev`` y
+    verifica en ``test`` (P10.2). Con ``aplicar`` escribe
+    ``configuracion/calibracion.yaml`` en cualquier estado, para auditoría;
+    el motor solo usa sus umbrales si el estado es ``calibrado`` y la
+    procedencia coincide. ``evaluar`` se inyecta en las pruebas (motor falso).
+    """
+    from rag.aplicacion.golden import _cargar_banco_vigente
+    from rag.configuracion import rutas
+    from rag.configuracion.calibracion import ProcedenciaCalibracion
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
+    from rag.configuracion.perfiles import perfil_efectivo
+    from rag.evaluacion.banco import exigir_calibrable
+    from rag.evaluacion.calibracion import calibrar, escribir_calibracion
+    from rag.evaluacion.golden import ErrorGolden
+
+    if not 0.0 < alfa < 1.0:
+        raise ErrorCalibracion([f"--alfa debe estar entre 0 y 1, sin incluirlos (se recibió {alfa})"])
+    cfg = cargar_proyecto()
+    nombre_perfil = cargar_dominio().get("perfil", "light")
+    # Umbrales del perfil sin calibración previa: son la base de la búsqueda.
+    perfil = perfil_efectivo(nombre_perfil, cfg.get("ajustes_perfil"))
+    hash_corpus = hash_corpus_del_indice(cfg)
+    try:
+        banco, _textos, manifiesto = _cargar_banco_vigente()
+    except ErrorGolden as e:
+        errores = list(e.errores)
+        if any("corpus cambió" in m for m in errores):
+            errores.append("Ejecuta 'rag golden validar' y vuelve a importar el golden si corresponde")
+        raise ErrorCalibracion(errores) from e
+    try:
+        exigir_calibrable(banco)
+    except ValueError as e:
+        raise ErrorCalibracion([str(e)]) from e
+
+    artefacto = (evaluar or evaluar_backend_activo)(str(manifiesto))
+    resultado = calibrar(banco, artefacto.observaciones, perfil.umbrales_por_defecto, alfa)
+    procedencia = ProcedenciaCalibracion(
+        perfil=perfil.perfil, modelos=perfil.modelos.model_dump(), hash_corpus=hash_corpus,
+        banco=f"{banco.manifiesto.dataset_id}@{banco.manifiesto.dataset_version}", hash_banco=hash_banco(banco),
+    )
+    ruta = escribir_calibracion(resultado, procedencia, rutas.CALIBRACION) if aplicar else None
+    return CalibracionProyecto(resultado, procedencia, ruta)

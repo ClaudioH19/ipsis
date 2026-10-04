@@ -446,6 +446,63 @@ def cmd_evaluar(args: argparse.Namespace) -> int:
     return 0 if reporte.guardia_falsos_ok else 1
 
 
+def _porcentaje(valor) -> str:
+    return "—" if valor is None else f"{valor:.1%}"
+
+
+def cmd_calibrar(args: argparse.Namespace) -> int:
+    from rag.aplicacion.evaluacion import ErrorCalibracion, calibrar_proyecto
+    from rag.configuracion.calibracion import EstadoCalibracion
+    from rag.evaluacion.calibracion import CALIBRABLES
+
+    try:
+        calibracion = calibrar_proyecto(alfa=args.alfa, aplicar=args.aplicar)
+    except ErrorCalibracion as e:
+        print("No se pudo calibrar:")
+        for error in e.errores:
+            print(f"  - {error}")
+        return 1
+    r, procedencia = calibracion.resultado, calibracion.procedencia
+    print(f"Calibración: {r.estado.value.upper()}  (riesgo objetivo ≤ {r.alfa:.1%}, confianza {r.confianza:.0%})")
+    print(f"Perfil {procedencia.perfil}, banco {procedencia.banco}, corpus {procedencia.hash_corpus[:19]}…")
+    dev = r.dev
+    print(f"Dev (elige los umbrales): {dev.riesgo.n} respuestas directas, {dev.riesgo.x} incorrectas, "
+          f"cota superior {_porcentaje(dev.riesgo.cota_superior)}")
+    print(f"  cobertura directa {_porcentaje(dev.cobertura_directa)} (exactas {_porcentaje(dev.cobertura_exacta)}, "
+          f"paráfrasis {_porcentaje(dev.cobertura_parafrasis)}); falsos ok {dev.falsos_ok} "
+          f"(trampas {dev.falsos_ok_trampas})")
+    if r.estado == EstadoCalibracion.CALIBRADO:
+        print("Umbrales (perfil → calibrado):")
+        for nombre in CALIBRABLES:
+            antes, despues = r.umbrales_perfil[nombre], r.umbrales[nombre]
+            marca = "" if antes == despues else "   (cambia)"
+            print(f"  {nombre:8} {antes:.4f} → {despues:.4f}{marca}")
+    elif r.estado == EstadoCalibracion.MUESTRA_INSUFICIENTE:
+        print("Todavía no se puede certificar el riesgo (no significa que el perfil sea inseguro):")
+        print(f"  respuestas aceptadas sin error: {r.aceptadas_sin_error_max_dev}")
+        print(f"  necesarias para α={r.alfa} al {r.confianza:.0%}: {r.n_minimo_sin_errores}")
+        print(f"  faltan al menos: {r.faltan_aceptadas}")
+        print("Siguen vigentes los umbrales del perfil.")
+    else:
+        print(f"Hay muestra suficiente (hasta {r.aceptadas_max_dev} respuestas directas en dev), pero ninguna "
+              f"combinación de umbrales deja la cota ≤ {r.alfa:.1%}.")
+        print("Siguen vigentes los umbrales del perfil.")
+    if r.test is not None:
+        t = r.test
+        print(f"Test (solo verifica): {r.verificacion_test}; {t.riesgo.n} respuestas directas, {t.riesgo.x} "
+              f"incorrectas, cota {_porcentaje(t.riesgo.cota_superior)}; cobertura directa "
+              f"{_porcentaje(t.cobertura_directa)}")
+    if calibracion.ruta is not None:
+        if r.estado == EstadoCalibracion.CALIBRADO:
+            print(f"Calibración guardada y habilitada en {calibracion.ruta}.")
+        else:
+            print(f"Resultado guardado para auditoría en {calibracion.ruta}. "
+                  "Los umbrales del perfil siguen activos.")
+    elif r.estado == EstadoCalibracion.CALIBRADO:
+        print("No se guardó nada: usa 'rag calibrar --aplicar' para habilitar estos umbrales.")
+    return 1 if r.estado == EstadoCalibracion.SIN_UMBRAL_SEGURO else 0
+
+
 def cmd_comparar(args: argparse.Namespace) -> int:
     from rag.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
 
@@ -712,6 +769,13 @@ def _construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--salida", default=None,
                    help="Ruta opcional para guardar el reporte JSON.")
     p.set_defaults(func=cmd_evaluar)
+
+    p = sub.add_parser("calibrar", help="Elige umbrales con el golden importado, con control de riesgo.")
+    p.add_argument("--alfa", type=float, default=0.05,
+                   help="Riesgo máximo de respuestas directas incorrectas, entre 0 y 1 (por defecto: 0.05).")
+    p.add_argument("--aplicar", action="store_true",
+                   help="Guarda el resultado en configuracion/calibracion.yaml (solo se usa si queda calibrado).")
+    p.set_defaults(func=cmd_calibrar)
 
     p = sub.add_parser("comparar", help="Compara artefactos producidos por 'rag evaluar'.")
     p.add_argument("artefactos", nargs="+", help="Dos o más reportes JSON comparables.")
