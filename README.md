@@ -257,6 +257,8 @@ instalación normal, no el checkout del repositorio.
 
 ## Documentación
 
+- [Instalación: perfiles, modelos, VPS con HTTPS y modos](docs/guia/instalacion.md)
+- [Uso: ciclo de trabajo y referencia de comandos](docs/guia/uso.md)
 - [Plan V3: arquitectura, tareas y avance](docs/plan/README.md)
 - [Referencia de configuración](docs/guia/configuracion.md)
 - [Metodologías implementadas](docs/metodologia/README.md)
