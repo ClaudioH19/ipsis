@@ -7,6 +7,8 @@ estado propio de cada instancia de aplicación.
 from __future__ import annotations
 
 import logging
+import threading
+import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -128,6 +130,7 @@ class EstadoAplicacion:
     error_arranque: str | None = None
     abstencion_calibrada: bool = False
     registro: RegistroConsultas | None = None  # None: registro apagado, no se escribe nada
+    diagnostico: tuple[float, dict | None] | None = None  # (momento, resumen) que publica /ready
 
 
 def _construir_motor_produccion() -> Motor:
@@ -165,6 +168,28 @@ class _CORSSinAdmin(CORSMiddleware):
 
 
 _ESTATICOS = ("/widget.js", "/estilos.css", "/avatar.js")
+
+
+_TTL_DIAGNOSTICO_S = 30.0
+_candado_diagnostico = threading.Lock()
+
+
+def _diagnostico_cacheado(servicio) -> dict | None:
+    """``resumen_para_servicio`` del proyecto en la carpeta actual, recalculado cada
+    30 s como máximo (un healthcheck frecuente no repite el diagnóstico)."""
+    from rag.aplicacion.diagnostico import ProyectoNoEncontrado, diagnosticar, resumen_para_servicio
+
+    ahora = time.monotonic()
+    with _candado_diagnostico:
+        cache = servicio.diagnostico
+        if cache is not None and ahora - cache[0] < _TTL_DIAGNOSTICO_S:
+            return cache[1]
+        try:
+            resumen = resumen_para_servicio(diagnosticar(abrir_indice=False))
+        except ProyectoNoEncontrado:
+            resumen = None
+        servicio.diagnostico = (ahora, resumen)
+        return resumen
 
 
 def crear_app(
@@ -281,17 +306,25 @@ def crear_app(
 
     @aplicacion.get("/ready")
     def ready(request: Request):
+        """Listo para consultas: el motor cargó y el diagnóstico del proyecto no
+        tiene nada bloqueante. ``proyecto`` separa lo que bloquea (con su acción)
+        de lo opcional; es ``None`` si el servicio corre fuera de un proyecto."""
+        from fastapi.responses import JSONResponse
+
         servicio = _estado(request)
-        if not servicio.listo:
-            raise HTTPException(
-                status_code=503,
-                detail=f"no listo: {servicio.error_arranque or 'modelos/índice todavía no cargados'}",
-            )
+        proyecto = _diagnostico_cacheado(servicio)
+        bloquea = proyecto is not None and not proyecto["listo"]
+        if not servicio.listo or bloquea:
+            motivo = (servicio.error_arranque or "modelos/índice todavía no cargados") if not servicio.listo                 else "; ".join(f"{b['clave']}: {b['mensaje']}" for b in proyecto["bloqueante"])
+            return JSONResponse(status_code=503, content={
+                "estado": "no_listo", "listo": False, "modo": modo.modo, "detail": f"no listo: {motivo}",
+                "proyecto": proyecto})
         motor_activo = servicio.motor
         coleccion = getattr(getattr(motor_activo, "retriever", None), "coleccion", None)
         control = motor_activo.control_admision
         return {
             "estado": "listo",
+            "listo": True,
             "modo": modo.modo,
             "backend": motor_activo.backend,
             "coleccion": getattr(coleccion, "nombre", motor_activo.backend),
@@ -299,6 +332,7 @@ def crear_app(
             "n_entidades_inventario": len(motor_activo.inventario_entidades()),
             "abstencion_calibrada": servicio.abstencion_calibrada,
             "concurrencia_maxima": control.config.concurrencia_maxima if control is not None else None,
+            "proyecto": proyecto,
         }
 
     @aplicacion.get("/config", response_model=ConfigWidget)

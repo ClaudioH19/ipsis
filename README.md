@@ -235,8 +235,14 @@ La respuesta contiene el estado, el texto extractivo, la confianza, la
 latencia y los fragmentos citados. Cuando el lector marcó un tramo, trae
 `respuesta_exacta`. En las respuestas conversacionales trae
 `categoria_conversacional`: `saludo`, `agradecimiento`, `despedida` o
-`capacidad`. También están disponibles `/health`,
-`/ready`, `/config`, `/estilos.css`, `/widget.js` y `/widget/demo.html`.
+`capacidad`. También están disponibles `/health`, `/ready`, `/config`,
+`/estilos.css`, `/widget.js`, `/avatar.js`, `/fuente` y `/widget/demo.html`.
+
+`/ready` responde 200 si el motor cargó y el diagnóstico de `rag doctor` no
+tiene nada bloqueante; si no, 503. En los dos casos, `proyecto` trae el
+estado de cada chequeo, lo que bloquea con su acción (por ejemplo,
+`rag indexar` si el índice es incompatible) y los avisos opcionales. El
+diagnóstico se recalcula cada 30 s como máximo y no abre Qdrant.
 
 ## Desarrollo y verificación
 

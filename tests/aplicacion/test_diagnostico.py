@@ -437,3 +437,86 @@ def test_doctor_no_usa_red_ni_onnx_ni_escribe(proyecto, monkeypatch):
     assert reporte().listo
     despues = {p: p.stat().st_mtime_ns for p in Path.cwd().rglob("*") if p.is_file() and "qdrant" not in p.parts}
     assert despues == antes
+
+
+# --- /ready (P12.11): el mismo diagnóstico, publicado por el servicio --------------------------
+class _MotorListo:
+    """Motor que arranca sin modelos: lo que importa aquí es el diagnóstico del proyecto."""
+
+    politica_abstencion = None
+    backend = "memoria"
+    retriever = None
+    control_admision = None
+
+    def calentar(self):
+        pass
+
+    def cerrar(self):
+        pass
+
+    def n_chunks(self):
+        return 2
+
+    def inventario_entidades(self):
+        return set()
+
+
+def _ready():
+    from fastapi.testclient import TestClient
+
+    from rag.servicio.api import crear_app
+
+    with TestClient(crear_app(_MotorListo())) as cliente:
+        return cliente.get("/ready")
+
+
+def test_ready_proyecto_sano(proyecto):
+    proyecto("light")
+    calibracion("light", sano("light"))
+    r = _ready()
+    assert r.status_code == 200, r.json()
+    cuerpo = r.json()
+    assert cuerpo["listo"] and cuerpo["proyecto"]["listo"] and cuerpo["proyecto"]["perfil"] == "light"
+    assert cuerpo["proyecto"]["bloqueante"] == []
+    assert cuerpo["proyecto"]["chequeos"]["indice"] == "ok" and cuerpo["proyecto"]["chequeos"]["calibracion"] == "ok"
+
+
+def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
+    proyecto("light")
+    instalar(E5_SMALL)
+    cargar_manual()
+    indexar(stemmer="english")
+    r = _ready()
+    assert r.status_code == 503
+    cuerpo = r.json()
+    assert cuerpo["listo"] is False and cuerpo["proyecto"]["listo"] is False
+    bloqueo = cuerpo["proyecto"]["bloqueante"][0]
+    assert bloqueo["clave"] == "indice" and "incompatible" in bloqueo["mensaje"]
+    assert bloqueo["acciones"] == ["rag indexar"]
+    assert "indice: incompatible" in cuerpo["detail"]
+
+
+def test_ready_sin_calibracion_esta_listo_con_aviso(proyecto):
+    proyecto("light")
+    sano("light")
+    r = _ready()
+    assert r.status_code == 200
+    avisos = {a["clave"]: a for a in r.json()["proyecto"]["avisos"]}
+    assert "opcional" in avisos["calibracion"]["mensaje"]
+
+
+def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
+    import rag.aplicacion.diagnostico as diagnostico
+    from fastapi.testclient import TestClient
+
+    from rag.servicio.api import crear_app
+
+    proyecto("light")
+    sano("light")
+    llamadas = []
+    original = diagnostico.diagnosticar
+    monkeypatch.setattr(diagnostico, "diagnosticar", lambda **k: llamadas.append(k) or original(**k))
+    with TestClient(crear_app(_MotorListo())) as cliente:
+        for _ in range(5):
+            cliente.get("/ready")
+    assert llamadas == [{"abrir_indice": False}]  # una vez cada 30 s y sin abrir Qdrant

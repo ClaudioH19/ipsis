@@ -150,7 +150,8 @@ docker build -t rag-extractivo .
 ```
 
 La imagen instala el wheel sin torch, corre con un usuario no root y expone
-el puerto 8000 con un healthcheck a `/ready`. La configuración del proyecto
+el puerto 8000 con un healthcheck a `/ready`, que da 503 si algo bloquea
+(con la acción en `proyecto.bloqueante`). La configuración del proyecto
 se monta en `/app/configuracion`. Pendiente **(P12.12)**: una imagen por
 perfil, con los modelos incluidos y sin red. **(P12.13)**:
 `rag desplegar preparar`, que genera `docker-compose.yml` con un servicio

@@ -92,8 +92,12 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
     with TestClient(app_1) as cliente:
         respuesta = cliente.get("/ready")
         assert respuesta.status_code == 200
-        assert respuesta.json() == {
+        cuerpo = respuesta.json()
+        proyecto = cuerpo.pop("proyecto")
+        assert proyecto is None or proyecto["listo"]  # el diagnóstico del proyecto (P12.11)
+        assert cuerpo == {
             "estado": "listo",
+            "listo": True,
             "modo": "produccion",
             "backend": "memoria",
             "coleccion": "memoria",
