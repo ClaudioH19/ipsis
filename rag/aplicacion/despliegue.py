@@ -119,7 +119,8 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
         ".env.ejemplo": f"env.ejemplo.{idioma}", "LEEME_despliegue.md": f"LEEME_despliegue.{idioma}.md",
     }
     for nombre, plantilla in generados.items():
-        (salida / nombre).write_text(_rellenar(_plantilla(plantilla), valores), encoding="utf-8")
+        # Siempre LF: estos archivos se usan en un servidor Linux (un \r final rompería el token de .env).
+        (salida / nombre).write_text(_rellenar(_plantilla(plantilla), valores), encoding="utf-8", newline="\n")
     (salida / MARCA).write_text(f"rag-extractivo {__version__}\n", encoding="utf-8")
 
     resumen.archivos = sorted(p.relative_to(salida).as_posix() for p in salida.rglob("*") if p.is_file())

@@ -561,6 +561,8 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     assert leeme.startswith("# Despliegue de") and "https://asistente.ejemplo.cl/widget.js" in leeme
     assert "/admin/panel" in leeme and "{{" not in leeme
     assert "ARG PERFIL=light" in (dist / "Dockerfile").read_text(encoding="utf-8")
+    for generado in ("Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo", "LEEME_despliegue.md"):
+        assert b"\r" not in (dist / generado).read_bytes(), generado  # LF también en Windows
 
     # Regenerar exige --forzar; una carpeta ajena nunca se borra.
     assert main(["desplegar", "preparar"]) == 1
