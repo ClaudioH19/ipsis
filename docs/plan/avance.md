@@ -63,7 +63,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P9.4 | ✅ | 2026-10-03 | 527 (suite completa) | tests/datos/banco_universal/{es,en,pt}: 90 casos (30 por idioma: 10 exactas, 5 paráfrasis, 10 trampas mismo tema en par, 3 fuera de dominio, 1 premisa falsa, 1 ambigua), 5 microdocumentos por idioma, 10 capacidades. Multilingüe, no cross-lingual. Fuentes (corpus/*.md, casos.yaml) → construir.py → banco.jsonl + manifiesto.json en el formato interno; una prueba verifica que coinciden. Manifiesto con uso: regresion; exigir_calibrable lo rechaza. Línea base en linea_base.json (light y medium; tabla en Hallazgos). Prueba lenta: falla si hay un falso ok nuevo respecto de la línea base (no exige 0: los 4 de hoy van a P10 sin corregir). Desvío: 1 premisa + 1 ambigua por idioma. linea_base.evaluar restaura el idioma y el perfil globales que rag indexar cambia (contaminaba las pruebas posteriores). |
 | P10.1 | ✅ | 2026-10-03 | 545 (suite completa) | metricas.py: SenalesObservadas (s_ret, s_oov, s_foco, s_cov, s_lex, acuerdo, s_rr, s_qa, dominio tal como decidió la política; None si no aplica). ObservacionEvaluacion gana idioma, regla, senales y respuesta_exacta, que evaluar_backend_activo llena desde el diagnóstico real. FilaCaso (vista por caso). ResumenCobertura: cobertura directa y relacionada, recall sin respuesta, falsos ok, tasa sobre no respondibles y directas sin literal. Global, por grupo (exacta, parafrasis, trampa_mismo_tema, sin_respuesta, fuera_de_dominio, premisa_falsa, ambigua) y por idioma, en ReporteMetricas.cobertura. riesgo_aceptadas (n = respuestas ok, x = falsos ok + directas sin literal) con cota_superior_clopper_pearson (CDF binomial + bisección, sin SciPy) y n_minimo. Falso ok unificado: no respondible y no conversacional. linea_base.py resume desde el reporte formal y coincide con la línea base de P9.4. Sin cambios en política, umbrales ni modelos. Definiciones, referencias y hallazgos en Hallazgos. Una corrida completa tuvo 1 fallo intermitente que no se reprodujo (ni aislado ni en una segunda corrida completa). |
 | P10.2 | ✅ | 2026-10-03 | 566 (suite completa) | Auditoría: acuerdo nunca se calculaba (lexico.acuerdo sin llamadas; su condición en light era inerte); se retira de cascada_v1 y de los documentos, sin cambio de comportamiento, y queda como candidata para P10.4. s_lex es señal interna de selección y no se agrega. regla_cascada (pura) la comparten política y calibración; no regresión: re-decidir con los umbrales del perfil reproduce cada estado (sintético y 180 casos del banco universal). τ_oov se separa en oov_dominio y oov_ok (0,6 ambos; un oov anterior vale para los dos; corregido que un oov en ajustes_perfil quedaba ignorado). Línea base universal sin cambios. calibracion.py: calibrar(banco, observaciones, umbrales_perfil, alfa, confianza) con exigir_calibrable; búsqueda conjunta (foco, oov_ok) × barrido de ok sobre valores observados en dev; elige la cobertura directa máxima con cota CP ≤ α y verifica la combinación con la política completa; test se reporta aparte. Estados calibrado/muestra_insuficiente/sin_umbral_seguro (los dos últimos mantienen los umbrales del perfil). escribir_calibracion/cargar_calibracion; configuracion/calibracion.py valida la procedencia (perfil, modelos, hash_corpus del índice) y construir_motor solo aplica estado calibrado. Se retiran calibrar_umbral y CalibracionDev. Análisis del banco universal y hard negatives inseparables en Hallazgos. |
-| P10.3 | ⬜ | | | |
+| P10.3 | ✅ | 2026-10-03 | 576 (suite completa, incluye la lenta de medium) | rag calibrar [--alfa 0.05] [--aplicar]: CLI fina → calibrar_proyecto (aplicacion/evaluacion.py) → calibrar (P10.2, sin cambios). Valida alfa en (0,1); hash_corpus del manifiesto del índice activo (sin índice: «rag indexar»); golden vigente y calibrable (corpus cambiado: «rag golden validar»; uso regresion: rechazado); evalúa con evaluar_backend_activo (inyectable). Sin --aplicar no escribe; con --aplicar escribe calibracion.yaml en cualquier estado, solo «calibrado» se habilita. Salidas: CALIBRADO 0, MUESTRA_INSUFICIENTE 0, SIN_UMBRAL_SEGURO 1, errores 1. 9 pruebas de CLI con motor falso (tres estados, procedencia del índice, errores) y 1 lenta: medium sobre el banco v1.1.0 importado da muestra_insuficiente con el hash del índice real. Guía golden.md con la sección Calibrar. Hallazgos (desempate y estratificación del split) en Hallazgos. |
 | P10.4 | ⬜ | | | |
 | P10.5 | ⬜ | | | |
 | P11.1 | ⬜ | | | |
@@ -290,5 +290,34 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
     estos casos: la relación pedida es otra con el mismo vocabulario.
   - Relajar `oov_ok` en medium suma 3 trampas más con falso ok: el costo de
     cobertura de paráfrasis está en esos hard negatives.
+- **P10.3 — `rag calibrar [--alfa 0.05] [--aplicar]`.**
+  - CLI fina → `aplicacion/evaluacion.py::calibrar_proyecto` →
+    `evaluacion/calibracion.py::calibrar`.
+  - Orden: perfil (sin calibración previa) → `hash_corpus` del manifiesto del
+    índice que abre el proyecto (sin índice: error con «rag indexar») → golden
+    vigente (`_cargar_banco_vigente`: si el corpus cambió, error con «rag golden
+    validar») → `exigir_calibrable` → `evaluar_backend_activo` (inyectable) →
+    `calibrar`.
+  - Procedencia: perfil y modelos del perfil efectivo, `hash_corpus` del
+    índice, `hash_banco` del golden importado.
+  - Salidas: CALIBRADO y MUESTRA_INSUFICIENTE devuelven 0 (no es un fallo:
+    siguen los umbrales del perfil). SIN_UMBRAL_SEGURO y los errores
+    operacionales devuelven 1, igual que la guardia de `rag evaluar`.
+  - `--aplicar` escribe `calibracion.yaml` en cualquier estado; solo
+    «calibrado» se habilita.
+  - Prueba lenta: medium sobre el banco sintético v1.1.0 (importado con `rag
+    golden importar`, uso evaluación) da **muestra_insuficiente**: 1
+    respuesta directa sin error en dev, frente a 59. Es lo correcto para 27
+    casos; no se forzó «calibrado».
+- **P10.3 — hallazgo: el desempate mueve umbrales que dev no informa.** Si
+  dev no distingue valores (p. ej. todos los `s_oov` son 0), el desempate
+  «más estricta» de P10.2 lleva `oov_ok` de 0,6 a ~0 y `foco` a 1,0 sin que
+  los datos lo pidan, y eso puede bajar la cobertura fuera de la muestra.
+  Propuesta para la próxima iteración de calibración: ante empate, preferir
+  el valor del perfil. No se cambió en P10.3 (era cambiar el algoritmo).
+- **P10.3 — hallazgo: el split estratifica por tipo público.** Las respondibles
+  se separan como un solo grupo, sin distinguir exacta de paráfrasis. En el
+  banco v1.1.0 las 3 exactas quedaron en test. Con bancos chicos conviene
+  estratificar también por categoría interna (P9.1, a revisar).
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.
