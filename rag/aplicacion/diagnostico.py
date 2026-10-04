@@ -119,7 +119,8 @@ def _breve(error: Exception) -> str:
 class _Contexto:
     """Lo que leen varios chequeos; ``None`` si no se pudo leer."""
 
-    def __init__(self) -> None:
+    def __init__(self, abrir_indice: bool = True) -> None:
+        self.abrir_indice = abrir_indice  # False en /ready: el servicio ya tiene Qdrant abierto
         self.dominio: dict | None = None
         self.motor: dict | None = None
         self.instalacion = None  # perfil efectivo (base + ajustes_perfil), sin calibración
@@ -340,8 +341,8 @@ def _indice(ctx: _Contexto) -> ChequeoDoctor:
             motivo = "su manifiesto (versión de payload o dimensión) no corresponde a esta versión"
         return _chequeo("indice", Estado.ERROR, f"incompatible: {motivo}", ["rag indexar"], estado="incompatible")
 
-    fisico = verificar_indice()
-    if fisico.bloqueante:
+    fisico = verificar_indice() if ctx.abrir_indice else None
+    if fisico is not None and fisico.bloqueante:
         return _chequeo("indice", Estado.ERROR, fisico.mensaje, fisico.acciones, estado="incompatible")
     if _corpus_cambio(indice, config_recuperacion(ctx.motor, perfil=perfil)):
         return _chequeo("indice", Estado.ERROR, "los documentos cambiaron desde la última indexación",
@@ -479,11 +480,15 @@ CHEQUEOS: tuple[tuple[str, Callable[[_Contexto], ChequeoDoctor]], ...] = (
 )
 
 
-def diagnosticar() -> ReporteDoctor:
-    """Todos los chequeos, en ``ORDEN``. Lanza ``ProyectoNoEncontrado`` fuera de un proyecto."""
+def diagnosticar(*, abrir_indice: bool = True) -> ReporteDoctor:
+    """Todos los chequeos, en ``ORDEN``. Lanza ``ProyectoNoEncontrado`` fuera de un proyecto.
+
+    Con ``abrir_indice=False`` el índice se juzga solo por sus manifiestos (sin
+    abrir Qdrant): lo usa ``/ready``, porque el servicio ya tiene la colección abierta.
+    """
     if not Path(rutas.ASISTENTE).is_file() and not Path(rutas.MOTOR).is_file():
         raise ProyectoNoEncontrado("no se encontró un proyecto RAG en esta carpeta")
-    ctx = _Contexto()
+    ctx = _Contexto(abrir_indice)
     chequeos = []
     for clave, funcion in CHEQUEOS:
         try:
@@ -493,6 +498,21 @@ def diagnosticar() -> ReporteDoctor:
                                      ["revisa los archivos de configuracion/ y vuelve a ejecutar 'rag doctor'"]))
     perfil = ctx.instalacion.perfil if ctx.instalacion is not None else None
     return ReporteDoctor(tuple(chequeos), perfil)
+
+
+def resumen_para_servicio(reporte: ReporteDoctor) -> dict:
+    """Lo que ``/ready`` publica: el estado de cada chequeo y, aparte, lo que
+    bloquea (con su acción) y lo opcional. Sin ``detalles``: es un endpoint público."""
+    def item(c: ChequeoDoctor) -> dict:
+        return {"clave": c.clave, "mensaje": c.mensaje, "acciones": list(c.acciones)}
+
+    return {
+        "listo": reporte.listo,
+        "perfil": reporte.perfil,
+        "chequeos": {c.clave: c.estado.value for c in reporte.chequeos},
+        "bloqueante": [item(c) for c in reporte.errores],
+        "avisos": [item(c) for c in reporte.avisos],
+    }
 
 
 def verificar_indice() -> ChequeoDoctor:
@@ -552,4 +572,4 @@ def verificar_indice() -> ChequeoDoctor:
 
 
 __all__ = ["CHEQUEOS", "ChequeoDoctor", "Estado", "ORDEN", "ProyectoNoEncontrado", "ReporteDoctor",
-           "diagnosticar", "verificar_indice"]
+           "diagnosticar", "resumen_para_servicio", "verificar_indice"]
