@@ -5,7 +5,7 @@ situaciones:
   saludo:
   - Hi there! I'm {nombre_asistente} and I love digging into {descripcion_dominio}. What would you like to know?
   - Great to see you! Ask me about {descripcion_dominio} and I'll bring you the exact quote.
-  - Hello! {nombre_asistente} here, ready to help with {descripcion_dominio}. Fire away!
+  - Hello! {nombre_asistente} here, ready to help with {descripcion_dominio}. Go ahead!
   - Curiosity is welcome here! Ask me anything about {descripcion_dominio}.
   - Hi! Let's find what you're looking for in {descripcion_dominio} together.
   agradecimiento:
@@ -94,10 +94,10 @@ situaciones:
   - See the quote and you'll know where it comes from!
   error_red:
   - Oops! The connection dropped. Try again.
-  - Uh oh! I could not connect. Check your connection and let's try again.
+  - Oh dear! I could not connect. Check your connection and let's try again.
   - The connection wandered off! Try again in a moment.
   - Oh no, no connection! Please try again.
-  - Whoops! I could not reach the service. Let's retry!
+  - Oh! I could not reach the service. Let's retry!
   error_limite:
   - We're going super fast! Wait a few seconds and we'll continue.
   - So many questions! Give me a few seconds.

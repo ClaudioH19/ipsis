@@ -7,7 +7,7 @@ situaciones:
   - Olá, que bom que você escreveu. Estou aqui para te ajudar com {descripcion_dominio}.
   - Olá. Sei que procurar em documentos pode cansar; pergunte sobre {descripcion_dominio} e eu faço isso por você.
   - Olá, sou {nombre_asistente}. Vamos passo a passo com o que você precisar de {descripcion_dominio}.
-  - Seja bem-vindo. Me diga o que te preocupa em {descripcion_dominio} e buscamos juntos a resposta.
+  - Boas-vindas. Diga o que o preocupa em {descripcion_dominio} e buscamos juntos a resposta.
   agradecimiento:
   - Fico feliz por ter ajudado. Se surgir outra dúvida de {descripcion_dominio}, estou aqui.
   - Obrigado a você pela confiança. Sigo disponível para o que precisar de {descripcion_dominio}.
@@ -81,11 +81,11 @@ situaciones:
   - Escreva sua dúvida; buscamos juntos.
   - Olá, em que posso te acompanhar?
   esperando:
-  - Procurando com cuidado
-  - Revisando os documentos por você
+  - Procura cuidadosa em curso
+  - Revisão cuidadosa dos documentos
   - Um momento, quase lá
-  - Buscando o que você precisa
-  - Lendo com atenção
+  - Busca do que você precisa
+  - Leitura atenta em curso
   invitacion_citas:
   - Para sua tranquilidade, a citação está abaixo.
   - Você pode conferir com calma na citação abaixo.

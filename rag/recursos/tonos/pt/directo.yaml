@@ -16,7 +16,7 @@ situaciones:
   - Entendido.
   - Certo. Próxima pergunta.
   despedida:
-  - Tchau.
+  - Adeus.
   - Pronto.
   - Até logo.
   - Fim.
@@ -82,11 +82,11 @@ situaciones:
   - Diga o que procura.
   - Pronto para responder.
   esperando:
-  - Buscando
+  - Em busca
   - Um momento
-  - Lendo
-  - Localizando a citação
-  - Revisando
+  - Em leitura
+  - Localização da citação
+  - Em revisão
   invitacion_citas:
   - Citação abaixo. Verifique.
   - A fonte está abaixo.

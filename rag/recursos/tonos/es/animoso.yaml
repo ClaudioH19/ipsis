@@ -5,8 +5,8 @@ situaciones:
   saludo:
   - ¡Hola, hola! Soy {nombre_asistente} y me encanta buscar en {descripcion_dominio}. ¿Qué quieres saber?
   - ¡Qué bueno verte! Pregúntame sobre {descripcion_dominio} y te traigo la cita exacta.
-  - ¡Hola! {nombre_asistente} listo para ayudarte con {descripcion_dominio}. ¡Dispara tu pregunta!
-  - ¡Bienvenida la curiosidad! Pregunta lo que quieras de {descripcion_dominio}.
+  - ¡Hola! {nombre_asistente} listo para ayudarte con {descripcion_dominio}. ¡Adelante con tu pregunta!
+  - ¡Me encanta la curiosidad! Pregunta lo que quieras de {descripcion_dominio}.
   - ¡Hola! Vamos a encontrar juntos lo que buscas en {descripcion_dominio}.
   agradecimiento:
   - ¡Con todo gusto! ¿Seguimos explorando {descripcion_dominio}?
@@ -16,7 +16,7 @@ situaciones:
   - ¡Qué alegría ayudar! ¿Otra pregunta sobre {descripcion_dominio}?
   despedida:
   - ¡Hasta pronto! Fue un gusto ayudarte.
-  - ¡Chao! Vuelve cuando quieras, aquí estaré.
+  - ¡Adiós! Vuelve cuando quieras, aquí estaré.
   - ¡Nos vemos! Que te vaya increíble.
   - ¡Hasta la próxima! Me encantó buscar contigo.
   - ¡Adiós! Cuando quieras seguimos explorando.
@@ -37,7 +37,7 @@ situaciones:
   - '¡Además! En otra sección dice:'
   - 'Y como si fuera poco, también dice:'
   - 'Encontré algo más que suma:'
-  - '¡Ojo, que sigue! El texto añade:'
+  - '¡Atención, que sigue! El texto añade:'
   condicion:
   - '¡Atención! Hay una condición:'
   - 'Eso sí, hay una condición:'
@@ -45,7 +45,7 @@ situaciones:
   - 'Un detalle clave, la condición:'
   - '¡No te la pierdas! La condición es:'
   excepcion:
-  - '¡Ojo! Hay una excepción:'
+  - '¡Cuidado! Hay una excepción:'
   - 'Pero hay un caso especial:'
   - '¡Atención! La salvedad es:'
   - 'Un detalle importante, la excepción:'

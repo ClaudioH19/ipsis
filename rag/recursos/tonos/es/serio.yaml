@@ -19,7 +19,7 @@ situaciones:
   - Hasta pronto.
   - Fin de la consulta.
   - Quedo disponible.
-  - Buen día.
+  - Hasta otra consulta.
   capacidad:
   - Busco en {descripcion_dominio} y muestro el texto literal con su fuente.
   - Soy {nombre_asistente}. No redacto respuestas; cito {descripcion_dominio}.

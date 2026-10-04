@@ -220,11 +220,28 @@ def tonos_disponibles(idioma: str) -> list[str]:
 
 
 @functools.lru_cache(maxsize=None)
+def _reglas(idioma: str) -> dict:
+    recurso = _raiz().joinpath(carpeta_idioma(idioma), "_reglas.yaml")
+    return yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
+
+
 def prohibidas(idioma: str) -> tuple[str, ...]:
     """Expresiones que ningún tono puede usar (insultos, culpar al usuario…)."""
-    recurso = _raiz().joinpath(carpeta_idioma(idioma), "_reglas.yaml")
-    datos = yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
-    return tuple(datos.get("prohibidas") or ())
+    return tuple(_reglas(idioma).get("prohibidas") or ())
+
+
+def regionalismos_en(situaciones: dict[str, list[str]], idioma: str) -> list[str]:
+    """Regionalismos, formas con género y saludos según la hora encontrados en
+    ``situaciones``. Los tonos incluidos deben ser neutros; las sobrescrituras de
+    un proyecto no se revisan con esta lista."""
+    hallados = []
+    for situacion, textos in situaciones.items():
+        for i, texto in enumerate(textos, start=1):
+            minusculas = _campos(texto)[0].casefold()
+            for expresion in _reglas(idioma).get("regionalismos") or ():
+                if re.search(rf"(?<!\w){re.escape(expresion.casefold())}(?!\w)", minusculas):
+                    hallados.append(f"{situacion}[{i}]: {expresion!r}")
+    return hallados
 
 
 @functools.lru_cache(maxsize=None)
@@ -302,5 +319,5 @@ def cargar_tono(idioma: str, tono: str = TONO_POR_DEFECTO, *, proyecto: str | Pa
 __all__ = [
     "LARGO_MAXIMO", "MINIMO_VARIANTES", "PaqueteTono", "SITUACIONES", "Situacion", "TONOS", "TONO_POR_DEFECTO",
     "TonoInvalido", "cargar_tono", "carpeta_idioma", "errores_plantilla", "errores_tono", "extraer_legado",
-    "prohibidas", "tonos_disponibles",
+    "prohibidas", "regionalismos_en", "tonos_disponibles",
 ]

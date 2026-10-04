@@ -7,7 +7,7 @@ situaciones:
   - Olá! Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do documento. O que você precisa saber?
   - 'Olá! Pergunte o que precisar sobre {descripcion_dominio}: busco a resposta no documento e mostro de onde a tirei.'
   - Olá! Aqui é {nombre_asistente}. Conte o que você procura em {descripcion_dominio} e eu mostro o que diz o texto.
-  - Oi, sou {nombre_asistente}. O que você gostaria de consultar sobre {descripcion_dominio}?
+  - Olá, sou {nombre_asistente}. O que você gostaria de consultar sobre {descripcion_dominio}?
   - Que bom te ver! Pergunte o que quiser sobre {descripcion_dominio} e eu mostro a citação exata.
   agradecimiento:
   - De nada. Se tiver outra pergunta sobre {descripcion_dominio}, estou aqui.
@@ -19,8 +19,8 @@ situaciones:
   - Até logo.
   - Até mais. Volte quando precisar consultar o documento.
   - Tudo de bom! Estarei aqui quando precisar revisar os documentos.
-  - Até breve. Quando quiser, seguimos consultando.
-  - Tchau, e obrigado por perguntar.
+  - Até breve. Quando quiser, continuamos a consulta.
+  - Adeus, e obrigado por perguntar.
   capacidad:
   - Sou {nombre_asistente}. Respondo perguntas sobre {descripcion_dominio} citando o texto exato do documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.
   - Busco em {descripcion_dominio} e devolvo texto literal com a fonte.
@@ -82,11 +82,11 @@ situaciones:
   - O que você gostaria de saber? Respondo citando o documento.
   - Olá! Escreva sua pergunta e eu busco a resposta no texto.
   esperando:
-  - Buscando no documento
-  - Revisando os documentos
-  - Buscando a citação exata
-  - Um momento, estou lendo
-  - Buscando a resposta no texto
+  - Consulta do documento em curso
+  - Revisão dos documentos em curso
+  - Busca da citação exata
+  - Um momento, leitura em curso
+  - Procura da resposta no texto
   invitacion_citas:
   - Você pode conferir na citação abaixo.
   - O texto original está abaixo para você verificar.

@@ -79,6 +79,20 @@ Las comprueba un linter; las mismas reglas aplican a tus sobrescrituras:
   (`rag/recursos/tonos/<idioma>/_reglas.yaml`): insultos, culpar al
   usuario, condescendencia.
 
+## Neutralidad de los tonos incluidos
+
+Los tonos que trae el paquete son neutros:
+- **Sin regionalismos:** nada de «pega», «chao», «e aí», «no worries».
+- **Sin formas con género para la persona:** «Te doy la bienvenida» en vez
+  de «Bienvenido»; nada de «o senhor».
+- **Sin saludos que dependan de la hora:** nada de «Buenos días».
+- **En portugués,** formas válidas en Brasil y en Portugal: sustantivos en
+  vez de gerundios («Busca em andamento»).
+
+La lista de cada idioma está en `_reglas.yaml` (`regionalismos`) y una
+prueba la hace cumplir. Las sobrescrituras de un proyecto **sí** pueden usar
+el habla local de su público.
+
 ## Revisión humana de un tono nuevo
 
 El linter no juzga el sentido. Antes de publicar un tono, una persona
