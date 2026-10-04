@@ -1,6 +1,8 @@
 """Casos de uso del proyecto: configurar el asistente."""
 from __future__ import annotations
 
+import os
+from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
@@ -45,11 +47,14 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
             )
 
     ruta_p.parent.mkdir(parents=True, exist_ok=True)
-    ruta_p.write_text(
+    # Temporal + os.replace: un fallo a mitad nunca deja asistente.yaml cortado.
+    temporal = ruta_p.with_name(ruta_p.name + ".tmp")
+    temporal.write_text(
         _encabezado_comentarios(ruta_p)
         + yaml.safe_dump(nuevo, allow_unicode=True, sort_keys=False),
         encoding="utf-8",
     )
+    os.replace(temporal, ruta_p)
     return nuevo
 
 
@@ -184,3 +189,158 @@ def interfaz_del_idioma(idioma: str) -> dict:
     from rag.lenguaje.paquete import cargar_paquete
 
     return cargar_paquete(idioma, proyecto=Path.cwd()).interfaz
+
+
+# ---------------------------------------------------------------------------
+# rag perfil mostrar | cambiar
+# ---------------------------------------------------------------------------
+class PerfilInvalido(ValueError):
+    """El perfil pedido no es instalable."""
+
+
+@dataclass(frozen=True)
+class EstadoIndice:
+    """``sin_indice``, ``compatible`` o ``incompatible`` para un perfil, según
+    los manifiestos del índice (lo que realmente se construyó)."""
+
+    estado: str
+    modelo_requerido: str
+    modelo_indice: str | None = None  # con qué modelo denso se construyó el índice encontrado
+    coleccion: str | None = None
+    hash_corpus: str | None = None
+
+
+@dataclass(frozen=True)
+class EstadoCalibracionPerfil:
+    """``sin_calibracion``, ``vigente``, ``obsoleta`` (procedencia distinta) o
+    ``no_habilitada`` (guardada solo para auditoría). Usa la misma regla que el motor."""
+
+    estado: str
+    motivo: str | None = None
+
+
+@dataclass(frozen=True)
+class ResumenPerfil:
+    perfil: str
+    descripcion: str
+    presupuesto_p95_ms: int
+    modelos: dict
+    indice: EstadoIndice
+    calibracion: EstadoCalibracionPerfil
+
+
+@dataclass(frozen=True)
+class CambioPerfil:
+    anterior: str
+    nuevo: str
+    cambio_real: bool
+    indice: EstadoIndice
+    calibracion: EstadoCalibracionPerfil
+
+    @property
+    def requiere_reindexar(self) -> bool:
+        return self.cambio_real and self.indice.estado == "incompatible"
+
+
+def validar_perfil_instalable(nombre: str) -> str:
+    from rag.configuracion.perfiles import PERFILES_INSTALABLES
+
+    disponibles = ", ".join(PERFILES_INSTALABLES)
+    if nombre in PERFILES_INSTALABLES:
+        return nombre
+    if nombre == "bm25":
+        raise PerfilInvalido("bm25 es un perfil de diagnóstico de 'rag benchmark', no un perfil instalable. "
+                             f"Perfiles disponibles: {disponibles}")
+    raise PerfilInvalido(f"perfil desconocido {nombre!r}. Perfiles disponibles: {disponibles}")
+
+
+def estado_indice(perfil: str) -> EstadoIndice:
+    """Si el índice del proyecto sirve para ``perfil``, mirando los manifiestos.
+
+    El perfil abriría la colección de su modelo denso. Si su manifiesto existe
+    y es compatible (modelo, dimensión y versión del payload), sirve. Si no,
+    pero hay un índice del proyecto construido con otro modelo, es
+    incompatible. Si no hay ninguno, no hay índice todavía.
+    """
+    import json
+
+    from rag.configuracion import rutas
+    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
+    from rag.indice.manifiesto import ManifiestoIndice, es_compatible, ruta_manifiesto
+    from rag.indice.qdrant import nombre_coleccion_versionada
+    from rag.modelos.catalogo import obtener
+
+    cfg_rec = config_recuperacion(cargar_proyecto(), perfil=perfil)
+    modelo = cfg_rec["modelo"]
+    base = cfg_rec["coleccion_base"]
+    nombre = nombre_coleccion_versionada(base, modelo, cfg_rec["version_coleccion"])
+    propio = ruta_manifiesto(nombre)
+    if propio.is_file():
+        manifiesto = ManifiestoIndice.model_validate(json.loads(propio.read_text(encoding="utf-8")))
+        compatible = es_compatible(manifiesto, modelo, dimension=obtener(modelo).dimension)
+        return EstadoIndice("compatible" if compatible else "incompatible", modelo, manifiesto.modelo_denso,
+                            nombre, manifiesto.hash_corpus)
+    otros = []
+    for ruta in sorted(Path(rutas.INDICE).glob("*.manifiesto.json")):
+        manifiesto = ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
+        if manifiesto.coleccion.startswith(base + "_"):
+            otros.append(manifiesto)
+    if not otros:
+        return EstadoIndice("sin_indice", modelo)
+    ultimo = max(otros, key=lambda m: m.fecha)
+    return EstadoIndice("incompatible", modelo, ultimo.modelo_denso, ultimo.coleccion, ultimo.hash_corpus)
+
+
+def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibracionPerfil:
+    """Vigencia de ``configuracion/calibracion.yaml`` con la regla del motor
+    (``motivo_no_aplicable``): perfil, modelos y corpus del índice compatible."""
+    from rag.configuracion import rutas
+    from rag.configuracion.calibracion import EstadoCalibracion, leer_calibracion, motivo_no_aplicable
+
+    archivo = leer_calibracion(rutas.CALIBRACION)
+    if archivo is None:
+        return EstadoCalibracionPerfil("sin_calibracion")
+    hash_corpus = indice.hash_corpus if indice.estado == "compatible" else None
+    motivo = motivo_no_aplicable(archivo, perfil=perfil_instalacion.perfil,
+                                 modelos=perfil_instalacion.modelos.model_dump(), hash_corpus=hash_corpus)
+    if motivo is None:
+        return EstadoCalibracionPerfil("vigente")
+    if archivo.estado != EstadoCalibracion.CALIBRADO:
+        return EstadoCalibracionPerfil("no_habilitada", motivo)
+    return EstadoCalibracionPerfil("obsoleta", motivo)
+
+
+def _perfil_instalacion(nombre: str):
+    from rag.configuracion.carga import cargar_proyecto
+    from rag.configuracion.perfiles import perfil_efectivo
+
+    return perfil_efectivo(nombre, cargar_proyecto().get("ajustes_perfil"))
+
+
+def resumen_perfil() -> ResumenPerfil:
+    """Perfil activo, sus modelos y presupuesto, y si el índice y la calibración le sirven."""
+    nombre = cargar_dominio().get("perfil", "light")
+    instalacion = _perfil_instalacion(nombre)
+    indice = estado_indice(nombre)
+    return ResumenPerfil(
+        perfil=nombre, descripcion=instalacion.descripcion, presupuesto_p95_ms=instalacion.presupuesto_p95_ms,
+        modelos=instalacion.modelos.model_dump(), indice=indice,
+        calibracion=estado_calibracion(instalacion, indice),
+    )
+
+
+def cambiar_perfil(destino: str) -> CambioPerfil:
+    """Cambia ``asistente.yaml::perfil`` y dice qué consecuencias tiene.
+
+    No descarga modelos, no reindexa, no calibra ni borra nada: el índice y
+    ``calibracion.yaml`` quedan como estaban (el motor ignora una calibración
+    de otra procedencia). Los ``ajustes_perfil`` del proyecto se conservan y se
+    validan contra el perfil destino antes de escribir.
+    """
+    destino = validar_perfil_instalable(destino)
+    anterior = cargar_dominio().get("perfil", "light")
+    instalacion = _perfil_instalacion(destino)  # valida los ajustes del proyecto antes de escribir
+    if anterior != destino:
+        actualizar_dominio({"perfil": destino})
+    indice = estado_indice(destino)
+    return CambioPerfil(anterior, destino, anterior != destino, indice, estado_calibracion(instalacion, indice))

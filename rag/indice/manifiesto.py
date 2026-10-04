@@ -69,9 +69,12 @@ def cargar_manifiesto(coleccion: str, directorio: str = rutas.INDICE) -> Manifie
     return ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
 
 
-def es_compatible(manifiesto: ManifiestoIndice, modelo_denso: str, stemmer: str | None = None) -> bool:
-    """El índice sirve para este modelo denso (y stemmer, si se indica)."""
+def es_compatible(manifiesto: ManifiestoIndice, modelo_denso: str, stemmer: str | None = None,
+                  dimension: int | None = None) -> bool:
+    """El índice sirve para este modelo denso (y stemmer y dimensión, si se indican)."""
     if manifiesto.version_payload != SCHEMA_VERSION or manifiesto.modelo_denso != modelo_denso:
+        return False
+    if dimension is not None and manifiesto.dimension != dimension:
         return False
     return stemmer is None or manifiesto.stemmer == stemmer
 
