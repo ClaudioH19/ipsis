@@ -65,7 +65,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P10.2 | ✅ | 2026-10-03 | 566 (suite completa) | Auditoría: acuerdo nunca se calculaba (lexico.acuerdo sin llamadas; su condición en light era inerte); se retira de cascada_v1 y de los documentos, sin cambio de comportamiento, y queda como candidata para P10.4. s_lex es señal interna de selección y no se agrega. regla_cascada (pura) la comparten política y calibración; no regresión: re-decidir con los umbrales del perfil reproduce cada estado (sintético y 180 casos del banco universal). τ_oov se separa en oov_dominio y oov_ok (0,6 ambos; un oov anterior vale para los dos; corregido que un oov en ajustes_perfil quedaba ignorado). Línea base universal sin cambios. calibracion.py: calibrar(banco, observaciones, umbrales_perfil, alfa, confianza) con exigir_calibrable; búsqueda conjunta (foco, oov_ok) × barrido de ok sobre valores observados en dev; elige la cobertura directa máxima con cota CP ≤ α y verifica la combinación con la política completa; test se reporta aparte. Estados calibrado/muestra_insuficiente/sin_umbral_seguro (los dos últimos mantienen los umbrales del perfil). escribir_calibracion/cargar_calibracion; configuracion/calibracion.py valida la procedencia (perfil, modelos, hash_corpus del índice) y construir_motor solo aplica estado calibrado. Se retiran calibrar_umbral y CalibracionDev. Análisis del banco universal y hard negatives inseparables en Hallazgos. |
 | P10.3 | ✅ | 2026-10-03 | 576 (suite completa, incluye la lenta de medium) | rag calibrar [--alfa 0.05] [--aplicar]: CLI fina → calibrar_proyecto (aplicacion/evaluacion.py) → calibrar (P10.2, sin cambios). Valida alfa en (0,1); hash_corpus del manifiesto del índice activo (sin índice: «rag indexar»); golden vigente y calibrable (corpus cambiado: «rag golden validar»; uso regresion: rechazado); evalúa con evaluar_backend_activo (inyectable). Sin --aplicar no escribe; con --aplicar escribe calibracion.yaml en cualquier estado, solo «calibrado» se habilita. Salidas: CALIBRADO 0, MUESTRA_INSUFICIENTE 0, SIN_UMBRAL_SEGURO 1, errores 1. 9 pruebas de CLI con motor falso (tres estados, procedencia del índice, errores) y 1 lenta: medium sobre el banco v1.1.0 importado da muestra_insuficiente con el hash del índice real. Guía golden.md con la sección Calibrar. Hallazgos (desempate y estratificación del split) en Hallazgos. |
 | P10.4 | ✅ | 2026-10-03 | 586 (suite completa) + benchmark real bm25/light/medium/heavy | rag benchmark --banco M [--banco…] --perfiles bm25,light,medium,heavy [--experimentos]: proyecto temporal por perfil y banco (idioma del manifiesto), evaluar_backend_activo con motor calentado, métricas de reporte_cobertura, p50/p95 por consulta y por etapa, presupuesto, modelos (parámetros y ONNX en disco, no RAM) e indexado aparte. Escribe golden/reportes/benchmark-perfiles.{json,md} y un artefacto por perfil y banco para rag comparar (etiquetado por perfil). Salida ≠ 0 si un perfil excede el presupuesto o, con un banco de evaluación, da falsos ok; las variantes no cortan. Se corrigen el perfil bm25 (era light: ahora recuperacion_modo dispersa, modo dispersa en buscar y en el retriever, seleccionable para diagnóstico pero no en rag init), el idioma en el manifiesto del banco y la limpieza en Windows. Experimentos: medium τ_ok 0,85 → POSPONER (falsos ok 3→1, misma cobertura); acuerdo → DESCARTAR (sin efecto, +4,6 ms p95). Tabla, hallazgos y decisiones en Hallazgos. |
-| P10.5 | ⬜ | | | |
+| P10.5 | ✅ | 2026-10-03 | 586 (suite completa; sin el código descartado) | texttiling_v1 implementado temporalmente en ingesta/chunking.py (párrafos por sección; coseno TF-IDF entre ventanas de hasta 2 párrafos; corte si sim < media − desv/2 del documento o al superar 256 palabras; sin cruzar secciones ni solape) y comparado con CH-F256 (actual) y CH-SEC (control) en bm25/light/medium/heavy sobre v1.1.0 y bm25/light/medium sobre el universal, con índices separados. DESCARTADO: da los mismos estados que CH-SEC (la cohesión solo agregó 1 frontera en 4 bancos) y frente a CH-F256 sube los falsos ok (v1.1.0 medium 0→1, universal light 1→2). Se borraron la estrategia, sus pruebas y el parámetro interno del benchmark; tablas, casos y decisión en Hallazgos. |
 | P11.1 | ⬜ | | | |
 | P11.2 | ⬜ | | | |
 | P11.3 | ⬜ | | | |
@@ -390,6 +390,74 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - De las 4 corridas reales, 2 fallaron antes de los arreglos y 1 más cuya
     salida perdí por un filtro de `grep`; no se reprodujo. La corrida de la
     tabla terminó con salida 0.
+- **P10.5 — experimento `texttiling_v1` → DESCARTADO** (el código se borró).
+  - **Implementación temporal:** una estrategia más en `ingesta/chunking.py`.
+    - Párrafos de una sección como unidades; las secciones siempre cortan.
+    - Coseno TF-IDF entre hasta 2 párrafos a cada lado de cada hueco
+      (`terminos`, `tfidf_vector`, `coseno`, IDF local del documento).
+    - Corta si `sim < media − desviación/2` de los huecos del documento (el
+      umbral de Hearst, sin mirar el golden), o si se superan 256 palabras.
+      Nunca parte un párrafo y no tiene solape.
+    - Una ventana simétrica sobresegmentaba las secciones homogéneas y se
+      descartó en las pruebas unitarias.
+  - **Comparación:** mismos modelos, umbrales por defecto, hardware y
+    preguntas, con un índice separado por variante. Se compara contra
+    `CH-F256` (actual: 256 palabras, solape 15%, cruza secciones) y `CH-SEC`
+    (control existente: un chunk por sección).
+  - **Chunks:**
+
+    | Banco | CH-F256 | CH-SEC | texttiling_v1 | Fronteras distintas tt/CH-SEC |
+    |---|---|---|---|---|
+    | v1.1.0 | 2 (media 152 palabras) | 9 (33) | 10 (30) | 1 |
+    | universal es/en/pt | 5 cada uno (≈51) | 14 cada uno (≈18) | 14 cada uno (≈18) | 0 |
+
+    Los documentos ya vienen bien seccionados: la cohesión solo agregó **una**
+    frontera en los cuatro bancos.
+  - **Calidad, banco v1.1.0** (criterio de P10.5; 8 respondibles, 17 no
+    respondibles):
+
+    | Chunker | Perfil | Directas | Exactas | Paráfrasis | Falsos ok | p95 ms | Indexado s |
+    |---|---|---|---|---|---|---|---|
+    | CH-F256 | bm25 / light | 2/8 | 2/5 | 0/3 | 0 | 120 / 113 | 7,6 / 3,7 |
+    | CH-F256 | medium / heavy | 4/8 | 4/5 | 0/3 | 0 / 1 | 864 / 2328 | 3,3 / 6,0 |
+    | CH-SEC | bm25 / light | 3/8 | 3/5 | 0/3 | 0 | 81 / 85 | 5,2 / 3,0 |
+    | CH-SEC | medium / heavy | 4/8 | 4/5 | 0/3 | **1** / 1 | 600 / 2586 | 3,3 / 4,9 |
+    | texttiling_v1 | bm25 / light | 3/8 | 3/5 | 0/3 | 0 | 83 / 86 | 4,5 / 3,6 |
+    | texttiling_v1 | medium / heavy | 4/8 | 4/5 | 0/3 | **1** / 1 | 655 / **4229** | 3,7 / 8,7 |
+
+  - **Banco universal** (90 casos; heavy no medido):
+
+    | Chunker | bm25 / light directas | medium directas | Falsos ok bm25 / light / medium | Trampas con falso ok medium |
+    |---|---|---|---|---|
+    | CH-F256 | 22/45 | 32/45 (paráfrasis 2/15) | 1 / 1 / 3 | 2/30 |
+    | CH-SEC = texttiling_v1 | 26/45 | 31/45 (paráfrasis 1/15) | 2 / 2 / 2 | 1/30 |
+
+  - **Casos que cambian** (texttiling_v1 frente a CH-F256; idénticos con
+    CH-SEC):
+    - Mejoras: `exacta_sabados` (v1.1.0, bm25/light); `es-exacta-002`,
+      `es-exacta-009`, `en-exacta-008` y `en-exacta-009` (universal,
+      bm25/light).
+    - Se quitan falsos ok: `es-trampa-009` (light) y `en-trampa-004` (medium).
+    - **Nuevos falsos ok:** `trampa_telefono` (v1.1.0, medium),
+      `es-trampa-004` y `en-trampa-004` (universal, bm25/light).
+    - Empeora: `es-parafrasis-004` (medium, ok → relacionado).
+  - **Decisión: DESCARTAR.**
+    1. La cohesión no aporta nada medible: texttiling_v1 da exactamente los
+       mismos estados que `CH-SEC`.
+    2. Frente al chunker actual aumenta los falsos ok: v1.1.0 medium de 0 a 1
+       y universal light de 1 a 2. Eso viola la regla de adopción aunque suba
+       la cobertura de light.
+    3. Heavy llegó a 4229 ms de p95 en esa corrida (probablemente ruido:
+       CH-SEC, con los mismos chunks, dio 2586).
+
+    Conclusión: las fronteras estructurales del documento ya hacen
+    innecesario TextTiling en este producto. Se borraron la estrategia, sus
+    pruebas y el parámetro interno del benchmark; queda solo este registro.
+  - **Hallazgo aparte (no se adopta):** cortar por sección (`CH-SEC`) sube las
+    exactas de light (+1 en v1.1.0, +4 en universal) pero también sus falsos
+    ok. El chunk más chico deja la oración tentadora sola, con más cobertura
+    léxica. Es un compromiso de granularidad para medir con el golden de un
+    cliente, no un cambio de default.
 - **Pendientes de P10.3, siguen abiertos.**
   - La calibración, ante empate, debería preferir el valor del perfil.
   - El split dev/test podría estratificar por exacta/paráfrasis.

@@ -100,7 +100,7 @@ reranker y el lector compensan una parte.
 | `rag golden plantilla` | Elige secciones **diversas** con MMR sobre vectores TF-IDF y llena la columna `terminos_clave` para ayudar al cliente a escribir preguntas |
 | `rag golden importar` | Clasifica cada caso respondible en `exacta` (`s_cov ≥ 0,6` entre pregunta y evidencia) o `parafrasis` |
 | `rag benchmark` | Perfil de diagnóstico `bm25` (solo léxico) como línea base: muestra cuánto aportan el denso y los modelos |
-| Chunking (experimento) | `texttiling_v1`: corta donde cae la cohesión léxica (coseno TF-IDF entre bloques vecinos), sin cruzar secciones ni superar el máximo de tokens. Se adopta solo si mejora las métricas del banco |
+| Chunking (experimento, **descartado en P10.5**) | `texttiling_v1`: cortaba donde caía la cohesión léxica (coseno TF-IDF entre párrafos vecinos), sin cruzar secciones ni superar el máximo de tokens. Dio los mismos resultados que cortar por sección (`CH-SEC`) y más falsos ok que `CH-F256`; se borró el código (ver avance.md, P10.5) |
 
 ## 6. Multilenguaje: inventario de reglas atadas al español
 
