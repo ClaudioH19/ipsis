@@ -177,6 +177,10 @@
     opciones($("tono-activo"), d.tonos.map(function (t) { return t.tono; }), tono.activo);
     var actual = d.tonos.filter(function (t) { return t.tono === tono.activo; })[0];
     $("tono-descripcion").textContent = actual ? actual.descripcion : "";
+    // Textos propios no neutros: aviso, no error (se guardan igual).
+    var avisos = $("tono-avisos");
+    vaciar(avisos);
+    (d.avisos_tono || []).forEach(function (texto) { avisos.appendChild(elemento("li", texto)); });
     Array.prototype.forEach.call(document.getElementsByName("variedad"), function (r) {
       r.checked = r.value === tono.variedad;
     });

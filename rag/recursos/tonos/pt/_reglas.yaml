@@ -15,8 +15,8 @@ prohibidas:
 - obviamente
 - como eu já disse
 # Regionalismos (do Brasil ou de Portugal), formas com género e gerúndios: os
-# tons incluídos devem ser neutros (um teste exige). As substituições de um
-# projeto podem usá-los.
+# tons incluídos devem ser neutros (um teste exige). Nas substituições de um
+# projeto são um aviso de 'rag personalidad validar' e 'rag doctor', não um erro.
 regionalismos:
 - oi
 - tchau

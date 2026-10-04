@@ -59,7 +59,8 @@ def test_token_incorrecto_401_y_correcto_200(proyecto):
     assert c.get("/admin/personalidad").status_code == 401
     assert c.get("/admin/personalidad", headers=_auth("x" * 40)).status_code == 401
     datos = c.get("/admin/personalidad", headers=_auth()).json()
-    assert set(datos) == {"config", "tonos", "situaciones", "eventos", "avatares", "avatar"}
+    assert set(datos) == {"config", "tonos", "situaciones", "eventos", "avatares", "avatar", "avisos_tono"}
+    assert datos["avisos_tono"] == []
     assert len(datos["tonos"]) == 7 and datos["config"]["tono"]["activo"] == "cordial"
 
 

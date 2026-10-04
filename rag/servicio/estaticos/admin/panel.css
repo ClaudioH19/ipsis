@@ -1,6 +1,6 @@
-:root{--acento:#2563eb;--fondo:#f4f5f7;--superficie:#fff;--texto:#15181d;--suave:#5b6472;--borde:#e3e6ea;--error:#b42318;
+:root{--acento:#2563eb;--fondo:#f4f5f7;--superficie:#fff;--texto:#15181d;--suave:#5b6472;--borde:#e3e6ea;--error:#b42318;--aviso:#9a6700;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--texto);background:var(--fondo);}
-@media (prefers-color-scheme:dark){:root{--fondo:#12151b;--superficie:#1b1f27;--texto:#eceff4;--suave:#9aa4b2;--borde:#2b323d;--error:#ff8a80;}}
+@media (prefers-color-scheme:dark){:root{--fondo:#12151b;--superficie:#1b1f27;--texto:#eceff4;--suave:#9aa4b2;--borde:#2b323d;--error:#ff8a80;--aviso:#e0b055;}}
 *{box-sizing:border-box;}
 body{margin:0;}
 .cabecera{padding:16px 24px;background:var(--superficie);border-bottom:1px solid var(--borde);}
@@ -29,6 +29,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .estado{color:var(--suave);min-height:1.2em;}
 .error{color:var(--error);}
 .error ul{margin:6px 0;}
+.aviso{color:var(--aviso);font-size:13px;margin:6px 0;padding-left:18px;}
+.aviso:empty{display:none;}
 table.eventos{width:100%;border-collapse:collapse;font-size:14px;}
 table.eventos th,table.eventos td{border-bottom:1px solid var(--borde);padding:6px;text-align:left;}
 table.eventos select{max-width:220px;}

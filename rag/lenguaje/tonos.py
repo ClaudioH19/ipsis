@@ -231,8 +231,8 @@ def prohibidas(idioma: str) -> tuple[str, ...]:
 
 def regionalismos_en(situaciones: dict[str, list[str]], idioma: str) -> list[str]:
     """Regionalismos, formas con género y saludos según la hora encontrados en
-    ``situaciones``. Los tonos incluidos deben ser neutros; las sobrescrituras de
-    un proyecto no se revisan con esta lista."""
+    ``situaciones``. Los tonos incluidos deben ser neutros (lo exige una prueba);
+    en las sobrescrituras de un proyecto es un aviso (``avisos_neutralidad``)."""
     hallados = []
     for situacion, textos in situaciones.items():
         for i, texto in enumerate(textos, start=1):

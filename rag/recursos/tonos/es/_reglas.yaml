@@ -15,8 +15,8 @@ prohibidas:
 - obviamente
 - como ya te dije
 # Regionalismos, formas con género y saludos según la hora: los tonos incluidos
-# deben ser neutros (una prueba lo exige). Las sobrescrituras de un proyecto sí
-# pueden usarlos.
+# deben ser neutros (una prueba lo exige). En las sobrescrituras de un proyecto
+# son un aviso de 'rag personalidad validar' y 'rag doctor', no un error.
 regionalismos:
 - chao
 - tranqui
