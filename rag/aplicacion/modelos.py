@@ -75,19 +75,16 @@ class ResultadoVerificacion:
 
 def _perfil(perfil: str | None):
     """Perfil efectivo pedido (``--perfil``) o el activo del proyecto."""
-    from rag.aplicacion.proyecto import validar_perfil_instalable
+    from rag.aplicacion.proyecto import perfil_de_instalacion, validar_perfil_instalable
     from rag.configuracion import rutas
-    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
-    from rag.configuracion.perfiles import perfil_efectivo
+    from rag.configuracion.carga import cargar_dominio
 
-    hay_proyecto = Path(rutas.MOTOR).is_file()
     if perfil is None:
-        if not hay_proyecto:
+        if not Path(rutas.MOTOR).is_file():
             raise SinProyecto("no hay un proyecto en esta carpeta, así que no hay perfil activo")
         perfil = cargar_dominio().get("perfil", "light")
-    nombre = validar_perfil_instalable(perfil)
-    # Dentro de un proyecto, sus ajustes_perfil pueden cambiar modelos: se usa el mismo perfil que el motor.
-    return perfil_efectivo(nombre, cargar_proyecto().get("ajustes_perfil") if hay_proyecto else None)
+    # Dentro de un proyecto, sus ajustes_perfil pueden cambiar modelos: el mismo perfil que el motor.
+    return perfil_de_instalacion(validar_perfil_instalable(perfil))
 
 
 def _modelos(instalacion):

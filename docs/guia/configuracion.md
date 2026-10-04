@@ -152,6 +152,33 @@ rag modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
   - No registra el modelo en el catálogo ni en los perfiles: adoptarlo es
     otro paso.
 
+### Idioma
+
+`asistente.yaml::idioma` es un código ISO 639, por ejemplo `es`, `en` o
+`pt-br`. `es`, `en` y `pt` tienen paquete propio: stemmer, stopwords,
+números, fechas, conectores, mensajes e interfaz. Una variante regional
+(`pt-br`, `es-cl`) usa el paquete de su idioma.
+
+Otro código funciona con un respaldo:
+- solo las reglas universales (fechas numéricas, montos, artículos);
+- términos sin stem;
+- los mensajes y la interfaz de `en`, que se pueden traducir en
+  `configuracion/idioma.yaml`.
+
+`rag init` y `rag configurar idioma=` lo avisan, y `rag doctor` lo marca
+como aviso.
+
+### Documentos vigentes
+
+`documentos/catalogo.yaml` lista lo cargado. Una entrada con `vigente: false`
+no se indexa ni entra en el golden (hay que ejecutar `rag indexar` después de
+cambiarla).
+
+Si `rag cargar` recibe un archivo con el mismo nombre que uno ya cargado y
+otro contenido:
+- lo agrega como documento nuevo (`<nombre>-<hash>.<ext>`) y lo avisa;
+- los dos se indexan hasta que el anterior se marque `vigente: false`.
+
 ### Diagnóstico (`rag doctor`)
 
 `rag doctor` responde si el proyecto puede funcionar ahora y, si no, qué
@@ -178,8 +205,11 @@ proyecto, pide `rag init`.
   `tokenizer.json`, `config.json`). Para probar la inferencia, usa
   `rag modelos verificar`.
 - **Índice:** se compara su manifiesto con el perfil (modelo, dimensión,
-  payload) y con el stemmer del idioma. Luego se recalcula el hash del corpus
-  parseando y fragmentando, sin modelos. Si no hay índice ni documentos, es
+  payload) y con el stemmer del idioma. Para saber si el corpus cambió, primero
+  compara una huella de los bytes de los documentos vigentes, guardada en el
+  manifiesto: si coincide, no parsea nada. Si difiere, o el manifiesto es
+  anterior y no la tiene, recalcula el hash exacto parseando y fragmentando,
+  sin modelos. Si no hay índice ni documentos, es
   un aviso; si hay documentos sin indexar, el corpus cambió o el índice es
   incompatible, es un error y la acción es `rag indexar`.
 - **Calibración y golden son opcionales.**
@@ -190,7 +220,8 @@ proyecto, pide `rag init`.
     evaluar ni calibrar hasta actualizarlo (`rag golden validar`).
   - Un banco de regresión sirve para evaluar, no para calibrar.
 - **Idioma:**
-  - Un idioma sin paquete es un error, porque el motor no arranca sin uno.
+  - Un idioma sin paquete propio es un aviso: rige el respaldo (ver
+    «Idioma»).
   - Un `stemmer` que snowballstemmer no conoce también es un error.
   - `stemmer: null` es válido: los términos quedan sin stem.
 

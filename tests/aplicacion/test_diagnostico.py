@@ -72,14 +72,14 @@ def modificar_documento() -> None:
 
 
 def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus: str | None = None,
-            coleccion_qdrant: bool = True) -> str:
+            coleccion_qdrant: bool = True, con_hash_archivos: bool = False) -> str:
     """Lo que deja ``rag indexar``, sin modelos: colección vacía, estadísticas y manifiesto."""
     from qdrant_client.models import Distance, VectorParams
 
     from rag.configuracion.carga import cargar_proyecto, config_recuperacion
     from rag.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
     from rag.indice.qdrant import crear_cliente_qdrant, nombre_coleccion_versionada, ruta_estadisticas
-    from rag.ingesta.ingesta import huella_corpus
+    from rag.ingesta.ingesta import huella_archivos, huella_corpus
     from rag.modelos.catalogo import obtener
 
     cfg_rec = config_recuperacion(cargar_proyecto())
@@ -87,13 +87,15 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
     dimension = obtener(modelo).dimension
     if coleccion_qdrant:
         cliente = crear_cliente_qdrant(qdrant_path=cfg_rec["qdrant_path"], modo="local")
-        cliente.create_collection(nombre, vectors_config=VectorParams(size=dimension, distance=Distance.COSINE))
+        if not cliente.collection_exists(nombre):
+            cliente.create_collection(nombre, vectors_config=VectorParams(size=dimension, distance=Distance.COSINE))
         cliente.close()
     ruta_estadisticas(nombre).parent.mkdir(parents=True, exist_ok=True)
     ruta_estadisticas(nombre).write_text("{}", encoding="utf-8")
     huella = hash_corpus or huella_corpus("documentos", cfg_rec)
+    archivos = huella_archivos("documentos", cfg_rec) if con_hash_archivos else None
     guardar_manifiesto(ManifiestoIndice(coleccion=nombre, modelo_denso=modelo, dimension=dimension,
-                                        stemmer=stemmer, hash_corpus=huella, n_chunks=2))
+                                        stemmer=stemmer, hash_corpus=huella, n_chunks=2, hash_archivos=archivos))
     return huella
 
 
@@ -246,14 +248,16 @@ def test_idiomas_con_paquete(proyecto, codigo):
     assert r.chequeo("idioma").estado.value == "ok" and r.chequeo("stemmer").estado.value == "ok"
 
 
-def test_idioma_sin_paquete_es_error_porque_el_respaldo_no_existe(proyecto):
+def test_idioma_sin_paquete_es_aviso_y_funciona_sin_stemmer(proyecto):
     proyecto("light")
-    editar("configuracion/asistente.yaml", idioma="xx")
+    sano("light")
+    editar("configuracion/asistente.yaml", idioma="ru")
+    indexar(stemmer=None)  # reindexado con el idioma nuevo
     r = reporte()
     idioma = r.chequeo("idioma")
-    assert idioma.estado.value == "error" and "no hay paquete" in idioma.mensaje
-    assert idioma.acciones == ("rag configurar idioma=<en|es|pt>",)
-    assert r.chequeo("stemmer").estado.value == "no_evaluado"
+    assert idioma.estado.value == "aviso" and "reglas universales" in idioma.mensaje and idioma.datos["respaldo"]
+    assert r.chequeo("stemmer").estado.value == "ok" and "no configurado" in r.chequeo("stemmer").mensaje
+    assert r.listo
 
 
 def test_idioma_yaml_invalido_es_error(proyecto):
@@ -318,6 +322,21 @@ def test_corpus_cambiado_es_error(proyecto):
     modificar_documento()
     indice = reporte().chequeo("indice")
     assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and indice.acciones == ("rag indexar",)
+
+
+def test_con_huella_de_archivos_no_parsea_el_corpus_si_no_cambio(proyecto, monkeypatch):
+    proyecto("light")
+    cargar_manual()
+    indexar(con_hash_archivos=True)
+    llamadas = []
+    import rag.ingesta.ingesta as ingesta
+
+    original = ingesta.huella_corpus
+    monkeypatch.setattr(ingesta, "huella_corpus", lambda *a: llamadas.append(1) or original(*a))
+    assert reporte().chequeo("indice").estado.value == "ok" and llamadas == []
+    modificar_documento()
+    indice = reporte().chequeo("indice")
+    assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and llamadas == [1]
 
 
 def test_manifiesto_sin_coleccion_qdrant_es_error(proyecto):

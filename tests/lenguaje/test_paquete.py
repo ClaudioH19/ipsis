@@ -20,9 +20,28 @@ def test_el_paquete_espanol_esta_completo():
     assert paquete.interfaz["placeholder"]
 
 
-def test_codigo_inexistente_falla_con_los_disponibles():
-    with pytest.raises(ValueError, match="disponibles"):
-        cargar_paquete("xx")
+def test_idioma_sin_paquete_usa_el_respaldo_universal():
+    """Plan (lexico-y-multilenguaje.md): reglas universales, términos sin stem y mensajes de en."""
+    from rag.lenguaje.texto import terminos
+
+    ru, en = cargar_paquete("ru"), cargar_paquete("en")
+    assert ru.respaldo and not en.respaldo
+    assert ru.codigo == "ru" and ru.stemmer is None
+    assert ru.mensajes == en.mensajes and ru.interfaz == en.interfaz
+    assert ru.stopwords == [] and ru.meses == [] and ru.numeros == {}
+    assert terminos("Как часто меняют фильтр?", ru) == ["как", "часто", "меняют", "фильтр"]
+
+
+def test_variante_regional_usa_el_paquete_de_su_idioma():
+    pt_br = cargar_paquete("pt-br")
+    assert pt_br.codigo == "pt-br" and not pt_br.respaldo
+    assert pt_br.stemmer == cargar_paquete("pt").stemmer and pt_br.mensajes == cargar_paquete("pt").mensajes
+
+
+@pytest.mark.parametrize("codigo", ["", "ruso!", "ES", "x"])
+def test_codigo_con_forma_invalida_falla(codigo):
+    with pytest.raises(ValueError, match="código de idioma inválido"):
+        cargar_paquete(codigo)
 
 
 def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
@@ -35,7 +54,15 @@ def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
     assert paquete.mensajes.premisa_no_encontrada == cargar_paquete("es").mensajes.premisa_no_encontrada
 
 
-def test_init_rechaza_un_idioma_sin_paquete(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+def test_init_acepta_un_idioma_sin_paquete_y_avisa_el_respaldo(tmp_path: Path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--idioma", "xx"]) == 1
+    assert main(["init", "--idioma", "ru"]) == 0
+    assert "no hay un paquete para 'ru'" in capsys.readouterr().out
+    assert main(["configurar", "idioma=es"]) == 0
+    assert "Nota" not in capsys.readouterr().out
+
+
+def test_init_rechaza_un_codigo_de_idioma_invalido(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "--idioma", "ruso!"]) == 1
     assert not (tmp_path / "configuracion" / "asistente.yaml").exists()

@@ -17,6 +17,12 @@ Reglas de curación:
 
 - `dev` puede usarse para ajustar umbrales; `test` permanece cerrado hasta la
   comparación final.
+- La separación dev/test se hace al importar. Es 50/50 dentro de cada estrato:
+  - categoría interna (exacta, paráfrasis, sin respuesta…);
+  - más el subtipo (trampa del mismo tema).
+
+  Así, con bancos chicos, las exactas no quedan todas de un lado. Es
+  determinista: reimportar el mismo archivo da la misma separación.
 - Toda pregunta respondible incluye respuesta literal y evidencia con offsets.
 - Las preguntas usadas para descubrir o corregir un defecto no deben ser la
   única medición de ese comportamiento.
@@ -34,6 +40,12 @@ Requiere el índice (`rag indexar`) y el golden importado
 escalares** (`ok`, `oov_ok`, `foco`) usando solo `dev`. Busca la combinación
 que más responde directo cuya cota superior de riesgo (Clopper-Pearson al 95%)
 es ≤ `--alfa`; `test` solo verifica. No entrena ni modifica modelos.
+Entre combinaciones con la misma cobertura, prefiere:
+1. la de menos errores;
+2. la más cercana a los umbrales del perfil;
+3. recién después, la más estricta.
+
+Si `dev` no distingue dos valores de un umbral, ese umbral no se mueve.
 
 | Resultado | Qué significa | Salida |
 |---|---|---|

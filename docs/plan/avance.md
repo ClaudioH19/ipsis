@@ -528,7 +528,7 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
     requeridos del `ModeloSpec` (ONNX, `tokenizer.json`, `config.json`).
   - **Descarga sin red:** con `HF_HUB_OFFLINE=1`, `descargar` falla con
     `ErrorDescarga`, que dice qué hacer.
-  - **Defecto abierto (entorno de desarrollo):** el extra `[exportar]`
+  - **Defecto (resuelto en el checkpoint de P11.4):** el extra `[exportar]`
     (`optimum[onnxruntime]>=1.20`, `torch>=2.2`) no fija una combinación
     compatible. En el venv quedaron optimum 2.1.0 y transformers 5.17, y la
     exportación real falla con `ImportError: get_parameter_dtype`. En
@@ -567,8 +567,62 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - **Cambio de semántica:** antes, `doctor` daba 1 en un proyecto recién
     creado sin documentos. Ahora es un aviso y da 0, porque no hay nada que
     indexar.
-- **Pendientes de P10.3, siguen abiertos.**
-  - La calibración, ante empate, debería preferir el valor del perfil.
-  - El split dev/test podría estratificar por exacta/paráfrasis.
+- **Checkpoint P11.4 (tag `checkpoint-p11.4` en cda77f7): defectos resueltos y
+  optimizaciones.**
+  - **`[exportar]` resuelto.** El extra pasa a
+    `optimum-onnx[onnxruntime]>=0.1,<0.2` + `torch`. `optimum-onnx` es el
+    paquete que en optimum 2.x tiene `optimum.exporters.onnx` y fija
+    `transformers<4.58`.
+    - Se verificó en un venv aparte, sin tocar el de desarrollo. El extra
+      instaló optimum 2.1.0, optimum-onnx 0.1.0, transformers 4.57.6 y torch
+      2.14.1+cpu.
+    - `rag modelos exportar hf-internal-testing/tiny-random-BertModel --int8`
+      terminó en 57 s, con exit 0. Generó `model.onnx` (429 KB) y
+      `model_int8.onnx` (247 KB), más los archivos del tokenizador. Los dos
+      corren en onnxruntime y dan salida (1, 8, 32) finita.
+    - optimum avisa que la deduplicación de pesos necesita `accelerate`;
+      queda opcional.
+    - En el venv de desarrollo la combinación implicaría bajar
+      huggingface_hub 1.32 → 0.36 y tokenizers 0.23 → 0.22; ambas versiones
+      están dentro de los rangos de producción.
+  - **Respaldo de idioma (plan ≠ código, resuelto).** Un código ISO sin paquete
+    carga un `PaqueteIdioma` con `respaldo=True`: reglas universales, sin
+    stemmer ni listas propias, y los mensajes e interfaz de `en`.
+    - `init` y `configurar` lo aceptan con una nota; un código mal formado se
+      rechaza.
+    - `rag doctor` lo marca como aviso.
+  - **`vigente: false` no tenía efecto (defecto).** El catálogo lo ofrecía,
+    pero `parsear_corpus` indexaba todo. `entradas_vigentes()` lo filtra en
+    indexación, golden y doctor.
+    - Se corrigió también un emparejamiento frágil: los payloads se unían al
+      catálogo con `zip` por posición; ahora es por `doc_id`.
+  - **Corrección del hallazgo de P11.4.** `rag cargar` no ignora un archivo
+    homónimo con otro contenido: lo agrega como documento nuevo y los dos
+    quedan vigentes. Se mantuvo ese diseño (no pisa nada), pero ahora lo avisa
+    y explica cómo retirar el anterior.
+  - **P10.3, desempate:** entre combinaciones con la misma cobertura en dev,
+    la calibración prefiere menos errores, luego la más cercana al perfil
+    (menos umbrales movidos y menor distancia) y recién después la más
+    estricta. En el escenario de prueba (todos los `s_oov` en 0), `oov_ok`
+    quedaba en 1e-9 y ahora queda en 0,6, el valor del perfil.
+  - **P10.3, split:** se estratifica por categoría interna y subtipo, no solo
+    por el tipo público. Cambia la separación de un golden reimportado.
+  - **Optimización de `rag doctor`.** El manifiesto del índice guarda
+    `hash_archivos` (bytes de los vigentes y configuración de fragmentado).
+    Si coincide, doctor no parsea el corpus; si difiere o falta, recalcula el
+    `hash_corpus` exacto. El campo es opcional: los manifiestos anteriores
+    siguen cargando.
+  - **Fallo no reproducido.** Una corrida de la suite completa falló en
+    `test_benchmark_real_light_y_medium_sobre_el_mismo_banco` con
+    `FileNotFoundError` (no existía `reportes/benchmark-light-universal_es.json`).
+    Esa corrida coincidió con ediciones de `paquete.py` y `proyecto.py`, y el
+    benchmark lanza subprocesos `rag init` que importan esos módulos. Aislada
+    pasó (50 s), y la suite completa siguiente, sin ediciones, dio 657
+    passed. Se guardó la evidencia; si vuelve a aparecer sin ediciones
+    concurrentes, se investiga.
+  - **Simplificación:** `perfil_de_instalacion()` reemplaza dos versiones del
+    mismo cálculo (en `aplicacion/modelos` y `aplicacion/proyecto`). No lee
+    la calibración, así que un `calibracion.yaml` roto ya no rompe
+    `rag modelos` ni `rag perfil`.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

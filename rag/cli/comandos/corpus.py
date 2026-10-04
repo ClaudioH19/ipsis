@@ -39,6 +39,10 @@ class ComandoCargar(Comando):
             print(f"  + {d.archivo}: doc_id={d.doc_id!r}, título={d.doc_titulo!r}")
             for a in d.advertencias:
                 print(f"      [!] {a}")
+            if d.homonimo_de:
+                print(f"      [!] ya había un documento con ese nombre ({d.homonimo_de!r}) y otro contenido: este se "
+                      "agregó aparte y ambos se indexan. Si lo reemplaza, marca 'vigente: false' en la entrada "
+                      f"de {d.homonimo_de!r} en documentos/catalogo.yaml y ejecuta 'rag indexar'.")
         n_nuevos = sum(1 for d in resultado if not d.ya_existia)
         print(f"{n_nuevos} documento(s) nuevo(s) agregado(s) al catálogo (documentos/catalogo.yaml).")
         print("Siguiente paso: 'rag indexar'.")

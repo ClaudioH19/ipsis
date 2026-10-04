@@ -3,6 +3,11 @@
 Cada idioma soportado tiene un YAML en ``rag/recursos/idiomas/<código>.yaml``.
 Un proyecto puede sobrescribir cualquier clave en ``configuracion/idioma.yaml``;
 la fusión es profunda para objetos y reemplaza listas completas.
+
+Una variante regional (``pt-br``) usa el paquete de su idioma. Un idioma sin
+paquete funciona con un respaldo: solo las reglas universales
+(sin stopwords, números, meses ni conectores propios), términos sin stem y
+los mensajes e interfaz de ``en``. ``rag doctor`` lo advierte.
 """
 from __future__ import annotations
 
@@ -56,6 +61,10 @@ class GoldenInstrucciones(_Estricto):
     conversacionales: list[str] = Field(min_length=3, max_length=3)
 
 
+IDIOMA_RESPALDO = "en"
+_CODIGO = r"^[a-z]{2,3}(-[a-z0-9]{2,8})*$"  # ISO 639 con subetiquetas opcionales (pt-br, zh-hant)
+
+
 class PaqueteIdioma(_Estricto):
     codigo: str = Field(min_length=2)
     nombre: str = Field(min_length=1)
@@ -79,6 +88,7 @@ class PaqueteIdioma(_Estricto):
     # (en español: «de el» -> «del»).
     contracciones: dict[str, str] = Field(default_factory=dict)
     golden_instrucciones: GoldenInstrucciones | None = None
+    respaldo: bool = False  # True: no hay paquete para este idioma (ver docstring del módulo)
 
 
 def _carpeta_paquetes():
@@ -104,13 +114,26 @@ def _fusionar(base: dict[str, Any], cambios: dict[str, Any]) -> dict[str, Any]:
     return salida
 
 
+def validar_codigo_idioma(codigo: str) -> str:
+    """El código tiene forma de idioma (``es``, ``pt-br``); no exige que haya paquete."""
+    import re
+
+    if not re.fullmatch(_CODIGO, codigo or ""):
+        raise ValueError(f"código de idioma inválido {codigo!r}: usa un código ISO 639 como 'es', 'en' o 'pt-br'")
+    return codigo
+
+
 @functools.lru_cache(maxsize=None)
 def _paquete_base(codigo: str) -> dict[str, Any]:
-    disponibles = idiomas_disponibles()
-    if codigo not in disponibles:
-        raise ValueError(
-            f"no hay paquete de idioma {codigo!r}; disponibles: {', '.join(disponibles)}"
-        )
+    if codigo not in idiomas_disponibles():
+        validar_codigo_idioma(codigo)
+        base = codigo.split("-")[0]
+        if base in idiomas_disponibles():  # variante regional (pt-br): el paquete de su idioma
+            return {**_paquete_base(base), "codigo": codigo}
+        respaldo = _paquete_base(IDIOMA_RESPALDO)
+        return {"codigo": codigo, "nombre": codigo, "stemmer": None, "respaldo": True,
+                **{clave: respaldo[clave] for clave in ("mensajes", "interfaz", "golden_instrucciones")
+                   if clave in respaldo}}
     texto = _carpeta_paquetes().joinpath(f"{codigo}.yaml").read_text(encoding="utf-8")
     return yaml.safe_load(texto) or {}
 
@@ -125,4 +148,4 @@ def cargar_paquete(codigo: str, proyecto: str | Path | None = None) -> PaqueteId
     return PaqueteIdioma.model_validate(datos)
 
 
-__all__ = ["PaqueteIdioma", "cargar_paquete", "idiomas_disponibles"]
+__all__ = ["IDIOMA_RESPALDO", "PaqueteIdioma", "cargar_paquete", "idiomas_disponibles", "validar_codigo_idioma"]
