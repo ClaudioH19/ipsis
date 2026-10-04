@@ -6,6 +6,8 @@ La integración tiene dos partes:
 - el **widget**, un solo archivo `widget.js` sin dependencias que el
   servicio publica en `/widget.js`.
 
+![El widget responde citando el manual y marca «6 meses» dentro de la cita](../assets/widget-respuesta.png)
+
 ## Insertarlo
 
 La forma más simple: pide el código ya armado y pégalo antes de `</body>`.

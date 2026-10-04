@@ -54,6 +54,10 @@ queda en git, en la etiqueta `plan-v3`; las decisiones, en `docs/decisiones/` y 
   idioma del proyecto) y `/ready` con el diagnóstico del proyecto.
 - CI: pruebas en Linux y Windows, navegador, build reproducible del motor del
   avatar, wheel limpio e imagen sin red.
+- `rag --version`.
+- Documentación: [arquitectura](docs/arquitectura.md) con diagramas, guía de
+  despliegue, fichas metodológicas, capturas, `CONTRIBUTING.md`,
+  `SECURITY.md`, código de conducta y plantillas de issues y pull requests.
 
 ### Cambiado
 
@@ -101,6 +105,11 @@ queda en git, en la etiqueta `plan-v3`; las decisiones, en `docs/decisiones/` y 
   espacio (por ejemplo, «1.5»).
 - Los pasajes se indexaban sin el prefijo `passage: ` que exige e5.
 - Los archivos de despliegue generados en Windows salían con CRLF.
+- `/ready` calculaba el diagnóstico en cada consulta vencida (segundos en
+  frío): ahora se calcula al arrancar y se refresca en segundo plano.
+- La cabecera de cada cita apretaba la posición en una columna angosta y
+  repetía el título cuando la sección se llama igual que el documento.
+- El enlace al código fuente apuntaba a un repositorio que no existe.
 
 ## [0.7.0]
 

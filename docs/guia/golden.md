@@ -5,15 +5,50 @@ y calibra el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
 se mezcla con el banco sintético de las pruebas (`tests/datos/banco/`).
 
 El banco versionado queda en `golden/banco/` (`manifiesto.json` más los casos
-en JSONL) con el esquema de `rag.evaluacion.banco`. Los comandos
-`rag golden plantilla` e `rag golden importar` (plan V3, fase P9) generan y
-cargan ese banco a partir de un CSV simple. Con 30 a 60 preguntas revisadas
+en JSONL). Se arma a partir de un CSV simple que completa una persona. Con 30 a 60 preguntas revisadas
 por una persona conocedora del corpus sirve para ajustar y comparar perfiles
 (para certificar un riesgo hace falta más: ver «Calibrar»). Debe cubrir las seis
 categorías (`exacta`, `parafrasis`, `sin_respuesta`, `premisa_falsa`,
 `ambigua`, `conversacional`) y separar casos `dev` y `test` antes de calibrar.
 
-Reglas de curación:
+## Paso a paso
+
+```bash
+rag golden plantilla            # golden/golden.csv con preguntas sugeridas desde tus documentos
+# completa el CSV en Excel, LibreOffice o un editor
+rag golden importar golden/golden.csv
+rag golden validar              # ¿sigue coincidiendo con el corpus?
+rag evaluar                     # cobertura, falsos «ok» y latencia del perfil
+rag calibrar                    # ver «Calibrar»
+```
+
+1. **Plantilla.** `rag golden plantilla [--n N]` elige secciones diversas de
+   tus documentos (TF-IDF y MMR, sin modelos) y escribe filas con
+   `instrucciones`, `fragmento_sugerido` y `terminos_clave` para ayudarte. Un
+   ~35% son trampas: preguntas del **mismo tema** cuyo dato no está. No pisa
+   un `golden.csv` existente sin `--force`. Junto al CSV queda un LEEME en el
+   idioma del proyecto.
+2. **Completar.** Columnas:
+
+   | Columna | Contenido |
+   |---|---|
+   | `pregunta` | Como la escribiría un usuario real |
+   | `tipo` | `respondible`, `sin_respuesta`, `premisa_falsa`, `ambigua` o `conversacional` |
+   | `respuesta_literal` | Solo si es respondible: el dato mínimo, copiado tal cual del documento |
+   | `documento` | El documento donde está (nombre o id) |
+   | `subtipo`, `par` | `trampa_mismo_tema` y el `id` de la respondible del mismo tema |
+   | `id`, `notas` | Opcionales |
+
+   Las columnas de ayuda se ignoran al importar.
+3. **Importar.** `rag golden importar` acepta el CSV (coma o punto y coma,
+   con o sin BOM), un `.jsonl` o un SQuAD 2.0. Ubica cada respuesta literal en
+   el documento y guarda sus offsets; clasifica las respondibles en `exacta` o
+   `parafrasis`. Si hay errores, los lista todos con su fila y no escribe nada.
+   Avisa si hay menos de 30 filas o menos de un 30% sin respuesta.
+4. **Exportar.** `rag golden exportar --formato squad2|csv` para usarlo en
+   otras herramientas.
+
+## Reglas de curación
 
 - `dev` puede usarse para ajustar umbrales; `test` permanece cerrado hasta la
   comparación final.

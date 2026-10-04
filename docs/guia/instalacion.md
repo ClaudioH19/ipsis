@@ -1,8 +1,8 @@
 # Instalación
 
 Cómo instalar rag-extractivo, elegir un perfil, descargar los modelos y
-ponerlo en un servidor propio (VPS) con HTTPS. El uso diario y la referencia
-de comandos están en [uso.md](uso.md).
+crear el primer proyecto. El uso diario y la referencia de comandos están en
+[uso.md](uso.md); el servidor con HTTPS, en [despliegue.md](despliegue.md).
 
 ## Requisitos
 
@@ -22,15 +22,35 @@ de comandos están en [uso.md](uso.md).
 
 ## Instalar el paquete
 
-Desde GitHub:
+Conviene un entorno virtual por servidor o por máquina. El paquete instala
+el comando `rag`.
+
+**Linux y macOS**
 
 ```bash
-pip install "rag-extractivo @ git+https://github.com/Claudiobiovision/rag-extractivo.git"
+python3 -m venv ~/.venvs/rag
+source ~/.venvs/rag/bin/activate
+pip install "rag-extractivo @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
+rag --version
 ```
 
-Para desarrollar desde un clon:
+**Windows (PowerShell)**
+
+```powershell
+py -3.12 -m venv $HOME\.venvs\rag
+& $HOME\.venvs\rag\Scripts\Activate.ps1
+pip install "rag-extractivo @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
+rag --version
+```
+
+**Sin instalar Python:** la imagen Docker trae todo, con los modelos del
+perfil incluidos (ver [despliegue.md](despliegue.md#3-docker)).
+
+### Para desarrollar
 
 ```bash
+git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git rag-extractivo
+cd rag-extractivo
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[test]"        # Linux/macOS
 .venv\Scripts\python.exe -m pip install -e ".[test]" # Windows
@@ -41,24 +61,33 @@ Extras opcionales:
 | Extra | Para qué | ¿Producción? |
 |---|---|---|
 | `test` | pytest | no |
-| `browser` | pruebas de navegador con Playwright | no |
+| `browser` | pruebas de navegador con Playwright (`python -m playwright install chromium`) | no |
 | `exportar` | `rag modelos exportar`: convierte un modelo de Hugging Face a ONNX (`optimum-onnx` y `torch`) | no; solo desarrollo |
 
-La producción no instala torch.
+La producción no instala torch. Una instalación editable guarda rutas
+absolutas: si mueves el clon, reinstala.
 
 ## Crear un proyecto
 
-Cada asistente es una carpeta:
+Cada asistente es una carpeta con su configuración, sus documentos y su
+índice:
 
 ```bash
 mkdir mi-asistente && cd mi-asistente
-rag init --perfil medium --idioma es
-rag modelos descargar          # modelos del perfil a la caché global
+rag init --perfil medium --idioma es \
+  --nombre-asistente "Asistente de soporte" --descripcion-dominio "los manuales del producto"
+rag modelos descargar          # modelos del perfil a la caché global (una sola vez por máquina)
 rag modelos verificar          # carga cada modelo y hace una inferencia mínima
-rag cargar /ruta/a/documentos
+rag cargar /ruta/a/documentos  # PDF con texto, DOCX, Markdown o TXT
 rag indexar
 rag doctor                     # ¿puede funcionar? Si no, qué comando ejecutar
-rag servir                     # http://127.0.0.1:8000
+rag servir                     # http://127.0.0.1:8000 (abre /widget/demo.html con --modo desarrollo)
+```
+
+En otra terminal:
+
+```bash
+rag preguntar "¿Cada cuánto se cambia el filtro?"
 ```
 
 - **Perfil:** `light`, `medium` o `heavy` (ver la tabla de requisitos). Se
@@ -67,6 +96,8 @@ rag servir                     # http://127.0.0.1:8000
 - **Idioma:** `es`, `en` y `pt` tienen paquete propio. Una variante regional
   (`pt-br`) usa el de su idioma. Cualquier otro código ISO funciona con
   reglas universales y textos en inglés.
+- **Atajo:** `rag servir ./mis-documentos` crea un proyecto privado en
+  `.rag-extractivo/`, carga los archivos, indexa si hace falta y sirve.
 
 ## Caché de modelos y uso sin red
 

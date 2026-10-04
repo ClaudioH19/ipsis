@@ -1,19 +1,49 @@
 # Referencia de configuración
 
+## Archivos de un proyecto
+
+`rag init` crea la carpeta del proyecto. Todo es YAML legible y versionable,
+salvo `.rag/`, que es generado.
+
+```text
+mi-asistente/
+├── configuracion/
+│   ├── asistente.yaml      # identidad, idioma, perfil, CORS, claves del widget y registro
+│   ├── motor.yaml          # recuperación, componentes, Qdrant, límites y ajustes del perfil
+│   ├── estilos.yaml        # tema y ubicación del widget
+│   ├── personalidad.yaml   # tono de las respuestas y avatar
+│   ├── dominio.yaml        # opcional: reglas y categorías propias del dominio
+│   ├── idioma.yaml         # opcional: textos del paquete de idioma sobrescritos
+│   ├── calibracion.yaml    # lo escribe `rag calibrar --aplicar`, con procedencia
+│   └── avatares/           # avatares importados (.avatar.json)
+├── documentos/             # archivos fuente + catalogo.yaml
+├── golden/                 # golden.csv, banco/ versionado y reportes/
+└── .rag/                   # generado: indice/ (Qdrant, estadísticas, manifiesto) y registros/
+```
+
+| Archivo | Se edita con | Detalle |
+|---|---|---|
+| `asistente.yaml` | `rag configurar clave=valor` | esta guía |
+| `motor.yaml` | a mano | esta guía; los umbrales viven en el perfil y en `calibracion.yaml` |
+| `estilos.yaml` | `rag widget tema`, panel `/admin` | [web.md](web.md) |
+| `personalidad.yaml` | `rag personalidad`, panel `/admin` | [personalidad.md](personalidad.md) |
+| `calibracion.yaml` | `rag calibrar --aplicar` | [metodología](../metodologia/calibracion.md) |
+
 ## Versionado
 
-`configuracion/motor.yaml` y `configuracion/asistente.yaml` usan
-`config_version`. La versión vigente es `2`.
+`asistente.yaml` y `motor.yaml` declaran `config_version`. La versión vigente
+es la `4`.
 
-- Si falta `config_version`, el cargador interpreta el archivo como versión 0
-  y lo migra de forma secuencial hasta la versión 2.
-- La migración no modifica el archivo original.
-- La validación rechaza claves desconocidas.
-- Una versión superior a la soportada produce un error explícito.
+- Un archivo sin `config_version` se lee como versión 0 y se migra paso a
+  paso hasta la 4; cualquier comando `rag` lo hace al cargar.
+- La validación rechaza claves desconocidas y una versión superior a la
+  soportada.
 
-La versión 2 elimina `recuperacion.reranker`: la implementación se selecciona
-únicamente mediante `componentes.reranker`. Los archivos anteriores se migran
-sin modificar el YAML de origen.
+| Versión | Qué cambió |
+|---|---|
+| 2 | El reranker se elige solo con `componentes.reranker` |
+| 3 | `dominio.yaml` reemplaza a los perfiles de dominio; `perfil` pasa a ser el perfil de instalación (los proyectos v2 quedan en `light`); sin torch; `.cache/` pasa a `.rag/` |
+| 4 | La política `cascada_v1` reemplaza a la anterior; los umbrales pasan al perfil y a `calibracion.yaml` |
 
 La configuración ya validada puede cargarse desde Python:
 
@@ -41,9 +71,10 @@ componentes:
   answer_extractor: sentence_selector
   evidence_verifier: literal_offsets
   response_renderer: templates
+  abstention_policy: cascada_v1
 ```
 
-Un valor `null` desactiva un componente opcional. Una implementación puede
+El reranker y el lector los define el perfil (`rag perfil mostrar`). Un valor `null` desactiva un componente opcional. Una implementación puede
 recibir opciones usando la forma extendida:
 
 ```yaml
@@ -74,7 +105,7 @@ a Qdrant y los rerankers se configura desde el servicio porque depende del
 `vectorial` o `hibrida`; ambos conservan el mismo contrato y requieren volver a
 indexar cuando cambia la representación persistida.
 
-### Perfil de instalación
+## Perfil de instalación
 
 El perfil activo está en `configuracion/asistente.yaml::perfil` (`light`,
 `medium` o `heavy`). `bm25` es solo un perfil de diagnóstico de
@@ -103,7 +134,7 @@ Repetir el perfil activo no hace nada.
   los umbrales del perfil. El archivo se conserva para auditoría. Para
   recuperarla: `rag calibrar --aplicar`.
 
-### Modelos
+## Modelos
 
 Los modelos ONNX viven en una caché global por usuario, compartida por todos
 los proyectos. Por defecto es `~/.cache/rag-extractivo/modelos`, y se cambia
@@ -152,7 +183,7 @@ rag modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
   - No registra el modelo en el catálogo ni en los perfiles: adoptarlo es
     otro paso.
 
-### Idioma
+## Idioma
 
 `asistente.yaml::idioma` es un código ISO 639, por ejemplo `es`, `en` o
 `pt-br`. `es`, `en` y `pt` tienen paquete propio: stemmer, stopwords,
@@ -169,7 +200,7 @@ Otro código funciona con un respaldo:
 `rag init` y `rag configurar idioma=` lo avisan, y `rag doctor` lo marca
 como aviso.
 
-### Tono de las respuestas
+## Tono de las respuestas
 
 Lo que el asistente dice alrededor del texto del documento viene de un
 **tono**, en `rag/recursos/tonos/<idioma>/<tono>.yaml`: `cordial` (por
@@ -219,7 +250,7 @@ Los textos de `configuracion/idioma.yaml` anteriores a los tonos
 siguen funcionando: se toman como sobrescrituras del tono.
 `personalidad.yaml` tiene prioridad sobre ellos.
 
-### Documentos vigentes
+## Documentos vigentes
 
 `documentos/catalogo.yaml` lista lo cargado. Una entrada con `vigente: false`
 no se indexa ni entra en el golden (hay que ejecutar `rag indexar` después de
@@ -230,7 +261,7 @@ otro contenido:
 - lo agrega como documento nuevo (`<nombre>-<hash>.<ext>`) y lo avisa;
 - los dos se indexan hasta que el anterior se marque `vigente: false`.
 
-### Diagnóstico (`rag doctor`)
+## Diagnóstico (`rag doctor`)
 
 `rag doctor` responde si el proyecto puede funcionar ahora y, si no, qué
 comando ejecutar. Solo diagnostica:
@@ -239,7 +270,8 @@ comando ejecutar. Solo diagnostica:
 - no escribe nada.
 
 Revisa, en este orden: configuración, perfil, idioma, stemmer, modelos,
-índice, calibración, golden y CORS. Cada chequeo muestra una marca:
+índice, calibración, golden, CORS, personalidad y modo. El servicio publica
+el mismo diagnóstico en `/ready`. Cada chequeo muestra una marca:
 
 | Marca | Significado |
 |---|---|
@@ -276,7 +308,7 @@ proyecto, pide `rag init`.
   - Un `stemmer` que snowballstemmer no conoce también es un error.
   - `stemmer: null` es válido: los términos quedan sin stem.
 
-### Diagnóstico de una consulta (`rag preguntar --diagnostico`)
+## Diagnóstico de una consulta (`rag preguntar --diagnostico`)
 
 ```
 rag preguntar --diagnostico "¿Cada cuánto se cambia el filtro?"
@@ -299,7 +331,7 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 En modo Qdrant local hay que detener `rag servir` antes, porque Qdrant
 bloquea la carpeta del índice.
 
-### Registro de consultas y auditoría (`rag auditar`)
+## Registro de consultas y auditoría (`rag auditar`)
 
 El servicio puede guardar una línea JSON por consulta en
 `.rag/registros/consultas.jsonl`. Está apagado por defecto, por privacidad:
@@ -307,6 +339,7 @@ El servicio puede guardar una línea JSON por consulta en
 ```
 rag configurar registro.activo=true   # y reiniciar 'rag servir'
 rag auditar
+rag auditar --desde 2026-10-01 --hasta 2026-10-31
 ```
 
 - **Qué guarda:** la pregunta, el estado, la regla, el motivo, el perfil, las
@@ -323,6 +356,8 @@ rag auditar
   offsets del corpus vigente.
   - Problemas posibles: `alterada`, `tramo_alterado`, `documento_ausente`
     (el documento se retiró) o `fuera_de_rango`.
+  - `--desde` y `--hasta` (fecha o ISO 8601, UTC por defecto, inclusivas)
+    limitan el rango; las líneas sin fecha se excluyen y se informan.
   - Sale con 0 si todo coincide y con 1 si hay problemas, líneas ilegibles o
     no hay registro.
   - No usa modelos ni el índice.

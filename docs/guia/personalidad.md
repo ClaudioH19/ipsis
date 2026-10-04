@@ -178,6 +178,8 @@ Los cambios, por HTTP o por terminal, se ven sin reiniciar:
 
 ## Panel gráfico (`/admin/panel`)
 
+![Pestaña Avatar del panel: Folio, colores, eventos y vista previa](../assets/panel-avatar.png)
+
 Es la misma API, con formularios. Abre `https://tu-dominio/admin/panel`
 (o `http://127.0.0.1:8000/admin/panel` en tu máquina) y pega el token.
 
