@@ -1,0 +1,51 @@
+name: 🐞 Error
+description: Algo no funciona como dice la documentación.
+labels: ["error"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportarlo. Si es una vulnerabilidad, **no** uses este formulario: ver SECURITY.md.
+  - type: textarea
+    id: que-paso
+    attributes:
+      label: ¿Qué pasó?
+      description: Qué hiciste, qué esperabas y qué obtuviste.
+    validations:
+      required: true
+  - type: textarea
+    id: reproducir
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: |
+        1. rag init --perfil light
+        2. rag cargar …
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Salida de `rag doctor`
+      render: text
+  - type: textarea
+    id: diagnostico
+    attributes:
+      label: Si es una respuesta equivocada, salida de `rag preguntar --diagnostico "…"`
+      description: Muestra la regla que decidió y las señales. Quita lo que sea confidencial.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Versión (`rag --version`)
+    validations:
+      required: true
+  - type: dropdown
+    id: perfil
+    attributes:
+      label: Perfil
+      options: [light, medium, heavy]
+  - type: input
+    id: entorno
+    attributes:
+      label: Sistema operativo, versión de Python y forma de instalación (pip, Docker…)
