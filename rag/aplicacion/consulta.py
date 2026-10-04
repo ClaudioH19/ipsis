@@ -1,6 +1,7 @@
 """Casos de uso de consulta: construir el motor desde la configuración."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -143,4 +144,68 @@ def construir_motor_del_proyecto() -> Motor:
     return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
 
 
-__all__ = ["Motor", "MotorNoListo", "MotorSaturado", "construir_motor", "construir_motor_del_proyecto"]
+@dataclass(frozen=True)
+class DiagnosticoConsulta:
+    """Por qué una consulta terminó como terminó, leído del diagnóstico del motor."""
+
+    pregunta: str
+    estado: str  # el del contrato HTTP: ok, relacionado, sin_respuesta, conversacional
+    respuesta: str
+    regla: str | None
+    motivo: str
+    perfil: str | None
+    etapas: list[tuple[str, int]]  # en orden de ejecución, en ms (motor ya calentado)
+    senales: dict[str, Any]  # las que vio la política (s_ret, s_oov, s_foco, s_cov, s_rr, s_qa, dominio)
+    foco_encontrados: list[str]
+    foco_ausentes: list[str]
+    ausentes_del_corpus: list[str]
+    oracion_foco: str | None
+    tramo: dict[str, Any] | None  # respuesta_exacta: texto y offsets, si el lector marcó uno
+    evidencias: list[dict[str, Any]]
+    advertencias: list[str]
+    salto_modelos: bool = False
+
+    @property
+    def total_ms(self) -> int:
+        return sum(ms for _, ms in self.etapas)
+
+
+def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> DiagnosticoConsulta:
+    """Ejecuta ``pregunta`` con el motor del proyecto, en este proceso, y devuelve
+    su diagnóstico. No pasa por el servicio HTTP, que no publica el diagnóstico.
+    ``motor`` se inyecta en las pruebas (motor falso)."""
+    propio = motor is None
+    motor = construir_motor_del_proyecto() if propio else motor
+    try:
+        if propio:
+            motor.calentar()  # que las latencias sean las de operación, sin la carga de modelos
+        resultado = motor.consultar(pregunta, "rag-diagnostico")
+    finally:
+        if propio:
+            motor.cerrar()
+    d = resultado.diagnostico or {}
+    contrato = d.get("contrato_http") or {}
+    lexicas = d.get("senales_lexicas") or {}
+    return DiagnosticoConsulta(
+        pregunta=pregunta,
+        estado=contrato.get("estado", resultado.estado.value),
+        respuesta=contrato.get("respuesta", resultado.mensaje_usuario),
+        regla=d.get("regla"),
+        motivo=resultado.motivo,
+        perfil=d.get("perfil"),
+        etapas=[(nombre.removesuffix("_ms"), ms) for nombre, ms in (d.get("etapas") or {}).items()],
+        senales=dict(d.get("senales_politica") or {}),
+        foco_encontrados=list(lexicas.get("foco_encontrados") or []),
+        foco_ausentes=list(lexicas.get("foco_ausentes") or []),
+        ausentes_del_corpus=list(lexicas.get("ausentes_del_corpus") or []),
+        oracion_foco=d.get("oracion_foco"),
+        tramo=contrato.get("respuesta_exacta"),
+        evidencias=[{k: e.get(k) for k in ("doc_id", "chunk_id", "offset_inicio", "offset_fin", "texto")}
+                    for e in d.get("evidencias") or []],
+        advertencias=list(d.get("advertencias") or []),
+        salto_modelos=bool(d.get("salto_modelos")),
+    )
+
+
+__all__ = ["DiagnosticoConsulta", "Motor", "MotorNoListo", "MotorSaturado", "construir_motor",
+           "construir_motor_del_proyecto", "diagnosticar_pregunta"]

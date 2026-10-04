@@ -225,6 +225,28 @@ proyecto, pide `rag init`.
   - Un `stemmer` que snowballstemmer no conoce también es un error.
   - `stemmer: null` es válido: los términos quedan sin stem.
 
+### Diagnóstico de una consulta (`rag preguntar --diagnostico`)
+
+```
+rag preguntar --diagnostico "¿Cada cuánto se cambia el filtro?"
+```
+
+Ejecuta la pregunta con el motor del proyecto en el mismo proceso, sin pasar
+por el servicio HTTP: el servicio no publica el diagnóstico. Antes de medir,
+calienta los modelos, para que las latencias sean las de operación. Muestra:
+- el estado y la respuesta;
+- la regla que decidió, el motivo y el perfil;
+- cada etapa con su latencia en ms, y el total;
+- las señales que vio la política (`s_ret`, `s_oov`, `s_foco`, `s_cov`,
+  `s_rr`, `s_qa`, `dominio`);
+- los términos foco encontrados y ausentes en la oración evaluada, y los
+  términos de la pregunta que no están en el corpus;
+- el tramo exacto que marcó el lector, con sus offsets;
+- las evidencias.
+
+En modo Qdrant local hay que detener `rag servir` antes, porque Qdrant
+bloquea la carpeta del índice.
+
 ## Presentación del widget
 
 `configuracion/estilos.yaml` admite un `preset` y opciones independientes del

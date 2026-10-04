@@ -291,7 +291,14 @@ def _proximidad_del_foco(motor, ctx) -> None:
         "s_cov": s_cov(ctx.terminos_pregunta, terminos_oracion, est),
     })
     if isinstance(ctx.diagnostico.get("senales_lexicas"), dict):
-        ctx.diagnostico["senales_lexicas"].update(s_foco=ctx.lexicas.s_foco, s_cov=ctx.lexicas.s_cov)
+        presentes = set(terminos_oracion)
+        superficie = getattr(est, "superficie", {})
+        ctx.diagnostico["senales_lexicas"].update(
+            s_foco=ctx.lexicas.s_foco, s_cov=ctx.lexicas.s_cov,
+            # Qué términos foco explican s_foco: los de la pregunta que están (o no) en la oración.
+            foco_encontrados=[superficie.get(t, t) for t in ctx.terminos_foco if t in presentes],
+            foco_ausentes=[superficie.get(t, t) for t in ctx.terminos_foco if t not in presentes],
+        )
 
 
 class EtapaEvidencia(_Etapa):

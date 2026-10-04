@@ -87,10 +87,14 @@ def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
     ctx.terminos_foco = terminos_foco(ctx.terminos_pregunta, est)
     ctx.lexicas = SenalesLexicas(terminos_foco=ctx.terminos_foco)
     ctx.candidatos = [_candidato()]
+    ctx.diagnostico["senales_lexicas"] = {}  # lo crea EtapaFiltros
     EtapaLectura(motor).ejecutar(ctx)
     EtapaEvidencia(motor).ejecutar(ctx)
     assert ctx.evidencias[0].texto == "El filtro se cambia cada 6 meses."
     assert ctx.lexicas.s_foco == 0.0
+    lexicas = ctx.diagnostico["senales_lexicas"]  # rag preguntar --diagnostico los muestra
+    assert lexicas["foco_encontrados"] == [] and lexicas["foco_ausentes"] == [est.superficie[t] for t in ctx.terminos_foco]
+    assert lexicas["foco_ausentes"]
 
 
 def test_concordancia_detecta_plazos_distintos_en_pasajes_distintos():
