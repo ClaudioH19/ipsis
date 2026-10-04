@@ -5,8 +5,48 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-> La configuración por terminal (`rag personalidad …`) llega en P12.4. La API
-> y el panel `/admin`, en P12.6 y P12.7. El avatar, en P12.10.
+> La API y el panel `/admin` llegan en P12.6 y P12.7; el avatar «Folio» y su
+> animación en el widget, en P12.9 y P12.10.
+
+## Configuración: `configuracion/personalidad.yaml`
+
+`rag init` lo crea con comentarios. Se edita a mano o con `rag personalidad …`
+(referencia en [uso.md](uso.md)). Cada cambio por terminal se valida completo
+antes de escribirse; si no pasa, el archivo queda igual.
+
+```bash
+rag personalidad tono listar                 # los 7 tonos, con un ejemplo
+rag personalidad tono aplicar formal
+rag personalidad tono probar --situacion sin_respuesta
+rag personalidad validar                     # sale con 1 si algo impide arrancar el motor
+```
+
+`tono.variedad: fija` usa siempre la primera variante de cada situación.
+
+## Avatar
+
+El widget muestra un avatar de
+[@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab).
+Se diseña en el Studio ([avatars.bible-strong.app](https://avatars.bible-strong.app))
+y se exporta como `.avatar.json`.
+
+```bash
+rag personalidad avatar importar ./mi-avatar.avatar.json --nombre mi-avatar
+rag personalidad avatar aplicar mi-avatar
+rag personalidad avatar eventos              # evento → animación (y respaldos)
+rag personalidad avatar asignar pensando mirando-arriba
+rag personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
+```
+
+- **Al importar** se revisa: hasta 256 KiB, JSON sin claves duplicadas,
+  campos obligatorios, la expresión `neutral`, claves con el formato
+  `minusculas-y-guiones` y colores `#rrggbb`. La librería valida el resto al
+  cargar el avatar en el navegador.
+- **Cada evento** del widget tiene una clave sugerida y un respaldo. Si el
+  avatar no tiene la clave, se usa el respaldo en cadena, hasta `neutral`.
+  Así cualquier avatar funciona, aunque no defina todas las animaciones.
+- **Si el avatar falta o no es válido,** el widget muestra el ícono y
+  `rag doctor` lo marca como aviso: no bloquea el servicio.
 
 ## Tonos incluidos
 

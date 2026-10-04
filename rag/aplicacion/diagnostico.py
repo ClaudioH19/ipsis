@@ -85,10 +85,12 @@ class ProyectoNoEncontrado(RuntimeError):
     """No hay ``configuracion/asistente.yaml`` ni ``configuracion/motor.yaml``."""
 
 
-ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors")
+ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
+         "personalidad")
 NOMBRES = {
     "configuracion": "Configuración", "perfil": "Perfil", "idioma": "Idioma", "stemmer": "Stemmer",
     "modelos": "Modelos", "indice": "Índice", "calibracion": "Calibración", "golden": "Golden", "cors": "CORS",
+    "personalidad": "Personalidad",
 }
 _PERFIL_CAMBIAR = "rag perfil cambiar light|medium|heavy"
 _GOLDEN_IMPORTAR = "rag golden importar <archivo>"
@@ -428,9 +430,31 @@ def _cors(ctx: _Contexto) -> ChequeoDoctor:
     return _chequeo("cors", Estado.OK, f"orígenes permitidos: {', '.join(origenes)}")
 
 
+def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
+    """Tono y avatar. Un ``personalidad.yaml`` o una plantilla propia inválidos impiden
+    arrancar el motor (error); un avatar que falta o no carga deja el ícono (aviso)."""
+    from rag.aplicacion.personalidad import resumen_personalidad, validar_personalidad
+
+    if ctx.dominio is None:
+        return _no_evaluado("personalidad", rutas.ASISTENTE)
+    errores, avisos = validar_personalidad()
+    if errores:
+        return _chequeo("personalidad", Estado.ERROR, "; ".join(errores),
+                        [f"corrige {rutas.PERSONALIDAD} (detalle: rag personalidad validar)"])
+    resumen = resumen_personalidad()
+    mensaje = f"tono {resumen.tono}; avatar {resumen.avatar.nombre} ({resumen.avatar.estado})"
+    if avisos:
+        accion = ("rag personalidad avatar importar <archivo.avatar.json>"
+                  if resumen.avatar.estado in ("falta", "invalido") else "rag personalidad avatar eventos")
+        return _chequeo("personalidad", Estado.AVISO, f"tono {resumen.tono}; {'; '.join(avisos[:2])}", [accion],
+                        tono=resumen.tono, avatar=resumen.avatar.estado)
+    return _chequeo("personalidad", Estado.OK, mensaje, tono=resumen.tono, avatar=resumen.avatar.estado)
+
+
 CHEQUEOS: tuple[tuple[str, Callable[[_Contexto], ChequeoDoctor]], ...] = (
     ("configuracion", _configuracion), ("perfil", _perfil), ("idioma", _idioma), ("stemmer", _stemmer),
     ("modelos", _modelos), ("indice", _indice), ("calibracion", _calibracion), ("golden", _golden), ("cors", _cors),
+    ("personalidad", _personalidad),
 )
 
 

@@ -12,6 +12,8 @@ ESTILOS = "configuracion/estilos.yaml"
 DOMINIO = "configuracion/dominio.yaml"
 IDIOMA = "configuracion/idioma.yaml"
 CALIBRACION = "configuracion/calibracion.yaml"
+PERSONALIDAD = "configuracion/personalidad.yaml"
+AVATARES = "configuracion/avatares"
 
 DOCUMENTOS = "documentos"
 CATALOGO = "documentos/catalogo.yaml"

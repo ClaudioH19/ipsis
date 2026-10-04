@@ -103,6 +103,7 @@ def inicializar_proyecto(
         inicializar_asistente_si_falta,
         inicializar_dominio_si_falta,
         inicializar_estilos_si_falta,
+        inicializar_personalidad_si_falta,
         inicializar_proyecto_si_falta,
         slug_coleccion,
     )
@@ -134,6 +135,7 @@ def inicializar_proyecto(
     creo_motor = inicializar_proyecto_si_falta(coleccion_base=slug_coleccion(nuevo["nombre_asistente"]))
     creo_dominio = inicializar_dominio_si_falta(descripcion_dominio=nuevo["descripcion_dominio"])
     creo_estilos = inicializar_estilos_si_falta()
+    inicializar_personalidad_si_falta()
     return InicioProyecto(nuevo, creo_motor, creo_dominio, creo_estilos)
 
 
@@ -142,6 +144,7 @@ def completar_proyecto_existente() -> None:
     from rag.configuracion.carga import (
         inicializar_dominio_si_falta,
         inicializar_estilos_si_falta,
+        inicializar_personalidad_si_falta,
         inicializar_proyecto_si_falta,
         slug_coleccion,
     )
@@ -155,6 +158,7 @@ def completar_proyecto_existente() -> None:
         descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados")
     )
     inicializar_estilos_si_falta()
+    inicializar_personalidad_si_falta()
     ruta_catalogo = Path(CATALOGO_PATH)
     if not ruta_catalogo.is_file():
         ruta_catalogo.parent.mkdir(parents=True, exist_ok=True)
@@ -201,8 +205,11 @@ def interfaz_del_idioma(idioma: str) -> dict:
     from rag.lenguaje.paquete import cargar_paquete
     from rag.lenguaje.tonos import cargar_tono
 
+    from rag.configuracion.personalidad import cargar_personalidad
+
     paquete = cargar_paquete(idioma, proyecto=Path.cwd())
-    tono = cargar_tono(idioma, proyecto=Path.cwd(), sobrescrituras=paquete.plantillas_legado)
+    tono = cargar_tono(idioma, cargar_personalidad(Path.cwd()).tono.activo, proyecto=Path.cwd(),
+                       sobrescrituras=paquete.plantillas_legado)
     return {**paquete.interfaz, **{clave: tono.variantes(s)[0] for clave, s in _MICROCOPIA.items()}}
 
 

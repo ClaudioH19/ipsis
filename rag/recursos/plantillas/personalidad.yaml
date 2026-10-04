@@ -1,0 +1,30 @@
+# Personalidad del asistente: tono de las respuestas y avatar del widget.
+# Es solo presentación: no cambia qué responde, ni pide reindexar ni recalibrar.
+# Se edita aquí o con 'rag personalidad …' (ver docs/guia/personalidad.md).
+#
+# tono.activo: cordial | formal | serio | animoso | cercano | empatico | directo
+# tono.variedad: rotativa (no repite en turnos seguidos) | fija (siempre la primera)
+# tono.plantillas: textos propios por situación, p. ej.
+#   sin_respuesta: ["Eso no está en el manual del equipo."]
+# avatar.ubicacion: cabecera | esquina-superior | esquina-inferior
+# avatar.colores: {cuerpo: "#rrggbb", ojos: "#rrggbb"} (no modifica el archivo del avatar)
+# avatar.eventos: evento → animación o expresión ('rag personalidad avatar eventos')
+config_version: 1
+tono:
+  activo: cordial
+  variedad: rotativa
+  plantillas: {}
+avatar:
+  activo: true
+  definicion: folio
+  ubicacion: cabecera
+  tamano: 56
+  en_lanzador: true
+  mirada:
+    activa: true
+    amplitud_ojos: 6
+    amplitud_cabeza: 8
+    zona_muerta: 24
+  inactividad_min: 2
+  colores: {}
+  eventos: {}

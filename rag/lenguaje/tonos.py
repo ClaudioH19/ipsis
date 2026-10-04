@@ -26,10 +26,9 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-from rag.configuracion import rutas
+from rag.configuracion.personalidad import TONOS  # la lista de tonos vive en la configuración
 
 TONO_POR_DEFECTO = "cordial"
-TONOS = ("cordial", "formal", "serio", "animoso", "cercano", "empatico", "directo")
 MINIMO_VARIANTES = 5
 LARGO_MAXIMO = 200
 
@@ -286,11 +285,9 @@ def extraer_legado(datos: dict[str, Any]) -> tuple[dict[str, Any], dict[str, lis
 def _sobrescrituras_personalidad(proyecto: str | Path | None) -> dict[str, list[str]]:
     if proyecto is None:
         return {}
-    ruta = Path(proyecto) / rutas.CONFIGURACION / "personalidad.yaml"
-    if not ruta.is_file():
-        return {}
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
-    plantillas = ((datos.get("tono") or {}).get("plantillas")) or {}
+    from rag.configuracion.personalidad import cargar_personalidad
+
+    plantillas = cargar_personalidad(proyecto).tono.plantillas
     return {s: ([v] if isinstance(v, str) else list(v)) for s, v in plantillas.items()}
 
 

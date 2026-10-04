@@ -78,8 +78,27 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden y CORS. Cada error trae su acción. Sale con 0 si no hay errores |
+| `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS y personalidad. Cada error trae su acción. Sale con 0 si no hay errores |
 | `rag auditar` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. El registro se activa con `rag configurar registro.activo=true` |
+
+### Personalidad
+
+Detalle en [personalidad.md](personalidad.md). Solo presentación: no pide
+reindexar ni recalibrar.
+
+| Comando | Qué hace |
+|---|---|
+| `rag personalidad mostrar` | Tono activo, variedad y avatar (ubicación, tamaño, mirada, colores, eventos con respaldo) |
+| `rag personalidad validar` | Revisa `personalidad.yaml`, las plantillas propias y el avatar. Sale con 1 si hay errores |
+| `rag personalidad tono listar` | Tonos del idioma del proyecto, con un ejemplo de cada uno |
+| `rag personalidad tono aplicar <tono>` | Activa `cordial`, `formal`, `serio`, `animoso`, `cercano`, `empatico` o `directo` |
+| `rag personalidad tono probar [--tono T] [--situacion S]` | Imprime las variantes con las variables del proyecto |
+| `rag personalidad avatar listar` | Avatares incluidos e importados |
+| `rag personalidad avatar importar <archivo.avatar.json> [--nombre N]` | Valida un avatar exportado del Studio y lo copia a `configuracion/avatares/` |
+| `rag personalidad avatar aplicar <nombre>` | Usa ese avatar en el widget |
+| `rag personalidad avatar eventos` | Qué animación o expresión dispara cada evento, y cuáles usan un respaldo |
+| `rag personalidad avatar asignar <evento> <clave>` | Asigna a un evento una clave que el avatar tenga |
+| `rag personalidad avatar colores [--cuerpo #rrggbb] [--ojos #rrggbb]` | Colores del avatar, sin modificar su archivo |
 
 ### Golden set y evaluación
 
@@ -111,9 +130,6 @@ Detalle en [web.md](web.md).
 
 | Comando | Tarea |
 |---|---|
-| `rag personalidad mostrar\|validar` | P12.4 |
-| `rag personalidad tono listar\|aplicar <tono>\|probar` | P12.4: tonos `cordial`, `formal`, `serio`, `animoso`, `cercano`, `empatico` y `directo` |
-| `rag personalidad avatar listar\|importar\|aplicar\|eventos\|asignar\|colores` | P12.4: avatar «Folio» y los que importes |
 | `rag widget snippet` | P12.5 |
 | `rag desplegar preparar` | P12.13 |
 
