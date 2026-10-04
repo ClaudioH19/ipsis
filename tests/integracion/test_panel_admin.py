@@ -183,6 +183,14 @@ def test_textos_propios_invalidos_muestran_el_error_del_linter(servidor, pagina,
     page.wait_for_selector("#errores li")
     assert "plantillas: {}" in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
 
+    # Un regionalismo no bloquea: se guarda y queda como aviso visible.
+    assert page.is_hidden("#tono-avisos")
+    page.fill("#propias", "Chao, nos vemos.")
+    page.click("#guardar-propias")
+    page.wait_for_selector("#tono-avisos li")
+    assert "chao" in page.text_content("#tono-avisos")
+    assert "Chao, nos vemos." in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
+
 
 @pytest.mark.browser
 def test_json_invalido_muestra_el_error_sin_guardar(servidor, pagina, proyecto):

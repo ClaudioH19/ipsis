@@ -211,8 +211,14 @@ Los tonos que trae el paquete son neutros:
   vez de gerundios («Busca em andamento»).
 
 La lista de cada idioma está en `_reglas.yaml` (`regionalismos`) y una
-prueba la hace cumplir. Las sobrescrituras de un proyecto **sí** pueden usar
-el habla local de su público.
+prueba la hace cumplir.
+
+Tus textos propios (`tono.plantillas`) se revisan con la misma lista, pero
+como **aviso**, no como error: se guardan igual, porque un sitio local
+puede querer hablar como su público. El aviso aparece en
+`rag personalidad validar`, en `rag doctor` y en la pestaña Tono del panel.
+Si el idioma del proyecto no tiene paquete propio (por ejemplo, `fr`), no se
+revisa.
 
 ## Revisión humana de un tono nuevo
 

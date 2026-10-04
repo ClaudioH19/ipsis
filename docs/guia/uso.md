@@ -77,7 +77,7 @@ comprobarlo.
 | Comando | Qué hace |
 |---|---|
 | `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS y personalidad. Cada error trae su acción. Sale con 0 si no hay errores |
-| `rag auditar` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. El registro se activa con `rag configurar registro.activo=true` |
+| `rag auditar [--desde FECHA] [--hasta FECHA]` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--desde`/`--hasta` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. El registro se activa con `rag configurar registro.activo=true` |
 
 ### Personalidad
 

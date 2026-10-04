@@ -5,7 +5,7 @@ import argparse
 
 from rag.aplicacion.diagnostico import Estado, ProyectoNoEncontrado, diagnosticar
 from rag.aplicacion.proyecto import guardar_snapshot
-from rag.aplicacion.registro import SinRegistro, auditar_registro
+from rag.aplicacion.registro import FechaInvalida, SinRegistro, auditar_registro, interpretar_fecha
 from rag.cli.base import Comando
 
 
@@ -46,14 +46,30 @@ class ComandoAuditar(Comando):
     nombre = "auditar"
     ayuda = "Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal."
 
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--desde", default=None,
+                            help="Solo consultas desde esta fecha (AAAA-MM-DD o ISO 8601; UTC si no trae zona).")
+        parser.add_argument("--hasta", default=None, help="Solo consultas hasta esta fecha, inclusive.")
+
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
-            r = auditar_registro()
+            desde = interpretar_fecha(args.desde) if args.desde else None
+            hasta = interpretar_fecha(args.hasta, fin_del_dia=True) if args.hasta else None
+            r = auditar_registro(desde=desde, hasta=hasta)
+        except FechaInvalida as e:
+            print(f"No se pudo auditar: {e}")
+            return 2
         except SinRegistro as e:
             print(f"No hay registro de consultas ({e}). Está apagado por defecto, por privacidad.")
             print("  Acción: rag configurar registro.activo=true (y reinicia 'rag servir')")
             return 1
-        print(f"Registro: {r.ruta} ({r.consultas} consultas)")
+        rango = ""
+        if r.desde or r.hasta:
+            rango = (f", rango {r.desde.isoformat() if r.desde else '…'} a {r.hasta.isoformat() if r.hasta else '…'}"
+                     f"; {r.fuera_de_rango} fuera del rango")
+        print(f"Registro: {r.ruta} ({r.consultas} consultas{rango})")
+        if r.sin_fecha:
+            print(f"Líneas sin fecha legible (excluidas del rango): {', '.join(map(str, r.sin_fecha))}")
         print("Estados: " + (", ".join(f"{k} {v}" for k, v in r.por_estado.most_common()) or "—"))
         print("Reglas:  " + (", ".join(f"{k} {v}" for k, v in r.por_regla.most_common()) or "—"))
         print("Tonos:   " + (", ".join(f"{k} {v}" for k, v in r.por_tono.most_common()) or "—"))

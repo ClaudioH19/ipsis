@@ -95,6 +95,10 @@ class ReporteAuditoria:
     evidencias: int = 0
     problemas: list[ProblemaEvidencia] = field(default_factory=list)
     lineas_invalidas: list[int] = field(default_factory=list)
+    desde: datetime | None = None
+    hasta: datetime | None = None
+    fuera_de_rango: int = 0  # consultas excluidas por --desde/--hasta
+    sin_fecha: list[int] = field(default_factory=list)  # líneas sin fecha legible (excluidas si se filtra)
 
     @property
     def ok(self) -> bool:
@@ -121,10 +125,41 @@ def _corto(texto: str | None, n: int = 60) -> str:
     return texto if len(texto) <= n else texto[: n - 1] + "…"
 
 
-def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAuditoria:
+class FechaInvalida(ValueError):
+    """``--desde``/``--hasta`` no es una fecha ISO."""
+
+
+def interpretar_fecha(texto: str, *, fin_del_dia: bool = False) -> datetime:
+    """``AAAA-MM-DD`` o fecha y hora ISO 8601; sin zona horaria se toma UTC.
+
+    Con ``fin_del_dia`` una fecha sola cubre el día completo (``--hasta`` inclusivo).
+    """
+    from datetime import timedelta
+
+    valor = (texto or "").strip()
+    try:
+        if len(valor) == 10:
+            momento = datetime.fromisoformat(valor).replace(tzinfo=timezone.utc)
+            return momento + timedelta(days=1) - timedelta(microseconds=1) if fin_del_dia else momento
+        momento = datetime.fromisoformat(valor.replace("Z", "+00:00"))
+    except ValueError as e:
+        raise FechaInvalida(f"fecha inválida {texto!r}: usa AAAA-MM-DD o AAAA-MM-DDTHH:MM (ISO 8601)") from e
+    return momento if momento.tzinfo else momento.replace(tzinfo=timezone.utc)
+
+
+def _fecha_entrada(entrada: dict) -> datetime | None:
+    try:
+        return interpretar_fecha(str(entrada["fecha"]))
+    except (KeyError, FechaInvalida):
+        return None
+
+
+def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: datetime | None = None,
+                     hasta: datetime | None = None) -> ReporteAuditoria:
     """Resume estados y reglas del registro y verifica cada evidencia contra el corpus vigente.
 
     Solo lectura: no usa modelos ni el índice; parsea los documentos vigentes.
+    Con ``desde``/``hasta`` (inclusivos) solo cuenta las consultas de ese rango.
     """
     from rag.ingesta.ingesta import parsear_corpus
 
@@ -132,7 +167,10 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAudi
     if not ruta.is_file():
         raise SinRegistro(ruta)
     textos = {d.doc_id: d.texto_completo for d in parsear_corpus(rutas.DOCUMENTOS)}
-    reporte = ReporteAuditoria(ruta)
+    if desde is not None and hasta is not None and desde > hasta:
+        raise FechaInvalida("--desde es posterior a --hasta")
+    reporte = ReporteAuditoria(ruta, desde=desde, hasta=hasta)
+    filtrar = desde is not None or hasta is not None
     for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), start=1):
         if not linea.strip():
             continue
@@ -142,6 +180,14 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAudi
         except (json.JSONDecodeError, AttributeError):
             reporte.lineas_invalidas.append(numero)
             continue
+        if filtrar:
+            fecha = _fecha_entrada(entrada)
+            if fecha is None:
+                reporte.sin_fecha.append(numero)
+                continue
+            if (desde is not None and fecha < desde) or (hasta is not None and fecha > hasta):
+                reporte.fuera_de_rango += 1
+                continue
         reporte.consultas += 1
         reporte.por_estado[entrada.get("estado") or "?"] += 1
         reporte.por_regla[entrada.get("regla") or "—"] += 1
@@ -162,8 +208,8 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAudi
     return reporte
 
 
-__all__ = ["ProblemaEvidencia", "RegistroConsultas", "ReporteAuditoria", "SinRegistro", "auditar_registro",
-           "entrada_de_registro", "registrar_admin", "registro_del_proyecto"]
+__all__ = ["FechaInvalida", "ProblemaEvidencia", "RegistroConsultas", "ReporteAuditoria", "SinRegistro", "auditar_registro",
+           "entrada_de_registro", "interpretar_fecha", "registrar_admin", "registro_del_proyecto"]
 
 
 def registrar_admin(ip: str | None, accion: str, claves: list[str] | None = None) -> None:

@@ -197,3 +197,43 @@ def test_los_colores_se_aplican_sin_modificar_el_archivo(proyecto, tmp_path):
     pintado = con_colores(datos, "#123456", None)
     assert pintado["colors"] == {"body": "#123456", "eyes": "#000000"}
     assert json.loads(Path("configuracion/avatares/mi-avatar.avatar.json").read_text())["colors"]["body"] == "#ffffff"
+
+
+# --- neutralidad de los textos propios: aviso, no error ----------------------------------------
+def _textos_propios(plantillas: dict) -> None:
+    ruta = Path("configuracion/personalidad.yaml")
+    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    datos["tono"]["plantillas"] = plantillas
+    ruta.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+
+
+def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
+    from rag.aplicacion.diagnostico import Estado, diagnosticar
+
+    _textos_propios({"despedida": ["Chao, nos vemos pronto."]})
+    capsys.readouterr()
+    assert main(["personalidad", "validar"]) == 0  # no bloquea
+    salida = capsys.readouterr().out
+    assert "[AVISO] texto propio no neutro: despedida[1]: 'chao'" in salida
+    assert "Hay avisos (no bloquean)" in salida
+    chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
+    assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
+    assert chequeo.acciones == ("revisa tono.plantillas en configuracion/personalidad.yaml "
+                                "(detalle: rag personalidad validar)",)
+
+
+def test_texto_propio_neutro_no_avisa(proyecto, capsys):
+    _textos_propios({"despedida": ["Hasta pronto."]})
+    capsys.readouterr()
+    assert main(["personalidad", "validar"]) == 0
+    assert "[AVISO]" not in capsys.readouterr().out
+
+
+def test_idioma_sin_reglas_propias_no_se_revisa(proyecto):
+    from rag.aplicacion.personalidad import avisos_neutralidad
+
+    datos = yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))
+    datos["idioma"] = "fr"
+    Path("configuracion/asistente.yaml").write_text(yaml.safe_dump(datos), encoding="utf-8")
+    _textos_propios({"despedida": ["Hey, à bientôt."]})  # «hey» está en la lista inglesa de respaldo
+    assert avisos_neutralidad() == []

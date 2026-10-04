@@ -12,7 +12,8 @@ prohibidas:
 - obviously
 - as i already told you
 # Regional idioms: the bundled tones must be neutral (a test enforces it).
-# A project's own overrides may use them.
+# In a project's own overrides they are a warning from 'rag personalidad validar'
+# and 'rag doctor', not an error.
 regionalismos:
 - fire away
 - no worries

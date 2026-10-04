@@ -147,12 +147,31 @@ def validar_personalidad() -> tuple[list[str], list[str]]:
         return e.errores, []
     errores = _validar_tono(config)
     avatar = estado_avatar(config)
-    avisos = []
+    avisos = [] if errores else avisos_neutralidad(config)
     if avatar.estado in ("falta", "invalido"):
         avisos.append(f"avatar {avatar.nombre!r}: {avatar.mensaje}")
     for evento, pedida in avatar.respaldos.items():
         avisos.append(f"al avatar le falta {pedida!r} (evento {evento}): usa {avatar.claves[evento]!r}")
     return errores, avisos
+
+
+PREFIJO_NEUTRALIDAD = "texto propio no neutro"
+
+
+def avisos_neutralidad(config: PersonalidadConfig | None = None) -> list[str]:
+    """Regionalismos, formas con género o saludos según la hora en los textos propios
+    del proyecto (``tono.plantillas``). Es un aviso, no un error: los tonos incluidos
+    son neutros, pero un sitio local puede querer hablar como su región."""
+    from rag.lenguaje.tonos import carpeta_idioma, regionalismos_en
+
+    config = config or _config()
+    propias = {s: ([v] if isinstance(v, str) else list(v)) for s, v in config.tono.plantillas.items()}
+    idioma = carpeta_idioma(_idioma().lower())
+    # Solo con reglas del propio idioma: las de respaldo (en) darían falsos avisos en otro idioma.
+    if not propias or idioma != _idioma().lower().split("-")[0]:
+        return []
+    return [f"{PREFIJO_NEUTRALIDAD}: {hallado} (los tonos incluidos lo evitan; cámbialo si tu público es de "
+            "varios países)" for hallado in regionalismos_en(propias, idioma)]
 
 
 # --- tono -------------------------------------------------------------------------------------
@@ -314,6 +333,7 @@ def resumen_admin() -> dict:
         "avatares": [{"nombre": a.nombre, "origen": a.origen, "animaciones": list(a.animaciones),
                       "expresiones": list(a.expresiones)} if not isinstance(a, tuple)
                      else {"nombre": a[0], "origen": a[1], "error": a[2]} for a in avatares],
+        "avisos_tono": avisos_neutralidad(resumen.config),
         "avatar": {"nombre": resumen.avatar.nombre, "estado": resumen.avatar.estado,
                    "mensaje": resumen.avatar.mensaje, "claves": resumen.avatar.claves,
                    "respaldos": resumen.avatar.respaldos},

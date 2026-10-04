@@ -147,3 +147,36 @@ def test_un_fallo_al_escribir_el_registro_no_tumba_la_respuesta(corpus, monkeypa
 def test_configurar_registro_activo_valida_el_booleano(capsys):
     assert main(["configurar", "registro.activo=quizas"]) == 1
     assert "espera true o false" in capsys.readouterr().out
+
+
+def test_auditar_por_rango_de_fechas(corpus, capsys):
+    assert main(["configurar", "registro.activo=true"]) == 0
+    _preguntar(corpus, "a", "b", "c")
+    lineas = [json.loads(linea) for linea in REGISTRO.read_text(encoding="utf-8").splitlines()]
+    lineas[0]["fecha"] = "2026-09-30T23:59:59+00:00"
+    lineas[1]["fecha"] = "2026-10-01T08:00:00+00:00"
+    lineas[2]["fecha"] = "2026-10-02T00:00:00+00:00"
+    sin_fecha = dict(lineas[2])
+    del sin_fecha["fecha"]
+    REGISTRO.write_text("\n".join(json.dumps(e, ensure_ascii=False) for e in [*lineas, sin_fecha]) + "\n",
+                        encoding="utf-8")
+    capsys.readouterr()
+    assert main(["auditar", "--desde", "2026-10-01", "--hasta", "2026-10-01"]) == 0  # el día completo
+    salida = capsys.readouterr().out
+    assert "(1 consultas, rango 2026-10-01T00:00:00+00:00 a 2026-10-01T23:59:59.999999+00:00; 2 fuera del rango)" \
+        in salida
+    assert "Líneas sin fecha legible (excluidas del rango): 4" in salida
+    assert main(["auditar", "--desde", "2026-10-01T08:00"]) == 0
+    assert "(2 consultas" in capsys.readouterr().out
+    assert main(["auditar"]) == 0
+    assert "(4 consultas)" in capsys.readouterr().out  # sin filtro no se excluye nada
+
+
+def test_auditar_con_fecha_invalida_dice_el_formato(corpus, capsys):
+    assert main(["configurar", "registro.activo=true"]) == 0
+    _preguntar(corpus, "a")
+    capsys.readouterr()
+    assert main(["auditar", "--desde", "ayer"]) == 2
+    assert "AAAA-MM-DD" in capsys.readouterr().out
+    assert main(["auditar", "--desde", "2026-10-02", "--hasta", "2026-10-01"]) == 2
+    assert "posterior" in capsys.readouterr().out

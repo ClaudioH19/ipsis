@@ -445,8 +445,14 @@ def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
     resumen = resumen_personalidad()
     mensaje = f"tono {resumen.tono}; avatar {resumen.avatar.nombre} ({resumen.avatar.estado})"
     if avisos:
-        accion = ("rag personalidad avatar importar <archivo.avatar.json>"
-                  if resumen.avatar.estado in ("falta", "invalido") else "rag personalidad avatar eventos")
+        from rag.aplicacion.personalidad import PREFIJO_NEUTRALIDAD
+
+        if resumen.avatar.estado in ("falta", "invalido"):
+            accion = "rag personalidad avatar importar <archivo.avatar.json>"
+        elif all(a.startswith(PREFIJO_NEUTRALIDAD) for a in avisos):
+            accion = f"revisa tono.plantillas en {rutas.PERSONALIDAD} (detalle: rag personalidad validar)"
+        else:
+            accion = "rag personalidad avatar eventos"
         return _chequeo("personalidad", Estado.AVISO, f"tono {resumen.tono}; {'; '.join(avisos[:2])}", [accion],
                         tono=resumen.tono, avatar=resumen.avatar.estado)
     return _chequeo("personalidad", Estado.OK, mensaje, tono=resumen.tono, avatar=resumen.avatar.estado)
