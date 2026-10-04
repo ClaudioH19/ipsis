@@ -108,6 +108,39 @@ def grupo_widget() -> Grupo:
                  [tema, ComandoWidgetExportar(), ComandoWidgetSnippet()])
 
 
-__all__ = ["ComandoTemaAplicar", "ComandoTemaListar", "ComandoTemaVistaPrevia", "ComandoWidgetExportar",
-           "ComandoWidgetSnippet",
+
+
+class ComandoDesplegarPreparar(Comando):
+    nombre = "preparar"
+    ayuda = "Genera una carpeta lista para copiar a un servidor (Docker, compose y Caddy opcional)."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--destino", default="dist", help="Carpeta de salida (por defecto: dist).")
+        parser.add_argument("--dominio", default=None, help="Dominio del servicio para HTTPS con Caddy.")
+        parser.add_argument("--wheel", default=None, help="Wheel de rag-extractivo a instalar en la imagen.")
+        parser.add_argument("--forzar", action="store_true", help="Regenera una carpeta preparada antes.")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        from rag.aplicacion.despliegue import DespliegueInvalido, preparar_despliegue
+
+        try:
+            resumen = preparar_despliegue(args.destino, dominio=args.dominio, wheel=args.wheel, forzar=args.forzar)
+        except (DespliegueInvalido, OSError) as exc:
+            print(f"No se pudo preparar el despliegue: {exc}")
+            return 1
+        print(f"Despliegue preparado en {resumen.destino} (perfil {resumen.perfil}, dominio {resumen.dominio}):"
+              f" {len(resumen.archivos)} archivos.")
+        for aviso in resumen.avisos:
+            print(f"  Aviso: {aviso}")
+        print(f"Siguiente paso: lee {resumen.destino / 'LEEME_despliegue.md'} y copia la carpeta al servidor.")
+        return 0
+
+
+def grupo_desplegar() -> Grupo:
+    return Grupo("desplegar", "Prepara el despliegue en un servidor propio.", "Operación de despliegue.",
+                 [ComandoDesplegarPreparar()])
+
+
+__all__ = ["ComandoDesplegarPreparar", "ComandoTemaAplicar", "ComandoTemaListar", "ComandoTemaVistaPrevia", "ComandoWidgetExportar",
+           "ComandoWidgetSnippet", "grupo_desplegar",
            "grupo_widget"]

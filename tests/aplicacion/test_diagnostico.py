@@ -520,3 +520,64 @@ def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
         for _ in range(5):
             cliente.get("/ready")
     assert llamadas == [{"abrir_indice": False}]  # una vez cada 30 s y sin abrir Qdrant
+
+
+# --- rag desplegar preparar (P12.13): reúne el proyecto que diagnosticó el doctor ----------------
+def test_desplegar_preparar_genera_todo(proyecto, capsys):
+    import json as _json
+
+    from apoyo import definicion_avatar
+    from rag.aplicacion.personalidad import importar_avatar_desde
+
+    proyecto("light")
+    calibracion("light", sano("light"))
+    importar_avatar_desde(_json.dumps(definicion_avatar()).encode(), "propio")
+    Path(".rag/registros").mkdir(parents=True, exist_ok=True)
+    Path(".rag/registros/consultas.jsonl").write_text("{}\n", encoding="utf-8")
+    Path("mi.whl").write_bytes(b"x")
+    Path("mi.whl").rename("rag_extractivo-0-py3-none-any.whl")
+    capsys.readouterr()
+    assert main(["desplegar", "preparar", "--dominio", "asistente.ejemplo.cl",
+                 "--wheel", "rag_extractivo-0-py3-none-any.whl"]) == 0
+    salida = capsys.readouterr().out
+    assert "Despliegue preparado" in salida and "perfil light" in salida
+    dist = Path("dist")
+    for archivo in ("configuracion/asistente.yaml", "configuracion/personalidad.yaml", "configuracion/estilos.yaml",
+                    "configuracion/calibracion.yaml", "configuracion/avatares/propio.avatar.json",
+                    "documentos/catalogo.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo",
+                    "LEEME_despliegue.md", "paquete/rag_extractivo-0-py3-none-any.whl"):
+        assert (dist / archivo).is_file(), archivo
+    assert any((dist / ".rag/indice").rglob("*.manifiesto.json"))
+    assert not (dist / ".rag/registros/consultas.jsonl").exists()  # los registros no viajan
+
+    compose = yaml.safe_load((dist / "docker-compose.yml").read_text(encoding="utf-8"))
+    assert compose["services"]["caddy"]["profiles"] == ["https"]
+    ip_caddy = compose["services"]["caddy"]["networks"]["rag"]["ipv4_address"]
+    assert compose["services"]["asistente"]["environment"]["RAG_PROXY_CONFIABLE"] == ip_caddy
+    assert compose["services"]["asistente"]["build"]["args"]["PERFIL"] == "light"
+    assert "RAG_ADMIN_TOKEN" not in compose["services"]["asistente"]["environment"]  # el secreto va en .env
+    assert "asistente.ejemplo.cl {" in (dist / "Caddyfile").read_text(encoding="utf-8")
+    leeme = (dist / "LEEME_despliegue.md").read_text(encoding="utf-8")
+    assert leeme.startswith("# Despliegue de") and "https://asistente.ejemplo.cl/widget.js" in leeme
+    assert "/admin/panel" in leeme and "{{" not in leeme
+    assert "ARG PERFIL=light" in (dist / "Dockerfile").read_text(encoding="utf-8")
+
+    # Regenerar exige --forzar; una carpeta ajena nunca se borra.
+    assert main(["desplegar", "preparar"]) == 1
+    assert "--forzar" in capsys.readouterr().out
+    assert main(["desplegar", "preparar", "--forzar"]) == 0
+    assert "sin --dominio" in capsys.readouterr().out
+    Path("ajena").mkdir()
+    Path("ajena/importante.txt").write_text("no borrar", encoding="utf-8")
+    assert main(["desplegar", "preparar", "--destino", "ajena", "--forzar"]) == 1
+    assert Path("ajena/importante.txt").is_file()
+    assert main(["desplegar", "preparar", "--destino", ".", "--forzar"]) == 1
+    assert main(["desplegar", "preparar", "--destino", "otro", "--dominio", "https://x.cl"]) == 1
+
+
+def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
+    proyecto("light")
+    editar("configuracion/asistente.yaml", idioma="pt-br")
+    assert main(["desplegar", "preparar"]) == 0
+    assert Path("dist/LEEME_despliegue.md").read_text(encoding="utf-8").startswith("# Implantação de")
+    assert "Copie este arquivo" in Path("dist/.env.ejemplo").read_text(encoding="utf-8")

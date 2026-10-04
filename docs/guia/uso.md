@@ -5,8 +5,6 @@ La instalación, los perfiles, el VPS y los modos están en
 [instalacion.md](instalacion.md). El detalle de cada archivo de configuración
 está en [configuracion.md](configuracion.md).
 
-> Las partes marcadas **(P12.x)** están planificadas y todavía no existen.
-
 ## Ciclo de trabajo
 
 ```text
@@ -131,11 +129,11 @@ Detalle en [web.md](web.md).
 | `rag widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js` y `snippet.html` para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
 | `rag widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `estilos.yaml::ubicacion` |
 
-### Planificados (P12)
+### Despliegue
 
-| Comando | Tarea |
+| Comando | Qué hace |
 |---|---|
-| `rag desplegar preparar` | P12.13 |
+| `rag desplegar preparar [--destino D] [--dominio DOM] [--wheel W] [--forzar]` | Genera en `dist/` todo lo necesario para un VPS: proyecto, índice, `Dockerfile`, `docker-compose.yml` con Caddy opcional y `LEEME_despliegue.md`. Ver [instalacion.md](instalacion.md) |
 
 ## Variables de entorno
 

@@ -1,0 +1,59 @@
+# Generado por `rag desplegar preparar`.
+#
+#   docker compose up -d --build                    # solo el asistente, en 127.0.0.1:8000
+#   docker compose --profile https up -d --build    # además Caddy con HTTPS para {{dominio}}
+#
+# Los secretos (RAG_ADMIN_TOKEN) van en .env (copia .env.ejemplo); nunca en este archivo.
+
+services:
+  asistente:
+    build:
+      context: .
+      args:
+        PERFIL: "{{perfil}}"
+    image: "rag-extractivo-{{nombre}}:{{perfil}}"
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RAG_MODO: produccion
+      # Caddy (abajo) tiene IP fija en la red interna: solo sus X-Forwarded-* se aceptan.
+      RAG_PROXY_CONFIABLE: "172.30.0.10"
+    volumes:
+      - ./configuracion:/app/configuracion
+      - ./documentos:/app/documentos:ro
+      - ./.rag:/app/.rag
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      rag:
+        ipv4_address: 172.30.0.20
+
+  caddy:
+    image: caddy:2
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on:
+      - asistente
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_datos:/data
+      - caddy_config:/config
+    networks:
+      rag:
+        ipv4_address: 172.30.0.10
+
+networks:
+  rag:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  caddy_datos:
+  caddy_config:
