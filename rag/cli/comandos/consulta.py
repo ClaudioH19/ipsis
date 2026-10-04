@@ -148,7 +148,7 @@ class ComandoPreguntar(Comando):
         try:
             resp = httpx.post(url, json={"pregunta": args.pregunta, "id_sesion": "rag-cli"}, timeout=args.timeout)
         except httpx.ConnectError:
-            print(f"No se pudo conectar a {url}. ¿Está el servicio arriba? Corré 'rag servir' primero.")
+            print(f"No se pudo conectar a {url}. ¿Está el servicio arriba? Ejecuta 'rag servir' primero.")
             return 1
         except httpx.TimeoutException:
             print(f"El servicio no respondió en {args.timeout}s.")
