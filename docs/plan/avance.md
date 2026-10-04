@@ -81,7 +81,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P12.7 | ✅ | 2026-10-04 | 790 (+9) | Panel /admin/panel en vanilla JS con CSP estricta; la vista previa usa CSP propia (style inline del widget, unsafe-eval para el avatar). La prueba de disparar verifica RagChat.avatar.disparar(evento); evento→play/setExpression se prueba en P12.10 |
 | P12.8 | ✅ | 2026-10-04 | 795 (+5) | LICENSE oficial (661 líneas, cotejada con SPDX), license AGPL-3.0-only (setuptools>=77), GET /fuente con RAG_URL_FUENTE validada, enlace «Código fuente» en widget y panel; avatar.js.LICENSE.txt generado del metafile de esbuild |
 | P12.9 | ✅ | 2026-10-04 | 803 (+8) | avatar.js 171 KB / 52 KB gzip (presupuesto 150), sha256 reproducible (npm run verificar), -text en .gitattributes; import() bajo demanda o en ocio con en_lanzador; CSP estricta deja el ícono; exportar con avatar-base |
-| P12.10 | ⬜ | | | |
+| P12.10 | ✅ | 2026-10-04 | 817 (+14) | Folio (14 expresiones, 15 animaciones) validado con la librería; máquina de estados con prioridades, tecleo 1,2 s, pensando-largo 3 s, inactividad, pausa oculta, grilla de mirada 5x3 con zona muerta e histéresis. La prueba del panel ahora verifica rag:avatar real (el stub previo desaparecía sin causa identificada; evidencia en scratchpad suite-p1210b) |
 | P12.11 | ⬜ | | | |
 | P12.12 | ⬜ | | | |
 | P12.13 | ⬜ | | | |

@@ -74,11 +74,14 @@ Se supone un widget por página.
 | `window.RagChat.abrir()` | Abre el panel |
 | `window.RagChat.cerrar()` | Lo cierra |
 | `window.RagChat.estado()` | `{abierto, posicion, tamano, lanzador, sesion}` |
+| `window.RagChat.avatar.disparar(evento)` | Hace reaccionar al avatar con un evento de la tabla de [personalidad.md](personalidad.md#cómo-reacciona-el-avatar). Devuelve `false` si aún no hay avatar |
+| `window.RagChat.avatar.estado()` | `{listo, persistente, transitorio, mirada}` |
 
 Eventos que emite el elemento: `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
 `rag:respuesta`, `rag:error` y `rag:avatar`. Este último trae
 `{estado: "listo", nombre}` cuando el avatar se montó, o
-`{estado: "error", mensaje}` cuando no se pudo y quedó el ícono.
+`{estado: "error", mensaje}` cuando no se pudo y quedó el ícono, y
+`{estado: "evento", evento, clave}` en cada reacción.
 
 ## Avatar
 

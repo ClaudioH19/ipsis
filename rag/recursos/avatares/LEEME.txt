@@ -1,1 +1,3 @@
-# Avatares incluidos (*.avatar.json). Folio llega en P12.10.
+# Avatares incluidos (*.avatar.json).
+# folio.avatar.json lo genera herramientas/avatar/folio.py; se valida con
+# herramientas/avatar/validar.mjs (la librería real).

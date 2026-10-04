@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muestra de avatares</title>
+<!--
+  Vista previa para revisión humana: todas las expresiones y animaciones de un
+  avatar. Sírvela desde la raíz del repositorio:
+    python -m http.server 8765
+    http://127.0.0.1:8765/herramientas/avatar/muestra.html?avatar=folio
+-->
+<style>
+  body{font-family:system-ui,sans-serif;margin:16px;background:#f4f5f7;color:#15181d;}
+  h1{font-size:20px;} h2{font-size:16px;margin-top:24px;}
+  .grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  figure{margin:0;background:#fff;border:1px solid #e3e6ea;border-radius:12px;padding:10px;text-align:center;}
+  figure div{width:120px;height:120px;margin:0 auto;}
+  figcaption{font-size:13px;margin-top:6px;}
+  #error{color:#b42318;}
+</style>
+</head>
+<body>
+<h1 id="titulo">Avatar</h1>
+<p id="error" role="alert"></p>
+<h2>Animaciones</h2>
+<div id="animaciones" class="grilla"></div>
+<h2>Expresiones</h2>
+<div id="expresiones" class="grilla"></div>
+<script type="module">
+  import { createAvatar } from "../../rag/servicio/estaticos/avatar.js";
+
+  const nombre = new URLSearchParams(location.search).get("avatar") || "folio";
+  const ruta = new URLSearchParams(location.search).get("ruta") || `../../rag/recursos/avatares/${nombre}.avatar.json`;
+  const definicion = await fetch(ruta).then((r) => r.json());
+  document.getElementById("titulo").textContent = definicion.name || nombre;
+
+  function tarjeta(contenedor, clave, opciones) {
+    const figura = document.createElement("figure");
+    const lienzo = document.createElement("div");
+    const pie = document.createElement("figcaption");
+    pie.textContent = clave;
+    figura.append(lienzo, pie);
+    contenedor.append(figura);
+    createAvatar(lienzo, { definition: definicion, size: 120, ariaLabel: clave,
+      onError: (e) => { document.getElementById("error").textContent += `${clave}: ${e.message} `; },
+      ...opciones });
+    figura.dataset.clave = clave;
+  }
+  for (const clave of definicion.animationOrder) {
+    tarjeta(document.getElementById("animaciones"), clave, { defaultAnimation: clave, autoplay: true });
+  }
+  for (const clave of definicion.expressionOrder) {
+    tarjeta(document.getElementById("expresiones"), clave, { defaultExpression: clave, autoplay: false });
+  }
+  document.body.dataset.listo = "true";
+</script>
+</body>
+</html>

@@ -1,0 +1,983 @@
+{
+  "schema": "bible-strong/avatar-definition",
+  "schemaVersion": 1,
+  "name": "Folio",
+  "body": {
+    "primary": {
+      "type": "cube",
+      "width": 190,
+      "height": 236,
+      "depth": 22,
+      "roundness": 0.28
+    },
+    "nodes": [
+      {
+        "surface": {
+          "type": "cube",
+          "width": 60,
+          "height": 60,
+          "depth": 20,
+          "roundness": 0.3
+        },
+        "position": [
+          64,
+          -88,
+          14
+        ],
+        "rotation": [
+          30,
+          30,
+          45
+        ]
+      }
+    ]
+  },
+  "colors": {
+    "body": "#f5f1e8",
+    "eyes": "#1e293b"
+  },
+  "expressions": {
+    "neutral": {
+      "head": {
+        "x": 0,
+        "y": 0,
+        "z": -4
+      },
+      "eyes": {
+        "left": {
+          "width": 18,
+          "height": 40,
+          "x": 0,
+          "y": -12,
+          "angle": 0
+        },
+        "right": {
+          "width": 18,
+          "height": 40,
+          "x": 0,
+          "y": -12,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "atento": {
+      "head": {
+        "x": 4,
+        "y": 0,
+        "z": -2.0
+      },
+      "eyes": {
+        "left": {
+          "width": 21,
+          "height": 46,
+          "x": 0,
+          "y": -14,
+          "angle": 0
+        },
+        "right": {
+          "width": 21,
+          "height": 46,
+          "x": 0,
+          "y": -14,
+          "angle": 0
+        },
+        "spacing": 38
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "leyendo": {
+      "head": {
+        "x": -14,
+        "y": 0,
+        "z": -4
+      },
+      "eyes": {
+        "left": {
+          "width": 19,
+          "height": 30,
+          "x": 0,
+          "y": 6,
+          "angle": 0
+        },
+        "right": {
+          "width": 19,
+          "height": 30,
+          "x": 0,
+          "y": 6,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "contento": {
+      "head": {
+        "x": 5,
+        "y": 0,
+        "z": -4
+      },
+      "eyes": {
+        "left": {
+          "width": 23,
+          "height": 20,
+          "x": 0,
+          "y": -15,
+          "angle": -12
+        },
+        "right": {
+          "width": 23,
+          "height": 20,
+          "x": 0,
+          "y": -15,
+          "angle": 12
+        },
+        "spacing": 38
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "amable": {
+      "head": {
+        "x": 3,
+        "y": -6,
+        "z": -7
+      },
+      "eyes": {
+        "left": {
+          "width": 22,
+          "height": 20,
+          "x": 0,
+          "y": -12,
+          "angle": 0
+        },
+        "right": {
+          "width": 22,
+          "height": 20,
+          "x": 0,
+          "y": -12,
+          "angle": 0
+        },
+        "spacing": 37
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "dudoso": {
+      "head": {
+        "x": 0,
+        "y": 8,
+        "z": -12
+      },
+      "eyes": {
+        "left": {
+          "width": 18,
+          "height": 40,
+          "x": 0,
+          "y": -14,
+          "angle": 0
+        },
+        "right": {
+          "width": 20,
+          "height": 22,
+          "x": 0,
+          "y": -10,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "apenado": {
+      "head": {
+        "x": -12,
+        "y": 0,
+        "z": -6
+      },
+      "eyes": {
+        "left": {
+          "width": 20,
+          "height": 30,
+          "x": 0,
+          "y": 4,
+          "angle": -14
+        },
+        "right": {
+          "width": 20,
+          "height": 30,
+          "x": 0,
+          "y": 4,
+          "angle": 14
+        },
+        "spacing": 34
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "pensando": {
+      "head": {
+        "x": 10,
+        "y": -14,
+        "z": 0
+      },
+      "eyes": {
+        "left": {
+          "width": 17,
+          "height": 36,
+          "x": -6,
+          "y": -24,
+          "angle": 0
+        },
+        "right": {
+          "width": 17,
+          "height": 36,
+          "x": -6,
+          "y": -24,
+          "angle": 0
+        },
+        "spacing": 34
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "slowDrift"
+      }
+    },
+    "pensando-lado": {
+      "head": {
+        "x": 8,
+        "y": 14,
+        "z": -6
+      },
+      "eyes": {
+        "left": {
+          "width": 17,
+          "height": 36,
+          "x": 6,
+          "y": -22,
+          "angle": 0
+        },
+        "right": {
+          "width": 17,
+          "height": 36,
+          "x": 6,
+          "y": -22,
+          "angle": 0
+        },
+        "spacing": 34
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "slowDrift"
+      }
+    },
+    "somnoliento": {
+      "head": {
+        "x": -8,
+        "y": 0,
+        "z": -8
+      },
+      "eyes": {
+        "left": {
+          "width": 22,
+          "height": 6,
+          "x": 0,
+          "y": -6,
+          "angle": 0
+        },
+        "right": {
+          "width": 22,
+          "height": 6,
+          "x": 0,
+          "y": -6,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "ojos-cerrados": {
+      "head": {
+        "x": -10,
+        "y": 0,
+        "z": -9
+      },
+      "eyes": {
+        "left": {
+          "width": 22,
+          "height": 3,
+          "x": 0,
+          "y": -4,
+          "angle": 0
+        },
+        "right": {
+          "width": 22,
+          "height": 3,
+          "x": 0,
+          "y": -4,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "sorprendido": {
+      "head": {
+        "x": 6,
+        "y": 0,
+        "z": -2.0
+      },
+      "eyes": {
+        "left": {
+          "width": 24,
+          "height": 50,
+          "x": 0,
+          "y": -16,
+          "angle": 0
+        },
+        "right": {
+          "width": 24,
+          "height": 50,
+          "x": 0,
+          "y": -16,
+          "angle": 0
+        },
+        "spacing": 40
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    },
+    "preocupado": {
+      "head": {
+        "x": -4,
+        "y": 0,
+        "z": -4
+      },
+      "eyes": {
+        "left": {
+          "width": 19,
+          "height": 34,
+          "x": 0,
+          "y": -10,
+          "angle": 12
+        },
+        "right": {
+          "width": 19,
+          "height": 34,
+          "x": 0,
+          "y": -10,
+          "angle": -12
+        },
+        "spacing": 34
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "shake",
+        "body": "none"
+      }
+    },
+    "asentir-abajo": {
+      "head": {
+        "x": -12,
+        "y": 0,
+        "z": -4
+      },
+      "eyes": {
+        "left": {
+          "width": 19,
+          "height": 36,
+          "x": 0,
+          "y": -6,
+          "angle": 0
+        },
+        "right": {
+          "width": 19,
+          "height": 36,
+          "x": 0,
+          "y": -6,
+          "angle": 0
+        },
+        "spacing": 36
+      },
+      "perspective": 1,
+      "motion": {
+        "eyes": "none",
+        "body": "none"
+      }
+    }
+  },
+  "expressionOrder": [
+    "neutral",
+    "atento",
+    "leyendo",
+    "contento",
+    "amable",
+    "dudoso",
+    "apenado",
+    "pensando",
+    "pensando-lado",
+    "somnoliento",
+    "ojos-cerrados",
+    "sorprendido",
+    "preocupado",
+    "asentir-abajo"
+  ],
+  "animations": {
+    "inactivo": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 5200,
+          "transitionMs": 400,
+          "transition": "smooth"
+        },
+        {
+          "expression": "leyendo",
+          "holdMs": 1800,
+          "transitionMs": 500,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 4200,
+          "transitionMs": 500,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "inactivo",
+        "description": "Respira; de vez en cuando relee la página.",
+        "group": "rag-extractivo"
+      }
+    },
+    "saludo": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "atento",
+          "holdMs": 500,
+          "transitionMs": 200,
+          "transition": "spring"
+        },
+        {
+          "expression": "amable",
+          "holdMs": 900,
+          "transitionMs": 240,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 300,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "saludo",
+        "description": "Se endereza y saluda con la mirada.",
+        "group": "rag-extractivo"
+      }
+    },
+    "atento": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "atento",
+          "holdMs": 4000,
+          "transitionMs": 220,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "atento",
+        "description": "",
+        "group": "rag-extractivo"
+      }
+    },
+    "escuchando": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "atento",
+          "holdMs": 1400,
+          "transitionMs": 200,
+          "transition": "smooth"
+        },
+        {
+          "expression": "leyendo",
+          "holdMs": 700,
+          "transitionMs": 260,
+          "transition": "smooth"
+        },
+        {
+          "expression": "atento",
+          "holdMs": 1200,
+          "transitionMs": 260,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "escuchando",
+        "description": "Sigue lo que se escribe.",
+        "group": "rag-extractivo"
+      }
+    },
+    "asentir": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "asentir-abajo",
+          "holdMs": 220,
+          "transitionMs": 160,
+          "transition": "snappy"
+        },
+        {
+          "expression": "atento",
+          "holdMs": 260,
+          "transitionMs": 180,
+          "transition": "smooth"
+        },
+        {
+          "expression": "asentir-abajo",
+          "holdMs": 200,
+          "transitionMs": 160,
+          "transition": "snappy"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 200,
+          "transitionMs": 200,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "asentir",
+        "description": "Recibió la pregunta.",
+        "group": "rag-extractivo"
+      }
+    },
+    "pensando": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "pensando",
+          "holdMs": 1600,
+          "transitionMs": 420,
+          "transition": "smooth"
+        },
+        {
+          "expression": "leyendo",
+          "holdMs": 1200,
+          "transitionMs": 420,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "pensando",
+        "description": "Busca en los documentos.",
+        "group": "rag-extractivo"
+      }
+    },
+    "pensando-largo": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "pensando",
+          "holdMs": 1400,
+          "transitionMs": 420,
+          "transition": "smooth"
+        },
+        {
+          "expression": "pensando-lado",
+          "holdMs": 1400,
+          "transitionMs": 520,
+          "transition": "smooth"
+        },
+        {
+          "expression": "leyendo",
+          "holdMs": 1600,
+          "transitionMs": 420,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "pensando-largo",
+        "description": "La búsqueda tarda: lee con más calma.",
+        "group": "rag-extractivo"
+      }
+    },
+    "contento": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "leyendo",
+          "holdMs": 700,
+          "transitionMs": 260,
+          "transition": "smooth"
+        },
+        {
+          "expression": "contento",
+          "holdMs": 1100,
+          "transitionMs": 300,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 360,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "contento",
+        "description": "Revisó la cita y la encontró.",
+        "group": "rag-extractivo"
+      }
+    },
+    "dudoso": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "leyendo",
+          "holdMs": 600,
+          "transitionMs": 260,
+          "transition": "smooth"
+        },
+        {
+          "expression": "dudoso",
+          "holdMs": 1400,
+          "transitionMs": 320,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 360,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "dudoso",
+        "description": "Encontró algo relacionado, no directo.",
+        "group": "rag-extractivo"
+      }
+    },
+    "apenado": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "leyendo",
+          "holdMs": 500,
+          "transitionMs": 260,
+          "transition": "smooth"
+        },
+        {
+          "expression": "apenado",
+          "holdMs": 1600,
+          "transitionMs": 380,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 420,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "apenado",
+        "description": "No está en los documentos.",
+        "group": "rag-extractivo"
+      }
+    },
+    "amable": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "amable",
+          "holdMs": 1200,
+          "transitionMs": 260,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 300,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "amable",
+        "description": "",
+        "group": "rag-extractivo"
+      }
+    },
+    "despedida": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "amable",
+          "holdMs": 700,
+          "transitionMs": 240,
+          "transition": "smooth"
+        },
+        {
+          "expression": "ojos-cerrados",
+          "holdMs": 300,
+          "transitionMs": 160,
+          "transition": "smooth"
+        },
+        {
+          "expression": "amable",
+          "holdMs": 600,
+          "transitionMs": 200,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 300,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "despedida",
+        "description": "",
+        "group": "rag-extractivo"
+      }
+    },
+    "preocupado": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "preocupado",
+          "holdMs": 900,
+          "transitionMs": 220,
+          "transition": "smooth"
+        },
+        {
+          "expression": "neutral",
+          "holdMs": 300,
+          "transitionMs": 360,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "preocupado",
+        "description": "Falló la conexión o el servicio.",
+        "group": "rag-extractivo"
+      }
+    },
+    "somnoliento": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "somnoliento",
+          "holdMs": 3200,
+          "transitionMs": 900,
+          "transition": "smooth"
+        },
+        {
+          "expression": "ojos-cerrados",
+          "holdMs": 2400,
+          "transitionMs": 900,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 6000,
+        "maxIntervalMs": 9000,
+        "durationMs": 400
+      },
+      "metadata": {
+        "label": "somnoliento",
+        "description": "Nadie escribe desde hace rato.",
+        "group": "rag-extractivo"
+      }
+    },
+    "despertar": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "ojos-cerrados",
+          "holdMs": 260,
+          "transitionMs": 100,
+          "transition": "smooth"
+        },
+        {
+          "expression": "sorprendido",
+          "holdMs": 500,
+          "transitionMs": 180,
+          "transition": "spring"
+        },
+        {
+          "expression": "atento",
+          "holdMs": 400,
+          "transitionMs": 240,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3200,
+        "maxIntervalMs": 6400,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "despertar",
+        "description": "",
+        "group": "rag-extractivo"
+      }
+    }
+  },
+  "animationOrder": [
+    "inactivo",
+    "saludo",
+    "atento",
+    "escuchando",
+    "asentir",
+    "pensando",
+    "pensando-largo",
+    "contento",
+    "dudoso",
+    "apenado",
+    "amable",
+    "despedida",
+    "preocupado",
+    "somnoliento",
+    "despertar"
+  ]
+}
