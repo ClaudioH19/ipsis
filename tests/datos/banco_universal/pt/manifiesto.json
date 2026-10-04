@@ -38,5 +38,6 @@
     "premisa_falsa",
     "sin_respuesta"
   ],
-  "uso": "regresion"
+  "uso": "regresion",
+  "idioma": "pt"
 }

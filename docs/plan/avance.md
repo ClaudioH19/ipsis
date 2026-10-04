@@ -64,7 +64,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P10.1 | ✅ | 2026-10-03 | 545 (suite completa) | metricas.py: SenalesObservadas (s_ret, s_oov, s_foco, s_cov, s_lex, acuerdo, s_rr, s_qa, dominio tal como decidió la política; None si no aplica). ObservacionEvaluacion gana idioma, regla, senales y respuesta_exacta, que evaluar_backend_activo llena desde el diagnóstico real. FilaCaso (vista por caso). ResumenCobertura: cobertura directa y relacionada, recall sin respuesta, falsos ok, tasa sobre no respondibles y directas sin literal. Global, por grupo (exacta, parafrasis, trampa_mismo_tema, sin_respuesta, fuera_de_dominio, premisa_falsa, ambigua) y por idioma, en ReporteMetricas.cobertura. riesgo_aceptadas (n = respuestas ok, x = falsos ok + directas sin literal) con cota_superior_clopper_pearson (CDF binomial + bisección, sin SciPy) y n_minimo. Falso ok unificado: no respondible y no conversacional. linea_base.py resume desde el reporte formal y coincide con la línea base de P9.4. Sin cambios en política, umbrales ni modelos. Definiciones, referencias y hallazgos en Hallazgos. Una corrida completa tuvo 1 fallo intermitente que no se reprodujo (ni aislado ni en una segunda corrida completa). |
 | P10.2 | ✅ | 2026-10-03 | 566 (suite completa) | Auditoría: acuerdo nunca se calculaba (lexico.acuerdo sin llamadas; su condición en light era inerte); se retira de cascada_v1 y de los documentos, sin cambio de comportamiento, y queda como candidata para P10.4. s_lex es señal interna de selección y no se agrega. regla_cascada (pura) la comparten política y calibración; no regresión: re-decidir con los umbrales del perfil reproduce cada estado (sintético y 180 casos del banco universal). τ_oov se separa en oov_dominio y oov_ok (0,6 ambos; un oov anterior vale para los dos; corregido que un oov en ajustes_perfil quedaba ignorado). Línea base universal sin cambios. calibracion.py: calibrar(banco, observaciones, umbrales_perfil, alfa, confianza) con exigir_calibrable; búsqueda conjunta (foco, oov_ok) × barrido de ok sobre valores observados en dev; elige la cobertura directa máxima con cota CP ≤ α y verifica la combinación con la política completa; test se reporta aparte. Estados calibrado/muestra_insuficiente/sin_umbral_seguro (los dos últimos mantienen los umbrales del perfil). escribir_calibracion/cargar_calibracion; configuracion/calibracion.py valida la procedencia (perfil, modelos, hash_corpus del índice) y construir_motor solo aplica estado calibrado. Se retiran calibrar_umbral y CalibracionDev. Análisis del banco universal y hard negatives inseparables en Hallazgos. |
 | P10.3 | ✅ | 2026-10-03 | 576 (suite completa, incluye la lenta de medium) | rag calibrar [--alfa 0.05] [--aplicar]: CLI fina → calibrar_proyecto (aplicacion/evaluacion.py) → calibrar (P10.2, sin cambios). Valida alfa en (0,1); hash_corpus del manifiesto del índice activo (sin índice: «rag indexar»); golden vigente y calibrable (corpus cambiado: «rag golden validar»; uso regresion: rechazado); evalúa con evaluar_backend_activo (inyectable). Sin --aplicar no escribe; con --aplicar escribe calibracion.yaml en cualquier estado, solo «calibrado» se habilita. Salidas: CALIBRADO 0, MUESTRA_INSUFICIENTE 0, SIN_UMBRAL_SEGURO 1, errores 1. 9 pruebas de CLI con motor falso (tres estados, procedencia del índice, errores) y 1 lenta: medium sobre el banco v1.1.0 importado da muestra_insuficiente con el hash del índice real. Guía golden.md con la sección Calibrar. Hallazgos (desempate y estratificación del split) en Hallazgos. |
-| P10.4 | ⬜ | | | |
+| P10.4 | ✅ | 2026-10-03 | 586 (suite completa) + benchmark real bm25/light/medium/heavy | rag benchmark --banco M [--banco…] --perfiles bm25,light,medium,heavy [--experimentos]: proyecto temporal por perfil y banco (idioma del manifiesto), evaluar_backend_activo con motor calentado, métricas de reporte_cobertura, p50/p95 por consulta y por etapa, presupuesto, modelos (parámetros y ONNX en disco, no RAM) e indexado aparte. Escribe golden/reportes/benchmark-perfiles.{json,md} y un artefacto por perfil y banco para rag comparar (etiquetado por perfil). Salida ≠ 0 si un perfil excede el presupuesto o, con un banco de evaluación, da falsos ok; las variantes no cortan. Se corrigen el perfil bm25 (era light: ahora recuperacion_modo dispersa, modo dispersa en buscar y en el retriever, seleccionable para diagnóstico pero no en rag init), el idioma en el manifiesto del banco y la limpieza en Windows. Experimentos: medium τ_ok 0,85 → POSPONER (falsos ok 3→1, misma cobertura); acuerdo → DESCARTAR (sin efecto, +4,6 ms p95). Tabla, hallazgos y decisiones en Hallazgos. |
 | P10.5 | ⬜ | | | |
 | P11.1 | ⬜ | | | |
 | P11.2 | ⬜ | | | |
@@ -319,5 +319,79 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   se separan como un solo grupo, sin distinguir exacta de paráfrasis. En el
   banco v1.1.0 las 3 exactas quedaron en test. Con bancos chicos conviene
   estratificar también por categoría interna (P9.1, a revisar).
+- **P10.4 — benchmark por perfiles.** Banco universal es+en+pt (90 casos: 45
+  respondibles y 45 no respondibles), CPU local, defaults sin calibrar. Comando:
+  `rag benchmark --banco …/es --banco …/en --banco …/pt --perfiles
+  bm25,light,medium,heavy --experimentos`; salida 0. Es un banco de
+  regresión: **no certifica** ningún perfil.
+
+  | Perfil | Cobertura directa | Exactas | Paráfrasis | Falsos ok | Trampas con falso ok | Riesgo x/n | p50 ms | p95 ms | Presupuesto |
+  |---|---|---|---|---|---|---|---|---|---|
+  | bm25 | 22/45 | 22/30 | 0/15 | 1/45 | 1/30 | 1/23 | 58 | 80 | 100 ✓ |
+  | light | 22/45 | 22/30 | 0/15 | 1/45 | 1/30 | 1/23 | 59 | 85 | 150 ✓ |
+  | medium | 32/45 | 30/30 | 2/15 | 3/45 | 2/30 | 3/35 | 595 | 815 | 1000 ✓ |
+  | heavy | 31/45 | 29/30 | 2/15 | 2/45 | 2/30 | 2/33 | 1883 | 2130 | 4000 ✓ |
+  | medium+ok0,85 (exp.) | 32/45 | 30/30 | 2/15 | 1/45 | 0/30 | 1/33 | 595 | 815 | — |
+  | light+acuerdo (exp.) | 22/45 | 22/30 | 0/15 | 1/45 | 1/30 | 1/23 | 62 | 89 | — |
+
+  - Rechazo: fuera de dominio y premisa falsa 100% en todos. Ninguna
+    respondible queda sin respuesta, y ninguna directa sale sin la respuesta
+    literal.
+  - Por idioma (exactas con ok): light/bm25 es 8, en 5, pt 9; medium 10 en los
+    tres; heavy es 9, en 10, pt 10.
+  - Costo: los tamaños son de los archivos ONNX en disco, no RAM (no se mide).
+    - light: e5-small, 118 M parámetros, 470 MB.
+    - medium: lo de light + mmarco (118 M, 119 MB) + mdeberta (278 M,
+      1114 MB).
+    - heavy: e5-base (278 M, 1110 MB) + bge-reranker-v2-m3 (568 M, 571 MB) +
+      mdeberta (1114 MB).
+    - p95 por etapa: medium reranking 293 y lectura 513 ms; heavy reranking
+      1207 y lectura 874 ms.
+  - Latencia frente a P7.6 (otro banco): light 85 contra 82 ms, medium 815
+    contra 886, heavy 2130 contra 2221. Sin regresiones.
+  - Falsos ok por perfil:
+    - bm25 y light: `es-trampa-009`.
+    - medium: `es-trampa-001`, `en-trampa-004` y `es-ambigua-001`.
+    - heavy: `es-trampa-001` y `en-trampa-004`.
+- **P10.4 — qué se aprendió.**
+  - **bm25 frente a light:** iguales en todo. Con 5 microdocumentos por idioma,
+    los candidatos cubren casi todo el corpus con cualquier recuperación. El
+    banco universal no tiene potencia para medir el aporte del denso: hace
+    falta un corpus grande.
+  - **light frente a medium:** el lector y el reranker suben las exactas de 22
+    a 30 de 30 (el inglés de 5 a 10) y las paráfrasis de 0 a 2 de 15. Cuestan
+    unos 730 ms más de p95 y 2 falsos ok más (trampas con `s_qa` 0,82 y 0,83).
+  - **medium frente a heavy:** heavy corrige «¿Cuánto dura?» pero no las dos
+    trampas del mismo tema. Pierde una exacta en español y cuesta 2,6 veces el
+    p95. Con esta evidencia no compra seguridad material.
+  - Las dos trampas (`es-trampa-001` y `en-trampa-004`) siguen inseparables
+    incluso en heavy: queda evidencia para considerar otra señal **después**
+    de P10, con las reglas de modelos-y-perfiles.md (no se implementa).
+- **P10.4 — decisión: `medium` con `τ_ok` = 0,85 → POSPONER.** Baja los
+  falsos ok de 3 a 1 (trampas de 2 a 0) con la misma cobertura (32/45) y la
+  misma latencia. No se cambia el default: el umbral de cada cliente lo elige
+  `rag calibrar`. Queda como candidato para una decisión posterior con más
+  bancos.
+- **P10.4 — decisión: `acuerdo` → DESCARTAR como señal de la política.** Los
+  falsos ok, la cobertura y las trampas no cambian (1/45; `es-trampa-009` ya
+  tiene acuerdo ≥ 0,5). Agrega dos búsquedas por pregunta: +3,4 ms en p50 y
+  +4,6 ms en p95, y light sigue dentro de los 150 ms. Sin mejora medible, no
+  justifica el costo. `lexico.acuerdo()` se conserva porque la usa el
+  experimento del benchmark. Volver a medir con un corpus grande, donde denso
+  y BM25 sí pueden discrepar.
+- **P10.4 — defectos del benchmark corregidos.**
+  - `bm25.yaml` era idéntico a light: mismas etapas y recuperación híbrida.
+  - bm25 no se podía seleccionar (`AsistenteConfig.perfil`).
+  - No existía el modo `dispersa`, ni en `buscar` ni en `RetrieverQdrant`.
+  - Todos los artefactos se llamaban `qdrant_hibrida` y `rag comparar` los
+    rechazaba; ahora se etiquetan por perfil.
+  - En Windows, la limpieza del temporal con Qdrant abierto tapaba el error
+    real.
+  - De las 4 corridas reales, 2 fallaron antes de los arreglos y 1 más cuya
+    salida perdí por un filtro de `grep`; no se reprodujo. La corrida de la
+    tabla terminó con salida 0.
+- **Pendientes de P10.3, siguen abiertos.**
+  - La calibración, ante empate, debería preferir el valor del perfil.
+  - El split dev/test podría estratificar por exacta/paráfrasis.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.

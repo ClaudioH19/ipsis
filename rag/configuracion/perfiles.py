@@ -61,6 +61,8 @@ class PerfilInstalacion(_Estricto):
     etapas: list[str]
     lexico: LexicoPerfil = Field(default_factory=LexicoPerfil)
     umbrales_por_defecto: dict[str, float]
+    # Modo de recuperación propio del perfil; si falta, el de motor.yaml.
+    recuperacion_modo: Literal["vectorial", "hibrida", "dispersa"] | None = None
     # Lo agrega la fusión: de dónde salieron los umbrales.
     origen_umbrales: Literal["perfil", "calibracion"] = "perfil"
 

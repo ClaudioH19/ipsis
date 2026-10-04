@@ -23,7 +23,8 @@ class AsistenteConfig(ConfiguracionEstricta):
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
     descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
     idioma: str = Field(default="es", min_length=2)
-    perfil: Literal["light", "medium", "heavy"] = "light"
+    # «bm25» es de diagnóstico (rag benchmark): rag init no lo ofrece.
+    perfil: Literal["light", "medium", "heavy", "bm25"] = "light"
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
 
@@ -32,7 +33,7 @@ class RecuperacionConfig(ConfiguracionEstricta):
     modelo: str | None = None  # si falta, el modelo denso del perfil
     estrategia_chunking: str = Field(min_length=1)
     con_header: bool = False
-    modo: Literal["vectorial", "hibrida"] = "hibrida"
+    modo: Literal["vectorial", "hibrida", "dispersa"] = "hibrida"
     top_k: int = Field(default=3, ge=1)
     coleccion_base: str = Field(min_length=1)
     qdrant_path: str = ".rag/indice/qdrant"

@@ -93,6 +93,7 @@ def construir(idioma: str) -> tuple[str, str]:
                            sha256=hash_archivos_corpus(carpeta / "corpus", archivos)),
         categorias_requeridas=sorted({c.categoria for c in casos}, key=lambda c: c.value),
         uso="regresion",
+        idioma=idioma,
     )
     banco = BancoEvaluacion(manifiesto=manifiesto, casos=casos)
     return (banco.manifiesto.model_dump_json(indent=2, exclude_none=True) + "\n",

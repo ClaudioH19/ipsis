@@ -17,7 +17,7 @@ from rag.nucleo.esquemas import (
 from rag.indice.qdrant import ColeccionQdrant, buscar, construir_filtro_entidad
 from rag.indice.payload import chunk_desde_payload
 
-MODOS = ("vectorial", "hibrida")
+MODOS = ("vectorial", "hibrida", "dispersa")  # «dispersa»: solo BM25 (perfil de diagnóstico bm25)
 
 
 class RetrieverQdrant:

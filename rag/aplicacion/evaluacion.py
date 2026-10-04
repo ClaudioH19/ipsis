@@ -11,6 +11,7 @@ from pathlib import Path
 import yaml
 
 from rag.evaluacion.banco import cargar_banco, hash_banco
+from rag.evaluacion.benchmark import percentil
 from rag.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
 from rag.evaluacion.metricas import (
     ArtefactoEvaluacion,
@@ -182,16 +183,6 @@ def ejecutar_benchmark(
             os.chdir(anterior)
 
 
-def _percentil(valores: list[float], q: float) -> float:
-    ordenados = sorted(valores)
-    if not ordenados:
-        return 0.0
-    posicion = (len(ordenados) - 1) * q
-    abajo = int(posicion)
-    arriba = min(abajo + 1, len(ordenados) - 1)
-    return ordenados[abajo] + (ordenados[arriba] - ordenados[abajo]) * (posicion - abajo)
-
-
 def medir_latencia(
     ruta_banco: str,
     perfiles: list[str],
@@ -237,11 +228,11 @@ def medir_latencia(
             finally:
                 os.chdir(anterior)
         presupuesto = cargar_perfil_instalacion(perfil).presupuesto_p95_ms
-        p95 = _percentil(totales, 0.95)
+        p95 = percentil(totales, 0.95)
         informe["perfiles"][perfil] = {
             "presupuesto_p95_ms": presupuesto,
-            "total": {"p50": round(_percentil(totales, 0.5), 1), "p95": round(p95, 1)},
-            "etapas": {e: {"p50": round(_percentil(v, 0.5), 1), "p95": round(_percentil(v, 0.95), 1)}
+            "total": {"p50": round(percentil(totales, 0.5), 1), "p95": round(p95, 1)},
+            "etapas": {e: {"p50": round(percentil(v, 0.5), 1), "p95": round(percentil(v, 0.95), 1)}
                        for e, v in por_etapa.items()},
             "cumple_presupuesto": p95 <= presupuesto,
         }

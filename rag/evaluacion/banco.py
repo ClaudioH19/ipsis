@@ -122,6 +122,8 @@ class ManifiestoBanco(BaseModel):
     # «regresion»: banco universal del software (lo usan las pruebas), igual para
     # todos los clientes; mide, pero nunca calibra umbrales de un cliente.
     uso: Literal["evaluacion", "regresion"] = "evaluacion"
+    # Idioma del corpus y las preguntas (código de paquete). Si falta, el del proyecto.
+    idioma: str | None = None
 
 
 class BancoEvaluacion(BaseModel):

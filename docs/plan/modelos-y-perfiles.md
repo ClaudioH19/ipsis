@@ -77,8 +77,11 @@ saturado en el cliente e IDF aplicado en Qdrant (`modifier: idf`). Ver
 
 Archivos: `rag/recursos/perfiles/{light,medium,heavy}.yaml`. El proyecto
 sobrescribe en `configuracion/motor.yaml`. Además existe `bm25`, que no se
-instala: es un perfil de diagnóstico de `rag benchmark` que muestra cuánto
-aportan el denso y los modelos.
+instala (`rag init` no lo ofrece): es un perfil de diagnóstico de
+`rag benchmark` que recupera **solo con BM25** (`recuperacion_modo: dispersa`)
+para mostrar cuánto aporta el denso a la recuperación. La señal de dominio
+`s_ret` sigue siendo el coseno denso, porque la política se calibró en esa
+escala.
 
 ```yaml
 # rag/recursos/perfiles/medium.yaml (borrador)
