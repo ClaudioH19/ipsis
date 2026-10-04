@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-oscuro.svg">
-  <img alt="rag-extractivo: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-claro.svg" width="100%">
+  <img alt="ipsis: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-claro.svg" width="100%">
 </picture>
 
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
@@ -21,7 +21,7 @@
 
 ---
 
-**rag-extractivo** es un asistente para tu sitio que responde preguntas sobre
+**ipsis** es un asistente para tu sitio que responde preguntas sobre
 tus documentos **mostrando el texto literal que lo respalda**, con documento,
 sección y posición exacta. No redacta con un modelo generativo: si los
 documentos no contienen la respuesta, lo dice. Corre en CPU, en tu propio
@@ -42,7 +42,7 @@ servidor y, una vez descargados los modelos, sin red.
 
 **🔎 Extractivo y verificable**<br>
 Cada respuesta es un tramo literal del documento, con la cita debajo y el
-dato marcado. `rag auditar` comprueba que siga siéndolo.
+dato marcado. `ipsis auditar` comprueba que siga siéndolo.
 
 **🛑 Sabe cuándo no responder**<br>
 Estados `ok`, `relacionado` y `sin_respuesta`, decididos por señales
@@ -65,7 +65,7 @@ Una línea de HTML, responsive, aislado en Shadow DOM, con 7 tonos de
 respuesta y **Folio**, un avatar que reacciona a cada evento.
 
 **🏠 Self-hosted de verdad**<br>
-Imagen Docker por perfil, `rag desplegar preparar` con HTTPS (Caddy) y un
+Imagen Docker por perfil, `ipsis desplegar preparar` con HTTPS (Caddy) y un
 panel `/admin` para ajustar la personalidad sin terminal.
 
 </td>
@@ -74,7 +74,7 @@ panel `/admin` para ajustar la personalidad sin terminal.
 
 ### ¿Por qué extractivo?
 
-| | RAG generativo | **rag-extractivo** |
+| | RAG generativo | **ipsis** |
 |---|---|---|
 | Qué devuelve | Texto nuevo redactado por un LLM | **El texto del documento, literal** |
 | ¿Puede inventar? | Sí (alucinaciones) | **No: si no está, lo dice** |
@@ -98,7 +98,7 @@ flowchart LR
 ```
 
 Cada decisión deja su regla y sus señales en el diagnóstico
-(`rag preguntar --diagnostico`). Detalle en [arquitectura](docs/arquitectura.md)
+(`ipsis preguntar --diagnostico`). Detalle en [arquitectura](docs/arquitectura.md)
 y en las [fichas metodológicas](docs/metodologia/README.md).
 
 ## 🚀 Inicio rápido
@@ -106,21 +106,21 @@ y en las [fichas metodológicas](docs/metodologia/README.md).
 Requiere Python 3.11 o 3.12. No necesita GPU.
 
 ```bash
-pip install "rag-extractivo @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
+pip install "ipsis @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
 
 mkdir mi-asistente && cd mi-asistente
-rag init --perfil medium --idioma es
-rag modelos descargar            # una sola vez por máquina
-rag cargar /ruta/a/documentos    # PDF con texto, DOCX, Markdown o TXT
-rag indexar
-rag doctor                       # ¿puede funcionar? Si no, qué comando ejecutar
-rag servir                       # http://127.0.0.1:8000
+ipsis init --perfil medium --idioma es
+ipsis modelos descargar            # una sola vez por máquina
+ipsis cargar /ruta/a/documentos    # PDF con texto, DOCX, Markdown o TXT
+ipsis indexar
+ipsis doctor                       # ¿puede funcionar? Si no, qué comando ejecutar
+ipsis servir                       # http://127.0.0.1:8000
 ```
 
 Pregunta desde otra terminal:
 
 ```bash
-rag preguntar "¿Cada cuánto se cambia el filtro?"
+ipsis preguntar "¿Cada cuánto se cambia el filtro?"
 ```
 
 <details>
@@ -132,7 +132,7 @@ rag preguntar "¿Cada cuánto se cambia el filtro?"
 | `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s | 815 ms |
 | `heavy` | e5-base + reranker bge-m3 + lector mDeBERTa | 2,8 GB | 5 s | 2.130 ms |
 
-Se cambia después con `rag perfil cambiar <perfil>`. Medido en CPU con el
+Se cambia después con `ipsis perfil cambiar <perfil>`. Medido en CPU con el
 banco universal de 90 preguntas; ver [ADR 0003](docs/decisiones/0003-onnx-y-perfiles.md).
 
 </details>
@@ -144,7 +144,7 @@ Todo el detalle está en la [guía de instalación](docs/guia/instalacion.md).
 Para un servidor con HTTPS:
 
 ```bash
-rag desplegar preparar --dominio asistente.tu-dominio.com
+ipsis desplegar preparar --dominio asistente.tu-dominio.com
 # copia dist/ al VPS y ejecuta:
 docker compose --profile https up -d --build
 ```
@@ -156,8 +156,8 @@ Ver la [guía de despliegue](docs/guia/despliegue.md).
 ## 🧩 En tu sitio
 
 ```bash
-rag configurar cors_origenes=https://www.tu-sitio.com
-rag widget snippet --api https://asistente.tu-dominio.com
+ipsis configurar cors_origenes=https://www.tu-sitio.com
+ipsis widget snippet --api https://asistente.tu-dominio.com
 ```
 
 ```html
@@ -183,10 +183,10 @@ configuran sin tocar código ([guía web](docs/guia/web.md)).
 ## 📏 Medir y calibrar
 
 ```bash
-rag golden plantilla              # propone preguntas a partir de tus documentos
-rag golden importar golden/golden.csv
-rag evaluar                       # cobertura, falsos «ok» y latencia
-rag calibrar --aplicar            # umbrales con riesgo de falso «ok» ≤ 5 %, si la muestra alcanza
+ipsis golden plantilla              # propone preguntas a partir de tus documentos
+ipsis golden importar golden/golden.csv
+ipsis evaluar                       # cobertura, falsos «ok» y latencia
+ipsis calibrar --aplicar            # umbrales con riesgo de falso «ok» ≤ 5 %, si la muestra alcanza
 ```
 
 La calibración no entrena nada: elige umbrales entre valores observados y
@@ -212,8 +212,8 @@ Por dentro: [fichas metodológicas](docs/metodologia/README.md),
 ## 🛠️ Desarrollo
 
 ```bash
-git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git rag-extractivo
-cd rag-extractivo
+git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git ipsis
+cd ipsis
 python -m venv .venv && .venv/bin/python -m pip install -e ".[test]"
 python -m pytest -m "not slow and not browser"     # rápidas
 ```
@@ -246,11 +246,11 @@ avatar ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-av
   nuevas: el servicio ya enlaza a este repositorio.
 - **Si lo modificas y lo ofreces por red,** ofrece el código fuente de tu
   versión (§13): el widget y el panel muestran «Código fuente» (`GET /fuente`);
-  apunta `RAG_URL_FUENTE` a tu repositorio.
+  apunta `IPSIS_SOURCE_URL` a tu repositorio.
 - **Si lo redistribuyes** (por ejemplo, una imagen Docker), incluye la licencia
   y el código fuente.
 
 Las licencias de los paquetes incluidos en el motor del avatar están en
-`rag/servicio/estaticos/avatar.js.LICENSE.txt`.
+`ipsis/servicio/estaticos/avatar.js.LICENSE.txt`.
 
 <div align="center"><sub>Hecho para que un asistente pueda decir «no está en los documentos».</sub></div>

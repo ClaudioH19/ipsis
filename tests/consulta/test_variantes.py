@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from rag.consulta.variantes import SelectorVariantes, elegir, en_consulta, usadas
+from ipsis.consulta.variantes import SelectorVariantes, elegir, en_consulta, usadas
 
 OPCIONES = ["a", "b", "c", "d", "e"]
 
@@ -54,9 +54,9 @@ def test_la_memoria_de_sesiones_es_acotada():
 # --- en el motor --------------------------------------------------------------------------------
 @pytest.fixture
 def motor():
-    from rag.consulta.etapas.redaccion import cargar_plantillas
-    from rag.consulta.motor import Motor
-    from rag.lenguaje.paquete import cargar_paquete
+    from ipsis.consulta.etapas.redaccion import cargar_plantillas
+    from ipsis.consulta.motor import Motor
+    from ipsis.lenguaje.paquete import cargar_paquete
 
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "Ana",
                                                           "descripcion_dominio": "el manual"})
@@ -82,7 +82,7 @@ def test_categoria_conversacional_por_cada_categoria(motor):
 def test_la_respuesta_http_publica_la_categoria_solo_si_es_conversacional(motor):
     from fastapi.testclient import TestClient
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     cliente = TestClient(crear_app(motor))
     datos = cliente.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()
@@ -90,7 +90,7 @@ def test_la_respuesta_http_publica_la_categoria_solo_si_es_conversacional(motor)
 
 
 def test_la_abstencion_varia_por_turno_y_queda_trazada():
-    from rag.consulta.etapas.redaccion import construir_mensaje_abstencion
+    from ipsis.consulta.etapas.redaccion import construir_mensaje_abstencion
 
     selector = SelectorVariantes()
     textos, ids = [], []
@@ -107,9 +107,9 @@ def test_la_abstencion_varia_por_turno_y_queda_trazada():
 
 def test_todas_las_variantes_de_conectores_pasan_la_fidelidad():
     """El tono enmarca: con cualquier apertura o conector, la respuesta sigue siendo literal."""
-    from rag.consulta.etapas.redaccion import redactar
-    from rag.consulta.etapas.verificacion import verificar_fidelidad
-    from rag.lenguaje.tonos import cargar_tono, tonos_disponibles
+    from ipsis.consulta.etapas.redaccion import redactar
+    from ipsis.consulta.etapas.verificacion import verificar_fidelidad
+    from ipsis.lenguaje.tonos import cargar_tono, tonos_disponibles
 
     fragmentos = [
         {"chunk_id": "c1", "texto": "El filtro se cambia cada 6 meses.", "doc_titulo": "Manual", "score": 0.9,

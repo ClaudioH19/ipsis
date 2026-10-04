@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.cli import main
-from rag.lenguaje.paquete import cargar_paquete, idiomas_disponibles
+from ipsis.cli import main
+from ipsis.lenguaje.paquete import cargar_paquete, idiomas_disponibles
 
 
 def test_el_paquete_espanol_esta_completo():
@@ -22,7 +22,7 @@ def test_el_paquete_espanol_esta_completo():
 
 def test_idioma_sin_paquete_usa_el_respaldo_universal():
     """docs/metodologia/multilenguaje.md: reglas universales, términos sin stem y mensajes de en."""
-    from rag.lenguaje.texto import terminos
+    from ipsis.lenguaje.texto import terminos
 
     ru, en = cargar_paquete("ru"), cargar_paquete("en")
     assert ru.respaldo and not en.respaldo
@@ -52,7 +52,7 @@ def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
     paquete = cargar_paquete("es", proyecto=tmp_path)
     # Ese texto ahora es del tono: el paquete lo entrega como sobrescritura de tono.
     assert paquete.plantillas_legado == {"sin_respuesta": ["Nada por aquí."]}
-    from rag.lenguaje.tonos import cargar_tono
+    from ipsis.lenguaje.tonos import cargar_tono
 
     tono = cargar_tono("es", sobrescrituras=paquete.plantillas_legado)
     assert tono.variantes("sin_respuesta") == ["Nada por aquí."]

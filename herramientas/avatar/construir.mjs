@@ -1,4 +1,4 @@
-// Genera rag/servicio/estaticos/avatar.js (ESM minificado), avatar.js.LICENSE.txt
+// Genera ipsis/servicio/estaticos/avatar.js (ESM minificado), avatar.js.LICENSE.txt
 // con el aviso de cada paquete incluido, y avatar.js.sha256.
 //
 //   npm ci && npm run construir     # escribe los tres archivos
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
-const destino = resolve(aqui, "../../rag/servicio/estaticos");
+const destino = resolve(aqui, "../../ipsis/servicio/estaticos");
 const verificar = process.argv.includes("--verificar");
 
 const resultado = await build({
@@ -46,12 +46,12 @@ for (const entrada of Object.keys(resultado.metafile.inputs)) {
 
 const nombres = [...paquetes.keys()].sort();
 const aviso = [
-  "avatar.js — motor del avatar de rag-extractivo, empaquetado con esbuild",
+  "avatar.js — motor del avatar de ipsis, empaquetado con esbuild",
   "desde herramientas/avatar/ (ver package-lock.json). Incluye:",
   "",
   ...nombres.map((n) => `  ${n}@${paquetes.get(n).version} (${paquetes.get(n).licencia})`),
   "",
-  "El código fuente de rag-extractivo, incluido este bundle, se distribuye",
+  "El código fuente de ipsis, incluido este bundle, se distribuye",
   "bajo AGPL-3.0-only: ver LICENSE en la raíz del repositorio.",
   ...nombres.flatMap((n) => ["", "=".repeat(78), `${n}@${paquetes.get(n).version}`, "=".repeat(78),
     paquetes.get(n).texto]),

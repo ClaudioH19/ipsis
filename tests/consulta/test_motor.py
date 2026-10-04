@@ -5,24 +5,24 @@ from typing import Any
 
 import pytest
 
-from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion.carga import cargar_dominio, cargar_proyecto
-from rag.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
-from rag.consulta.etapas.politica import DecisionAbstencion
-from rag.nucleo.esquemas import (
+from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
+from ipsis.consulta.etapas.politica import DecisionAbstencion
+from ipsis.nucleo.esquemas import (
     ChunkRecord,
     RetrievalCandidate,
     RetrievalSignals,
     SenalesRecuperacion,
 )
-from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
-from rag.lenguaje.entidades import extraer_entidades
-from rag.consulta.motor import Motor
-from rag.aplicacion.consulta import construir_motor
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
+from ipsis.lenguaje.entidades import extraer_entidades
+from ipsis.consulta.motor import Motor
+from ipsis.aplicacion.consulta import construir_motor
 
 
 def test_endpoint_consultar_delega_en_motor():
-    from rag.servicio import api
+    from ipsis.servicio import api
     from fastapi.testclient import TestClient
 
     contrato = {
@@ -59,7 +59,7 @@ def test_endpoint_consultar_delega_en_motor():
 
 def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
     from fastapi.testclient import TestClient
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     eventos: list[str] = []
 
@@ -112,7 +112,7 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
 
 def test_health_sigue_vivo_y_ready_diagnostica_un_arranque_fallido():
     from fastapi.testclient import TestClient
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     class _MotorQueFalla:
         politica_abstencion = None
@@ -255,7 +255,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
             return {"articulo:9"}
 
         def estadisticas_lexico(self):
-            from rag.indice.estadisticas import EstadisticasLexicas
+            from ipsis.indice.estadisticas import EstadisticasLexicas
 
             return EstadisticasLexicas.construir(["El documento describe el equipo."])
 

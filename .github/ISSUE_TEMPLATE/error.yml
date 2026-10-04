@@ -18,26 +18,26 @@ body:
     attributes:
       label: Pasos para reproducirlo
       placeholder: |
-        1. rag init --perfil light
-        2. rag cargar …
+        1. ipsis init --perfil light
+        2. ipsis cargar …
         3. …
     validations:
       required: true
   - type: textarea
     id: doctor
     attributes:
-      label: Salida de `rag doctor`
+      label: Salida de `ipsis doctor`
       render: text
   - type: textarea
     id: diagnostico
     attributes:
-      label: Si es una respuesta equivocada, salida de `rag preguntar --diagnostico "…"`
+      label: Si es una respuesta equivocada, salida de `ipsis preguntar --diagnostico "…"`
       description: Muestra la regla que decidió y las señales. Quita lo que sea confidencial.
       render: text
   - type: input
     id: version
     attributes:
-      label: Versión (`rag --version`)
+      label: Versión (`ipsis --version`)
     validations:
       required: true
   - type: dropdown

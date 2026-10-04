@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ejemplo HTML · rag-extractivo</title>
+  <title>Ejemplo HTML · ipsis</title>
 </head>
 <body>
   <main>
@@ -11,16 +11,16 @@
     <p>Abre el asistente para consultar los documentos publicados.</p>
   </main>
 
-  <rag-extractivo-chat titulo="Ayuda documental"></rag-extractivo-chat>
+  <ipsis-chat titulo="Ayuda documental"></ipsis-chat>
   <script src="config.js"></script>
   <script>
-    const widget = document.querySelector("rag-extractivo-chat");
-    widget.setAttribute("api", window.RAG_EJEMPLO.api);
-    if (window.RAG_EJEMPLO.widgetKey) {
-      widget.setAttribute("widget-key", window.RAG_EJEMPLO.widgetKey);
+    const widget = document.querySelector("ipsis-chat");
+    widget.setAttribute("api", window.IPSIS_EXAMPLE.api);
+    if (window.IPSIS_EXAMPLE.widgetKey) {
+      widget.setAttribute("widget-key", window.IPSIS_EXAMPLE.widgetKey);
     }
     const script = document.createElement("script");
-    script.src = window.RAG_EJEMPLO.api.replace(/\/$/, "") + "/widget.js";
+    script.src = window.IPSIS_EXAMPLE.api.replace(/\/$/, "") + "/widget.js";
     document.body.appendChild(script);
   </script>
 </body>

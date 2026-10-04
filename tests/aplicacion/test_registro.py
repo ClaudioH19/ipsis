@@ -1,4 +1,4 @@
-"""Registro de consultas (apagado por defecto) y ``rag auditar``, con un motor falso."""
+"""Registro de consultas (apagado por defecto) y ``ipsis auditar``, con un motor falso."""
 from __future__ import annotations
 
 import json
@@ -8,12 +8,12 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
-from rag.cli import main
-from rag.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
+from ipsis.cli import main
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
 
 MANUAL = "# Manual\n\n## Filtro\n\nEl filtro de sedimentos se cambia cada 6 meses.\n"
 ORACION = "El filtro de sedimentos se cambia cada 6 meses."
-REGISTRO = Path(".rag/registros/consultas.jsonl")
+REGISTRO = Path(".ipsis/registros/consultas.jsonl")
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +29,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 @pytest.fixture
 def corpus(tmp_path: Path) -> dict[str, int]:
     """Un documento cargado en el proyecto; offsets reales de ORACION."""
-    from rag.ingesta.ingesta import parsear_corpus
+    from ipsis.ingesta.ingesta import parsear_corpus
 
     origen = tmp_path / "fuente" / "manual.md"
     origen.parent.mkdir()
@@ -61,7 +61,7 @@ class MotorFalso:
 
 
 def _preguntar(offsets, *preguntas):
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     cliente = TestClient(crear_app(MotorFalso(offsets)))
     for pregunta in preguntas:
@@ -69,11 +69,11 @@ def _preguntar(offsets, *preguntas):
 
 
 def test_con_el_registro_apagado_no_se_escribe_nada(corpus):
-    from rag.aplicacion.proyecto import configuracion_asistente
+    from ipsis.aplicacion.proyecto import configuracion_asistente
 
     assert configuracion_asistente()["registro"] == {"activo": False}  # apagado por defecto
     _preguntar(corpus, "¿Cada cuánto se cambia el filtro?")
-    assert not Path(".rag/registros").exists()
+    assert not Path(".ipsis/registros").exists()
 
 
 def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, capsys):
@@ -118,7 +118,7 @@ def test_una_evidencia_alterada_a_mano_se_reporta(corpus, capsys):
 
 
 def test_documento_retirado_del_corpus_se_reporta(corpus):
-    from rag.aplicacion.registro import auditar_registro
+    from ipsis.aplicacion.registro import auditar_registro
 
     assert main(["configurar", "registro.activo=true"]) == 0
     _preguntar(corpus, "a")
@@ -132,7 +132,7 @@ def test_documento_retirado_del_corpus_se_reporta(corpus):
 
 def test_sin_registro_auditar_dice_como_activarlo(capsys):
     assert main(["auditar"]) == 1
-    assert "Acción: rag configurar registro.activo=true" in capsys.readouterr().out
+    assert "Acción: ipsis configurar registro.activo=true" in capsys.readouterr().out
 
 
 def test_un_fallo_al_escribir_el_registro_no_tumba_la_respuesta(corpus, monkeypatch):
@@ -140,7 +140,7 @@ def test_un_fallo_al_escribir_el_registro_no_tumba_la_respuesta(corpus, monkeypa
         raise OSError("disco lleno")
 
     assert main(["configurar", "registro.activo=true"]) == 0
-    monkeypatch.setattr("rag.aplicacion.registro.RegistroConsultas.registrar", falla)
+    monkeypatch.setattr("ipsis.aplicacion.registro.RegistroConsultas.registrar", falla)
     _preguntar(corpus, "a")
 
 

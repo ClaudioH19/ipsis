@@ -1,5 +1,5 @@
 """Tests del parser DOCX con un documento sintético."""
-from rag.ingesta.parsear import parsear_docx
+from ipsis.ingesta.parsear import parsear_docx
 
 
 def _parsear(ruta_docx_sintetico):

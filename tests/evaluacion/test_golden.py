@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from rag.evaluacion.banco import CategoriaPregunta, CorpusBanco, ArchivoCorpus, validar_evidencias_contra_corpus
-from rag.evaluacion.golden import (
+from ipsis.evaluacion.banco import CategoriaPregunta, CorpusBanco, ArchivoCorpus, validar_evidencias_contra_corpus
+from ipsis.evaluacion.golden import (
     ErrorGolden,
     FilaGolden,
     a_banco,
@@ -19,8 +19,8 @@ from rag.evaluacion.golden import (
     separar_dev_test,
     ubicar_respuesta,
 )
-from rag.indice.estadisticas import EstadisticasLexicas
-from rag.lenguaje.paquete import cargar_paquete
+from ipsis.indice.estadisticas import EstadisticasLexicas
+from ipsis.lenguaje.paquete import cargar_paquete
 
 DOCS = {
     "manual": "Garantía\nLa garantía cubre 24 meses desde la fecha de compra. No cubre golpes.\n"
@@ -103,7 +103,7 @@ def test_leer_jsonl_y_squad2(tmp_path):
             {"id": "q1", "question": "¿Cuánto dura?", "answers": [{"text": "24 meses", "answer_start": 0}],
              "is_impossible": False},
             {"id": "q2", "question": "¿Qué incluye?", "answers": [], "is_impossible": True,
-             "rag": {"subtipo": "trampa_mismo_tema", "par": "q1"}},
+             "ipsis": {"subtipo": "trampa_mismo_tema", "par": "q1"}},
         ]}]}]}), encoding="utf-8")
     filas = leer_squad2(squad)
     assert [(f.tipo, f.documento, f.respuesta_literal) for f in filas] == [
@@ -203,7 +203,7 @@ TEMAS = {
 
 
 def _corpus_sintetico():
-    from rag.ingesta.parsear import Bloque, DocumentoParseado
+    from ipsis.ingesta.parsear import Bloque, DocumentoParseado
 
     documentos = []
     for doc_id, temas in TEMAS.items():
@@ -221,7 +221,7 @@ def _corpus_sintetico():
 
 
 def test_plantilla_cubre_documentos_con_pares_y_35_por_ciento_de_trampas():
-    from rag.evaluacion.golden import generar_plantilla
+    from ipsis.evaluacion.golden import generar_plantilla
 
     plantilla = generar_plantilla(_corpus_sintetico(), cargar_paquete("es"), n=20)
     filas = plantilla.filas
@@ -244,7 +244,7 @@ def test_plantilla_cubre_documentos_con_pares_y_35_por_ciento_de_trampas():
 
 
 def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
-    from rag.evaluacion.golden import escribir_plantilla, generar_plantilla
+    from ipsis.evaluacion.golden import escribir_plantilla, generar_plantilla
 
     corpus = _corpus_sintetico()
     ruta_csv, ruta_leeme = escribir_plantilla(generar_plantilla(corpus, cargar_paquete("es"), n=20), tmp_path)
@@ -280,7 +280,7 @@ def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
 
 @pytest.mark.parametrize("idioma", ["es", "en", "pt"])
 def test_plantilla_en_cada_idioma(idioma):
-    from rag.evaluacion.golden import generar_plantilla
+    from ipsis.evaluacion.golden import generar_plantilla
 
     paquete = cargar_paquete(idioma)
     plantilla = generar_plantilla(_corpus_sintetico(), paquete, n=20)

@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 from docx import Document
 
-from rag.lenguaje.dominio import cargar_perfil
-from rag.lenguaje.entidades import configurar_idioma, configurar_perfil
-from rag.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.dominio import cargar_perfil
+from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil
+from ipsis.lenguaje.paquete import cargar_paquete
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -19,24 +19,24 @@ def pytest_configure(config: pytest.Config) -> None:
     En Windows, el temporal del sistema puede devolver "Acceso denegado" y una
     carpeta dentro del checkout falla si está sincronizada por OneDrive, que
     bloquea el borrado entre corridas. Se usa ``%LOCALAPPDATA%``, fuera de
-    ambos. ``RAG_PYTEST_BASETEMP`` o ``--basetemp`` tienen prioridad; en otros
+    ambos. ``IPSIS_PYTEST_BASETEMP`` o ``--basetemp`` tienen prioridad; en otros
     sistemas se conserva el comportamiento por defecto de pytest.
     """
     if config.option.basetemp:
         return
-    elegido = os.environ.get("RAG_PYTEST_BASETEMP")
+    elegido = os.environ.get("IPSIS_PYTEST_BASETEMP")
     if not elegido and os.name == "nt" and os.environ.get("LOCALAPPDATA"):
-        elegido = str(Path(os.environ["LOCALAPPDATA"]) / "rag-extractivo" / "pytest")
+        elegido = str(Path(os.environ["LOCALAPPDATA"]) / "ipsis" / "pytest")
     if elegido:
+        Path(elegido).parent.mkdir(parents=True, exist_ok=True)  # pytest no crea los padres
         config.option.basetemp = elegido
 
 
 def ruta_cache_modelos() -> Path:
-    """Caché global de modelos; debe coincidir con ``rag.modelos.descarga``."""
-    elegido = os.environ.get("RAG_MODELOS_DIR")
-    if elegido:
-        return Path(elegido)
-    return Path.home() / ".cache" / "rag-extractivo" / "modelos"
+    """Caché global de modelos: la misma de ``ipsis.modelos.descarga`` (sin duplicar la ruta)."""
+    from ipsis.modelos.descarga import ruta_cache
+
+    return ruta_cache()
 
 
 def _modelo_en_cache(id_hf: str) -> bool:
@@ -54,19 +54,19 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
         faltantes = [id_hf for id_hf in marca.args if not _modelo_en_cache(id_hf)]
         if faltantes or not marca.args:
             item.add_marker(pytest.mark.skip(
-                reason=f"faltan modelos en caché: {faltantes or 'sin id'}; ejecuta 'rag modelos descargar'"
+                reason=f"faltan modelos en caché: {faltantes or 'sin id'}; ejecuta 'ipsis modelos descargar'"
             ))
 
 
 @pytest.fixture(scope="session")
 def proyecto_suite(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """Proyecto creado con ``rag init``, compartido por la suite.
+    """Proyecto creado con ``ipsis init``, compartido por la suite.
 
     Reemplaza a la antigua configuración en la raíz del repositorio: las
     pruebas leen ``configuracion/`` y ``documentos/`` relativos al directorio
     actual, igual que el servicio real.
     """
-    from rag.cli import main
+    from ipsis.cli import main
 
     carpeta = tmp_path_factory.mktemp("proyecto_suite")
     anterior = Path.cwd()

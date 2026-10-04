@@ -3,7 +3,7 @@ from importlib.resources import files
 
 import yaml
 
-from rag.recursos import leer_plantilla
+from ipsis.recursos import leer_plantilla
 
 
 PLANTILLAS_YAML = [
@@ -31,6 +31,6 @@ def test_plantilla_de_dominio_parte_sin_reglas_propias():
 
 
 def test_widget_y_demo_estan_dentro_del_paquete():
-    estaticos = files("rag.servicio").joinpath("estaticos")
+    estaticos = files("ipsis.servicio").joinpath("estaticos")
     assert estaticos.joinpath("widget.js").is_file()
     assert estaticos.joinpath("demo.html").is_file()

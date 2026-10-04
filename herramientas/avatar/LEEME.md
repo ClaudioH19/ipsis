@@ -7,7 +7,7 @@ el resultado.
 ```bash
 cd herramientas/avatar
 npm ci                  # versiones exactas de package-lock.json
-npm run construir       # escribe rag/servicio/estaticos/avatar.js, .LICENSE.txt y .sha256
+npm run construir       # escribe ipsis/servicio/estaticos/avatar.js, .LICENSE.txt y .sha256
 npm run verificar       # falla si el resultado difiere de lo versionado
 node validar.mjs        # valida los avatares incluidos con la librería real
 ```

@@ -22,7 +22,7 @@ sin redactar nada.
 - **Salida:** `RetrievalCandidate` en orden (id, payload, score) y la señal
   `s_ret`.
 - **Índice:** colección `{coleccion}_{modelo}_v{n}` con su manifiesto en
-  `.rag/indice/` (modelo, dimensión, stemmer, hash del corpus, versión del
+  `.ipsis/indice/` (modelo, dimensión, stemmer, hash del corpus, versión del
   payload). Si el modelo cambia, se crea otra colección: nunca se mezclan
   vectores de modelos distintos.
 
@@ -54,7 +54,7 @@ sin redactar nada.
 - La pregunta se codifica una sola vez por consulta.
 - La recuperación no modifica ni redacta texto.
 - El índice de un perfil solo se abre si su manifiesto es compatible
-  (`rag doctor` lo comprueba).
+  (`ipsis doctor` lo comprueba).
 
 ## 7. Parámetros y defaults
 
@@ -75,10 +75,10 @@ Codificar la pregunta y consultar Qdrant toma 20–60 ms con e5-small y
 ## 9. Fallos y fallback
 
 - Sin índice o con índice incompatible: el servicio no está listo y `/ready`
-  dice `rag indexar`.
+  dice `ipsis indexar`.
 - Sin candidatos: la política se abstiene.
 - Qdrant local bloqueado por otro proceso: error accionable (detén
-  `rag servir`).
+  `ipsis servir`).
 
 ## 10. Seguridad y privacidad
 

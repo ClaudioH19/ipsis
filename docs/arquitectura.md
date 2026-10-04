@@ -1,6 +1,6 @@
 # Arquitectura
 
-Cómo está organizado rag-extractivo, qué hace cada módulo y cómo viaja una
+Cómo está organizado ipsis, qué hace cada módulo y cómo viaja una
 pregunta desde el widget hasta una respuesta citada. Las técnicas en detalle
 están en las [fichas metodológicas](metodologia/README.md); las decisiones, en
 los [ADR](decisiones/).
@@ -8,7 +8,7 @@ los [ADR](decisiones/).
 Tres criterios guían la estructura:
 
 - **Mínima:** cada carpeta agrupa una responsabilidad; no hay archivos sueltos
-  en `rag/`.
+  en `ipsis/`.
 - **Entendible:** el nombre de la carpeta dice qué hay dentro y las
   dependencias van en una sola dirección.
 - **Auditable:** toda decisión se puede reconstruir desde archivos legibles, y
@@ -23,9 +23,9 @@ flowchart LR
         W["Widget<br/>widget.js + avatar.js"]
     end
     subgraph Servidor["Tu servidor (VPS)"]
-        C["Caddy<br/>HTTPS"] --> API["Servicio FastAPI<br/>rag servir"]
+        C["Caddy<br/>HTTPS"] --> API["Servicio FastAPI<br/>ipsis servir"]
         API --> M["Motor<br/>cascada de etapas"]
-        M --> Q[("Qdrant<br/>.rag/indice")]
+        M --> Q[("Qdrant<br/>.ipsis/indice")]
         M --> O["Modelos ONNX<br/>caché global"]
         API --> P["Panel /admin"]
     end
@@ -35,18 +35,18 @@ flowchart LR
         G["golden/"]
     end
     W -- "POST /consultar" --> C
-    CLI["CLI rag"] --> CFG
+    CLI["CLI ipsis"] --> CFG
     CLI --> DOC
-    CLI -- "rag indexar" --> Q
+    CLI -- "ipsis indexar" --> Q
     CFG --> API
 ```
 
 - **Sin red en ejecución:** los modelos se descargan una vez a la caché global
-  (`RAG_MODELOS_DIR`) y el servicio corre con `HF_HUB_OFFLINE=1`.
+  (`IPSIS_MODELS_DIR`) y el servicio corre con `HF_HUB_OFFLINE=1`.
 - **Sin modelo generativo:** el texto que responde es siempre un tramo literal
   de `documentos/`; lo que se agrega alrededor son plantillas fijas (tonos).
 
-## 2. Capas de `rag/`
+## 2. Capas de `ipsis/`
 
 ```mermaid
 flowchart RL
@@ -86,7 +86,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | Módulo | Qué hace |
 |---|---|
 | `esquemas.py` | Esquemas de `asistente.yaml` y `motor.yaml`, con migraciones de `config_version` hasta la 4 |
-| `carga.py` | Carga y valida la configuración; copia las plantillas en `rag init` |
+| `carga.py` | Carga y valida la configuración; copia las plantillas en `ipsis init` |
 | `migraciones.py` | Migra la estructura de archivos de un proyecto anterior |
 | `perfiles.py` | Perfiles `light`, `medium`, `heavy` y `bm25`; fusión perfil ← `motor.yaml` ← calibración |
 | `calibracion.py` | `calibracion.yaml` y cuándo aplica (procedencia) |
@@ -112,7 +112,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | `parsear.py` | PDF con texto, DOCX, Markdown y TXT a texto con estructura y offsets |
 | `chunking.py` | Fragmentos que no cruzan secciones (`CH-F256` por defecto) |
 | `metadata.py` | Entidades, palabras clave TF-IDF y categoría determinista |
-| `ingesta.py` | La secuencia completa de `rag indexar` |
+| `ingesta.py` | La secuencia completa de `ipsis indexar` |
 
 ### `modelos/` — ONNX en CPU
 
@@ -157,7 +157,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 
 Uno por área, compartidos por la CLI y la API: `proyecto`, `corpus`,
 `consulta`, `modelos`, `golden`, `evaluacion`, `benchmark`, `diagnostico`
-(`rag doctor` y `/ready`), `registro` (consultas y `rag auditar`),
+(`ipsis doctor` y `/ready`), `registro` (consultas y `ipsis auditar`),
 `personalidad`, `avatar`, `widget`, `estilos`, `modo` (desarrollo o
 producción) y `despliegue`. `registro_base.py` registra las
 implementaciones por defecto.
@@ -166,7 +166,7 @@ implementaciones por defecto.
 
 | Módulo | Qué hace |
 |---|---|
-| `cli/base.py`, `cli/comandos/*` | Un comando por clase (patrón Command), agrupados como en `rag --help` |
+| `cli/base.py`, `cli/comandos/*` | Un comando por clase (patrón Command), agrupados como en `ipsis --help` |
 | `servicio/api.py` | FastAPI: `/consultar`, `/config`, `/ready`, estáticos, CORS, caché y errores |
 | `servicio/admin.py` | `/admin` (API con token) y `/admin/panel` |
 | `servicio/seguridad.py` | Límite de peticiones y claves del widget |
@@ -174,9 +174,9 @@ implementaciones por defecto.
 
 ### `recursos/` — datos que viajan en el paquete
 
-`plantillas/` (lo que copia `rag init`), `idiomas/`, `tonos/<idioma>/`,
+`plantillas/` (lo que copia `ipsis init`), `idiomas/`, `tonos/<idioma>/`,
 `perfiles/`, `avatares/` (Folio) y `despliegue/` (plantillas de
-`rag desplegar preparar`).
+`ipsis desplegar preparar`).
 
 ## 4. Flujo de una consulta
 
@@ -228,7 +228,7 @@ flowchart LR
     Q --> MA[manifiesto.json<br/>modelo, stemmer, hash]
 ```
 
-`rag indexar` reconstruye todo. `rag doctor` compara el manifiesto con el
+`ipsis indexar` reconstruye todo. `ipsis doctor` compara el manifiesto con el
 perfil y el idioma, y una huella de los documentos con la indexada, para
 decir cuándo hay que reindexar.
 
@@ -266,12 +266,12 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph Equipo["Tu equipo"]
-        R1["rag cargar · indexar · calibrar"] --> R2["rag desplegar preparar"]
+        R1["ipsis cargar · indexar · calibrar"] --> R2["ipsis desplegar preparar"]
     end
     R2 -- "dist/" --> VPS
     subgraph VPS["VPS (docker compose)"]
         CA["caddy<br/>perfil https"] -- "X-Forwarded-*<br/>IP confiable" --> AS["asistente<br/>imagen por perfil<br/>sin red, no root"]
-        AS --- V[("configuracion/ · documentos/ · .rag/")]
+        AS --- V[("configuracion/ · documentos/ · .ipsis/")]
     end
     Internet((Internet)) -- "443" --> CA
 ```
@@ -282,12 +282,12 @@ Paso a paso en la [guía de despliegue](guia/despliegue.md).
 
 | Pregunta del auditor | Dónde se responde |
 |---|---|
-| ¿Con qué se construyó el índice? | `.rag/indice/*.manifiesto.json`: modelo, stemmer, hash del corpus, versión del payload |
-| ¿Por qué pesa tanto este término? | `.rag/indice/estadisticas.json`: df, N, largo medio |
+| ¿Con qué se construyó el índice? | `.ipsis/indice/*.manifiesto.json`: modelo, stemmer, hash del corpus, versión del payload |
+| ¿Por qué pesa tanto este término? | `.ipsis/indice/estadisticas.json`: df, N, largo medio |
 | ¿De dónde salen los umbrales? | `configuracion/calibracion.yaml`: banco, hashes, α y resultado en `test` |
-| ¿Por qué esta consulta dio `relacionado`? | `rag preguntar --diagnostico` o el registro: etapas, señales y regla |
-| ¿La respuesta es literal? | `rag auditar`: comprueba cada evidencia del registro contra el corpus |
-| ¿Quién cambió la personalidad? | `.rag/registros/admin.jsonl`: fecha, IP, acción y claves (nunca el token) |
+| ¿Por qué esta consulta dio `relacionado`? | `ipsis preguntar --diagnostico` o el registro: etapas, señales y regla |
+| ¿La respuesta es literal? | `ipsis auditar`: comprueba cada evidencia del registro contra el corpus |
+| ¿Quién cambió la personalidad? | `.ipsis/registros/admin.jsonl`: fecha, IP, acción y claves (nunca el token) |
 
 ## 9. Patrones de diseño
 

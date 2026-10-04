@@ -24,7 +24,7 @@ function RagExtractivoChat({ onAnswer, onError }) {
     };
   }, [onAnswer, onError]);
 
-  return React.createElement("rag-extractivo-chat", {
+  return React.createElement("ipsis-chat", {
     ref,
     api: API,
     "widget-key": WIDGET_KEY || undefined,

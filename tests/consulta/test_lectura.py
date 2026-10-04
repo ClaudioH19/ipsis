@@ -1,10 +1,10 @@
 """Etapa de lectura con un lector falso."""
 from __future__ import annotations
 
-from rag.aplicacion.registro_base import LiteralOffsetsVerifier
-from rag.consulta.contexto import ContextoConsulta
-from rag.consulta.etapas.lectura import EtapaLectura, oracion_que_contiene
-from rag.nucleo.esquemas import ChunkRecord, LecturaQA, RetrievalCandidate, RetrievalSignals
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier
+from ipsis.consulta.contexto import ContextoConsulta
+from ipsis.consulta.etapas.lectura import EtapaLectura, oracion_que_contiene
+from ipsis.nucleo.esquemas import ChunkRecord, LecturaQA, RetrievalCandidate, RetrievalSignals
 
 TEXTO = "Instalación sencilla. El filtro se cambia cada 6 meses. Garantía de 2 años."
 
@@ -63,11 +63,11 @@ def test_oracion_que_contiene_un_tramo_que_cruza_oraciones():
 
 def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
     """«6 meses» sale de la oración del filtro: no responde «¿Cuánto dura la garantía?»."""
-    from rag.consulta.etapas.seleccion import EtapaEvidencia
-    from rag.indice.estadisticas import EstadisticasLexicas
-    from rag.lenguaje.lexico import terminos_foco, terminos_pregunta
-    from rag.lenguaje.paquete import cargar_paquete
-    from rag.nucleo.esquemas import SenalesLexicas
+    from ipsis.consulta.etapas.seleccion import EtapaEvidencia
+    from ipsis.indice.estadisticas import EstadisticasLexicas
+    from ipsis.lenguaje.lexico import terminos_foco, terminos_pregunta
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.nucleo.esquemas import SenalesLexicas
 
     es = cargar_paquete("es")
     est = EstadisticasLexicas.construir([TEXTO, "La garantía cubre 24 meses."], es)
@@ -92,13 +92,13 @@ def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
     EtapaEvidencia(motor).ejecutar(ctx)
     assert ctx.evidencias[0].texto == "El filtro se cambia cada 6 meses."
     assert ctx.lexicas.s_foco == 0.0
-    lexicas = ctx.diagnostico["senales_lexicas"]  # rag preguntar --diagnostico los muestra
+    lexicas = ctx.diagnostico["senales_lexicas"]  # ipsis preguntar --diagnostico los muestra
     assert lexicas["foco_encontrados"] == [] and lexicas["foco_ausentes"] == [est.superficie[t] for t in ctx.terminos_foco]
     assert lexicas["foco_ausentes"]
 
 
 def test_concordancia_detecta_plazos_distintos_en_pasajes_distintos():
-    from rag.consulta.etapas.lectura import hay_discordancia
+    from ipsis.consulta.etapas.lectura import hay_discordancia
 
     def lec(i, texto, p=0.95):
         return LecturaQA(indice_pasaje=i, inicio=0, fin=len(texto), texto=texto,

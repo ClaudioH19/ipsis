@@ -4,7 +4,7 @@ import copy
 
 import pytest
 
-from rag.ingesta.metadata import (
+from ipsis.ingesta.metadata import (
     cargar_taxonomia, clasificar_categoria, extraer_keywords, validar_chunk,
 )
 

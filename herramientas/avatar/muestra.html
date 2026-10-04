@@ -28,10 +28,10 @@
 <h2>Expresiones</h2>
 <div id="expresiones" class="grilla"></div>
 <script type="module">
-  import { createAvatar } from "../../rag/servicio/estaticos/avatar.js";
+  import { createAvatar } from "../../ipsis/servicio/estaticos/avatar.js";
 
   const nombre = new URLSearchParams(location.search).get("avatar") || "folio";
-  const ruta = new URLSearchParams(location.search).get("ruta") || `../../rag/recursos/avatares/${nombre}.avatar.json`;
+  const ruta = new URLSearchParams(location.search).get("ruta") || `../../ipsis/recursos/avatares/${nombre}.avatar.json`;
   const definicion = await fetch(ruta).then((r) => r.json());
   document.getElementById("titulo").textContent = definicion.name || nombre;
 

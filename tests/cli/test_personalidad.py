@@ -1,4 +1,4 @@
-"""``rag personalidad``: tono y avatar desde la terminal (P12.4)."""
+"""``ipsis personalidad``: tono y avatar desde la terminal (P12.4)."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rag.cli import main
+from ipsis.cli import main
 
 PERSONALIDAD = Path("configuracion/personalidad.yaml")
 
@@ -57,7 +57,7 @@ def test_init_crea_personalidad_por_defecto_y_mostrar_la_resume(proyecto, capsys
 def test_sin_proyecto_pide_rag_init(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     assert main(["personalidad", "mostrar"]) == 1
-    assert "Acción: rag init" in capsys.readouterr().out
+    assert "Acción: ipsis init" in capsys.readouterr().out
 
 
 # --- tono ---------------------------------------------------------------------------------------
@@ -94,10 +94,10 @@ def test_tono_invalido_no_escribe_nada(proyecto, capsys, argumentos):
 
 
 def test_el_motor_usa_el_tono_activo_y_la_variedad_fija(proyecto):
-    from rag.aplicacion.consulta import construir_motor  # noqa: F401 -- la ruta real del motor
-    from rag.consulta.etapas.redaccion import cargar_plantillas
-    from rag.consulta.motor import Motor
-    from rag.lenguaje.paquete import cargar_paquete
+    from ipsis.aplicacion.consulta import construir_motor  # noqa: F401 -- la ruta real del motor
+    from ipsis.consulta.etapas.redaccion import cargar_plantillas
+    from ipsis.consulta.motor import Motor
+    from ipsis.lenguaje.paquete import cargar_paquete
 
     datos = yaml.safe_load(PERSONALIDAD.read_text(encoding="utf-8"))
     datos["tono"].update(activo="directo", variedad="fija")
@@ -116,14 +116,14 @@ def test_plantilla_propia_invalida_es_error_en_validar_y_doctor(proyecto, capsys
     PERSONALIDAD.write_text(yaml.safe_dump(datos), encoding="utf-8")
     assert main(["personalidad", "validar"]) == 1
     assert "[ERROR]" in capsys.readouterr().out
-    from rag.aplicacion.diagnostico import diagnosticar
+    from ipsis.aplicacion.diagnostico import diagnosticar
 
     chequeo = diagnosticar().chequeo("personalidad")
     assert chequeo.estado.value == "error" and chequeo.acciones
 
 
 def test_cambiar_el_tono_no_toca_indice_ni_calibracion(proyecto, capsys):
-    from rag.aplicacion.diagnostico import diagnosticar
+    from ipsis.aplicacion.diagnostico import diagnosticar
 
     antes = {c.clave: c.estado for c in diagnosticar().chequeos}
     assert main(["perfil", "mostrar"]) == 0
@@ -157,7 +157,7 @@ def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
     assert main(["personalidad", "avatar", "asignar", "pensando", "volar"]) == 1
     assert "no tiene la clave 'volar'" in capsys.readouterr().out
     assert main(["personalidad", "avatar", "asignar", "bailar", "contento"]) == 1
-    from rag.aplicacion.diagnostico import diagnosticar
+    from ipsis.aplicacion.diagnostico import diagnosticar
 
     assert diagnosticar().chequeo("personalidad").estado.value == "aviso"  # faltan claves del mapa
 
@@ -190,7 +190,7 @@ def test_colores_se_normalizan_y_validan(proyecto, capsys):
 
 
 def test_los_colores_se_aplican_sin_modificar_el_archivo(proyecto, tmp_path):
-    from rag.aplicacion.avatar import cargar_avatar, con_colores
+    from ipsis.aplicacion.avatar import cargar_avatar, con_colores
 
     main(["personalidad", "avatar", "importar", str(_avatar(tmp_path)), "--nombre", "mi-avatar"])
     _, datos = cargar_avatar("mi-avatar")
@@ -208,7 +208,7 @@ def _textos_propios(plantillas: dict) -> None:
 
 
 def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
-    from rag.aplicacion.diagnostico import Estado, diagnosticar
+    from ipsis.aplicacion.diagnostico import Estado, diagnosticar
 
     _textos_propios({"despedida": ["Chao, nos vemos pronto."]})
     capsys.readouterr()
@@ -219,7 +219,7 @@ def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
     chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
     assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
     assert chequeo.acciones == ("revisa tono.plantillas en configuracion/personalidad.yaml "
-                                "(detalle: rag personalidad validar)",)
+                                "(detalle: ipsis personalidad validar)",)
 
 
 def test_texto_propio_neutro_no_avisa(proyecto, capsys):
@@ -230,7 +230,7 @@ def test_texto_propio_neutro_no_avisa(proyecto, capsys):
 
 
 def test_idioma_sin_reglas_propias_no_se_revisa(proyecto):
-    from rag.aplicacion.personalidad import avisos_neutralidad
+    from ipsis.aplicacion.personalidad import avisos_neutralidad
 
     datos = yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))
     datos["idioma"] = "fr"

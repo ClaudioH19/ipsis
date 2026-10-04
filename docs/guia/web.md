@@ -13,8 +13,8 @@ La integración tiene dos partes:
 La forma más simple: pide el código ya armado y pégalo antes de `</body>`.
 
 ```bash
-rag widget snippet --api https://asistente.tu-dominio.cl
-rag widget snippet --api https://asistente.tu-dominio.cl --componente   # como Web Component
+ipsis widget snippet --api https://asistente.tu-dominio.cl
+ipsis widget snippet --api https://asistente.tu-dominio.cl --componente   # como Web Component
 ```
 
 Con la etiqueta `<script>`:
@@ -29,12 +29,12 @@ Con la etiqueta `<script>`:
 O como Web Component:
 
 ```html
-<rag-extractivo-chat api="https://asistente.tu-dominio.cl" posicion="abajo-izquierda"></rag-extractivo-chat>
+<ipsis-chat api="https://asistente.tu-dominio.cl" posicion="abajo-izquierda"></ipsis-chat>
 <script src="https://asistente.tu-dominio.cl/widget.js" defer></script>
 ```
 
 Agrega el origen exacto de tu sitio a CORS
-(`rag configurar cors_origenes=https://www.tu-sitio.cl`). Si usas claves de
+(`ipsis configurar cors_origenes=https://www.tu-sitio.cl`). Si usas claves de
 widget (`data-widget-key`), recuerda que son públicas: identifican y limitan
 el tráfico, no son un secreto.
 
@@ -56,7 +56,7 @@ abierto, sin botón ni ventana flotante. El contenedor decide el alto:
 
 ```html
 <div style="height:560px">
-  <rag-extractivo-chat api="https://asistente.tu-dominio.cl" modo="incrustado"></rag-extractivo-chat>
+  <ipsis-chat api="https://asistente.tu-dominio.cl" modo="incrustado"></ipsis-chat>
 </div>
 <script src="https://asistente.tu-dominio.cl/widget.js" defer></script>
 ```
@@ -140,16 +140,16 @@ Los valores anteriores siguen funcionando: `abiertas` equivale a `lista`, y
 Todo el aspecto vive en `configuracion/estilos.yaml` y se aplica sin
 reiniciar el servicio:
 
-- **Presets:** `rag widget tema listar` y `rag widget tema aplicar editorial`
+- **Presets:** `ipsis widget tema listar` y `ipsis widget tema aplicar editorial`
   (`clasico`, `minimal`, `editorial`, `contraste`).
-- **Cada valor:** `rag widget estilo mostrar` y, por ejemplo,
-  `rag widget estilo cambiar colores.acento=#0ea5e9 forma.radio_panel=10px
+- **Cada valor:** `ipsis widget estilo mostrar` y, por ejemplo,
+  `ipsis widget estilo cambiar colores.acento=#0ea5e9 forma.radio_panel=10px
   tipografia.familia="Inter, sans-serif"`. Secciones: `colores`,
   `colores_oscuro`, `tipografia`, `forma`, `sombras`, `animaciones`,
   `ubicacion` y `presentacion`.
 - **Sin terminal:** el panel `/admin/panel`, pestaña Widget, «Estilo
   completo» (ver [personalidad.md](personalidad.md#panel-gráfico-adminpanel)).
-- **Vista previa sin servicio:** `rag widget tema vista-previa`.
+- **Vista previa sin servicio:** `ipsis widget tema vista-previa`.
 
 ## CSP de tu sitio
 
@@ -173,7 +173,7 @@ style-src   'self' https://asistente.tu-dominio.cl 'unsafe-inline';
 ## Exportar archivos estáticos
 
 ```bash
-rag widget exportar ./public/rag --api https://asistente.tu-dominio.cl --posicion abajo-izquierda
+ipsis widget exportar ./public/ipsis --api https://asistente.tu-dominio.cl --posicion abajo-izquierda
 ```
 
 Genera, para servirlos desde otro servidor:
@@ -188,7 +188,7 @@ Genera, para servirlos desde otro servidor:
 - `ejemplos/html`: página estática configurable desde `config.js`;
 - `ejemplos/react`: proyecto Vite y adaptador de eventos para React;
 - `ejemplos/wordpress`: plugin instalable con el shortcode
-  `[rag_extractivo]`.
+  `[ipsis]`.
 
 Las pruebas de navegador (`pytest -m browser`) usan Chromium real y
 verifican:

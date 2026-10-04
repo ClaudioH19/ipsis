@@ -15,11 +15,11 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from rag.aplicacion.modo import ModoServicio
-from rag.cli import main
+from ipsis.aplicacion.modo import ModoServicio
+from ipsis.cli import main
 
 RAIZ = Path(__file__).resolve().parents[2]
-CARPETA_PANEL = RAIZ / "rag/servicio/estaticos/admin"
+CARPETA_PANEL = RAIZ / "ipsis/servicio/estaticos/admin"
 TOKEN = "p" * 40
 
 
@@ -28,7 +28,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     carpeta = tmp_path / "proyecto"
     carpeta.mkdir()
     monkeypatch.chdir(carpeta)
-    for variable in ("RAG_MODO", "RAG_ADMIN_TOKEN", "RAG_PROXY_CONFIABLE", "RAG_ADMIN_IPS"):
+    for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
     assert main(["init", "--perfil", "light"]) == 0
     return carpeta
@@ -37,7 +37,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 def _app(modo: ModoServicio):
     from apoyo import motor_minimo as _motor
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     return crear_app(_motor(), modo=modo)
 
@@ -55,7 +55,7 @@ def test_panel_sin_html_crudo_ni_scripts_en_linea():
 
 
 def test_rutas_del_panel(proyecto):
-    from rag.servicio.admin import CSP_PANEL, CSP_VISTA_PREVIA
+    from ipsis.servicio.admin import CSP_PANEL, CSP_VISTA_PREVIA
 
     c = TestClient(_app(ModoServicio(token_admin=TOKEN)), base_url="https://testserver",
                    client=("203.0.113.5", 50000))
@@ -179,7 +179,7 @@ def test_cambiar_el_tono_actualiza_la_vista_previa_y_guarda(servidor, pagina, pr
     assert "activo: formal" in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
     # La vista previa carga el widget real con la CSP de la vista previa.
     marco = page.frame_locator("#vista-previa")
-    marco.locator("rag-extractivo-chat").wait_for(state="attached")
+    marco.locator("ipsis-chat").wait_for(state="attached")
     assert not errores, errores
 
 

@@ -1,4 +1,4 @@
-"""Tests unitarios de ``rag/servicio/seguridad.py``:
+"""Tests unitarios de ``ipsis/servicio/seguridad.py``:
 clave de widget y *token bucket* del límite de peticiones. Sin FastAPI, sin
 red, sin índice -- solo la lógica determinista, para que corran siempre
 (no dependen del corpus real ni de Qdrant)."""
@@ -9,7 +9,7 @@ import time
 import pytest
 from fastapi import HTTPException
 
-from rag.servicio.seguridad import LimitadorPeticiones, identificador_limitador, verificar_clave_widget
+from ipsis.servicio.seguridad import LimitadorPeticiones, identificador_limitador, verificar_clave_widget
 
 
 # ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ def test_clave_escrita_sin_valor_cae_a_lista_vacia(tmp_path):
     problema. El valor de repuesto es la lista vacía -- falla CERRADO: una
     configuración a medio escribir nunca debe terminar abriendo el servicio.
     """
-    from rag.configuracion.carga import cargar_dominio
+    from ipsis.configuracion.carga import cargar_dominio
 
     ruta = tmp_path / "dominio.yaml"
     ruta.write_text(

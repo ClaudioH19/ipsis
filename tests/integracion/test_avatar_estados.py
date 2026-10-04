@@ -18,11 +18,11 @@ import pytest
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 
-from rag.configuracion.personalidad import EVENTOS
+from ipsis.configuracion.personalidad import EVENTOS
 
 RAIZ = Path(__file__).resolve().parents[2]
-ESTATICOS = RAIZ / "rag/servicio/estaticos"
-FOLIO = RAIZ / "rag/recursos/avatares/folio.avatar.json"
+ESTATICOS = RAIZ / "ipsis/servicio/estaticos"
+FOLIO = RAIZ / "ipsis/recursos/avatares/folio.avatar.json"
 CONTRATO = ("inactivo", "saludo", "atento", "escuchando", "asentir", "pensando", "pensando-largo", "contento",
             "dudoso", "apenado", "amable", "despedida", "preocupado", "somnoliento", "despertar")
 
@@ -64,8 +64,8 @@ def test_folio_lo_acepta_la_libreria():
 
 
 def test_doctor_y_config_usan_folio(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    from rag.aplicacion.personalidad import config_avatar_publica
-    from rag.cli import main
+    from ipsis.aplicacion.personalidad import config_avatar_publica
+    from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
@@ -85,7 +85,7 @@ def _app(estado: dict):
     @app.get("/", response_class=HTMLResponse)
     def pagina():
         return """<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body style="margin:0">
-<rag-extractivo-chat titulo="Ayuda"></rag-extractivo-chat><script src="/widget.js"></script></body></html>"""
+<ipsis-chat titulo="Ayuda"></ipsis-chat><script src="/widget.js"></script></body></html>"""
 
     @app.get("/widget.js")
     def widget():
@@ -198,21 +198,21 @@ def test_secuencia_de_una_pregunta(navegador, servidor):
     page.clock.run_for(3000)
     assert _ultima(page) == ["play", "atento"]  # el saludo terminó: vuelve al persistente
 
-    page.locator("rag-extractivo-chat >> #rw-input").press_sequentially("hola")
+    page.locator("ipsis-chat >> #rw-input").press_sequentially("hola")
     assert _ultima(page) == ["play", "escuchando"]
     page.clock.run_for(1300)  # 1,2 s sin teclear
     assert _ultima(page) == ["play", "atento"]
 
     estado["retener"] = True
     _limpiar(page)
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
     assert _llamadas(page)[0] == ["play", "asentir"]
     page.clock.run_for(1700)  # asentir de Folio: 1,58 s
     assert _ultima(page) == ["play", "pensando"]
     page.clock.run_for(3000)
     assert _ultima(page) == ["play", "pensando-largo"]
     estado["retener"] = False
-    page.wait_for_selector("rag-extractivo-chat >> text=Respuesta de prueba.")
+    page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
     assert _ultima(page) == ["play", "contento"]
     page.clock.run_for(3500)  # contento de Folio: 3,02 s
     assert _ultima(page) == ["play", "atento"]
@@ -226,9 +226,9 @@ def test_cada_estado_de_respuesta(navegador, servidor, estado_respuesta, clave):
     base, estado = servidor
     estado["estado"] = estado_respuesta
     page = _abrir(navegador, base)
-    page.locator("rag-extractivo-chat >> #rw-input").fill("pregunta")
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
-    page.wait_for_selector("rag-extractivo-chat >> text=Respuesta de prueba.")
+    page.locator("ipsis-chat >> #rw-input").fill("pregunta")
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
+    page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
     assert _ultima(page) == ["play", clave]
     page.close()
 
@@ -238,8 +238,8 @@ def test_un_error_durante_pensando_gana(navegador, servidor):
     base, estado = servidor
     estado["fallar"] = True
     page = _abrir(navegador, base)
-    page.locator("rag-extractivo-chat >> #rw-input").fill("pregunta")
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
+    page.locator("ipsis-chat >> #rw-input").fill("pregunta")
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
     _esperar(page, "(window.__llamadas || []).some(l => l[1] === 'preocupado')")
     page.clock.run_for(3000)
     assert _ultima(page) == ["play", "atento"]  # el transitorio vuelve al persistente
@@ -270,7 +270,7 @@ def test_inactividad_y_despertar(navegador, servidor):
     page.clock.run_for(2 * 60_000 + 500)
     assert _ultima(page) == ["play", "somnoliento"]
     _limpiar(page)
-    page.locator("rag-extractivo-chat >> #rw-input").press_sequentially("a")
+    page.locator("ipsis-chat >> #rw-input").press_sequentially("a")
     assert _llamadas(page)[0] == ["play", "despertar"]
     page.close()
 
@@ -286,7 +286,7 @@ def test_pestana_oculta_pausa(navegador, servidor):
 
 
 def _centro_avatar(page) -> tuple[float, float]:
-    caja = page.evaluate("(() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot"
+    caja = page.evaluate("(() => { const r = document.querySelector('ipsis-chat').shadowRoot"
                          ".querySelector('.rw-avatar-lienzo').getBoundingClientRect(); "
                          "return [r.left + r.width / 2, r.top + r.height / 2]; })()")
     return caja[0], caja[1]

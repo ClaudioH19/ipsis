@@ -1,7 +1,7 @@
 """Pruebas de extractores genéricos, independientes de cualquier dominio."""
 import pytest
 
-from rag.lenguaje.entidades import (
+from ipsis.lenguaje.entidades import (
     extraer_articulos,
     extraer_decimales,
     extraer_entidades,
@@ -100,7 +100,7 @@ def test_marcadores_excepcion_y_condicion():
 # ---------------------------------------------------------------------------
 import pytest as _pytest
 
-from rag.lenguaje.entidades import extraer_fechas_numericas, extraer_montos
+from ipsis.lenguaje.entidades import extraer_fechas_numericas, extraer_montos
 
 
 @_pytest.mark.parametrize(("texto", "esperado"), [

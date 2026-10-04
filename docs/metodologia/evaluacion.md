@@ -9,8 +9,8 @@ regresiones, y el golden del cliente permite [calibrar](calibracion.md).
 ## 2. Alcance y no-alcance
 
 - **Alcance:** formato versionado de bancos, métricas de cobertura y riesgo,
-  `rag evaluar`, `rag benchmark` y `rag comparar`.
-- **No-alcance:** elegir umbrales (lo hace `rag calibrar`) o cambiar defaults
+  `ipsis evaluar`, `ipsis benchmark` y `ipsis comparar`.
+- **No-alcance:** elegir umbrales (lo hace `ipsis calibrar`) o cambiar defaults
   automáticamente.
 
 ## 3. Entradas y salidas versionadas
@@ -35,7 +35,7 @@ llevar el subtipo `trampa_mismo_tema` y su `par` (la respondible del mismo
 tema): es el par mínimo que mide si el sistema distingue «se parece» de
 «responde». El estado esperado distingue además `fuera_dominio`.
 
-Métricas (`rag/evaluacion/metricas.py`), globales, por grupo y por idioma:
+Métricas (`ipsis/evaluacion/metricas.py`), globales, por grupo y por idioma:
 
 - cobertura directa y relacionada sobre las respondibles;
 - recall de abstención sobre las no respondibles;
@@ -46,16 +46,16 @@ Métricas (`rag/evaluacion/metricas.py`), globales, por grupo y por idioma:
 - latencia p50/p95, total y por etapa.
 
 Un falso `ok` tiene prioridad sobre el recall: recuperar más evidencia no
-compensa afirmar algo que el corpus no respalda. `rag evaluar` sale con ≠ 0
+compensa afirmar algo que el corpus no respalda. `ipsis evaluar` sale con ≠ 0
 si encuentra alguno.
 
-`rag benchmark --banco … --perfiles bm25,light,medium,heavy` crea un proyecto
+`ipsis benchmark --banco … --perfiles bm25,light,medium,heavy` crea un proyecto
 temporal por perfil y banco, evalúa con el motor caliente y escribe
-`benchmark-perfiles.{json,md}` y un artefacto por perfil para `rag comparar`.
+`benchmark-perfiles.{json,md}` y un artefacto por perfil para `ipsis comparar`.
 Sale con ≠ 0 si un perfil excede su presupuesto o, con un banco de
 evaluación, da falsos `ok`. `--solo-latencia` mide p50/p95 por etapa.
 
-`rag comparar` exige el mismo hash de banco, versión y `k`.
+`ipsis comparar` exige el mismo hash de banco, versión y `k`.
 
 ## 5. Supuestos
 
@@ -80,7 +80,7 @@ Lineal en los casos; el costo es el de las consultas del perfil.
 ## 9. Fallos y fallback
 
 Corpus del banco cambiado: el hash no coincide y el comando lo dice
-(`rag golden validar` para el golden).
+(`ipsis golden validar` para el golden).
 
 ## 10. Seguridad y privacidad
 
@@ -99,7 +99,7 @@ proceso, no para certificar un perfil ni elegir defaults por sí solos.
 
 ## 13. Referencias y procedencia
 
-Formato de exportación compatible con SQuAD 2.0 (`rag golden exportar
+Formato de exportación compatible con SQuAD 2.0 (`ipsis golden exportar
 --formato squad2`).
 
 ## 14. Estado

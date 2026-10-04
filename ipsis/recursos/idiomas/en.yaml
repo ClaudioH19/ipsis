@@ -1,0 +1,277 @@
+# Paquete de idioma: inglés. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en configuracion/idioma.yaml.
+codigo: en
+nombre: English
+stemmer: english
+stopwords:
+- a
+- about
+- all
+- also
+- an
+- and
+- any
+- are
+- as
+- at
+- be
+- been
+- being
+- but
+- by
+- can
+- could
+- did
+- do
+- does
+- each
+- for
+- from
+- he
+- her
+- here
+- his
+- how
+- i
+- if
+- in
+- into
+- is
+- it
+- its
+- may
+- me
+- might
+- must
+- my
+- 'no'
+- not
+- of
+- 'on'
+- or
+- our
+- she
+- should
+- so
+- some
+- than
+- that
+- the
+- their
+- them
+- then
+- there
+- these
+- they
+- this
+- those
+- to
+- us
+- was
+- we
+- were
+- what
+- when
+- where
+- which
+- who
+- whom
+- why
+- will
+- with
+- would
+- you
+- your
+numeros:
+  a: 1
+  an: 1
+  one: 1
+  two: 2
+  three: 3
+  four: 4
+  five: 5
+  six: 6
+  seven: 7
+  eight: 8
+  nine: 9
+  ten: 10
+  eleven: 11
+  twelve: 12
+  fourteen: 14
+  fifteen: 15
+  twenty: 20
+  thirty: 30
+ordinales:
+  first: 1
+  second: 2
+  third: 3
+  fourth: 4
+  fifth: 5
+  last: 5
+meses:
+- january
+- february
+- march
+- april
+- may
+- june
+- july
+- august
+- september
+- october
+- november
+- december
+dias_semana:
+  '1':
+  - monday
+  '2':
+  - tuesday
+  '3':
+  - wednesday
+  '4':
+  - thursday
+  '5':
+  - friday
+  '6':
+  - saturday
+  '7':
+  - sunday
+unidades_tiempo:
+  dia:
+  - day
+  - days
+  semana:
+  - week
+  - weeks
+  hora:
+  - hour
+  - hours
+  minuto:
+  - minute
+  - minutes
+  mes:
+  - month
+  - months
+calificadores_plazo:
+  habiles:
+  - business
+  - working
+  corridos:
+  - calendar
+referencias_documento:
+  articulo:
+  - article
+  - articles
+  anexo:
+  - annex
+  - annexes
+  - appendix
+  - appendices
+  capitulo:
+  - chapter
+  - chapters
+conectores_rango:
+  y:
+  - and
+  a:
+  - to
+  - through
+conectores_fecha:
+- of
+conectores_fecha_relativa:
+- of
+- in
+marcadores:
+  excepcion:
+  - except
+  - unless
+  - other than
+  - excluding
+  condicion:
+  - provided that
+  - as long as
+  - in case of
+  - if
+  - when
+conversacional:
+  categorias:
+  - saludo
+  - agradecimiento
+  - despedida
+  - capacidad
+  patrones:
+    saludo:
+    - ^\s*hi\b
+    - ^\s*hello\b
+    - ^\s*hey\b
+    - ^\s*good (morning|afternoon|evening)\b
+    agradecimiento:
+    - \bthanks?\b
+    - \bthank you\b
+    despedida:
+    - ^\s*bye\b
+    - ^\s*goodbye\b
+    - ^\s*see you\b
+    capacidad:
+    - what can you do
+    - who are you
+    - what are you
+    - how do you work
+mensajes:
+  conectores:
+    secuencia:
+    - First
+    - Then
+    - Finally
+    contraste_version:
+    - In version {v1}…; in version {v2}…
+  sin_seccion: (no section)
+interfaz:
+  fuentes_una: 1 source from the document
+  fuentes_varias: '{n} sources from the document'
+  posicion_cita: 'characters {inicio}–{fin}'
+  titulo: Assistant
+  subtitulo: Answers quoting the document
+  abrir: Open chat with {titulo}
+  cerrar: Close chat
+  etiqueta_pregunta: Type your question
+  placeholder: Type your question...
+  enviar: Send question
+  no_directa: Not a direct answer
+  error_origen: This site is not authorized to use the assistant.
+  error_http: The service could not answer (HTTP {estado}).
+  codigo_fuente: Source code
+contracciones: {}
+golden_instrucciones:
+  nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).
+    In respuesta_literal copy the minimal answer exactly as written.'
+  nota_trampa: Write a question about the SAME topic ({terminos}) and the same entity as row {par}, but asking for
+    information that is NOT in any document. Leave respuesta_literal empty.
+  conversacionales:
+  - hello
+  - thanks
+  - What can you do?
+  leeme: "GOLDEN SET: TEST QUESTIONS FOR THE ASSISTANT\n============================================\n\nThis file\
+    \ explains how to fill in golden.csv. It measures whether the\nassistant answers correctly, and whether it abstains\
+    \ when the documents do\nnot contain the answer. It is optional: the assistant works without a\ngolden set.\
+    \ No model is trained: results are only measured and thresholds\nadjusted.\n\nHOW TO FILL IT IN\n-----------------\n\
+    1. Open golden.csv with Excel, LibreOffice or a text editor.\n2. In each row write a question in the «pregunta»\
+    \ column, the way a real\n   user would.\n3. Do not change the «id», «tipo», «par» or «subtipo» columns.\n4.\
+    \ Rows left without a question are ignored.\n5. You can add new rows (leave «id» empty; it is generated).\n\
+    6. Save as CSV UTF-8.\n\nROW TYPES\n---------\nrespondible\n  The answer EXISTS literally in the documents.\
+    \ In «respuesta_literal»\n  copy the minimal answer exactly as written.\n    Question:       How long is the\
+    \ warranty?\n    Literal answer: 18 months\n\nsin_respuesta («trampa_mismo_tema» rows)\n  A question about the\
+    \ SAME topic and entity as its paired row («par»\n  column) that asks for information NOT present in any document.\
+    \ Leave\n  «respuesta_literal» empty.\n    GOOD: the document says how long the warranty lasts, but not who\n\
+    \          approves it  ->  Who approves the warranty?\n    BAD:  What is the capital of Japan?  (unrelated\
+    \ to the documents: it\n          tests nothing useful)\n  These are the most important rows: they check that\
+    \ the assistant does\n  not answer with a similar passage that lacks the information.\n\npremisa_falsa (optional,\
+    \ add rows)\n  Assumes something that does not exist: «What does article 99 say?» when\n  there is no article\
+    \ 99.\n\nambigua (optional, add rows)\n  Cannot be answered without clarification: «How long does it last?».\n\
+    \nconversacional\n  Greetings and courtesy; already filled in.\n\nHELPERS\n-------\n«fragmento_sugerido» and\
+    \ «terminos_clave» show which section each row\ncomes from. «documento» names the file; use it if the same text\
+    \ appears in\nseveral documents.\n\nSIZE\n----\n30 to 60 questions are enough to tune and compare profiles.\
+    \ To CERTIFY\nstatistically a false-answer risk below 5%, at least 59 accepted answers\nwithout error are needed\
+    \ in the test split (over 120 answerable questions\nin total). The assistant warns on import if the size is\
+    \ not enough.\n\nNext: ipsis golden importar golden/golden.csv\n"

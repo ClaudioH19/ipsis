@@ -1,4 +1,4 @@
-"""``rag perfil mostrar | cambiar`` con manifiestos y calibraciones sintéticos (sin modelos)."""
+"""``ipsis perfil mostrar | cambiar`` con manifiestos y calibraciones sintéticos (sin modelos)."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rag.cli import main
+from ipsis.cli import main
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 HASH = "sha256:corpus-del-proyecto"
@@ -24,11 +24,11 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 
 def _indice(modelo: str, dimension: int | None = None) -> Path:
-    """Manifiesto de un índice construido con ``modelo`` (lo que deja ``rag indexar``)."""
-    from rag.configuracion.carga import cargar_proyecto
-    from rag.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
-    from rag.indice.qdrant import nombre_coleccion_versionada
-    from rag.modelos.catalogo import obtener
+    """Manifiesto de un índice construido con ``modelo`` (lo que deja ``ipsis indexar``)."""
+    from ipsis.configuracion.carga import cargar_proyecto
+    from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
+    from ipsis.indice.qdrant import nombre_coleccion_versionada
+    from ipsis.modelos.catalogo import obtener
 
     rec = cargar_proyecto()["recuperacion"]
     nombre = nombre_coleccion_versionada(rec["coleccion_base"], modelo, rec["version_coleccion"])
@@ -38,7 +38,7 @@ def _indice(modelo: str, dimension: int | None = None) -> Path:
 
 
 def _calibracion(perfil: str) -> Path:
-    from rag.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     ruta = Path("configuracion/calibracion.yaml")
     ruta.write_text(yaml.safe_dump({
@@ -56,7 +56,7 @@ def _perfil_activo() -> str:
 
 # --- mostrar ----------------------------------------------------------------------------
 def test_mostrar_lee_modelos_y_presupuesto_del_perfil(proyecto, capsys):
-    from rag.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     proyecto("medium")
     assert main(["perfil", "mostrar"]) == 0
@@ -74,7 +74,7 @@ def test_mostrar_indice_compatible_e_incompatible(proyecto, capsys):
     _indice(E5_SMALL)  # el proyecto se editó a mano: heavy con un índice de e5-small
     assert main(["perfil", "mostrar"]) == 0
     salida = capsys.readouterr().out
-    assert "incompatible" in salida and E5_SMALL in salida and E5_BASE in salida and "rag indexar" in salida
+    assert "incompatible" in salida and E5_SMALL in salida and E5_BASE in salida and "ipsis indexar" in salida
     _indice(E5_BASE)  # después de reindexar para heavy
     assert main(["perfil", "mostrar"]) == 0
     assert "Índice: compatible" in capsys.readouterr().out
@@ -88,7 +88,7 @@ def test_dimension_distinta_es_incompatible(proyecto, capsys):
 
 
 def test_mostrar_calibracion_vigente_y_obsoleta_con_la_regla_del_motor(proyecto, capsys):
-    from rag.configuracion.perfiles import perfil_efectivo
+    from ipsis.configuracion.perfiles import perfil_efectivo
 
     proyecto("medium")
     _indice(E5_SMALL)
@@ -99,7 +99,7 @@ def test_mostrar_calibracion_vigente_y_obsoleta_con_la_regla_del_motor(proyecto,
 
     assert main(["perfil", "cambiar", "light"]) == 0
     salida = capsys.readouterr().out
-    assert "ya no corresponde al perfil activo" in salida and "rag calibrar --aplicar" in salida
+    assert "ya no corresponde al perfil activo" in salida and "ipsis calibrar --aplicar" in salida
     assert main(["perfil", "mostrar"]) == 0
     assert "Calibración: obsoleta" in capsys.readouterr().out
     assert calibracion.is_file()  # se conserva para auditoría
@@ -120,7 +120,7 @@ def test_transiciones_segun_el_manifiesto(proyecto, capsys, origen, destino, ind
     assert main(["perfil", "cambiar", destino]) == 0  # requerir reindexar no es un fallo
     salida = capsys.readouterr().out
     assert _perfil_activo() == destino
-    assert ("Acción: rag indexar" in salida) is reindexar
+    assert ("Acción: ipsis indexar" in salida) is reindexar
     assert ("sigue siendo compatible" in salida) is not reindexar
     assert manifiesto.is_file()  # el índice no se borra
 
@@ -129,7 +129,7 @@ def test_volver_al_perfil_anterior_reutiliza_su_indice(proyecto, capsys):
     proyecto("medium")
     _indice(E5_SMALL)
     assert main(["perfil", "cambiar", "heavy"]) == 0
-    assert "Acción: rag indexar" in capsys.readouterr().out
+    assert "Acción: ipsis indexar" in capsys.readouterr().out
     assert main(["perfil", "cambiar", "medium"]) == 0  # sin reindexar entre medio
     assert "sigue siendo compatible" in capsys.readouterr().out
 

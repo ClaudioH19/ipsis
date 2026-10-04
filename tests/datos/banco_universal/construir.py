@@ -2,12 +2,12 @@
 
 Fuentes (se editan a mano): ``<idioma>/corpus/*.md`` y ``<idioma>/casos.yaml``.
 Derivados (versionados): ``<idioma>/banco.jsonl`` y ``<idioma>/manifiesto.json``,
-en el formato del banco interno (``rag.evaluacion.banco``).
+en el formato del banco interno (``ipsis.evaluacion.banco``).
 
 La categoría la fija el autor por el id (``exacta``, ``parafrasis``, ``trampa``,
 ``premisa``, ``ambigua``, ``fuera``), no ``s_cov``: una paráfrasis real cuenta
 como paráfrasis aunque al sistema le cueste. Las evidencias y offsets salen de
-los mismos ayudantes que ``rag golden importar``.
+los mismos ayudantes que ``ipsis golden importar``.
 
 Regenerar tras editar una fuente::
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-from rag.evaluacion.banco import (
+from ipsis.evaluacion.banco import (
     ArchivoCorpus,
     BancoEvaluacion,
     CasoEvaluacion,
@@ -32,8 +32,8 @@ from rag.evaluacion.banco import (
     ManifiestoBanco,
     hash_archivos_corpus,
 )
-from rag.evaluacion.golden import oracion_de, ubicar_respuesta
-from rag.ingesta.parsear import parsear_documento
+from ipsis.evaluacion.golden import oracion_de, ubicar_respuesta
+from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parent
 IDIOMAS = ("es", "en", "pt")

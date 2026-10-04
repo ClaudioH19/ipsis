@@ -6,12 +6,12 @@ los endpoints del widget (Tarea B: ``/config``, ``/widget.js``,
 A propósito, NINGUNO de estos tests requiere el corpus real ni el índice
 Qdrant: usan ``TestClient(app)`` SIN el context manager (``with``), que en
 FastAPI/Starlette es lo que dispara el evento ``startup`` -- así corren
-siempre, en cualquier máquina, sin depender de que ``rag indexar``
+siempre, en cualquier máquina, sin depender de que ``ipsis indexar``
 se haya corrido antes (a diferencia de ``tests/integracion/test_caracterizacion.py``, que sí lo
 necesita y se salta si falta). Esto es posible porque la seguridad de borde
 (clave de widget + límite de peticiones) se resuelve como una dependencia de
 FastAPI que corre ANTES que el cuerpo de la ruta -- ver
-``rag/servicio/api.py::_verificar_seguridad`` -- y ``/config``/``/widget.js``/
+``ipsis/servicio/api.py::_verificar_seguridad`` -- y ``/config``/``/widget.js``/
 ``/widget/demo.html`` tampoco tocan el índice.
 
 Los tests de autenticación y límite de peticiones reemplazan los atributos
@@ -23,8 +23,8 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from rag.servicio.api import app
-from rag.servicio.seguridad import NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones
+from ipsis.servicio.api import app
+from ipsis.servicio.seguridad import NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones
 
 client = TestClient(app)  # SIN 'with': no dispara startup (no requiere corpus/índice)
 estado = app.state.servicio
@@ -204,14 +204,14 @@ def test_widget_js_no_usa_innerhtml_en_ningun_punto():
     atrapa la regresión más peligrosa): el archivo entero no debe contener
     ``.innerHTML`` -- todo texto que venga de la API se asigna con
     ``textContent`` (ver ``agregarMensajeAsistente``/``agregarCitas`` en
-    ``rag/servicio/estaticos/widget.js``)."""
+    ``ipsis/servicio/estaticos/widget.js``)."""
     texto = client.get("/widget.js").text
     assert ".innerHTML" not in texto, "el widget no debe usar innerHTML en ningún punto (política de este proyecto)"
 
 
 def test_widget_demo_html_solo_en_desarrollo_o_con_rag_demo():
-    from rag.aplicacion.modo import ModoServicio
-    from rag.servicio.api import crear_app
+    from ipsis.aplicacion.modo import ModoServicio
+    from ipsis.servicio.api import crear_app
 
     assert client.get("/widget/demo.html").status_code == 404  # producción por defecto
     for modo in (ModoServicio(modo="desarrollo", demo=True), ModoServicio(demo=True)):

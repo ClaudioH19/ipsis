@@ -6,10 +6,10 @@ from __future__ import annotations
 
 import pytest
 
-from rag.consulta.etapas.conversacional import detectar_conversacional
-from rag.consulta.etapas.redaccion import cargar_plantillas
-from rag.lenguaje.entidades import extraer_articulos, extraer_fechas, extraer_plazos
-from rag.lenguaje.paquete import cargar_paquete
+from ipsis.consulta.etapas.conversacional import detectar_conversacional
+from ipsis.consulta.etapas.redaccion import cargar_plantillas
+from ipsis.lenguaje.entidades import extraer_articulos, extraer_fechas, extraer_plazos
+from ipsis.lenguaje.paquete import cargar_paquete
 
 PLAZOS = {
     "es": [("dentro de cinco días hábiles", "5_dia_habiles"), ("dura 4 semanas", "4_semana"),
@@ -88,7 +88,7 @@ def test_respuestas_conversacionales_sustituyen_variables(idioma):
 
 
 def test_sin_paquete_no_hay_reglas_de_idioma():
-    from rag.lenguaje.entidades import usar_idioma
+    from ipsis.lenguaje.entidades import usar_idioma
 
     with usar_idioma(None):
         assert extraer_plazos("dentro de cinco días hábiles") == []

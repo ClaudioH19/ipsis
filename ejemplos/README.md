@@ -6,10 +6,10 @@ Los tres ejemplos usan el mismo Web Component y no duplican la interfaz:
 - `react/`: aplicación Vite con un adaptador React que escucha los eventos del
   componente.
 - `wordpress/`: plugin instalable que registra el shortcode
-  `[rag_extractivo]`.
+  `[ipsis]`.
 
-Antes de abrirlos, inicia el servicio con `rag servir <carpeta>` y permite el
-origen del sitio mediante `rag configurar cors_origenes=...`. La clave pública
+Antes de abrirlos, inicia el servicio con `ipsis servir <carpeta>` y permite el
+origen del sitio mediante `ipsis configurar cors_origenes=...`. La clave pública
 del widget identifica la integración, pero no reemplaza la protección del
 servidor o del proxy.
 
@@ -28,12 +28,12 @@ traduce `rag:respuesta` y `rag:error` a callbacks de React.
 
 ## WordPress
 
-1. Copia esta carpeta a `wp-content/plugins/rag-extractivo-widget`.
-2. Activa **rag-extractivo Widget** en el panel de plugins.
+1. Copia esta carpeta a `wp-content/plugins/ipsis-widget`.
+2. Activa **ipsis Widget** en el panel de plugins.
 3. Inserta el shortcode en una página:
 
 ```text
-[rag_extractivo api="https://rag.example" clave="sitio-publico" color="#7c3aed"]
+[ipsis api="https://ipsis.example" clave="sitio-publico" color="#7c3aed"]
 ```
 
 Permite el origen de WordPress en `cors_origenes` del servicio. La clave queda

@@ -52,7 +52,7 @@ de modo que, con 95% de confianza, la tasa de respuestas `ok` incorrectas sea
 Certificar α = 5% exige **al menos 59 respuestas aceptadas sin error** en el
 split donde se mide (más si hay errores). Tres resultados posibles:
 
-| Estado | Significa | Salida de `rag calibrar` |
+| Estado | Significa | Salida de `ipsis calibrar` |
 |---|---|---|
 | `CALIBRADO` | Hay muestra y una combinación cumple α | 0; con `--aplicar` el motor la usa |
 | `MUESTRA_INSUFICIENTE` | Los resultados pueden ser buenos, pero n no alcanza | 0; mantiene los umbrales del perfil e informa cuántas aceptadas faltan |
@@ -67,12 +67,12 @@ falsa, y pares mínimos «mismo tema, dato ausente» curados por una persona.
 
 - El motor aplica la calibración solo si está en estado `calibrado` **y** su
   procedencia coincide con el perfil, los modelos y el `hash_corpus` del índice
-  abierto. Si algo cambió, la ignora y `rag doctor` lo dice.
+  abierto. Si algo cambió, la ignora y `ipsis doctor` lo dice.
 - `calibracion.yaml` se escribe en cualquier estado, para auditoría.
 
 ## 7. Parámetros y defaults
 
-`rag calibrar [--alfa 0.05] [--aplicar]`; confianza 0,95. Umbrales
+`ipsis calibrar [--alfa 0.05] [--aplicar]`; confianza 0,95. Umbrales
 calibrables: `ok`, `oov_ok` y `foco`.
 
 ## 8. Complejidad y recursos
@@ -82,8 +82,8 @@ Una evaluación del golden con modelos más una búsqueda en memoria
 
 ## 9. Fallos y fallback
 
-Sin índice: «rag indexar». Corpus cambiado desde que se importó el golden:
-«rag golden validar». En los estados que no certifican, el perfil sigue con
+Sin índice: «ipsis indexar». Corpus cambiado desde que se importó el golden:
+«ipsis golden validar». En los estados que no certifican, el perfil sigue con
 sus umbrales: el producto funciona, sin afirmar el 5%.
 
 ## 10. Seguridad y privacidad
@@ -93,7 +93,7 @@ El golden y el reporte quedan en el proyecto; nada sale de la máquina.
 ## 11. Pruebas técnicas
 
 `tests/evaluacion/test_calibracion.py` (los tres estados, empates,
-procedencia) y las pruebas de CLI de `rag calibrar` con un motor falso.
+procedencia) y las pruebas de CLI de `ipsis calibrar` con un motor falso.
 
 ## 12. Limitaciones
 

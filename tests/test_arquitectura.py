@@ -1,4 +1,4 @@
-"""Reglas de dependencia entre las capas de ``rag/``.
+"""Reglas de dependencia entre las capas de ``ipsis/``.
 
 Un módulo solo importa de su capa o de capas inferiores. Las capas base no
 cargan librerías pesadas al importarse. Ver ``docs/README.md`` (Arquitectura).
@@ -8,7 +8,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[1] / "rag"
+RAIZ = Path(__file__).resolve().parents[1] / "ipsis"
 
 CAPAS = {
     "nucleo": 0,
@@ -29,14 +29,14 @@ PESADAS = ("onnxruntime", "qdrant_client", "fastapi", "torch", "sentence_transfo
 
 
 def _capa(partes: list[str]) -> str | None:
-    if len(partes) < 2 or partes[0] != "rag":
+    if len(partes) < 2 or partes[0] != "ipsis":
         return None
     return partes[1].removesuffix(".py")
 
 
 def _modulos():
     for archivo in sorted(RAIZ.rglob("*.py")):
-        partes = ["rag", *archivo.relative_to(RAIZ).with_suffix("").parts]
+        partes = ["ipsis", *archivo.relative_to(RAIZ).with_suffix("").parts]
         capa = _capa(partes)
         if capa is None or capa == "__init__":
             continue
@@ -107,19 +107,19 @@ def test_cli_y_servicio_solo_importan_aplicacion_nucleo_y_recursos():
     violaciones = [f"{archivo.relative_to(RAIZ.parent).as_posix()}:{linea} {capa} -> {modulo}"
                    for archivo, capa, arbol in _modulos()
                    for linea, modulo in violaciones_de_frontera(capa, arbol)]
-    assert not violaciones, "la presentación debe pasar por rag.aplicacion:\n" + "\n".join(violaciones)
+    assert not violaciones, "la presentación debe pasar por ipsis.aplicacion:\n" + "\n".join(violaciones)
 
 
 def test_la_regla_de_frontera_detecta_un_import_prohibido():
     codigo = ast.parse(
         "import argparse\nfrom pathlib import Path\nimport yaml\n"
-        "from rag.aplicacion.golden import importar_golden\nfrom rag.nucleo.registro import RegistroComponentes\n"
-        "from rag.cli.base import Comando\n"
-        "from rag.evaluacion.golden import ErrorGolden\n"
-        "def f():\n    from rag.configuracion.carga import cargar_dominio\n"
+        "from ipsis.aplicacion.golden import importar_golden\nfrom ipsis.nucleo.registro import RegistroComponentes\n"
+        "from ipsis.cli.base import Comando\n"
+        "from ipsis.evaluacion.golden import ErrorGolden\n"
+        "def f():\n    from ipsis.configuracion.carga import cargar_dominio\n"
     )
-    assert violaciones_de_frontera("cli", codigo) == [(7, "rag.evaluacion.golden"), (9, "rag.configuracion.carga")]
+    assert violaciones_de_frontera("cli", codigo) == [(7, "ipsis.evaluacion.golden"), (9, "ipsis.configuracion.carga")]
     # Para el servicio, importar la CLI también es una violación (presentación → presentación).
     assert [m for _, m in violaciones_de_frontera("servicio", codigo)] == [
-        "rag.cli.base", "rag.evaluacion.golden", "rag.configuracion.carga"]
+        "ipsis.cli.base", "ipsis.evaluacion.golden", "ipsis.configuracion.carga"]
     assert violaciones_de_frontera("aplicacion", codigo) == []  # la regla es solo para la presentación

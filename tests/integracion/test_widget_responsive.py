@@ -17,7 +17,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 
 RAIZ = Path(__file__).resolve().parents[2]
-WIDGET = RAIZ / "rag/servicio/estaticos/widget.js"
+WIDGET = RAIZ / "ipsis/servicio/estaticos/widget.js"
 TEXTO_CITA = "El filtro de sedimentos se cambia cada 6 meses."
 
 
@@ -36,7 +36,7 @@ def test_widget_sin_avatar_pesa_menos_de_40_kb_gzip():
 
 
 def test_no_hay_opcion_para_ocultar_las_citas():
-    from rag.aplicacion.widget import citas_presentacion
+    from ipsis.aplicacion.widget import citas_presentacion
 
     assert citas_presentacion("ocultas") == "acordeon" and citas_presentacion("abiertas") == "lista"
     assert '"ocultas"' not in WIDGET.read_text(encoding="utf-8")
@@ -54,7 +54,7 @@ def _app(base: str, estado: dict):
         q = request.query_params
         attrs = " ".join(f'{k}="{v}"' for k, v in q.items() if k in ("posicion", "tamano", "lanzador", "modo"))
         contenedor = q.get("modo") == "incrustado"
-        widget = f'<rag-extractivo-chat api="{base}" titulo="Ayuda" {attrs}></rag-extractivo-chat>'
+        widget = f'<ipsis-chat api="{base}" titulo="Ayuda" {attrs}></ipsis-chat>'
         cuerpo = f'<main style="padding:20px"><div style="height:520px">{widget}</div></main>' if contenedor else widget
         return f"""<!doctype html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head>
@@ -121,12 +121,12 @@ def navegador():
 
 def _shadow(page, selector: str):
     return page.evaluate_handle(
-        f"document.querySelector('rag-extractivo-chat').shadowRoot.querySelector('{selector}')")
+        f"document.querySelector('ipsis-chat').shadowRoot.querySelector('{selector}')")
 
 
 def _caja(page, selector: str) -> dict:
     return page.evaluate(
-        f"(() => {{ const r = document.querySelector('rag-extractivo-chat').shadowRoot"
+        f"(() => {{ const r = document.querySelector('ipsis-chat').shadowRoot"
         f".querySelector('{selector}').getBoundingClientRect(); "
         f"return {{x: r.x, y: r.y, ancho: r.width, alto: r.height}}; }})()")
 
@@ -135,7 +135,7 @@ def _abrir(page, incrustado: bool = False) -> None:
     if not incrustado:
         page.evaluate("window.RagChat.abrir()")
     # Sin depender de la animación de entrada: se esperan las animaciones del panel.
-    page.evaluate("Promise.all(document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.evaluate("Promise.all(document.querySelector('ipsis-chat').shadowRoot"
                   ".querySelector('.rw-panel').getAnimations().map(a => a.finished))")
 
 
@@ -200,11 +200,11 @@ def test_citas_debajo_con_el_tramo_exacto_marcado(navegador, servidor, citas):
     page = navegador.new_page()
     page.goto(base)
     _abrir(page)
-    page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         r.querySelector('#rw-input').value = '¿Cada cuánto?';
         r.querySelector('.rw-form').requestSubmit(); }""")
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot.querySelector('mark')")
-    datos = page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot.querySelector('mark')")
+    datos = page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         const citas = r.querySelector('.rw-citas'); const marca = r.querySelector('mark.rw-tramo');
         return {marca: marca.textContent, cita: r.querySelector('.rw-cita-texto').textContent,
                 invitacion: r.querySelector('.rw-citas-invitacion').textContent,
@@ -227,11 +227,11 @@ def test_microcopia_del_tono_y_region_viva(navegador, servidor):
     page = navegador.new_page()
     page.goto(base)
     _abrir(page)
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-msg').textContent.includes('Bienvenida de prueba')")
-    page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         r.querySelector('#rw-input').value = 'hola'; r.querySelector('.rw-form').requestSubmit(); }""")
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('[role=status]').textContent === 'Servicio en pausa.'")
     estado.update(estado_http=None)
     page.close()
@@ -259,13 +259,13 @@ def test_ubicacion_de_estilos_yaml_si_el_sitio_no_la_declara(navegador, servidor
     estado.update(ubicacion={"posicion": "abajo-izquierda", "lanzador": "pestana", "tamano": "amplio"})
     page = navegador.new_page(viewport={"width": 1280, "height": 900})
     page.goto(base)
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-raiz').dataset.lanzador === 'pestana'")
     assert _caja(page, ".rw-boton")["x"] < 640  # izquierda
-    assert page.evaluate("document.querySelector('rag-extractivo-chat').shadowRoot"
+    assert page.evaluate("document.querySelector('ipsis-chat').shadowRoot"
                          ".querySelector('.rw-boton-texto').getBoundingClientRect().width") > 0
     page.goto(f"{base}/?posicion=abajo-derecha")  # el sitio manda
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-raiz').dataset.lanzador === 'pestana'")
     assert _caja(page, ".rw-boton")["x"] > 640
     estado.pop("ubicacion")

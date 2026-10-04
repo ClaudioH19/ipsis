@@ -1,0 +1,40 @@
+# Perfil de instalación «light». Un proyecto lo ajusta en
+# configuracion/motor.yaml (sección ajustes_perfil) y `ipsis calibrar`
+# reemplaza los umbrales por defecto. Ver docs/decisiones/0003-onnx-y-perfiles.md.
+perfil: light
+descripcion: Recuperación híbrida y señales léxicas, sin modelos de reordenamiento
+  ni lectura.
+presupuesto_p95_ms: 150
+modelos:
+  denso: intfloat/multilingual-e5-small
+  reranker: null
+  lector: null
+cascada:
+  recuperar_n: 10
+  rerank_k: 0
+  leer_m: 0
+  max_tokens_pasaje: 384
+  stride: 128
+  salida_temprana_sin_foco: true
+etapas:
+- conversacional
+- analisis
+- confianza
+- filtros
+- recuperacion
+- evidencia
+- politica
+- redaccion
+- verificacion
+lexico:
+  k1: 1.2
+  b: 0.75
+  max_terminos_foco: 2
+umbrales_por_defecto:
+  oov_dominio: 0.6
+  oov_ok: 0.6
+  dominio: 0.33
+  relacionado: 0.33
+  foco: 0.5
+  ok: 0.5
+  cov: 0.6

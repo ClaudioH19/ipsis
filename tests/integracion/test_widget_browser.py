@@ -18,7 +18,7 @@ if __name__ != "__main__":
 
 
 RAIZ = Path(__file__).resolve().parents[2]
-WIDGET = RAIZ / "rag/servicio/estaticos/widget.js"
+WIDGET = RAIZ / "ipsis/servicio/estaticos/widget.js"
 
 
 def _pagina(api: str) -> str:
@@ -26,7 +26,7 @@ def _pagina(api: str) -> str:
 <html lang=\"es\"><head><meta charset=\"utf-8\">
 <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>
 <body><button id=\"antes\">Antes del widget</button>
-<rag-extractivo-chat api=\"{api}\" titulo=\"Ayuda documental\"></rag-extractivo-chat>
+<ipsis-chat api=\"{api}\" titulo=\"Ayuda documental\"></ipsis-chat>
 <script src=\"/widget.js\"></script></body></html>"""
 
 
@@ -112,24 +112,24 @@ def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
     dialogo = page.get_by_role("dialog")
     expect(dialogo).to_be_visible()
     assert dialogo.get_attribute("aria-modal") == "true"
-    assert page.evaluate("document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.id") == "rw-input"
+    assert page.evaluate("document.querySelector('ipsis-chat').shadowRoot.activeElement.id") == "rw-input"
 
     cerrar = page.get_by_role("button", name="Cerrar chat")
     cerrar.focus()
     page.keyboard.press("Shift+Tab")
     # El último enfocable es el enlace «Código fuente» (AGPL §13), bajo el campo.
     assert page.evaluate(
-        "document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.className"
+        "document.querySelector('ipsis-chat').shadowRoot.activeElement.className"
     ) == "rw-fuente"
     page.keyboard.press("Tab")
     assert page.evaluate(
-        "document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.className"
+        "document.querySelector('ipsis-chat').shadowRoot.activeElement.className"
     ) == "rw-cerrar"
 
     page.keyboard.press("Escape")
     expect(dialogo).to_be_hidden()
     assert page.evaluate(
-        "document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.className"
+        "document.querySelector('ipsis-chat').shadowRoot.activeElement.className"
     ) == "rw-boton"
     page.close()
 

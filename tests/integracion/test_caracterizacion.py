@@ -5,14 +5,14 @@ cambiar ninguna respuesta. Congela también respuestas malas conocidas; cuando
 un cambio las corrija a propósito, se regenera el archivo esperado y el
 cambio se explica en el commit y en ``CHANGELOG.md``.
 
-El servidor corre en un subproceso con ``rag servir`` sobre el corpus sintético
+El servidor corre en un subproceso con ``ipsis servir`` sobre el corpus sintético
 de ``tests/datos/corpus``, de modo que la prueba solo depende del
 contrato HTTP, no de la estructura interna del servicio. Corre con ``light`` y,
 si sus modelos están en caché, con ``medium`` (un archivo esperado por perfil).
 
 Regenerar el archivo esperado (revisar el diff antes de hacer commit)::
 
-    RAG_ACTUALIZAR_CARACTERIZACION=1 python -m pytest tests/integracion/test_caracterizacion.py
+    IPSIS_UPDATE_CHARACTERIZATION=1 python -m pytest tests/integracion/test_caracterizacion.py
 """
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ pytestmark = pytest.mark.slow
 
 MEDIUM = pytest.param("medium", marks=pytest.mark.modelos(
     "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"))
-ACTUALIZAR = os.environ.get("RAG_ACTUALIZAR_CARACTERIZACION") == "1"
+ACTUALIZAR = os.environ.get("IPSIS_UPDATE_CHARACTERIZATION") == "1"
 
 # Tolerancia para los puntajes: absorbe diferencias numéricas entre CPUs y
 # bibliotecas BLAS (del orden de 1e-5). La pregunta más cercana a un umbral
@@ -69,10 +69,10 @@ def _puerto_libre() -> int:
 
 def _rag(args: list[str], cwd: Path, timeout: float = 300.0) -> None:
     r = subprocess.run(
-        [sys.executable, "-m", "rag.cli", *args], cwd=str(cwd),
+        [sys.executable, "-m", "ipsis.cli", *args], cwd=str(cwd),
         capture_output=True, text=True, timeout=timeout,
     )
-    assert r.returncode == 0, f"rag {' '.join(args)}:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    assert r.returncode == 0, f"ipsis {' '.join(args)}:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
 
 
 @pytest.fixture(scope="module", params=["light", MEDIUM])
@@ -92,7 +92,7 @@ def url_servicio(perfil):
 
         puerto = _puerto_libre()
         proceso = subprocess.Popen(
-            [sys.executable, "-m", "rag.cli", "servir", "--port", str(puerto)],
+            [sys.executable, "-m", "ipsis.cli", "servir", "--port", str(puerto)],
             cwd=str(proyecto), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         )
         url = f"http://127.0.0.1:{puerto}"
@@ -187,7 +187,7 @@ def test_caracterizacion_cubre_todos_los_estados(observado):
 def test_respuestas_son_texto_literal_del_corpus(observado):
     """Invariante que la refactorización debe preservar: cada fragmento citado
     es una subcadena exacta del corpus parseado, en los offsets declarados."""
-    from rag.ingesta.parsear import parsear_markdown
+    from ipsis.ingesta.parsear import parsear_markdown
 
     textos = {}
     for ruta in CORPUS.glob("*.md"):

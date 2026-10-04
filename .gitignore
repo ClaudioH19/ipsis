@@ -8,9 +8,9 @@ build/
 dist/
 .cache/
 
-# Lo que generan los comandos `rag` si se ejecutan dentro del clon
-.rag/
-.rag-extractivo/
+# Lo que generan los comandos `ipsis` si se ejecutan dentro del clon
+.ipsis/
+.ipsis-project/
 exportados/
 
 # Herramientas y ejemplos con npm

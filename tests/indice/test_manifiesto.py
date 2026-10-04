@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from rag.indice.manifiesto import (
+from ipsis.indice.manifiesto import (
     ManifiestoIndice,
     cargar_manifiesto,
     es_compatible,
@@ -38,7 +38,7 @@ def test_guardar_y_cargar(tmp_path):
 
 
 def test_sin_manifiesto_pide_reindexar(tmp_path):
-    with pytest.raises(FileNotFoundError, match="rag indexar"):
+    with pytest.raises(FileNotFoundError, match="ipsis indexar"):
         cargar_manifiesto("otro_v1", str(tmp_path))
 
 

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import yaml
 
-from rag.configuracion.migraciones import migrar_proyecto
-from rag.lenguaje.dominio import cargar_perfil
-from rag.ingesta.metadata import cargar_taxonomia
+from ipsis.configuracion.migraciones import migrar_proyecto
+from ipsis.lenguaje.dominio import cargar_perfil
+from ipsis.ingesta.metadata import cargar_taxonomia
 
 
 def _proyecto_v2(raiz: Path) -> None:
@@ -59,9 +59,9 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     assert [c["id"] for c in cargar_taxonomia(str(conf / "dominio.yaml"))["categorias"]] == ["equipo", "otro"]
     motor = yaml.safe_load((conf / "motor.yaml").read_text(encoding="utf-8"))
     assert motor["config_version"] == 3
-    assert motor["recuperacion"]["qdrant_path"] == ".rag/indice/qdrant"
-    assert (tmp_path / ".rag" / "indice" / "qdrant" / "meta.json").is_file()
-    assert (tmp_path / ".rag" / "indice" / "demo.json").is_file()
+    assert motor["recuperacion"]["qdrant_path"] == ".ipsis/indice/qdrant"
+    assert (tmp_path / ".ipsis" / "indice" / "qdrant" / "meta.json").is_file()
+    assert (tmp_path / ".ipsis" / "indice" / "demo.json").is_file()
     assert (tmp_path / "golden" / "banco" / "manifiesto.json").is_file()
     assert not (tmp_path / ".cache").exists() and not (tmp_path / "data").exists()
 

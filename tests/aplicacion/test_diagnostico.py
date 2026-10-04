@@ -1,4 +1,4 @@
-"""``rag doctor``: cada chequeo sano y con fallo, sin red ni modelos reales.
+"""``ipsis doctor``: cada chequeo sano y con fallo, sin red ni modelos reales.
 
 Los modelos se simulan en la caché (archivos vacíos detrás de un
 ``snapshot_download`` falso), el índice es una colección Qdrant local vacía
@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rag.cli import main
+from ipsis.cli import main
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 MMARCO, LECTOR = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"
@@ -38,9 +38,9 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     import huggingface_hub
 
     monkeypatch.setattr(huggingface_hub, "snapshot_download", snapshot_download)
-    monkeypatch.setenv("RAG_MODELOS_DIR", str(cache))
+    monkeypatch.setenv("IPSIS_MODELS_DIR", str(cache))
     monkeypatch.chdir(tmp_path)
-    for variable in ("RAG_MODO", "RAG_ADMIN_TOKEN", "RAG_PROXY_CONFIABLE"):
+    for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY"):
         monkeypatch.delenv(variable, raising=False)  # el modo lo fija el entorno de quien corre doctor
 
     def crear(perfil: str = "light") -> Path:
@@ -53,11 +53,11 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 def instalar(*ids: str) -> None:
     import os
 
-    from rag.modelos.catalogo import obtener
-    from rag.modelos.descarga import archivos_requeridos
+    from ipsis.modelos.catalogo import obtener
+    from ipsis.modelos.descarga import archivos_requeridos
 
     for id_hf in ids:
-        carpeta = Path(os.environ["RAG_MODELOS_DIR"]) / id_hf.replace("/", "--")
+        carpeta = Path(os.environ["IPSIS_MODELS_DIR"]) / id_hf.replace("/", "--")
         for archivo in archivos_requeridos(obtener(id_hf)):
             (carpeta / archivo).parent.mkdir(parents=True, exist_ok=True)
             (carpeta / archivo).write_text("x", encoding="utf-8")
@@ -76,14 +76,14 @@ def modificar_documento() -> None:
 
 def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus: str | None = None,
             coleccion_qdrant: bool = True, con_hash_archivos: bool = False) -> str:
-    """Lo que deja ``rag indexar``, sin modelos: colección vacía, estadísticas y manifiesto."""
+    """Lo que deja ``ipsis indexar``, sin modelos: colección vacía, estadísticas y manifiesto."""
     from qdrant_client.models import Distance, VectorParams
 
-    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
-    from rag.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
-    from rag.indice.qdrant import crear_cliente_qdrant, nombre_coleccion_versionada, ruta_estadisticas
-    from rag.ingesta.ingesta import huella_archivos, huella_corpus
-    from rag.modelos.catalogo import obtener
+    from ipsis.configuracion.carga import cargar_proyecto, config_recuperacion
+    from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
+    from ipsis.indice.qdrant import crear_cliente_qdrant, nombre_coleccion_versionada, ruta_estadisticas
+    from ipsis.ingesta.ingesta import huella_archivos, huella_corpus
+    from ipsis.modelos.catalogo import obtener
 
     cfg_rec = config_recuperacion(cargar_proyecto())
     nombre = nombre_coleccion_versionada(cfg_rec["coleccion_base"], modelo, cfg_rec["version_coleccion"])
@@ -103,7 +103,7 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
 
 
 def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> None:
-    from rag.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     Path("configuracion/calibracion.yaml").write_text(yaml.safe_dump({
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
@@ -126,7 +126,7 @@ def editar(ruta: str, **cambios) -> None:
 
 
 def reporte():
-    from rag.aplicacion.diagnostico import diagnosticar
+    from ipsis.aplicacion.diagnostico import diagnosticar
 
     return diagnosticar()
 
@@ -136,7 +136,7 @@ def estados(r) -> dict[str, str]:
 
 
 def sano(perfil: str = "light") -> str:
-    from rag.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     instalar(*(m for m in cargar_perfil_instalacion(perfil).modelos.model_dump().values() if m))
     cargar_manual()
@@ -145,7 +145,7 @@ def sano(perfil: str = "light") -> str:
 
 # --- sano ---------------------------------------------------------------------------------
 def test_proyecto_sano_sin_golden_ni_calibracion_esta_listo(proyecto):
-    from rag.aplicacion.diagnostico import ORDEN
+    from ipsis.aplicacion.diagnostico import ORDEN
 
     proyecto("medium")
     sano("medium")
@@ -185,25 +185,25 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
                           "personalidad": "ok", "modo": "ok"}
     assert r.chequeo("modelos").datos["faltantes"] == [MMARCO, LECTOR]
-    assert r.chequeo("modelos").acciones == ("rag modelos descargar",)
-    assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("rag indexar",)
+    assert r.chequeo("modelos").acciones == ("ipsis modelos descargar",)
+    assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis indexar",)
     assert "obsoleta" in r.chequeo("calibracion").mensaje
-    assert r.chequeo("golden").acciones == ("rag golden validar", "rag golden importar <archivo>")
+    assert r.chequeo("golden").acciones == ("ipsis golden validar", "ipsis golden importar <archivo>")
     assert all(c.acciones for c in r.errores)
     assert not r.listo
-    assert r.acciones[:3] == ["rag modelos descargar", "rag indexar", "rag configurar cors_origenes=https://tu-sitio.cl"]
+    assert r.acciones[:3] == ["ipsis modelos descargar", "ipsis indexar", "ipsis configurar cors_origenes=https://tu-sitio.cl"]
     assert len(r.acciones) == len(set(r.acciones))
 
 
 # --- proyecto y configuración -------------------------------------------------------------------
 def test_fuera_de_un_proyecto(proyecto, capsys):
-    from rag.aplicacion.diagnostico import ProyectoNoEncontrado
+    from ipsis.aplicacion.diagnostico import ProyectoNoEncontrado
 
     with pytest.raises(ProyectoNoEncontrado):
         reporte()
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
-    assert "No se encontró un proyecto RAG" in salida and "Acción: rag init" in salida
+    assert "No se encontró un proyecto RAG" in salida and "Acción: ipsis init" in salida
     assert not Path("configuracion").exists()
 
 
@@ -233,7 +233,7 @@ def test_perfil_bm25_editado_a_mano_es_error(proyecto):
     r = reporte()
     perfil = r.chequeo("perfil")
     assert perfil.estado.value == "error" and "diagnóstico" in perfil.mensaje
-    assert perfil.acciones == ("rag perfil cambiar light|medium|heavy",)
+    assert perfil.acciones == ("ipsis perfil cambiar light|medium|heavy",)
     assert r.chequeo("modelos").estado.value == "no_evaluado"
 
 
@@ -305,11 +305,11 @@ def test_light_solo_requiere_el_denso(proyecto):
 def test_sin_indice_es_aviso_sin_documentos_y_error_con_documentos(proyecto):
     proyecto("light")
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "aviso" and indice.acciones == ("rag cargar <archivo|carpeta>", "rag indexar")
+    assert indice.estado.value == "aviso" and indice.acciones == ("ipsis cargar <archivo|carpeta>", "ipsis indexar")
     cargar_manual()
     indice = reporte().chequeo("indice")
     assert indice.estado.value == "error" and "1 documento" in indice.mensaje
-    assert indice.acciones == ("rag indexar",)
+    assert indice.acciones == ("ipsis indexar",)
 
 
 def test_indice_de_otro_stemmer_es_incompatible(proyecto):
@@ -327,7 +327,7 @@ def test_corpus_cambiado_es_error(proyecto):
     assert reporte().chequeo("indice").estado.value == "ok"
     modificar_documento()
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and indice.acciones == ("rag indexar",)
+    assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and indice.acciones == ("ipsis indexar",)
 
 
 def test_con_huella_de_archivos_no_parsea_el_corpus_si_no_cambio(proyecto, monkeypatch):
@@ -335,7 +335,7 @@ def test_con_huella_de_archivos_no_parsea_el_corpus_si_no_cambio(proyecto, monke
     cargar_manual()
     indexar(con_hash_archivos=True)
     llamadas = []
-    import rag.ingesta.ingesta as ingesta
+    import ipsis.ingesta.ingesta as ingesta
 
     original = ingesta.huella_corpus
     monkeypatch.setattr(ingesta, "huella_corpus", lambda *a: llamadas.append(1) or original(*a))
@@ -350,7 +350,7 @@ def test_manifiesto_sin_coleccion_qdrant_es_error(proyecto):
     cargar_manual()
     indexar(coleccion_qdrant=False)
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "error" and "no existe" in indice.mensaje and indice.acciones == ("rag indexar",)
+    assert indice.estado.value == "error" and "no existe" in indice.mensaje and indice.acciones == ("ipsis indexar",)
 
 
 # --- calibración ------------------------------------------------------------------------------
@@ -364,9 +364,9 @@ def test_calibracion_no_habilitada_y_obsoleta_son_avisos(proyecto):
     calibracion("medium", huella)
     c = reporte().chequeo("calibracion")
     assert c.estado.value == "aviso" and "obsoleta" in c.mensaje
-    assert c.acciones == ("rag golden importar <archivo>", "rag calibrar --aplicar")  # no hay golden
+    assert c.acciones == ("ipsis golden importar <archivo>", "ipsis calibrar --aplicar")  # no hay golden
     importar_golden()
-    assert reporte().chequeo("calibracion").acciones == ("rag calibrar --aplicar",)
+    assert reporte().chequeo("calibracion").acciones == ("ipsis calibrar --aplicar",)
     assert Path("configuracion/calibracion.yaml").is_file()  # doctor no la toca
 
 
@@ -413,7 +413,7 @@ def test_cli_resume_y_no_repite_acciones(proyecto, capsys):
     assert "[ERROR]   Modelos" in salida and "[ERROR]   Índice" in salida and "[AVISO]   Golden" in salida
     assert "3 errores, 2 avisos. El proyecto no está listo." in salida
     resumen = salida.split("Acciones:\n")[1].splitlines()
-    assert resumen[:3] == ["  rag modelos descargar", "  rag indexar", "  rag configurar cors_origenes=https://tu-sitio.cl"]
+    assert resumen[:3] == ["  ipsis modelos descargar", "  ipsis indexar", "  ipsis configurar cors_origenes=https://tu-sitio.cl"]
     assert resumen[3:] == []  # con Folio incluido, el avatar no pide acción
 
 
@@ -433,8 +433,8 @@ def test_doctor_no_usa_red_ni_onnx_ni_escribe(proyecto, monkeypatch):
     antes = {p: p.stat().st_mtime_ns for p in Path.cwd().rglob("*") if p.is_file() and "qdrant" not in p.parts}
     for modulo in ("onnxruntime", "torch", "optimum"):
         monkeypatch.setitem(sys.modules, modulo, None)  # importarlos fallaría
-    monkeypatch.setattr("rag.aplicacion.modelos.descargar_modelos", lambda *a, **k: pytest.fail("descargó"))
-    monkeypatch.setattr("rag.aplicacion.corpus.indexar_proyecto", lambda *a, **k: pytest.fail("indexó"))
+    monkeypatch.setattr("ipsis.aplicacion.modelos.descargar_modelos", lambda *a, **k: pytest.fail("descargó"))
+    monkeypatch.setattr("ipsis.aplicacion.corpus.indexar_proyecto", lambda *a, **k: pytest.fail("indexó"))
     assert reporte().listo
     despues = {p: p.stat().st_mtime_ns for p in Path.cwd().rglob("*") if p.is_file() and "qdrant" not in p.parts}
     assert despues == antes
@@ -465,7 +465,7 @@ class _MotorListo:
 def _ready():
     from fastapi.testclient import TestClient
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     with TestClient(crear_app(_MotorListo())) as cliente:
         return cliente.get("/ready")
@@ -493,7 +493,7 @@ def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
     assert cuerpo["listo"] is False and cuerpo["proyecto"]["listo"] is False
     bloqueo = cuerpo["proyecto"]["bloqueante"][0]
     assert bloqueo["clave"] == "indice" and "incompatible" in bloqueo["mensaje"]
-    assert bloqueo["acciones"] == ["rag indexar"]
+    assert bloqueo["acciones"] == ["ipsis indexar"]
     assert "indice: incompatible" in cuerpo["detail"]
 
 
@@ -507,10 +507,10 @@ def test_ready_sin_calibracion_esta_listo_con_aviso(proyecto):
 
 
 def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
-    import rag.aplicacion.diagnostico as diagnostico
+    import ipsis.aplicacion.diagnostico as diagnostico
     from fastapi.testclient import TestClient
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     proyecto("light")
     sano("light")
@@ -523,40 +523,40 @@ def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
     assert llamadas == [{"abrir_indice": False}]  # una vez cada 30 s y sin abrir Qdrant
 
 
-# --- rag desplegar preparar (P12.13): reúne el proyecto que diagnosticó el doctor ----------------
+# --- ipsis desplegar preparar (P12.13): reúne el proyecto que diagnosticó el doctor ----------------
 def test_desplegar_preparar_genera_todo(proyecto, capsys):
     import json as _json
 
     from apoyo import definicion_avatar
-    from rag.aplicacion.personalidad import importar_avatar_desde
+    from ipsis.aplicacion.personalidad import importar_avatar_desde
 
     proyecto("light")
     calibracion("light", sano("light"))
     importar_avatar_desde(_json.dumps(definicion_avatar()).encode(), "propio")
-    Path(".rag/registros").mkdir(parents=True, exist_ok=True)
-    Path(".rag/registros/consultas.jsonl").write_text("{}\n", encoding="utf-8")
+    Path(".ipsis/registros").mkdir(parents=True, exist_ok=True)
+    Path(".ipsis/registros/consultas.jsonl").write_text("{}\n", encoding="utf-8")
     Path("mi.whl").write_bytes(b"x")
-    Path("mi.whl").rename("rag_extractivo-0-py3-none-any.whl")
+    Path("mi.whl").rename("ipsis-0-py3-none-any.whl")
     capsys.readouterr()
     assert main(["desplegar", "preparar", "--dominio", "asistente.ejemplo.cl",
-                 "--wheel", "rag_extractivo-0-py3-none-any.whl"]) == 0
+                 "--wheel", "ipsis-0-py3-none-any.whl"]) == 0
     salida = capsys.readouterr().out
     assert "Despliegue preparado" in salida and "perfil light" in salida
     dist = Path("dist")
     for archivo in ("configuracion/asistente.yaml", "configuracion/personalidad.yaml", "configuracion/estilos.yaml",
                     "configuracion/calibracion.yaml", "configuracion/avatares/propio.avatar.json",
                     "documentos/catalogo.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo",
-                    "LEEME_despliegue.md", "paquete/rag_extractivo-0-py3-none-any.whl"):
+                    "LEEME_despliegue.md", "paquete/ipsis-0-py3-none-any.whl"):
         assert (dist / archivo).is_file(), archivo
-    assert any((dist / ".rag/indice").rglob("*.manifiesto.json"))
-    assert not (dist / ".rag/registros/consultas.jsonl").exists()  # los registros no viajan
+    assert any((dist / ".ipsis/indice").rglob("*.manifiesto.json"))
+    assert not (dist / ".ipsis/registros/consultas.jsonl").exists()  # los registros no viajan
 
     compose = yaml.safe_load((dist / "docker-compose.yml").read_text(encoding="utf-8"))
     assert compose["services"]["caddy"]["profiles"] == ["https"]
-    ip_caddy = compose["services"]["caddy"]["networks"]["rag"]["ipv4_address"]
-    assert compose["services"]["asistente"]["environment"]["RAG_PROXY_CONFIABLE"] == ip_caddy
+    ip_caddy = compose["services"]["caddy"]["networks"]["ipsis"]["ipv4_address"]
+    assert compose["services"]["asistente"]["environment"]["IPSIS_TRUSTED_PROXY"] == ip_caddy
     assert compose["services"]["asistente"]["build"]["args"]["PERFIL"] == "light"
-    assert "RAG_ADMIN_TOKEN" not in compose["services"]["asistente"]["environment"]  # el secreto va en .env
+    assert "IPSIS_ADMIN_TOKEN" not in compose["services"]["asistente"]["environment"]  # el secreto va en .env
     assert "asistente.ejemplo.cl {" in (dist / "Caddyfile").read_text(encoding="utf-8")
     leeme = (dist / "LEEME_despliegue.md").read_text(encoding="utf-8")
     assert leeme.startswith("# Despliegue de") and "https://asistente.ejemplo.cl/widget.js" in leeme
@@ -589,11 +589,11 @@ def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
 def test_ready_vencido_responde_sin_esperar_y_refresca_en_segundo_plano(proyecto, monkeypatch):
     import threading
 
-    import rag.aplicacion.diagnostico as diagnostico
-    import rag.servicio.api as api
+    import ipsis.aplicacion.diagnostico as diagnostico
+    import ipsis.servicio.api as api
     from fastapi.testclient import TestClient
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     proyecto("light")
     sano("light")

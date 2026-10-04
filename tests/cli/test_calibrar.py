@@ -1,4 +1,4 @@
-"""``rag calibrar`` con un motor falso: orquestación, mensajes, persistencia y
+"""``ipsis calibrar`` con un motor falso: orquestación, mensajes, persistencia y
 códigos de salida. La matemática de la calibración la prueba
 ``tests/evaluacion/test_calibracion.py``."""
 from __future__ import annotations
@@ -11,7 +11,7 @@ import pytest
 import yaml
 from apoyo import CORPUS
 
-from rag.cli import main
+from ipsis.cli import main
 
 LITERALES = [
     "24 meses desde la fecha de compra",
@@ -36,9 +36,9 @@ def _escribir_golden(ruta: Path, respondibles: int, trampas: int) -> None:
 
 def _indice_falso(hash_corpus: str = "sha256:indice-del-proyecto") -> str:
     """Manifiesto del índice que abriría el proyecto (sin Qdrant ni modelos)."""
-    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
-    from rag.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
-    from rag.indice.qdrant import nombre_coleccion_versionada
+    from ipsis.configuracion.carga import cargar_proyecto, config_recuperacion
+    from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
+    from ipsis.indice.qdrant import nombre_coleccion_versionada
 
     cfg_rec = config_recuperacion(cargar_proyecto())
     nombre = nombre_coleccion_versionada(cfg_rec["coleccion_base"], cfg_rec["modelo"], cfg_rec["version_coleccion"])
@@ -49,8 +49,8 @@ def _indice_falso(hash_corpus: str = "sha256:indice-del-proyecto") -> str:
 
 def _motor_falso(qa_respondibles: float, qa_trampas: float):
     """Sustituye la evaluación real: observaciones con señales controladas."""
-    from rag.evaluacion.banco import cargar_banco
-    from rag.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas
+    from ipsis.evaluacion.banco import cargar_banco
+    from ipsis.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas
 
     def evaluar(ruta_manifiesto: str) -> ArtefactoEvaluacion:
         banco = cargar_banco(ruta_manifiesto)
@@ -79,7 +79,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         (tmp_path / "golden").mkdir(exist_ok=True)
         _escribir_golden(tmp_path / "golden" / "golden.csv", respondibles, trampas)
         assert main(["golden", "importar", "golden/golden.csv"]) == 0
-        monkeypatch.setattr("rag.aplicacion.evaluacion.evaluar_backend_activo",
+        monkeypatch.setattr("ipsis.aplicacion.evaluacion.evaluar_backend_activo",
                             _motor_falso(qa_respondibles, qa_trampas))
         return _indice_falso()
 
@@ -93,14 +93,14 @@ def test_calibrado_sin_aplicar_no_escribe_nada(proyecto, capsys):
     proyecto(140, 20, qa_respondibles=0.9, qa_trampas=0.5)
     assert main(["calibrar"]) == 0
     salida = capsys.readouterr().out
-    assert "CALIBRADO" in salida and "(cambia)" in salida and "rag calibrar --aplicar" in salida
+    assert "CALIBRADO" in salida and "(cambia)" in salida and "ipsis calibrar --aplicar" in salida
     assert "Test (solo verifica)" in salida
     assert not CALIBRACION.exists()
 
 
 def test_calibrado_con_aplicar_guarda_procedencia_del_indice_y_se_habilita(proyecto, capsys):
-    from rag.configuracion.perfiles import cargar_perfil_instalacion, perfil_efectivo
-    from rag.evaluacion.banco import cargar_banco, hash_banco
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion, perfil_efectivo
+    from ipsis.evaluacion.banco import cargar_banco, hash_banco
 
     hash_indice = proyecto(140, 20, qa_respondibles=0.9, qa_trampas=0.5)
     assert main(["calibrar", "--aplicar"]) == 0
@@ -118,7 +118,7 @@ def test_calibrado_con_aplicar_guarda_procedencia_del_indice_y_se_habilita(proye
 
 
 def test_muestra_insuficiente_no_es_fallo_y_no_se_aplica(proyecto, capsys):
-    from rag.configuracion.perfiles import perfil_efectivo
+    from ipsis.configuracion.perfiles import perfil_efectivo
 
     hash_indice = proyecto(40, 10, qa_respondibles=0.9, qa_trampas=0.5)
     assert main(["calibrar", "--aplicar"]) == 0
@@ -131,7 +131,7 @@ def test_muestra_insuficiente_no_es_fallo_y_no_se_aplica(proyecto, capsys):
 
 
 def test_sin_umbral_seguro_sale_con_error_y_no_se_aplica(proyecto, capsys):
-    from rag.configuracion.perfiles import perfil_efectivo
+    from ipsis.configuracion.perfiles import perfil_efectivo
 
     hash_indice = proyecto(140, 20, qa_respondibles=0.9, qa_trampas=0.99)
     assert main(["calibrar", "--aplicar"]) == 1
@@ -155,10 +155,10 @@ def test_sin_golden_o_sin_indice(tmp_path, monkeypatch, capsys):
     assert main(["init", "--perfil", "light"]) == 0
     assert main(["cargar", str(CORPUS)]) == 0
     assert main(["calibrar"]) == 1
-    assert "rag indexar" in capsys.readouterr().out  # sin índice, antes que nada
+    assert "ipsis indexar" in capsys.readouterr().out  # sin índice, antes que nada
     _indice_falso()
     assert main(["calibrar"]) == 1
-    assert "rag golden importar" in capsys.readouterr().out
+    assert "ipsis golden importar" in capsys.readouterr().out
 
 
 def test_corpus_cambiado_o_banco_de_regresion(proyecto, capsys, tmp_path):
@@ -174,7 +174,7 @@ def test_corpus_cambiado_o_banco_de_regresion(proyecto, capsys, tmp_path):
     documento.write_text(documento.read_text(encoding="utf-8") + "\nNueva línea.\n", encoding="utf-8")
     assert main(["calibrar"]) == 1
     salida = capsys.readouterr().out
-    assert "corpus cambió" in salida and "rag golden validar" in salida
+    assert "corpus cambió" in salida and "ipsis golden validar" in salida
 
 
 # --- integración real (lenta): medium sobre el banco sintético v1.1.0 ------------------
@@ -189,11 +189,11 @@ def test_calibrar_medium_con_el_banco_v1_1_0(tmp_path, monkeypatch, capsys):
     chico: lo correcto es «muestra_insuficiente», no forzar «calibrado»."""
     from apoyo import BANCO_SINTETICO
 
-    from rag.configuracion.carga import cargar_proyecto, config_recuperacion
-    from rag.evaluacion.banco import cargar_banco
-    from rag.evaluacion.golden import COLUMNAS_EXPORTADAS, escribir_csv, exportar_filas_csv
-    from rag.indice.manifiesto import cargar_manifiesto
-    from rag.indice.qdrant import nombre_coleccion_versionada
+    from ipsis.configuracion.carga import cargar_proyecto, config_recuperacion
+    from ipsis.evaluacion.banco import cargar_banco
+    from ipsis.evaluacion.golden import COLUMNAS_EXPORTADAS, escribir_csv, exportar_filas_csv
+    from ipsis.indice.manifiesto import cargar_manifiesto
+    from ipsis.indice.qdrant import nombre_coleccion_versionada
 
     banco_v11 = cargar_banco(BANCO_SINTETICO)
     assert banco_v11.manifiesto.dataset_version == "1.1.0" and banco_v11.manifiesto.uso == "evaluacion"

@@ -1,12 +1,12 @@
 """Prueba de portabilidad desde una instalación y carpeta externas.
 
 Recorre ``init -> cargar -> indexar -> preguntar`` por
-SUBPROCESOS reales de la CLI (``python -m rag.cli ...``), sobre un dominio
+SUBPROCESOS reales de la CLI (``python -m ipsis.cli ...``), sobre un dominio
 SINTÉTICO ficticio ("Equipo X100", inventado para este test, sin nombres de
 organizaciones ni personas reales), en un directorio temporal **fuera del
 árbol de este repositorio** -- a propósito NO usa el fixture ``tmp_path`` de
 pytest, porque ``pytest.ini::addopts`` fija ``--basetemp=.cache/pytest_tmp``,
-que sigue viviendo DENTRO de ``rag-extractivo/``.
+que sigue viviendo DENTRO de ``ipsis/``.
 
 Por qué esto es necesario y ``tests/cli/test_cli.py`` no alcanza: ese archivo
 corre en el MISMO proceso de pytest (con el intérprete, las cachés de
@@ -44,12 +44,12 @@ def _puerto_libre() -> int:
 
 
 def _rag(args: list[str], cwd: Path, timeout: float = 60.0) -> subprocess.CompletedProcess:
-    """Corre ``rag <args>`` como SUBPROCESO real (``python -m rag.cli``), en
+    """Corre ``ipsis <args>`` como SUBPROCESO real (``python -m ipsis.cli``), en
     ``cwd``, con su propio intérprete y estado global -- nunca comparte el
     perfil de dominio activo ni ninguna caché con otro paso, a diferencia de
-    llamar ``rag.cli.main()`` en el mismo proceso."""
+    llamar ``ipsis.cli.main()`` en el mismo proceso."""
     return subprocess.run(
-        [PYTHON, "-m", "rag.cli", *args], cwd=str(cwd), capture_output=True, text=True,
+        [PYTHON, "-m", "ipsis.cli", *args], cwd=str(cwd), capture_output=True, text=True,
         timeout=timeout, env=dict(os.environ),
     )
 
@@ -105,16 +105,16 @@ def _construir_documentos(destino: Path) -> dict[str, Path]:
 def _init_cargar_indexar(proyecto: Path, docs: dict[str, Path]) -> None:
     r = _rag(["init", "--nombre-asistente", "Asistente X100",
               "--descripcion-dominio", "el manual del equipo ficticio X100"], cwd=proyecto)
-    assert r.returncode == 0, f"'rag init' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    assert r.returncode == 0, f"'ipsis init' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
     for clave in ("manual", "ficha", "notas"):
         r = _rag(["cargar", str(docs[clave])], cwd=proyecto)
-        assert r.returncode == 0, f"'rag cargar {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+        assert r.returncode == 0, f"'ipsis cargar {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
         assert "Traceback" not in r.stderr
 
     r = _rag(["indexar"], cwd=proyecto, timeout=300.0)
-    assert r.returncode == 0, f"'rag indexar' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    assert r.returncode == 0, f"'ipsis indexar' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
 
@@ -141,7 +141,7 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
     docs = _construir_documentos(proyecto_externo)
     _init_cargar_indexar(proyecto_externo, docs)
 
-    # El andamiaje que 'rag init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
+    # El andamiaje que 'ipsis init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
     assert (proyecto_externo / "configuracion" / "dominio.yaml").exists()
     assert not (proyecto_externo / "configuracion" / "dominios").exists()
     assert not (proyecto_externo / "configuracion" / "textos.yaml").exists()
@@ -158,7 +158,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
 
     puerto = _puerto_libre()
     proceso = subprocess.Popen(
-        [PYTHON, "-m", "rag.cli", "servir", "--port", str(puerto)],
+        [PYTHON, "-m", "ipsis.cli", "servir", "--port", str(puerto)],
         cwd=str(proyecto_externo), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
     )
     try:
@@ -191,7 +191,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         # .md, que traen sintaxis ('# ', líneas en blanco) que el parser ya
         # normaliza; es el mismo criterio que usan
         # tests/ingesta/test_parsear_docx.py y tests/ingesta/test_parsear.py.
-        from rag.ingesta.parsear import parsear_markdown
+        from ipsis.ingesta.parsear import parsear_markdown
         doc_manual = parsear_markdown(str(docs["manual"]), doc_id="x", doc_titulo="x", version="1")
         frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)
         assert frag_manual is not None, datos["fragmentos"]
@@ -233,7 +233,7 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
     """Criterio de cierre 2: los mismos comandos, forzando
     PYTHONIOENCODING=cp1252 (la codificación real de una consola de Windows
     en español, la que reprodujo el DEFECTO 2 -- un '⚠' en una advertencia
-    de 'rag cargar' mataba el comando con UnicodeEncodeError), terminan en
+    de 'ipsis cargar' mataba el comando con UnicodeEncodeError), terminan en
     código de salida 0. Ejercita explícitamente la ruta CON advertencia
     (el .txt sin estructura de secciones)."""
     entorno = dict(os.environ)
@@ -241,7 +241,7 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
 
     def _rag_cp1252(args: list[str], timeout: float = 60.0) -> subprocess.CompletedProcess:
         return subprocess.run(
-            [PYTHON, "-m", "rag.cli", *args], cwd=str(proyecto_externo), capture_output=True, text=True,
+            [PYTHON, "-m", "ipsis.cli", *args], cwd=str(proyecto_externo), capture_output=True, text=True,
             timeout=timeout, env=entorno,
         )
 

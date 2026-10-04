@@ -7,15 +7,15 @@ ninguna respuesta, ni pide reindexar ni recalibrar.
 
 ## Configuración: `configuracion/personalidad.yaml`
 
-`rag init` lo crea con comentarios. Se edita a mano o con `rag personalidad …`
+`ipsis init` lo crea con comentarios. Se edita a mano o con `ipsis personalidad …`
 (referencia en [uso.md](uso.md)). Cada cambio por terminal se valida completo
 antes de escribirse; si no pasa, el archivo queda igual.
 
 ```bash
-rag personalidad tono listar                 # los 7 tonos, con un ejemplo
-rag personalidad tono aplicar formal
-rag personalidad tono probar --situacion sin_respuesta
-rag personalidad validar                     # sale con 1 si algo impide arrancar el motor
+ipsis personalidad tono listar                 # los 7 tonos, con un ejemplo
+ipsis personalidad tono aplicar formal
+ipsis personalidad tono probar --situacion sin_respuesta
+ipsis personalidad validar                     # sale con 1 si algo impide arrancar el motor
 ```
 
 `tono.variedad: fija` usa siempre la primera variante de cada situación.
@@ -28,11 +28,11 @@ Se diseña en el Studio ([avatars.bible-strong.app](https://avatars.bible-strong
 y se exporta como `.avatar.json`.
 
 ```bash
-rag personalidad avatar importar ./mi-avatar.avatar.json --nombre mi-avatar
-rag personalidad avatar aplicar mi-avatar
-rag personalidad avatar eventos              # evento → animación (y respaldos)
-rag personalidad avatar asignar pensando mirando-arriba
-rag personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
+ipsis personalidad avatar importar ./mi-avatar.avatar.json --nombre mi-avatar
+ipsis personalidad avatar aplicar mi-avatar
+ipsis personalidad avatar eventos              # evento → animación (y respaldos)
+ipsis personalidad avatar asignar pensando mirando-arriba
+ipsis personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
 ```
 
 - **Al importar** se revisa: hasta 256 KiB, JSON sin claves duplicadas,
@@ -43,7 +43,7 @@ rag personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
   avatar no tiene la clave, se usa el respaldo en cadena, hasta `neutral`.
   Así cualquier avatar funciona, aunque no defina todas las animaciones.
 - **Si el avatar falta o no es válido,** el widget muestra el ícono y
-  `rag doctor` lo marca como aviso: no bloquea el servicio.
+  `ipsis doctor` lo marca como aviso: no bloquea el servicio.
 
 ### Folio, el avatar por defecto
 
@@ -53,7 +53,7 @@ proyecto: lee, mira la cita antes de afirmar y no exagera.
 - `contento` es sobrio: primero mira hacia las citas y después se alegra.
 - En `dudoso` y `apenado` nunca hay gesto de éxito.
 - Colores: papel `#f5f1e8` y tinta `#1e293b`; se cambian con
-  `rag personalidad avatar colores`.
+  `ipsis personalidad avatar colores`.
 
 Para revisar todas sus animaciones, desde la raíz del repositorio:
 `python -m http.server 8765` y abre
@@ -120,8 +120,8 @@ idioma, 1.890 en total.
   no se repite en turnos seguidos.
 - La misma sesión y el mismo turno dan siempre el mismo texto.
 - Cada variante usada queda como `plantilla_id` (por ejemplo,
-  `formal.apertura.3`) en `rag preguntar --diagnostico` y en el registro de
-  consultas. `rag auditar` cuenta las consultas por tono.
+  `formal.apertura.3`) en `ipsis preguntar --diagnostico` y en el registro de
+  consultas. `ipsis auditar` cuenta las consultas por tono.
 
 ## Textos propios del proyecto
 
@@ -152,12 +152,12 @@ Las comprueba un linter; las mismas reglas aplican a tus sobrescrituras:
 - Variedad: las 5 variantes son distintas, y ninguna se repite en otra
   situación del mismo tono.
 - Ninguna expresión de la lista prohibida del idioma
-  (`rag/recursos/tonos/<idioma>/_reglas.yaml`): insultos, culpar al
+  (`ipsis/recursos/tonos/<idioma>/_reglas.yaml`): insultos, culpar al
   usuario, condescendencia.
 
 ## Configurar por HTTP (`/admin`)
 
-Con `RAG_ADMIN_TOKEN` definido, el servicio expone una API para cambiar la
+Con `IPSIS_ADMIN_TOKEN` definido, el servicio expone una API para cambiar la
 personalidad y el widget sin terminal (ver modos y seguridad en
 [despliegue.md](despliegue.md)). Todas las llamadas llevan
 `Authorization: Bearer <token>`.
@@ -198,7 +198,7 @@ Es la misma API, con formularios. Abre `https://tu-dominio/admin/panel`
   - su política de contenido (CSP) prohíbe scripts en línea;
   - sigue las mismas reglas de transporte que la API: en producción, HTTPS
     salvo desde la propia máquina;
-  - sin `RAG_ADMIN_TOKEN`, el panel no existe (404).
+  - sin `IPSIS_ADMIN_TOKEN`, el panel no existe (404).
 - Sus archivos no tienen datos: todo lo que muestra llega por la API con el
   token.
 
@@ -218,7 +218,7 @@ prueba la hace cumplir.
 Tus textos propios (`tono.plantillas`) se revisan con la misma lista, pero
 como **aviso**, no como error: se guardan igual, porque un sitio local
 puede querer hablar como su público. El aviso aparece en
-`rag personalidad validar`, en `rag doctor` y en la pestaña Tono del panel.
+`ipsis personalidad validar`, en `ipsis doctor` y en la pestaña Tono del panel.
 Si el idioma del proyecto no tiene paquete propio (por ejemplo, `fr`), no se
 revisa.
 

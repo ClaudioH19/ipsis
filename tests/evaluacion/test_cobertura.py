@@ -5,15 +5,15 @@ import math
 
 import pytest
 
-from rag.evaluacion.banco import CasoEvaluacion, CategoriaPregunta, EvidenciaEsperada
-from rag.evaluacion.metricas import (
+from ipsis.evaluacion.banco import CasoEvaluacion, CategoriaPregunta, EvidenciaEsperada
+from ipsis.evaluacion.metricas import (
     ObservacionEvaluacion,
     SenalesObservadas,
     cota_superior_clopper_pearson,
     n_minimo,
     reporte_cobertura,
 )
-from rag.nucleo.esquemas import EvidenceSpan
+from ipsis.nucleo.esquemas import EvidenceSpan
 
 TEXTO = "La garantía dura 24 meses."
 

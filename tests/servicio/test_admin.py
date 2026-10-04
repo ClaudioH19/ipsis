@@ -8,8 +8,8 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
-from rag.aplicacion.modo import ModoServicio
-from rag.cli import main
+from ipsis.aplicacion.modo import ModoServicio
+from ipsis.cli import main
 
 TOKEN = "t" * 40
 REMOTA = ("203.0.113.5", 50000)  # IP de documentación (no loopback)
@@ -21,7 +21,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     carpeta = tmp_path / "proyecto"
     carpeta.mkdir()
     monkeypatch.chdir(carpeta)
-    for variable in ("RAG_MODO", "RAG_ADMIN_TOKEN", "RAG_PROXY_CONFIABLE", "RAG_ADMIN_IPS"):
+    for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
     assert main(["init", "--perfil", "light"]) == 0
     datos = yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))
@@ -34,7 +34,7 @@ from apoyo import motor_minimo as _motor
 
 
 def _cliente(modo: ModoServicio, cliente=REMOTA, esquema="https", motor=None) -> TestClient:
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     return TestClient(crear_app(motor or _motor(), modo=modo), base_url=f"{esquema}://testserver", client=cliente,
                       raise_server_exceptions=False)
@@ -119,11 +119,11 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
     assert r.status_code == 200 and r.json()["tono"]["activo"] == "directo"
     assert motor.plantillas["tono"] == "directo"
     respuesta = c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()["respuesta"]
-    from rag.lenguaje.tonos import cargar_tono
+    from ipsis.lenguaje.tonos import cargar_tono
 
     assert respuesta in [v.format(nombre_asistente="Asistente documental", descripcion_dominio="los documentos cargados")
                          for v in cargar_tono("es", "directo").variantes("saludo")]
-    auditoria = Path(".rag/registros/admin.jsonl").read_text(encoding="utf-8")
+    auditoria = Path(".ipsis/registros/admin.jsonl").read_text(encoding="utf-8")
     entrada = json.loads(auditoria.splitlines()[-1])
     assert entrada["accion"] == "personalidad" and entrada["claves"] == ["tono"] and entrada["ip"] == REMOTA[0]
     assert TOKEN not in auditoria
@@ -218,24 +218,24 @@ def test_servir_en_desarrollo_genera_un_token_temporal(proyecto, monkeypatch, ca
     monkeypatch.setattr("uvicorn.run", lambda *a, **k: llamadas.append(k))
     assert main(["servir", "--modo", "desarrollo"]) == 0
     salida = capsys.readouterr().out
-    token = os.environ["RAG_ADMIN_TOKEN"]
+    token = os.environ["IPSIS_ADMIN_TOKEN"]
     assert len(token) >= 32 and token in salida and "Modo desarrollo" in salida
     assert llamadas[0]["proxy_headers"] is True and llamadas[0]["forwarded_allow_ips"] == "127.0.0.1"
-    monkeypatch.delenv("RAG_ADMIN_TOKEN")
-    monkeypatch.setenv("RAG_PROXY_CONFIABLE", "10.0.0.2")
+    monkeypatch.delenv("IPSIS_ADMIN_TOKEN")
+    monkeypatch.setenv("IPSIS_TRUSTED_PROXY", "10.0.0.2")
     assert main(["servir", "--modo", "produccion"]) == 0
-    assert "RAG_ADMIN_TOKEN" not in os.environ  # producción nunca inventa un token
+    assert "IPSIS_ADMIN_TOKEN" not in os.environ  # producción nunca inventa un token
     assert llamadas[1]["forwarded_allow_ips"] == "10.0.0.2"
 
 
 def test_doctor_informa_el_modo(proyecto, monkeypatch):
-    from rag.aplicacion.diagnostico import diagnosticar
+    from ipsis.aplicacion.diagnostico import diagnosticar
 
     assert diagnosticar().chequeo("modo").estado.value == "ok"
-    monkeypatch.setenv("RAG_MODO", "desarrollo")
+    monkeypatch.setenv("IPSIS_MODE", "desarrollo")
     assert diagnosticar().chequeo("modo").estado.value == "aviso"
-    monkeypatch.setenv("RAG_MODO", "produccion")
-    monkeypatch.setenv("RAG_ADMIN_TOKEN", "corto")
+    monkeypatch.setenv("IPSIS_MODE", "produccion")
+    monkeypatch.setenv("IPSIS_ADMIN_TOKEN", "corto")
     chequeo = diagnosticar().chequeo("modo")
     assert chequeo.estado.value == "error" and "secrets.token_urlsafe" in chequeo.acciones[0]
 
@@ -250,4 +250,4 @@ def test_estilo_plano_y_cambiar_por_admin(proyecto):
     malo = c.post("/admin/estilos/cambiar", headers=_auth(), json={"asignaciones": ["colores.acentto=#fff"]})
     assert malo.status_code == 422 and "clave desconocida" in malo.json()["detail"]["errores"][0]
     assert c.post("/admin/estilos/cambiar", json={"asignaciones": []}).status_code == 401
-    assert "estilos" in Path(".rag/registros/admin.jsonl").read_text(encoding="utf-8")
+    assert "estilos" in Path(".ipsis/registros/admin.jsonl").read_text(encoding="utf-8")

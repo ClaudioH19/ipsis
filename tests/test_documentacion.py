@@ -18,10 +18,10 @@ def _comandos(parser, ruta=()):
 
 
 def test_cada_comando_aparece_en_la_guia_de_uso():
-    from rag.cli import construir_parser
+    from ipsis.cli import construir_parser
 
     guia = GUIA.read_text(encoding="utf-8")
-    faltan = [" ".join(c) for c in _comandos(construir_parser()) if f"rag {' '.join(c)}" not in guia]
+    faltan = [" ".join(c) for c in _comandos(construir_parser()) if f"ipsis {' '.join(c)}" not in guia]
     assert not faltan, f"documenta en docs/guia/uso.md: {faltan}"
 
 

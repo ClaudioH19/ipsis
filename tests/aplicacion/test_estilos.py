@@ -1,4 +1,4 @@
-"""Tests de ``rag/aplicacion/estilos.py`` y del endpoint ``/estilos.css``.
+"""Tests de ``ipsis/aplicacion/estilos.py`` y del endpoint ``/estilos.css``.
 
 La promesa que verifican: `configuracion/estilos.yaml` es el ÚNICO
 archivo que hay que tocar para repintar el widget entero, y borrar
@@ -12,15 +12,15 @@ from pathlib import Path
 import yaml
 from fastapi.testclient import TestClient
 
-from rag.servicio.api import app
-from rag.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
+from ipsis.servicio.api import app
+from ipsis.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
 
 client = TestClient(app)
 
 
 def test_el_archivo_de_estilos_del_repositorio_es_valido():
     """El tema que se distribuye tiene que cargar y rendear sin error: es el
-    que `rag init` copia a cada proyecto nuevo."""
+    que `ipsis init` copia a cada proyecto nuevo."""
     tema = cargar_estilos(RUTA_ESTILOS)
     assert tema, "configuracion/estilos.yaml está vacío o no existe"
     css = render_css(tema)
@@ -120,9 +120,9 @@ def test_todas_las_variables_del_yaml_existen_en_el_widget():
 
 
 def test_init_deja_el_archivo_de_estilos(tmp_path: Path, monkeypatch):
-    """`rag init` tiene que dejar el tema en el proyecto nuevo, con sus
+    """`ipsis init` tiene que dejar el tema en el proyecto nuevo, con sus
     comentarios: son la documentación de cada clave."""
-    from rag.configuracion.carga import inicializar_estilos_si_falta
+    from ipsis.configuracion.carga import inicializar_estilos_si_falta
 
     origen = Path(RUTA_ESTILOS).resolve()
     monkeypatch.chdir(tmp_path)

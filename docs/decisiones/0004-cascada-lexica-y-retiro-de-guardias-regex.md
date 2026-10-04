@@ -22,7 +22,7 @@ dominio anterior.
   → confianza → filtros → recuperación → reranking → lectura → evidencia →
   política → redacción → verificación. Cada perfil lista las suyas; las baratas van
   primero.
-- **Señales léxicas explicables** (`rag/lenguaje/lexico.py`), calculadas con
+- **Señales léxicas explicables** (`ipsis/lenguaje/lexico.py`), calculadas con
   un único `terminos()` (stem Snowball del idioma) y el IDF del corpus:
   - `s_oov`: masa IDF de la pregunta ausente del corpus;
   - términos foco: los 2 de mayor IDF que existen en el corpus;
@@ -38,7 +38,7 @@ dominio anterior.
 - **Se borran** las guardias regex, las «palabras generales», la
   tokenización latina `[a-z0-9]+` y el BM25 con vocabulario propio. BM25 pasa
   a ids por hash con el IDF aplicado en Qdrant.
-- Todo lo que depende del idioma pasa a paquetes (`rag/recursos/idiomas/`).
+- Todo lo que depende del idioma pasa a paquetes (`ipsis/recursos/idiomas/`).
 
 ## Consecuencias
 

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from rag.configuracion.calibracion import EstadoCalibracion, ProcedenciaCalibracion, umbrales_aplicables
-from rag.consulta.etapas.politica import CascadaV1
-from rag.evaluacion.banco import (
+from ipsis.configuracion.calibracion import EstadoCalibracion, ProcedenciaCalibracion, umbrales_aplicables
+from ipsis.consulta.etapas.politica import CascadaV1
+from ipsis.evaluacion.banco import (
     ArchivoCorpus,
     BancoEvaluacion,
     CasoEvaluacion,
@@ -17,9 +17,9 @@ from rag.evaluacion.banco import (
     ManifiestoBanco,
     cargar_banco,
 )
-from rag.evaluacion.calibracion import calibrar, escribir_calibracion, redecidir
-from rag.evaluacion.metricas import ObservacionEvaluacion, SenalesObservadas
-from rag.nucleo.esquemas import EvidenceSpan
+from ipsis.evaluacion.calibracion import calibrar, escribir_calibracion, redecidir
+from ipsis.evaluacion.metricas import ObservacionEvaluacion, SenalesObservadas
+from ipsis.nucleo.esquemas import EvidenceSpan
 
 BASE = {"oov_dominio": 0.6, "oov_ok": 0.6, "dominio": 0.33, "relacionado": 0.33, "foco": 0.5, "ok": 0.8, "cov": 0.6}
 TEXTO = "La garantía dura 24 meses."

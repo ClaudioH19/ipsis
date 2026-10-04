@@ -9,7 +9,7 @@
 
 ## Arquitectura
 
-[arquitectura.md](arquitectura.md): capas de `rag/`, qué hace cada módulo,
+[arquitectura.md](arquitectura.md): capas de `ipsis/`, qué hace cada módulo,
 el flujo de una consulta y de la ingesta, el servicio, el despliegue y dónde
 se audita cada decisión, con diagramas.
 
@@ -17,8 +17,8 @@ se audita cada decisión, con diagramas.
 
 | Carpeta | Para qué existe |
 |---|---|
-| `rag/` | El paquete: código por capas y recursos |
-| `tests/` | Pruebas espejo de `rag/`, más `datos/` (corpus y bancos sintéticos) e `integracion/` |
+| `ipsis/` | El paquete: código por capas y recursos |
+| `tests/` | Pruebas espejo de `ipsis/`, más `datos/` (corpus y bancos sintéticos) e `integracion/` |
 | `ejemplos/` | Integraciones web probadas: HTML, React y WordPress |
 | `herramientas/avatar/` | Build reproducible del motor del avatar y Folio (solo desarrollo) |
 | `docs/` | Esta documentación |

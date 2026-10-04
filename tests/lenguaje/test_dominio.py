@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.lenguaje.dominio import cargar_perfil
-from rag.lenguaje.entidades import extraer_decimales, extraer_porcentajes
+from ipsis.lenguaje.dominio import cargar_perfil
+from ipsis.lenguaje.entidades import extraer_decimales, extraer_porcentajes
 
 
 @pytest.fixture()
@@ -56,7 +56,7 @@ def test_sin_dominio_yaml_el_perfil_no_aporta_entidades(tmp_path: Path):
 
 
 def test_plantilla_de_dominio_no_aporta_entidades(tmp_path: Path):
-    from rag.recursos import leer_plantilla
+    from ipsis.recursos import leer_plantilla
 
     ruta = tmp_path / "dominio.yaml"
     ruta.write_text(leer_plantilla("dominio.yaml"), encoding="utf-8")
@@ -65,7 +65,7 @@ def test_plantilla_de_dominio_no_aporta_entidades(tmp_path: Path):
 
 def test_ejemplo_comentado_del_perfil_generico_funciona(tmp_path: Path):
     """El ejemplo de regla documentado en la plantilla debe seguir siendo válido."""
-    from rag.recursos import leer_plantilla
+    from ipsis.recursos import leer_plantilla
 
     lineas = leer_plantilla("dominio.yaml").splitlines()
     inicio = lineas.index("# extractores_regex:")

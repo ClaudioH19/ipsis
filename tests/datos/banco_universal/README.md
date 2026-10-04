@@ -11,7 +11,7 @@ corre sin red y nunca entrena ni calibra.
 | Manifiesto | `uso: regresion` (`exigir_calibrable` lo rechaza) | `uso: evaluacion` |
 
 El sistema no se ajusta para pasar este banco: si falla, se registra en la
-línea base y se analiza con `rag benchmark` (ver
+línea base y se analiza con `ipsis benchmark` (ver
 [docs/metodologia/evaluacion.md](../../../docs/metodologia/evaluacion.md)).
 
 ## Contenido

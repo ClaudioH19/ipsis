@@ -15,8 +15,8 @@ código Python: todo lo que depende del idioma vive en un paquete.
 
 ## 3. Entradas y salidas versionadas
 
-- `rag/recursos/idiomas/<código>.yaml`: paquete del idioma.
-- `rag/recursos/tonos/<código>/<tono>.yaml` y `_reglas.yaml`: los 7 tonos y
+- `ipsis/recursos/idiomas/<código>.yaml`: paquete del idioma.
+- `ipsis/recursos/tonos/<código>/<tono>.yaml` y `_reglas.yaml`: los 7 tonos y
   su linter.
 - `configuracion/idioma.yaml` (opcional): sobrescrituras del proyecto.
 - El manifiesto del índice guarda el stemmer: cambiar de idioma exige
@@ -26,7 +26,7 @@ código Python: todo lo que depende del idioma vive en un paquete.
 
 - `asistente.yaml::idioma` elige el paquete. Una variante regional (`pt-br`)
   usa el de su idioma base. Un código sin paquete funciona con las reglas
-  universales, `terminos()` sin stem y los textos en inglés; `rag doctor` lo
+  universales, `terminos()` sin stem y los textos en inglés; `ipsis doctor` lo
   advierte.
 - **Entidades universales:** cifras, porcentajes, fechas numéricas y montos
   con moneda. Su `valor_norm` no depende del idioma (`2024-03-15`, `6_mes`).
@@ -55,7 +55,7 @@ abstenerse (lado seguro).
 
 ## 7. Parámetros y defaults
 
-Paquetes incluidos: `es`, `en` y `pt`. Idioma por defecto de `rag init`: el
+Paquetes incluidos: `es`, `en` y `pt`. Idioma por defecto de `ipsis init`: el
 de `--idioma` (`es` si no se indica).
 
 ## 8. Complejidad y recursos

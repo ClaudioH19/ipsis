@@ -7,14 +7,14 @@ import pytest
 from pydantic import ValidationError
 
 from apoyo import BANCO_SINTETICO, CORPUS, RAIZ_REPO
-from rag.evaluacion.banco import (
+from ipsis.evaluacion.banco import (
     CasoEvaluacion,
     CategoriaPregunta,
     cargar_banco,
     hash_banco,
     validar_evidencias_contra_corpus,
 )
-from rag.ingesta.parsear import parsear_markdown
+from ipsis.ingesta.parsear import parsear_markdown
 
 MANIFIESTO = BANCO_SINTETICO
 

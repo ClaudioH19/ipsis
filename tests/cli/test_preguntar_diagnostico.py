@@ -1,10 +1,10 @@
-"""``rag preguntar --diagnostico`` con un motor falso: sin servicio, modelos ni índice."""
+"""``ipsis preguntar --diagnostico`` con un motor falso: sin servicio, modelos ni índice."""
 from __future__ import annotations
 
 import pytest
 
-from rag.cli import main
-from rag.nucleo.esquemas import AssistantResult, AssistantState
+from ipsis.cli import main
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState
 
 DIAGNOSTICO = {
     "perfil": "medium",
@@ -43,7 +43,7 @@ class MotorFalso:
 
 
 def test_el_caso_de_uso_lee_el_diagnostico_del_motor():
-    from rag.aplicacion.consulta import diagnosticar_pregunta
+    from ipsis.aplicacion.consulta import diagnosticar_pregunta
 
     motor = MotorFalso()
     d = diagnosticar_pregunta("¿Cada cuánto se cambia el filtro?", motor=motor)
@@ -58,7 +58,7 @@ def test_el_caso_de_uso_lee_el_diagnostico_del_motor():
 
 def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
     motor = MotorFalso()
-    monkeypatch.setattr("rag.aplicacion.consulta.construir_motor_del_proyecto", lambda: motor)
+    monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: motor)
     monkeypatch.setattr("httpx.post", lambda *a, **k: pytest.fail("--diagnostico no usa el servicio"))
     assert main(["preguntar", "--diagnostico", "¿Cada cuánto se cambia el filtro?"]) == 0
     salida = capsys.readouterr().out
@@ -77,7 +77,7 @@ def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
 def test_cli_sin_tramo_ni_foco_muestra_guiones(monkeypatch, capsys):
     diagnostico = {**DIAGNOSTICO, "senales_lexicas": None,
                    "contrato_http": {"estado": "relacionado", "respuesta": "No encontré…"}}
-    monkeypatch.setattr("rag.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
+    monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
     assert main(["preguntar", "--diagnostico", "x"]) == 0
     salida = capsys.readouterr().out
     assert "Tramo exacto: —" in salida and "encontrados: —; ausentes: —" in salida
@@ -87,7 +87,7 @@ def test_cli_motor_que_no_se_puede_construir_pide_rag_doctor(monkeypatch, capsys
     def roto():
         raise FileNotFoundError("el modelo intfloat/multilingual-e5-small no está en la caché")
 
-    monkeypatch.setattr("rag.aplicacion.consulta.construir_motor_del_proyecto", roto)
+    monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", roto)
     assert main(["preguntar", "--diagnostico", "x"]) == 1
     salida = capsys.readouterr().out
-    assert "no está en la caché" in salida and "Acción: rag doctor" in salida and "Traceback" not in salida
+    assert "no está en la caché" in salida and "Acción: ipsis doctor" in salida and "Traceback" not in salida

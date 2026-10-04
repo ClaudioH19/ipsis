@@ -1,0 +1,54 @@
+# Configuración global inicial. Los umbrales de abstención son valores de
+# partida sin calibrar; ajústalos con preguntas representativas de tu corpus.
+config_version: 4
+recuperacion:
+  # modelo: lo define el perfil (asistente.yaml::perfil); descomenta para fijarlo.
+  estrategia_chunking: "CH-F256"
+  con_header: false
+  modo: "hibrida"
+  top_k: 3
+  coleccion_base: "{coleccion_base}"
+  qdrant_path: ".ipsis/indice/qdrant"
+  version_coleccion: 1
+
+componentes:
+  parser: "builtin"
+  chunker: "builtin"
+  dense_encoder: "onnx"
+  sparse_encoder: "bm25"
+  retriever: "qdrant"
+  fusion: "rrf"
+  reranker: null
+  intent_classifier: "rules"
+  answer_extractor: "sentence_selector"
+  evidence_verifier: "literal_offsets"
+  response_renderer: "templates"
+  abstention_policy: "cascada_v1"
+
+qdrant:
+  modo: "local"
+  url_servidor: "http://localhost:6333"
+
+servicio:
+  concurrencia_maxima: 4
+
+seguridad:
+  limite_peticiones:
+    capacidad: 100
+    tasa_por_segundo: 1.0
+
+redaccion:
+  longitud_maxima_fragmento_chars: 500
+  max_fragmentos_en_respuesta: 2
+  score_relativo_minimo: 0.6
+  cita_en_texto: "breve"
+  incluir_apertura: true
+
+# Los umbrales de la política viven en el perfil (ipsis perfil mostrar) y, tras
+# calibrar, en configuracion/calibracion.yaml.
+abstencion:
+  # Si la pregunta cita una entidad (p. ej. «artículo 9») que existe en el corpus
+  # pero no en los candidatos, se buscan hasta N fragmentos que la contengan.
+  max_fragmentos_adicionales: 2
+
+pipeline_version: "ingesta-0.1.0"

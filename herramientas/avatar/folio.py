@@ -1,4 +1,4 @@
-"""Genera rag/recursos/avatares/folio.avatar.json, el avatar por defecto.
+"""Genera ipsis/recursos/avatares/folio.avatar.json, el avatar por defecto.
 
 Folio es una hoja de papel viva: un rectángulo redondeado, levemente inclinado,
 con la esquina doblada y dos ojos de tinta. No tiene boca; expresa con los ojos,
@@ -20,7 +20,7 @@ from pathlib import Path
 
 # FOLIO_DESTINO permite escribir en otra ruta (para revisar variantes sin tocar el paquete).
 DESTINO = Path(os.environ.get("FOLIO_DESTINO") or Path(__file__).resolve().parents[2]
-               / "rag/recursos/avatares/folio.avatar.json")
+               / "ipsis/recursos/avatares/folio.avatar.json")
 
 # Cabeza: x = cabeceo (negativo, mira abajo), y = giro, z = inclinación lateral.
 # Folio está siempre un poco ladeado, como una hoja apoyada.
@@ -77,7 +77,7 @@ def paso(expr, hold, trans=260, curva="smooth"):
 def animacion(modo, pasos, parpadeo=PARPADEO, etiqueta="", descripcion=""):
     datos = {"playbackMode": modo, "steps": pasos, "blink": parpadeo}
     if etiqueta:
-        datos["metadata"] = {"label": etiqueta, "description": descripcion, "group": "rag-extractivo"}
+        datos["metadata"] = {"label": etiqueta, "description": descripcion, "group": "ipsis"}
     return datos
 
 

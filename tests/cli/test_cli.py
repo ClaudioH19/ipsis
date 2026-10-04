@@ -4,12 +4,12 @@ en un directorio temporal, sin tocar el corpus ni la configuración del repo.
 El proyecto se distribuye como paquete instalable (ver `pyproject.toml`) y el
 código lee rutas relativas al directorio de trabajo, igual que los scripts
 numerados. Antes de la corrección de esta tanda (revisión independiente),
-`rag init` ASUMÍA que `configuracion/dominios/_generico/perfil.yaml` y
+`ipsis init` ASUMÍA que `configuracion/dominios/_generico/perfil.yaml` y
 `configuracion/dominios/idiomas/es.yaml` ya existían en el directorio de trabajo -- lo que
 solo funcionaba DENTRO de una copia de este repo, no como librería
-reutilizable. Ahora `rag init` los ESCRIBE desde plantillas embebidas en
-Python (`rag/lenguaje/dominio.py::escribir_perfil_generico_si_falta`,
-`rag/lenguaje/texto.py::escribir_idioma_es_si_falta`), así que este fixture ya
+reutilizable. Ahora `ipsis init` los ESCRIBE desde plantillas embebidas en
+Python (`ipsis/lenguaje/dominio.py::escribir_perfil_generico_si_falta`,
+`ipsis/lenguaje/texto.py::escribir_idioma_es_si_falta`), así que este fixture ya
 NO los copia a mano -- si algún test de este archivo fallara por su
 ausencia, sería una señal real de que la corrección se rompió. La prueba
 DEFINITIVA de portabilidad, por subprocesos y fuera del árbol de este
@@ -22,21 +22,21 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rag.cli import main
+from ipsis.cli import main
 
 RAIZ = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(autouse=True)
 def _restaurar_perfil_activo():
-    """``rag indexar``/``rag cargar`` configuran el perfil de dominio activo
-    como estado de PROCESO (``rag.lenguaje.entidades.configurar_perfil``,
-    mismo criterio que ``rag/servicio/api.py::startup`` -- ver
+    """``ipsis indexar``/``ipsis cargar`` configuran el perfil de dominio activo
+    como estado de PROCESO (``ipsis.lenguaje.entidades.configurar_perfil``,
+    mismo criterio que ``ipsis/servicio/api.py::startup`` -- ver
     ``tests/conftest.py``). Sin restaurarlo, un test de este archivo que
     indexa con el perfil ``_generico`` dejaría ese perfil activo para el
     resto de la sesión de pytest, rompiendo tests de otros archivos que
     dependen del perfil que fija la fixture de sesión."""
-    from rag.lenguaje.entidades import configurar_perfil, perfil_activo
+    from ipsis.lenguaje.entidades import configurar_perfil, perfil_activo
 
     anterior = perfil_activo()
     yield
@@ -47,7 +47,7 @@ def _restaurar_perfil_activo():
 def proyecto_temporal(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Un directorio de trabajo AISLADO y VACÍO -- ni siquiera se copia
     `configuracion/dominios/_generico/` ni `configuracion/dominios/idiomas/`, a propósito: es lo que
-    debe funcionar solo con `rag init` desde la corrección de esta tanda."""
+    debe funcionar solo con `ipsis init` desde la corrección de esta tanda."""
     monkeypatch.chdir(tmp_path)
     return tmp_path
 
@@ -88,7 +88,7 @@ def test_init_crea_configuracion_minima(proyecto_temporal: Path):
     assert (proyecto_temporal / "documentos").is_dir()
 
     # Corrección de esta tanda (revisión independiente, DEFECTO 1): en un
-    # directorio VACÍO, 'rag init' debe ESCRIBIR el andamiaje del perfil y
+    # directorio VACÍO, 'ipsis init' debe ESCRIBIR el andamiaje del perfil y
     # del recurso de idioma, no asumir que ya existen.
     assert not (proyecto_temporal / "configuracion" / "dominios").exists()
 
@@ -103,7 +103,7 @@ def test_init_cors_y_claves_widget_vacios_por_defecto(proyecto_temporal: Path):
     """Corrección de seguridad de esta tanda: un
     dominio recién creado NUNCA trae 'cors_origenes: [\"*\"]' -- eso
     expondría el servicio a cualquier sitio que copie la plantilla. Ambas
-    listas empiezan vacías; se abren a mano con 'rag configurar'."""
+    listas empiezan vacías; se abren a mano con 'ipsis configurar'."""
     assert main(["init"]) == 0
     dominio = yaml.safe_load((proyecto_temporal / "configuracion" / "asistente.yaml").read_text(encoding="utf-8"))
     assert dominio["cors_origenes"] == []
@@ -176,7 +176,7 @@ def test_cargar_archivo_modificado_no_sobrescribe_la_version_anterior(
 
 
 def test_cargar_avisa_el_homonimo_y_vigente_false_lo_saca_del_indice(proyecto_temporal: Path, capsys):
-    from rag.ingesta.ingesta import parsear_corpus
+    from ipsis.ingesta.ingesta import parsear_corpus
 
     main(["init"])
     md = _doc_prueba_md(proyecto_temporal)
@@ -229,11 +229,11 @@ def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path, cap
     capsys.readouterr()
     codigo = main(["doctor"])
     assert codigo == 1  # hay un documento cargado y el índice todavía no existe
-    assert "Acción: rag indexar" in capsys.readouterr().out
+    assert "Acción: ipsis indexar" in capsys.readouterr().out
 
 
 def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temporal: Path, capsys):
-    """'rag doctor' debe avisar cuando cors_origenes está vacío Y ya
+    """'ipsis doctor' debe avisar cuando cors_origenes está vacío Y ya
     hay claves de widget configuradas -- la señal concreta de que alguien
     preparó el widget para un sitio real y se olvidó de abrirle CORS."""
     main(["init"])
@@ -247,7 +247,7 @@ def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temp
 
 def test_doctor_reporta_textos_de_idioma_invalidos(proyecto_temporal: Path, capsys):
     """Un configuracion/idioma.yaml inválido rompería '/consultar' en la
-    primera pregunta: 'rag doctor' debe decirlo antes."""
+    primera pregunta: 'ipsis doctor' debe decirlo antes."""
     main(["init"])
     (proyecto_temporal / "configuracion" / "idioma.yaml").write_text("mensajes: [1, 2]\n", encoding="utf-8")
     capsys.readouterr()
@@ -296,7 +296,7 @@ def test_indexar_dominio_sintetico_multiformato(proyecto_temporal: Path):
     codigo = main(["indexar"])
     assert codigo == 0
 
-    # el índice quedó donde 'rag doctor' y el servicio lo esperan
+    # el índice quedó donde 'ipsis doctor' y el servicio lo esperan
     assert main(["doctor"]) == 0
 
 
@@ -306,7 +306,7 @@ def test_servir_sin_carpeta_conserva_el_modo_actual(monkeypatch, proyecto_tempor
 
     assert main(["servir", "--port", "8123"]) == 0
 
-    assert llamadas[0][0] == ("rag.servicio.api:app",)
+    assert llamadas[0][0] == ("ipsis.servicio.api:app",)
     assert llamadas[0][1]["port"] == 8123
     assert Path.cwd() == proyecto_temporal
 
@@ -319,15 +319,15 @@ def test_servir_carpeta_crea_proyecto_privado_y_carga_documentos(
     _doc_prueba_md(fuente)
     llamadas = []
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append(Path.cwd()))
-    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
+    monkeypatch.setattr("ipsis.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
     monkeypatch.setattr(
-        "rag.aplicacion.diagnostico.verificar_indice",
+        "ipsis.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
     )
 
     assert main(["servir", str(fuente)]) == 0
 
-    proyecto = fuente / ".rag-extractivo"
+    proyecto = fuente / ".ipsis-project"
     assert llamadas == [proyecto]
     assert (proyecto / "configuracion" / "asistente.yaml").is_file()
     catalogo = yaml.safe_load(
@@ -341,10 +341,10 @@ def test_servir_carpeta_reutiliza_indice_vigente(monkeypatch, proyecto_temporal)
     assert main(["init"]) == 0
     indexaciones = []
     servidores = []
-    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar",
+    monkeypatch.setattr("ipsis.cli.comandos.corpus.ComandoIndexar.ejecutar",
                         lambda _self, args: indexaciones.append(args) or 0)
     monkeypatch.setattr(
-        "rag.aplicacion.diagnostico.verificar_indice",
+        "ipsis.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": True})(),
     )
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: servidores.append(Path.cwd()))
@@ -368,9 +368,9 @@ def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
         "idioma: es\nperfil: _generico\ncors_origenes: []\nclaves_widget: []\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
+    monkeypatch.setattr("ipsis.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
     monkeypatch.setattr(
-        "rag.aplicacion.diagnostico.verificar_indice",
+        "ipsis.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
     )
     monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: None)
@@ -390,12 +390,12 @@ def test_servir_rechaza_carpeta_sin_documentos(monkeypatch, proyecto_temporal):
     monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: pytest.fail("no debe servir"))
 
     assert main(["servir", str(fuente)]) == 1
-    assert not (fuente / ".rag-extractivo").exists()
+    assert not (fuente / ".ipsis-project").exists()
     assert Path.cwd() == proyecto_temporal
 
 
 # ---------------------------------------------------------------------------
-# rag preguntar -- código de salida:
+# ipsis preguntar -- código de salida:
 # cualquier fallo de conexión o de HTTP debe devolver código ≠ 0, o un
 # script que use la CLI no se entera de que la pregunta no se respondió.
 # Se monkeypatchea 'httpx.post' en vez de levantar un servicio real: más
@@ -449,7 +449,7 @@ def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
 
 # ---------------------------------------------------------------------------
 # Ayuda de la CLI: cada opción de cada
-# subcomando debe traer 'help=' en castellano -- antes 'rag servir --help'
+# subcomando debe traer 'help=' en castellano -- antes 'ipsis servir --help'
 # mostraba '--host HOST'/'--port PORT' sin ninguna explicación.
 # ---------------------------------------------------------------------------
 def _subcomandos(parser, ruta=()):
@@ -464,8 +464,8 @@ def _subcomandos(parser, ruta=()):
 
 
 def test_todas_las_opciones_de_todos_los_subcomandos_tienen_ayuda():
-    """Recorre todo el árbol (también ``rag golden …`` y ``rag widget tema …``)."""
-    from rag.cli import construir_parser
+    """Recorre todo el árbol (también ``ipsis golden …`` y ``ipsis widget tema …``)."""
+    from ipsis.cli import construir_parser
 
     rutas = list(_subcomandos(construir_parser()))
     assert len(rutas) >= 23
@@ -473,4 +473,4 @@ def test_todas_las_opciones_de_todos_los_subcomandos_tienen_ayuda():
         for accion in subparser._actions:
             if accion.dest == "help":  # el propio '-h/--help' automático
                 continue
-            assert accion.help and len(accion.help.strip()) > 10, f"rag {' '.join(ruta)}: {accion.dest!r} sin ayuda útil"
+            assert accion.help and len(accion.help.strip()) > 10, f"ipsis {' '.join(ruta)}: {accion.dest!r} sin ayuda útil"

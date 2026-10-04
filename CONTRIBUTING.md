@@ -1,6 +1,6 @@
 # Cómo contribuir
 
-¡Gracias por querer mejorar rag-extractivo! Esta guía resume cómo trabajar
+¡Gracias por querer mejorar ipsis! Esta guía resume cómo trabajar
 en el repositorio. Antes de proponer un cambio grande, abre un issue para
 conversarlo.
 
@@ -13,15 +13,15 @@ conversarlo.
 - **Abstenerse es mejor que equivocarse.** Un cambio que sube la cobertura a
   costa de falsos `ok` no se acepta.
 - **Nada de texto de un idioma en Python.** Palabras, patrones y mensajes van
-  en los paquetes de `rag/recursos/idiomas/` y `rag/recursos/tonos/`.
+  en los paquetes de `ipsis/recursos/idiomas/` y `ipsis/recursos/tonos/`.
 - **Capas en una sola dirección.** `tests/test_arquitectura.py` lo verifica
   (ver [arquitectura](docs/arquitectura.md)).
 
 ## Preparar el entorno
 
 ```bash
-git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git rag-extractivo
-cd rag-extractivo
+git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git ipsis
+cd ipsis
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[test,browser]"     # .venv\Scripts\python.exe en Windows
 .venv/bin/python -m playwright install chromium
@@ -44,7 +44,7 @@ python -m pytest                                 # todo; las lentas descargan o 
 
 ## El motor del avatar
 
-`rag/servicio/estaticos/avatar.js` se genera; no se edita a mano:
+`ipsis/servicio/estaticos/avatar.js` se genera; no se edita a mano:
 
 ```bash
 cd herramientas/avatar

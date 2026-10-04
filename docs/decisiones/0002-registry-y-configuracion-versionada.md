@@ -8,16 +8,16 @@ instalación nueva interprete opciones desconocidas como si fueran válidas.
 
 ## Decisión
 
-Se usan contratos Python pequeños en `rag.nucleo.contratos`, un
+Se usan contratos Python pequeños en `ipsis.nucleo.contratos`, un
 `RegistroComponentes` explícito y schemas Pydantic estrictos en
-`rag.configuracion.esquemas`.
+`ipsis.configuracion.esquemas`.
 
 La selección se declara bajo `componentes` en `motor.yaml`. Las factories se
 resuelven por nombre y pueden recibir opciones. Los cambios de formato pasan
 por migraciones idempotentes; una versión futura se rechaza.
 
 La configuración efectiva se puede exportar a un snapshot mediante
-`rag snapshot-config`.
+`ipsis snapshot-config`.
 
 ## Consecuencias
 

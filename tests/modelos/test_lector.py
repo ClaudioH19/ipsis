@@ -6,8 +6,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import pytest
 
-from rag.modelos.catalogo import obtener
-from rag.modelos.lector import LectorOnnx
+from ipsis.modelos.catalogo import obtener
+from ipsis.modelos.lector import LectorOnnx
 
 LECTOR = "dewdev/mdeberta-v3-base-squad2-onnx"
 PASAJE = "El filtro se cambia cada 6 meses."

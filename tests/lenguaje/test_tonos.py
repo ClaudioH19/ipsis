@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from rag.lenguaje.tonos import (
+from ipsis.lenguaje.tonos import (
     SITUACIONES,
     TonoInvalido,
     _base,
@@ -75,7 +75,7 @@ def test_los_tonos_incluidos_pasan_el_linter(idioma):
 @pytest.mark.parametrize("idioma", ["es", "en", "pt"])
 def test_los_tonos_incluidos_son_neutros(idioma):
     """Sin regionalismos, formas con género ni saludos que dependan de la hora."""
-    from rag.lenguaje.tonos import regionalismos_en
+    from ipsis.lenguaje.tonos import regionalismos_en
 
     for tono in tonos_disponibles(idioma):
         assert regionalismos_en(_base(idioma, tono)["situaciones"], idioma) == [], (idioma, tono)
@@ -129,8 +129,8 @@ def test_personalidad_yaml_sobrescribe_y_se_valida(tmp_path: Path):
 
 
 def test_el_motor_usa_el_tono_y_la_sobrescritura_del_proyecto(tmp_path: Path, monkeypatch):
-    from rag.consulta.etapas.redaccion import cargar_plantillas
-    from rag.lenguaje.paquete import cargar_paquete
+    from ipsis.consulta.etapas.redaccion import cargar_plantillas
+    from ipsis.lenguaje.paquete import cargar_paquete
 
     (tmp_path / "configuracion").mkdir()
     (tmp_path / "configuracion" / "personalidad.yaml").write_text(

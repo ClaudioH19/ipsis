@@ -17,7 +17,7 @@ ahorrar latencia con salidas tempranas que evitan ejecutar modelos.
 
 - `terminos(texto, paquete)`: el **único** camino de texto a términos, igual
   al indexar y al consultar.
-- `.rag/indice/estadisticas.json`: `n_chunks`, `largo_medio`, `df[término]` y
+- `.ipsis/indice/estadisticas.json`: `n_chunks`, `largo_medio`, `df[término]` y
   `superficie[término]` (la forma original más frecuente, para mostrarla).
   JSON legible, con el hash del corpus.
 
@@ -43,7 +43,7 @@ escritura latina) → stem Snowball del idioma, si el paquete define uno.
 ejecutan reranker ni lector; la política decide entre `relacionado` y
 `sin_respuesta` con lo que hay.
 
-Otros usos de TF-IDF: palabras clave de cada fragmento, `rag golden
+Otros usos de TF-IDF: palabras clave de cada fragmento, `ipsis golden
 plantilla` (MMR sobre secciones para proponer preguntas diversas) y la
 clasificación `exacta`/`parafrasis` al importar el golden (`s_cov ≥ 0,6`).
 
@@ -56,7 +56,7 @@ stopwords obligatorias (las del paquete son opcionales).
 
 - Un solo `terminos()`; lo que se indexa y lo que se consulta coinciden y
   cualquier puntaje se puede reproducir.
-- Todas las señales son funciones puras en `rag/lenguaje/lexico.py`, con
+- Todas las señales son funciones puras en `ipsis/lenguaje/lexico.py`, con
   resultado en [0, 1].
 
 ## 7. Parámetros y defaults
@@ -71,7 +71,7 @@ Menos de 5 ms por consulta; las estadísticas ocupan unos KB por documento.
 ## 9. Fallos y fallback
 
 - Idioma sin stemmer: términos sin stem.
-- Estadísticas faltantes o de otro corpus: `rag doctor` pide `rag indexar`.
+- Estadísticas faltantes o de otro corpus: `ipsis doctor` pide `ipsis indexar`.
 
 ## 10. Seguridad y privacidad
 

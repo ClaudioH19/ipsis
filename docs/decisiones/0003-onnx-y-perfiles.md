@@ -15,9 +15,9 @@ multilingüe, con licencia compatible y sin fine-tuning.
   `ModeloOnnx` (Template Method), carga la sesión y el tokenizador; cada
   modelo implementa lo suyo: `CodificadorDenso`, `RerankerOnnx` y
   `LectorOnnx`. torch solo aparece en el extra de desarrollo `[exportar]`.
-- **Caché global de modelos** (`RAG_MODELOS_DIR`) y uso sin red
+- **Caché global de modelos** (`IPSIS_MODELS_DIR`) y uso sin red
   (`HF_HUB_OFFLINE=1`).
-- **Tres perfiles** en `rag/recursos/perfiles/`, más `bm25` solo para
+- **Tres perfiles** en `ipsis/recursos/perfiles/`, más `bm25` solo para
   diagnóstico:
 
   | Perfil | Modelos | p95 objetivo | p95 medido (banco universal) |

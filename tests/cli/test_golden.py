@@ -1,4 +1,4 @@
-"""``rag golden``: plantilla, importar, validar y exportar en un proyecto real.
+"""``ipsis golden``: plantilla, importar, validar y exportar en un proyecto real.
 
 Sin modelos ni red: el golden solo mide. El banco interno (manifiesto + JSONL)
 es la representación rigurosa; SQuAD 2.0 y CSV son formatos de intercambio.
@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 from apoyo import CORPUS
 
-from rag.cli import main
+from ipsis.cli import main
 
 
 @pytest.fixture
@@ -74,7 +74,7 @@ def test_plantilla_sin_documentos_falla_con_mensaje(tmp_path: Path, monkeypatch,
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
     assert main(["golden", "plantilla"]) == 1
-    assert "rag cargar" in capsys.readouterr().out
+    assert "ipsis cargar" in capsys.readouterr().out
 
 
 # --- ida y vuelta (criterio de P9.3) ----------------------------------------------
@@ -95,7 +95,7 @@ def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
     inicio = respuesta["answer_start"]
     assert parrafo["context"][inicio:inicio + len(respuesta["text"])] == respuesta["text"]
     # …y el context, ubicado en el documento, lleva a la misma posición global.
-    from rag.ingesta.ingesta import parsear_corpus
+    from ipsis.ingesta.ingesta import parsear_corpus
 
     evidencia = original[id_r]["evidencias"][0]
     documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documentos")}[evidencia["doc_id"]]
@@ -151,7 +151,7 @@ def test_squad2_externo_sin_extension_y_ocurrencia_exacta_por_contexto(proyecto:
     # «días hábiles» aparece en el Artículo 3 y en el 8: el contexto elige el 8.
     texto = "Artículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia " \
             "a la cuenta registrada por el cliente."
-    from rag.ingesta.ingesta import parsear_corpus
+    from ipsis.ingesta.ingesta import parsear_corpus
 
     documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documentos")}["reglamento-servicio"]
     assert texto in documento and documento.count("días hábiles") == 2
@@ -170,7 +170,7 @@ def test_squad2_externo_sin_extension_y_ocurrencia_exacta_por_contexto(proyecto:
 # --- validar y errores ---------------------------------------------------------------
 def test_validar_detecta_corpus_modificado_sin_tocar_nada(proyecto: Path, capsys):
     assert main(["golden", "validar"]) == 1
-    assert "rag golden importar" in capsys.readouterr().out
+    assert "ipsis golden importar" in capsys.readouterr().out
 
     assert main(["golden", "plantilla", "--n", "20"]) == 0
     _completar_un_par(proyecto / "golden" / "golden.csv")

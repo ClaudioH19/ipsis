@@ -27,15 +27,15 @@ COMANDOS_ACTUALES = {
 
 def test_el_script_rag_sigue_apuntando_a_rag_cli_main():
     datos = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))
-    assert datos["project"]["scripts"]["rag"] == "rag.cli:main"
-    from rag.cli import main
+    assert datos["project"]["scripts"]["ipsis"] == "ipsis.cli:main"
+    from ipsis.cli import main
 
     assert callable(main)
-    assert not (RAIZ / "rag" / "cli.py").exists()  # sin módulo puente
+    assert not (RAIZ / "ipsis" / "cli.py").exists()  # sin módulo puente
 
 
 def test_importar_la_cli_no_crea_ni_abre_nada(tmp_path):
-    codigo = "import rag.cli, os; print(sorted(os.listdir('.')))"
+    codigo = "import ipsis.cli, os; print(sorted(os.listdir('.')))"
     salida = subprocess.run([sys.executable, "-c", codigo], cwd=tmp_path, capture_output=True, text=True, check=True)
     assert salida.stdout.strip() == "[]"
 
@@ -53,8 +53,8 @@ def _hojas(parser, ruta=()):
 
 
 def test_todos_los_comandos_actuales_quedan_registrados_con_su_command():
-    from rag.cli import construir_parser
-    from rag.cli.base import Comando
+    from ipsis.cli import construir_parser
+    from ipsis.cli.base import Comando
 
     hojas = dict(_hojas(construir_parser()))
     assert set(hojas) == COMANDOS_ACTUALES
@@ -63,7 +63,7 @@ def test_todos_los_comandos_actuales_quedan_registrados_con_su_command():
 
 
 def test_el_command_recibe_su_namespace_y_llama_al_caso_de_uso(monkeypatch):
-    from rag.cli import main
+    from ipsis.cli import main
 
     llamadas = []
 
@@ -71,16 +71,16 @@ def test_el_command_recibe_su_namespace_y_llama_al_caso_de_uso(monkeypatch):
         llamadas.append((formato, salida))
         return Path("golden/exportado.csv"), []
 
-    monkeypatch.setattr("rag.cli.comandos.golden.exportar_golden", exportar_falso)
+    monkeypatch.setattr("ipsis.cli.comandos.golden.exportar_golden", exportar_falso)
     assert main(["golden", "exportar", "--formato", "csv", "--salida", "x.csv"]) == 0
     assert llamadas == [("csv", "x.csv")]
 
 
 @pytest.mark.parametrize("codigo", [0, 1, 7])
 def test_el_codigo_del_command_llega_a_main(monkeypatch, codigo):
-    from rag.cli import main
+    from ipsis.cli import main
 
-    monkeypatch.setattr("rag.cli.comandos.operacion.ComandoDoctor.ejecutar", lambda _self, _args: codigo)
+    monkeypatch.setattr("ipsis.cli.comandos.operacion.ComandoDoctor.ejecutar", lambda _self, _args: codigo)
     assert main(["doctor"]) == codigo
 
 
@@ -89,15 +89,15 @@ def test_python_m_rag_cli_funciona():
 
     # Con la salida redirigida, Windows escribiría en cp1252: se fija UTF-8 para leerla.
     entorno = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    salida = subprocess.run([sys.executable, "-m", "rag.cli", "--help"], capture_output=True, text=True,
+    salida = subprocess.run([sys.executable, "-m", "ipsis.cli", "--help"], capture_output=True, text=True,
                             encoding="utf-8", env=entorno)
     assert salida.returncode == 0 and "golden" in salida.stdout
 
 
 def test_version(capsys):
-    from rag import __version__
-    from rag.cli import main
+    from ipsis import __version__
+    from ipsis.cli import main
 
     with pytest.raises(SystemExit) as salida:
         main(["--version"])
-    assert salida.value.code == 0 and capsys.readouterr().out.strip() == f"rag-extractivo {__version__}"
+    assert salida.value.code == 0 and capsys.readouterr().out.strip() == f"ipsis {__version__}"

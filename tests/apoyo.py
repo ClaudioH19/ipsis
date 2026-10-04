@@ -119,13 +119,13 @@ def definicion_avatar(**cambios) -> dict:
 
 def motor_minimo():
     """Motor sin índice con las plantillas del proyecto actual (para probar la API)."""
-    from rag.configuracion.carga import cargar_dominio
-    from rag.consulta.etapas.redaccion import cargar_plantillas
-    from rag.consulta.motor import Motor
-    from rag.lenguaje.paquete import cargar_paquete
+    from ipsis.configuracion.carga import cargar_dominio
+    from ipsis.consulta.etapas.redaccion import cargar_plantillas
+    from ipsis.consulta.motor import Motor
+    from ipsis.lenguaje.paquete import cargar_paquete
 
     motor = Motor(plantillas=cargar_plantillas(cargar_paquete("es"), cargar_dominio()), idioma=cargar_paquete("es"))
-    from rag.aplicacion.consulta import recargar_presentacion
+    from ipsis.aplicacion.consulta import recargar_presentacion
 
     recargar_presentacion(motor)  # fija la marca inicial, como construir_motor
     return motor

@@ -21,7 +21,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from apoyo import definicion_avatar
 
 RAIZ = Path(__file__).resolve().parents[2]
-ESTATICOS = RAIZ / "rag/servicio/estaticos"
+ESTATICOS = RAIZ / "ipsis/servicio/estaticos"
 CSP_ESTRICTA = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'"
 CSP_PERMISIVA = ("default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; "
                  "connect-src 'self'")
@@ -37,7 +37,7 @@ def test_avatar_js_coincide_con_su_sha256_y_cabe_en_el_presupuesto():
 
 
 def test_exportar_incluye_el_motor(tmp_path: Path):
-    from rag.aplicacion.widget import exportar_widget
+    from ipsis.aplicacion.widget import exportar_widget
 
     destino = exportar_widget(str(tmp_path / "web"))
     assert (destino / "avatar.js").read_bytes() == (ESTATICOS / "avatar.js").read_bytes()
@@ -47,14 +47,14 @@ def test_exportar_incluye_el_motor(tmp_path: Path):
 def test_exportar_incluye_la_definicion_activa(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     import json
 
-    from rag.aplicacion.personalidad import actualizar_personalidad, importar_avatar_desde
-    from rag.cli import main
+    from ipsis.aplicacion.personalidad import actualizar_personalidad, importar_avatar_desde
+    from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
     importar_avatar_desde(json.dumps(definicion_avatar()).encode(), "mi-avatar")
     actualizar_personalidad({"avatar": {"definicion": "mi-avatar", "colores": {"cuerpo": "#123456"}}})
-    from rag.aplicacion.widget import exportar_widget
+    from ipsis.aplicacion.widget import exportar_widget
 
     destino = exportar_widget(str(tmp_path / "web"))
     datos = json.loads((destino / "avatares/mi-avatar.avatar.json").read_text(encoding="utf-8"))
@@ -73,7 +73,7 @@ def _app(estado: dict):
     def pagina(request: Request):
         csp = CSP_PERMISIVA if request.query_params.get("csp") == "permisiva" else CSP_ESTRICTA
         cuerpo = """<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body>
-<rag-extractivo-chat titulo="Ayuda"></rag-extractivo-chat><script src="/widget.js"></script></body></html>"""
+<ipsis-chat titulo="Ayuda"></ipsis-chat><script src="/widget.js"></script></body></html>"""
         return HTMLResponse(cuerpo, headers={"Content-Security-Policy": csp})
 
     @app.get("/widget.js")
@@ -145,7 +145,7 @@ def _pagina(navegador, url: str):
 
 
 def _sombra(page, expresion: str):
-    return page.evaluate(f"(() => {{ const r = document.querySelector('rag-extractivo-chat').shadowRoot; "
+    return page.evaluate(f"(() => {{ const r = document.querySelector('ipsis-chat').shadowRoot; "
                          f"return {expresion}; }})()")
 
 
@@ -181,9 +181,9 @@ def test_csp_estricta_deja_el_icono_y_el_chat_funciona(navegador, servidor):
     assert evento["estado"] == "error" and evento["mensaje"], evento
     assert _sombra(page, "!r.querySelector('.rw-avatar-lienzo')")
     assert _sombra(page, "!!r.querySelector('.rw-avatar svg')")  # el ícono sigue
-    page.fill("rag-extractivo-chat >> #rw-input", "hola")
+    page.fill("ipsis-chat >> #rw-input", "hola")
     page.keyboard.press("Enter")
-    page.wait_for_selector("rag-extractivo-chat >> text=Respuesta de prueba.")
+    page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
     page.close()
 
 

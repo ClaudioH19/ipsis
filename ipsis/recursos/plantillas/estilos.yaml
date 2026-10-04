@@ -1,0 +1,72 @@
+# Tema global del widget. `ipsis init` crea una copia editable en cada proyecto.
+preset: "clasico"
+presentacion:
+  densidad: "comoda"
+  citas: "acordeon"            # acordeon | lista (las citas siempre se muestran)
+  mostrar_etiqueta_estado: true
+# Dónde y cómo aparece el widget en tu sitio. Los atributos del <script> o del
+# <ipsis-chat> (posicion, tamano, lanzador…) tienen prioridad.
+ubicacion:
+  posicion: "abajo-derecha"    # abajo-derecha | abajo-izquierda | arriba-derecha | arriba-izquierda | incrustado
+  desplazamiento_x: 24         # px desde el borde lateral
+  desplazamiento_y: 24         # px desde el borde superior o inferior
+  z_index: 2147483000
+  tamano: "normal"             # compacto | normal | amplio
+  lanzador: "burbuja"          # burbuja | pestana | oculto (el sitio abre con window.RagChat.abrir())
+colores:
+  acento: "#2563eb"
+  acento_texto: "#ffffff"
+  superficie: "#ffffff"
+  fondo: "#f4f5f7"
+  texto: "#15181d"
+  texto_suave: "#5b6472"
+  borde: "#e3e6ea"
+  aviso: "#b4801f"
+  aviso_borde: "#d9a441"
+  vivo: "#22c55e"
+
+colores_oscuro:
+  superficie: "#1b1f27"
+  fondo: "#12151b"
+  texto: "#eceff4"
+  texto_suave: "#9aa4b2"
+  borde: "#2b323d"
+  aviso: "#e0b055"
+
+tipografia:
+  familia: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+  tamano_base: "14px"
+  tamano_mensaje: "13.5px"
+  tamano_cita: "12px"
+  tamano_etiqueta: "10.5px"
+  interlineado: "1.55"
+
+forma:
+  radio_panel: "18px"
+  radio_burbuja: "16px"
+  radio_control: "12px"
+  ancho_panel: "390px"
+  alto_panel: "600px"
+  tamano_boton: "58px"
+  tamano_icono: "26px"
+  separacion: "12px"
+  relleno: "16px"
+
+sombras:
+  panel: "0 12px 40px rgba(16,24,40,.18), 0 2px 8px rgba(16,24,40,.08)"
+  boton: "0 8px 24px rgba(16,24,40,.28)"
+  panel_oscuro: "0 12px 40px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35)"
+  boton_oscuro: "0 8px 24px rgba(0,0,0,.5)"
+
+animaciones:
+  activadas: true
+  duracion_panel: ".22s"
+  duracion_burbuja: ".2s"
+  duracion_control: ".18s"
+  duracion_latido: "1.2s"
+  curva: "cubic-bezier(.16,1,.3,1)"
+  desplazamiento_entrada: "12px"
+  escala_entrada: ".96"
+  escala_hover: "1.04"
+
+css_extra: ""

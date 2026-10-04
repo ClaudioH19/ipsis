@@ -1,0 +1,43 @@
+# Perfil de instalación «heavy». Un proyecto lo ajusta en
+# configuracion/motor.yaml (sección ajustes_perfil) y `ipsis calibrar`
+# reemplaza los umbrales por defecto. Ver docs/decisiones/0003-onnx-y-perfiles.md.
+perfil: heavy
+descripcion: Modelos grandes, más candidatos, recuperación dirigida y concordancia.
+presupuesto_p95_ms: 4000
+modelos:
+  denso: intfloat/multilingual-e5-base
+  reranker: onnx-community/bge-reranker-v2-m3-ONNX
+  lector: dewdev/mdeberta-v3-base-squad2-onnx
+cascada:
+  recuperar_n: 30
+  rerank_k: 8
+  leer_m: 4
+  max_tokens_pasaje: 384
+  stride: 128
+  salida_temprana_sin_foco: true
+  concordancia: true
+  max_caracteres_lectura: 1200
+etapas:
+- conversacional
+- analisis
+- confianza
+- filtros
+- recuperacion
+- reranking
+- lectura
+- evidencia
+- politica
+- redaccion
+- verificacion
+lexico:
+  k1: 1.2
+  b: 0.75
+  max_terminos_foco: 2
+umbrales_por_defecto:
+  oov_dominio: 0.6
+  oov_ok: 0.6
+  dominio: 0.33
+  relacionado: 0.33
+  foco: 0.5
+  ok: 0.8
+  cov: 0.6

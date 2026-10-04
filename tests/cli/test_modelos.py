@@ -1,4 +1,4 @@
-"""``rag modelos listar | descargar | verificar | exportar`` con la descarga simulada (sin red).
+"""``ipsis modelos listar | descargar | verificar | exportar`` con la descarga simulada (sin red).
 
 La simulación reemplaza solo ``huggingface_hub.snapshot_download``: el camino
 CLI → aplicacion → modelos.descarga es el real.
@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rag.cli import main
+from ipsis.cli import main
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 MMARCO, BGE = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "onnx-community/bge-reranker-v2-m3-ONNX"
@@ -42,7 +42,7 @@ def hub(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     import huggingface_hub
 
     monkeypatch.setattr(huggingface_hub, "snapshot_download", snapshot_download)
-    monkeypatch.setenv("RAG_MODELOS_DIR", str(tmp_path / "cache"))
+    monkeypatch.setenv("IPSIS_MODELS_DIR", str(tmp_path / "cache"))
     monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
     monkeypatch.chdir(tmp_path)
     return llamadas
@@ -71,7 +71,7 @@ def test_light_lista_solo_el_denso(hub, capsys):
 
 
 def test_medium_lista_sus_roles_con_datos_del_catalogo_y_estado_de_cache(hub, capsys, monkeypatch):
-    from rag.modelos.catalogo import obtener
+    from ipsis.modelos.catalogo import obtener
 
     _proyecto("medium")
     assert main(["modelos", "descargar", "--perfil", "light"]) == 0  # solo e5-small queda en caché
@@ -87,18 +87,18 @@ def test_medium_lista_sus_roles_con_datos_del_catalogo_y_estado_de_cache(hub, ca
         assert spec.archivo_onnx("aarch64") in bloques[rol]  # el ONNX de la CPU actual
     assert "onnx/model_qint8_arm64.onnx" in bloques["reranker"]
     assert "Caché:      disponible" in bloques["denso"] and "Caché:      falta" in bloques["reranker"]
-    assert "Acción: rag modelos descargar" in salida
+    assert "Acción: ipsis modelos descargar" in salida
 
 
 def test_listar_y_verificar_sin_proyecto_piden_rag_init(hub, capsys):
     assert main(["modelos", "listar"]) == 1
-    assert "rag init" in capsys.readouterr().out
+    assert "ipsis init" in capsys.readouterr().out
     assert main(["modelos", "verificar"]) == 1
 
 
 # --- descargar ----------------------------------------------------------------------------
 def test_descargar_usa_el_perfil_activo_y_la_frontera_de_cache(hub, capsys, tmp_path):
-    from rag.modelos.catalogo import obtener
+    from ipsis.modelos.catalogo import obtener
 
     _proyecto("medium")
     assert main(["modelos", "descargar"]) == 0
@@ -162,12 +162,12 @@ def test_sin_red_falla_con_un_mensaje_accionable(hub, capsys, monkeypatch):
 def test_verificar_falta_un_modelo_y_no_lo_descarga(hub, capsys, monkeypatch):
     _proyecto("medium")
     assert main(["modelos", "descargar", "--perfil", "light"]) == 0
-    monkeypatch.setattr("rag.modelos.verificacion.probar", lambda spec, carpeta: None)
+    monkeypatch.setattr("ipsis.modelos.verificacion.probar", lambda spec, carpeta: None)
     capsys.readouterr()
     assert main(["modelos", "verificar"]) == 1
     salida = capsys.readouterr().out
     assert f"{E5_SMALL:45} OK" in salida and f"{MMARCO:45} FALTA" in salida
-    assert "Acción: rag modelos descargar" in salida
+    assert "Acción: ipsis modelos descargar" in salida
     assert _descargas(hub) == [E5_SMALL]
 
     assert main(["modelos", "descargar"]) == 0
@@ -185,7 +185,7 @@ def test_onnx_presente_pero_no_cargable_no_se_reporta_como_faltante(hub, capsys)
 
 
 def test_inferencia_invalida_identifica_al_modelo(hub, capsys, monkeypatch):
-    from rag.modelos import verificacion
+    from ipsis.modelos import verificacion
 
     class Cargado:  # sesión y tokenizador «cargan»; solo se prueba la inferencia
         def __init__(self, spec, carpeta, hilos=None):
@@ -216,14 +216,14 @@ def test_exportar_sin_el_extra_dice_que_instalar(tmp_path, capsys, monkeypatch):
     monkeypatch.setitem(sys.modules, "torch", None)
     assert main(["modelos", "exportar", "org/modelo", "--int8"]) == 1
     salida = capsys.readouterr().out
-    assert 'Acción: pip install "rag-extractivo[exportar]"' in salida
+    assert 'Acción: pip install "ipsis[exportar]"' in salida
     assert "Traceback" not in salida and "ModuleNotFoundError" not in salida
     assert not Path("exportados").exists()
 
 
 def test_exportar_int8_llega_al_caso_de_uso_y_no_registra_el_modelo(tmp_path, capsys, monkeypatch):
-    from rag.modelos import exportacion
-    from rag.modelos.catalogo import CATALOGO
+    from ipsis.modelos import exportacion
+    from ipsis.modelos.catalogo import CATALOGO
 
     llamadas = []
 
@@ -250,7 +250,7 @@ def test_exportar_int8_llega_al_caso_de_uso_y_no_registra_el_modelo(tmp_path, ca
 
 
 def test_exportacion_que_falla_no_muestra_traceback_ni_deja_carpeta(tmp_path, capsys, monkeypatch):
-    from rag.modelos import exportacion
+    from ipsis.modelos import exportacion
 
     def convertir(id_hf, salida):
         salida.mkdir(parents=True)
@@ -282,7 +282,7 @@ def falso(repo_id, allow_patterns, cache_dir, local_files_only):
     return str(carpeta)
 
 huggingface_hub.snapshot_download = falso
-from rag.cli import main
+from ipsis.cli import main
 assert main(['init', '--perfil', 'medium']) == 0
 assert main(['modelos', 'descargar']) == 0
 assert main(['modelos', 'listar']) == 0
@@ -290,7 +290,7 @@ print('PESADOS=' + ','.join(m for m in ('torch', 'optimum', 'onnxruntime', 'tran
 """
     import os
 
-    entorno = {**os.environ, "RAG_MODELOS_DIR": str(tmp_path / "cache"), "PYTHONIOENCODING": "utf-8"}
+    entorno = {**os.environ, "IPSIS_MODELS_DIR": str(tmp_path / "cache"), "PYTHONIOENCODING": "utf-8"}
     salida = subprocess.run([sys.executable, "-c", codigo], cwd=tmp_path, capture_output=True, text=True,
                             encoding="utf-8", env=entorno)
     assert salida.returncode == 0, salida.stderr

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import yaml
 
-from rag.cli import main
-from rag.aplicacion.widget import (
+from ipsis.cli import main
+from ipsis.aplicacion.widget import (
     aplicar_preset,
     generar_vista_previa,
     listar_presets,
@@ -104,7 +104,7 @@ def test_cli_genera_vista_previa(tmp_path):
 def test_ubicacion_por_defecto_y_validacion():
     import pytest
 
-    from rag.aplicacion.widget import ubicacion_widget
+    from ipsis.aplicacion.widget import ubicacion_widget
 
     assert ubicacion_widget({}) == {"posicion": "abajo-derecha", "desplazamiento_x": 24, "desplazamiento_y": 24,
                                     "z_index": 2147483000, "tamano": "normal", "lanzador": "burbuja"}
@@ -117,7 +117,7 @@ def test_ubicacion_por_defecto_y_validacion():
 
 
 def test_forma_margen_anterior_sigue_ubicando_el_widget():
-    from rag.aplicacion.widget import ubicacion_widget
+    from ipsis.aplicacion.widget import ubicacion_widget
 
     u = ubicacion_widget({"forma": {"margen": "40px"}})
     assert (u["desplazamiento_x"], u["desplazamiento_y"]) == (40, 40)
@@ -127,7 +127,7 @@ def test_forma_margen_anterior_sigue_ubicando_el_widget():
 def test_las_citas_nunca_se_ocultan():
     import pytest
 
-    from rag.aplicacion.widget import citas_presentacion
+    from ipsis.aplicacion.widget import citas_presentacion
 
     assert [citas_presentacion(v) for v in ("acordeon", "lista", "abiertas", "ocultas", None)] == \
         ["acordeon", "lista", "lista", "acordeon", "acordeon"]
@@ -146,7 +146,7 @@ def test_snippet_usa_la_ubicacion_y_escapa(tmp_path, monkeypatch, capsys):
     assert 'data-posicion="arriba-izquierda"' in salida and 'data-lanzador="pestana"' in salida
     assert main(["widget", "snippet", "--componente", "--clave", 'a"b']) == 0
     componente = capsys.readouterr().out
-    assert "<rag-extractivo-chat" in componente and 'widget-key="a&quot;b"' in componente
+    assert "<ipsis-chat" in componente and 'widget-key="a&quot;b"' in componente
 
 
 def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
@@ -155,7 +155,7 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
     assert main(["personalidad", "tono", "aplicar", "serio"]) == 0
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     cfg = TestClient(crear_app()).get("/config").json()
     assert cfg["citas"] == "acordeon" and cfg["ubicacion"]["posicion"] == "abajo-derecha"
@@ -167,7 +167,7 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget
 
 
-# --- rag widget estilo: cada valor, por consola ----------------------------------------------
+# --- ipsis widget estilo: cada valor, por consola ----------------------------------------------
 def test_estilo_mostrar_y_cambiar_por_consola(tmp_path, monkeypatch, capsys):
     from pathlib import Path
 

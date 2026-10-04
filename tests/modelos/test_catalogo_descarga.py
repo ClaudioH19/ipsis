@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.modelos import descarga
-from rag.modelos.catalogo import CATALOGO, obtener
+from ipsis.modelos import descarga
+from ipsis.modelos.catalogo import CATALOGO, obtener
 
 
 def test_catalogo_tiene_un_modelo_por_tarea_y_licencias_permitidas():
@@ -46,7 +46,7 @@ def hub_falso(tmp_path, monkeypatch):
     import huggingface_hub
 
     monkeypatch.setattr(huggingface_hub, "snapshot_download", snapshot_download)
-    monkeypatch.setenv("RAG_MODELOS_DIR", str(tmp_path / "cache"))
+    monkeypatch.setenv("IPSIS_MODELS_DIR", str(tmp_path / "cache"))
     return llamadas
 
 
@@ -61,5 +61,5 @@ def test_descarga_usa_la_cache_global(hub_falso, tmp_path):
 
 
 def test_sin_cache_el_error_dice_que_comando_ejecutar(hub_falso):
-    with pytest.raises(FileNotFoundError, match="rag modelos descargar"):
+    with pytest.raises(FileNotFoundError, match="ipsis modelos descargar"):
         descarga.ruta_local(obtener("dewdev/mdeberta-v3-base-squad2-onnx"))

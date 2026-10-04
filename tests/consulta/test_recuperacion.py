@@ -2,7 +2,7 @@
 
 Sin modelo real: Qdrant en memoria y un codificador falso determinista (bolsa
 de palabras con hash). Los payloads salen del mismo pipeline de ingesta que
-usa ``rag indexar``, sobre el corpus de caracterización.
+usa ``ipsis indexar``, sobre el corpus de caracterización.
 """
 from __future__ import annotations
 
@@ -14,13 +14,13 @@ import numpy as np
 import pytest
 import yaml
 
-from rag.ingesta.chunking import ESTRATEGIAS
-from rag.nucleo.contratos import Retriever
-from rag.nucleo.esquemas import FiltroEntidad, QueryAnalysis
-from rag.ingesta.metadata import construir_payload
-from rag.ingesta.parsear import parsear_markdown
-from rag.indice.payload import chunk_desde_payload, payload_desde_chunk
-from rag.recursos import leer_plantilla
+from ipsis.ingesta.chunking import ESTRATEGIAS
+from ipsis.nucleo.contratos import Retriever
+from ipsis.nucleo.esquemas import FiltroEntidad, QueryAnalysis
+from ipsis.ingesta.metadata import construir_payload
+from ipsis.ingesta.parsear import parsear_markdown
+from ipsis.indice.payload import chunk_desde_payload, payload_desde_chunk
+from ipsis.recursos import leer_plantilla
 from apoyo import CORPUS
 
 DIM = 64
@@ -71,9 +71,9 @@ def payloads() -> list[dict]:
 def retriever(payloads):
     from qdrant_client import QdrantClient
 
-    from rag.indice.qdrant import indexar_qdrant
-    from rag.indice.qdrant import ColeccionQdrant
-    from rag.consulta.etapas.recuperacion import RetrieverQdrant
+    from ipsis.indice.qdrant import indexar_qdrant
+    from ipsis.indice.qdrant import ColeccionQdrant
+    from ipsis.consulta.etapas.recuperacion import RetrieverQdrant
 
     codificador = CodificadorFalso()
     client, modelo, estadisticas, nombre = indexar_qdrant(
@@ -159,15 +159,15 @@ def test_expone_inventarios_y_tamano(retriever, payloads):
 
 
 def test_modo_invalido_falla_al_construir(retriever):
-    from rag.consulta.etapas.recuperacion import RetrieverQdrant
+    from ipsis.consulta.etapas.recuperacion import RetrieverQdrant
 
     with pytest.raises(ValueError, match="modo desconocido"):
         RetrieverQdrant(retriever.coleccion, modo="magico")
 
 
 def test_registry_expone_qdrant_como_unico_retriever_base():
-    from rag.nucleo.registro import RegistroComponentes
-    from rag.aplicacion.registro_base import registrar_componentes_base
+    from ipsis.nucleo.registro import RegistroComponentes
+    from ipsis.aplicacion.registro_base import registrar_componentes_base
 
     assert registrar_componentes_base(RegistroComponentes()).disponibles("retriever") == ["qdrant"]
 
@@ -183,10 +183,10 @@ def test_bm25_solo_recupera_el_chunk_correcto(payloads, pregunta, fragmento):
     stemmer del español, ids por hash e IDF aplicado por Qdrant."""
     from qdrant_client import QdrantClient
 
-    from rag.indice.qdrant import indexar_qdrant, paquete_del_indice, vector_disperso
-    from rag.lenguaje.lexico import bm25_consulta
-    from rag.lenguaje.paquete import cargar_paquete
-    from rag.lenguaje.texto import terminos
+    from ipsis.indice.qdrant import indexar_qdrant, paquete_del_indice, vector_disperso
+    from ipsis.lenguaje.lexico import bm25_consulta
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.texto import terminos
 
     client, _modelo, estadisticas, nombre = indexar_qdrant(
         payloads, "falso", "bm25", qdrant_path="", usar_texto_embebido=False,

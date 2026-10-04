@@ -1,9 +1,9 @@
-"""Tests de ``rag/consulta/etapas/seleccion.py`` (evita respuestas demasiado
+"""Tests de ``ipsis/consulta/etapas/seleccion.py`` (evita respuestas demasiado
 largas). Funciones puras, sin modelos ni red: la puntuación por ``s_lex``
 cubre todo el algoritmo de selección y expansión."""
 from __future__ import annotations
 
-from rag.consulta.etapas.seleccion import (
+from ipsis.consulta.etapas.seleccion import (
     dividir_en_unidades,
     seleccionar_texto_pertinente,
     recortar_payload_a_texto_pertinente,
@@ -138,7 +138,7 @@ def test_ordenar_por_pertinencia_global_no_pierde_fragmentos():
 def test_seleccionar_texto_pertinente_prioriza_oracion_con_entidad_literal():
     """Caso real: "3,9" tokeniza a fragmentos de 1
     carácter para el solapamiento léxico (ambos números son < 4 caracteres,
-    el mínimo de rag/lenguaje/texto.py::palabras_contenido), así que el score de
+    el mínimo de ipsis/lenguaje/texto.py::palabras_contenido), así que el score de
     similitud NUNCA prioriza de forma confiable la oración con "3,9" -- hace
     falta la entidad exacta."""
     texto = (

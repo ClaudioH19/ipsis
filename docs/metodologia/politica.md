@@ -18,7 +18,7 @@ literal que responde la pregunta, y abstenerse cuando no lo es.
 - **Entrada:** `SenalesPolitica` (`s_ret`, `s_oov`, `s_foco`, `s_cov`, `s_rr`,
   `s_qa`; `None` si la etapa no corrió) y los umbrales efectivos.
 - **Salida:** `DecisionAbstencion` (resultado, motivo, regla y señal de
-  dominio usada). La regla viaja en el diagnóstico (`rag preguntar
+  dominio usada). La regla viaja en el diagnóstico (`ipsis preguntar
   --diagnostico`) y en el registro de consultas.
 
 ## 4. Algoritmo y desempates
@@ -83,7 +83,7 @@ Constante; menos de 1 ms.
 ## 9. Fallos y fallback
 
 Un umbral faltante impide construir el motor, con un mensaje que nombra los
-umbrales. Sin calibración vigente se usan los del perfil y `rag doctor` lo
+umbrales. Sin calibración vigente se usan los del perfil y `ipsis doctor` lo
 advierte.
 
 ## 10. Seguridad y privacidad

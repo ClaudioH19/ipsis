@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from rag.lenguaje.paquete import cargar_paquete
-from rag.lenguaje.texto import dividir_oraciones, terminos, tokenizar
+from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.texto import dividir_oraciones, terminos, tokenizar
 
 TEXTOS = {
     "es": "¿Cada cuánto se cambia el filtro? Se cambia cada 6 meses. El precio es 1.5 UF.",

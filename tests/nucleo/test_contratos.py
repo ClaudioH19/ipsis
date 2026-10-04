@@ -3,11 +3,11 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from rag import __version__
-from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion.carga import configuracion_efectiva, guardar_snapshot_configuracion
-from rag.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
-from rag.configuracion.esquemas import validar_asistente, validar_motor
+from ipsis import __version__
+from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.configuracion.carga import configuracion_efectiva, guardar_snapshot_configuracion
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
+from ipsis.configuracion.esquemas import validar_asistente, validar_motor
 
 
 def test_registro_crea_y_enumera_componentes():
@@ -124,13 +124,13 @@ def test_snapshot_incluye_defaults_y_se_puede_persistir(tmp_path):
 
 
 def test_version_del_api_proviene_del_paquete():
-    from rag.servicio.api import app
+    from ipsis.servicio.api import app
 
     assert app.version == __version__
 
 
 def test_componentes_base_registra_adaptadores_sin_cargar_modelos():
-    from rag.aplicacion.registro_base import registrar_componentes_base
+    from ipsis.aplicacion.registro_base import registrar_componentes_base
 
     registro = registrar_componentes_base(RegistroComponentes())
     assert registro.disponibles("parser") == ["builtin"]
@@ -139,8 +139,8 @@ def test_componentes_base_registra_adaptadores_sin_cargar_modelos():
 
 
 def test_fusion_rrf_es_determinista_y_conserva_el_candidato():
-    from rag.nucleo.esquemas import ChunkRecord, RetrievalCandidate
-    from rag.aplicacion.registro_base import FusionRRF
+    from ipsis.nucleo.esquemas import ChunkRecord, RetrievalCandidate
+    from ipsis.aplicacion.registro_base import FusionRRF
 
     def candidato(chunk_id: str) -> RetrievalCandidate:
         return RetrievalCandidate(chunk=ChunkRecord(
@@ -161,7 +161,7 @@ def test_el_nucleo_no_importa_dependencias_pesadas():
     import sys
 
     codigo = (
-        "import sys, rag.nucleo.contratos, rag.nucleo.esquemas, rag.nucleo.registro; "
+        "import sys, ipsis.nucleo.contratos, ipsis.nucleo.esquemas, ipsis.nucleo.registro; "
         "pesados = ('qdrant_client', 'onnxruntime', 'torch', 'sentence_transformers', 'fastapi'); "
         "print(','.join(m for m in pesados if m in sys.modules))"
     )
