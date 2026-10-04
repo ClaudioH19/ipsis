@@ -39,7 +39,7 @@ exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 "rag.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "tonos/*/*.yaml", "avatares/*.avatar.json", "despliegue/*"]
-"rag.servicio" = ["estaticos/*.js", "estaticos/*.html"]
+"rag.servicio" = ["estaticos/*.js", "estaticos/*.html", "estaticos/admin/*"]
 
 [tool.pytest.ini_options]
 # El directorio temporal se elige en tests/conftest.py::pytest_configure.

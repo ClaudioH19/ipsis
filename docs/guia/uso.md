@@ -100,6 +100,10 @@ reindexar ni recalibrar.
 | `rag personalidad avatar asignar <evento> <clave>` | Asigna a un evento una clave que el avatar tenga |
 | `rag personalidad avatar colores [--cuerpo #rrggbb] [--ojos #rrggbb]` | Colores del avatar, sin modificar su archivo |
 
+Sin terminal: el panel gráfico `/admin/panel` hace lo mismo con
+formularios y una vista previa del widget. Necesita `RAG_ADMIN_TOKEN`; ver
+[personalidad.md](personalidad.md#panel-gráfico-adminpanel).
+
 ### Golden set y evaluación
 
 Detalle en [golden.md](golden.md).

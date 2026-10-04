@@ -259,8 +259,9 @@ def crear_app(
             _log.warning("no se pudo recargar la personalidad: %s", exc)
 
     if modo.admin_activo:
-        from rag.servicio.admin import crear_router_admin
+        from rag.servicio.admin import crear_router_admin, crear_router_panel
 
+        aplicacion.include_router(crear_router_panel(modo, _DIR_ESTATICOS))
         aplicacion.include_router(crear_router_admin(modo, estado.limitador, al_cambiar=lambda: _refrescar(estado)))
     for problema in modo.problemas:
         _log.warning(problema)
