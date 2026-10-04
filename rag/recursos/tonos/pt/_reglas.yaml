@@ -14,3 +14,37 @@ prohibidas:
 - sua culpa
 - obviamente
 - como eu já disse
+# Regionalismos (do Brasil ou de Portugal), formas com género e gerúndios: os
+# tons incluídos devem ser neutros (um teste exige). As substituições de um
+# projeto podem usá-los.
+regionalismos:
+- oi
+- tchau
+- e aí
+- bora
+- foi mal
+- beleza
+- poxa
+- puxa
+- a gente
+- pra
+- o senhor
+- a senhora
+- bem-vindo
+- bem-vinda
+- bom dia
+- imagina
+- opa
+- ops
+- ajudá-lo
+- atendê-lo
+- convido-o
+- buscando
+- procurando
+- revisando
+- lendo
+- consultando
+- localizando
+- achando
+- processando
+- encontrando

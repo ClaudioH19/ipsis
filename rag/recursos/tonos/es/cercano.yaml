@@ -4,22 +4,22 @@ descripcion: Tuteo y lenguaje coloquial suave.
 situaciones:
   saludo:
   - ¡Hola! Soy {nombre_asistente}. Cuéntame qué necesitas de {descripcion_dominio}.
-  - ¡Hey, hola! ¿Qué buscamos hoy en {descripcion_dominio}?
+  - ¡Hola, hola! ¿Qué buscamos hoy en {descripcion_dominio}?
   - Hola, por aquí {nombre_asistente}. Pregúntame lo que quieras de {descripcion_dominio}.
   - ¡Buenas! Dime qué te interesa de {descripcion_dominio} y lo buscamos.
   - ¡Hola! Te ayudo con {descripcion_dominio}, siempre con la cita a mano.
   agradecimiento:
   - ¡De nada! Si te surge otra duda de {descripcion_dominio}, me dices.
-  - ¡Tranqui, para eso estoy! ¿Algo más de {descripcion_dominio}?
+  - ¡Para eso estoy! ¿Algo más de {descripcion_dominio}?
   - ¡Un gusto! Aquí sigo si necesitas algo más de {descripcion_dominio}.
   - ¡Cuando quieras! ¿Seguimos con {descripcion_dominio}?
   - Nada que agradecer. Si quieres, seguimos con {descripcion_dominio}.
   despedida:
-  - ¡Chao! Nos vemos.
+  - ¡Adiós! Nos vemos.
   - ¡Nos vemos pronto!
   - ¡Cuídate! Aquí estaré.
   - ¡Hasta la próxima!
-  - Dale, nos vemos cuando quieras.
+  - Bueno, nos vemos cuando quieras.
   capacidad:
   - Busco en {descripcion_dominio} y te muestro el texto tal cual, con su fuente. Si no está, te lo digo.
   - Soy {nombre_asistente}. Encuentro en {descripcion_dominio} lo que preguntas y te paso la cita exacta.
@@ -31,15 +31,15 @@ situaciones:
   - 'Te cuento lo que dice el texto:'
   - 'Esto es lo que encontré:'
   - 'Fíjate, según el documento:'
-  - 'Va, el texto dice así:'
+  - 'A ver, el texto dice así:'
   complemento:
   - 'Y además dice:'
   - 'También aparece esto:'
   - 'Por otro lado, agrega:'
-  - 'Y ojo, también dice:'
+  - 'Y atención, también dice:'
   - 'Súmale esto:'
   condicion:
-  - 'Pero ojo, aplica si:'
+  - 'Pero cuidado, aplica si:'
   - 'Hay una condición, eso sí:'
   - 'Fíjate en esta condición:'
   - 'Vale solo si:'
@@ -47,7 +47,7 @@ situaciones:
   excepcion:
   - 'Eso sí, hay una excepción:'
   - 'Menos en este caso:'
-  - 'Ojo con esta salvedad:'
+  - 'Cuidado con esta salvedad:'
   - 'Pero no aplica cuando:'
   - 'Hay una excepción, mira:'
   relacionado_intro:
@@ -76,7 +76,7 @@ situaciones:
   - Ni rastro de "{entidad}" en los documentos, lo siento.
   bienvenida:
   - ¡Hola! ¿Qué necesitas?
-  - ¡Hey! Pregúntame lo que quieras.
+  - ¡Hola! Pregúntame lo que quieras.
   - Hola, soy {nombre_asistente}. ¿Qué buscamos?
   - ¡Buenas! Dime qué te interesa.
   - Cuéntame tu duda y la buscamos.
@@ -91,11 +91,11 @@ situaciones:
   - Abajo tienes el texto original.
   - Si quieres verificarlo, la cita está abajo.
   - La fuente te la dejo aquí abajo.
-  - Échale un ojo a la cita de abajo.
+  - Mira con calma la cita de abajo.
   error_red:
   - Uy, se cortó la conexión. ¿Lo intentas de nuevo?
   - No pude conectarme. Revisa tu internet y probamos otra vez.
-  - Se cayó la conexión, dale de nuevo en un rato.
+  - Se cayó la conexión, inténtalo de nuevo en un rato.
   - Parece que no hay conexión. Inténtalo otra vez.
   - No llegué al servicio. ¿Pruebas de nuevo?
   error_limite:
@@ -103,10 +103,10 @@ situaciones:
   - Muchas preguntas seguidas, dame un respiro.
   - Espérame un poquito y seguimos.
   - Para un segundo y vuelve a preguntar.
-  - Tranqui, en unos segundos seguimos.
+  - Con calma, en unos segundos seguimos.
   error_servicio:
   - Ahora no estoy disponible. Prueba más tarde.
-  - Me estoy preparando, dale en un momento.
+  - Me estoy preparando, prueba en un momento.
   - Ahora no puedo responder, vuelve en un rato.
-  - Estoy con mucha pega, prueba en unos segundos.
+  - Tengo mucho trabajo, prueba en unos segundos.
   - Algo falló por acá. Intenta más tarde.

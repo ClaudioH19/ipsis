@@ -11,3 +11,22 @@ prohibidas:
 - your fault
 - obviously
 - as i already told you
+# Regional idioms: the bundled tones must be neutral (a test enforces it).
+# A project's own overrides may use them.
+regionalismos:
+- fire away
+- no worries
+- sure thing
+- catch you
+- swamped
+- stuff
+- breather
+- give it another go
+- alright
+- whoops
+- uh oh
+- cheers
+- mate
+- y'all
+- gonna
+- wanna

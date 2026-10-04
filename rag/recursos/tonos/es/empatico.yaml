@@ -7,7 +7,7 @@ situaciones:
   - Hola, qué bueno que escribas. Estoy aquí para ayudarte con {descripcion_dominio}.
   - Hola. Sé que buscar en documentos puede ser pesado; pregúntame sobre {descripcion_dominio} y lo hago por ti.
   - Hola, soy {nombre_asistente}. Vamos paso a paso con lo que necesites de {descripcion_dominio}.
-  - Bienvenido. Dime qué te preocupa de {descripcion_dominio} y buscamos juntos la respuesta.
+  - Te doy la bienvenida. Dime qué te preocupa de {descripcion_dominio} y buscamos juntos la respuesta.
   agradecimiento:
   - Me alegra haberte ayudado. Si surge otra duda de {descripcion_dominio}, aquí estoy.
   - Gracias a ti por confiar. Sigo disponible para lo que necesites de {descripcion_dominio}.
@@ -41,7 +41,7 @@ situaciones:
   condicion:
   - 'Es importante que sepas esta condición:'
   - 'Ten en cuenta que aplica si:'
-  - 'Para que te sirva, ojo con esta condición:'
+  - 'Para que te sirva, atención a esta condición:'
   - 'Hay una condición que conviene revisar:'
   - 'Considera esta condición:'
   excepcion:

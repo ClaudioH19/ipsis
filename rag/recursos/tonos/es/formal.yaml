@@ -3,9 +3,9 @@ tono: formal
 descripcion: Trato de usted y registro cuidado, sin exclamaciones.
 situaciones:
   saludo:
-  - Buenos días. Le saluda {nombre_asistente}. Respondo consultas sobre {descripcion_dominio} citando textualmente el documento. ¿En qué puedo asistirle?
-  - Bienvenido. Puede consultarme sobre {descripcion_dominio}; le indicaré siempre la fuente exacta de cada respuesta.
-  - Saludos. Soy {nombre_asistente} y estoy a su disposición para consultas sobre {descripcion_dominio}.
+  - Saludos. Le atiende {nombre_asistente}. Respondo consultas sobre {descripcion_dominio} citando textualmente el documento. ¿En qué puedo asistirle?
+  - Le doy la bienvenida. Puede consultarme sobre {descripcion_dominio}; le indicaré siempre la fuente exacta de cada respuesta.
+  - Mi nombre es {nombre_asistente} y estoy a su disposición para consultas sobre {descripcion_dominio}.
   - Le saluda {nombre_asistente}. Indíqueme qué desea consultar sobre {descripcion_dominio}.
   - Es un gusto atenderle. Formule su consulta sobre {descripcion_dominio} y le mostraré el texto correspondiente.
   agradecimiento:
@@ -15,7 +15,7 @@ situaciones:
   - Con mucho gusto. Sigo disponible para cualquier consulta sobre {descripcion_dominio}.
   - Agradezco su consulta. Estoy a su servicio para lo relacionado con {descripcion_dominio}.
   despedida:
-  - Que tenga un buen día.
+  - Que esté muy bien.
   - Hasta pronto. Quedo a su disposición.
   - Ha sido un gusto atenderle. Hasta luego.
   - Le deseo una buena jornada. Puede volver cuando lo necesite.
@@ -75,8 +75,8 @@ situaciones:
   - Lamento informarle que "{entidad}" no figura en los documentos.
   - Tras revisar los documentos, no se encontró referencia a "{entidad}".
   bienvenida:
-  - Buenos días. ¿En qué puedo asistirle?
-  - Bienvenido. Formule su consulta, por favor.
+  - Saludos. ¿En qué puedo asistirle?
+  - Le doy la bienvenida. Formule su consulta, por favor.
   - Le saluda {nombre_asistente}. ¿Qué desea consultar?
   - Estoy a su disposición. Cada respuesta incluye su fuente.
   - Indíqueme su consulta y le mostraré el texto correspondiente.

@@ -3,23 +3,23 @@ tono: cercano
 descripcion: Informal e coloquial suave.
 situaciones:
   saludo:
-  - Oi! Sou {nombre_asistente}. Me conta o que você precisa de {descripcion_dominio}.
-  - E aí! O que a gente procura hoje em {descripcion_dominio}?
-  - Oi, aqui é {nombre_asistente}. Pergunta o que quiser de {descripcion_dominio}.
-  - Olá! Me diz o que te interessa em {descripcion_dominio} e a gente procura.
-  - Oi! Te ajudo com {descripcion_dominio}, sempre com a citação à mão.
+  - Olá! Sou {nombre_asistente}. Me conta o que você precisa de {descripcion_dominio}.
+  - Olá, olá! O que procuramos hoje em {descripcion_dominio}?
+  - Olá, aqui é {nombre_asistente}. Pergunte o que quiser de {descripcion_dominio}.
+  - Olá! Me diz o que te interessa em {descripcion_dominio} e procuramos.
+  - Olá! Ajudo com {descripcion_dominio}, sempre com a citação à mão.
   agradecimiento:
-  - Imagina! Se surgir outra dúvida de {descripcion_dominio}, me fala.
-  - Tranquilo, é pra isso que estou aqui! Mais alguma coisa de {descripcion_dominio}?
+  - De nada! Se surgir outra dúvida de {descripcion_dominio}, diga.
+  - É para isso que estou aqui! Mais alguma coisa de {descripcion_dominio}?
   - Foi um prazer! Sigo por aqui se precisar de mais coisa de {descripcion_dominio}.
   - Quando quiser! Seguimos com {descripcion_dominio}?
   - Não precisa agradecer. Se quiser, seguimos com {descripcion_dominio}.
   despedida:
-  - Tchau! A gente se vê.
+  - Adeus! Até à próxima.
   - Até mais!
   - Se cuida! Estarei por aqui.
   - Até a próxima!
-  - Beleza, até quando quiser.
+  - Combinado, até quando quiser.
   capacidad:
   - Busco em {descripcion_dominio} e te mostro o texto do jeito que está, com a fonte. Se não estiver, te aviso.
   - Sou {nombre_asistente}. Acho em {descripcion_dominio} o que você pergunta e te passo a citação exata.
@@ -31,7 +31,7 @@ situaciones:
   - 'Te conto o que diz o texto:'
   - 'Isto é o que encontrei:'
   - 'Repara, segundo o documento:'
-  - 'Bora, o texto diz assim:'
+  - 'Vamos lá, o texto diz assim:'
   complemento:
   - 'E ainda diz:'
   - 'Também aparece isto:'
@@ -58,55 +58,55 @@ situaciones:
   - 'Não achei direto, mas isto pode te servir:'
   foco_ausente:
   - 'De «{termino}» não achei nada, mas olha isto:'
-  - 'Opa, «{termino}» não aparece. O mais próximo é isto:'
+  - 'Ah, «{termino}» não aparece. O mais próximo é isto:'
   - 'Sobre «{termino}» não tem nada pontual; te deixo o relacionado:'
   - 'Procurei «{termino}» e não está. Isto chega perto:'
   - '«{termino}» não aparece nos documentos, mas olha:'
   sin_respuesta:
-  - Poxa, isso eu não acho nos seus documentos.
-  - Isso não aparece nos documentos, foi mal.
+  - Ah, isso não encontro nos seus documentos.
+  - Isso não aparece nos documentos, desculpe.
   - Procurei e nada, isso não está nos documentos.
   - Hum, isso não vem nos documentos que tenho.
   - Não tenho isso nos documentos, vamos tentar outra pergunta?
   premisa_no_encontrada:
   - Procurei "{entidad}" e não aparece nos seus documentos.
-  - Opa, "{entidad}" não aparece nos documentos.
+  - Ah, "{entidad}" não aparece nos documentos.
   - Não achei nada de "{entidad}"; talvez não esteja no que você carregou.
   - '"{entidad}" não aparece em lugar nenhum dos documentos.'
-  - Nem sinal de "{entidad}" nos documentos, foi mal.
+  - Nem sinal de "{entidad}" nos documentos, desculpe.
   bienvenida:
-  - Oi! Do que você precisa?
-  - E aí! Pergunta o que quiser.
-  - Oi, sou {nombre_asistente}. O que a gente procura?
+  - Olá! Do que precisa?
+  - Olá! Pergunte o que quiser.
+  - Olá, sou {nombre_asistente}. O que procuramos?
   - Olá! Me diz o que te interessa.
-  - Me conta sua dúvida e a gente procura.
+  - Conte a sua dúvida e procuramos.
   esperando:
-  - Procurando…
+  - Busca em andamento…
   - Só um segundo
-  - Revisando os documentos
+  - Revisão dos documentos
   - Quase lá
-  - Achando a citação
+  - Quase com a citação
   invitacion_citas:
-  - Olha a citação abaixo pra conferir.
+  - Olhe a citação abaixo para conferir.
   - Aqui embaixo está o texto original.
   - Se quiser conferir, a citação está abaixo.
   - A fonte eu deixei aqui embaixo.
   - Dá uma olhada na citação abaixo.
   error_red:
-  - Opa, a conexão caiu. Tenta de novo?
-  - Não consegui conectar. Confere sua internet e a gente tenta de novo.
-  - A conexão caiu, tenta de novo daqui a pouco.
+  - Ah, a conexão caiu. Tenta de novo?
+  - Não foi possível conectar. Confira a sua internet e tentamos de novo.
+  - A conexão falhou, tente de novo daqui a pouco.
   - Parece que está sem conexão. Tenta outra vez.
   - Não cheguei ao serviço. Tenta de novo?
   error_limite:
   - Estamos indo muito rápido. Espera uns segundos.
   - Muita pergunta seguida, me dá um respiro.
-  - Espera um pouquinho e a gente segue.
+  - Espere um pouco e continuamos.
   - Para um segundo e pergunta de novo.
-  - Tranquilo, em uns segundos a gente segue.
+  - Com calma, em alguns segundos continuamos.
   error_servicio:
   - Agora não estou disponível. Tenta mais tarde.
   - Estou me preparando, tenta daqui a pouco.
   - Agora não consigo responder, volta daqui a pouco.
-  - Estou cheio de trabalho, tenta em uns segundos.
+  - Tenho muito trabalho, tente em alguns segundos.
   - Algo deu errado por aqui. Tenta mais tarde.

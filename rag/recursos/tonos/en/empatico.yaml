@@ -48,7 +48,7 @@ situaciones:
   - 'It is important that you know this exception:'
   - 'Please keep this caveat in mind:'
   - 'It is worth checking this special case:'
-  - 'So it does not catch you by surprise, there is an exception:'
+  - 'So it does not surprise you, there is an exception:'
   - 'There is a case where it does not apply:'
   relacionado_intro:
   - 'I understand what you are looking for, but there is no direct answer. This is the closest:'

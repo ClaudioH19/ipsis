@@ -72,6 +72,15 @@ def test_los_tonos_incluidos_pasan_el_linter(idioma):
         assert set(datos["situaciones"]) == set(SITUACIONES)
 
 
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_los_tonos_incluidos_son_neutros(idioma):
+    """Sin regionalismos, formas con género ni saludos que dependan de la hora."""
+    from rag.lenguaje.tonos import regionalismos_en
+
+    for tono in tonos_disponibles(idioma):
+        assert regionalismos_en(_base(idioma, tono)["situaciones"], idioma) == [], (idioma, tono)
+
+
 def test_cordial_conserva_como_primera_variante_los_textos_anteriores():
     """Migración exacta: con el tono por defecto, las respuestas de siempre siguen ahí."""
     es = cargar_tono("es")

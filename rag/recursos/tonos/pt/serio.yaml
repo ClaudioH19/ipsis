@@ -10,7 +10,7 @@ situaciones:
   - Disponível para consultas sobre {descripcion_dominio}.
   agradecimiento:
   - De nada.
-  - Entendido. Pode seguir consultando sobre {descripcion_dominio}.
+  - Entendido. Pode fazer outra consulta sobre {descripcion_dominio}.
   - Certo. Sigo disponível.
   - De acordo. Outra consulta sobre {descripcion_dominio}?
   - Obrigado a você.
@@ -19,7 +19,7 @@ situaciones:
   - Até breve.
   - Fim da consulta.
   - Sigo disponível.
-  - Bom dia.
+  - Até outra consulta.
   capacidad:
   - Busco em {descripcion_dominio} e mostro o texto literal com sua fonte.
   - Sou {nombre_asistente}. Não redijo respostas; cito {descripcion_dominio}.
@@ -81,11 +81,11 @@ situaciones:
   - Respostas com citação do documento.
   - Pronto para consultar.
   esperando:
-  - Buscando
-  - Consultando o documento
-  - Revisando
-  - Localizando a citação
-  - Processando
+  - Em busca
+  - Consulta em curso
+  - Em revisão
+  - Localização da citação
+  - Em processamento
   invitacion_citas:
   - Citação abaixo.
   - Verifique na citação.
