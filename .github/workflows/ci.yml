@@ -152,7 +152,7 @@ jobs:
           EOF
           /tmp/venv/bin/rag desplegar preparar --dominio asistente.example.com
           test -f dist/docker-compose.yml
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheel-python-3.12
           path: dist/*.whl
