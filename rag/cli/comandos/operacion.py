@@ -5,6 +5,7 @@ import argparse
 
 from rag.aplicacion.diagnostico import Estado, ProyectoNoEncontrado, diagnosticar
 from rag.aplicacion.proyecto import guardar_snapshot
+from rag.aplicacion.registro import SinRegistro, auditar_registro
 from rag.cli.base import Comando
 
 
@@ -41,6 +42,33 @@ class ComandoDoctor(Comando):
         return 0 if reporte.listo else 1
 
 
+class ComandoAuditar(Comando):
+    nombre = "auditar"
+    ayuda = "Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal."
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        try:
+            r = auditar_registro()
+        except SinRegistro as e:
+            print(f"No hay registro de consultas ({e}). Está apagado por defecto, por privacidad.")
+            print("  Acción: rag configurar registro.activo=true (y reinicia 'rag servir')")
+            return 1
+        print(f"Registro: {r.ruta} ({r.consultas} consultas)")
+        print("Estados: " + (", ".join(f"{k} {v}" for k, v in r.por_estado.most_common()) or "—"))
+        print("Reglas:  " + (", ".join(f"{k} {v}" for k, v in r.por_regla.most_common()) or "—"))
+        print(f"Evidencias verificadas contra el corpus vigente: {r.evidencias}, con problemas: {len(r.problemas)}")
+        for p in r.problemas:
+            print(f"  línea {p.linea}: {p.doc_id} offsets {p.offset_inicio}-{p.offset_fin}: {p.motivo}: {p.detalle}")
+        if r.lineas_invalidas:
+            print(f"Líneas ilegibles: {', '.join(map(str, r.lineas_invalidas))}")
+        if r.ok:
+            print("Todas las evidencias registradas siguen siendo literales.")
+            return 0
+        print("Hay evidencias que ya no coinciden con el corpus: el documento cambió desde la consulta o el "
+              "registro se editó.")
+        return 1
+
+
 class ComandoSnapshotConfig(Comando):
     nombre = "snapshot-config"
     ayuda = "Escribe la configuración efectiva con defaults resueltos."
@@ -59,4 +87,4 @@ class ComandoSnapshotConfig(Comando):
         return 0
 
 
-__all__ = ["ComandoDoctor", "ComandoSnapshotConfig"]
+__all__ = ["ComandoAuditar", "ComandoDoctor", "ComandoSnapshotConfig"]

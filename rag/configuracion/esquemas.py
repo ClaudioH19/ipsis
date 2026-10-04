@@ -18,6 +18,12 @@ class ConfiguracionEstricta(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class RegistroConfig(ConfiguracionEstricta):
+    """Registro de consultas (``.rag/registros/consultas.jsonl``): apagado por privacidad."""
+
+    activo: bool = False
+
+
 class AsistenteConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
@@ -27,6 +33,7 @@ class AsistenteConfig(ConfiguracionEstricta):
     perfil: Literal["light", "medium", "heavy", "bm25"] = "light"
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
+    registro: RegistroConfig = Field(default_factory=RegistroConfig)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):

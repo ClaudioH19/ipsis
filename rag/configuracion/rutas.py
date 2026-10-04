@@ -25,4 +25,5 @@ INTERNO = ".rag"  # generado; no se versiona
 INDICE = ".rag/indice"
 QDRANT = ".rag/indice/qdrant"
 SNAPSHOT = ".rag/configuracion-efectiva.yaml"
+REGISTRO_CONSULTAS = ".rag/registros/consultas.jsonl"
 VISTA_PREVIA = ".rag/widget-vista-previa.html"

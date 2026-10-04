@@ -247,6 +247,32 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 En modo Qdrant local hay que detener `rag servir` antes, porque Qdrant
 bloquea la carpeta del índice.
 
+### Registro de consultas y auditoría (`rag auditar`)
+
+El servicio puede guardar una línea JSON por consulta en
+`.rag/registros/consultas.jsonl`. Está apagado por defecto, por privacidad:
+
+```
+rag configurar registro.activo=true   # y reiniciar 'rag servir'
+rag auditar
+```
+
+- **Qué guarda:** la pregunta, el estado, la regla, el motivo, el perfil, las
+  señales de la política, las evidencias (documento, offsets y texto) y el
+  tramo exacto. No guarda la sesión ni la IP.
+- **Quién escribe:** solo `/consultar` del servicio. `rag preguntar
+  --diagnostico`, `rag evaluar` y `rag benchmark` no escriben. Si escribir
+  falla, la respuesta no se ve afectada; queda un aviso en el log del
+  servicio.
+- **Qué revisa `rag auditar`:** cuenta las consultas por estado y por regla,
+  y comprueba que el texto de cada evidencia y de cada tramo siga en esos
+  offsets del corpus vigente.
+  - Problemas posibles: `alterada`, `tramo_alterado`, `documento_ausente`
+    (el documento se retiró) o `fuera_de_rango`.
+  - Sale con 0 si todo coincide y con 1 si hay problemas, líneas ilegibles o
+    no hay registro.
+  - No usa modelos ni el índice.
+
 ## Presentación del widget
 
 `configuracion/estilos.yaml` admite un `preset` y opciones independientes del

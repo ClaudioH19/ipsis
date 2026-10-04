@@ -16,7 +16,7 @@ from rag.cli.comandos.corpus import ComandoCargar, ComandoIndexar
 from rag.cli.comandos.evaluacion import ComandoBenchmark, ComandoCalibrar, ComandoComparar, ComandoEvaluar
 from rag.cli.comandos.golden import grupo_golden
 from rag.cli.comandos.modelos import grupo_modelos
-from rag.cli.comandos.operacion import ComandoDoctor, ComandoSnapshotConfig
+from rag.cli.comandos.operacion import ComandoAuditar, ComandoDoctor, ComandoSnapshotConfig
 from rag.cli.comandos.proyecto import ComandoConfigurar, ComandoInit, grupo_perfil
 from rag.cli.comandos.web import grupo_widget
 
@@ -27,7 +27,7 @@ def registro_de_comandos() -> list[Comando | Grupo]:
     return [
         init, cargar, ComandoConfigurar(), grupo_perfil(), grupo_modelos(), indexar,
         ComandoServir(init, cargar, indexar), ComandoPreguntar(),
-        ComandoDoctor(), ComandoSnapshotConfig(),
+        ComandoDoctor(), ComandoAuditar(), ComandoSnapshotConfig(),
         ComandoEvaluar(), ComandoCalibrar(), ComandoComparar(), ComandoBenchmark(main),
         grupo_golden(), grupo_widget(),
     ]
