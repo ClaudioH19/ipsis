@@ -1,16 +1,13 @@
-"""Metadata determinista + validaciones de ingesta (secciones 3.3 y 3.4).
+"""Metadata determinista y validaciones de ingesta.
 
 Este módulo NO depende de ningún modelo para los campos deterministas
 (entidades, tiene_excepcion, tiene_condicion, keywords por frecuencia).
-La categoría se asigna con un clasificador de respaldo determinista
+La categoría se asigna con un clasificador léxico determinista
 (coincidencia de palabras clave contra la descripción de cada categoría de
-``taxonomia.yaml``) — documentado en el registro de decisiones de ESTADO.md
-como una simplificación deliberada frente al "zero-shot por embeddings"
-sugerido en la sección 2.3: en este dominio (17 categorías cerradas, corpus
-pequeño) un clasificador léxico determinista es más auditable y no depende de
-que un modelo de embeddings esté disponible offline. La categoría se marca
-con ``origen.categoria = "keywords_v1"`` y NUNCA se usa como filtro duro salvo
-que E1 confirme exactitud >= umbral_categoria_filtro_duro.
+la sección ``taxonomia`` de ``configuracion/dominio.yaml``): es más auditable
+que una clasificación por embeddings y no depende de un modelo. La categoría se
+marca con ``origen.categoria = "keywords_v1"`` y NUNCA se usa como filtro duro
+salvo que una evaluación confirme exactitud >= umbral_categoria_filtro_duro.
 """
 from __future__ import annotations
 
@@ -95,7 +92,7 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
             mejor_cat = cid
 
     umbral = taxonomia.get("umbral_categoria_filtro_duro", 0.95)
-    # el umbral de la taxonomía rige el uso como filtro DURO (ver E1), no la asignación
+    # el umbral de la taxonomía rige el uso como filtro DURO, no la asignación
     # de la etiqueta en sí; aquí solo degradamos a "otro" si no hubo señal mínima.
     if mejor_score == 0.0:
         return ResultadoCategoria("otro", 0.0)
@@ -145,7 +142,7 @@ def validar_chunk(chunk_payload: dict, taxonomia: dict) -> list[ErrorValidacion]
         errores.append(ErrorValidacion(cid, "categoria", f"{chunk_payload.get('categoria')!r} no está en la taxonomía"))
 
     # 3) si score < umbral, debe haberse degradado a "otro" para uso como filtro duro
-    #    (se valida en E1, aquí solo se verifica consistencia score/categoria)
+    #    (la exactitud se mide aparte; aquí solo se verifica consistencia score/categoria)
     score = chunk_payload.get("categoria_score", 0.0)
     if chunk_payload.get("categoria") != "otro" and score == 0.0:
         errores.append(ErrorValidacion(cid, "categoria_score", "score 0.0 con categoría distinta de 'otro'"))

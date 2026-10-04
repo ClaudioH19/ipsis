@@ -18,8 +18,7 @@ from rag.indice.qdrant import (
 
 def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
     """Parsea todo el catálogo (``documentos/catalogo.yaml``) con el despacho por
-    extensión de ``rag/ingesta/parsear.py::parsear_documento`` (Etapa Plugin, Tarea
-    B) -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
+    extensión de ``rag/ingesta/parsear.py::parsear_documento`` -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
     tenga que saber cuál es cuál."""
     docs = []
@@ -77,12 +76,9 @@ def validar_payloads(payloads: list[dict], taxonomia: dict) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# `rag indexar` (Etapa Plugin, Tarea A): la MISMA secuencia que corría
-# Pipeline compartido por la CLI: parsear, fragmentar, validar e indexar.
-# y persistir los artefactos de ingesta -- movida aquí para que el script
-# numerado (que sigue existiendo como herramienta de desarrollo, ver
-# README.md) y el comando de la CLI llamen a una única implementación en vez
-# de reimplementar la orquestación dos veces.
+# `rag indexar`: parsear, fragmentar, validar, indexar y persistir los
+# artefactos de ingesta, en una única implementación que usan la CLI y
+# `rag servir <carpeta>`.
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -155,9 +151,8 @@ def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None 
     Las advertencias combinan las que trae cada `DocumentoParseado` (PDF sin
     outline, Markdown/texto sin encabezados) con un chequeo genérico para
     `.docx` (que hoy no las emite desde el propio parser): si NINGÚN bloque
-    del documento tiene `seccion_path`, se advierte igual -- el mensaje
-    exacto que pide el encargo: "este documento no tiene estructura de
-    secciones"."""
+    del documento tiene `seccion_path`, se advierte igual ("este documento no
+    tiene estructura de secciones")."""
     import time
 
     from rag.configuracion.carga import config_recuperacion

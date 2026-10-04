@@ -29,8 +29,8 @@ class ControlAdmision:
     petición que no cabe se rechaza de inmediato (503), en vez de esperar y
     acumular latencia — coherente con el principio fijo de
     ``configuracion/motor.yaml``: "ante carga, el sistema degrada en escalones y
-    rechaza con 503 antes que acumular latencia". No implementa niveles
-    media/alta (sección 7 completa, E7): solo normal/saturado.
+    rechaza con 503 antes que acumular latencia". Solo hay dos niveles:
+    normal y saturado.
 
     Pensado para poder testearse sin concurrencia real: ``intentar_admitir``
     y ``liberar`` son las dos operaciones atómicas que el test puede invocar

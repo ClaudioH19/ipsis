@@ -49,7 +49,7 @@ class Mensajes(_Estricto):
 
 
 class GoldenInstrucciones(_Estricto):
-    """Textos de ``rag golden plantilla`` (ver docs/plan/comandos-y-golden.md §3).
+    """Textos de ``rag golden plantilla`` (ver docs/guia/golden.md).
 
     ``nota_*`` admiten ``{terminos}`` (términos clave de la sección),
     ``{documento}`` y ``{par}``. ``conversacionales`` son tres preguntas ya

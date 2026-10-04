@@ -2,7 +2,7 @@
 
 Reciben términos ya producidos por ``rag.lenguaje.texto.terminos`` y un objeto
 de estadísticas del corpus (``rag.indice.estadisticas.EstadisticasLexicas`` o
-cualquiera con la misma forma). Ver ``docs/plan/lexico-y-multilenguaje.md``.
+cualquiera con la misma forma). Ver ``docs/metodologia/lexico.md``.
 """
 from __future__ import annotations
 

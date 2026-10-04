@@ -2,7 +2,7 @@
 
 ## Contexto
 
-La V2 necesita cambiar parser, chunker, encoder, fusión o extractor sin
+El motor necesita cambiar parser, chunker, encoder, fusión o extractor sin
 reescribir el pipeline. Además, los YAML deben poder evolucionar sin que una
 instalación nueva interprete opciones desconocidas como si fueran válidas.
 
@@ -29,5 +29,6 @@ La configuración efectiva se puede exportar a un snapshot mediante
 
 ## Estado
 
-Implementado para los adaptadores base. La integración completa del retriever
-Qdrant y del reranker con el pipeline multietapa queda para las fases 3 y 4.
+Implementado. Las etapas de la cascada, el retriever Qdrant, el reranker y el
+lector se construyen por nombre desde el registry; las configuraciones viejas
+migran solas (`config_version` 4).

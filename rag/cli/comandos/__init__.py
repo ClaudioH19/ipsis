@@ -1,1 +1,1 @@
-"""Grupos de comandos de la CLI (uno por módulo; ver docs/plan/comandos-y-golden.md)."""
+"""Grupos de comandos de la CLI (uno por módulo; referencia en docs/guia/uso.md)."""

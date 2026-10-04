@@ -1,7 +1,7 @@
 """Reglas de dependencia entre las capas de ``rag/``.
 
 Un módulo solo importa de su capa o de capas inferiores. Las capas base no
-cargan librerías pesadas al importarse. Ver ``docs/plan/arquitectura.md`` §1.2.
+cargan librerías pesadas al importarse. Ver ``docs/README.md`` (Arquitectura).
 """
 from __future__ import annotations
 

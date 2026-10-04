@@ -1,295 +1,126 @@
 # rag-extractivo
 
-Asistente documental local que recupera y muestra texto literal de tus propios
-documentos. No usa un modelo generativo para redactar respuestas: si no
-encuentra evidencia suficiente, lo indica explícitamente.
+Asistente documental para tu sitio que **responde citando el texto literal
+de tus documentos**. No usa un modelo generativo: si los documentos no
+respaldan una respuesta, lo dice. Corre en CPU, en tu propio servidor y, una
+vez descargados los modelos, sin red.
+
+```text
+¿Cada cuánto se cambia el filtro?
+→ «El filtro de sedimentos se cambia cada 6 meses.»
+   Manual del purificador › Mantenimiento · caracteres 139–146
+```
 
 ## Características
 
+- **Extractivo y auditable:** cada respuesta es un tramo literal con
+  documento, sección y offsets; `rag auditar` comprueba que lo sigue siendo.
+- **Sabe cuándo no responder:** estados `ok`, `relacionado`, `sin_respuesta` y
+  `conversacional`, decididos por señales explicables (léxicas y de modelos)
+  con umbrales que se pueden calibrar con riesgo controlado.
+- **Tres perfiles:** `light` (búsqueda híbrida, ~85 ms), `medium` (+ reranker
+  y lector QA, ~0,8 s) y `heavy` (modelos grandes y más comprobaciones).
+- **Multilingüe:** paquetes de idioma `es`, `en` y `pt`; otros idiomas con
+  reglas universales.
+- **Widget embebible y responsive** con citas verificables, 7 tonos de
+  respuesta y un avatar animado («Folio»), configurable por CLI o desde el
+  panel `/admin/panel`.
+- **Self-hosting:** imagen Docker por perfil y `rag desplegar preparar`, que
+  genera todo para un VPS con HTTPS (Caddy).
 - PDF con capa de texto, DOCX, Markdown y TXT.
-- Recuperación híbrida: embeddings multilingües + búsqueda léxica en Qdrant.
-- Respuestas extractivas con documento, sección y offsets verificables.
-- Estados `ok`, `relacionado`, `sin_respuesta` y `conversacional`.
-- API FastAPI, CLI y widget web embebible.
-- Ejecución local en CPU; después de descargar el modelo puede operar sin red.
-- Configuración y apariencia editables mediante YAML.
-- Núcleo independiente del dominio: una instalación nueva comienza sin corpus
-  ni reglas institucionales.
 
 ## Instalación
 
-Desde PyPI, cuando el paquete sea publicado:
+Requiere Python 3.11 o 3.12. No necesita GPU.
 
 ```bash
-pip install rag-extractivo
+pip install "rag-extractivo @ git+https://github.com/Claudiobiovision/rag-extractivo.git"
 ```
 
-Desde GitHub:
+| Perfil | Modelos | Disco | p95 objetivo |
+|---|---|---|---|
+| `light` | e5-small | 0,5 GB | 150 ms |
+| `medium` | e5-small + reranker + lector | 1,7 GB | 1 s |
+| `heavy` | e5-base + reranker grande + lector | 2,8 GB | 5 s |
+
+Detalle, caché de modelos y uso sin red: [docs/guia/instalacion.md](docs/guia/instalacion.md).
+
+## Ciclo de uso
 
 ```bash
-pip install "rag-extractivo @ git+https://github.com/USUARIO/rag-extractivo.git"
-```
-
-Para desarrollar desde un clon:
-
-```bash
-python -m venv .venv
-python -m pip install -e ".[test]"
-```
-
-En PowerShell puedes invocar explícitamente el intérprete del entorno:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
-```
-
-No copies ni publiques `.venv`: una instalación editable contiene rutas
-absolutas. Si mueves el checkout, reinstala con `pip install -e .` o crea un
-entorno nuevo.
-
-## Inicio rápido
-
-Crea una carpeta vacía para cada asistente:
-
-```bash
-mkdir mi-asistente
-cd mi-asistente
-rag init
-rag configurar nombre_asistente="Asistente de soporte" descripcion_dominio="los manuales de producto"
-rag cargar /ruta/a/mis/documentos
+mkdir mi-asistente && cd mi-asistente
+rag init --perfil medium --idioma es
+rag modelos descargar
+rag cargar /ruta/a/documentos
 rag indexar
-rag doctor
-rag servir
+rag doctor                     # ¿puede funcionar? Si no, qué comando ejecutar
+rag servir                     # http://127.0.0.1:8000
+rag preguntar "¿Cada cuánto se cambia el filtro?" --diagnostico
 ```
 
-También puedes servir directamente una carpeta documental. Se crea un proyecto
-privado en `.rag-extractivo/`, se cargan los archivos y se construye el índice
-si hace falta:
+Para tu sitio:
 
 ```bash
-rag servir ./mis-documentos
+rag configurar cors_origenes=https://www.tu-sitio.cl
+rag widget snippet --api https://asistente.tu-dominio.cl
 ```
 
-Si la ruta ya es un proyecto, se completan únicamente los archivos faltantes.
-Usa `--reindexar` para reconstruir expresamente el índice.
-
-Para elegir y revisar la presentación del widget sin editar CSS ni iniciar el
-servicio:
+Y para medir y calibrar con preguntas reales:
 
 ```bash
-rag widget tema listar
-rag widget tema aplicar editorial
-rag widget tema vista-previa
+rag golden plantilla           # propone preguntas a partir de tus documentos
+rag golden importar golden/golden.csv
+rag calibrar --aplicar         # umbrales con riesgo de falso «ok» ≤ 5% (si la muestra alcanza)
 ```
 
-Los presets disponibles son `clasico`, `minimal`, `editorial` y `contraste`.
-La vista previa se escribe por defecto en `.cache/widget-vista-previa.html` y
-muestra respuestas directas, relacionadas, abstención, conversación y citas.
-En `configuracion/estilos.yaml`, `presentacion` permite elegir densidad
-`comoda|compacta`, citas `acordeon|abiertas|ocultas` y la visibilidad de la
-etiqueta de estado. `/config` publica estos valores en modo de solo lectura.
-
-Para exportar el cliente y un snippet:
-
-```bash
-rag widget exportar ./public/rag --api https://api.example.com
-```
-
-La integración declarativa usa:
-
-```html
-<rag-extractivo-chat
-  api="https://api.example.com"
-  posicion="abajo-derecha">
-</rag-extractivo-chat>
-<script src="./public/rag/widget.js"></script>
-```
-
-El componente admite `api`, `widget-key`, `color`, `titulo`, `saludo` y
-`posicion`. Emite los eventos `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
-`rag:respuesta` y `rag:error`.
-
-Para inspeccionar los defaults y la selección efectiva de componentes:
-
-```bash
-rag snapshot-config
-```
-
-El snapshot queda en `.cache/configuracion-efectiva.yaml`. La sección
-`componentes` de `configuracion/motor.yaml` usa nombres estables y permite
-seleccionar las implementaciones registradas sin cambiar el pipeline.
-
-Para evaluar el backend activo contra un banco versionado y guardar el reporte:
-
-```bash
-rag evaluar --banco golden/banco/manifiesto.json --salida reporte.json
-```
-
-El comando devuelve código distinto de cero si detecta algún falso `ok`.
-
-Para reproducir una comparación aislada entre Qdrant denso e híbrido con el
-banco sintético incluido:
-
-```bash
-rag benchmark --banco tests/datos/banco/manifiesto.json \
-  --salida reportes/benchmark
-```
-
-El resultado registra configuración, índice, dataset, calibración de `dev` y
-métricas. No cambia defaults ni convierte automáticamente los umbrales sugeridos
-en configuración de producción.
-
-Prueba la API desde otra terminal:
-
-```bash
-rag preguntar "¿Cada cuánto se cambia el filtro?"
-```
-
-La primera indexación descarga `intfloat/multilingual-e5-small`. El índice y
-los documentos permanecen en la carpeta del proyecto creado por el usuario,
-no dentro de la instalación de la librería.
-
-## Integración web
-
-Configura el origen del sitio que alojará el widget:
-
-```bash
-rag configurar cors_origenes=https://mi-sitio.example claves_widget=mi-sitio
-```
-
-Luego agrega:
-
-```html
-<script
-  src="https://mi-servidor.example/widget.js"
-  data-api="https://mi-servidor.example"
-  data-widget-key="mi-sitio">
-</script>
-```
-
-La clave identifica una integración, pero no es un secreto porque se entrega
-al navegador. La protección real del servicio debe completarse en el proxy o
-infraestructura de despliegue.
-
-Hay integraciones ejecutables para [HTML](ejemplos/html/),
-[React](ejemplos/react/) y [WordPress](ejemplos/wordpress/). Todas usan el
-mismo Web Component y muestran dónde configurar la URL, la clave pública y
-los eventos del widget.
-
-## Plantillas y estilos globales
-
-La fuente canónica está incluida dentro del paquete:
-
-```text
-rag/recursos/plantillas/
-├── asistente.yaml
-├── categorias.yaml
-├── motor.yaml
-├── textos.yaml
-├── estilos.yaml
-└── dominios/
-    ├── _generico/perfil.yaml
-    └── idiomas/es.yaml
-```
-
-`rag init` copia estos recursos a la carpeta actual:
-
-```text
-configuracion/
-├── asistente.yaml   # identidad, idioma, CORS y claves del widget
-├── categorias.yaml  # taxonomía del corpus
-├── motor.yaml       # recuperación, Qdrant, abstención y límites
-├── textos.yaml      # mensajes, conectores y respuestas conversacionales
-├── estilos.yaml     # colores, tipografía, dimensiones y animaciones
-└── dominios/
-    ├── _generico/perfil.yaml
-    └── idiomas/es.yaml
-```
-
-Las copias pertenecen al proyecto del usuario y pueden editarse sin modificar
-la librería. `rag init` no sobrescribe configuraciones existentes salvo que se
-use `--force` para reiniciar `asistente.yaml`.
-
-Para agregar entidades particulares, crea otro perfil YAML bajo
-`configuracion/dominios/<perfil>/perfil.yaml` y selecciónalo con:
-
-```bash
-rag configurar perfil=mi_perfil
-```
-
-## API
-
-Endpoint principal:
-
-```http
-POST /consultar
-Content-Type: application/json
-
-{
-  "pregunta": "¿Cuál es el plazo?",
-  "id_sesion": "sesion-opcional"
-}
-```
-
-La respuesta contiene el estado, el texto extractivo, la confianza, la
-latencia y los fragmentos citados. Cuando el lector marcó un tramo, trae
-`respuesta_exacta`. En las respuestas conversacionales trae
-`categoria_conversacional`: `saludo`, `agradecimiento`, `despedida` o
-`capacidad`. También están disponibles `/health`, `/ready`, `/config`,
-`/estilos.css`, `/widget.js`, `/avatar.js`, `/fuente` y `/widget/demo.html`.
-
-`/ready` responde 200 si el motor cargó y el diagnóstico de `rag doctor` no
-tiene nada bloqueante; si no, 503. En los dos casos, `proyecto` trae el
-estado de cada chequeo, lo que bloquea con su acción (por ejemplo,
-`rag indexar` si el índice es incompatible) y los avisos opcionales. El
-diagnóstico se recalcula cada 30 s como máximo y no abre Qdrant.
-
-## Desarrollo y verificación
-
-```bash
-python -m pytest -m "not slow"
-python -m pytest
-```
-
-Las pruebas usan documentos sintéticos. El repositorio no distribuye corpus,
-perfiles ni métricas de una institución concreta.
-
-Para comprobar el artefacto distribuible:
-
-```bash
-python -m build
-pip install dist/rag_extractivo-*.whl
-```
-
-La prueba decisiva es ejecutar `rag init` desde una carpeta vacía usando una
-instalación normal, no el checkout del repositorio.
+Referencia completa de comandos: [docs/guia/uso.md](docs/guia/uso.md).
 
 ## Documentación
 
-- [Instalación: perfiles, modelos, VPS con HTTPS y modos](docs/guia/instalacion.md)
-- [Uso: ciclo de trabajo y referencia de comandos](docs/guia/uso.md)
-- [Plan V3: arquitectura, tareas y avance](docs/plan/README.md)
-- [Referencia de configuración](docs/guia/configuracion.md)
-- [Metodologías implementadas](docs/metodologia/README.md)
-- [Metodología de recuperación actual](docs/metodologia/recuperacion.md)
-- [Instalación en sitios web](docs/guia/web.md)
-- [Golden set del cliente](docs/guia/golden.md)
-- [Personalidad: tono, avatar y panel `/admin`](docs/guia/personalidad.md)
+| Guía | Contenido |
+|---|---|
+| [Instalación](docs/guia/instalacion.md) | Perfiles, modelos, caché y Qdrant |
+| [Uso](docs/guia/uso.md) | Ciclo de trabajo y todos los comandos |
+| [Configuración](docs/guia/configuracion.md) | Cada archivo de `configuracion/` |
+| [Golden set](docs/guia/golden.md) | Cómo escribir y validar preguntas de prueba |
+| [Web](docs/guia/web.md) | Widget, ubicación, API JavaScript, CSP y avatar |
+| [Personalidad](docs/guia/personalidad.md) | Tonos, avatar y panel `/admin` |
+| [Despliegue](docs/guia/despliegue.md) | VPS con HTTPS, Docker, `rag desplegar preparar` y modos |
 
-Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 2` y
-se validan estrictamente al cargarse. Esto permite detectar errores de nombre
-o tipos inválidos antes de indexar o iniciar la API, y prepara migraciones
-explícitas cuando cambie el formato.
+Cómo funciona por dentro: [fichas metodológicas](docs/metodologia/README.md) y
+[decisiones de arquitectura](docs/decisiones/).
 
-## Límites actuales
+## API
 
-- Los PDF escaneados requieren OCR externo; se rechazan para evitar indexar
-  contenido vacío silenciosamente.
-- Los umbrales creados por `rag init` son valores iniciales genéricos y deben
-  validarse con preguntas representativas del corpus real.
-- El modo Qdrant local bloquea su carpeta mientras otro proceso la usa.
-- El historial conversacional todavía no se utiliza para resolver preguntas
-  de seguimiento.
+`POST /consultar` con `{"pregunta": "…", "id_sesion": "…"}` devuelve el
+estado, el texto extractivo, los fragmentos citados con offsets y, si el
+lector marcó un tramo, `respuesta_exacta`. También: `/health`, `/ready`
+(diagnóstico del proyecto; 503 si algo bloquea), `/config`, `/widget.js`,
+`/avatar.js`, `/estilos.css` y `/fuente`.
+
+## Desarrollo
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -e ".[test]"       # .venv\Scripts\python.exe en Windows
+python -m pytest -m "not slow and not browser"     # rápidas
+python -m pytest                                   # todo (con el extra [browser] para Chromium)
+```
+
+Las pruebas usan documentos sintéticos: el repositorio no distribuye corpus
+ni métricas de una institución concreta. El motor del avatar se construye en
+[herramientas/avatar/](herramientas/avatar/LEEME.md).
+
+## Límites
+
+- Los PDF escaneados necesitan OCR externo; se rechazan para no indexar
+  contenido vacío.
+- Los umbrales de `rag init` son conservadores y genéricos: valídalos con
+  preguntas de tu corpus (`rag calibrar`).
+- Un sinónimo que no aparece en el documento puede llevar a abstenerse: es
+  el lado seguro del error.
+- No usa el historial de la conversación para preguntas de seguimiento.
+- En modo local, Qdrant bloquea su carpeta mientras otro proceso la usa.
 
 ## Licencia
 

@@ -86,7 +86,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P12.12 | ✅ | 2026-10-04 | 823 (+1) | Imagen light construida (868 MB, modelos 465 MB) y probada con --network none: /health, /widget.js, /avatar.js y /config responden; /ready 503 con acción (sin índice). Corrige defecto: perfiles/*.yaml no entraban en el wheel; prueba que exige todo recurso no-Python en el wheel |
 | P12.13 | ✅ | 2026-10-04 | 823 (+2) | dist/ con proyecto, índice, Dockerfile, compose (Caddy perfil https con IP fija = RAG_PROXY_CONFIABLE), Caddyfile, .env.ejemplo y LEEME por idioma; compose validado con docker compose config y la imagen generada construida y levantada (/health 200) |
 | P12.14 | ✅ | 2026-10-04 | 823 | ci.yml reemplaza pruebas.yml: rápidas Linux/Windows 3.11/3.12 sin torch, linter de tonos, modelos con caché, web (sha256 de avatar.js, validar avatares, navegador, ejemplos), wheel limpio, imagen light sin red. YAML válido; la primera ejecución real requiere push |
-| P13.1 | ⬜ | | | |
+| P13.1 | ✅ | 2026-10-04 | 830 | README reescrito; 8 fichas de metodología con la plantilla de 14 puntos; ADR 0003 y 0004; guía despliegue.md (separada de instalacion.md) con la puerta de lanzamiento; docs/README.md con la arquitectura; CHANGELOG 0.8.0 y versión 0.8.0; sin etiquetas históricas en rag/. Excepción justificada: torch aparece en instalacion.md y configuracion.md solo para el extra de desarrollo [exportar]. Prueba nueva: enlaces relativos de la documentación |
 | P13.2 | ⬜ | | | |
 | P13.3 | ⬜ | | | |
 

@@ -159,7 +159,7 @@ Las comprueba un linter; las mismas reglas aplican a tus sobrescrituras:
 
 Con `RAG_ADMIN_TOKEN` definido, el servicio expone una API para cambiar la
 personalidad y el widget sin terminal (ver modos y seguridad en
-[instalacion.md](instalacion.md)). Todas las llamadas llevan
+[despliegue.md](despliegue.md)). Todas las llamadas llevan
 `Authorization: Bearer <token>`.
 
 | Método y ruta | Qué hace |
