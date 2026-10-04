@@ -57,7 +57,7 @@ class RetrieverQdrant:
 
         if not client.collection_exists(nombre):
             raise RuntimeError(
-                f"la colección Qdrant {nombre!r} no existe todavía. Corré 'rag indexar' primero "
+                f"la colección Qdrant {nombre!r} no existe todavía. Ejecuta 'rag indexar' primero "
                 f"(lee la misma configuracion/motor.yaml::recuperacion que este servicio)."
             )
 

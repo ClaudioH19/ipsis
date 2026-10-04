@@ -83,7 +83,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P12.9 | ✅ | 2026-10-04 | 803 (+8) | avatar.js 171 KB / 52 KB gzip (presupuesto 150), sha256 reproducible (npm run verificar), -text en .gitattributes; import() bajo demanda o en ocio con en_lanzador; CSP estricta deja el ícono; exportar con avatar-base |
 | P12.10 | ✅ | 2026-10-04 | 817 (+14) | Folio (14 expresiones, 15 animaciones) validado con la librería; máquina de estados con prioridades, tecleo 1,2 s, pensando-largo 3 s, inactividad, pausa oculta, grilla de mirada 5x3 con zona muerta e histéresis. La prueba del panel ahora verifica rag:avatar real (el stub previo desaparecía sin causa identificada; evidencia en scratchpad suite-p1210b) |
 | P12.11 | ✅ | 2026-10-04 | 821 (+4) | /ready reutiliza diagnosticar(abrir_indice=False) con caché de 30 s; 503 si algo bloquea, con proyecto.bloqueante (clave, mensaje, acciones) y avisos |
-| P12.12 | ⬜ | | | |
+| P12.12 | ✅ | 2026-10-04 | 823 (+1) | Imagen light construida (868 MB, modelos 465 MB) y probada con --network none: /health, /widget.js, /avatar.js y /config responden; /ready 503 con acción (sin índice). Corrige defecto: perfiles/*.yaml no entraban en el wheel; prueba que exige todo recurso no-Python en el wheel |
 | P12.13 | ⬜ | | | |
 | P12.14 | ⬜ | | | |
 | P13.1 | ⬜ | | | |

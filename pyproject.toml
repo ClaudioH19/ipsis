@@ -40,7 +40,8 @@ include = ["rag*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-"rag.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "tonos/*/*.yaml", "avatares/*.avatar.json", "despliegue/*"]
+"rag.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "perfiles/*.yaml", "tonos/*/*.yaml", "avatares/*",
+                  "despliegue/*", "despliegue/preparar/*"]
 "rag.servicio" = ["estaticos/*.js", "estaticos/*.html", "estaticos/*.LICENSE.txt", "estaticos/*.sha256", "estaticos/admin/*"]
 
 [tool.pytest.ini_options]

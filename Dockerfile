@@ -1,17 +1,24 @@
 # syntax=docker/dockerfile:1
-# Construye e instala el mismo wheel que se distribuye a usuarios. El corpus,
-# secretos, tests e índices quedan fuera de la imagen mediante .dockerignore.
+# Imagen por perfil: el mismo wheel que se distribuye (con avatar.js, avatares y
+# tonos) más los modelos del perfil, descargados al construir. En ejecución no
+# usa la red. El corpus, secretos, tests e índices quedan fuera (.dockerignore).
+#
+#   docker build --build-arg PERFIL=light -t rag-extractivo:light .
+#
+# La carpeta del proyecto se monta sobre /app (configuracion/, documentos/ y
+# .rag/); `rag desplegar preparar` la genera junto a un docker-compose.yml.
 
 FROM python:3.12-slim AS builder
 
 WORKDIR /build
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE ./
 COPY rag/ ./rag/
 RUN python -m pip wheel --no-cache-dir --no-deps --wheel-dir /wheels .
 
 
 FROM python:3.12-slim AS runtime
 
+ARG PERFIL=medium
 ARG APP_UID=10001
 ARG APP_GID=10001
 
@@ -27,16 +34,27 @@ COPY --from=builder /wheels/ /wheels/
 RUN python -m pip install --no-cache-dir /wheels/rag_extractivo-*.whl \
     && rm -rf /wheels
 
-# Configuración genérica de arranque, generada con las plantillas del paquete.
-# En producción se monta la carpeta del proyecto sobre /app/configuracion.
-RUN cd /app && rag init \
-    && mkdir -p /app/.rag/indice /app/.cache/huggingface \
+# Modelos del perfil en una caché fuera de /app, para que montar el proyecto
+# no los tape. Es el único paso con red.
+ENV RAG_MODELOS_DIR=/opt/rag/modelos
+RUN rag modelos descargar --perfil ${PERFIL} \
+    && chmod -R a+rX /opt/rag
+
+# Proyecto genérico de arranque; en producción se monta el propio sobre /app.
+RUN rag init --perfil ${PERFIL} \
+    && mkdir -p /app/.rag/indice /app/.rag/registros \
     && chown -R rag:rag /app
 
+# Producción explícita y sin red. Sin RAG_ADMIN_TOKEN, /admin no existe:
+# defínelo al ejecutar (docker run -e / compose) para activarlo.
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    HF_HOME=/app/.cache/huggingface \
-    QDRANT_URL=http://qdrant:6333
+    HF_HUB_OFFLINE=1 \
+    RAG_MODO=produccion
+
+LABEL org.opencontainers.image.licenses="AGPL-3.0-only" \
+      org.opencontainers.image.source="https://github.com/Claudiobiovision/rag-extractivo" \
+      rag-extractivo.perfil="${PERFIL}"
 
 USER rag
 EXPOSE 8000
@@ -44,4 +62,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)" || exit 1
 
-CMD ["python", "-m", "uvicorn", "rag.servicio.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# rag servir aplica RAG_PROXY_CONFIABLE a uvicorn (cabeceras X-Forwarded-* del proxy).
+CMD ["rag", "servir", "--host", "0.0.0.0", "--port", "8000"]

@@ -62,7 +62,7 @@ class ComandoIndexar(Comando):
             resumen = indexar_proyecto(args.corpus)
         except ErrorConfiguracion as e:
             print(f"Error de configuración: {e}")
-            print("Corré 'rag doctor' para un diagnóstico completo.")
+            print("Ejecuta 'rag doctor' para un diagnóstico completo.")
             return 1
         except Exception as e:  # noqa: BLE001 -- se reporta con contexto, no se oculta
             print(f"Error indexando: {e}")

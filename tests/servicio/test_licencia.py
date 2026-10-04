@@ -75,5 +75,9 @@ def test_el_wheel_incluye_las_licencias(tmp_path: Path):
     assert "rag/servicio/estaticos/avatar.js.LICENSE.txt" in nombres
     assert "rag/servicio/estaticos/admin/panel.js" in nombres
     assert not any("herramientas" in n or "node_modules" in n for n in nombres)
+    # Todo recurso que no es Python (perfiles, idiomas, tonos, plantillas, estáticos…) viaja en el wheel.
+    recursos = {p.relative_to(RAIZ).as_posix() for p in (RAIZ / "rag").rglob("*")
+                if p.is_file() and p.suffix not in (".py", ".pyc") and "__pycache__" not in p.parts}
+    assert recursos - set(nombres) == set()
     metadatos = next(zipfile.ZipFile(wheel).read(n) for n in nombres if n.endswith("METADATA")).decode()
     assert "License-Expression: AGPL-3.0-only" in metadatos
