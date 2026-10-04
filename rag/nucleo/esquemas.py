@@ -215,6 +215,8 @@ class QueryDiagnostic(EsquemaEstricto):
     senales_politica: dict[str, Any] | None = None
     oracion_foco: str | None = None
     salto_modelos: bool = False
+    tono: str | None = None
+    plantillas: list[str] = Field(default_factory=list)  # <tono>.<situación>.<n> usadas en la respuesta
 
 
 class AssistantResult(EsquemaEstricto):

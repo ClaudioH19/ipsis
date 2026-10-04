@@ -88,8 +88,18 @@ class Motor:
         self.perfil_instalacion = None
         self.reranker = reranker
         self.lector = lector
+        from rag.consulta.variantes import SelectorVariantes
+
+        self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial")
 
     def _diagnostico(self, **valores: Any) -> dict[str, Any]:
+        from rag.consulta.variantes import usadas
+
+        tono, plantillas = usadas()
+        if tono is not None:
+            valores["tono"] = tono
+            valores["plantillas"] = [*(valores.get("plantillas") or []),
+                                     *(p for p in plantillas if p not in (valores.get("plantillas") or []))]
         valores.setdefault("backend", self.backend)
         perfil = getattr(self, "perfil_instalacion", None)
         valores.setdefault("perfil", perfil.perfil if perfil is not None else None)
@@ -231,6 +241,9 @@ class Motor:
         }
         if respuesta_exacta is not None:
             contrato["respuesta_exacta"] = respuesta_exacta
+        if estado == AssistantState.CONVERSACIONAL and motivo.startswith("conversacional:"):
+            # Para el widget y el avatar: saludo, agradecimiento, despedida o capacidad.
+            contrato["categoria_conversacional"] = motivo.split(":", 1)[1]
         detalles = self._diagnostico(**(diagnostico or {}))
         detalles["contrato_http"] = contrato
         return AssistantResult(
@@ -278,6 +291,9 @@ class Motor:
                 contexto.enter_context(usar_perfil(self.perfil))
             if self.idioma is not None:
                 contexto.enter_context(usar_idioma(self.idioma))
+            from rag.consulta.variantes import en_consulta
+
+            contexto.enter_context(en_consulta(self.selector_variantes, id_sesion))
             return self._consultar_en_contexto(pregunta, id_sesion)
 
     def _ejecutar_etapa(self, etapa, ctx: ContextoConsulta) -> None:

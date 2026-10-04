@@ -85,6 +85,8 @@ class RespuestaConsulta(BaseModel):
     confianza: Confianza
     latencia_ms: int
     respuesta_exacta: Optional[RespuestaExacta] = None
+    # Solo en respuestas conversacionales (para el avatar del widget).
+    categoria_conversacional: Optional[Literal["saludo", "agradecimiento", "despedida", "capacidad"]] = None
 
 
 class ConfigWidget(BaseModel):

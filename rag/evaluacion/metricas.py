@@ -108,6 +108,7 @@ class ArtefactoEvaluacion(BaseModel):
     indice: dict[str, Any]
     reporte: ReporteMetricas
     observaciones: list[ObservacionEvaluacion] = Field(default_factory=list)
+    tono: str | None = None  # tono de las respuestas (no cambia estados ni literalidad)
 
 
 ESTADOS_ABSTENCION = {"sin_respuesta", "fuera_dominio", "necesita_aclaracion"}

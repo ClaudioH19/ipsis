@@ -5,10 +5,15 @@ citas declarados en la configuración del proyecto.
 """
 from __future__ import annotations
 
-import zlib
 from copy import deepcopy
 
 from rag.consulta.etapas.base import _Etapa
+from rag.consulta.variantes import elegir
+
+
+def _lista(valor) -> list[str]:
+    """Plantillas de un dict anterior a los tonos pueden traer un texto suelto."""
+    return [valor] if isinstance(valor, str) else list(valor)
 
 # ==========================================================================
 # REDACCION (sección 6.2 — plantillas y conectores fijos, nunca texto libre)
@@ -36,10 +41,10 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
         "tono": tono.tono,
         "conectores": conectores,
         "abstencion": {
-            "generico": tono.variantes("sin_respuesta")[0],
-            "premisa_no_encontrada": tono.variantes("premisa_no_encontrada")[0],
-            "zona_gris_intro": tono.variantes("relacionado_intro")[0],
-            "foco_ausente": tono.variantes("foco_ausente")[0],
+            "generico": tono.variantes("sin_respuesta"),
+            "premisa_no_encontrada": tono.variantes("premisa_no_encontrada"),
+            "zona_gris_intro": tono.variantes("relacionado_intro"),
+            "foco_ausente": tono.variantes("foco_ausente"),
         },
         "conversacional": {
             **paquete.conversacional.model_dump(mode="python"),
@@ -77,30 +82,6 @@ def _cargar_plantillas() -> dict:
     from rag.lenguaje.paquete import cargar_paquete
 
     return cargar_plantillas(idioma_activo() or cargar_paquete("es"), cargar_dominio())
-
-
-def _elegir_variante(opciones: list[str], semilla: str, evitar: set[str] | None = None) -> str:
-    """Elige una de varias formulaciones FIJAS de forma determinista.
-
-    Consume: la lista declarada en el paquete de idioma, una cadena
-    que sirve de semilla (el ``chunk_id`` del fragmento, o la pregunta) y,
-    opcionalmente, las variantes ya usadas en esta misma respuesta. Produce:
-    una de las opciones.
-
-    El hash es de la semilla, no aleatorio: la misma pregunta sobre el mismo
-    indice devuelve SIEMPRE el mismo texto. Sin eso, la respuesta cambiaria
-    entre corridas y ningun test podria fijarla. ``evitar`` solo desplaza la
-    eleccion al siguiente candidato, para que una respuesta con tres
-    fragmentos no repita la misma frase tres veces."""
-    if not opciones:
-        return ""
-    evitar = evitar or set()
-    inicio = zlib.crc32(semilla.encode("utf-8")) % len(opciones)
-    for desplazamiento in range(len(opciones)):
-        candidato = opciones[(inicio + desplazamiento) % len(opciones)]
-        if candidato not in evitar:
-            return candidato
-    return opciones[inicio]
 
 
 def _fragmentos_para_el_texto(fragmentos: list[dict], cfg: dict) -> list[dict]:
@@ -171,7 +152,7 @@ def _ensamblar_fragmentos_con_citas(
 
     La CATEGORIA del conector la decide metadata determinista calculada en
     la ingesta (``tiene_excepcion``/``tiene_condicion``), nunca un modelo;
-    la VARIANTE dentro de la categoria sale de ``_elegir_variante``. Los
+    la VARIANTE dentro de la categoria sale de ``rag.consulta.variantes``. Los
     conectores cierran en dos puntos a proposito: el texto que sigue es una
     cita literal que empieza donde el documento empiece, y un conector
     subordinante ("Siempre que,") producia frases rotas.
@@ -189,9 +170,9 @@ def _ensamblar_fragmentos_con_citas(
     usadas: set[str] = set()
     partes: list[str] = []
 
-    if con_apertura and cfg.get("incluir_apertura", False) and conectores.get("apertura"):
+    if con_apertura and cfg.get("incluir_apertura", True) and conectores.get("apertura"):
         semilla = str(elegidos[0].get("chunk_id", "")) if elegidos else ""
-        apertura = _elegir_variante(list(conectores["apertura"]), semilla)
+        apertura = elegir("apertura", list(conectores["apertura"]), semilla)
         if apertura:
             partes.append(apertura)
             usadas.add(apertura)
@@ -210,7 +191,7 @@ def _ensamblar_fragmentos_con_citas(
         else:
             categoria = "complemento"
         opciones = list(conectores.get(categoria) or [])
-        conector = _elegir_variante(opciones, str(frag.get("chunk_id", i)), usadas)
+        conector = elegir(categoria, opciones, str(frag.get("chunk_id", i)), usadas)
         if conector:
             usadas.add(conector)
             partes.append(f"{conector} {cuerpo}")
@@ -254,10 +235,12 @@ def redactar_zona_gris(
     Lo decide ``cascada_v1`` (regla «relacionado»)."""
     plantillas = plantillas or _cargar_plantillas()
     # Si falta el término de foco, el mensaje lo nombra («No encontré información sobre «X»»).
+    semilla = str(fragmentos[0].get("chunk_id", "")) if fragmentos else ""
     if termino_ausente:
-        intro = plantillas["abstencion"]["foco_ausente"].format(termino=termino_ausente)
+        intro = elegir("foco_ausente", _lista(plantillas["abstencion"]["foco_ausente"]), semilla)
+        intro = intro.format(termino=termino_ausente)
     else:
-        intro = plantillas["abstencion"]["zona_gris_intro"]
+        intro = elegir("relacionado_intro", _lista(plantillas["abstencion"]["zona_gris_intro"]), semilla)
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
@@ -278,8 +261,9 @@ def construir_mensaje_abstencion(
     usuario, nunca inventado)."""
     textos = (plantillas or _cargar_plantillas())["abstencion"]
     if motivo == "premisa" and entidad_texto:
-        return textos["premisa_no_encontrada"].format(entidad=entidad_texto)
-    return textos["generico"]
+        texto = elegir("premisa_no_encontrada", _lista(textos["premisa_no_encontrada"]), entidad_texto)
+        return texto.format(entidad=entidad_texto)
+    return elegir("sin_respuesta", _lista(textos["generico"]), motivo)
 
 
 class EtapaRedaccion(_Etapa):

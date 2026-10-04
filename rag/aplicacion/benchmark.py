@@ -167,7 +167,7 @@ def ejecutar_benchmark_perfiles(
     acuerdos: dict[str, float] = {}
     costo_acuerdo: dict[str, float] = {}
     for perfil in perfiles:
-        pares, observaciones, indexado = [], [], 0.0
+        pares, observaciones, indexado, tono = [], [], 0.0, None
         for manifiesto, banco in zip(rutas_bancos, bancos):
             artefacto, segundos, acuerdo = evaluar(perfil, manifiesto, banco, experimentos)
             # rag comparar exige una etiqueta de backend por ejecución: la del perfil.
@@ -181,6 +181,7 @@ def ejecutar_benchmark_perfiles(
                 raise RuntimeError(f"{perfil} no evaluó exactamente los casos de {banco.manifiesto.dataset_id}")
             pares += [(c, por_id[c.id]) for c in banco.casos]
             observaciones += list(artefacto.observaciones)
+            tono = artefacto.tono or tono
             if acuerdo is not None:
                 acuerdos.update(acuerdo[0])
                 costo_acuerdo.update(acuerdo[1])
@@ -195,6 +196,7 @@ def ejecutar_benchmark_perfiles(
                      "leer_m": instalacion.cascada.leer_m, "concordancia": instalacion.cascada.concordancia,
                      "recuperacion": instalacion.recuperacion_modo or "hibrida"},
             tiempo_indexado_s=round(indexado, 1),
+            tono=tono,
         ))
 
     if experimentos and "medium" in pares_de:
