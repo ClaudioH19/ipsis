@@ -68,8 +68,8 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P10.5 | ✅ | 2026-10-03 | 586 (suite completa; sin el código descartado) | texttiling_v1 implementado temporalmente en ingesta/chunking.py (párrafos por sección; coseno TF-IDF entre ventanas de hasta 2 párrafos; corte si sim < media − desv/2 del documento o al superar 256 palabras; sin cruzar secciones ni solape) y comparado con CH-F256 (actual) y CH-SEC (control) en bm25/light/medium/heavy sobre v1.1.0 y bm25/light/medium sobre el universal, con índices separados. DESCARTADO: da los mismos estados que CH-SEC (la cohesión solo agregó 1 frontera en 4 bancos) y frente a CH-F256 sube los falsos ok (v1.1.0 medium 0→1, universal light 1→2). Se borraron la estrategia, sus pruebas y el parámetro interno del benchmark; tablas, casos y decisión en Hallazgos. |
 | P11.1 | ✅ | 2026-10-03 | 596 (suite completa, incluidas las lentas) | rag/cli.py (925 líneas) → paquete rag/cli/: __init__.py (registro_de_comandos explícito, construir_parser, main), __main__.py, base.py (Comando con registrar/ejecutar, Grupo, registrar) y comandos/{proyecto,corpus,consulta,golden,evaluacion,operacion,web}.py con 20 Commands. Sin módulo puente; el script sigue en rag.cli:main. Las 24 pantallas de --help quedaron idénticas. La lógica pasó a aplicacion/: proyecto (inicializar_proyecto, completar_proyecto_existente, guardar_snapshot, migrar_proyecto_activo y lecturas para el servicio), corpus.py nuevo (archivos_de_ruta, cargar_documentos, indexar_proyecto), evaluacion (comparar_reportes), benchmark (benchmark_perfiles), golden (ErrorGolden), consulta (Motor y sus errores, construir_motor_del_proyecto). servicio/api.py dejó de importar configuracion, consulta y lenguaje. tests/test_arquitectura.py: regla cli/servicio → solo aplicacion, nucleo y recursos, con prueba sintética. Pruebas nuevas: entrypoint, importación sin efectos, registro de los 20 comandos, despacho al caso de uso, código de salida, python -m rag.cli, y ayuda en todo el árbol. |
 | P11.2 | ✅ | 2026-10-04 | 610 (14 nuevas) | Commit ee7e78d. rag perfil mostrar / cambiar; estado del índice por manifiestos (modelo, dimensión, payload) y de la calibración con motivo_no_aplicable; no descarga, indexa, calibra ni borra; conserva ajustes_perfil, índice y calibracion.yaml. |
-| P11.3 | ✅ | 2026-10-04 | 627 (17 nuevas) | rag modelos listar / descargar / verificar / exportar. Caché global y descarga simulada en las pruebas; verificar hace una inferencia mínima por modelo; exportar importa torch/optimum solo en su flujo y sin el extra indica pip install "rag-extractivo[exportar]". ruta_local exige todos los archivos del ModeloSpec. Abierto: el extra [exportar] no fija versiones compatibles (optimum 2.1 + transformers 5.17 fallan). |
-| P11.4 | ⬜ | | | |
+| P11.3 | ✅ | 2026-10-04 | 627 (17 nuevas) | Commit 5e0ffa6. rag modelos listar / descargar / verificar / exportar. Caché global y descarga simulada en las pruebas; verificar hace una inferencia mínima por modelo; exportar importa torch/optimum solo en su flujo y sin el extra indica pip install "rag-extractivo[exportar]". ruta_local exige todos los archivos del ModeloSpec. Abierto: el extra [exportar] no fija versiones compatibles (optimum 2.1 + transformers 5.17 fallan). |
+| P11.4 | ✅ | 2026-10-04 | 647 (20 nuevas) | rag doctor: ReporteDoctor con 9 chequeos ordenados (configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS) en ok/aviso/error/no_evaluado; acumula fallos, cada error trae acción y el resumen no las repite. Sin red, sin ONNX, sin escribir. Índice por manifiesto + stemmer + colección Qdrant + hash del corpus recalculado sin modelos. Calibración y golden opcionales (avisos). Idioma sin paquete = error: el respaldo del plan no existe en el código. |
 | P11.5 | ⬜ | | | |
 | P11.6 | ⬜ | | | |
 | P12.1 | ⬜ | | | |
@@ -538,6 +538,35 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - **Pendiente:** fijar versiones del extra. Sin cambiar las dependencias,
     sí se verificó la cuantización int8 (`quantize_dynamic`) sobre un ONNX
     sintético.
+- **P11.4 — `rag doctor` ampliado.**
+  - **Estructura:** `aplicacion/diagnostico.py` devuelve un `ReporteDoctor`
+    con `ChequeoDoctor` (clave, estado, mensaje, acciones, detalles y datos)
+    en un orden fijo. Los estados son ok, aviso, error y no_evaluado; `listo`
+    significa que no hay errores. Está pensado para que `/ready` (P12.4) lo
+    reutilice.
+  - **Composición:** reutiliza `estado_indice`, `estado_calibracion`,
+    `estado_modelos`, `cargar_banco`, `cargar_paquete` y `terminos()`, sin
+    reimplementar reglas.
+  - **Cambios en las capas reutilizadas:**
+    - `perfil_efectivo(ruta_calibracion=None)`: perfil sin calibración.
+    - `estado_indice(perfil, stemmer=None)`: pasa el stemmer a
+      `es_compatible`. P11.2 sigue llamándolo sin stemmer.
+    - `huella_corpus()` en la ingesta: el mismo hash del manifiesto, sin
+      modelos ni Qdrant.
+  - **Se mantiene** `verificar_indice()` (lo usa `rag servir <carpeta>`).
+    Ahora cierra el cliente de Qdrant para liberar el candado del modo local.
+  - **Defecto (plan ≠ código, no resuelto):** `lexico-y-multilenguaje.md`
+    dice que un idioma sin paquete funciona con las reglas universales y los
+    textos de `en`. Pero `cargar_paquete` lanza error, `init` y `configurar`
+    lo rechazan, y el motor no arranca. Por eso doctor lo marca como ERROR
+    (`rag configurar idioma=<en|es|pt>`). Implementar ese respaldo es otra
+    tarea.
+  - **Hallazgo:** `rag cargar` no reemplaza un documento que ya está
+    cargado. Para que el corpus cambie hay que editar el archivo en
+    `documentos/`.
+  - **Cambio de semántica:** antes, `doctor` daba 1 en un proyecto recién
+    creado sin documentos. Ahora es un aviso y da 0, porque no hay nada que
+    indexar.
 - **Pendientes de P10.3, siguen abiertos.**
   - La calibración, ante empate, debería preferir el valor del perfil.
   - El split dev/test podría estratificar por exacta/paráfrasis.

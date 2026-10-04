@@ -208,6 +208,8 @@ class EstadoIndice:
     modelo_indice: str | None = None  # con qué modelo denso se construyó el índice encontrado
     coleccion: str | None = None
     hash_corpus: str | None = None
+    stemmer: str | None = None  # con qué stemmer se construyeron sus estadísticas léxicas
+    n_chunks: int | None = None
 
 
 @dataclass(frozen=True)
@@ -254,13 +256,14 @@ def validar_perfil_instalable(nombre: str) -> str:
     raise PerfilInvalido(f"perfil desconocido {nombre!r}. Perfiles disponibles: {disponibles}")
 
 
-def estado_indice(perfil: str) -> EstadoIndice:
+def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
     """Si el índice del proyecto sirve para ``perfil``, mirando los manifiestos.
 
     El perfil abriría la colección de su modelo denso. Si su manifiesto existe
     y es compatible (modelo, dimensión y versión del payload), sirve. Si no,
     pero hay un índice del proyecto construido con otro modelo, es
-    incompatible. Si no hay ninguno, no hay índice todavía.
+    incompatible. Si no hay ninguno, no hay índice todavía. Con ``stemmer``
+    también se exige el mismo stemmer (el del paquete de idioma activo).
     """
     import json
 
@@ -277,9 +280,9 @@ def estado_indice(perfil: str) -> EstadoIndice:
     propio = ruta_manifiesto(nombre)
     if propio.is_file():
         manifiesto = ManifiestoIndice.model_validate(json.loads(propio.read_text(encoding="utf-8")))
-        compatible = es_compatible(manifiesto, modelo, dimension=obtener(modelo).dimension)
+        compatible = es_compatible(manifiesto, modelo, stemmer=stemmer, dimension=obtener(modelo).dimension)
         return EstadoIndice("compatible" if compatible else "incompatible", modelo, manifiesto.modelo_denso,
-                            nombre, manifiesto.hash_corpus)
+                            nombre, manifiesto.hash_corpus, manifiesto.stemmer, manifiesto.n_chunks)
     otros = []
     for ruta in sorted(Path(rutas.INDICE).glob("*.manifiesto.json")):
         manifiesto = ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
@@ -288,7 +291,8 @@ def estado_indice(perfil: str) -> EstadoIndice:
     if not otros:
         return EstadoIndice("sin_indice", modelo)
     ultimo = max(otros, key=lambda m: m.fecha)
-    return EstadoIndice("incompatible", modelo, ultimo.modelo_denso, ultimo.coleccion, ultimo.hash_corpus)
+    return EstadoIndice("incompatible", modelo, ultimo.modelo_denso, ultimo.coleccion, ultimo.hash_corpus,
+                        ultimo.stemmer, ultimo.n_chunks)
 
 
 def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibracionPerfil:

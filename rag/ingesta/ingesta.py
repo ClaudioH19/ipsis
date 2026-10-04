@@ -107,6 +107,17 @@ class ResumenIngesta:
         return len(self.documentos)
 
 
+def huella_corpus(carpeta_corpus: str = "documentos", cfg_rec: dict | None = None) -> str:
+    """``hash_corpus`` que tendría el índice si se indexara ahora: parsea y
+    fragmenta igual que ``ejecutar_ingesta``, sin modelos ni Qdrant."""
+    from rag.configuracion.carga import config_recuperacion
+
+    cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
+    _chunks, payloads = construir_chunks_y_payloads(parsear_corpus(carpeta_corpus), cfg_rec["estrategia_chunking"],
+                                                    cfg_rec["con_header"], cargar_taxonomia())
+    return hash_corpus(payloads)
+
+
 def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None = None,
                       con_header: bool | None = None, modelo: str | None = None,
                       coleccion: str | None = None, qdrant_path: str | None = None,
