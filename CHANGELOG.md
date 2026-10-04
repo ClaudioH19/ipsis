@@ -9,7 +9,7 @@ sea 0.x, un cambio menor puede romper compatibilidad y se indica como tal.
 Cierra el plan V3: cascada con señales léxicas, modelos ONNX por perfil,
 multilenguaje, calibración con riesgo controlado, personalidad del widget y
 despliegue propio. La historia detallada (tareas, mediciones y hallazgos)
-queda en git; las decisiones, en `docs/decisiones/` y `docs/metodologia/`.
+queda en git, en la etiqueta `plan-v3`; las decisiones, en `docs/decisiones/` y `docs/metodologia/`.
 
 **Requiere reindexar** y migra la configuración sola (`config_version` 4).
 
