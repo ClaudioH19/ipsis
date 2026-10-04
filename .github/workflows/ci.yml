@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -45,7 +45,7 @@ jobs:
     env:
       RAG_MODELOS_DIR: ${{ github.workspace }}/.cache/modelos
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: rapidas
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: rapidas
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: rapidas
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Construir la imagen del perfil light
         run: docker build --build-arg PERFIL=light --tag rag-extractivo:light .
       - name: Usuario no root y CLI
