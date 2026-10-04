@@ -76,7 +76,20 @@ Se supone un widget por página.
 | `window.RagChat.estado()` | `{abierto, posicion, tamano, lanzador, sesion}` |
 
 Eventos que emite el elemento: `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
-`rag:respuesta` y `rag:error`.
+`rag:respuesta`, `rag:error` y `rag:avatar`. Este último trae
+`{estado: "listo", nombre}` cuando el avatar se montó, o
+`{estado: "error", mensaje}` cuando no se pudo y quedó el ícono.
+
+## Avatar
+
+Si `personalidad.yaml` tiene un avatar activo y válido, el widget lo muestra
+en lugar del ícono:
+- **Carga bajo demanda:** el motor (`/avatar.js`, 52 KB comprimido) se pide
+  al abrir el panel por primera vez. Con `avatar.en_lanzador: true` se pide
+  antes, cuando el navegador está ocioso, para mostrarlo en el botón.
+- **Nunca rompe el chat:** si falla la red, la definición o la CSP, queda el
+  ícono y se emite `rag:avatar` con el error.
+- **Decorativo:** lleva `aria-hidden`; los estados ya tienen texto.
 
 ## Pantallas
 
@@ -129,9 +142,12 @@ style-src   'self' https://asistente.tu-dominio.cl 'unsafe-inline';
 
 - `style-src` permite la hoja `/estilos.css` y el estilo propio del widget,
   que vive aislado en su Shadow DOM.
-- El avatar animado (P12.9) necesita además `'unsafe-eval'` en `script-src`,
-  porque su librería compila el esquema en el navegador. Sin eso, el widget
-  muestra el ícono y el chat funciona igual.
+- El avatar animado necesita además `'unsafe-eval'` en `script-src`,
+  porque su librería valida la definición con ajv, que compila el esquema en
+  el navegador. Sin eso, el widget muestra el ícono y el chat funciona igual.
+- Si el widget se sirve desde otro dominio, el servicio debe permitir tu
+  sitio en `cors_origenes`: el motor del avatar es un módulo ES y el
+  navegador lo pide con CORS.
 
 ## Exportar archivos estáticos
 
@@ -139,9 +155,12 @@ style-src   'self' https://asistente.tu-dominio.cl 'unsafe-inline';
 rag widget exportar ./public/rag --api https://asistente.tu-dominio.cl --posicion abajo-izquierda
 ```
 
-Genera `widget.js` y `snippet.html` para servirlos desde otro servidor.
-Cuando llegue el avatar (P12.9), incluirá también `avatar.js` y su
-definición.
+Genera, para servirlos desde otro servidor:
+- `widget.js` y `snippet.html`;
+- `avatar.js` y `avatar.js.LICENSE.txt` (el motor y sus licencias);
+- `avatares/<nombre>.avatar.json`: el avatar activo, con los colores del
+  proyecto. Si hay avatar, el snippet lleva `avatar-base="."`: el widget
+  carga el motor y la definición desde esa carpeta, no desde el servicio.
 
 ## Ejemplos ejecutables
 

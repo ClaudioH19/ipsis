@@ -5,8 +5,9 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-> El avatar «Folio» y su animación en el widget llegan en P12.9 y P12.10.
-> Mientras tanto, el widget muestra el ícono.
+> El avatar «Folio» y sus reacciones a cada evento llegan en P12.10.
+> Mientras tanto, un avatar importado se muestra con su animación
+> `inactivo` (ver [web.md](web.md#avatar)).
 
 ## Configuración: `configuracion/personalidad.yaml`
 

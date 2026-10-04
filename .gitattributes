@@ -3,3 +3,7 @@
 tests/datos/corpus/** text eol=lf
 tests/datos/caracterizacion/*.json text eol=lf
 tests/datos/banco_universal/** text eol=lf
+# Generados por herramientas/avatar: se comparan byte a byte (sha256).
+rag/servicio/estaticos/avatar.js -text
+rag/servicio/estaticos/avatar.js.LICENSE.txt -text
+rag/servicio/estaticos/avatar.js.sha256 -text

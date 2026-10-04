@@ -14,6 +14,7 @@ import yaml
 from rag.recursos import leer_plantilla
 from rag.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
 import html
+import json
 from importlib.resources import files
 
 
@@ -248,10 +249,22 @@ def generar_vista_previa(
 
 
 __all__ = [
-    "PRESETS", "aplicar_preset", "citas_presentacion", "generar_vista_previa", "listar_presets", "snippet_widget",
-    "ubicacion_widget",
-    "validar_tema",
+    "PRESETS", "actualizar_estilos", "aplicar_preset", "citas_presentacion", "exportar_widget",
+    "generar_vista_previa", "listar_presets", "snippet_widget", "ubicacion_widget", "validar_tema",
 ]
+
+
+def _definicion_para_exportar() -> tuple[str, dict] | None:
+    """Nombre y definición pública del avatar activo, o ``None`` si no hay uno válido."""
+    from rag.aplicacion.personalidad import config_avatar_publica, definicion_publica
+
+    try:
+        publica = config_avatar_publica()
+        if not publica["activo"]:
+            return None
+        return publica["nombre"], definicion_publica(publica["nombre"])
+    except Exception:  # noqa: BLE001 - sin proyecto o sin avatar: se exporta sin él
+        return None
 
 
 def exportar_widget(
@@ -264,20 +277,30 @@ def exportar_widget(
         raise ValueError(f"posición debe ser una de: {', '.join(POSICIONES)}")
     destino = Path(carpeta).resolve()
     destino.mkdir(parents=True, exist_ok=True)
-    javascript = files("rag.servicio").joinpath("estaticos", "widget.js").read_text(encoding="utf-8")
-    (destino / "widget.js").write_text(javascript, encoding="utf-8")
+    estaticos = files("rag.servicio").joinpath("estaticos")
+    (destino / "widget.js").write_bytes(estaticos.joinpath("widget.js").read_bytes())
+    # El motor del avatar, su aviso de licencias y la definición activa (con los
+    # colores del proyecto): el widget exportado los carga desde esta carpeta.
+    for nombre in ("avatar.js", "avatar.js.LICENSE.txt"):
+        (destino / nombre).write_bytes(estaticos.joinpath(nombre).read_bytes())
+    avatar_attr = ""
+    definicion = _definicion_para_exportar()
+    if definicion is not None:
+        nombre, datos = definicion
+        (destino / "avatares").mkdir(exist_ok=True)
+        (destino / "avatares" / f"{nombre}.avatar.json").write_text(json.dumps(datos, ensure_ascii=False),
+                                                                     encoding="utf-8")
+        avatar_attr = ' avatar-base="."'
     api_attr = html.escape(api.rstrip("/"), quote=True)
     posicion_attr = html.escape(posicion, quote=True)
     snippet = (
-        f'<rag-extractivo-chat api="{api_attr}" posicion="{posicion_attr}">'
+        f'<rag-extractivo-chat api="{api_attr}" posicion="{posicion_attr}"{avatar_attr}>'
         "</rag-extractivo-chat>\n"
         '<script src="./widget.js"></script>\n'
     )
     (destino / "snippet.html").write_text(snippet, encoding="utf-8")
     return destino
 
-
-__all__ = ["exportar_widget"]
 
 
 def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
