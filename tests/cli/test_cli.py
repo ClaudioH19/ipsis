@@ -296,7 +296,7 @@ def test_servir_carpeta_crea_proyecto_privado_y_carga_documentos(
     _doc_prueba_md(fuente)
     llamadas = []
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append(Path.cwd()))
-    monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
+    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
     monkeypatch.setattr(
         "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
@@ -318,7 +318,8 @@ def test_servir_carpeta_reutiliza_indice_vigente(monkeypatch, proyecto_temporal)
     assert main(["init"]) == 0
     indexaciones = []
     servidores = []
-    monkeypatch.setattr("rag.cli.cmd_indexar", lambda args: indexaciones.append(args) or 0)
+    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar",
+                        lambda _self, args: indexaciones.append(args) or 0)
     monkeypatch.setattr(
         "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": True})(),
@@ -344,7 +345,7 @@ def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
         "idioma: es\nperfil: _generico\ncors_origenes: []\nclaves_widget: []\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr("rag.cli.cmd_indexar", lambda _args: 0)
+    monkeypatch.setattr("rag.cli.comandos.corpus.ComandoIndexar.ejecutar", lambda _self, _args: 0)
     monkeypatch.setattr(
         "rag.aplicacion.diagnostico.verificar_indice",
         lambda: type("Chequeo", (), {"ok": False})(),
@@ -428,14 +429,25 @@ def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
 # subcomando debe traer 'help=' en castellano -- antes 'rag servir --help'
 # mostraba '--host HOST'/'--port PORT' sin ninguna explicación.
 # ---------------------------------------------------------------------------
-def test_todas_las_opciones_de_todos_los_subcomandos_tienen_ayuda():
-    from rag.cli import _construir_parser
+def _subcomandos(parser, ruta=()):
+    """(ruta, parser) de cada comando del árbol, incluidos los anidados."""
+    import argparse
 
-    parser = _construir_parser()
-    # argparse expone los subparsers a través de la acción '_SubParsersAction'
-    accion_subparsers = next(a for a in parser._actions if a.dest == "comando")
-    for nombre_comando, subparser in accion_subparsers.choices.items():
+    for accion in parser._actions:
+        if isinstance(accion, argparse._SubParsersAction):
+            for nombre, sub in accion.choices.items():
+                yield ruta + (nombre,), sub
+                yield from _subcomandos(sub, ruta + (nombre,))
+
+
+def test_todas_las_opciones_de_todos_los_subcomandos_tienen_ayuda():
+    """Recorre todo el árbol (también ``rag golden …`` y ``rag widget tema …``)."""
+    from rag.cli import construir_parser
+
+    rutas = list(_subcomandos(construir_parser()))
+    assert len(rutas) >= 23
+    for ruta, subparser in rutas:
         for accion in subparser._actions:
-            if accion.dest in ("help",):  # el propio '-h/--help' automático
+            if accion.dest == "help":  # el propio '-h/--help' automático
                 continue
-            assert accion.help, f"rag {nombre_comando}: la opción {accion.dest!r} no tiene help=..."
+            assert accion.help and len(accion.help.strip()) > 10, f"rag {' '.join(ruta)}: {accion.dest!r} sin ayuda útil"

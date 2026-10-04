@@ -66,7 +66,7 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P10.3 | ✅ | 2026-10-03 | 576 (suite completa, incluye la lenta de medium) | rag calibrar [--alfa 0.05] [--aplicar]: CLI fina → calibrar_proyecto (aplicacion/evaluacion.py) → calibrar (P10.2, sin cambios). Valida alfa en (0,1); hash_corpus del manifiesto del índice activo (sin índice: «rag indexar»); golden vigente y calibrable (corpus cambiado: «rag golden validar»; uso regresion: rechazado); evalúa con evaluar_backend_activo (inyectable). Sin --aplicar no escribe; con --aplicar escribe calibracion.yaml en cualquier estado, solo «calibrado» se habilita. Salidas: CALIBRADO 0, MUESTRA_INSUFICIENTE 0, SIN_UMBRAL_SEGURO 1, errores 1. 9 pruebas de CLI con motor falso (tres estados, procedencia del índice, errores) y 1 lenta: medium sobre el banco v1.1.0 importado da muestra_insuficiente con el hash del índice real. Guía golden.md con la sección Calibrar. Hallazgos (desempate y estratificación del split) en Hallazgos. |
 | P10.4 | ✅ | 2026-10-03 | 586 (suite completa) + benchmark real bm25/light/medium/heavy | rag benchmark --banco M [--banco…] --perfiles bm25,light,medium,heavy [--experimentos]: proyecto temporal por perfil y banco (idioma del manifiesto), evaluar_backend_activo con motor calentado, métricas de reporte_cobertura, p50/p95 por consulta y por etapa, presupuesto, modelos (parámetros y ONNX en disco, no RAM) e indexado aparte. Escribe golden/reportes/benchmark-perfiles.{json,md} y un artefacto por perfil y banco para rag comparar (etiquetado por perfil). Salida ≠ 0 si un perfil excede el presupuesto o, con un banco de evaluación, da falsos ok; las variantes no cortan. Se corrigen el perfil bm25 (era light: ahora recuperacion_modo dispersa, modo dispersa en buscar y en el retriever, seleccionable para diagnóstico pero no en rag init), el idioma en el manifiesto del banco y la limpieza en Windows. Experimentos: medium τ_ok 0,85 → POSPONER (falsos ok 3→1, misma cobertura); acuerdo → DESCARTAR (sin efecto, +4,6 ms p95). Tabla, hallazgos y decisiones en Hallazgos. |
 | P10.5 | ✅ | 2026-10-03 | 586 (suite completa; sin el código descartado) | texttiling_v1 implementado temporalmente en ingesta/chunking.py (párrafos por sección; coseno TF-IDF entre ventanas de hasta 2 párrafos; corte si sim < media − desv/2 del documento o al superar 256 palabras; sin cruzar secciones ni solape) y comparado con CH-F256 (actual) y CH-SEC (control) en bm25/light/medium/heavy sobre v1.1.0 y bm25/light/medium sobre el universal, con índices separados. DESCARTADO: da los mismos estados que CH-SEC (la cohesión solo agregó 1 frontera en 4 bancos) y frente a CH-F256 sube los falsos ok (v1.1.0 medium 0→1, universal light 1→2). Se borraron la estrategia, sus pruebas y el parámetro interno del benchmark; tablas, casos y decisión en Hallazgos. |
-| P11.1 | ⬜ | | | |
+| P11.1 | ✅ | 2026-10-03 | 596 (suite completa, incluidas las lentas) | rag/cli.py (925 líneas) → paquete rag/cli/: __init__.py (registro_de_comandos explícito, construir_parser, main), __main__.py, base.py (Comando con registrar/ejecutar, Grupo, registrar) y comandos/{proyecto,corpus,consulta,golden,evaluacion,operacion,web}.py con 20 Commands. Sin módulo puente; el script sigue en rag.cli:main. Las 24 pantallas de --help quedaron idénticas. La lógica pasó a aplicacion/: proyecto (inicializar_proyecto, completar_proyecto_existente, guardar_snapshot, migrar_proyecto_activo y lecturas para el servicio), corpus.py nuevo (archivos_de_ruta, cargar_documentos, indexar_proyecto), evaluacion (comparar_reportes), benchmark (benchmark_perfiles), golden (ErrorGolden), consulta (Motor y sus errores, construir_motor_del_proyecto). servicio/api.py dejó de importar configuracion, consulta y lenguaje. tests/test_arquitectura.py: regla cli/servicio → solo aplicacion, nucleo y recursos, con prueba sintética. Pruebas nuevas: entrypoint, importación sin efectos, registro de los 20 comandos, despacho al caso de uso, código de salida, python -m rag.cli, y ayuda en todo el árbol. |
 | P11.2 | ⬜ | | | |
 | P11.3 | ⬜ | | | |
 | P11.4 | ⬜ | | | |
@@ -458,6 +458,53 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
     ok. El chunk más chico deja la oración tentadora sola, con más cobertura
     léxica. Es un compromiso de granularidad para medir con el golden de un
     cliente, no un cambio de default.
+- **P11.1 — CLI con patrón Command.** `rag/cli.py` (925 líneas) se reemplaza
+  por el paquete `rag/cli/`, sin módulo puente:
+  - `__init__.py`: `registro_de_comandos()` explícito, `construir_parser()` y
+    `main()`.
+  - `__main__.py`, para `python -m rag.cli`.
+  - `base.py`: `Comando` (`registrar` y `ejecutar`), `Grupo` (subcomandos) y
+    `registrar()`.
+  - `comandos/`:
+    - `proyecto.py`: init y configurar.
+    - `corpus.py`: cargar e indexar.
+    - `consulta.py`: servir y preguntar.
+    - `golden.py`: los cuatro subcomandos.
+    - `evaluacion.py`: evaluar, calibrar, comparar y benchmark.
+    - `operacion.py`: doctor y snapshot-config.
+    - `web.py`: widget tema listar, aplicar y vista-previa, y widget exportar.
+  - 20 Commands. `modelos.py` no se crea: no había comandos de modelos y lo
+    agrega P11.3.
+  - El script sigue siendo `rag.cli:main`.
+  - Las 24 pantallas de `--help` (raíz, grupos y hojas) quedaron idénticas a
+    las anteriores, comparadas normalizando espacios.
+- **P11.1 — lógica que salió de la CLI hacia `aplicacion/`.**
+  - `proyecto.py`: `inicializar_proyecto` (y `ProyectoExistente`),
+    `completar_proyecto_existente`, `guardar_snapshot` y
+    `migrar_proyecto_activo`.
+  - `corpus.py` (nuevo): `archivos_de_ruta`, `cargar_documentos` e
+    `indexar_proyecto` (y `ErrorConfiguracion`).
+  - `evaluacion.py`: `comparar_reportes`.
+  - `benchmark.py`: `benchmark_perfiles` (salida por defecto, reportes y
+    código de salida).
+  - `golden.py` expone `ErrorGolden`.
+  - `rag calibrar` ya no importa `EstadoCalibracion` ni `CALIBRABLES`: usa
+    `estado.value` y `resultado.calibrables`.
+- **P11.1 — `servicio` tenía imports prohibidos** (`api.py` importaba
+  `configuracion.carga`, `consulta.motor` y `lenguaje.paquete`). Ahora usa:
+  - `aplicacion.consulta`: `Motor`, `MotorNoListo`, `MotorSaturado` y
+    `construir_motor_del_proyecto`.
+  - `aplicacion.proyecto`: `configuracion_asistente`, `limite_de_peticiones`
+    e `interfaz_del_idioma`.
+
+  Los endpoints no cambian.
+- **P11.1 — regla de frontera:** `tests/test_arquitectura.py` verifica que
+  `cli` y `servicio` solo importen `aplicacion`, `nucleo` y `recursos`. Una
+  prueba sintética muestra que detecta un import prohibido, incluso dentro de
+  una función. Sin excepciones.
+- **P11.1 — defecto evitado:** una función `comandos()` en `rag/cli/__init__.py`
+  tapaba el subpaquete `rag.cli.comandos` (rompía `monkeypatch` y los imports
+  por ruta). Se llama `registro_de_comandos()`.
 - **Pendientes de P10.3, siguen abiertos.**
   - La calibración, ante empate, debería preferir el valor del perfil.
   - El split dev/test podría estratificar por exacta/paráfrasis.

@@ -81,3 +81,45 @@ def test_capas_base_no_importan_librerias_pesadas_al_cargarse():
                     if modulo.split(".")[0] in PESADAS:
                         violaciones.append(f"{archivo.relative_to(RAIZ.parent).as_posix()}: {modulo}")
     assert not violaciones, "\n".join(violaciones)
+
+
+# Desde P11.1: la CLI y el servicio son presentación; solo hablan con la capa
+# de aplicación (y con nucleo/recursos). Nunca directo con configuración,
+# lenguaje, ingesta, modelos, índice, consulta ni evaluación.
+FRONTERA = {"cli", "servicio"}
+PERMITIDAS_EN_FRONTERA = {"aplicacion", "nucleo", "recursos"}
+
+
+def violaciones_de_frontera(capa: str, arbol: ast.AST) -> list[tuple[int, str]]:
+    """``(línea, módulo)`` de cada import de ``capa`` a una capa ``rag`` no
+    permitida. Ignora la biblioteca estándar y dependencias externas."""
+    if capa not in FRONTERA:
+        return []
+    salida = []
+    for nodo, modulo in _imports(arbol):
+        destino = _capa(modulo.split("."))
+        if destino in CAPAS and destino != capa and destino not in PERMITIDAS_EN_FRONTERA:
+            salida.append((nodo.lineno, modulo))
+    return salida
+
+
+def test_cli_y_servicio_solo_importan_aplicacion_nucleo_y_recursos():
+    violaciones = [f"{archivo.relative_to(RAIZ.parent).as_posix()}:{linea} {capa} -> {modulo}"
+                   for archivo, capa, arbol in _modulos()
+                   for linea, modulo in violaciones_de_frontera(capa, arbol)]
+    assert not violaciones, "la presentación debe pasar por rag.aplicacion:\n" + "\n".join(violaciones)
+
+
+def test_la_regla_de_frontera_detecta_un_import_prohibido():
+    codigo = ast.parse(
+        "import argparse\nfrom pathlib import Path\nimport yaml\n"
+        "from rag.aplicacion.golden import importar_golden\nfrom rag.nucleo.registro import RegistroComponentes\n"
+        "from rag.cli.base import Comando\n"
+        "from rag.evaluacion.golden import ErrorGolden\n"
+        "def f():\n    from rag.configuracion.carga import cargar_dominio\n"
+    )
+    assert violaciones_de_frontera("cli", codigo) == [(7, "rag.evaluacion.golden"), (9, "rag.configuracion.carga")]
+    # Para el servicio, importar la CLI también es una violación (presentación → presentación).
+    assert [m for _, m in violaciones_de_frontera("servicio", codigo)] == [
+        "rag.cli.base", "rag.evaluacion.golden", "rag.configuracion.carga"]
+    assert violaciones_de_frontera("aplicacion", codigo) == []  # la regla es solo para la presentación

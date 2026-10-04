@@ -6,7 +6,8 @@ from typing import Any
 
 from rag.modelos.catalogo import obtener as obtener_modelo
 from rag.consulta.etapas.redaccion import cargar_plantillas
-from rag.consulta.motor import Motor
+# El servicio usa el motor y sus errores a través de esta capa.
+from rag.consulta.motor import Motor, MotorNoListo, MotorSaturado
 from rag.lenguaje.paquete import cargar_paquete
 from rag.configuracion.perfiles import perfil_efectivo
 from rag.nucleo.registro import RegistroComponentes
@@ -133,3 +134,13 @@ def construir_motor(
         )
     motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
     return motor
+
+
+def construir_motor_del_proyecto() -> Motor:
+    """Motor del proyecto del directorio actual (lo que sirve ``rag servir``)."""
+    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
+
+    return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
+
+
+__all__ = ["Motor", "MotorNoListo", "MotorSaturado", "construir_motor", "construir_motor_del_proyecto"]

@@ -1,0 +1,146 @@
+"""Grupo consulta: servir la API y preguntarle desde la terminal."""
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+
+from rag.aplicacion import diagnostico
+from rag.aplicacion.corpus import archivos_de_ruta
+from rag.aplicacion.proyecto import completar_proyecto_existente
+from rag.cli.base import Comando
+from rag.cli.comandos.corpus import ComandoCargar, ComandoIndexar
+from rag.cli.comandos.proyecto import ComandoInit
+
+
+class ComandoServir(Comando):
+    """Si recibe una carpeta, la prepara componiendo ``init``, ``cargar`` e
+    ``indexar`` (los mismos comandos, con su salida) antes de servir."""
+
+    nombre = "servir"
+    ayuda = "Levanta la API del servicio."
+
+    def __init__(self, init: ComandoInit, cargar: ComandoCargar, indexar: ComandoIndexar) -> None:
+        self.init, self.cargar, self.indexar = init, cargar, indexar
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("carpeta", nargs="?",
+                            help="Carpeta de documentos o proyecto existente; se prepara automáticamente.")
+        parser.add_argument("--host", default="127.0.0.1",
+                            help="Dirección donde escucha el servicio (por defecto: '127.0.0.1', solo local; "
+                                 "usa '0.0.0.0' para aceptar conexiones externas).")
+        parser.add_argument("--port", type=int, default=8000,
+                            help="Puerto donde escucha el servicio (por defecto: 8000).")
+        parser.add_argument("--reindexar", action="store_true",
+                            help="Reconstruye el índice aunque el catálogo no haya cambiado.")
+
+    def _preparar_carpeta(self, carpeta: str, *, reindexar: bool = False) -> Path:
+        """Completa un proyecto o crea uno privado junto a una carpeta documental."""
+        fuente = Path(carpeta).resolve()
+        if not fuente.is_dir():
+            raise ValueError(f"no existe la carpeta {fuente}")
+
+        es_proyecto = (
+            (fuente / "configuracion" / "asistente.yaml").is_file()
+            or (fuente / "documentos" / "catalogo.yaml").is_file()
+        )
+        if not es_proyecto and not archivos_de_ruta(fuente):
+            raise ValueError(f"no hay documentos compatibles en {fuente}")
+        proyecto = fuente if es_proyecto else fuente / ".rag-extractivo"
+        proyecto.mkdir(parents=True, exist_ok=True)
+        os.chdir(proyecto)
+
+        if not Path("configuracion/asistente.yaml").is_file():
+            inicio = argparse.Namespace(nombre_asistente=None, descripcion_dominio=None, idioma=None, perfil=None,
+                                        force=False)
+            if self.init.ejecutar(inicio) != 0:
+                raise RuntimeError("no se pudo inicializar el proyecto automático")
+        else:
+            completar_proyecto_existente()
+
+        catalogo = Path("documentos/catalogo.yaml")
+        catalogo_antes = catalogo.read_bytes() if catalogo.is_file() else b""
+        if not es_proyecto:
+            if self.cargar.ejecutar(argparse.Namespace(ruta=str(fuente))) != 0:
+                raise RuntimeError("no se pudieron cargar los documentos")
+        catalogo_despues = catalogo.read_bytes() if catalogo.is_file() else b""
+
+        indice = diagnostico.verificar_indice()
+        if reindexar or catalogo_antes != catalogo_despues or not indice.ok:
+            print("Preparando el índice antes de iniciar el servicio...")
+            if self.indexar.ejecutar(argparse.Namespace(corpus="documentos")) != 0:
+                raise RuntimeError("no se pudo construir el índice")
+        else:
+            print("El índice existente está vigente; se reutiliza.")
+        return proyecto
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        import uvicorn
+
+        anterior = Path.cwd()
+        try:
+            if args.carpeta:
+                proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
+                print(f"Proyecto activo: {proyecto}")
+            print(f"Sirviendo en http://{args.host}:{args.port} (Ctrl+C para detener)...")
+            uvicorn.run("rag.servicio.api:app", host=args.host, port=args.port, log_level="info")
+            return 0
+        except (OSError, RuntimeError, ValueError) as exc:
+            print(f"No se pudo preparar el servicio: {exc}")
+            return 1
+        finally:
+            os.chdir(anterior)
+
+
+ETIQUETA_ESTADO = {
+    "ok": "[OK]",
+    "relacionado": "[RELACIONADO -- no es una respuesta directa]",
+    "sin_respuesta": "[SIN RESPUESTA]",
+    "conversacional": "[CONVERSACIONAL]",
+    "degradado": "[DEGRADADO]",
+    "saturado": "[SATURADO]",
+}
+
+
+class ComandoPreguntar(Comando):
+    nombre = "preguntar"
+    ayuda = "Consulta el servicio desde la terminal."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("pregunta", help="La pregunta a enviar (entre comillas si tiene espacios).")
+        parser.add_argument("--url", default="http://127.0.0.1:8000",
+                            help="Base del servicio a consultar (por defecto: 'http://127.0.0.1:8000').")
+        parser.add_argument("--timeout", type=float, default=30.0,
+                            help="Segundos de espera máxima por una respuesta antes de fallar (por defecto: 30).")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        import httpx
+
+        url = f"{args.url.rstrip('/')}/consultar"
+        try:
+            resp = httpx.post(url, json={"pregunta": args.pregunta, "id_sesion": "rag-cli"}, timeout=args.timeout)
+        except httpx.ConnectError:
+            print(f"No se pudo conectar a {url}. ¿Está el servicio arriba? Corré 'rag servir' primero.")
+            return 1
+        except httpx.TimeoutException:
+            print(f"El servicio no respondió en {args.timeout}s.")
+            return 1
+
+        if resp.status_code != 200:
+            print(f"El servicio respondió {resp.status_code}: {resp.text}")
+            return 1
+
+        datos = resp.json()
+        estado = datos.get("estado", "?")
+        print(ETIQUETA_ESTADO.get(estado, f"[{estado.upper()}]"))
+        print(datos.get("respuesta", ""))
+        fragmentos = datos.get("fragmentos") or []
+        if fragmentos:
+            print("\nCitas:")
+            for f in fragmentos:
+                print(f"  - {f['doc_titulo']} > {f['seccion']} "
+                      f"(offsets {f['offset_inicio']}-{f['offset_fin']}, score={f['score']:.3f})")
+        return 0
+
+
+__all__ = ["ComandoPreguntar", "ComandoServir", "ETIQUETA_ESTADO"]
