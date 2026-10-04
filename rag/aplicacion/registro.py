@@ -163,4 +163,15 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAudi
 
 
 __all__ = ["ProblemaEvidencia", "RegistroConsultas", "ReporteAuditoria", "SinRegistro", "auditar_registro",
-           "entrada_de_registro", "registro_del_proyecto"]
+           "entrada_de_registro", "registrar_admin", "registro_del_proyecto"]
+
+
+def registrar_admin(ip: str | None, accion: str, claves: list[str] | None = None) -> None:
+    """Auditoría de ``/admin`` en ``.rag/registros/admin.jsonl``: quién cambió qué
+    (fecha, IP, acción y claves). Nunca guarda el token ni los valores."""
+    ruta = Path(rutas.REGISTRO_CONSULTAS).with_name("admin.jsonl")
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    linea = json.dumps({"fecha": datetime.now(timezone.utc).isoformat(timespec="seconds"), "ip": ip,
+                        "accion": accion, "claves": sorted(claves or [])}, ensure_ascii=False)
+    with ruta.open("a", encoding="utf-8") as archivo:
+        archivo.write(linea + "\n")

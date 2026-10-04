@@ -5,7 +5,7 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-> La API y el panel `/admin` llegan en P12.6 y P12.7; el avatar «Folio» y su
+> El panel gráfico `/admin/panel` llega en P12.7; el avatar «Folio» y su
 > animación en el widget, en P12.9 y P12.10.
 
 ## Configuración: `configuracion/personalidad.yaml`
@@ -118,6 +118,26 @@ Las comprueba un linter; las mismas reglas aplican a tus sobrescrituras:
 - Ninguna expresión de la lista prohibida del idioma
   (`rag/recursos/tonos/<idioma>/_reglas.yaml`): insultos, culpar al
   usuario, condescendencia.
+
+## Configurar por HTTP (`/admin`)
+
+Con `RAG_ADMIN_TOKEN` definido, el servicio expone una API para cambiar la
+personalidad y el widget sin terminal (ver modos y seguridad en
+[instalacion.md](instalacion.md)). Todas las llamadas llevan
+`Authorization: Bearer <token>`.
+
+| Método y ruta | Qué hace |
+|---|---|
+| `GET /admin/personalidad` | Configuración, tonos (con ejemplo), situaciones, eventos, avatares y estado del avatar |
+| `PUT /admin/personalidad` | Cambio parcial, p. ej. `{"tono": {"activo": "formal"}}`. Se valida completo; si falla responde 422 con los errores y no escribe |
+| `POST /admin/personalidad/vista-previa` | `{"tono": "formal", "situacion": "sin_respuesta"}` → las variantes con las variables del proyecto |
+| `GET /admin/avatares` · `POST /admin/avatares` | Lista, o importa `{"nombre": "mi-avatar", "definicion": {…}}` |
+| `GET /admin/estilos` · `PUT /admin/estilos` | Tema y ubicación del widget (`estilos.yaml`), con la misma validación que la terminal |
+
+Los cambios, por HTTP o por terminal, se ven sin reiniciar:
+- el servicio revisa la fecha de `personalidad.yaml`, `idioma.yaml` y
+  `asistente.yaml` en cada consulta, y el motor toma las plantillas nuevas;
+- `/config` entrega al widget la microcopia y el avatar vigentes.
 
 ## Neutralidad de los tonos incluidos
 

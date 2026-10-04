@@ -91,3 +91,20 @@ def _combinar_con_outline(paginas: list[bytes], marcadores: list[tuple[str, int]
 # ---------------------------------------------------------------------------
 # PDF con capa de texto, CON outline
 # ---------------------------------------------------------------------------
+
+
+def definicion_avatar(**cambios) -> dict:
+    """Definición mínima de avatar con la forma que revisa Python (la librería valida el resto)."""
+    expresion = {"head": {"x": 0, "y": 0, "z": 0}, "perspective": 1, "motion": {"eyes": "none", "body": "none"},
+                 "eyes": {"spacing": 1, "left": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0},
+                          "right": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0}}}
+    paso = {"expression": "contento", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
+    datos = {"schema": "bible-strong-avatar", "schemaVersion": 1, "name": "Prueba", "body": {},
+             "colors": {"body": "#ffffff", "eyes": "#000000"},
+             "expressions": {"neutral": expresion, "contento": expresion},
+             "expressionOrder": ["neutral", "contento"],
+             "animations": {"inactivo": {"playbackMode": "loop", "steps": [paso], "blink": {}},
+                            "contento": {"playbackMode": "once", "steps": [paso], "blink": {}}},
+             "animationOrder": ["inactivo", "contento"]}
+    datos.update(cambios)
+    return datos

@@ -278,3 +278,18 @@ def exportar_widget(
 
 
 __all__ = ["exportar_widget"]
+
+
+def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
+    """Fusiona ``cambios`` (parcial) sobre ``estilos.yaml``; valida el tema completo
+    antes de escribir (escritura atómica)."""
+    if not isinstance(cambios, dict):
+        raise ValueError("el cuerpo debe ser un objeto JSON")
+    tema = _fusionar(cargar_estilos(), cambios)
+    validar_tema(tema)
+    destino = Path(ruta)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    temporal = destino.with_name(destino.name + ".tmp")
+    temporal.write_text(yaml.safe_dump(tema, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    os.replace(temporal, destino)
+    return tema
