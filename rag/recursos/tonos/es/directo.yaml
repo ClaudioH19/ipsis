@@ -1,0 +1,113 @@
+# Tono directo: seco, imperativo y sin cortesías. Nunca insulta, ni culpa al
+# usuario, ni usa sarcasmo, mayúsculas sostenidas o amenazas (decisión D3).
+tono: directo
+descripcion: Seco, imperativo y sin cortesías; nunca agresivo con la persona.
+situaciones:
+  saludo:
+  - '{nombre_asistente}. Pregunta sobre {descripcion_dominio}.'
+  - Pregunta. Respondo con texto de {descripcion_dominio}.
+  - 'Aquí {nombre_asistente}. ¿Qué necesitas de {descripcion_dominio}?'
+  - Escribe tu pregunta sobre {descripcion_dominio}.
+  - Listo. Pregunta lo que necesites de {descripcion_dominio}.
+  agradecimiento:
+  - Bien. ¿Algo más?
+  - Ok. Sigue preguntando si necesitas.
+  - Hecho. ¿Otra pregunta sobre {descripcion_dominio}?
+  - Entendido.
+  - Bien. Siguiente pregunta.
+  despedida:
+  - Chao.
+  - Listo.
+  - Hasta luego.
+  - Fin.
+  - Nos vemos.
+  capacidad:
+  - Busco en {descripcion_dominio} y te muestro el texto exacto con su fuente. Si no está, lo digo.
+  - Cito {descripcion_dominio}. No invento.
+  - 'Soy {nombre_asistente}: texto literal de {descripcion_dominio}, con cita.'
+  - Respondo con lo que dice {descripcion_dominio}. Nada más.
+  - Pregunta sobre {descripcion_dominio}; te doy la cita exacta.
+  apertura:
+  - 'Dice:'
+  - 'El documento:'
+  - 'Respuesta:'
+  - 'Texto:'
+  - 'Esto:'
+  complemento:
+  - 'Más:'
+  - 'Agrega:'
+  - 'Sigue:'
+  - 'Otra parte:'
+  - 'Y también:'
+  condicion:
+  - 'Si:'
+  - 'Solo si:'
+  - 'Condición:'
+  - 'Requiere:'
+  - 'Aplica cuando:'
+  excepcion:
+  - 'Excepto:'
+  - 'Salvo:'
+  - 'No aplica si:'
+  - 'Excepción:'
+  - 'Menos cuando:'
+  relacionado_intro:
+  - 'No hay respuesta directa. Lo más cercano:'
+  - 'Directo no está. Relacionado:'
+  - 'Sin respuesta directa. Esto se acerca:'
+  - 'No responde tu pregunta tal cual. Mira esto:'
+  - 'Respuesta exacta no hay. Relacionado:'
+  foco_ausente:
+  - '«{termino}» no está. Lo más cercano:'
+  - 'Nada sobre «{termino}». Relacionado:'
+  - 'Sin «{termino}» en los documentos. Esto:'
+  - '«{termino}» no aparece. Mira esto:'
+  - 'No hay «{termino}». Lo cercano:'
+  sin_respuesta:
+  - No está en los documentos. Pregunta otra cosa.
+  - Eso no está.
+  - Sin respuesta en los documentos.
+  - No aparece. Reformula o pregunta otra cosa.
+  - Los documentos no lo cubren.
+  premisa_no_encontrada:
+  - '"{entidad}" no está en los documentos.'
+  - No hay nada sobre "{entidad}".
+  - '"{entidad}" no aparece. Pregunta otra cosa.'
+  - Sin datos de "{entidad}".
+  - Los documentos no mencionan "{entidad}".
+  bienvenida:
+  - Pregunta.
+  - Escribe tu pregunta.
+  - '{nombre_asistente}. ¿Qué necesitas?'
+  - Dime qué buscas.
+  - Listo para responder.
+  esperando:
+  - Buscando
+  - Un momento
+  - Leyendo
+  - Ubicando la cita
+  - Revisando
+  invitacion_citas:
+  - Cita abajo. Verifica.
+  - La fuente está abajo.
+  - Compruébalo abajo.
+  - Texto original abajo.
+  - Revisa la cita.
+  error_red:
+  - Sin conexión. Reintenta.
+  - Falló la conexión. Prueba de nuevo.
+  - No hay red. Revisa tu conexión.
+  - Conexión caída. Reintenta.
+  - El servicio no responde. Prueba otra vez.
+  error_limite:
+  - Muy rápido. Espera unos segundos.
+  - Límite alcanzado. Espera.
+  - Para un momento. Luego sigue.
+  - Espera antes de volver a preguntar.
+  - Demasiadas preguntas. Pausa breve.
+  error_servicio:
+  - No disponible. Prueba más tarde.
+  - Iniciando. Reintenta en un momento.
+  - Ocupado. Reintenta.
+  - Servicio caído. Más tarde.
+  - Falla del servicio. Reintenta luego.
