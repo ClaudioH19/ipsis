@@ -50,8 +50,5 @@ abstencion:
   # Si la pregunta cita una entidad (p. ej. «artículo 9») que existe en el corpus
   # pero no en los candidatos, se buscan hasta N fragmentos que la contengan.
   max_fragmentos_adicionales: 2
-criterios_aceptacion:
-  E2_embeddings_chunking_recuperacion:
-    recall_at_3_min: 0.85
 
 pipeline_version: "ingesta-0.1.0"

@@ -91,3 +91,12 @@ def test_python_m_rag_cli_funciona():
     salida = subprocess.run([sys.executable, "-m", "rag.cli", "--help"], capture_output=True, text=True,
                             encoding="utf-8", env=entorno)
     assert salida.returncode == 0 and "golden" in salida.stdout
+
+
+def test_version(capsys):
+    from rag import __version__
+    from rag.cli import main
+
+    with pytest.raises(SystemExit) as salida:
+        main(["--version"])
+    assert salida.value.code == 0 and capsys.readouterr().out.strip() == f"rag-extractivo {__version__}"

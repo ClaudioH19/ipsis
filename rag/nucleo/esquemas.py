@@ -1,4 +1,4 @@
-"""Esquemas versionados que conectarán las etapas de la tubería V2."""
+"""Esquemas versionados que cruzan las fronteras entre etapas, servicio y evaluación."""
 from __future__ import annotations
 
 from dataclasses import dataclass

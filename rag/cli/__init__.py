@@ -36,6 +36,9 @@ def registro_de_comandos() -> list[Comando | Grupo]:
 
 def construir_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="rag", description="Chatbot RAG extractivo sobre tus documentos.")
+    from rag import __version__
+
+    parser.add_argument("--version", action="version", version=f"rag-extractivo {__version__}")
     subcomandos = parser.add_subparsers(dest="comando", required=True)
     for elemento in registro_de_comandos():
         registrar(subcomandos, elemento)

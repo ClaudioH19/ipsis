@@ -53,7 +53,7 @@ ENV PYTHONUNBUFFERED=1 \
     RAG_MODO=produccion
 
 LABEL org.opencontainers.image.licenses="AGPL-3.0-only" \
-      org.opencontainers.image.source="https://github.com/Claudiobiovision/rag-extractivo" \
+      org.opencontainers.image.source="https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat" \
       rag-extractivo.perfil="${PERFIL}"
 
 USER rag

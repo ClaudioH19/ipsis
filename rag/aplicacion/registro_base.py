@@ -1,4 +1,4 @@
-"""Implementaciones base conectables al registry V2.
+"""Implementaciones base conectables al registry de componentes.
 
 Este módulo contiene adaptadores del código existente al contrato declarativo.
 Las dependencias pesadas se importan dentro de las factories, de modo que

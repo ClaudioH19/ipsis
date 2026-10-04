@@ -95,11 +95,22 @@ def servidor(proyecto):
                                            log_level="error"))
     hilo = threading.Thread(target=server.run, daemon=True)
     hilo.start()
-    for _ in range(250):
-        if server.started:
-            break
-        time.sleep(0.02)
-    yield f"http://127.0.0.1:{puerto}"
+    url = f"http://127.0.0.1:{puerto}"
+    # El arranque calcula el diagnóstico de /ready (en frío, segundos): se espera a
+    # que el servicio responda, no solo a que el hilo exista.
+    import httpx
+
+    fin = time.monotonic() + 60
+    while True:
+        try:
+            if server.started and httpx.get(url + "/health", timeout=2).status_code == 200:
+                break
+        except httpx.HTTPError:
+            pass
+        if time.monotonic() > fin:
+            pytest.fail("el servicio de prueba no respondió /health en 60 s")
+        time.sleep(0.05)
+    yield url
     server.should_exit = True
     hilo.join(timeout=5)
 

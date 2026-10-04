@@ -381,7 +381,8 @@
     "  color:var(--rw-texto);line-height:var(--rw-interlineado);white-space:pre-wrap;",
     "  overflow-wrap:anywhere;}",
     ".rw-citas-invitacion{margin:0 0 6px;font-size:var(--rw-tamano-cita);color:var(--rw-texto-suave);}",
-    ".rw-cita-posicion{font-weight:400;opacity:.85;}",
+    ".rw-cita-origen{min-width:0;}",
+    ".rw-cita-posicion{font-weight:400;opacity:.85;white-space:nowrap;}",
     ".rw-cita{margin-top:5px;border-radius:9px;background:var(--rw-fondo);border:1px solid var(--rw-borde);}",
     ".rw-cita-cabecera{margin:0;padding:7px 9px 4px;font-size:11.5px;font-weight:600;color:var(--rw-texto-suave);}",
     ".rw-cita .rw-cita-texto{padding:0 10px 10px;}",
@@ -676,14 +677,19 @@
       item.className = enLista ? "rw-cita" : "";
       var cabeceraCita = document.createElement(enLista ? "p" : "summary");
       if (enLista) cabeceraCita.className = "rw-cita-cabecera";
-      // documento + sección: texto de la API, SIEMPRE por textContent.
-      cabeceraCita.textContent = (frag.doc_titulo || "") + " › " + (frag.seccion || "");
+      // documento + sección: texto de la API, SIEMPRE por textContent. Un solo
+      // elemento en línea: así la posición fluye con el título y no se aprieta.
+      var origen = document.createElement("span");
+      origen.className = "rw-cita-origen";
+      var seccion = frag.seccion && frag.seccion !== frag.doc_titulo ? " › " + frag.seccion : "";
+      origen.textContent = (frag.doc_titulo || "") + seccion;
       if (typeof frag.offset_inicio === "number" && typeof frag.offset_fin === "number") {
         var posicion = document.createElement("span");
         posicion.className = "rw-cita-posicion";
         posicion.textContent = " · " + texto("posicion_cita", { inicio: frag.offset_inicio, fin: frag.offset_fin });
-        cabeceraCita.appendChild(posicion);
+        origen.appendChild(posicion);
       }
+      cabeceraCita.appendChild(origen);
       var cuerpo = document.createElement("p");
       cuerpo.className = "rw-cita-texto";
       var rango = rangoExacto(frag, exacta);
