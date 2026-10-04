@@ -143,7 +143,7 @@ rag modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
   descargar`), `NO CARGA` (archivo presente pero inválido) o `FALLA`
   (inferencia inválida). Termina con 0 solo si todos dan `OK`.
 - **`exportar`** es solo para desarrollo. Necesita el extra `[exportar]`
-  (`pip install "rag-extractivo[exportar]"`, con `optimum` y `torch`). La
+  (`pip install "rag-extractivo[exportar]"`, con `optimum-onnx` y `torch`). La
   producción corre sin torch.
   - Deja `exportados/<org>--<modelo>/model.onnx` en la carpeta actual y, con
     `--int8`, también `model_int8.onnx`. Ese archivo usa la cuantización
@@ -336,13 +336,15 @@ contenido documental:
 preset: editorial
 presentacion:
   densidad: comoda
-  citas: abiertas
+  citas: lista          # acordeon | lista (las citas siempre se muestran)
   mostrar_etiqueta_estado: true
 ```
 
-Los presets se administran mediante `rag widget tema`. `/config` expone estos
-valores para que el widget los aplique, pero no ofrece escritura HTTP. La clave
-pública del widget autoriza consultas y no debe utilizarse para administración.
+Los presets se administran con `rag widget tema` o desde el panel
+`/admin/panel`. `/config` expone estos valores para que el widget los aplique
+y no admite escritura; los cambios por HTTP pasan por `/admin`, con token (ver
+[personalidad.md](personalidad.md)). La clave pública del widget autoriza
+consultas y no sirve para administrar.
 
 ## Snapshot efectivo
 
@@ -350,7 +352,7 @@ Para obtener una copia de la configuración con defaults y valores resueltos:
 
 ```bash
 rag snapshot-config
-rag snapshot-config --salida .cache/config-produccion.yaml
+rag snapshot-config --salida .rag/config-produccion.yaml
 ```
 
 También está disponible desde Python:

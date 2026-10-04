@@ -1,7 +1,8 @@
 # Fichas metodológicas
 
-Cada técnica de la librería debe documentarse antes de considerarse estable.
-La ficha acompaña al código y debe actualizarse cuando cambie su algoritmo.
+Cada técnica de la librería se documenta en una ficha antes de considerarse
+estable. La ficha acompaña al código y se actualiza cuando cambia su
+algoritmo.
 
 ## Plantilla obligatoria
 
@@ -20,10 +21,19 @@ La ficha acompaña al código y debe actualizarse cuando cambie su algoritmo.
 13. Referencias y procedencia.
 14. Estado: experimental, estable, deprecado o pendiente de calibración.
 
-Los valores aún no contrastados contra un golden set deben identificarse como
+Los valores aún no contrastados contra un golden set se identifican como
 `pendiente de calibración`; nunca como una garantía de precisión.
 
-Fichas actuales:
+## Fichas, en el orden de una consulta
 
-- [Recuperación híbrida Qdrant](recuperacion.md).
-- [Banco de evaluación](evaluacion.md).
+1. [Recuperación híbrida](recuperacion.md): e5 + BM25 en Qdrant con RRF.
+2. [Capa léxica](lexico.md): `terminos()`, BM25, TF-IDF y las señales
+   `s_oov`, foco, `s_foco`, `s_cov` y `s_lex`.
+3. [Reranker](reranker.md): cross-encoder en medium y heavy.
+4. [Lector QA](lector.md): tramo literal o «sin respuesta», señal `s_qa`.
+5. [Política `cascada_v1`](politica.md): `ok`, `relacionado` o
+   `sin_respuesta`.
+6. [Calibración](calibracion.md): umbrales con riesgo ≤ α
+   (Clopper-Pearson).
+7. [Multilenguaje](multilenguaje.md): paquetes de idioma y tonos.
+8. [Banco de evaluación](evaluacion.md): formato, categorías y splits.

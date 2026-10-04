@@ -43,10 +43,9 @@ def entradas_vigentes(ruta: str = CATALOGO_PATH) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# `rag cargar` (Etapa Plugin, Tarea A): copia un documento al corpus y lo
-# registra en `documentos/catalogo.yaml`. La lógica vive aquí (no en la CLI) por
-# la regla del encargo: "si un comando necesita lógica nueva, esa lógica se
-# escribe en rag/, nunca en la CLI".
+# `rag cargar`: copia un documento al corpus y lo registra en
+# `documentos/catalogo.yaml`. La lógica vive aquí, no en la CLI: los comandos
+# solo traducen argumentos y llaman a rag/.
 # ---------------------------------------------------------------------------
 
 def _slug(nombre: str) -> str:

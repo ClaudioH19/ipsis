@@ -13,7 +13,7 @@ from rag.consulta.etapas.redaccion import _cargar_plantillas
 from rag.consulta.variantes import elegir
 
 # ==========================================================================
-# CONVERSACIONAL (Etapa C, punto 4): saludos y charla trivial se detectan
+# CONVERSACIONAL: saludos y charla trivial se detectan
 # ANTES de tocar Qdrant y se responden con texto fijo -- nunca pasan por
 # recuperación, abstención ni guardia (no hay nada del corpus que
 # verificar en "hola"). Pensado para el widget de chat: sin esto, un

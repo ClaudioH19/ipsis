@@ -5,7 +5,7 @@ una respuesta, nunca su contenido: el texto del corpus va literal en su
 propio bloque y las citas van debajo. Cada tono vive en
 ``rag/recursos/tonos/<idioma>/<tono>.yaml`` con 18 situaciones de al menos 5
 variantes cada una; el linter de este módulo hace cumplir las reglas del
-catálogo (``docs/plan/tareas.md`` §P12).
+catálogo (``docs/guia/personalidad.md``).
 
 Un proyecto puede sobrescribir situaciones en
 ``configuracion/personalidad.yaml::tono.plantillas``. Las sobrescrituras de

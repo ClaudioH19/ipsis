@@ -1,6 +1,6 @@
 # Perfil de instalación «medium». Un proyecto lo ajusta en
 # configuracion/motor.yaml (sección ajustes_perfil) y `rag calibrar`
-# reemplaza los umbrales por defecto. Ver docs/plan/modelos-y-perfiles.md.
+# reemplaza los umbrales por defecto. Ver docs/decisiones/0003-onnx-y-perfiles.md.
 perfil: medium
 descripcion: Light más reranker cross-encoder y lector QA extractivo.
 presupuesto_p95_ms: 1000

@@ -226,8 +226,7 @@ def redactar_zona_gris(
     cfg_redaccion: dict | None = None,
     termino_ausente: str | None = None,
 ) -> str:
-    """Estado propio ``"relacionado"`` (Etapa C, punto 2 del encargo del
-    coordinador -- ACTIVO por defecto desde esta etapa): cuando la pregunta
+    """Estado propio ``"relacionado"`` (activo por defecto): cuando la pregunta
     pasa las dos capas de abstención pero el score denso es "intermedio"
     (ni claramente fuera de dominio ni un match fuerte), en vez de
     abstenerse se muestran los fragmentos más pertinentes enmarcados con un

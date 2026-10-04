@@ -4,129 +4,103 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 el proyecto sigue [SemVer](https://semver.org/lang/es/). Mientras la versión
 sea 0.x, un cambio menor puede romper compatibilidad y se indica como tal.
 
-## [Sin publicar]
+## [0.8.0] - 2026-10-04
 
-### Cambiado
+Cierra el plan V3: cascada con señales léxicas, modelos ONNX por perfil,
+multilenguaje, calibración con riesgo controlado, personalidad del widget y
+despliegue propio. La historia detallada (tareas, mediciones y hallazgos)
+queda en git; las decisiones, en `docs/decisiones/` y `docs/metodologia/`.
 
-- **Requiere reindexar.** Estructura de proyecto v3 (`config_version: 3`):
-  `configuracion/dominio.yaml` reemplaza a `dominios/<perfil>/perfil.yaml` y
-  `categorias.yaml`; los textos pasan al paquete de idioma (sobrescribibles en
-  `configuracion/idioma.yaml`); el índice vive en `.rag/indice/` y el golden en
-  `golden/`. Cualquier comando `rag` migra un proyecto v2 automáticamente.
-- **Requiere reindexar.** Multilenguaje: paquetes de idioma `es`, `en` y `pt`
-  con palabras, patrones conversacionales, mensajes y textos del widget. Las
-  entidades con palabras (plazos, fechas, referencias) se generan desde el
-  paquete y su `valor_norm` ya no depende del idioma (`2024-03-15`,
-  `2_dow5_m01`, `6_mes`). Nuevas entidades universales: fechas numéricas y
-  montos con moneda.
-- Código reorganizado por capas (`rag/nucleo`, `configuracion`, `lenguaje`,
-  `ingesta`, `indice`, `consulta`, `evaluacion`, `aplicacion`, `servicio`) con
-  una prueba que impide dependencias hacia capas superiores.
-
-### Corregido
-
-- La selección de oraciones perdía el texto anterior a un punto no seguido de
-  espacio (por ejemplo, «1.5»).
-- La palabra «no» se leía como booleano en la lista de palabras generales.
-- `cargar_dominio` aplicaba la versión vigente antes de migrar un archivo
-  antiguo sin `config_version`.
-- Las palabras generales del idioma dependían del directorio actual al
-  importarse.
-
-- **Requiere reindexar.** El tipo de entidad `nota` (escala 1,0–7,0) se
-  reemplaza por `decimal`, que reconoce cualquier número con coma o punto
-  decimal y lo normaliza a punto. Una escala propia se declara en el perfil;
-  la plantilla `dominios/_generico/perfil.yaml` trae un ejemplo.
-- Imagen Docker multi-stage construida desde el wheel, con usuario sin
-  privilegios y healthcheck contra `/ready`.
-- La versión que informa la API se lee del paquete instalado.
-- Las pruebas usan un directorio temporal fuera del checkout (en Windows,
-  `%LOCALAPPDATA%\rag-extractivo\pytest`); `RAG_PYTEST_BASETEMP` lo cambia.
-
-### Corregido
-
-- **Requiere reindexar.** `12,5%` se extraía como el porcentaje `5`, lo que
-  hacía pasar la verificación de premisa a una pregunta por el 5 %.
-- Las preguntas que solicitan precios, duraciones o cantidades reconocibles ya
-  no producen `ok` si la evidencia carece del tipo de dato solicitado.
-
-### Descartado
-
-- El backend experimental SQLite FTS5 se retira antes de publicar. Aunque se
-  implementó y verificó técnicamente, en C.3 produjo un falso `ok` bloqueante
-  ante una pregunta ambigua. Qdrant queda como único backend soportado.
-  Línea base de esa comparación (banco `aqualis_sintetico@1.0.0`, 12 casos):
-
-  | Backend | Recall@3 | MRR | Falsos `ok` | Exactitud de estado | p95 |
-  |---|---:|---:|---:|---:|---:|
-  | `sqlite_fts` (descartado) | 1,000 | 1,000 | 0,125 | 0,500 | 9 ms |
-  | `qdrant_vectorial` | 1,000 | 0,750 | 0,000 | 0,583 | 22 ms |
-  | `qdrant_hibrida` | 1,000 | 0,750 | 0,000 | 0,583 | 13 ms |
-- Planes y bitácoras anteriores (`PLAN_V2.md`, `docs/ruta.md`,
-  `docs/avance.md`, `docs/arquitectura.md`), `requirements*.txt` y el
-  evaluador del golden antiguo (`rag/evaluacion.py`, `rag/metricas.py`). Los
-  reemplaza el plan V3 en `docs/plan/`.
+**Requiere reindexar** y migra la configuración sola (`config_version` 4).
 
 ### Agregado
 
-- Contratos de componentes, esquemas versionados y registry
-  (`rag.componentes`, `rag.esquemas`, `rag.registro`), conectados
-  progresivamente al pipeline; ver `docs/plan/`.
-- Protocolo `AbstentionPolicy` e implementación `layered_v1`, seleccionable
-  desde `componentes.abstention_policy`, con decisiones estructuradas y
-  validación temprana en el arranque y en `rag doctor`.
-- Frontera tipada de consulta: recuperación y selección trabajan con
-  `RetrievalCandidate`, `ChunkRecord` y `EvidenceSpan`; el verificador coteja
-  texto y offsets contra el chunk fuente antes de redactar.
-- Primer corte de `Motor.consultar() -> AssistantResult`; `/consultar` delega
-  en el motor mientras un adaptador transitorio preserva el contrato HTTP V1.
-- El flujo activo de consulta pasa al `Motor`, separado en análisis,
-  recuperación normal y dirigida, abstención, selección, verificación y
-  construcción del resultado, con diagnóstico básico por etapa.
-- `Motor.desde_configuracion()` valida la selección completa del registry y
-  centraliza la construcción de los componentes de consulta; FastAPI solo crea
-  y calienta el motor durante el arranque.
-- Diagnóstico interno versionado por consulta con backend, latencias,
-  candidatos, señales, decisión, evidencia y advertencias, excluido de la
-  respuesta pública de `AssistantResult`.
-- Fábrica `crear_app(motor)` con estado aislado por aplicación y ciclo de vida
-  para calentamiento y cierre; se elimina el pipeline HTTP heredado duplicado.
-- Plantillas y perfil de dominio inyectados en `Motor`, con perfil contextual
-  por consulta y sin lecturas relativas de plantillas durante la ejecución.
-- `config_version: 2` unifica la selección de reranker bajo
-  `componentes.reranker` y migra configuraciones anteriores.
-- Matriz de intercambio de componentes y ejecución completa del motor en
-  memoria, verificada sin importar Qdrant ni las dependencias de modelos.
-- Banco de evaluación versionado con manifiesto, hash del corpus, categorías,
-  splits `dev`/`test`, respuestas literales y evidencias con offsets; incluye
-  un conjunto sintético balanceado y mantiene separado el golden set manual.
-- Evaluación del backend activo con Recall@k, MRR, estados, abstención,
-  falsos `ok`, literalidad, offsets, longitud y latencias; `rag evaluar` puede
-  persistir el reporte y bloquea ante cualquier falso `ok`.
-- Benchmark reproducible de Qdrant denso e híbrido contra el mismo banco; los
-  artefactos incluyen hash del dataset completo, configuración,
-  índice, observaciones y calibración exclusiva de `dev`. `rag comparar`
-  valida que los resultados sean compatibles y no toma decisiones automáticas.
-- `rag servir <carpeta>` prepara automáticamente una carpeta documental en un
-  proyecto privado `.rag-extractivo/`, o completa un proyecto existente sin
-  sobrescribir su configuración. Reutiliza el índice vigente y acepta
-  `--reindexar`; `/health` y `/ready` mantienen semánticas separadas.
-- Presets `clasico`, `minimal`, `editorial` y `contraste` para el widget,
-  administrables mediante `rag widget tema`; la vista previa HTML muestra
-  estados y citas sin API. `/config` expone en lectura el preset, densidad,
-  comportamiento de citas y etiquetas que consume el widget real.
-- Web Component `<rag-extractivo-chat>` compatible con la integración anterior,
-  con atributos y eventos públicos. `rag widget exportar` genera `widget.js` y
-  un snippet escapado listo para integrar.
-- Ejemplos ejecutables para HTML, React/Vite y WordPress, más pruebas del
-  widget en Chromium para teclado, foco y ARIA, vista móvil, citas y errores
-  de red. Los fallos de transporte muestran un mensaje estable en español.
-- `config_version` en `asistente.yaml` y `motor.yaml`, con validación estricta
-  y migración de archivos sin versión.
-- `rag snapshot-config`: escribe la configuración efectiva con defaults.
-- CI en GitHub Actions: pruebas rápidas en Linux y Windows, integración con
-  modelo real y prueba del wheel en un entorno limpio.
-- Documentación: ADR, metodología de recuperación y plan V3 (`docs/plan/`).
+- **Perfiles de instalación** `light`, `medium` y `heavy` (más `bm25`, solo
+  para diagnóstico), con presupuesto de latencia, modelos y umbrales propios.
+  `rag perfil mostrar|cambiar`. Ver [ADR 0003](docs/decisiones/0003-onnx-y-perfiles.md).
+- **Modelos ONNX en CPU** sin torch: codificador e5, reranker cross-encoder y
+  lector QA extractivo (estilo SQuAD 2.0), con caché global y uso sin red.
+  `rag modelos listar|descargar|verificar|exportar`.
+- **Cascada de etapas** y política `cascada_v1` con señales explicables
+  (`s_ret`, `s_oov`, foco, `s_foco`, `s_cov`, `s_rr`, `s_qa`), salida temprana
+  sin modelos y concordancia en heavy. Ver
+  [ADR 0004](docs/decisiones/0004-cascada-lexica-y-retiro-de-guardias-regex.md).
+- **Capa léxica propia:** un único `terminos()` con stem Snowball, BM25 con ids
+  por hash e IDF en Qdrant, estadísticas del corpus legibles y TF-IDF.
+- **Multilingüe:** paquetes de idioma `es`, `en` y `pt` (stemmer, entidades
+  con palabras, patrones conversacionales, mensajes y textos del widget);
+  otros idiomas con reglas universales.
+- **Golden del cliente:** `rag golden plantilla|importar|validar|exportar`
+  (CSV, JSONL y SQuAD 2.0), con pares mínimos «mismo tema, dato ausente».
+- **Calibración** `rag calibrar [--alfa] [--aplicar]`: elige umbrales en `dev`
+  con cota de Clopper-Pearson ≤ α, verifica en `test` y distingue
+  `CALIBRADO`, `MUESTRA_INSUFICIENTE` y `SIN_UMBRAL_SEGURO`. Se aplica solo si
+  su procedencia coincide con el perfil, los modelos y el corpus indexado.
+- **Evaluación:** banco universal de regresión (90 casos en tres idiomas),
+  métricas de cobertura y riesgo, `rag benchmark --perfiles`.
+- **Operación:** `rag doctor` con acciones, `rag preguntar --diagnostico`,
+  registro de consultas opcional y `rag auditar [--desde] [--hasta]`, que
+  verifica que cada evidencia siga siendo literal.
+- **Personalidad:** 7 tonos × 18 situaciones × 5 variantes por idioma (1.890
+  plantillas con linter y neutralidad), avatar animado «Folio» que reacciona a
+  cada evento y sigue el puntero, `rag personalidad …`.
+- **Widget** responsive con ubicación configurable, citas siempre visibles
+  con el tramo marcado, `RagChat.avatar` y enlace «Código fuente».
+- **Administración:** API `/admin` y panel `/admin/panel` con token, HTTPS en
+  producción, bloqueo tras intentos fallidos y auditoría; modos `desarrollo` y
+  `produccion`.
+- **Despliegue:** imagen Docker por perfil con los modelos incluidos,
+  `rag desplegar preparar` (proyecto, índice, compose con Caddy y LEEME en el
+  idioma del proyecto) y `/ready` con el diagnóstico del proyecto.
+- CI: pruebas en Linux y Windows, navegador, build reproducible del motor del
+  avatar, wheel limpio e imagen sin red.
+
+### Cambiado
+
+- **Licencia:** AGPL-3.0-only.
+- Estructura de proyecto: `configuracion/dominio.yaml` reemplaza a
+  `dominios/<perfil>/perfil.yaml` y `categorias.yaml`; los textos pasan al
+  paquete de idioma (sobrescribibles en `idioma.yaml`); el índice vive en
+  `.rag/indice/` y el golden en `golden/`. Cualquier comando migra un proyecto
+  anterior.
+- Código por capas (`nucleo`, `configuracion`, `lenguaje`, `ingesta`,
+  `modelos`, `indice`, `consulta`, `evaluacion`, `aplicacion`, `cli`,
+  `servicio`) con una prueba que impide dependencias hacia capas superiores;
+  CLI con un comando por clase.
+- Las entidades con palabras se generan desde el paquete y su `valor_norm` ya
+  no depende del idioma (`2024-03-15`, `6_mes`). Nuevas entidades universales:
+  fechas numéricas y montos con moneda. El tipo `nota` se reemplaza por
+  `decimal`.
+- En `ok`, la respuesta muestra primero la oración que responde; en
+  `relacionado` nunca se presenta un tramo como respuesta.
+
+### Eliminado
+
+- Las guardias regex por tipo de pregunta y la lista de «palabras
+  generales»: las reemplazan `s_foco` y `s_oov`.
+- torch y sentence-transformers en producción (quedan en el extra de
+  desarrollo `[exportar]`).
+- La política `layered_v1` (los proyectos migran a `cascada_v1`).
+- Planes y bitácoras anteriores, `requirements*.txt` y el evaluador antiguo.
+
+### Descartado tras medirlo
+
+- Backend SQLite FTS5: produjo un falso `ok` ante una pregunta ambigua.
+  Qdrant queda como único backend.
+- Chunking por cohesión léxica (`texttiling_v1`): mismos estados que cortar
+  por sección y más falsos `ok` que el chunker actual.
+- `acuerdo` (denso frente a BM25) como señal de la política: sin efecto
+  medible y +4,6 ms de p95.
+
+### Corregido
+
+- El wheel no incluía los perfiles (`rag/recursos/perfiles/`): una
+  instalación normal fallaba con «perfil desconocido».
+- `12,5%` se extraía como el porcentaje `5`.
+- La selección de oraciones perdía el texto anterior a un punto no seguido de
+  espacio (por ejemplo, «1.5»).
+- Los pasajes se indexaban sin el prefijo `passage: ` que exige e5.
+- Los archivos de despliegue generados en Windows salían con CRLF.
 
 ## [0.7.0]
 

@@ -20,5 +20,7 @@ son templates configurados y probados.
 - Las respuestas son auditables mediante documento, sección y offsets.
 - El sistema debe abstenerse o pedir aclaración con mayor frecuencia.
 - Resúmenes libres y síntesis abiertas quedan fuera de alcance.
-- Mejorar la interacción depende de planes, slots, estados y templates.
+- La interacción mejora con estados (`ok`, `relacionado`, `sin_respuesta`)
+  y con tonos: plantillas fijas, revisadas por un linter, que nunca afirman
+  datos (ver `docs/guia/personalidad.md`).
 

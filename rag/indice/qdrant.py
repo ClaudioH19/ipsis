@@ -29,8 +29,8 @@ class ColeccionQdrant:
 
 def construir_filtro_entidad(valor_norm: str):
     """`models.Filter` que restringe la búsqueda a chunks cuyo campo
-    `entidades` contiene una entidad con este `valor_norm` exacto (Etapa C,
-    punto 1: recuperación dirigida para la capa de premisa cuando una
+    `entidades` contiene una entidad con este `valor_norm` exacto
+    (recuperación dirigida para la capa de premisa cuando una
     entidad de la pregunta existe en el corpus pero no llegó al top-k
     recuperado). Sintaxis verificada contra Qdrant real (local y servidor):
     `"entidades[].valor_norm"` -- la variante sin `[]` NO encuentra nada
@@ -50,7 +50,7 @@ class ResultadoBusqueda:
     latencia_encode_ms: float
     latencia_qdrant_ms: float
     # Payload completo de cada punto, en el MISMO orden que `ids_ordenados`/
-    # `scores` (Etapa A/B, 2026-09-19): Qdrant ya devuelve el payload con
+    # `scores`: Qdrant ya devuelve el payload con
     # cada resultado por defecto (`with_payload=True` es el default de
     # `query_points`, verificado) -- no hace falta mantener una lista
     # `payloads` externa indexada por posición para recuperar el chunk_id/
@@ -73,7 +73,7 @@ def buscar(col: ColeccionQdrant, pregunta: str, modo: str, limit: int,
     `models.Filter` de Qdrant real (p.ej. filtro duro por `categoria`),
     resuelto por Qdrant, no en Python.
 
-    `vector_precomputado` (opcional, Etapa A / servicio): si se entrega, se
+    `vector_precomputado` (opcional): si se entrega, se
     usa tal cual y se salta la codificación (`latencia_encode_ms` queda en
     0.0) -- permite que un llamador que necesita dos consultas para la MISMA
     pregunta (p.ej. el servicio: una vectorial para la señal de abstención y
@@ -164,7 +164,7 @@ def paquete_del_indice(est: EstadisticasLexicas):
 
 def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_version: int = 1,
                                  sufijo: str | None = None) -> str:
-    """Nombre de colección exigido por la sección 3.2 del molde:
+    """Nombre de colección versionado:
     ``{{COLECCION}}_{{MODELO}}_v{{N}}``. Si cambia el modelo de embeddings,
     se crea una colección nueva (nunca se mezclan vectores de modelos
     distintos en la misma colección)."""
@@ -180,7 +180,7 @@ def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_versi
 def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None,
                           url_servidor: str | None = None):
     """Único punto donde se decide LOCAL (on-disk) vs. SERVIDOR (docker
-    compose) para el cliente Qdrant (Etapa 1, tarea 2). La elección es de
+    compose) para el cliente Qdrant. La elección es de
     configuración, nunca de código duplicado.
 
     Prioridad: parámetro explícito > variable de entorno > `qdrant_path`
@@ -211,9 +211,9 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
                     client=None, modo: str | None = None, url_servidor: str | None = None,
                     paquete=None):
     """Codifica los textos con el codificador ONNX de ``modelo_nombre`` (con el
-    prefijo de pasaje que exige el modelo, p. ej. ``passage: `` en E5) e
+    prefijo de pasaje que exige el modelo, p. ej. ``passage: `` en e5) e
     indexa en una colección Qdrant real. Crea la colección con vector denso COSENO + vector sparse BM25
-    (``Modifier.IDF``) más los índices de payload de la sección 3.2, y nombra
+    (``Modifier.IDF``) más los índices de payload de filtrado, y nombra
     la colección como ``{coleccion}_{modelo}_v{n}`` para no mezclar nunca
     vectores de modelos distintos.
 
@@ -234,7 +234,7 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
 
     # El cliente Qdrant on-disk local toma un lock exclusivo de la carpeta de
     # almacenamiento: para poder crear/consultar muchas colecciones en la
-    # misma corrida (grid de E2/E3) hay que REUSAR un único cliente por
+    # misma corrida (p. ej. el benchmark de perfiles) hay que REUSAR un único cliente por
     # `qdrant_path`, nunca abrir uno nuevo por colección.
     if client is None:
         client = crear_cliente_qdrant(qdrant_path=qdrant_path, modo=modo, url_servidor=url_servidor)

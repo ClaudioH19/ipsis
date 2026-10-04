@@ -1,108 +1,107 @@
-# Banco de evaluación
+# Banco de evaluación y métricas
 
-## Propósito
+## 1. Propósito
 
-Separar la calidad esperada del comportamiento actual del sistema. La
-caracterización detecta cambios; el banco normativo permite afirmar si esos
-cambios son mejoras o regresiones.
+Separar la calidad esperada del comportamiento actual. La caracterización
+detecta cambios; un banco normativo dice si esos cambios son mejoras o
+regresiones, y el golden del cliente permite [calibrar](calibracion.md).
 
-## Formato versionado
+## 2. Alcance y no-alcance
 
-Cada banco tiene un `manifiesto.json` y un archivo JSONL de casos. El esquema
-vigente es `1`, validado por `rag.evaluacion.banco`.
+- **Alcance:** formato versionado de bancos, métricas de cobertura y riesgo,
+  `rag evaluar`, `rag benchmark` y `rag comparar`.
+- **No-alcance:** elegir umbrales (lo hace `rag calibrar`) o cambiar defaults
+  automáticamente.
 
-El manifiesto identifica:
+## 3. Entradas y salidas versionadas
 
-- ID, versión, tipo (`sintetico` o `manual`) y estado del dataset;
-- archivo de casos;
-- archivos del corpus y su SHA-256 conjunto;
-- categorías obligatorias.
+Cada banco es un `manifiesto.json` (esquema `1`: id, versión, tipo, estado,
+`uso`, corpus con su SHA-256 conjunto y categorías) y un JSONL de casos. Cada
+caso declara `id`, `split`, `categoria`, `pregunta`, `estado_esperado`,
+`respondible` y, si es respondible, la `respuesta_literal` y la evidencia con
+`doc_id` y offsets exactos.
 
-Cada caso declara:
+| Banco | Dónde | Uso |
+|---|---|---|
+| Sintético `aqualis_sintetico@1.1.0` | `tests/datos/banco/` | 27 casos (56% no respondibles), regresión y caracterización |
+| Universal | `tests/datos/banco_universal/{es,en,pt}` | 90 casos (30 por idioma), `uso: regresion`: no se puede calibrar con él |
+| Golden del cliente | `golden/banco/` del proyecto | el único que calibra (ver [guía](../guia/golden.md)) |
 
-- `id`, `dataset_version`, `split`, `categoria` y `pregunta`;
-- `estado_esperado` y `respondible`;
-- para preguntas respondibles, `respuesta_literal` y una o más evidencias con
-  `doc_id`, texto y offsets exactos;
-- notas opcionales que expliquen casos adversariales.
+## 4. Algoritmo y desempates
 
-## Categorías
+Categorías: `exacta`, `parafrasis`, `sin_respuesta`, `premisa_falsa`,
+`ambigua` y `conversacional`. Una `sin_respuesta` o `premisa_falsa` puede
+llevar el subtipo `trampa_mismo_tema` y su `par` (la respondible del mismo
+tema): es el par mínimo que mide si el sistema distingue «se parece» de
+«responde». El estado esperado distingue además `fuera_dominio`.
 
-- `exacta`: usa términos cercanos al documento.
-- `parafrasis`: expresa el mismo hecho con vocabulario diferente.
-- `sin_respuesta`: el corpus no contiene el dato o está fuera del dominio.
-- `premisa_falsa`: la pregunta presupone una entidad o valor inexistente.
-- `ambigua`: falta información para elegir una respuesta única.
-- `conversacional`: saludo, agradecimiento u otra interacción no documental.
+Métricas (`rag/evaluacion/metricas.py`), globales, por grupo y por idioma:
 
-## Separación de datos
+- cobertura directa y relacionada sobre las respondibles;
+- recall de abstención sobre las no respondibles;
+- **falsos `ok`:** no respondible que termina en respuesta directa;
+- directas sin la respuesta literal;
+- riesgo de las aceptadas `x/n` con su cota de Clopper-Pearson;
+- Recall@k y MRR sobre la evidencia, exactitud de offsets;
+- latencia p50/p95, total y por etapa.
 
-`dev` puede utilizarse para calibrar. `test` permanece cerrado hasta comparar
-configuraciones. Cada categoría del conjunto sintético tiene casos en ambos
-splits para impedir que los únicos ejemplos medidos sean los usados al ajustar.
+Un falso `ok` tiene prioridad sobre el recall: recuperar más evidencia no
+compensa afirmar algo que el corpus no respalda. `rag evaluar` sale con ≠ 0
+si encuentra alguno.
 
-Los datos se mantienen en dos ubicaciones distintas:
+`rag benchmark --banco … --perfiles bm25,light,medium,heavy` crea un proyecto
+temporal por perfil y banco, evalúa con el motor caliente y escribe
+`benchmark-perfiles.{json,md}` y un artefacto por perfil para `rag comparar`.
+Sale con ≠ 0 si un perfil excede su presupuesto o, con un banco de
+evaluación, da falsos `ok`. `--solo-latencia` mide p50/p95 por etapa.
 
-- `tests/datos/banco/`: corpus ficticio, reproducible y versionado;
-- `golden/banco/` del proyecto: conjunto manual de 30–50 preguntas de un corpus real (ver `docs/guia/golden.md`).
+`rag comparar` exige el mismo hash de banco, versión y `k`.
 
-El conjunto manual no se rellena automáticamente. Requiere revisión humana y
-no debe incorporar documentos sensibles al repositorio.
+## 5. Supuestos
 
-## Estado
+Los casos y sus offsets fueron revisados por una persona. El banco sintético
+y el universal son ficticios: no contienen datos de una institución.
 
-El formato y el banco sintético `aqualis_sintetico@1.0.0` están activos. Su
-línea base comparativa está resumida en `CHANGELOG.md`.
+## 6. Invariantes
 
-## Métricas de C.2
+- `test` nunca elige umbrales.
+- Un banco con `uso: regresion` no se acepta para calibrar.
+- Cada artefacto guarda el hash del banco, la configuración efectiva y la
+  identidad del índice.
 
-`rag evaluar --banco <manifiesto> [--salida reporte.json]` ejecuta el backend
-activo sin reindexar y calcula:
+## 7. Parámetros y defaults
 
-- Recall@k y MRR sobre la evidencia esperada;
-- tasa de falsos `ok`, que bloquea el comando si es mayor que cero;
-- precisión de abstención y distribución de estados;
-- exactitud del estado esperado, de la respuesta literal y de los offsets;
-- proporción de respuestas sobre el límite de longitud;
-- latencia media, p95 y promedio por etapa del diagnóstico;
-- los indicadores principales desglosados por backend y categoría.
+Split 50/50 estratificado por tipo, ordenado por hash (determinista).
 
-Un falso `ok` es una pregunta marcada no respondible que termina en
-`respuesta_directa` o `respuesta_parcial`. Esta guardia tiene prioridad sobre
-Recall: recuperar más evidencia no compensa afirmar algo que el corpus no
-respalda.
+## 8. Complejidad y recursos
 
-## Comparación y calibración de C.3
+Lineal en los casos; el costo es el de las consultas del perfil.
 
-Para producir los tres artefactos y la tabla comparable desde un solo comando:
+## 9. Fallos y fallback
 
-```bash
-rag benchmark \
-  --banco tests/datos/banco/manifiesto.json \
-  --salida reportes/aqualis_sintetico_v1
-```
+Corpus del banco cambiado: el hash no coincide y el comando lo dice
+(`rag golden validar` para el golden).
 
-El benchmark inicializa un proyecto temporal, carga el corpus declarado una
-vez y ejecuta Qdrant denso y Qdrant híbrido. Cada JSON conserva:
+## 10. Seguridad y privacidad
 
-- hash del banco completo, versión e identidad del dataset;
-- snapshot y hash de la configuración efectiva;
-- manifiesto o identidad del índice;
-- versión de la señal de confianza y calibración calculada solo con `dev`;
-- reporte agregado y observaciones por caso.
+El golden del cliente queda en su proyecto; el repositorio no distribuye
+corpus, perfiles ni métricas de una institución concreta.
 
-`test` nunca participa en la selección del umbral. La calibración es una
-recomendación registrada, no modifica automáticamente `motor.yaml`. Para
-comparar artefactos existentes sin repetir consultas:
+## 11. Pruebas técnicas
 
-```bash
-rag comparar \
-  reportes/aqualis_sintetico_v1/qdrant_vectorial.json \
-  reportes/aqualis_sintetico_v1/qdrant_hibrida.json \
-  --salida reportes/aqualis_sintetico_v1/comparacion.json
-```
+`tests/evaluacion/` y la prueba lenta del banco universal, que falla si
+aparece un falso `ok` nuevo respecto de su línea base.
 
-El comparador exige igual hash, versión y `k`, y no admite backends repetidos.
-El informe deja explícitamente vacía la lista `decisiones`: un banco sintético
-pequeño permite detectar defectos y verificar el proceso, no escoger por sí
-solo el backend predeterminado ni publicar umbrales.
+## 12. Limitaciones
+
+Los bancos incluidos son chicos: sirven para detectar defectos y verificar el
+proceso, no para certificar un perfil ni elegir defaults por sí solos.
+
+## 13. Referencias y procedencia
+
+Formato de exportación compatible con SQuAD 2.0 (`rag golden exportar
+--formato squad2`).
+
+## 14. Estado
+
+Estable.

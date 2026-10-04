@@ -68,7 +68,7 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `rag servir [carpeta] [--host H] [--port P] [--reindexar] [--modo produccion\|desarrollo]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.rag-extractivo/`. `--modo`: ver [instalacion.md](instalacion.md); en desarrollo, sin `RAG_ADMIN_TOKEN`, imprime un token temporal |
+| `rag servir [carpeta] [--host H] [--port P] [--reindexar] [--modo produccion\|desarrollo]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.rag-extractivo/`. `--modo`: ver [despliegue.md](despliegue.md#modos-de-ejecución-desarrollo-y-producción); en desarrollo, sin `RAG_ADMIN_TOKEN`, imprime un token temporal |
 | `rag preguntar "<pregunta>" [--url URL] [--timeout S]` | Pregunta al servicio en marcha |
 | `rag preguntar "<pregunta>" --diagnostico` | Ejecuta el motor localmente, sin servicio, y muestra etapas con su latencia, señales, términos foco, la regla que decidió, el tramo exacto, el tono y las plantillas usadas. En modo Qdrant local, detén `rag servir` antes |
 
@@ -133,7 +133,7 @@ Detalle en [web.md](web.md).
 
 | Comando | Qué hace |
 |---|---|
-| `rag desplegar preparar [--destino D] [--dominio DOM] [--wheel W] [--forzar]` | Genera en `dist/` todo lo necesario para un VPS: proyecto, índice, `Dockerfile`, `docker-compose.yml` con Caddy opcional y `LEEME_despliegue.md`. Ver [instalacion.md](instalacion.md) |
+| `rag desplegar preparar [--destino D] [--dominio DOM] [--wheel W] [--forzar]` | Genera en `dist/` todo lo necesario para un VPS: proyecto, índice, `Dockerfile`, `docker-compose.yml` con Caddy opcional y `LEEME_despliegue.md`. Ver [despliegue.md](despliegue.md) |
 
 ## Variables de entorno
 
@@ -143,7 +143,7 @@ Detalle en [web.md](web.md).
 | `HF_HUB_OFFLINE=1` | Nunca usa la red |
 | `RAG_HILOS_ONNX` | Hilos de onnxruntime |
 | `QDRANT_MODO`, `QDRANT_URL` | Qdrant `local` o `servidor` |
-| `RAG_MODO`, `RAG_ADMIN_TOKEN`, `RAG_PROXY_CONFIABLE`, `RAG_ADMIN_IPS`, `RAG_DOCS`, `RAG_DEMO`, `RAG_URL_FUENTE` | Modo de ejecución y `/admin`; ver [instalacion.md](instalacion.md) |
+| `RAG_MODO`, `RAG_ADMIN_TOKEN`, `RAG_PROXY_CONFIABLE`, `RAG_ADMIN_IPS`, `RAG_DOCS`, `RAG_DEMO`, `RAG_URL_FUENTE` | Modo de ejecución y `/admin`; ver [despliegue.md](despliegue.md) |
 
 ## Problemas frecuentes
 

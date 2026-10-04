@@ -2,7 +2,7 @@
 
 La integración tiene dos partes:
 - el **servicio**, que corre en tu servidor o VPS (ver
-  [instalacion.md](instalacion.md));
+  [despliegue.md](despliegue.md));
 - el **widget**, un solo archivo `widget.js` sin dependencias que el
   servicio publica en `/widget.js`.
 

@@ -1,8 +1,8 @@
 """Codificador denso (embeddings) sobre ONNX.
 
-Aplica los prefijos que el modelo exige (E5: ``query: `` y ``passage: ``),
+Aplica los prefijos que el modelo exige (e5: ``query: `` y ``passage: ``),
 promedia los estados ocultos con la máscara de atención y normaliza a norma
-1 (el pooling que usa E5).
+1 (el pooling que usa e5).
 """
 from __future__ import annotations
 

@@ -137,7 +137,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
       2. Si no, ancla en la unidad de mayor ``s_lex``.
     El tramo empieza en el ancla y suma las unidades siguientes mientras
     quepan en ``limite_caracteres``: la oración que responde va primero y el
-    contexto después, nunca antes (ver arquitectura.md §2.1).
+    contexto después, nunca antes (ver docs/metodologia/politica.md).
 
     ``centrada=True`` es para el lector QA, no para mostrar: agrega vecinos a
     ambos lados (primero el de mayor score; en empate, el de la izquierda),

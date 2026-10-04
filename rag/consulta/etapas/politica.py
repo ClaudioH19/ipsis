@@ -152,7 +152,7 @@ def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
 
 
 class CascadaV1:
-    """Decide con todas las señales de la cascada (arquitectura.md §2.1).
+    """Decide con todas las señales de la cascada (docs/metodologia/politica.md).
 
     Reglas en orden; la primera que se cumple decide:
 

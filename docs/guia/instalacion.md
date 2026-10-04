@@ -25,7 +25,7 @@ de comandos están en [uso.md](uso.md).
 Desde GitHub:
 
 ```bash
-pip install "rag-extractivo @ git+https://github.com/USUARIO/rag-extractivo.git"
+pip install "rag-extractivo @ git+https://github.com/Claudiobiovision/rag-extractivo.git"
 ```
 
 Para desarrollar desde un clon:
@@ -99,140 +99,9 @@ También sirven las variables `QDRANT_MODO` y `QDRANT_URL`.
 ## Servidor propio (VPS)
 
 El proyecto está pensado para self-hosting: tu servicio, tus documentos y tu
-dominio.
-
-### 1. Servicio en loopback
-
-`rag servir` escucha en `127.0.0.1:8000` por defecto. Déjalo así y pon un
-proxy con HTTPS delante. Ejemplo con systemd:
-
-```ini
-# /etc/systemd/system/rag-asistente.service
-[Unit]
-Description=rag-extractivo
-After=network.target
-
-[Service]
-User=rag
-WorkingDirectory=/srv/mi-asistente
-Environment=HF_HUB_OFFLINE=1
-ExecStart=/srv/venv/bin/rag servir --host 127.0.0.1 --port 8000
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### 2. HTTPS con Caddy
-
-Caddy obtiene y renueva el certificado solo:
-
-```caddyfile
-asistente.tu-dominio.cl {
-    reverse_proxy 127.0.0.1:8000
-}
-```
-
-Luego, en el proyecto:
-
-```bash
-rag configurar cors_origenes=https://www.tu-sitio.cl
-rag configurar claves_widget=clave-publica-del-sitio   # opcional
-```
-
-### 3. Docker
-
-Una imagen por perfil, con los modelos incluidos; en ejecución no usa la red:
-
-```bash
-docker build --build-arg PERFIL=light -t rag-extractivo:light .
-```
-
-- Instala el mismo wheel que se distribuye (con `avatar.js`, avatares y
-  tonos) y descarga los modelos del perfil al construir (el único paso con
-  red).
-- Corre como usuario no root (uid 10001), con `HF_HUB_OFFLINE=1` y
-  `RAG_MODO=produccion`.
-- Sin `RAG_ADMIN_TOKEN`, `/admin` no existe; defínelo al ejecutar.
-- Healthcheck a `/ready`, que da 503 si algo bloquea (con la acción en
-  `proyecto.bloqueante`). La imagen sola no trae índice: monta tu proyecto
-  sobre `/app`.
-
-### 4. `rag desplegar preparar`
-
-Genera una carpeta lista para copiar al VPS:
-
-```bash
-rag desplegar preparar --dominio asistente.tu-dominio.cl
-```
-
-`dist/` incluye:
-- la configuración (con `personalidad.yaml`, `estilos.yaml`, la calibración
-  y los avatares importados), los documentos y el índice;
-- `Dockerfile`, `docker-compose.yml` (con un Caddy opcional, perfil `https`,
-  ya declarado como proxy confiable), `Caddyfile` y `.env.ejemplo`;
-- `LEEME_despliegue.md` en el idioma del proyecto, con el snippet del widget
-  y cómo activar `/admin`.
-
-Los registros de consultas y los secretos no se copian.
-
-- **Versión exacta:** sin `--wheel`, la imagen instala la versión actual del
-  repositorio público. Para fijar la tuya, construye el wheel
-  (`python -m pip wheel . --no-deps`) y pásalo con `--wheel`.
-- **Regenerar:** `--forzar` reemplaza una carpeta preparada antes. Nunca
-  borra una carpeta que no haya generado este comando.
-
-En el servidor:
-
-```bash
-cp .env.ejemplo .env
-sudo chown -R 10001:10001 configuracion .rag
-docker compose --profile https up -d --build
-```
-
-## Modos de ejecución: desarrollo y producción
-
-El servicio corre en uno de dos modos, con `rag servir --modo` o
-`RAG_MODO`. **Por defecto es `produccion`.**
-
-| Aspecto | `desarrollo` | `produccion` |
-|---|---|---|
-| Panel `/admin` por HTTP plano | permitido desde cualquier IP, con aviso | solo desde la propia máquina; desde fuera exige HTTPS |
-| Token de `/admin` | obligatorio; si no defines `RAG_ADMIN_TOKEN`, se imprime uno temporal al arrancar | obligatorio; sin `RAG_ADMIN_TOKEN` el panel no existe |
-| Encabezados del proxy | se aceptan de la propia máquina | solo del proxy en `RAG_PROXY_CONFIABLE` |
-| `/docs` (OpenAPI) | habilitado | deshabilitado salvo `RAG_DOCS=1` |
-| Archivos del widget | sin caché, para ver cambios al recargar | caché larga con versión |
-| Errores 500 | con detalle | solo un id; el detalle va al log |
-
-Usa `desarrollo` en tu máquina o para probar en un VPS sin certificado.
-Usa `produccion` en cualquier servicio público. El modo no cambia las
-respuestas del asistente.
-
-Variables del modo y del panel `/admin`:
-
-| Variable | Efecto |
-|---|---|
-| `RAG_ADMIN_TOKEN` | Activa `/admin`; al menos 32 caracteres. Genera uno con `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
-| `RAG_PROXY_CONFIABLE` | IP del proxy (por ejemplo, Caddy) del que se aceptan `X-Forwarded-*` |
-| `RAG_ADMIN_IPS` | Opcional: IPs permitidas para `/admin` |
-| `RAG_MODO` | `produccion` (por defecto) o `desarrollo`; también `rag servir --modo` |
-| `RAG_DOCS=1`, `RAG_DEMO=1` | `/docs` y `/widget/demo.html` también en producción |
-| `RAG_URL_FUENTE` | URL de tu código fuente (AGPL §13) a la que redirige `GET /fuente`. Por defecto, este repositorio |
-
-Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
-queda en `.rag/registros/admin.jsonl`: fecha, IP, acción y claves, nunca el
-token. `rag doctor` revisa el modo: avisa en desarrollo y da error con un
-token corto.
-
-En un VPS con Caddy delante:
-
-```bash
-export RAG_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
-export RAG_PROXY_CONFIABLE=127.0.0.1      # Caddy en la misma máquina
-rag servir --modo produccion
-```
-
-Para rotar el token, cámbialo y reinicia el servicio.
+dominio. El paso a paso (Caddy con HTTPS, Docker, `rag desplegar preparar`,
+modos de desarrollo y producción y el panel `/admin`) está en
+[despliegue.md](despliegue.md).
 
 ## Licencia
 
