@@ -34,7 +34,7 @@ a un caso de uso de `rag/aplicacion/`.
 | modelos | ★ `rag modelos verificar` | Archivos completos + una inferencia de prueba por modelo |
 | modelos | ★ `rag modelos exportar <id_hf> [--int8]` | Desarrollo, extra `[exportar]`: convierte a ONNX y cuantiza |
 | corpus | `rag cargar <archivo\|carpeta>` | Copia a `documentos/` y cataloga |
-| corpus | `rag indexar [--reindexar]` | Parsea, fragmenta, calcula `EstadisticasLexicas`, codifica e indexa. Escribe el manifiesto |
+| corpus | `rag indexar` | Reconstruye siempre: parsea, fragmenta, calcula `EstadisticasLexicas`, codifica e indexa. Escribe el manifiesto |
 | consulta | `rag preguntar "<texto>" [--diagnostico]` | Consulta local; con diagnóstico muestra etapas, latencias, señales, términos foco y regla |
 | consulta | `rag servir [carpeta] [--reindexar]` | API HTTP + widget |
 | golden | ★ `rag golden plantilla [--n 40] [--force]` | Genera `golden/golden.csv` y `golden/LEEME.txt` (§3) |
@@ -45,6 +45,10 @@ a un caso de uso de `rag/aplicacion/`.
 | evaluacion | ★ `rag calibrar [--alfa 0.05] [--aplicar]` | Umbrales con control de riesgo (§4) |
 | evaluacion | `rag benchmark --banco M [--banco M2…] [--perfiles bm25,light,medium,heavy] [--experimentos] [--solo-latencia]` | Compara perfiles con los mismos bancos: seguridad, cobertura, latencia y costo (`golden/reportes/benchmark-perfiles.{json,md}`). Sale ≠ 0 si un perfil excede su presupuesto p95 o, con el golden del cliente, da falsos ok (la guardia de `rag evaluar`) |
 | evaluacion | `rag comparar <a.json> <b.json>` | Compara dos reportes |
+| personalidad | ★ `rag personalidad mostrar\|validar` | Tono y avatar activos; valida `personalidad.yaml` |
+| personalidad | ★ `rag personalidad tono listar\|aplicar <tono>\|probar` | 7 tonos × 18 situaciones × 5 variantes; `probar` imprime las variantes |
+| personalidad | ★ `rag personalidad avatar listar\|importar\|aplicar\|eventos\|asignar\|colores` | Avatar del widget: definición, colores y mapa evento → animación |
+| web | ★ `rag widget snippet` | Etiqueta `<script>` o Web Component según `estilos.yaml` |
 | operacion | `rag doctor` | Configuración, perfil, modelos, índice, calibración, idioma, golden y CORS |
 | operacion | ★ `rag auditar [--desde fecha]` | Verifica que cada evidencia del registro de consultas es literal del corpus vigente y resume estados y reglas |
 | operacion | ★ `rag desplegar preparar [--salida dist/]` | Empaqueta configuración, calibración e índice; genera `Dockerfile` y `docker-compose.yml` del perfil desde `rag/recursos/despliegue/` |
