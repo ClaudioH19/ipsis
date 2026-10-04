@@ -56,6 +56,7 @@ class ComandoAuditar(Comando):
         print(f"Registro: {r.ruta} ({r.consultas} consultas)")
         print("Estados: " + (", ".join(f"{k} {v}" for k, v in r.por_estado.most_common()) or "—"))
         print("Reglas:  " + (", ".join(f"{k} {v}" for k, v in r.por_regla.most_common()) or "—"))
+        print("Tonos:   " + (", ".join(f"{k} {v}" for k, v in r.por_tono.most_common()) or "—"))
         print(f"Evidencias verificadas contra el corpus vigente: {r.evidencias}, con problemas: {len(r.problemas)}")
         for p in r.problemas:
             print(f"  línea {p.linea}: {p.doc_id} offsets {p.offset_inicio}-{p.offset_fin}: {p.motivo}: {p.detalle}")

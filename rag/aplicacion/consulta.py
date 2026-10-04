@@ -1,7 +1,7 @@
 """Casos de uso de consulta: construir el motor desde la configuración."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -164,6 +164,8 @@ class DiagnosticoConsulta:
     evidencias: list[dict[str, Any]]
     advertencias: list[str]
     salto_modelos: bool = False
+    tono: str | None = None
+    plantillas: list[str] = field(default_factory=list)  # <tono>.<situación>.<n>
 
     @property
     def total_ms(self) -> int:
@@ -204,6 +206,8 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
                     for e in d.get("evidencias") or []],
         advertencias=list(d.get("advertencias") or []),
         salto_modelos=bool(d.get("salto_modelos")),
+        tono=d.get("tono"),
+        plantillas=list(d.get("plantillas") or []),
     )
 
 

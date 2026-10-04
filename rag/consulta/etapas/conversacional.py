@@ -9,7 +9,8 @@ import functools
 import re
 
 from rag.consulta.etapas.base import _Etapa
-from rag.consulta.etapas.redaccion import _cargar_plantillas, _elegir_variante
+from rag.consulta.etapas.redaccion import _cargar_plantillas
+from rag.consulta.variantes import elegir
 
 # ==========================================================================
 # CONVERSACIONAL (Etapa C, punto 4): saludos y charla trivial se detectan
@@ -69,7 +70,7 @@ def respuesta_conversacional(
     opciones = (plantillas or _cargar_plantillas())["conversacional"]["respuestas"][categoria]
     if isinstance(opciones, str):
         return opciones
-    return _elegir_variante(opciones, pregunta)
+    return elegir(categoria, list(opciones), pregunta)
 
 
 class EtapaConversacional(_Etapa):

@@ -232,7 +232,10 @@ Content-Type: application/json
 ```
 
 La respuesta contiene el estado, el texto extractivo, la confianza, la
-latencia y los fragmentos citados. También están disponibles `/health`,
+latencia y los fragmentos citados. Cuando el lector marcó un tramo, trae
+`respuesta_exacta`. En las respuestas conversacionales trae
+`categoria_conversacional`: `saludo`, `agradecimiento`, `despedida` o
+`capacidad`. También están disponibles `/health`,
 `/ready`, `/config`, `/estilos.css`, `/widget.js` y `/widget/demo.html`.
 
 ## Desarrollo y verificación

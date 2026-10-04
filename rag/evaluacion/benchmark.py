@@ -68,6 +68,7 @@ class ResultadoPerfil(BaseModel):
     modelos: list[ModeloCargado] = Field(default_factory=list)
     cascada: dict = Field(default_factory=dict)
     tiempo_indexado_s: float | None = None  # costo único, fuera de la latencia por consulta
+    tono: str | None = None
     costo_extra: dict | None = None  # p. ej. búsquedas adicionales de una variante
 
 

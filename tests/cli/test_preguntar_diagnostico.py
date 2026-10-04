@@ -17,6 +17,8 @@ DIAGNOSTICO = {
     "evidencias": [{"doc_id": "manual", "chunk_id": "manual__c0000", "texto": "El filtro se cambia cada 6 meses.",
                     "offset_inicio": 14, "offset_fin": 47}],
     "advertencias": [],
+    "tono": "cordial",
+    "plantillas": ["cordial.apertura.2"],
     "contrato_http": {"estado": "ok", "respuesta": "El filtro se cambia cada 6 meses.",
                       "respuesta_exacta": {"chunk_id": "manual__c0000", "texto": "6 meses",
                                            "offset_inicio": 39, "offset_fin": 46}},
@@ -68,6 +70,7 @@ def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
     assert "Términos que no están en el corpus: xilofon" in salida
     assert "Tramo exacto: «6 meses» (manual__c0000, offsets 39-46)" in salida
     assert "Evidencia: manual offsets 14-47" in salida
+    assert "Tono: cordial; plantillas: cordial.apertura.2" in salida
     assert motor.llamadas[0] == "calentar" and motor.llamadas[-1] == "cerrar"  # latencias sin carga de modelos
 
 

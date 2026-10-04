@@ -187,6 +187,13 @@ El tono **solo enmarca**: el texto del documento va literal y las citas,
 debajo. Cambiar de tono no cambia el estado de la respuesta, ni pide
 reindexar ni recalibrar.
 
+**Variedad sin perder reproducibilidad.**
+- En una conversación, la variante se elige por sesión, turno y situación.
+  No repite la misma frase en turnos seguidos de una sesión.
+- La misma sesión y el mismo turno dan siempre el mismo texto.
+- Cada variante usada queda como `plantilla_id` (`cordial.sin_respuesta.3`)
+  en `rag preguntar --diagnostico` y en el registro de consultas.
+
 Para cambiar textos propios del proyecto, sin tocar el paquete, usa
 `configuracion/personalidad.yaml`:
 
@@ -286,7 +293,8 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 - los términos foco encontrados y ausentes en la oración evaluada, y los
   términos de la pregunta que no están en el corpus;
 - el tramo exacto que marcó el lector, con sus offsets;
-- las evidencias.
+- las evidencias;
+- el tono y los `plantilla_id` usados.
 
 En modo Qdrant local hay que detener `rag servir` antes, porque Qdrant
 bloquea la carpeta del índice.
@@ -302,13 +310,15 @@ rag auditar
 ```
 
 - **Qué guarda:** la pregunta, el estado, la regla, el motivo, el perfil, las
-  señales de la política, las evidencias (documento, offsets y texto) y el
-  tramo exacto. No guarda la sesión ni la IP.
+  señales de la política, el tono y los `plantilla_id` usados, las
+  evidencias (documento, offsets y texto) y el tramo exacto. No guarda la
+  sesión ni la IP.
 - **Quién escribe:** solo `/consultar` del servicio. `rag preguntar
   --diagnostico`, `rag evaluar` y `rag benchmark` no escriben. Si escribir
   falla, la respuesta no se ve afectada; queda un aviso en el log del
   servicio.
-- **Qué revisa `rag auditar`:** cuenta las consultas por estado y por regla,
+- **Qué revisa `rag auditar`:** cuenta las consultas por estado, por regla y
+  por tono,
   y comprueba que el texto de cada evidencia y de cada tramo siga en esos
   offsets del corpus vigente.
   - Problemas posibles: `alterada`, `tramo_alterado`, `documento_ausente`

@@ -120,6 +120,7 @@ def evaluar_backend_activo(
         indice=indice,
         reporte=reporte,
         observaciones=observaciones,
+        tono=(motor.plantillas or {}).get("tono"),
     )
 
 

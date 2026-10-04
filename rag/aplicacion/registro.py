@@ -46,6 +46,8 @@ def entrada_de_registro(pregunta: str, resultado) -> dict[str, Any]:
         "motivo": resultado.motivo,
         "perfil": d.get("perfil"),
         "senales": d.get("senales_politica") or {},
+        "tono": d.get("tono"),
+        "plantillas": list(d.get("plantillas") or []),
         "evidencias": evidencias,
         "respuesta_exacta": exacta,
     }
@@ -89,6 +91,7 @@ class ReporteAuditoria:
     consultas: int = 0
     por_estado: Counter = field(default_factory=Counter)
     por_regla: Counter = field(default_factory=Counter)
+    por_tono: Counter = field(default_factory=Counter)
     evidencias: int = 0
     problemas: list[ProblemaEvidencia] = field(default_factory=list)
     lineas_invalidas: list[int] = field(default_factory=list)
@@ -142,6 +145,7 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> ReporteAudi
         reporte.consultas += 1
         reporte.por_estado[entrada.get("estado") or "?"] += 1
         reporte.por_regla[entrada.get("regla") or "—"] += 1
+        reporte.por_tono[entrada.get("tono") or "—"] += 1
         for e in evidencias:
             reporte.evidencias += 1
             problema = _verificar(numero, e.get("doc_id"), e.get("offset_inicio"), e.get("offset_fin"),

@@ -72,14 +72,14 @@ comprobarlo.
 |---|---|
 | `rag servir [carpeta] [--host H] [--port P] [--reindexar]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.rag-extractivo/`. Pendiente **(P12.6)**: `--modo desarrollo\|produccion` |
 | `rag preguntar "<pregunta>" [--url URL] [--timeout S]` | Pregunta al servicio en marcha |
-| `rag preguntar "<pregunta>" --diagnostico` | Ejecuta el motor localmente, sin servicio, y muestra etapas con su latencia, señales, términos foco, la regla que decidió y el tramo exacto. En modo Qdrant local, detén `rag servir` antes |
+| `rag preguntar "<pregunta>" --diagnostico` | Ejecuta el motor localmente, sin servicio, y muestra etapas con su latencia, señales, términos foco, la regla que decidió, el tramo exacto, el tono y las plantillas usadas. En modo Qdrant local, detén `rag servir` antes |
 
 ### Operación
 
 | Comando | Qué hace |
 |---|---|
 | `rag doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden y CORS. Cada error trae su acción. Sale con 0 si no hay errores |
-| `rag auditar` | Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal del corpus. El registro se activa con `rag configurar registro.activo=true` |
+| `rag auditar` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. El registro se activa con `rag configurar registro.activo=true` |
 
 ### Golden set y evaluación
 

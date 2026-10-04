@@ -56,7 +56,8 @@ class MotorFalso:
         return AssistantResult(estado=AssistantState.RESPUESTA_DIRECTA, motivo="lector", mensaje_usuario=ORACION,
                                evidencias=[evidencia],
                                diagnostico={"contrato_http": contrato, "regla": "ok_lector", "perfil": "medium",
-                                            "senales_politica": {"s_qa": 0.97, "s_foco": 1.0}})
+                                            "senales_politica": {"s_qa": 0.97, "s_foco": 1.0},
+                                            "tono": "cordial", "plantillas": ["cordial.apertura.3"]})
 
 
 def _preguntar(offsets, *preguntas):
@@ -85,6 +86,7 @@ def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, caps
         "pregunta": "¿Cada cuánto se cambia el filtro?", "estado": "ok", "regla": "ok_lector",
         "motivo": "lector", "perfil": "medium"}
     assert entrada["senales"] == {"s_qa": 0.97, "s_foco": 1.0}
+    assert entrada["tono"] == "cordial" and entrada["plantillas"] == ["cordial.apertura.3"]
     assert entrada["evidencias"][0]["offset_inicio"] == corpus["inicio"]
     assert entrada["respuesta_exacta"]["doc_id"] == "manual"
     assert "sesion-secreta" not in REGISTRO.read_text(encoding="utf-8")
@@ -93,6 +95,7 @@ def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, caps
     assert main(["auditar"]) == 0
     salida = capsys.readouterr().out
     assert "(2 consultas)" in salida and "ok 2" in salida and "ok_lector 2" in salida
+    assert "Tonos:   cordial 2" in salida
     assert "Evidencias verificadas contra el corpus vigente: 4, con problemas: 0" in salida
 
 

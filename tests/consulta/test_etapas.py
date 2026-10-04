@@ -183,7 +183,10 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
 def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
     frag = _fragmento("Texto de contexto general sobre el tema.")
     texto = redactar_zona_gris([frag])
-    assert texto.startswith("No encontré una respuesta directa")
+    # El encabezado es una variante del tono (todas dicen que no es una respuesta directa).
+    from rag.lenguaje.tonos import cargar_tono
+
+    assert any(texto.startswith(v) for v in cargar_tono("es").variantes("relacionado_intro"))
     assert "Texto de contexto general sobre el tema." in texto
 
 

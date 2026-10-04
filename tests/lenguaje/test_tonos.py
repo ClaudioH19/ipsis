@@ -129,7 +129,7 @@ def test_el_motor_usa_el_tono_y_la_sobrescritura_del_proyecto(tmp_path: Path, mo
     monkeypatch.chdir(tmp_path)
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "Ana", "descripcion_dominio": "el manual"})
     assert plantillas["tono"] == "cordial"
-    assert plantillas["abstencion"]["generico"] == "Eso no está en el manual."
+    assert plantillas["abstencion"]["generico"] == ["Eso no está en el manual."]
     assert plantillas["conectores"]["secuencia"] == ["Primero", "Luego", "Por último"]  # estructural, del idioma
     assert len(plantillas["conectores"]["apertura"]) == 5
     assert all("Ana" in r or "manual" in r for r in plantillas["conversacional"]["respuestas"]["capacidad"])

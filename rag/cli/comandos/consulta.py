@@ -186,6 +186,8 @@ class ComandoPreguntar(Comando):
             print("Tramo exacto: —")
         for e in d.evidencias:
             print(f"Evidencia: {e['doc_id']} offsets {e['offset_inicio']}-{e['offset_fin']}")
+        if d.tono:
+            print(f"Tono: {d.tono}; plantillas: {', '.join(d.plantillas) or '—'}")
         for a in d.advertencias:
             print(f"Advertencia: {a}")
         return 0
