@@ -3,8 +3,15 @@ from __future__ import annotations
 
 import argparse
 
-from rag.aplicacion.proyecto import ProyectoExistente, actualizar_dominio, inicializar_proyecto
-from rag.cli.base import Comando
+from rag.aplicacion.proyecto import (
+    PerfilInvalido,
+    ProyectoExistente,
+    actualizar_dominio,
+    cambiar_perfil,
+    inicializar_proyecto,
+    resumen_perfil,
+)
+from rag.cli.base import Comando, Grupo
 
 
 class ComandoInit(Comando):
@@ -90,4 +97,84 @@ class ComandoConfigurar(Comando):
         return 0
 
 
-__all__ = ["ComandoConfigurar", "ComandoInit"]
+def _mostrar_indice(indice, perfil: str) -> None:
+    if indice.estado == "compatible":
+        print(f"Índice: compatible (construido con {indice.modelo_indice}).")
+    elif indice.estado == "sin_indice":
+        print(f"Índice: todavía no existe; el próximo 'rag indexar' lo construirá para {perfil} "
+              f"({indice.modelo_requerido}).")
+    else:
+        print(f"Índice: incompatible: se construyó con {indice.modelo_indice} y el perfil {perfil} "
+              f"necesita {indice.modelo_requerido}.")
+        print("  Acción: rag indexar")
+
+
+def _mostrar_calibracion(calibracion, cambio: bool = False) -> None:
+    if calibracion.estado == "sin_calibracion":
+        print("Calibración: no hay (rigen los umbrales del perfil).")
+    elif calibracion.estado == "vigente":
+        print("Calibración: vigente (sus umbrales están activos).")
+    elif calibracion.estado == "no_habilitada":
+        print(f"Calibración: guardada solo para auditoría, no se aplica ({calibracion.motivo}).")
+    else:
+        prefijo = "La calibración anterior ya no corresponde al perfil activo" if cambio else "Calibración: obsoleta"
+        print(f"{prefijo} ({calibracion.motivo}). Rigen los umbrales del perfil; el archivo se conserva.")
+        print("  Acción: rag calibrar --aplicar (si tienes un golden set importado)")
+
+
+class ComandoPerfilMostrar(Comando):
+    nombre = "mostrar"
+    ayuda = "Muestra el perfil activo, sus modelos, su presupuesto y si el índice y la calibración le sirven."
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        r = resumen_perfil()
+        print(f"Perfil activo: {r.perfil} ({r.descripcion})" if r.descripcion else f"Perfil activo: {r.perfil}")
+        print(f"Presupuesto p95: {r.presupuesto_p95_ms} ms")
+        print("Modelos:")
+        for rol in ("denso", "reranker", "lector"):
+            print(f"  {rol + ':':9} {r.modelos.get(rol) or '—'}")
+        _mostrar_indice(r.indice, r.perfil)
+        _mostrar_calibracion(r.calibracion)
+        return 0
+
+
+class ComandoPerfilCambiar(Comando):
+    nombre = "cambiar"
+    ayuda = "Cambia el perfil activo e indica si hay que reindexar o recalibrar (no ejecuta nada costoso)."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("perfil", help="Perfil de instalación destino: light, medium o heavy.")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        try:
+            cambio = cambiar_perfil(args.perfil)
+        except PerfilInvalido as e:
+            print(f"Error: {e}")
+            return 1
+        except ValueError as e:  # ajustes_perfil del proyecto inválidos para el destino
+            print(f"Error: los ajustes_perfil de configuracion/motor.yaml no son válidos para {args.perfil}: {e}")
+            return 1
+        if not cambio.cambio_real:
+            print(f"El perfil {cambio.nuevo} ya está activo. No se realizaron cambios.")
+            return 0
+        print(f"Perfil cambiado: {cambio.anterior} → {cambio.nuevo}")
+        indice = cambio.indice
+        if indice.estado == "compatible":
+            print("El índice actual sigue siendo compatible: no es necesario reindexar.")
+        elif indice.estado == "sin_indice":
+            print(f"Todavía no hay índice: el próximo 'rag indexar' lo construirá para {cambio.nuevo}.")
+        else:
+            print(f"El modelo denso cambió: {indice.modelo_indice} → {indice.modelo_requerido}. "
+                  "Hay que reconstruir el índice (el anterior se conserva).")
+            print("  Acción: rag indexar")
+        if cambio.calibracion.estado in ("obsoleta", "no_habilitada"):
+            _mostrar_calibracion(cambio.calibracion, cambio=True)
+        return 0
+
+
+def grupo_perfil() -> Grupo:
+    return Grupo("perfil", "Muestra o cambia el perfil de instalación (light, medium o heavy).",
+                 "Operación sobre el perfil.", [ComandoPerfilMostrar(), ComandoPerfilCambiar()])
+
+
+__all__ = ["ComandoConfigurar", "ComandoInit", "ComandoPerfilCambiar", "ComandoPerfilMostrar", "grupo_perfil"]
