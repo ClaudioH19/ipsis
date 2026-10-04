@@ -78,6 +78,9 @@
   var TITULO_INICIAL = opcion("titulo", "titulo", "Asistente");
   var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
   var CABECERA_CLAVE_WIDGET = "X-Rag-Widget-Key";
+  // Carpeta alternativa para el motor y la definición del avatar (widget
+  // exportado con `rag widget exportar`): ahí están avatar.js y avatares/.
+  var AVATAR_BASE = opcion("avatar-base", "avatarBase", null);
 
   // Ubicación: lo que declare el sitio (atributos del elemento o data-* del
   // <script>) manda; lo que no, llega de estilos.yaml vía /config.
@@ -311,6 +314,18 @@
     ".rw-avatar{width:34px;height:34px;border-radius:50%;background:var(--rw-acento);",
     "  color:var(--rw-acento-texto);display:flex;align-items:center;justify-content:center;flex:none;}",
     ".rw-avatar svg{width:18px;height:18px;}",
+    // Avatar animado (opcional): reemplaza al ícono solo cuando ya está montado.
+    ".rw-avatar.rw-avatar-vivo{width:var(--rw-avatar-tamano,56px);height:var(--rw-avatar-tamano,56px);",
+    "  background:transparent;border-radius:0;}",
+    ".rw-avatar-lienzo{width:100%;height:100%;display:block;pointer-events:none;}",
+    ".rw-avatar-lienzo svg{width:100%;height:100%;}",
+    ".rw-boton.rw-con-avatar[aria-expanded='false'] .rw-icono-chat{display:none;}",
+    ".rw-boton .rw-avatar-lienzo{width:84%;height:84%;}",
+    ".rw-boton[aria-expanded='true'] .rw-avatar-lienzo{display:none;}",
+    ".rw-avatar-esquina{position:absolute;right:18px;z-index:1;width:var(--rw-avatar-tamano,56px);",
+    "  height:var(--rw-avatar-tamano,56px);pointer-events:none;}",
+    ".rw-avatar-esquina[data-esquina='esquina-superior']{top:calc(var(--rw-avatar-tamano,56px) / -2);}",
+    ".rw-avatar-esquina[data-esquina='esquina-inferior']{bottom:72px;}",
     ".rw-cabecera-textos{flex:1;min-width:0;}",
     ".rw-cabecera h2{margin:0;font-size:calc(var(--rw-tamano-base) + .5px);font-weight:650;",
     "  letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
@@ -413,7 +428,9 @@
     "    height:var(--rw-vv-alto,100dvh);max-height:none;border-radius:0;border:none;",
     "    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)",
     "      env(safe-area-inset-left);animation:rw-aparecer var(--rw-dur-panel) ease-out;}",
-    "  .rw-msg{max-width:92%;}}",
+    "  .rw-msg{max-width:92%;}",
+    "  .rw-raiz{--rw-avatar-tamano:40px !important;}",
+    "  .rw-avatar-esquina[data-esquina='esquina-superior']{top:8px;right:56px;}}",
     // Contraste alto del sistema (Windows): bordes visibles y el tramo marcado.
     "@media (forced-colors:active){",
     "  .rw-boton,.rw-enviar,.rw-cerrar{border:2px solid ButtonText;}",
@@ -791,6 +808,7 @@
           UBICACION.posicion = u.posicion;
         }
         aplicarUbicacion();
+        configurarAvatar(cfg.avatar);
         if (cfg.nombre_asistente) {
           tituloEl.textContent = cfg.nombre_asistente;
           botonTexto.textContent = cfg.nombre_asistente;
@@ -909,6 +927,8 @@
     boton.setAttribute("aria-expanded", "true");
     input.focus();
     document.addEventListener("keydown", manejarTeclado, true);
+    cargarAvatar();
+    ubicarAvatar();
     emitir("rag:abierto");
   }
 
@@ -917,6 +937,7 @@
     panel.hidden = true;
     boton.setAttribute("aria-expanded", "false");
     document.removeEventListener("keydown", manejarTeclado, true);
+    ubicarAvatar();
     if (elementoFocoPrevio && typeof elementoFocoPrevio.focus === "function") {
       elementoFocoPrevio.focus();
     } else {
@@ -959,6 +980,106 @@
 
   // La configuración se pide al cargar: la ubicación de estilos.yaml aplica al
   // lanzador desde el principio, y el saludo ya está listo al abrir.
+  // -------------------------------------------------------------------
+  // 6. Avatar (opcional). El motor (/avatar.js, @bible-strong/avatar-web)
+  //    se carga bajo demanda: al abrir el panel por primera vez o, si va en
+  //    el lanzador, cuando el navegador está ocioso. Si algo falla (red,
+  //    CSP sin 'unsafe-eval', definición inválida) queda el ícono y se emite
+  //    rag:avatar con el error: el chat nunca se rompe.
+  // -------------------------------------------------------------------
+  var AVATAR = { config: null, promesa: null, controlador: null, definicion: null, lienzo: null };
+
+  function urlDelServicio(ruta) {
+    if (/^https?:\/\//.test(ruta)) return ruta;
+    if (AVATAR_BASE) return new URL(AVATAR_BASE.replace(/\/?$/, "/") + ruta.replace(/^\//, ""), window.location.href).href;
+    return API_BASE + ruta;
+  }
+
+  function configurarAvatar(cfg) {
+    if (!cfg || typeof cfg !== "object" || !cfg.activo || !cfg.url_motor || !cfg.url_definicion) return;
+    AVATAR.config = cfg;
+    var tamano = entero(cfg.tamano, 32, 160);
+    if (tamano !== null) contenedor.style.setProperty("--rw-avatar-tamano", tamano + "px");
+    if (INCRUSTADO || !panel.hidden) {
+      cargarAvatar();
+    } else if (cfg.en_lanzador) {
+      var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(fn, 1500); };
+      ocioso(function () { cargarAvatar(); });
+    }
+  }
+
+  function cargarAvatar() {
+    var cfg = AVATAR.config;
+    if (!cfg || AVATAR.promesa) return AVATAR.promesa;
+    AVATAR.promesa = Promise.all([
+      import(urlDelServicio(cfg.url_motor)),
+      fetch(urlDelServicio(cfg.url_definicion), { headers: cabecerasComunes() }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+    ]).then(function (r) {
+      montarAvatar(r[0], r[1]);
+    }).catch(function (error) {
+      AVATAR.controlador = null;
+      emitir("rag:avatar", { estado: "error", mensaje: String((error && error.message) || error) });
+    });
+    return AVATAR.promesa;
+  }
+
+  function montarAvatar(motor, definicion) {
+    var lienzo = document.createElement("span");
+    lienzo.className = "rw-avatar-lienzo";
+    // Decorativo: los estados ya tienen texto y etiqueta propios.
+    lienzo.setAttribute("aria-hidden", "true");
+    var opciones = {
+      definition: definicion,
+      size: "100%",
+      ariaLabel: "",
+      onError: function (e) { emitir("rag:avatar", { estado: "error", mensaje: e.message }); }
+    };
+    var inicial = AVATAR.config.eventos && AVATAR.config.eventos.inactivo;
+    if (inicial && definicion.animations && definicion.animations[inicial]) opciones.defaultAnimation = inicial;
+    // createAvatar valida la definición (y lanza si no es válida): recién
+    // con el avatar montado se reemplaza el ícono.
+    AVATAR.controlador = motor.createAvatar(lienzo, opciones);
+    AVATAR.definicion = definicion;
+    AVATAR.lienzo = lienzo;
+    ubicarAvatar();
+    emitir("rag:avatar", { estado: "listo", nombre: AVATAR.config.nombre });
+  }
+
+  // Lleva el lienzo a donde corresponde: el lanzador con el panel cerrado
+  // (si en_lanzador), y la cabecera o una esquina del panel con él abierto.
+  var esquinaAvatar = null;
+  function ubicarAvatar() {
+    var lienzo = AVATAR.lienzo, cfg = AVATAR.config;
+    if (!lienzo || !cfg) return;
+    var abierto = INCRUSTADO || !panel.hidden;
+    var destino;
+    if (!abierto) {
+      if (!cfg.en_lanzador) return;
+      destino = boton;
+    } else if (cfg.ubicacion === "esquina-superior" || cfg.ubicacion === "esquina-inferior") {
+      if (!esquinaAvatar) {
+        esquinaAvatar = document.createElement("div");
+        esquinaAvatar.className = "rw-avatar-esquina";
+        panel.appendChild(esquinaAvatar);
+      }
+      esquinaAvatar.setAttribute("data-esquina", cfg.ubicacion);
+      destino = esquinaAvatar;
+    } else {
+      destino = avatar;
+    }
+    if (lienzo.parentNode === destino) return;
+    destino.appendChild(lienzo);
+    var enCabecera = destino === avatar;
+    avatar.classList.toggle("rw-avatar-vivo", enCabecera);
+    Array.prototype.forEach.call(avatar.children, function (hijo) {
+      if (hijo !== lienzo) hijo.style.display = enCabecera ? "none" : "";
+    });
+    if (cfg.en_lanzador) boton.classList.add("rw-con-avatar");
+  }
+
   cargarConfigServidor();
 
   // API del sitio (se supone un widget por página): abrir y cerrar desde un

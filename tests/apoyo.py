@@ -94,17 +94,24 @@ def _combinar_con_outline(paginas: list[bytes], marcadores: list[tuple[str, int]
 
 
 def definicion_avatar(**cambios) -> dict:
-    """Definición mínima de avatar con la forma que revisa Python (la librería valida el resto)."""
-    expresion = {"head": {"x": 0, "y": 0, "z": 0}, "perspective": 1, "motion": {"eyes": "none", "body": "none"},
-                 "eyes": {"spacing": 1, "left": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0},
-                          "right": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0}}}
+    """Definición mínima y válida para la librería (la acepta ``parseAvatarDefinition``)."""
+    def expresion(alto: float) -> dict:
+        ojo = {"width": 18, "height": alto, "x": 0, "y": -10, "angle": 0}
+        return {"head": {"x": 0, "y": 0, "z": 0}, "perspective": 1, "motion": {"eyes": "none", "body": "none"},
+                "eyes": {"spacing": 36, "left": dict(ojo), "right": dict(ojo)}}
+
+    parpadeo = {"enabled": True, "initialDelayMs": 1000, "minIntervalMs": 3000, "maxIntervalMs": 6000,
+                "durationMs": 150}
     paso = {"expression": "contento", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
-    datos = {"schema": "bible-strong-avatar", "schemaVersion": 1, "name": "Prueba", "body": {},
+    datos = {"schema": "bible-strong/avatar-definition", "schemaVersion": 1, "name": "Prueba",
+             "body": {"primary": {"type": "sphere", "width": 200, "height": 200, "depth": 200, "roundness": 1},
+                      "nodes": []},
              "colors": {"body": "#ffffff", "eyes": "#000000"},
-             "expressions": {"neutral": expresion, "contento": expresion},
+             "expressions": {"neutral": expresion(40), "contento": expresion(16)},
              "expressionOrder": ["neutral", "contento"],
-             "animations": {"inactivo": {"playbackMode": "loop", "steps": [paso], "blink": {}},
-                            "contento": {"playbackMode": "once", "steps": [paso], "blink": {}}},
+             "animations": {"inactivo": {"playbackMode": "loop", "steps": [{**paso, "expression": "neutral"}],
+                                         "blink": parpadeo},
+                            "contento": {"playbackMode": "once", "steps": [paso], "blink": parpadeo}},
              "animationOrder": ["inactivo", "contento"]}
     datos.update(cambios)
     return datos

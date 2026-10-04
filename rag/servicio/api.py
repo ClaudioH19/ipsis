@@ -342,6 +342,15 @@ def crear_app(
     def widget_js():
         return FileResponse(_DIR_ESTATICOS / "widget.js", media_type="application/javascript; charset=utf-8")
 
+    @aplicacion.get("/avatar.js")
+    def avatar_js():
+        """Motor del avatar (ESM, bajo demanda). Licencias en /avatar.js.LICENSE.txt."""
+        return FileResponse(_DIR_ESTATICOS / "avatar.js", media_type="text/javascript; charset=utf-8")
+
+    @aplicacion.get("/avatar.js.LICENSE.txt")
+    def avatar_licencia():
+        return FileResponse(_DIR_ESTATICOS / "avatar.js.LICENSE.txt", media_type="text/plain; charset=utf-8")
+
     @aplicacion.get("/estilos.css")
     def estilos_css():
         from rag.aplicacion.estilos import render_css
