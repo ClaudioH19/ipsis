@@ -588,36 +588,28 @@ reacciona a lo que pasa en el chat. Todo se configura primero por terminal,
 después por API y al final con un panel gráfico que solo llama a esa API.
 Cierra con el despliegue (imagen, `rag desplegar`, CI y `/ready`).
 
-### Decisiones del usuario antes de empezar
+### Decisiones del usuario (resueltas el 2026-10-04)
 
-Estas decisiones bloquean las tareas indicadas; las demás pueden avanzar.
-
-- **D1. Licencia del avatar (bloquea P12.9 y P12.10).**
-  - `@bible-strong/avatar-web` y `@bible-strong/avatar-core` 0.1.0 (de
-    [bible-strong-avatar-lab](https://github.com/smontlouis/bible-strong-avatar-lab))
-    son **AGPL-3.0-only**.
-  - Servir ese código a los navegadores de los visitantes es distribuirlo:
-    obliga a ofrecer su código fuente y, si el widget forma con él una obra
-    combinada, a licenciar el widget como AGPL.
-  - Hoy el proyecto no declara licencia.
-  - Opciones:
-    - (a) licenciar el proyecto, o al menos el widget, como AGPL-3.0;
-    - (b) pedir al autor una licencia comercial;
-    - (c) usar otra librería de avatar con licencia permisiva.
-  - Conviene una revisión legal: este plan no es asesoría legal.
-- **D2. Avatar por defecto (bloquea P12.10).** El avatar se diseña en el
-  Studio ([avatars.bible-strong.app](https://avatars.bible-strong.app)) y se
-  exporta como `.avatar.json`. Opciones:
-  - (a) el usuario lo diseña con el contrato de claves de P12.10;
-  - (b) el agente escribe la definición a mano y la valida con la propia
-    librería.
-- **D3. Tono «agresivo».** Se implementa como `directo`: seco, imperativo y
-  sin cortesías, pero nunca insulta, ni culpa al usuario, ni usa sarcasmo,
-  mayúsculas sostenidas o amenazas. Un widget público con tono hostil es un
-  riesgo de marca.
-- **D4. Panel de administración (bloquea P12.7).** Hay que decidir si se
-  sirve solo en local (`127.0.0.1`) o también en remoto, con token y HTTPS
-  obligatorio.
+- **D1. Licencia: AGPL-3.0 para todo el repositorio.**
+  - El proyecto será público y libre en GitHub, así que se adopta la misma
+    licencia que `@bible-strong/avatar-web` y `@bible-strong/avatar-core`
+    0.1.0 (de
+    [bible-strong-avatar-lab](https://github.com/smontlouis/bible-strong-avatar-lab)),
+    que son AGPL-3.0-only.
+  - Una licencia AGPL no se tramita: se aplica, agregando el texto
+    `LICENSE` y los avisos (P12.8).
+  - Consecuencia: quien ofrezca una versión **modificada** como servicio
+    de red debe publicar sus cambios. Quien solo la instala en su VPS sin
+    modificarla no tiene obligaciones nuevas.
+- **D2. Avatar por defecto: «Folio», diseñado por el agente** (P12.10).
+- **D3. Tono `directo`:** seco, imperativo y sin cortesías, pero nunca
+  insulta, ni culpa al usuario, ni usa sarcasmo, mayúsculas sostenidas o
+  amenazas.
+- **D4. Self-hosted en un VPS:** el panel `/admin` se usa en remoto, con
+  token y HTTPS obligatorio (P12.6). En el `docker-compose` va un proxy con
+  TLS automático (P12.13).
+- **Seguir el puntero:** la librería no lo trae, así que lo implementa el
+  widget con mirada real (ver «Eventos del avatar»).
 
 ### Invariantes de toda la fase
 
@@ -726,8 +718,8 @@ columna «Si falta».
 | `conversacional` | estado `conversacional` (saludo o agradecimiento) | transitorio | 5 | `amable` | `contento` |
 | `despedida` | respuesta de despedida o cierre del panel | transitorio | 3 | `despedida` | `inactivo` |
 | `error` | error de red, 429 o 503 | transitorio | 6 | `preocupado` | `apenado` |
-| `mirando_citas` | foco, paso del puntero o despliegue de una cita | transitorio | 4 | expresión `mirar-abajo` | inclinación CSS |
-| `seguir_puntero` | el puntero se mueve (panel abierto, sin táctil ni movimiento reducido) | continuo | — | expresiones `mirar-izquierda`, `mirar-derecha`, `mirar-arriba`, `mirar-abajo` | inclinación CSS ≤ 6° y desplazamiento ≤ 4 px |
+| `mirando_citas` | foco, paso del puntero o despliegue de una cita | transitorio | 4 | la celda de la grilla que apunta a la cita | — |
+| `seguir_puntero` | el puntero se mueve (panel abierto; en táctil, el último toque o el campo con foco) | continuo | — | grilla de mirada generada por el widget (ver abajo) | la grilla solo necesita `neutral`: funciona con cualquier avatar |
 | `somnoliento` | sin actividad por N minutos (2 por defecto) | persistente | 0 | `somnoliento` | `inactivo` |
 | `despertar` | actividad después de `somnoliento` | transitorio | 2 | `despertar` | `atento` |
 | `oculto` | la pestaña se oculta | sistema | — | `pause()` al ocultarse, reanuda al volver | — |
@@ -747,9 +739,37 @@ Reglas de la máquina de estados:
 - **Integración con el sitio:** cada cambio emite `rag:avatar`
   `{evento, clave}`.
 
-La librería no trae seguimiento de mirada: `seguir_puntero` se aproxima con
-expresiones discretas, o con una transformación CSS si el avatar no las
-tiene.
+**Seguir el puntero: lo implementa el widget.** La librería no lo trae,
+pero cada expresión del avatar define el giro de la cabeza (`head.x/y/z`) y
+la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
+
+1. **Grilla de mirada.** Al cargar la definición, y antes de
+   `createAvatar`, el widget genera 15 expresiones `mirada-c<col>-f<fila>`
+   (5 columnas × 3 filas) a partir de `neutral`:
+   - los ojos se desplazan hasta `amplitud_ojos`;
+   - la cabeza gira hasta `amplitud_cabeza` grados;
+   - el resto de la expresión no cambia.
+
+   No se modifica la librería ni el archivo del avatar: las expresiones se
+   agregan a la copia en memoria. Respeta el límite de 128 expresiones.
+2. **Del puntero a una celda.** El ángulo y la distancia del puntero
+   respecto del centro del avatar eligen la celda:
+   - con una zona muerta central y con histéresis, para que no tiemble;
+   - a lo sumo 30 actualizaciones por segundo (`requestAnimationFrame`);
+   - `setExpression` con la transición `smooth` del avatar.
+3. **Vuelta al centro:** tras 1,5 s con el puntero quieto, o si sale de la
+   ventana, mira al frente.
+4. **Cuándo no sigue:**
+   - durante un transitorio;
+   - con `prefers-reduced-motion`;
+   - con el panel cerrado, salvo que el avatar esté en el lanzador.
+5. **En táctil:** mira hacia el último toque y, al escribir, hacia el
+   campo de texto.
+6. **Configuración:** `avatar.mirada` en `personalidad.yaml`:
+   ```yaml
+   mirada: {activa: true, amplitud_ojos: 6, amplitud_cabeza: 8, zona_muerta: 24}
+   ```
+   Si un avatar trae sus propias expresiones `mirada-*`, se usan las suyas.
 
 ### P12.1 Contrato de tonos
 
@@ -837,11 +857,11 @@ tiene.
     plantillas: {}             # sobrescrituras por situación, validadas con el linter
   avatar:
     activo: true
-    definicion: asistente      # rag/recursos/avatares/<n>.avatar.json o configuracion/avatares/<n>.avatar.json
+    definicion: folio          # rag/recursos/avatares/<n>.avatar.json o configuracion/avatares/<n>.avatar.json
     ubicacion: cabecera        # cabecera | esquina-superior | esquina-inferior
     tamano: 56                 # px, 32 a 160
     en_lanzador: true
-    seguir_puntero: true
+    mirada: {activa: true, amplitud_ojos: 6, amplitud_cabeza: 8, zona_muerta: 24}
     inactividad_min: 2
     colores: {}                # {cuerpo: "#rrggbb", ojos: "#rrggbb"}; se aplican al servir la definición
     eventos: {}                # sobrescrituras evento → clave (tabla de eventos)
@@ -948,9 +968,16 @@ tiene.
     `hmac.compare_digest`;
   - sin CORS: el middleware no aplica a `/admin`;
   - límites: cuerpo ≤ 256 KiB y limitador de peticiones;
-  - auditoría en `.rag/registros/admin.jsonl`: fecha, acción y claves
+  - auditoría en `.rag/registros/admin.jsonl`: fecha, IP, acción y claves
     cambiadas, nunca el token;
-  - según D4, solo `127.0.0.1` salvo que se habilite el modo remoto.
+  - **remoto en un VPS (D4):**
+    - HTTPS obligatorio: con la petición en HTTP plano responde 403,
+      salvo que venga de loopback;
+    - `X-Forwarded-Proto` y la IP del cliente solo se aceptan del proxy
+      declarado en `RAG_PROXY_CONFIABLE` (uvicorn `forwarded_allow_ips`);
+    - lista opcional de IPs en `RAG_ADMIN_IPS`;
+    - bloqueo de 15 min por IP tras 5 tokens incorrectos;
+    - la guía explica cómo rotar el token.
 - **Recarga en caliente:**
   - el servicio relee `personalidad.yaml` y `estilos.yaml` si cambió su
     mtime (un `stat` por petición, sin reiniciar);
@@ -964,7 +991,9 @@ tiene.
   - un cambio por CLI también se ve sin reiniciar;
   - el `Origin` de un sitio con CORS permitido no obtiene encabezados CORS
     en `/admin`;
-  - `/avatares/../motor.yaml` da 404.
+  - `/avatares/../motor.yaml` da 404;
+  - por HTTP plano desde una IP no local da 403;
+  - el sexto token incorrecto da 429 aunque el séptimo sea correcto.
 
 ### P12.7 Panel gráfico `/admin`
 
@@ -990,15 +1019,25 @@ tiene.
   - un JSON inválido muestra el error sin guardar;
   - sin token no se ve nada.
 
-### P12.8 Licencia del avatar (D1)
+### P12.8 Licencia AGPL-3.0 (D1)
 
-- **Pasos:** aplicar la opción elegida en D1:
-  - `LICENSE` del proyecto;
-  - aviso y enlace al código fuente de la librería en
-    `/avatar.js.LICENSE.txt` y en la guía;
-  - si aplica, oferta del código fuente del widget.
-- **Aceptación:** `docs/guia/web.md` explica la licencia del avatar, y el
-  paquete incluye los textos de licencia.
+- **Pasos:**
+  1. `LICENSE` con el texto oficial de la AGPL-3.0, y
+     `license = "AGPL-3.0-only"` en `pyproject.toml`.
+  2. `README.md`, sección Licencia:
+     - qué permite;
+     - qué exige a quien modifica y ofrece el servicio;
+     - que instalarlo sin cambios en un VPS no obliga a nada nuevo.
+  3. El panel y la API muestran «Código fuente» con el enlace al
+     repositorio público, como pide el §13 de la AGPL a los servicios de
+     red. `GET /fuente` redirige a la URL de `RAG_URL_FUENTE`; por defecto,
+     la del repositorio.
+  4. `avatar.js.LICENSE.txt` con los avisos de `@bible-strong/*` y de `ajv`
+     (MIT).
+- **Aceptación:**
+  - el wheel incluye `LICENSE` y `avatar.js.LICENSE.txt`;
+  - `GET /fuente` responde con la URL configurada;
+  - en P13.3, la casilla «Licencia del proyecto decidida» queda marcada.
 
 ### P12.9 Motor del avatar empaquetado
 
@@ -1029,41 +1068,76 @@ tiene.
     donde se ve el ícono de respaldo y el chat funciona;
   - prueba con CSP permisiva, donde se monta el avatar.
 
-### P12.10 Avatar por defecto y máquina de estados
+### P12.10 Avatar «Folio» y máquina de estados
 
+- **Diseño de Folio (D2).**
+  - Es una hoja de papel viva: un rectángulo redondeado, levemente
+    inclinado y con la esquina doblada (un nodo), y dos ojos de tinta
+    ovalados. No tiene boca: la librería expresa con la forma de los ojos,
+    el giro de la cabeza y el movimiento ambiental.
+  - Encarna lo que es el proyecto: lee documentos, mira la cita antes de
+    afirmar y no exagera.
+  - Colores: cuerpo `#f5f1e8` (papel) y ojos `#1e293b` (tinta). Se cambian
+    con `avatar.colores`.
+  - Honestidad también en el gesto:
+    - `contento` es sobrio, no celebra;
+    - en `dudoso` y `apenado` nunca hay gesto de éxito;
+    - en `respuesta_ok` primero mira hacia las citas, y recién después se
+      alegra.
 - **Pasos:**
-  1. Contrato de claves:
-     - animaciones: `inactivo`, `saludo`, `atento`, `escuchando`,
-       `asentir`, `pensando`, `pensando-largo`, `contento`, `dudoso`,
-       `apenado`, `amable`, `despedida`, `preocupado`, `somnoliento` y
-       `despertar`;
-     - expresiones: `neutral`, `mirar-izquierda`, `mirar-derecha`,
-       `mirar-arriba` y `mirar-abajo`.
-  2. `rag/recursos/avatares/asistente.avatar.json` (según D2), validado con
-     `parseAvatarDefinition` de la librería en un script de
-     `herramientas/avatar/`.
-  3. Máquina de estados en `widget.js`, con la tabla de eventos, sus
-     prioridades y sus reglas. El mapa efectivo viene de `/config`.
-     `window.RagChat.avatar.disparar(evento)` lo usan el panel y los sitios
-     que quieran reaccionar a sus propios eventos.
-  4. Móvil (≤ 480 px):
+  1. Contrato de claves de animación: `inactivo`, `saludo`, `atento`,
+     `escuchando`, `asentir`, `pensando`, `pensando-largo`, `contento`,
+     `dudoso`, `apenado`, `amable`, `despedida`, `preocupado`,
+     `somnoliento` y `despertar`. La expresión `neutral` es obligatoria; la
+     mirada la genera el widget.
+  2. Expresiones de Folio, para orientar el diseño:
+
+     | Expresión | Ojos | Cabeza | Movimiento |
+     |---|---|---|---|
+     | `atento` | grandes | — | — |
+     | `contento` | entrecerrados, en arco | levemente arriba | — |
+     | `dudoso` | uno más chico | inclinada | — |
+     | `apenado` | ángulo hacia abajo | gacha | — |
+     | `pensando` | arriba a un lado | — | `slowDrift` |
+     | `somnoliento` | casi cerrados | — | — |
+     | `preocupado` | — | — | ojos con `shake` breve |
+
+     El parpadeo es el automático de la librería.
+  3. `rag/recursos/avatares/folio.avatar.json`, validado con
+     `parseAvatarDefinition` de la librería en `herramientas/avatar/`. Una
+     página de muestra con todas las animaciones queda como vista previa
+     para revisión humana.
+  4. Máquina de estados en `widget.js`, con la tabla de eventos, sus
+     prioridades, sus reglas y la grilla de mirada. El mapa efectivo viene
+     de `/config`. `window.RagChat.avatar.disparar(evento)` lo usan el panel
+     y los sitios que quieran reaccionar a sus propios eventos.
+  5. Móvil (≤ 480 px):
      - el avatar baja a 40 px;
-     - con el teclado abierto se oculta para no quitar espacio al campo;
-     - en pantallas táctiles no se sigue el puntero.
-  5. Accesibilidad:
+     - con el teclado abierto se oculta para no quitar espacio al campo.
+  6. Accesibilidad:
      - el avatar es decorativo (`aria-hidden`); los estados ya tienen
        texto y etiqueta;
      - ninguna animación parpadea más de 3 veces por segundo (WCAG 2.3.1).
-- **Aceptación:** pruebas de navegador con un `avatar.js` falso que registra
-  las llamadas:
-  - la secuencia de cada evento de la tabla;
-  - las prioridades: un error durante `pensando` gana, y un transitorio
-    vuelve al persistente;
-  - el tecleo con su retraso;
-  - la inactividad acelerada con el reloj falso de Playwright;
-  - `visibilitychange` pausa;
-  - con `prefers-reduced-motion` no se sigue el puntero;
-  - una clave faltante cae a su respaldo.
+- **Aceptación:**
+  - Folio pasa `parseAvatarDefinition` y define todas las claves del
+    contrato.
+  - Pruebas de navegador con un `avatar.js` falso que registra las
+    llamadas:
+    - la secuencia de cada evento de la tabla;
+    - las prioridades: un error durante `pensando` gana, y un transitorio
+      vuelve al persistente;
+    - el tecleo con su retraso;
+    - la inactividad acelerada con el reloj falso de Playwright;
+    - `visibilitychange` pausa;
+    - con `prefers-reduced-motion` no se sigue el puntero;
+    - una clave faltante cae a su respaldo.
+  - La grilla de mirada:
+    - se generan 15 expresiones válidas a partir de `neutral` (la librería
+      real las acepta);
+    - el puntero en cada esquina elige la celda correcta;
+    - en la zona muerta mira al centro;
+    - la histéresis evita el cambio con movimientos de 2 px;
+    - tras 1,5 s quieto vuelve al centro.
 
 ### P12.11 `/ready` informa el estado del proyecto
 
@@ -1095,6 +1169,9 @@ tiene.
       `rag/recursos/despliegue/`);
     - un `LEEME_despliegue.md` en el idioma del proyecto, con el snippet
       del widget y cómo activar `/admin`;
+    - en `docker-compose.yml`, un servicio `caddy` opcional (perfil
+      `https`) con TLS automático para el dominio del VPS, y
+      `RAG_PROXY_CONFIABLE` apuntando a él;
   - prueba de CLI.
 
 ### P12.14 CI
@@ -1120,8 +1197,8 @@ tiene.
 P12.1 → P12.2 → P12.3        (tonos)
 P12.4                        (CLI de personalidad; necesita P12.1)
 P12.5                        (widget; independiente de los tonos salvo la microcopia)
-P12.6 → P12.7                (API y luego panel; P12.7 necesita D4)
-D1 → P12.8 → P12.9 → P12.10  (avatar; necesita D1 y D2)
+P12.6 → P12.7                (API y luego panel)
+P12.8 → P12.9 → P12.10       (licencia, motor del avatar y Folio)
 P12.11 → P12.12 → P12.13 → P12.14
 ```
 
@@ -1153,4 +1230,4 @@ Con el corpus real de un cliente:
 - [ ] `rag calibrar --alfa 0.05` da `CALIBRADO`: en `test`, la cota superior al 95% de falsos `ok` es ≤ 5% (con 0 errores exige ≥ 59 respuestas aceptadas en `test`). Si da `MUESTRA_INSUFICIENTE`, se lanza con los umbrales del perfil y sin afirmar el 5%.
 - [ ] `rag benchmark` cumple los presupuestos en la máquina de producción (light ≤ 150 ms, medium ≤ 1 s y heavy ≤ 5 s de p95).
 - [ ] CI en verde (requiere push).
-- [ ] Licencia del proyecto decidida.
+- [x] Licencia del proyecto decidida: AGPL-3.0 (D1, se aplica en P12.8).
