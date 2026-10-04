@@ -67,8 +67,8 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P10.4 | ✅ | 2026-10-03 | 586 (suite completa) + benchmark real bm25/light/medium/heavy | rag benchmark --banco M [--banco…] --perfiles bm25,light,medium,heavy [--experimentos]: proyecto temporal por perfil y banco (idioma del manifiesto), evaluar_backend_activo con motor calentado, métricas de reporte_cobertura, p50/p95 por consulta y por etapa, presupuesto, modelos (parámetros y ONNX en disco, no RAM) e indexado aparte. Escribe golden/reportes/benchmark-perfiles.{json,md} y un artefacto por perfil y banco para rag comparar (etiquetado por perfil). Salida ≠ 0 si un perfil excede el presupuesto o, con un banco de evaluación, da falsos ok; las variantes no cortan. Se corrigen el perfil bm25 (era light: ahora recuperacion_modo dispersa, modo dispersa en buscar y en el retriever, seleccionable para diagnóstico pero no en rag init), el idioma en el manifiesto del banco y la limpieza en Windows. Experimentos: medium τ_ok 0,85 → POSPONER (falsos ok 3→1, misma cobertura); acuerdo → DESCARTAR (sin efecto, +4,6 ms p95). Tabla, hallazgos y decisiones en Hallazgos. |
 | P10.5 | ✅ | 2026-10-03 | 586 (suite completa; sin el código descartado) | texttiling_v1 implementado temporalmente en ingesta/chunking.py (párrafos por sección; coseno TF-IDF entre ventanas de hasta 2 párrafos; corte si sim < media − desv/2 del documento o al superar 256 palabras; sin cruzar secciones ni solape) y comparado con CH-F256 (actual) y CH-SEC (control) en bm25/light/medium/heavy sobre v1.1.0 y bm25/light/medium sobre el universal, con índices separados. DESCARTADO: da los mismos estados que CH-SEC (la cohesión solo agregó 1 frontera en 4 bancos) y frente a CH-F256 sube los falsos ok (v1.1.0 medium 0→1, universal light 1→2). Se borraron la estrategia, sus pruebas y el parámetro interno del benchmark; tablas, casos y decisión en Hallazgos. |
 | P11.1 | ✅ | 2026-10-03 | 596 (suite completa, incluidas las lentas) | rag/cli.py (925 líneas) → paquete rag/cli/: __init__.py (registro_de_comandos explícito, construir_parser, main), __main__.py, base.py (Comando con registrar/ejecutar, Grupo, registrar) y comandos/{proyecto,corpus,consulta,golden,evaluacion,operacion,web}.py con 20 Commands. Sin módulo puente; el script sigue en rag.cli:main. Las 24 pantallas de --help quedaron idénticas. La lógica pasó a aplicacion/: proyecto (inicializar_proyecto, completar_proyecto_existente, guardar_snapshot, migrar_proyecto_activo y lecturas para el servicio), corpus.py nuevo (archivos_de_ruta, cargar_documentos, indexar_proyecto), evaluacion (comparar_reportes), benchmark (benchmark_perfiles), golden (ErrorGolden), consulta (Motor y sus errores, construir_motor_del_proyecto). servicio/api.py dejó de importar configuracion, consulta y lenguaje. tests/test_arquitectura.py: regla cli/servicio → solo aplicacion, nucleo y recursos, con prueba sintética. Pruebas nuevas: entrypoint, importación sin efectos, registro de los 20 comandos, despacho al caso de uso, código de salida, python -m rag.cli, y ayuda en todo el árbol. |
-| P11.2 | ✅ | 2026-10-04 | 610 | rag perfil mostrar|cambiar; estado del índice por manifiestos (modelo, dimensión, payload) y de la calibración con motivo_no_aplicable; no descarga, indexa, calibra ni borra; conserva ajustes_perfil, índice y calibracion.yaml. |
-| P11.3 | ⬜ | | | |
+| P11.2 | ✅ | 2026-10-04 | 610 (14 nuevas) | Commit ee7e78d. rag perfil mostrar / cambiar; estado del índice por manifiestos (modelo, dimensión, payload) y de la calibración con motivo_no_aplicable; no descarga, indexa, calibra ni borra; conserva ajustes_perfil, índice y calibracion.yaml. |
+| P11.3 | ✅ | 2026-10-04 | 627 (17 nuevas) | rag modelos listar / descargar / verificar / exportar. Caché global y descarga simulada en las pruebas; verificar hace una inferencia mínima por modelo; exportar importa torch/optimum solo en su flujo y sin el extra indica pip install "rag-extractivo[exportar]". ruta_local exige todos los archivos del ModeloSpec. Abierto: el extra [exportar] no fija versiones compatibles (optimum 2.1 + transformers 5.17 fallan). |
 | P11.4 | ⬜ | | | |
 | P11.5 | ⬜ | | | |
 | P11.6 | ⬜ | | | |
@@ -519,6 +519,25 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
   - **Desvío del instructivo:** los mensajes dicen `rag indexar` y no
     `rag indexar --reindexar`, porque ese flag no existe. `indexar` siempre
     reconstruye; `--reindexar` es de `servir`.
+- **P11.3 — `rag modelos listar | descargar | verificar | exportar`.**
+  Los casos de uso están en `aplicacion/modelos.py`. La prueba mínima está
+  en `modelos/verificacion.py` y la exportación en `modelos/exportacion.py`.
+  `torch` y `optimum` se importan solo dentro de `exportar`.
+  - **Defecto corregido:** `ruta_local` (y con ella `esta_en_cache`) daba
+    por presente un modelo con solo el ONNX. Ahora exige todos los archivos
+    requeridos del `ModeloSpec` (ONNX, `tokenizer.json`, `config.json`).
+  - **Descarga sin red:** con `HF_HUB_OFFLINE=1`, `descargar` falla con
+    `ErrorDescarga`, que dice qué hacer.
+  - **Defecto abierto (entorno de desarrollo):** el extra `[exportar]`
+    (`optimum[onnxruntime]>=1.20`, `torch>=2.2`) no fija una combinación
+    compatible. En el venv quedaron optimum 2.1.0 y transformers 5.17, y la
+    exportación real falla con `ImportError: get_parameter_dtype`. En
+    optimum 2.x, el exportador ONNX está en el paquete aparte
+    `optimum-onnx`. El comando lo informa sin traceback y no deja una
+    carpeta a medias.
+  - **Pendiente:** fijar versiones del extra. Sin cambiar las dependencias,
+    sí se verificó la cuantización int8 (`quantize_dynamic`) sobre un ONNX
+    sintético.
 - **Pendientes de P10.3, siguen abiertos.**
   - La calibración, ante empate, debería preferir el valor del perfil.
   - El split dev/test podría estratificar por exacta/paráfrasis.
