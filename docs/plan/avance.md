@@ -84,8 +84,8 @@ omiten y 21 quedan deseleccionadas (`-m "not slow"`, 152 s).
 | P12.10 | ✅ | 2026-10-04 | 817 (+14) | Folio (14 expresiones, 15 animaciones) validado con la librería; máquina de estados con prioridades, tecleo 1,2 s, pensando-largo 3 s, inactividad, pausa oculta, grilla de mirada 5x3 con zona muerta e histéresis. La prueba del panel ahora verifica rag:avatar real (el stub previo desaparecía sin causa identificada; evidencia en scratchpad suite-p1210b) |
 | P12.11 | ✅ | 2026-10-04 | 821 (+4) | /ready reutiliza diagnosticar(abrir_indice=False) con caché de 30 s; 503 si algo bloquea, con proyecto.bloqueante (clave, mensaje, acciones) y avisos |
 | P12.12 | ✅ | 2026-10-04 | 823 (+1) | Imagen light construida (868 MB, modelos 465 MB) y probada con --network none: /health, /widget.js, /avatar.js y /config responden; /ready 503 con acción (sin índice). Corrige defecto: perfiles/*.yaml no entraban en el wheel; prueba que exige todo recurso no-Python en el wheel |
-| P12.13 | ⬜ | | | |
-| P12.14 | ⬜ | | | |
+| P12.13 | ✅ | 2026-10-04 | 823 (+2) | dist/ con proyecto, índice, Dockerfile, compose (Caddy perfil https con IP fija = RAG_PROXY_CONFIABLE), Caddyfile, .env.ejemplo y LEEME por idioma; compose validado con docker compose config y la imagen generada construida y levantada (/health 200) |
+| P12.14 | ✅ | 2026-10-04 | 823 | ci.yml reemplaza pruebas.yml: rápidas Linux/Windows 3.11/3.12 sin torch, linter de tonos, modelos con caché, web (sha256 de avatar.js, validar avatares, navegador, ejemplos), wheel limpio, imagen light sin red. YAML válido; la primera ejecución real requiere push |
 | P13.1 | ⬜ | | | |
 | P13.2 | ⬜ | | | |
 | P13.3 | ⬜ | | | |
