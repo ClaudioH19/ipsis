@@ -258,5 +258,5 @@ def test_widget_js_conserva_las_garantias_de_accesibilidad():
     """Foco atrapado, cierre con Escape y roles ARIA: no deben perderse al
     repintar el widget."""
     texto = client.get("/widget.js").text
-    for marca in ('role", "dialog"', 'aria-modal', '"Escape"', 'aria-live'):
+    for marca in ('"role", INCRUSTADO ? "region" : "dialog"', 'aria-modal', '"Escape"', 'aria-live'):
         assert marca in texto, f"falta {marca}"

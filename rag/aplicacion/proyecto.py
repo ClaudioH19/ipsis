@@ -200,6 +200,19 @@ _MICROCOPIA = {"saludo": "bienvenida", "esperando": "esperando", "error_red": "e
                "invitacion_citas": "invitacion_citas"}
 
 
+def microcopia_del_widget(idioma: str, nombre_asistente: str) -> dict[str, list[str]]:
+    """Variantes del tono activo para los textos del widget (el widget rota entre ellas)."""
+    from rag.configuracion.personalidad import cargar_personalidad
+    from rag.lenguaje.paquete import cargar_paquete
+    from rag.lenguaje.tonos import SITUACIONES, cargar_tono
+
+    paquete = cargar_paquete(idioma, proyecto=Path.cwd())
+    tono = cargar_tono(idioma, cargar_personalidad(Path.cwd()).tono.activo, proyecto=Path.cwd(),
+                       sobrescrituras=paquete.plantillas_legado)
+    return {s: [v.format(nombre_asistente=nombre_asistente) for v in tono.variantes(s)]
+            for s, regla in SITUACIONES.items() if regla.origen == "widget"}
+
+
 def interfaz_del_idioma(idioma: str) -> dict:
     """Textos de la interfaz del widget: los fijos del idioma más la microcopia del tono."""
     from rag.lenguaje.paquete import cargar_paquete

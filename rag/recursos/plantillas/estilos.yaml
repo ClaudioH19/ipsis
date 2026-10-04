@@ -2,8 +2,17 @@
 preset: "clasico"
 presentacion:
   densidad: "comoda"
-  citas: "acordeon"
+  citas: "acordeon"            # acordeon | lista (las citas siempre se muestran)
   mostrar_etiqueta_estado: true
+# Dónde y cómo aparece el widget en tu sitio. Los atributos del <script> o del
+# <rag-extractivo-chat> (posicion, tamano, lanzador…) tienen prioridad.
+ubicacion:
+  posicion: "abajo-derecha"    # abajo-derecha | abajo-izquierda | arriba-derecha | arriba-izquierda | incrustado
+  desplazamiento_x: 24         # px desde el borde lateral
+  desplazamiento_y: 24         # px desde el borde superior o inferior
+  z_index: 2147483000
+  tamano: "normal"             # compacto | normal | amplio
+  lanzador: "burbuja"          # burbuja | pestana | oculto (el sitio abre con window.RagChat.abrir())
 colores:
   acento: "#2563eb"
   acento_texto: "#ffffff"
@@ -40,7 +49,6 @@ forma:
   alto_panel: "600px"
   tamano_boton: "58px"
   tamano_icono: "26px"
-  margen: "24px"
   separacion: "12px"
   relleno: "16px"
 

@@ -228,6 +228,9 @@ mensajes:
     - In version {v1}…; in version {v2}…
   sin_seccion: (no section)
 interfaz:
+  fuentes_una: 1 source from the document
+  fuentes_varias: '{n} sources from the document'
+  posicion_cita: 'characters {inicio}–{fin}'
   titulo: Assistant
   subtitulo: Answers quoting the document
   abrir: Open chat with {titulo}

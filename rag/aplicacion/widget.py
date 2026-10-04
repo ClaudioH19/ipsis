@@ -41,7 +41,7 @@ PRESETS: dict[str, dict[str, Any]] = {
             },
             "tipografia": {"familia": "Georgia, 'Times New Roman', serif", "interlineado": "1.65"},
             "forma": {"radio_panel": "8px", "radio_burbuja": "6px", "radio_control": "4px"},
-            "presentacion": {"densidad": "comoda", "citas": "abiertas"},
+            "presentacion": {"densidad": "comoda", "citas": "lista"},
         },
     },
     "contraste": {
@@ -102,11 +102,67 @@ def validar_tema(tema: dict) -> None:
         raise ValueError("presentacion debe ser un objeto")
     if presentacion.get("densidad", "comoda") not in {"comoda", "compacta"}:
         raise ValueError("presentacion.densidad debe ser 'comoda' o 'compacta'")
-    if presentacion.get("citas", "acordeon") not in {"acordeon", "abiertas", "ocultas"}:
-        raise ValueError("presentacion.citas debe ser acordeon, abiertas u ocultas")
+    # Las citas no se pueden ocultar: «abiertas» y «ocultas» son valores anteriores
+    # que se leen como «lista» y «acordeon» (citas_presentacion).
+    if presentacion.get("citas", "acordeon") not in {"acordeon", "lista", "abiertas", "ocultas"}:
+        raise ValueError("presentacion.citas debe ser acordeon o lista (las citas siempre se muestran)")
     if not isinstance(presentacion.get("mostrar_etiqueta_estado", True), bool):
         raise ValueError("presentacion.mostrar_etiqueta_estado debe ser booleano")
+    ubicacion_widget(tema)  # valida tema.ubicacion
     render_css(tema=tema)
+
+
+POSICIONES = ("abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda", "incrustado")
+TAMANOS = ("compacto", "normal", "amplio")
+LANZADORES = ("burbuja", "pestana", "oculto")
+UBICACION_POR_DEFECTO = {"posicion": "abajo-derecha", "desplazamiento_x": 24, "desplazamiento_y": 24,
+                         "z_index": 2147483000, "tamano": "normal", "lanzador": "burbuja"}
+
+
+def citas_presentacion(valor: str | None) -> str:
+    """``acordeon`` o ``lista``; los valores anteriores no ocultan las citas."""
+    return "lista" if valor in ("lista", "abiertas") else "acordeon"
+
+
+def ubicacion_widget(tema: dict | None = None) -> dict:
+    """``estilos.yaml::ubicacion`` validada y con sus valores por defecto."""
+    tema = cargar_estilos() if tema is None else tema
+    propia = tema.get("ubicacion") or {}
+    if not isinstance(propia, dict):
+        raise ValueError("ubicacion debe ser un objeto")
+    if extra := set(propia) - set(UBICACION_POR_DEFECTO):
+        raise ValueError(f"ubicacion: claves desconocidas {sorted(extra)}")
+    base = dict(UBICACION_POR_DEFECTO)
+    # Compatibilidad: forma.margen ("24px") era la distancia al borde antes de ubicacion.
+    margen = str((tema.get("forma") or {}).get("margen", "")).strip().removesuffix("px")
+    if margen.isdigit():
+        base["desplazamiento_x"] = base["desplazamiento_y"] = int(margen)
+    ubicacion = {**base, **propia}
+    for clave, validos in (("posicion", POSICIONES), ("tamano", TAMANOS), ("lanzador", LANZADORES)):
+        if ubicacion[clave] not in validos:
+            raise ValueError(f"ubicacion.{clave} debe ser uno de: {', '.join(validos)}")
+    for clave, minimo, maximo in (("desplazamiento_x", 0, 400), ("desplazamiento_y", 0, 400),
+                                  ("z_index", 0, 2147483647)):
+        valor = ubicacion[clave]
+        if isinstance(valor, bool) or not isinstance(valor, int) or not minimo <= valor <= maximo:
+            raise ValueError(f"ubicacion.{clave} debe ser un entero entre {minimo} y {maximo}")
+    return ubicacion
+
+
+def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | None = None) -> str:
+    """Etiqueta lista para pegar en el sitio, según ``estilos.yaml::ubicacion``."""
+    u = ubicacion_widget()
+    api = api.rstrip("/")
+    atributos = {"posicion": u["posicion"], "tamano": u["tamano"], "lanzador": u["lanzador"],
+                 "desplazamiento-x": u["desplazamiento_x"], "desplazamiento-y": u["desplazamiento_y"]}
+    if clave_widget:
+        atributos["widget-key"] = clave_widget
+    if componente:
+        attrs = " ".join(f'{k}="{html.escape(str(v), quote=True)}"' for k, v in atributos.items())
+        return (f'<rag-extractivo-chat api="{html.escape(api, quote=True)}" {attrs}></rag-extractivo-chat>\n'
+                f'<script src="{html.escape(api, quote=True)}/widget.js" defer></script>')
+    attrs = " ".join(f'data-{k}="{html.escape(str(v), quote=True)}"' for k, v in atributos.items())
+    return f'<script src="{html.escape(api, quote=True)}/widget.js" data-api="{html.escape(api, quote=True)}" {attrs} defer></script>' 
 
 
 def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
@@ -192,7 +248,8 @@ def generar_vista_previa(
 
 
 __all__ = [
-    "PRESETS", "aplicar_preset", "generar_vista_previa", "listar_presets",
+    "PRESETS", "aplicar_preset", "citas_presentacion", "generar_vista_previa", "listar_presets", "snippet_widget",
+    "ubicacion_widget",
     "validar_tema",
 ]
 
@@ -203,8 +260,8 @@ def exportar_widget(
     api: str = "http://127.0.0.1:8000",
     posicion: str = "abajo-derecha",
 ) -> Path:
-    if posicion not in {"abajo-derecha", "abajo-izquierda"}:
-        raise ValueError("posición debe ser abajo-derecha o abajo-izquierda")
+    if posicion not in POSICIONES:
+        raise ValueError(f"posición debe ser una de: {', '.join(POSICIONES)}")
     destino = Path(carpeta).resolve()
     destino.mkdir(parents=True, exist_ok=True)
     javascript = files("rag.servicio").joinpath("estaticos", "widget.js").read_text(encoding="utf-8")

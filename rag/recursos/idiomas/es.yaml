@@ -272,6 +272,9 @@ mensajes:
     - En la versión {v1}…; en la {v2}…
   sin_seccion: (sin sección)
 interfaz:
+  fuentes_una: 1 fuente del documento
+  fuentes_varias: '{n} fuentes del documento'
+  posicion_cita: 'caracteres {inicio}–{fin}'
   titulo: Asistente
   subtitulo: Responde citando el documento
   abrir: Abrir chat de {titulo}
