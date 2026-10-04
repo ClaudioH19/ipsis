@@ -285,6 +285,7 @@ interfaz:
   no_directa: No es una respuesta directa
   error_origen: Este sitio no está autorizado para usar el asistente.
   error_http: El servicio no pudo responder (HTTP {estado}).
+  codigo_fuente: Código fuente
 contracciones:
   ' de el ': ' del '
   ' a el ': ' al '

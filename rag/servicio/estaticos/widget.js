@@ -130,6 +130,7 @@
     fuentes_una: "1 fuente del documento",
     fuentes_varias: "{n} fuentes del documento",
     posicion_cita: "caracteres {inicio}–{fin}",
+    codigo_fuente: "Código fuente",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -390,6 +391,9 @@
     ".rw-form input::placeholder{color:var(--rw-texto-suave);}",
     ".rw-form input:focus{outline:none;border-color:var(--rw-acento);}",
     ".rw-form input:disabled{opacity:.6;}",
+    ".rw-fuente{flex:none;display:block;text-align:center;font-size:var(--rw-tamano-etiqueta);",
+    "  color:var(--rw-texto-suave);padding:0 0 6px;background:var(--rw-superficie);text-decoration:none;}",
+    ".rw-fuente:hover,.rw-fuente:focus-visible{text-decoration:underline;color:var(--rw-texto);}",
     ".rw-enviar{background:var(--rw-acento);color:var(--rw-acento-texto);border:none;",
     "  border-radius:var(--rw-radio-control);width:42px;height:42px;flex:none;cursor:pointer;",
     "  display:flex;align-items:center;justify-content:center;",
@@ -570,6 +574,14 @@
   form.appendChild(input);
   form.appendChild(botonEnviar);
   panel.appendChild(form);
+  // AGPL §13: quien usa el servicio por red puede obtener su código fuente.
+  var enlaceFuente = document.createElement("a");
+  enlaceFuente.className = "rw-fuente";
+  enlaceFuente.href = API_BASE + "/fuente";
+  enlaceFuente.target = "_blank";
+  enlaceFuente.rel = "noopener noreferrer";
+  enlaceFuente.textContent = texto("codigo_fuente");
+  panel.appendChild(enlaceFuente);
 
   // -------------------------------------------------------------------
   // 3. Render de mensajes -- TODO texto que venga de la API se asigna con
@@ -749,6 +761,7 @@
     input.placeholder = texto("placeholder");
     botonEnviar.setAttribute("aria-label", texto("enviar"));
     ETIQUETAS_ESTADO.relacionado = texto("no_directa");
+    enlaceFuente.textContent = texto("codigo_fuente");
   }
 
   function cargarConfigServidor() {

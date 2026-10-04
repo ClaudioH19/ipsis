@@ -30,17 +30,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return carpeta
 
 
-def _motor():
-    from rag.configuracion.carga import cargar_dominio
-    from rag.consulta.etapas.redaccion import cargar_plantillas
-    from rag.consulta.motor import Motor
-    from rag.lenguaje.paquete import cargar_paquete
-
-    motor = Motor(plantillas=cargar_plantillas(cargar_paquete("es"), cargar_dominio()), idioma=cargar_paquete("es"))
-    from rag.aplicacion.consulta import recargar_presentacion
-
-    recargar_presentacion(motor)  # fija la marca inicial, como construir_motor
-    return motor
+from apoyo import motor_minimo as _motor
 
 
 def _cliente(modo: ModoServicio, cliente=REMOTA, esquema="https", motor=None) -> TestClient:

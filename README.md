@@ -268,6 +268,7 @@ instalación normal, no el checkout del repositorio.
 - [Metodología de recuperación actual](docs/metodologia/recuperacion.md)
 - [Instalación en sitios web](docs/guia/web.md)
 - [Golden set del cliente](docs/guia/golden.md)
+- [Personalidad: tono, avatar y panel `/admin`](docs/guia/personalidad.md)
 
 Los archivos `asistente.yaml` y `motor.yaml` declaran `config_version: 2` y
 se validan estrictamente al cargarse. Esto permite detectar errores de nombre
@@ -283,3 +284,23 @@ explícitas cuando cambie el formato.
 - El modo Qdrant local bloquea su carpeta mientras otro proceso la usa.
 - El historial conversacional todavía no se utiliza para resolver preguntas
   de seguimiento.
+
+## Licencia
+
+rag-extractivo es software libre bajo la
+[GNU Affero General Public License v3.0](LICENSE) (`AGPL-3.0-only`), la misma
+licencia que el motor del avatar ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab)).
+
+- **Qué permite:** usarlo con cualquier fin, también comercial; estudiarlo,
+  modificarlo y redistribuirlo.
+- **Si lo instalas sin cambios** en tu VPS para tu sitio, no tienes
+  obligaciones nuevas: el servicio ya enlaza a este repositorio.
+- **Si lo modificas y lo ofreces como servicio por red,** debes ofrecer a
+  quienes lo usan el código fuente de tu versión, bajo la misma licencia
+  (§13). Para eso, el widget y el panel muestran «Código fuente», que lleva a
+  `GET /fuente`. Apunta `RAG_URL_FUENTE` a tu repositorio.
+- **Si lo redistribuyes** (por ejemplo, una imagen Docker), incluye la
+  licencia y el código fuente correspondiente.
+
+`rag/servicio/estaticos/avatar.js.LICENSE.txt` lista los paquetes incluidos
+en el motor del avatar y sus licencias (AGPL-3.0, MIT y BSD-3-Clause).

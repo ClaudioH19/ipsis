@@ -218,7 +218,9 @@ def crear_app(
             servicio.listo = False
 
     docs = {} if modo.docs_activos else {"docs_url": None, "redoc_url": None, "openapi_url": None}
-    aplicacion = FastAPI(title="rag-extractivo", version=__version__, lifespan=lifespan, **docs)
+    aplicacion = FastAPI(title="rag-extractivo", version=__version__, lifespan=lifespan,
+                         license_info={"name": "AGPL-3.0-only", "identifier": "AGPL-3.0-only"},
+                         description=f"Código fuente (AGPL-3.0): {modo.fuente}", **docs)
     aplicacion.state.servicio = estado
     aplicacion.state.modo = modo
     aplicacion.add_middleware(
@@ -265,6 +267,13 @@ def crear_app(
         aplicacion.include_router(crear_router_admin(modo, estado.limitador, al_cambiar=lambda: _refrescar(estado)))
     for problema in modo.problemas:
         _log.warning(problema)
+
+    @aplicacion.get("/fuente", include_in_schema=False)
+    def fuente():
+        """AGPL §13: enlace al código fuente del servicio (``RAG_URL_FUENTE``)."""
+        from fastapi.responses import RedirectResponse
+
+        return RedirectResponse(modo.fuente, status_code=307)
 
     @aplicacion.get("/health")
     def health():

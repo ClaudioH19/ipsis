@@ -117,9 +117,14 @@ def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
     cerrar = page.get_by_role("button", name="Cerrar chat")
     cerrar.focus()
     page.keyboard.press("Shift+Tab")
+    # El último enfocable es el enlace «Código fuente» (AGPL §13), bajo el campo.
     assert page.evaluate(
         "document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.className"
-    ) == "rw-enviar"
+    ) == "rw-fuente"
+    page.keyboard.press("Tab")
+    assert page.evaluate(
+        "document.querySelector('rag-extractivo-chat').shadowRoot.activeElement.className"
+    ) == "rw-cerrar"
 
     page.keyboard.press("Escape")
     expect(dialogo).to_be_hidden()

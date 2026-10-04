@@ -145,7 +145,7 @@ Detalle en [web.md](web.md).
 | `HF_HUB_OFFLINE=1` | Nunca usa la red |
 | `RAG_HILOS_ONNX` | Hilos de onnxruntime |
 | `QDRANT_MODO`, `QDRANT_URL` | Qdrant `local` o `servidor` |
-| `RAG_MODO`, `RAG_ADMIN_TOKEN`, `RAG_PROXY_CONFIABLE`, `RAG_ADMIN_IPS`, `RAG_DOCS`, `RAG_DEMO` | Modo de ejecución y `/admin`; ver [instalacion.md](instalacion.md) |
+| `RAG_MODO`, `RAG_ADMIN_TOKEN`, `RAG_PROXY_CONFIABLE`, `RAG_ADMIN_IPS`, `RAG_DOCS`, `RAG_DEMO`, `RAG_URL_FUENTE` | Modo de ejecución y `/admin`; ver [instalacion.md](instalacion.md) |
 
 ## Problemas frecuentes
 
