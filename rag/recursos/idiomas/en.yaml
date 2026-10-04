@@ -218,47 +218,8 @@ conversacional:
     - who are you
     - what are you
     - how do you work
-  respuestas:
-    saludo:
-    - Hi! I'm {nombre_asistente}. I answer questions about {descripcion_dominio} quoting the exact text
-      of the document. What do you need to know?
-    - 'Hi! Ask me anything about {descripcion_dominio}: I look for the answer in the document and show
-      you where I found it.'
-    agradecimiento:
-    - You're welcome. If you have another question about {descripcion_dominio}, I'm here.
-    - Glad to help. Any other question about {descripcion_dominio}, just ask.
-    despedida:
-    - Goodbye.
-    - See you. Come back whenever you need to check the document.
-    capacidad:
-    - I'm {nombre_asistente}. I answer questions about {descripcion_dominio} quoting the exact text of
-      the document. If the information is not there, I tell you instead of making up an answer.
-    - I search {descripcion_dominio} and give you literal text with its source.
 mensajes:
-  sin_respuesta: I couldn't find that information in the available documents.
-  premisa_no_encontrada: I couldn't find information about "{entidad}" in the available documents. It
-    may not exist or be outside what your documents cover.
-  relacionado_intro: 'I couldn''t find a direct answer. This is what the documents say about the topic:'
-  relacionado_foco_ausente: 'I couldn''t find specific information about «{termino}». This is the closest:'
   conectores:
-    apertura:
-    - 'This is what the document says:'
-    - 'I found this in the document:'
-    - 'The document puts it this way:'
-    - 'According to the loaded text:'
-    complemento:
-    - 'It also adds:'
-    - 'In another section, the document adds:'
-    - 'It also says:'
-    - 'And it continues:'
-    condicion:
-    - 'This applies under a condition:'
-    - 'There is an associated condition:'
-    - 'The document makes it conditional:'
-    excepcion:
-    - 'With one exception:'
-    - 'There is a caveat:'
-    - 'The document includes an exception:'
     secuencia:
     - First
     - Then
@@ -268,7 +229,6 @@ mensajes:
   sin_seccion: (no section)
 interfaz:
   titulo: Assistant
-  saludo: Hi, how can I help you?
   subtitulo: Answers quoting the document
   abrir: Open chat with {titulo}
   cerrar: Close chat
@@ -276,11 +236,8 @@ interfaz:
   placeholder: Type your question...
   enviar: Send question
   no_directa: Not a direct answer
-  esperando: Searching the document
-  error_limite: Too many questions in a row. Wait a few seconds and try again.
   error_origen: This site is not authorized to use the assistant.
   error_http: The service could not answer (HTTP {estado}).
-  error_red: Could not reach the assistant. Check your connection and try again.
 contracciones: {}
 golden_instrucciones:
   nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).

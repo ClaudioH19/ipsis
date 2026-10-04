@@ -162,11 +162,55 @@ números, fechas, conectores, mensajes e interfaz. Una variante regional
 Otro código funciona con un respaldo:
 - solo las reglas universales (fechas numéricas, montos, artículos);
 - términos sin stem;
-- los mensajes y la interfaz de `en`, que se pueden traducir en
-  `configuracion/idioma.yaml`.
+- la interfaz y los tonos de `en`, que se pueden traducir con
+  `configuracion/idioma.yaml` (interfaz) y
+  `configuracion/personalidad.yaml` (tono).
 
 `rag init` y `rag configurar idioma=` lo avisan, y `rag doctor` lo marca
 como aviso.
+
+### Tono de las respuestas
+
+Lo que el asistente dice alrededor del texto del documento viene de un
+**tono**, en `rag/recursos/tonos/<idioma>/<tono>.yaml`. Hoy está `cordial`;
+`formal`, `serio`, `animoso`, `cercano`, `empatico` y `directo` llegan en
+P12.3.
+
+Cada tono tiene 18 situaciones con 5 variantes cada una:
+- motor: saludo, agradecimiento, despedida, capacidad, apertura,
+  complemento, condición, excepción, relacionado, término ausente, sin
+  respuesta y premisa no encontrada;
+- widget: bienvenida, esperando, invitación a revisar las citas y errores
+  de red, de límite y de servicio.
+
+El tono **solo enmarca**: el texto del documento va literal y las citas,
+debajo. Cambiar de tono no cambia el estado de la respuesta, ni pide
+reindexar ni recalibrar.
+
+Para cambiar textos propios del proyecto, sin tocar el paquete, usa
+`configuracion/personalidad.yaml`:
+
+```yaml
+tono:
+  plantillas:
+    sin_respuesta:
+    - Eso no está en el manual del equipo.
+```
+
+Cada sobrescritura pasa por las mismas reglas que los paquetes. Si no las
+cumple, el motor no arranca y el error dice qué regla falló:
+- una línea, de hasta 200 caracteres;
+- sin dígitos, URLs, HTML, Markdown, emojis ni palabras enteras en
+  mayúsculas;
+- solo las variables de su situación (`{termino}`, `{entidad}`,
+  `{nombre_asistente}`, `{descripcion_dominio}`);
+- los conectores terminan en «:»;
+- sin expresiones de la lista prohibida del idioma.
+
+Los textos de `configuracion/idioma.yaml` anteriores a los tonos
+(`mensajes.sin_respuesta`, `mensajes.conectores.apertura`, `interfaz.saludo`…)
+siguen funcionando: se toman como sobrescrituras del tono.
+`personalidad.yaml` tiene prioridad sobre ellos.
 
 ### Documentos vigentes
 

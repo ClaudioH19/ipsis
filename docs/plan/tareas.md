@@ -713,7 +713,7 @@ no varían con el tono.
 
 **Reglas para todas las plantillas** (las comprueba un linter en las
 pruebas):
-- forma: una línea, ≤ 180 caracteres;
+- forma: una línea, ≤ 200 caracteres;
 - contenido prohibido: dígitos, URLs, HTML, Markdown y emojis;
 - solo las variables permitidas de su situación;
 - variedad: las 5 variantes son distintas entre sí tras normalizar y

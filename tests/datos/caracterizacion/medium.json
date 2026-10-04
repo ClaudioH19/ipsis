@@ -3,7 +3,7 @@
     "estado": "conversacional",
     "nivel_servicio": "normal",
     "plan": "conversacional",
-    "respuesta": "¡Hola! Soy Asistente Aqualis. Respondo preguntas sobre los manuales del purificador Aqualis citando el texto exacto del documento. ¿Qué necesitas saber?",
+    "respuesta": "¡Hola! Pregúntame lo que necesites sobre los manuales del purificador Aqualis: busco la respuesta en el documento y te muestro de dónde la saqué.",
     "confianza": {
       "top1": 0.0,
       "margen": 0.0
@@ -14,7 +14,7 @@
     "estado": "conversacional",
     "nivel_servicio": "normal",
     "plan": "conversacional",
-    "respuesta": "De nada. Si tienes otra pregunta sobre los manuales del purificador Aqualis, aquí estoy.",
+    "respuesta": "Con gusto. Cualquier otra duda sobre los manuales del purificador Aqualis, dime.",
     "confianza": {
       "top1": 0.0,
       "margen": 0.0
@@ -25,7 +25,7 @@
     "estado": "ok",
     "nivel_servicio": "normal",
     "plan": "extractivo",
-    "respuesta": "El documento lo plantea así: El filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "respuesta": "Esto es lo que dice el documento: El filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confianza": {
       "top1": 0.85422,
       "margen": 0.02035
@@ -67,7 +67,7 @@
     "estado": "ok",
     "nivel_servicio": "normal",
     "plan": "extractivo",
-    "respuesta": "El documento lo plantea así: El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "respuesta": "Esto es lo que dice el documento: El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confianza": {
       "top1": 0.87552,
       "margen": 0.09017
@@ -180,7 +180,7 @@
     "estado": "ok",
     "nivel_servicio": "normal",
     "plan": "extractivo",
-    "respuesta": "El documento lo plantea así: Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "respuesta": "Esto es lo que dice el documento: Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confianza": {
       "top1": 0.82972,
       "margen": 0.07259
@@ -201,7 +201,7 @@
     "estado": "ok",
     "nivel_servicio": "normal",
     "plan": "extractivo",
-    "respuesta": "El documento lo plantea así: Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "respuesta": "Esto es lo que dice el documento: Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confianza": {
       "top1": 0.82911,
       "margen": 0.03318

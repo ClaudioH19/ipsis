@@ -86,6 +86,26 @@ def _diferencias(propio, base):
     return None if propio == base else propio
 
 
+def _con_textos_del_tono(base: dict, idioma: str) -> dict:
+    """El paquete de idioma con los textos que hoy viven en el tono ``cordial``,
+    en su forma anterior: así se reconoce qué cambió el proyecto."""
+    from importlib.resources import files
+
+    recurso = files("rag.recursos").joinpath("tonos", idioma, "cordial.yaml")
+    if not recurso.is_file():
+        return base
+    tono = (yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}).get("situaciones") or {}
+    mensajes = dict(base.get("mensajes") or {})
+    mensajes.update({clave: tono[situacion][0] for clave, situacion in (
+        ("sin_respuesta", "sin_respuesta"), ("premisa_no_encontrada", "premisa_no_encontrada"),
+        ("relacionado_intro", "relacionado_intro"), ("relacionado_foco_ausente", "foco_ausente"))})
+    mensajes["conectores"] = {**(mensajes.get("conectores") or {}),
+                              **{c: tono[c] for c in ("apertura", "complemento", "condicion", "excepcion")}}
+    conversacional = {**(base.get("conversacional") or {}),
+                      "respuestas": {c: tono[c] for c in ("saludo", "agradecimiento", "despedida", "capacidad")}}
+    return {**base, "mensajes": mensajes, "conversacional": conversacional}
+
+
 def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
     """``configuracion/textos.yaml`` pasa al paquete de idioma (P3.5).
 
@@ -104,6 +124,7 @@ def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
     if not recurso.is_file():
         recurso = carpeta.joinpath("es.yaml")
     base = yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
+    base = _con_textos_del_tono(base, recurso.name.removesuffix(".yaml"))
     abstencion = textos.get("abstencion") or {}
     equivalente = {
         "mensajes": {
