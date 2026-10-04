@@ -101,7 +101,10 @@ class ComandoConfigurar(Comando):
 
         print("configuracion/asistente.yaml actualizado:")
         for clave in pares:
-            print(f"  {clave} = {nuevo[clave]!r}")
+            valor = nuevo
+            for parte in clave.split("."):  # claves anidadas: registro.activo
+                valor = valor[parte]
+            print(f"  {clave} = {valor!r}")
         if "idioma" in pares and idioma_con_respaldo(nuevo["idioma"]):
             print(_NOTA_RESPALDO.format(idioma=nuevo["idioma"]))
         return 0

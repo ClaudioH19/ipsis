@@ -6,6 +6,7 @@ estado propio de cada instancia de aplicación.
 """
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,6 +20,7 @@ from pydantic import BaseModel, Field
 from rag import __version__
 from rag.aplicacion.consulta import Motor, MotorNoListo, MotorSaturado, construir_motor_del_proyecto
 from rag.aplicacion.proyecto import configuracion_asistente, interfaz_del_idioma, limite_de_peticiones
+from rag.aplicacion.registro import RegistroConsultas, registro_del_proyecto
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
     LimitadorPeticiones,
@@ -27,6 +29,7 @@ from rag.servicio.seguridad import (
 )
 
 _DIR_ESTATICOS = Path(__file__).resolve().parent / "estaticos"
+_log = logging.getLogger(__name__)
 ConstructorMotor = Callable[[], Motor]
 
 
@@ -104,6 +107,7 @@ class EstadoAplicacion:
     listo: bool = False
     error_arranque: str | None = None
     abstencion_calibrada: bool = False
+    registro: RegistroConsultas | None = None  # None: registro apagado, no se escribe nada
 
 
 def _construir_motor_produccion() -> Motor:
@@ -151,6 +155,7 @@ def crear_app(
             capacidad=cfg_limite["capacidad"],
             tasa_por_segundo=cfg_limite["tasa_por_segundo"],
         ),
+        registro=registro_del_proyecto(cfg_dominio),
     )
 
     @asynccontextmanager
@@ -251,8 +256,9 @@ def crear_app(
         dependencies=[Depends(_verificar_seguridad)],
     )
     def consultar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
+        servicio = _estado(request)
         try:
-            resultado = _estado(request).motor.consultar(peticion.pregunta, peticion.id_sesion)
+            resultado = servicio.motor.consultar(peticion.pregunta, peticion.id_sesion)
         except MotorNoListo as exc:
             raise HTTPException(status_code=503, detail="servicio no listo, ver /ready") from exc
         except MotorSaturado as exc:
@@ -261,6 +267,11 @@ def crear_app(
                 detail="servicio saturado (límite de concurrencia alcanzado), reintente en un momento",
                 headers={"Retry-After": "1"},
             ) from exc
+        if servicio.registro is not None:
+            try:
+                servicio.registro.registrar(peticion.pregunta, resultado)
+            except OSError as exc:  # el registro nunca tumba una respuesta
+                _log.warning("no se pudo escribir el registro de consultas: %s", exc)
         return RespuestaConsulta.model_validate(resultado.diagnostico["contrato_http"])
 
     return aplicacion

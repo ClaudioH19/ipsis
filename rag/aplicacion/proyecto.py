@@ -16,6 +16,15 @@ from rag.configuracion.carga import (
 )
 
 
+def _booleano(clave: str, valor: str) -> bool:
+    texto = valor.strip().lower()
+    if texto in {"true", "si", "sí", "1", "yes", "on"}:
+        return True
+    if texto in {"false", "no", "0", "off"}:
+        return False
+    raise ValueError(f"{clave} espera true o false, no {valor!r}")
+
+
 def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     desconocidas = set(pares) - CLAVES_DOMINIO_VALIDAS
     if desconocidas:
@@ -27,7 +36,9 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     ruta_p = Path(ruta)
     nuevo = cargar_dominio(ruta)
     for clave, valor in pares.items():
-        if clave in _CLAVES_LISTA_SEPARADA_POR_COMA:
+        if clave == "registro.activo":
+            nuevo["registro"] = {**(nuevo.get("registro") or {}), "activo": _booleano(clave, valor)}
+        elif clave in _CLAVES_LISTA_SEPARADA_POR_COMA:
             nuevo[clave] = [v.strip() for v in valor.split(",") if v.strip()]
         else:
             nuevo[clave] = valor

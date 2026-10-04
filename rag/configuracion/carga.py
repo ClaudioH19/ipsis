@@ -147,7 +147,7 @@ def config_seguridad(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict
 
 CLAVES_DOMINIO_VALIDAS = {
     "nombre_asistente", "descripcion_dominio", "idioma", "perfil",
-    "cors_origenes", "claves_widget",
+    "cors_origenes", "claves_widget", "registro.activo",
 }
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
 
