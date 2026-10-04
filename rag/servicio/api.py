@@ -10,7 +10,7 @@ import logging
 import threading
 import time
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Literal, Optional
 
@@ -131,6 +131,8 @@ class EstadoAplicacion:
     abstencion_calibrada: bool = False
     registro: RegistroConsultas | None = None  # None: registro apagado, no se escribe nada
     diagnostico: tuple[float, dict | None] | None = None  # (momento, resumen) que publica /ready
+    refrescando_diagnostico: bool = False
+    candado_diagnostico: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
 
 def _construir_motor_produccion() -> Motor:
@@ -171,25 +173,41 @@ _ESTATICOS = ("/widget.js", "/estilos.css", "/avatar.js")
 
 
 _TTL_DIAGNOSTICO_S = 30.0
-_candado_diagnostico = threading.Lock()
+
+
+def _calcular_diagnostico() -> dict | None:
+    from rag.aplicacion.diagnostico import ProyectoNoEncontrado, diagnosticar, resumen_para_servicio
+
+    try:
+        return resumen_para_servicio(diagnosticar(abrir_indice=False))
+    except ProyectoNoEncontrado:
+        return None
+
+
+def _refrescar_diagnostico(servicio) -> None:
+    try:
+        servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
+    except Exception:  # noqa: BLE001 -- se conserva el último diagnóstico y se reintenta luego
+        _log.exception("no se pudo refrescar el diagnóstico de /ready")
+    finally:
+        servicio.refrescando_diagnostico = False
 
 
 def _diagnostico_cacheado(servicio) -> dict | None:
-    """``resumen_para_servicio`` del proyecto en la carpeta actual, recalculado cada
-    30 s como máximo (un healthcheck frecuente no repite el diagnóstico)."""
-    from rag.aplicacion.diagnostico import ProyectoNoEncontrado, diagnosticar, resumen_para_servicio
+    """``resumen_para_servicio`` del proyecto en la carpeta actual, sin hacer esperar a ``/ready``.
 
-    ahora = time.monotonic()
-    with _candado_diagnostico:
-        cache = servicio.diagnostico
-        if cache is not None and ahora - cache[0] < _TTL_DIAGNOSTICO_S:
-            return cache[1]
-        try:
-            resumen = resumen_para_servicio(diagnosticar(abrir_indice=False))
-        except ProyectoNoEncontrado:
-            resumen = None
-        servicio.diagnostico = (ahora, resumen)
-        return resumen
+    El primero se calcula al arrancar (``lifespan``). Si tiene más de 30 s, se
+    devuelve igual y se refresca en segundo plano, una sola vez a la vez: un
+    healthcheck con timeout corto nunca paga el diagnóstico (en frío, segundos).
+    """
+    with servicio.candado_diagnostico:
+        if servicio.diagnostico is None:  # sin lifespan (p. ej. una prueba): una vez, en línea
+            servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
+        momento, resumen = servicio.diagnostico
+        if time.monotonic() - momento >= _TTL_DIAGNOSTICO_S and not servicio.refrescando_diagnostico:
+            servicio.refrescando_diagnostico = True
+            threading.Thread(target=_refrescar_diagnostico, args=(servicio,), daemon=True).start()
+    return resumen
 
 
 def crear_app(
@@ -231,6 +249,8 @@ def crear_app(
                 "abstencion_calibrada",
                 servicio.motor.politica_abstencion is not None,
             )
+            # El diagnóstico se calcula aquí, antes de declararse listo: /ready nunca lo espera.
+            servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
             servicio.listo = True
             servicio.error_arranque = None
         except Exception as exc:  # se expone en /ready; el proceso sigue vivo
