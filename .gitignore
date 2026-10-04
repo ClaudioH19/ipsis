@@ -46,3 +46,6 @@ onnx_scratch/
 
 # Grafo de conocimiento local (graphify)
 graphify-out/
+
+# Herramientas de desarrollo (npm)
+herramientas/*/node_modules/

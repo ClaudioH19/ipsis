@@ -1,0 +1,20 @@
+{
+  "name": "rag-extractivo-avatar",
+  "private": true,
+  "description": "Empaqueta el motor del avatar (@bible-strong/avatar-web) en rag/servicio/estaticos/avatar.js. Solo desarrollo: no entra en el wheel.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "construir": "node construir.mjs",
+    "verificar": "node construir.mjs --verificar"
+  },
+  "dependencies": {
+    "@bible-strong/avatar-web": "0.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

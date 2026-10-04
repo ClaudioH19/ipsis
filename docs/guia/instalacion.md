@@ -183,6 +183,7 @@ Variables del modo y del panel `/admin`:
 | `RAG_ADMIN_IPS` | Opcional: IPs permitidas para `/admin` |
 | `RAG_MODO` | `produccion` (por defecto) o `desarrollo`; también `rag servir --modo` |
 | `RAG_DOCS=1`, `RAG_DEMO=1` | `/docs` y `/widget/demo.html` también en producción |
+| `RAG_URL_FUENTE` | URL de tu código fuente (AGPL §13) a la que redirige `GET /fuente`. Por defecto, este repositorio |
 
 Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
 queda en `.rag/registros/admin.jsonl`: fecha, IP, acción y claves, nunca el
@@ -201,7 +202,9 @@ Para rotar el token, cámbialo y reinicia el servicio.
 
 ## Licencia
 
-El proyecto será AGPL-3.0, la misma licencia que la librería del avatar
-**(P12.8)**:
+El proyecto es AGPL-3.0 (`AGPL-3.0-only`), la misma licencia que la librería
+del avatar. Detalle en la sección Licencia del [README](../../README.md):
 - instalarlo sin cambios en tu VPS no te impone obligaciones nuevas;
-- si lo modificas y lo ofreces como servicio, debes publicar tus cambios.
+- si lo modificas y lo ofreces como servicio, debes publicar tus cambios y
+  apuntar `RAG_URL_FUENTE` a tu repositorio. El widget y el panel enlazan a
+  `GET /fuente`, que redirige ahí.

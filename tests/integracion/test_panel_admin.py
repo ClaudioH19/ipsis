@@ -8,7 +8,6 @@ from __future__ import annotations
 import json
 import re
 import socket
-import sys
 import threading
 import time
 from pathlib import Path
@@ -23,9 +22,6 @@ RAIZ = Path(__file__).resolve().parents[2]
 CARPETA_PANEL = RAIZ / "rag/servicio/estaticos/admin"
 TOKEN = "p" * 40
 
-sys.path.insert(0, str(RAIZ / "tests"))
-sys.path.insert(0, str(RAIZ / "tests/servicio"))
-
 
 @pytest.fixture
 def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
@@ -39,7 +35,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 def _app(modo: ModoServicio):
-    from test_admin import _motor
+    from apoyo import motor_minimo as _motor
 
     from rag.servicio.api import crear_app
 

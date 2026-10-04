@@ -241,6 +241,7 @@ interfaz:
   no_directa: Not a direct answer
   error_origen: This site is not authorized to use the assistant.
   error_http: The service could not answer (HTTP {estado}).
+  codigo_fuente: Source code
 contracciones: {}
 golden_instrucciones:
   nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).

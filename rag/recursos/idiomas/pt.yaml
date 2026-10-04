@@ -233,6 +233,7 @@ interfaz:
   no_directa: Não é uma resposta direta
   error_origen: Este site não está autorizado a usar o assistente.
   error_http: O serviço não conseguiu responder (HTTP {estado}).
+  codigo_fuente: Código-fonte
 contracciones:
   ' de o ': ' do '
   ' de a ': ' da '

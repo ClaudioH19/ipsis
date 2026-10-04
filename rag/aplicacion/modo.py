@@ -60,7 +60,15 @@ class ModoServicio:
         if self.token_admin and len(self.token_admin) < LARGO_MINIMO_TOKEN:
             salida.append(f"RAG_ADMIN_TOKEN tiene {len(self.token_admin)} caracteres; se necesitan "
                           f"{LARGO_MINIMO_TOKEN} o más: /admin queda apagado")
+        if not self.url_fuente.startswith(("https://", "http://")):
+            salida.append(f"RAG_URL_FUENTE={self.url_fuente!r} no es una URL http(s): /fuente usa "
+                          f"{URL_FUENTE_POR_DEFECTO}")
         return salida
+
+    @property
+    def fuente(self) -> str:
+        """URL del código fuente (AGPL §13); la del repositorio si la configurada no es válida."""
+        return self.url_fuente if self.url_fuente.startswith(("https://", "http://")) else URL_FUENTE_POR_DEFECTO
 
 
 def modo_servicio(modo: str | None = None, entorno: Mapping[str, str] | None = None) -> ModoServicio:
