@@ -39,7 +39,7 @@ def test_preset_editorial_abre_citas_y_minimal_es_compacto(tmp_path):
     editorial = aplicar_preset("editorial", str(tmp_path / "editorial.yaml"))
     minimal = aplicar_preset("minimal", str(tmp_path / "minimal.yaml"))
 
-    assert editorial["presentacion"]["citas"] == "abiertas"
+    assert editorial["presentacion"]["citas"] == "lista"
     assert minimal["presentacion"]["densidad"] == "compacta"
 
 
@@ -98,3 +98,70 @@ def test_cli_genera_vista_previa(tmp_path):
         "--salida", str(salida),
     ]) == 0
     assert salida.is_file()
+
+
+# --- ubicación, snippet y /config (P12.5) -------------------------------------------------------
+def test_ubicacion_por_defecto_y_validacion():
+    import pytest
+
+    from rag.aplicacion.widget import ubicacion_widget
+
+    assert ubicacion_widget({}) == {"posicion": "abajo-derecha", "desplazamiento_x": 24, "desplazamiento_y": 24,
+                                    "z_index": 2147483000, "tamano": "normal", "lanzador": "burbuja"}
+    assert ubicacion_widget({"ubicacion": {"posicion": "incrustado", "lanzador": "oculto"}})["lanzador"] == "oculto"
+    for malo, mensaje in [({"posicion": "centro"}, "posicion"), ({"tamano": "enorme"}, "tamano"),
+                          ({"desplazamiento_x": -1}, "desplazamiento_x"), ({"z_index": "alto"}, "z_index"),
+                          ({"color": "rojo"}, "desconocidas")]:
+        with pytest.raises(ValueError, match=mensaje):
+            validar_tema({"ubicacion": malo})
+
+
+def test_forma_margen_anterior_sigue_ubicando_el_widget():
+    from rag.aplicacion.widget import ubicacion_widget
+
+    u = ubicacion_widget({"forma": {"margen": "40px"}})
+    assert (u["desplazamiento_x"], u["desplazamiento_y"]) == (40, 40)
+    assert ubicacion_widget({"forma": {"margen": "40px"}, "ubicacion": {"desplazamiento_x": 8}})["desplazamiento_x"] == 8
+
+
+def test_las_citas_nunca_se_ocultan():
+    import pytest
+
+    from rag.aplicacion.widget import citas_presentacion
+
+    assert [citas_presentacion(v) for v in ("acordeon", "lista", "abiertas", "ocultas", None)] == \
+        ["acordeon", "lista", "lista", "acordeon", "acordeon"]
+    with pytest.raises(ValueError, match="siempre se muestran"):
+        validar_tema({"presentacion": {"citas": "invisibles"}})
+
+
+def test_snippet_usa_la_ubicacion_y_escapa(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "configuracion").mkdir()
+    (tmp_path / "configuracion" / "estilos.yaml").write_text(
+        "ubicacion:\n  posicion: arriba-izquierda\n  lanzador: pestana\n", encoding="utf-8")
+    assert main(["widget", "snippet", "--api", "https://asistente.ejemplo.cl/"]) == 0
+    salida = capsys.readouterr().out.strip()
+    assert salida.startswith('<script src="https://asistente.ejemplo.cl/widget.js" data-api="https://asistente.ejemplo.cl"')
+    assert 'data-posicion="arriba-izquierda"' in salida and 'data-lanzador="pestana"' in salida
+    assert main(["widget", "snippet", "--componente", "--clave", 'a"b']) == 0
+    componente = capsys.readouterr().out
+    assert "<rag-extractivo-chat" in componente and 'widget-key="a&quot;b"' in componente
+
+
+def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["personalidad", "tono", "aplicar", "serio"]) == 0
+    from rag.servicio.api import crear_app
+
+    cfg = TestClient(crear_app()).get("/config").json()
+    assert cfg["citas"] == "acordeon" and cfg["ubicacion"]["posicion"] == "abajo-derecha"
+    assert set(cfg["microcopia"]) == {"bienvenida", "esperando", "invitacion_citas", "error_red", "error_limite",
+                                      "error_servicio"}
+    assert cfg["microcopia"]["esperando"][0] == "Buscando"  # tono serio
+    assert all(len(v) == 5 for v in cfg["microcopia"].values())
+    assert "{" not in " ".join(sum(cfg["microcopia"].values(), []))  # variables reemplazadas
+    assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget

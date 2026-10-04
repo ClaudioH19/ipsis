@@ -5,7 +5,7 @@ import argparse
 
 import yaml
 
-from rag.aplicacion.widget import aplicar_preset, exportar_widget, generar_vista_previa, listar_presets
+from rag.aplicacion.widget import aplicar_preset, exportar_widget, generar_vista_previa, listar_presets, snippet_widget
 from rag.cli.base import Comando, Grupo
 
 
@@ -65,7 +65,9 @@ class ComandoWidgetExportar(Comando):
         parser.add_argument("carpeta", help="Directorio donde escribir los archivos.")
         parser.add_argument("--api", default="http://127.0.0.1:8000",
                             help="URL pública de la API que consultará el widget.")
-        parser.add_argument("--posicion", choices=["abajo-derecha", "abajo-izquierda"], default="abajo-derecha",
+        parser.add_argument("--posicion", default="abajo-derecha",
+                            choices=["abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda",
+                                     "incrustado"],
                             help="Esquina donde se mostrará el botón.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
@@ -79,12 +81,33 @@ class ComandoWidgetExportar(Comando):
         return 0
 
 
+class ComandoWidgetSnippet(Comando):
+    nombre = "snippet"
+    ayuda = "Imprime el código para pegar el widget en tu sitio, según estilos.yaml::ubicacion."
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--api", default="http://127.0.0.1:8000",
+                            help="URL pública del servicio (p. ej. https://asistente.tu-dominio.cl).")
+        parser.add_argument("--componente", action="store_true",
+                            help="Usa el Web Component <rag-extractivo-chat> en vez de los data-* del <script>.")
+        parser.add_argument("--clave", default=None, help="Clave pública del widget (claves_widget), si usas.")
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        try:
+            print(snippet_widget(args.api, componente=args.componente, clave_widget=args.clave))
+        except ValueError as e:
+            print(f"Error: configuracion/estilos.yaml: {e}")
+            return 1
+        return 0
+
+
 def grupo_widget() -> Grupo:
     tema = Grupo("tema", "Administra presets visuales.", "Operación sobre el tema visual.",
                  [ComandoTemaListar(), ComandoTemaAplicar(), ComandoTemaVistaPrevia()])
     return Grupo("widget", "Configura y exporta el widget embebible.", "Operación sobre el widget.",
-                 [tema, ComandoWidgetExportar()])
+                 [tema, ComandoWidgetExportar(), ComandoWidgetSnippet()])
 
 
 __all__ = ["ComandoTemaAplicar", "ComandoTemaListar", "ComandoTemaVistaPrevia", "ComandoWidgetExportar",
+           "ComandoWidgetSnippet",
            "grupo_widget"]

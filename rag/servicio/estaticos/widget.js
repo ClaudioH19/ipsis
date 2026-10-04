@@ -77,8 +77,38 @@
   var COLOR_ACENTO = opcion("color", "color", "#2563eb");
   var TITULO_INICIAL = opcion("titulo", "titulo", "Asistente");
   var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
-  var POSICION = opcion("posicion", "posicion", "abajo-derecha") === "abajo-izquierda" ? "izquierda" : "derecha";
   var CABECERA_CLAVE_WIDGET = "X-Rag-Widget-Key";
+
+  // Ubicación: lo que declare el sitio (atributos del elemento o data-* del
+  // <script>) manda; lo que no, llega de estilos.yaml vía /config.
+  var VALIDOS = {
+    posicion: ["abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda", "incrustado"],
+    tamano: ["compacto", "normal", "amplio"],
+    lanzador: ["burbuja", "pestana", "oculto"]
+  };
+  function enLista(valor, clave) {
+    return VALIDOS[clave].indexOf(valor) >= 0 ? valor : null;
+  }
+  function entero(valor, minimo, maximo) {
+    var n = parseInt(valor, 10);
+    return isNaN(n) ? null : Math.min(Math.max(n, minimo), maximo);
+  }
+  var DEL_SITIO = {
+    posicion: enLista(host.getAttribute("modo") === "incrustado" ? "incrustado" : opcion("posicion", "posicion", null), "posicion"),
+    tamano: enLista(opcion("tamano", "tamano", null), "tamano"),
+    lanzador: enLista(opcion("lanzador", "lanzador", null), "lanzador"),
+    desplazamiento_x: entero(opcion("desplazamiento-x", "desplazamientoX", null), 0, 400),
+    desplazamiento_y: entero(opcion("desplazamiento-y", "desplazamientoY", null), 0, 400),
+    z_index: entero(opcion("z-index", "zIndex", null), 0, 2147483647)
+  };
+  var UBICACION = {
+    posicion: "abajo-derecha", tamano: "normal", lanzador: "burbuja",
+    desplazamiento_x: 24, desplazamiento_y: 24, z_index: 2147483000
+  };
+  Object.keys(DEL_SITIO).forEach(function (clave) {
+    if (DEL_SITIO[clave] !== null) UBICACION[clave] = DEL_SITIO[clave];
+  });
+  var INCRUSTADO = UBICACION.posicion === "incrustado";
   // Textos de la interfaz. Estos valores en español son el respaldo si
   // /config no responde; normalmente llegan del paquete de idioma del
   // servicio (campo `interfaz` de /config).
@@ -95,7 +125,26 @@
     error_origen: "Este sitio no está autorizado para usar el asistente.",
     error_http: "El servicio no pudo responder (HTTP {estado}).",
     error_red: "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.",
+    error_servicio: "El asistente no está disponible en este momento. Intenta de nuevo más tarde.",
+    invitacion_citas: "Puedes comprobarlo en la cita de abajo.",
+    fuentes_una: "1 fuente del documento",
+    fuentes_varias: "{n} fuentes del documento",
+    posicion_cita: "caracteres {inicio}–{fin}",
   };
+  // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
+  // si /config no responde, usa el texto de TEXTOS.
+  var MICROCOPIA = {};
+  var giro = 0;
+  function micro(situacion, variables) {
+    var opciones = MICROCOPIA[situacion];
+    if (!opciones || !opciones.length) return texto(situacion, variables);
+    giro += 1;
+    var valor = String(opciones[giro % opciones.length]);
+    Object.keys(variables || {}).forEach(function (nombre) {
+      valor = valor.split("{" + nombre + "}").join(String(variables[nombre]));
+    });
+    return valor;
+  }
   function texto(clave, variables) {
     var valor = String(TEXTOS[clave] || "");
     Object.keys(variables || {}).forEach(function (nombre) {
@@ -180,7 +229,6 @@
     "  --rw-alto-panel:600px;",
     "  --rw-tamano-boton:58px;",
     "  --rw-tamano-icono:26px;",
-    "  --rw-margen:24px;",
     "  --rw-separacion:12px;",
     "  --rw-relleno:16px;",
     "  --rw-dur-panel:.22s;",
@@ -191,9 +239,16 @@
     "  --rw-desplazamiento-entrada:12px;",
     "  --rw-escala-entrada:.96;",
     "  --rw-escala-hover:1.04;",
-    "  position:fixed;bottom:var(--rw-margen);" + POSICION + ":var(--rw-margen);",
-    "  z-index:2147483000;font-family:var(--rw-fuente);font-size:var(--rw-tamano-base);",
-    "  line-height:1.5;-webkit-font-smoothing:antialiased;}",
+    "  --rw-margen-x:24px;--rw-margen-y:24px;",
+    "  position:fixed;z-index:var(--rw-z,2147483000);font-family:var(--rw-fuente);",
+    "  font-size:var(--rw-tamano-base);line-height:1.5;-webkit-font-smoothing:antialiased;}",
+    // Ubicación: esquina por atributo; el panel sale hacia dentro de la pantalla.
+    ".rw-raiz[data-posicion$='derecha']{right:var(--rw-margen-x);}",
+    ".rw-raiz[data-posicion$='izquierda']{left:var(--rw-margen-x);}",
+    ".rw-raiz[data-posicion^='abajo']{bottom:var(--rw-margen-y);}",
+    ".rw-raiz[data-posicion^='arriba']{top:var(--rw-margen-y);}",
+    ".rw-raiz[data-tamano='compacto']{--rw-ancho-panel:340px;--rw-alto-panel:520px;}",
+    ".rw-raiz[data-tamano='amplio']{--rw-ancho-panel:440px;--rw-alto-panel:680px;}",
     "@media (prefers-color-scheme:dark){.rw-raiz{",
     "  --rw-superficie:#1b1f27;--rw-fondo:#12151b;--rw-texto:#eceff4;",
     "  --rw-texto-suave:#9aa4b2;--rw-borde:#2b323d;--rw-aviso:#e0b055;",
@@ -214,15 +269,35 @@
     ".rw-boton[aria-expanded='true'] .rw-icono-chat{display:none;}",
     ".rw-boton[aria-expanded='true'] .rw-icono-cerrar{display:block;}",
 
-    ".rw-panel{position:fixed;bottom:calc(var(--rw-margen) + var(--rw-tamano-boton) + 16px);",
-    "  " + POSICION + ":var(--rw-margen);width:var(--rw-ancho-panel);",
-    "  max-width:calc(100vw - var(--rw-margen) * 2);height:var(--rw-alto-panel);",
-    "  max-height:calc(100vh - 140px);background:var(--rw-superficie);",
+    ".rw-panel{position:fixed;width:var(--rw-ancho-panel);",
+    "  max-width:calc(100vw - var(--rw-margen-x) * 2);height:var(--rw-alto-panel);",
+    "  max-height:calc(100dvh - var(--rw-tamano-boton) - var(--rw-margen-y) * 2 - 32px);",
+    "  background:var(--rw-superficie);",
     "  border-radius:var(--rw-radio-panel);box-shadow:var(--rw-sombra-panel);display:flex;",
     "  flex-direction:column;overflow:hidden;border:1px solid var(--rw-borde);",
-    "  transform-origin:bottom " + POSICION + ";",
     "  animation:rw-entrar var(--rw-dur-panel) var(--rw-curva);}",
+    ".rw-raiz[data-posicion$='derecha'] .rw-panel{right:var(--rw-margen-x);}",
+    ".rw-raiz[data-posicion$='izquierda'] .rw-panel{left:var(--rw-margen-x);}",
+    ".rw-raiz[data-posicion^='abajo'] .rw-panel{bottom:calc(var(--rw-margen-y) + var(--rw-tamano-boton) + 16px);",
+    "  transform-origin:bottom center;}",
+    ".rw-raiz[data-posicion^='arriba'] .rw-panel{top:calc(var(--rw-margen-y) + var(--rw-tamano-boton) + 16px);",
+    "  transform-origin:top center;}",
+    ".rw-raiz[data-lanzador='oculto'] .rw-panel{top:auto;bottom:var(--rw-margen-y);}",
+    ".rw-raiz[data-lanzador='oculto'][data-posicion^='arriba'] .rw-panel{bottom:auto;top:var(--rw-margen-y);}",
     ".rw-panel[hidden]{display:none;}",
+    // Incrustado: el widget vive dentro de un contenedor del sitio, siempre abierto.
+    ".rw-raiz[data-posicion='incrustado']{position:relative;inset:auto;z-index:auto;width:100%;height:100%;}",
+    ".rw-raiz[data-posicion='incrustado'] .rw-boton{display:none;}",
+    ".rw-raiz[data-posicion='incrustado'] .rw-panel{position:relative;inset:auto;width:100%;max-width:100%;",
+    "  height:100%;min-height:420px;max-height:none;animation:none;box-shadow:none;}",
+    // Lanzador: burbuja (por defecto), pestaña con el nombre, u oculto.
+    ".rw-raiz[data-lanzador='oculto'] .rw-boton{display:none;}",
+    ".rw-raiz[data-lanzador='pestana'] .rw-boton{width:auto;height:44px;border-radius:var(--rw-radio-control);",
+    "  padding:0 16px;gap:8px;font:600 var(--rw-tamano-base)/1 var(--rw-fuente);}",
+    ".rw-raiz[data-lanzador='pestana'] .rw-boton svg{width:20px;height:20px;}",
+    ".rw-boton-texto{display:none;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis;}",
+    ".rw-raiz[data-lanzador='pestana'] .rw-boton-texto{display:inline;}",
+    "@keyframes rw-aparecer{from{opacity:0;}to{opacity:1;}}",
     "@keyframes rw-entrar{",
     "  from{opacity:0;transform:translateY(var(--rw-desplazamiento-entrada)) scale(var(--rw-escala-entrada));}",
     "  to{opacity:1;transform:translateY(0) scale(1);}}",
@@ -289,6 +364,13 @@
     ".rw-citas .rw-cita-texto{margin:0;padding:0 10px 10px 24px;font-size:var(--rw-tamano-cita);",
     "  color:var(--rw-texto);line-height:var(--rw-interlineado);white-space:pre-wrap;",
     "  overflow-wrap:anywhere;}",
+    ".rw-citas-invitacion{margin:0 0 6px;font-size:var(--rw-tamano-cita);color:var(--rw-texto-suave);}",
+    ".rw-cita-posicion{font-weight:400;opacity:.85;}",
+    ".rw-cita{margin-top:5px;border-radius:9px;background:var(--rw-fondo);border:1px solid var(--rw-borde);}",
+    ".rw-cita-cabecera{margin:0;padding:7px 9px 4px;font-size:11.5px;font-weight:600;color:var(--rw-texto-suave);}",
+    ".rw-cita .rw-cita-texto{padding:0 10px 10px;}",
+    ".rw-tramo{background:color-mix(in srgb, var(--rw-acento) 22%, transparent);color:inherit;",
+    "  border-radius:3px;padding:0 1px;font-weight:600;}",
 
     ".rw-escribiendo{align-self:flex-start;display:flex;gap:4px;padding:12px 14px;",
     "  background:var(--rw-superficie);border:1px solid var(--rw-borde);",
@@ -318,11 +400,21 @@
     ".rw-enviar:focus-visible{outline:3px solid var(--rw-acento);outline-offset:2px;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
 
-    "@media (max-width:480px){",
-    "  .rw-panel{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;max-width:100%;",
-    "    height:100%;max-height:100%;border-radius:0;border:none;}",
-    "  .rw-raiz{--rw-margen:16px;}",
+    // Teléfono (o apaisado bajo): hoja a pantalla completa. La altura sigue al
+    // viewport visible, así el teclado virtual no tapa el campo de texto.
+    "@media (max-width:480px), (max-height:480px) and (orientation:landscape){",
+    "  .rw-raiz:not([data-posicion='incrustado']){--rw-margen-x:16px;--rw-margen-y:16px;}",
+    "  .rw-raiz:not([data-posicion='incrustado']) .rw-panel{position:fixed;left:0;right:0;",
+    "    top:var(--rw-vv-arriba,0px);bottom:auto;width:100%;max-width:100%;",
+    "    height:var(--rw-vv-alto,100dvh);max-height:none;border-radius:0;border:none;",
+    "    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)",
+    "      env(safe-area-inset-left);animation:rw-aparecer var(--rw-dur-panel) ease-out;}",
     "  .rw-msg{max-width:92%;}}",
+    // Contraste alto del sistema (Windows): bordes visibles y el tramo marcado.
+    "@media (forced-colors:active){",
+    "  .rw-boton,.rw-enviar,.rw-cerrar{border:2px solid ButtonText;}",
+    "  .rw-panel,.rw-msg,.rw-citas details,.rw-cita{border:1px solid CanvasText;}",
+    "  .rw-tramo{forced-color-adjust:none;background:Mark;color:MarkText;}}",
   ].join("\n");
   raiz.appendChild(estilos);
 
@@ -367,6 +459,26 @@
   contenedor.className = "rw-raiz";
   raiz.appendChild(contenedor);
 
+  function aplicarUbicacion() {
+    contenedor.setAttribute("data-posicion", UBICACION.posicion);
+    contenedor.setAttribute("data-tamano", UBICACION.tamano);
+    contenedor.setAttribute("data-lanzador", UBICACION.lanzador);
+    contenedor.style.setProperty("--rw-margen-x", UBICACION.desplazamiento_x + "px");
+    contenedor.style.setProperty("--rw-margen-y", UBICACION.desplazamiento_y + "px");
+    contenedor.style.setProperty("--rw-z", String(UBICACION.z_index));
+  }
+  aplicarUbicacion();
+
+  // Región viva para lectores de pantalla: anuncia "buscando…" y los errores.
+  var anunciador = document.createElement("div");
+  anunciador.className = "rw-sr-solo";
+  anunciador.setAttribute("role", "status");
+  anunciador.setAttribute("aria-live", "polite");
+  function anunciar(mensaje) {
+    anunciador.textContent = "";
+    window.setTimeout(function () { anunciador.textContent = mensaje; }, 30);
+  }
+
   var boton = document.createElement("button");
   boton.className = "rw-boton";
   boton.type = "button";
@@ -377,14 +489,22 @@
   // el mismo boton abre y cierra sin que nada dependa de la API.
   boton.appendChild(icono("chat", "rw-icono-chat"));
   boton.appendChild(icono("cerrar", "rw-icono-cerrar"));
+  // Texto visible solo con el lanzador «pestana».
+  var botonTexto = document.createElement("span");
+  botonTexto.className = "rw-boton-texto";
+  botonTexto.setAttribute("aria-hidden", "true");
+  botonTexto.textContent = TITULO_INICIAL;
+  boton.appendChild(botonTexto);
   contenedor.appendChild(boton);
+  contenedor.appendChild(anunciador);
 
   var panel = document.createElement("div");
   panel.className = "rw-panel";
-  panel.setAttribute("role", "dialog");
-  panel.setAttribute("aria-modal", "true");
+  // Incrustado: parte de la página, no un diálogo modal.
+  panel.setAttribute("role", INCRUSTADO ? "region" : "dialog");
+  if (!INCRUSTADO) panel.setAttribute("aria-modal", "true");
   panel.setAttribute("aria-label", TITULO_INICIAL);
-  panel.hidden = true;
+  panel.hidden = !INCRUSTADO;
   contenedor.appendChild(panel);
 
   var cabecera = document.createElement("div");
@@ -475,30 +595,72 @@
     conversacional: null,
   };
 
-  function agregarCitas(contenedorMsg, fragmentos) {
-    if (!fragmentos || !fragmentos.length || PRESENTACION.citas === "ocultas") return;
+  // Rango del tramo exacto dentro del texto de una cita, o null. Solo se marca
+  // si el texto en esos offsets es idéntico al tramo: nunca se adivina.
+  function rangoExacto(frag, exacta) {
+    if (!exacta || !frag || exacta.chunk_id !== frag.chunk_id || typeof frag.texto !== "string") return null;
+    var ini = exacta.offset_inicio - frag.offset_inicio;
+    var fin = exacta.offset_fin - frag.offset_inicio;
+    if (isFinite(ini) && isFinite(fin) && ini >= 0 && fin > ini && fin <= frag.texto.length &&
+        frag.texto.slice(ini, fin) === exacta.texto) {
+      return [ini, fin];
+    }
+    return null;
+  }
+
+  // Texto literal de la cita con el tramo dentro de un <mark> creado por DOM.
+  function textoConTramo(elemento, textoCita, rango) {
+    if (!rango) {
+      elemento.textContent = textoCita;
+      return;
+    }
+    elemento.appendChild(document.createTextNode(textoCita.slice(0, rango[0])));
+    var marca = document.createElement("mark");
+    marca.className = "rw-tramo";
+    marca.textContent = textoCita.slice(rango[0], rango[1]);
+    elemento.appendChild(marca);
+    elemento.appendChild(document.createTextNode(textoCita.slice(rango[1])));
+  }
+
+  // Las citas van SIEMPRE debajo de la respuesta, para comprobarla: la
+  // presentación solo elige acordeón (desplegable) o lista (a la vista).
+  function agregarCitas(contenedorMsg, fragmentos, exacta) {
+    if (!fragmentos || !fragmentos.length) return;
     var caja = document.createElement("div");
     caja.className = "rw-citas";
-    // Encabezado con el numero de fuentes: deja ver de un vistazo que la
-    // respuesta esta respaldada, sin tener que desplegar nada.
+    var invitacion = document.createElement("p");
+    invitacion.className = "rw-citas-invitacion";
+    invitacion.textContent = micro("invitacion_citas");
+    caja.appendChild(invitacion);
+    // Encabezado con el número de fuentes: deja ver de un vistazo que la
+    // respuesta está respaldada, sin tener que desplegar nada.
     var titulo = document.createElement("p");
     titulo.className = "rw-citas-titulo";
     titulo.textContent = fragmentos.length === 1
-      ? "1 fuente del documento"
-      : fragmentos.length + " fuentes del documento";
+      ? texto("fuentes_una") : texto("fuentes_varias", { n: fragmentos.length });
     caja.appendChild(titulo);
+    var enLista = PRESENTACION.citas === "lista";
     fragmentos.forEach(function (frag) {
-      var det = document.createElement("details");
-      det.open = PRESENTACION.citas === "abiertas";
-      var resumen = document.createElement("summary");
+      var item = document.createElement(enLista ? "div" : "details");
+      item.className = enLista ? "rw-cita" : "";
+      var cabeceraCita = document.createElement(enLista ? "p" : "summary");
+      if (enLista) cabeceraCita.className = "rw-cita-cabecera";
       // documento + sección: texto de la API, SIEMPRE por textContent.
-      resumen.textContent = (frag.doc_titulo || "") + " › " + (frag.seccion || "");
+      cabeceraCita.textContent = (frag.doc_titulo || "") + " › " + (frag.seccion || "");
+      if (typeof frag.offset_inicio === "number" && typeof frag.offset_fin === "number") {
+        var posicion = document.createElement("span");
+        posicion.className = "rw-cita-posicion";
+        posicion.textContent = " · " + texto("posicion_cita", { inicio: frag.offset_inicio, fin: frag.offset_fin });
+        cabeceraCita.appendChild(posicion);
+      }
       var cuerpo = document.createElement("p");
       cuerpo.className = "rw-cita-texto";
-      cuerpo.textContent = frag.texto || "";
-      det.appendChild(resumen);
-      det.appendChild(cuerpo);
-      caja.appendChild(det);
+      var rango = rangoExacto(frag, exacta);
+      textoConTramo(cuerpo, frag.texto || "", rango);
+      if (rango && !enLista) item.open = true;  // la cita con el tramo se ve sin desplegar
+      item.appendChild(cabeceraCita);
+      item.appendChild(cuerpo);
+      caja.appendChild(item);
     });
     contenedorMsg.appendChild(caja);
   }
@@ -522,7 +684,7 @@
     burbuja.appendChild(parrafo);
 
     if (estadoResp === "ok" || estadoResp === "relacionado") {
-      agregarCitas(burbuja, respuesta.fragmentos);
+      agregarCitas(burbuja, respuesta.fragmentos, respuesta.respuesta_exacta);
     }
 
     mensajes.appendChild(burbuja);
@@ -538,7 +700,9 @@
     if (burbujaEspera) return;
     burbujaEspera = document.createElement("div");
     burbujaEspera.className = "rw-escribiendo";
-    burbujaEspera.setAttribute("aria-label", texto("esperando"));
+    var esperando = micro("esperando");
+    burbujaEspera.setAttribute("aria-label", esperando);
+    anunciar(esperando);
     for (var i = 0; i < 3; i++) {
       var punto = document.createElement("span");
       punto.className = "rw-punto";
@@ -561,6 +725,7 @@
     burbuja.textContent = texto;
     mensajes.appendChild(burbuja);
     desplazarAlFinal();
+    anunciar(texto);
   }
 
   // -------------------------------------------------------------------
@@ -594,19 +759,34 @@
       })
       .then(function (cfg) {
         PRESENTACION.densidad = cfg.densidad === "compacta" ? "compacta" : "comoda";
-        PRESENTACION.citas = ["acordeon", "abiertas", "ocultas"].indexOf(cfg.citas) >= 0
-          ? cfg.citas : "acordeon";
+        // Las citas nunca se ocultan: «abiertas» es el nombre anterior de «lista».
+        PRESENTACION.citas = (cfg.citas === "lista" || cfg.citas === "abiertas") ? "lista" : "acordeon";
         PRESENTACION.mostrarEtiquetaEstado = cfg.mostrar_etiqueta_estado !== false;
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
         if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
         aplicarInterfaz(cfg.interfaz);
+        if (cfg.microcopia && typeof cfg.microcopia === "object") MICROCOPIA = cfg.microcopia;
+        var u = cfg.ubicacion || {};
+        Object.keys(DEL_SITIO).forEach(function (clave) {
+          if (DEL_SITIO[clave] !== null || u[clave] === undefined || clave === "posicion") return;
+          var valor = VALIDOS[clave] ? enLista(u[clave], clave) : entero(u[clave], 0, 2147483647);
+          if (valor !== null) UBICACION[clave] = valor;
+        });
+        // La posición incrustada la decide el sitio (el elemento vive en su página).
+        if (DEL_SITIO.posicion === null && !INCRUSTADO && enLista(u.posicion, "posicion") &&
+            u.posicion !== "incrustado") {
+          UBICACION.posicion = u.posicion;
+        }
+        aplicarUbicacion();
         if (cfg.nombre_asistente) {
           tituloEl.textContent = cfg.nombre_asistente;
+          botonTexto.textContent = cfg.nombre_asistente;
           panel.setAttribute("aria-label", cfg.nombre_asistente);
           boton.setAttribute("aria-label", texto("abrir", { titulo: cfg.nombre_asistente }));
         }
-        if (cfg.saludo && mensajes.children.length === 0) {
-          agregarMensajeAsistente({ estado: "conversacional", respuesta: cfg.saludo });
+        var bienvenida = (MICROCOPIA.bienvenida && MICROCOPIA.bienvenida.length) ? micro("bienvenida") : cfg.saludo;
+        if (bienvenida && mensajes.children.length === 0) {
+          agregarMensajeAsistente({ estado: "conversacional", respuesta: bienvenida });
         }
       })
       .catch(function () {
@@ -634,10 +814,13 @@
     })
       .then(function (r) {
         if (r.status === 429) {
-          throw new Error(texto("error_limite"));
+          throw new Error(micro("error_limite"));
         }
-        if (r.status === 401) {
+        if (r.status === 401 || r.status === 403) {
           throw new Error(texto("error_origen"));
+        }
+        if (r.status === 503) {
+          throw new Error(micro("error_servicio"));
         }
         if (!r.ok) {
           throw new Error(texto("error_http", { estado: r.status }));
@@ -654,8 +837,8 @@
         // HTTP creados arriba sí son deliberados y se conservan; un TypeError
         // de fetch recibe un mensaje estable para quien usa el widget.
         var mensajeError = err instanceof TypeError
-          ? texto("error_red")
-          : (err && err.message ? err.message : texto("error_red"));
+          ? micro("error_red")
+          : (err && err.message ? err.message : micro("error_red"));
         agregarMensajeError(mensajeError);
         emitir("rag:error", { mensaje: mensajeError });
       })
@@ -687,19 +870,37 @@
     });
   }
 
+  // Viewport visible (descuenta el teclado virtual en móviles): la hoja a
+  // pantalla completa usa su alto y su desplazamiento.
+  function ajustarViewport() {
+    var vv = window.visualViewport;
+    if (!vv) return;
+    contenedor.style.setProperty("--rw-vv-alto", vv.height + "px");
+    contenedor.style.setProperty("--rw-vv-arriba", vv.offsetTop + "px");
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", ajustarViewport);
+    window.visualViewport.addEventListener("scroll", ajustarViewport);
+  }
+
   function abrirPanel() {
+    if (INCRUSTADO) {
+      input.focus();
+      return;
+    }
     // Dentro de Shadow DOM, document.activeElement es el host; conservar el
     // elemento interno permite devolver el foco al botón que abrió el diálogo.
     elementoFocoPrevio = raiz.activeElement || document.activeElement;
+    ajustarViewport();
     panel.hidden = false;
     boton.setAttribute("aria-expanded", "true");
-    if (mensajes.children.length === 0) cargarConfigServidor();
     input.focus();
     document.addEventListener("keydown", manejarTeclado, true);
     emitir("rag:abierto");
   }
 
   function cerrarPanel() {
+    if (INCRUSTADO) return;
     panel.hidden = true;
     boton.setAttribute("aria-expanded", "false");
     document.removeEventListener("keydown", manejarTeclado, true);
@@ -741,4 +942,25 @@
     else cerrarPanel();
   });
   botonCerrar.addEventListener("click", cerrarPanel);
+  if (INCRUSTADO) botonCerrar.hidden = true;
+
+  // La configuración se pide al cargar: la ubicación de estilos.yaml aplica al
+  // lanzador desde el principio, y el saludo ya está listo al abrir.
+  cargarConfigServidor();
+
+  // API del sitio (se supone un widget por página): abrir y cerrar desde un
+  // botón propio (lanzador «oculto») o consultar el estado.
+  window.RagChat = {
+    abrir: abrirPanel,
+    cerrar: cerrarPanel,
+    estado: function () {
+      return {
+        abierto: !panel.hidden,
+        posicion: UBICACION.posicion,
+        tamano: UBICACION.tamano,
+        lanzador: UBICACION.lanzador,
+        sesion: ID_SESION
+      };
+    }
+  };
 })();

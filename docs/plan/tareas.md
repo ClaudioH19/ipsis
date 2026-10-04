@@ -969,8 +969,9 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
      `aria-live`. `invitacion_citas` solo aparece si hay citas.
   5. API JS del sitio: `window.RagChat.abrir()`, `cerrar()` y
      `estado()`. Se supone un widget por página.
-  6. `rag widget exportar` incluye todo lo necesario para servir el widget
-     estático: `avatar.js`, la definición del avatar y su configuración.
+  6. `rag widget exportar` admite las 5 posiciones. Incluir `avatar.js`, la
+     definición del avatar y su configuración pasa a P12.9, porque todavía
+     no existen.
   7. `rag widget snippet`: imprime la etiqueta `<script>` (o el Web
      Component) según `estilos.yaml`.
   8. Guía de inserción con CSP: el sitio debe permitir `script-src` y
@@ -1108,6 +1109,8 @@ la posición de cada ojo (`eyes.left/right.x/y`). Con eso hay mirada real:
      rompe.
   4. `avatar.js`, `avatar.js.LICENSE.txt` y `rag/recursos/avatares/`
      entran en `package-data`.
+     `rag widget exportar` los incluye, junto con la definición del avatar
+     activo y su configuración (pendiente traído de P12.5).
   5. Presupuesto de tamaño medido y anotado. Objetivo: ≤ 150 KB gzip,
      cargado bajo demanda.
 - **Aceptación:**

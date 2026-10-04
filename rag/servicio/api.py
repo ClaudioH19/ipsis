@@ -19,7 +19,12 @@ from pydantic import BaseModel, Field
 
 from rag import __version__
 from rag.aplicacion.consulta import Motor, MotorNoListo, MotorSaturado, construir_motor_del_proyecto
-from rag.aplicacion.proyecto import configuracion_asistente, interfaz_del_idioma, limite_de_peticiones
+from rag.aplicacion.proyecto import (
+    configuracion_asistente,
+    interfaz_del_idioma,
+    limite_de_peticiones,
+    microcopia_del_widget,
+)
 from rag.aplicacion.registro import RegistroConsultas, registro_del_proyecto
 from rag.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
@@ -95,9 +100,13 @@ class ConfigWidget(BaseModel):
     saludo: str
     preset: str = "clasico"
     densidad: Literal["comoda", "compacta"] = "comoda"
-    citas: Literal["acordeon", "abiertas", "ocultas"] = "acordeon"
+    citas: Literal["acordeon", "lista"] = "acordeon"  # las citas nunca se ocultan
     mostrar_etiqueta_estado: bool = True
     interfaz: dict[str, str] = {}
+    # Variantes del tono para bienvenida, esperando, invitación a las citas y errores.
+    microcopia: dict[str, list[str]] = {}
+    # estilos.yaml::ubicacion: posición, desplazamientos, z_index, tamaño y lanzador.
+    ubicacion: dict[str, str | int] = {}
 
 
 @dataclass
@@ -220,20 +229,25 @@ def crear_app(
     @aplicacion.get("/config", response_model=ConfigWidget)
     def configuracion_widget(request: Request):
         from rag.aplicacion.estilos import cargar_estilos
+        from rag.aplicacion.widget import citas_presentacion, ubicacion_widget
 
         dominio = configuracion_asistente()
-        interfaz = interfaz_del_idioma(dominio.get("idioma", "es"))
+        idioma = dominio.get("idioma", "es")
+        nombre = dominio.get("nombre_asistente", "Asistente documental")
+        interfaz = interfaz_del_idioma(idioma)
         estilos = cargar_estilos()
         presentacion = estilos.get("presentacion") or {}
         return ConfigWidget(
-            nombre_asistente=dominio.get("nombre_asistente", "Asistente documental"),
+            nombre_asistente=nombre,
             descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados"),
             saludo=_estado(request).motor.respuesta_conversacional("saludo"),
             preset=str(estilos.get("preset") or "clasico"),
             densidad=presentacion.get("densidad", "comoda"),
-            citas=presentacion.get("citas", "acordeon"),
+            citas=citas_presentacion(presentacion.get("citas")),
             mostrar_etiqueta_estado=presentacion.get("mostrar_etiqueta_estado", True),
             interfaz=interfaz,
+            microcopia=microcopia_del_widget(idioma, nombre),
+            ubicacion=ubicacion_widget(estilos),
         )
 
     @aplicacion.get("/widget.js")

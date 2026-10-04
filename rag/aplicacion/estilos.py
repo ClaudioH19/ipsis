@@ -56,7 +56,6 @@ _FORMA = {
     "alto_panel": "--rw-alto-panel",
     "tamano_boton": "--rw-tamano-boton",
     "tamano_icono": "--rw-tamano-icono",
-    "margen": "--rw-margen",
     "separacion": "--rw-separacion",
     "relleno": "--rw-relleno",
 }

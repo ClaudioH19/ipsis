@@ -1,47 +1,147 @@
-# Instalación en sitios web
+# Widget en tu sitio web
 
-La integración tiene dos partes: un backend Python y un cliente de navegador.
-El navegador no puede ejecutar directamente el índice o los modelos Python.
+La integración tiene dos partes:
+- el **servicio**, que corre en tu servidor o VPS (ver
+  [instalacion.md](instalacion.md));
+- el **widget**, un solo archivo `widget.js` sin dependencias que el
+  servicio publica en `/widget.js`.
 
-## Disponible actualmente
+## Insertarlo
 
-### Backend
+La forma más simple: pide el código ya armado y pégalo antes de `</body>`.
 
 ```bash
-pip install rag-extractivo
-rag init
-rag cargar ./mis-documentos
-rag indexar
-rag servir
+rag widget snippet --api https://asistente.tu-dominio.cl
+rag widget snippet --api https://asistente.tu-dominio.cl --componente   # como Web Component
 ```
 
-También puede desplegarse mediante la imagen Docker del proyecto.
-
-### Widget mediante script
+Con la etiqueta `<script>`:
 
 ```html
-<script
-  src="https://mi-api.example/widget.js"
-  data-api="https://mi-api.example"
-  data-widget-key="identificador-publico-del-sitio">
-</script>
+<script src="https://asistente.tu-dominio.cl/widget.js"
+        data-api="https://asistente.tu-dominio.cl"
+        data-posicion="abajo-derecha" data-tamano="normal" data-lanzador="burbuja"
+        defer></script>
 ```
 
-Configura `cors_origenes` con el origen exacto del sitio. La clave incluida en
-HTML es pública: sirve para identificar y limitar tráfico, no sustituye una
-credencial secreta del servidor.
+O como Web Component:
 
-## Web Component y exportación
+```html
+<rag-extractivo-chat api="https://asistente.tu-dominio.cl" posicion="abajo-izquierda"></rag-extractivo-chat>
+<script src="https://asistente.tu-dominio.cl/widget.js" defer></script>
+```
+
+Agrega el origen exacto de tu sitio a CORS
+(`rag configurar cors_origenes=https://www.tu-sitio.cl`). Si usas claves de
+widget (`data-widget-key`), recuerda que son públicas: identifican y limitan
+el tráfico, no son un secreto.
+
+## Ubicación, tamaño y lanzador
+
+Se configuran en `configuracion/estilos.yaml` (sección `ubicacion`) o con
+atributos en la etiqueta. **Si el sitio declara un atributo, ese manda.**
+
+| Opción | Atributo (`data-` en el `<script>`) | Valores |
+|---|---|---|
+| Posición | `posicion` | `abajo-derecha` (por defecto), `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda`, `incrustado` |
+| Distancia al borde | `desplazamiento-x`, `desplazamiento-y` | píxeles (24 por defecto) |
+| Capa | `z-index` | entero (2147483000 por defecto) |
+| Tamaño del panel | `tamano` | `compacto` (340×520), `normal` (390×600), `amplio` (440×680) |
+| Lanzador | `lanzador` | `burbuja` (botón redondo), `pestana` (botón con el nombre), `oculto` |
+
+**Incrustado.** El chat vive dentro de un contenedor de tu página, siempre
+abierto, sin botón ni ventana flotante. El contenedor decide el alto:
+
+```html
+<div style="height:560px">
+  <rag-extractivo-chat api="https://asistente.tu-dominio.cl" modo="incrustado"></rag-extractivo-chat>
+</div>
+<script src="https://asistente.tu-dominio.cl/widget.js" defer></script>
+```
+
+**Lanzador oculto.** Tu sitio abre el chat con su propio botón:
+
+```html
+<button onclick="window.RagChat.abrir()">¿Dudas? Pregunta al manual</button>
+```
+
+## API JavaScript del sitio
+
+Se supone un widget por página.
+
+| Llamada | Qué hace |
+|---|---|
+| `window.RagChat.abrir()` | Abre el panel |
+| `window.RagChat.cerrar()` | Lo cierra |
+| `window.RagChat.estado()` | `{abierto, posicion, tamano, lanzador, sesion}` |
+
+Eventos que emite el elemento: `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
+`rag:respuesta` y `rag:error`.
+
+## Pantallas
+
+- **Teléfono** (≤ 480 px de ancho, o apaisado bajo): hoja a pantalla
+  completa.
+  - Respeta los bordes seguros (`safe-area-inset`, con
+    `viewport-fit=cover` en tu página).
+  - Sigue el alto visible, así el teclado virtual no tapa el campo de
+    texto.
+- **Tablet** (481–1024 px): panel ajustado al espacio disponible.
+- **Escritorio:** panel flotante en la esquina elegida.
+- **Preferencias del sistema:** modo oscuro, `prefers-reduced-motion` (sin
+  animaciones) y contraste alto (`forced-colors`).
+
+## Citas
+
+Toda respuesta con evidencia muestra, **debajo**, un bloque de citas para
+comprobarla:
+- una invitación a revisar la fuente (del tono activo);
+- por cada cita: documento, sección y posición en caracteres, con el texto
+  literal;
+- el tramo exacto que respondió, resaltado.
+
+`estilos.yaml::presentacion.citas` elige cómo se ven, nunca si se ven:
+- `acordeon`: desplegables; la que tiene el tramo exacto viene abierta;
+- `lista`: todas a la vista.
+
+Los valores anteriores siguen funcionando: `abiertas` equivale a `lista`, y
+`ocultas` ya no oculta nada (equivale a `acordeon`).
+
+## Textos
+
+- **Del tono activo** (ver [personalidad.md](personalidad.md)): la
+  bienvenida, «buscando…», la invitación a las citas y los mensajes de error
+  vienen de `/config` en 5 variantes, y el widget rota entre ellas.
+- **Accesibilidad:** «buscando…» y los errores se anuncian a los lectores
+  de pantalla con una región `aria-live`.
+- **Seguridad:** ningún texto de la API se inserta como HTML; todo usa
+  `textContent`.
+
+## CSP de tu sitio
+
+Si tu sitio usa Content Security Policy, permite el dominio del asistente:
+
+```text
+script-src  'self' https://asistente.tu-dominio.cl;
+connect-src 'self' https://asistente.tu-dominio.cl;
+style-src   'self' https://asistente.tu-dominio.cl 'unsafe-inline';
+```
+
+- `style-src` permite la hoja `/estilos.css` y el estilo propio del widget,
+  que vive aislado en su Shadow DOM.
+- El avatar animado (P12.9) necesita además `'unsafe-eval'` en `script-src`,
+  porque su librería compila el esquema en el navegador. Sin eso, el widget
+  muestra el ícono y el chat funciona igual.
+
+## Exportar archivos estáticos
 
 ```bash
-rag widget exportar ./public/rag --api https://mi-api.example
+rag widget exportar ./public/rag --api https://asistente.tu-dominio.cl --posicion abajo-izquierda
 ```
 
-El comando genera `widget.js` y `snippet.html`. El elemento
-`<rag-extractivo-chat>` admite los atributos `api`, `widget-key`, `color`,
-`titulo`, `saludo` y `posicion`; sus eventos públicos son `rag:abierto`,
-`rag:cerrado`, `rag:pregunta`, `rag:respuesta` y `rag:error`. La forma anterior
-basada únicamente en atributos `data-*` del `<script>` continúa disponible.
+Genera `widget.js` y `snippet.html` para servirlos desde otro servidor.
+Cuando llegue el avatar (P12.9), incluirá también `avatar.js` y su
+definición.
 
 ## Ejemplos ejecutables
 
@@ -50,15 +150,10 @@ basada únicamente en atributos `data-*` del `<script>` continúa disponible.
 - `ejemplos/wordpress`: plugin instalable con el shortcode
   `[rag_extractivo]`.
 
-La suite `pytest -m browser` arranca una API controlada y usa Chromium real
-para verificar teclado, captura y restitución del foco, semántica de diálogo,
-pantalla móvil, respuestas con citas y recuperación ante errores de red.
-
-## Distribución prevista para V2
-
-- paquete npm `@rag-extractivo/widget`;
-- bundles ESM y UMD autocontenidos;
-- tipos TypeScript;
-- matriz SemVer de compatibilidad entre widget y API.
-
-La ruta `/widget.js` se conserva para instalaciones sin npm.
+Las pruebas de navegador (`pytest -m browser`) usan Chromium real y
+verifican:
+- teclado, foco y diálogo;
+- cada posición en teléfono, tablet y escritorio, sin desbordes y con el
+  campo visible con el teclado abierto;
+- las citas con el tramo exacto marcado;
+- la API `RagChat`.

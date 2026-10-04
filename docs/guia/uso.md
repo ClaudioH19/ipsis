@@ -124,13 +124,13 @@ Detalle en [web.md](web.md).
 | `rag widget tema listar` | Presets visuales disponibles |
 | `rag widget tema aplicar <preset> [--ruta RUTA]` | Aplica un preset a `configuracion/estilos.yaml` |
 | `rag widget tema vista-previa [--ruta RUTA] [--salida RUTA]` | Genera un HTML para ver el tema |
-| `rag widget exportar <carpeta> [--api URL] [--posicion abajo-derecha\|abajo-izquierda]` | Exporta `widget.js` y `snippet.html` para servirlos aparte |
+| `rag widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js` y `snippet.html` para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
+| `rag widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `estilos.yaml::ubicacion` |
 
 ### Planificados (P12)
 
 | Comando | Tarea |
 |---|---|
-| `rag widget snippet` | P12.5 |
 | `rag desplegar preparar` | P12.13 |
 
 ## Variables de entorno
