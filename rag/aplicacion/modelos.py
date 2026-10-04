@@ -103,9 +103,15 @@ def _modelos(instalacion):
 
 def listar_modelos() -> ModelosPerfil:
     """Modelos del perfil activo, con licencia, archivo ONNX y estado de la caché."""
+    instalacion = _perfil(None)
+    return ModelosPerfil(instalacion.perfil, estado_modelos(instalacion))
+
+
+def estado_modelos(instalacion) -> list[EstadoModelo]:
+    """Estado en caché de cada modelo de un perfil efectivo. Solo mira la caché local:
+    no descarga ni carga ONNX (para eso, ``verificar_modelos``)."""
     from rag.modelos.descarga import ruta_local, tamano_en_disco
 
-    instalacion = _perfil(None)
     estados = []
     for rol, spec in _modelos(instalacion):
         try:
@@ -117,7 +123,7 @@ def listar_modelos() -> ModelosPerfil:
             parametros=spec.parametros, archivo=spec.archivo_onnx(), en_cache=carpeta is not None,
             bytes_en_disco=tamano_en_disco(spec, carpeta) if carpeta is not None else None,
         ))
-    return ModelosPerfil(instalacion.perfil, estados)
+    return estados
 
 
 def descargar_modelos(perfil: str | None = None,
@@ -176,5 +182,5 @@ def exportar_modelo(id_hf: str, int8: bool = False) -> Exportado:
 __all__ = [
     "EstadoModelo", "ExportacionFallida", "ExportacionNoDisponible", "Exportado", "ModeloDescargado", "ModelosPerfil",
     "ResultadoDescarga", "ResultadoVerificacion", "SinProyecto", "VerificacionModelo",
-    "descargar_modelos", "exportar_modelo", "listar_modelos", "verificar_modelos",
+    "descargar_modelos", "estado_modelos", "exportar_modelo", "listar_modelos", "verificar_modelos",
 ]

@@ -202,10 +202,13 @@ def test_configurar_claves_widget_como_lista(proyecto_temporal: Path):
     assert dominio["claves_widget"] == ["clave-sitio-a", "clave-sitio-b"]
 
 
-def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path):
+def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path, capsys):
     main(["init"])
+    main(["cargar", str(_doc_prueba_md(proyecto_temporal))])
+    capsys.readouterr()
     codigo = main(["doctor"])
-    assert codigo == 1  # el índice todavía no existe
+    assert codigo == 1  # hay un documento cargado y el índice todavía no existe
+    assert "Acción: rag indexar" in capsys.readouterr().out
 
 
 def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temporal: Path, capsys):
@@ -230,8 +233,7 @@ def test_doctor_reporta_textos_de_idioma_invalidos(proyecto_temporal: Path, caps
     codigo = main(["doctor"])
     salida = capsys.readouterr().out
     assert codigo == 1
-    assert "idioma" in salida.lower()
-    assert "FALLA" in salida
+    assert "[ERROR]   Idioma" in salida
 
 
 def test_doctor_reporta_politica_abstencion_desconocida(proyecto_temporal: Path, capsys):

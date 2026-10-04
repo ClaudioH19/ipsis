@@ -152,6 +152,48 @@ rag modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
   - No registra el modelo en el catálogo ni en los perfiles: adoptarlo es
     otro paso.
 
+### Diagnóstico (`rag doctor`)
+
+`rag doctor` responde si el proyecto puede funcionar ahora y, si no, qué
+comando ejecutar. Solo diagnostica:
+- no usa la red ni carga modelos ONNX;
+- no descarga, no indexa ni calibra;
+- no escribe nada.
+
+Revisa, en este orden: configuración, perfil, idioma, stemmer, modelos,
+índice, calibración, golden y CORS. Cada chequeo muestra una marca:
+
+| Marca | Significado |
+|---|---|
+| `[OK]` | Listo. |
+| `[AVISO]` | Funciona, pero algo opcional falta o merece atención. No cambia el código de salida. |
+| `[ERROR]` | Impide o invalida el funcionamiento. Siempre trae una `Acción:`. |
+| `[--]` | No se evaluó porque depende de un chequeo que falló. |
+
+El resumen final cuenta errores y avisos y lista las acciones sin repetir.
+El comando sale con 0 si no hay errores y con 1 si hay alguno. Fuera de un
+proyecto, pide `rag init`.
+
+- **Modelos:** solo mira si están completos en la caché (ONNX,
+  `tokenizer.json`, `config.json`). Para probar la inferencia, usa
+  `rag modelos verificar`.
+- **Índice:** se compara su manifiesto con el perfil (modelo, dimensión,
+  payload) y con el stemmer del idioma. Luego se recalcula el hash del corpus
+  parseando y fragmentando, sin modelos. Si no hay índice ni documentos, es
+  un aviso; si hay documentos sin indexar, el corpus cambió o el índice es
+  incompatible, es un error y la acción es `rag indexar`.
+- **Calibración y golden son opcionales.**
+  - Si faltan, es un aviso y rigen los umbrales del perfil.
+  - Una calibración obsoleta o no habilitada es un aviso; la acción es
+    `rag calibrar --aplicar`.
+  - Un golden cuyo corpus cambió también es un aviso, y no debe usarse para
+    evaluar ni calibrar hasta actualizarlo (`rag golden validar`).
+  - Un banco de regresión sirve para evaluar, no para calibrar.
+- **Idioma:**
+  - Un idioma sin paquete es un error, porque el motor no arranca sin uno.
+  - Un `stemmer` que snowballstemmer no conoce también es un error.
+  - `stemmer: null` es válido: los términos quedan sin stem.
+
 ## Presentación del widget
 
 `configuracion/estilos.yaml` admite un `preset` y opciones independientes del

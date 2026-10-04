@@ -91,7 +91,7 @@ def cargar_perfil_instalacion(nombre: str) -> PerfilInstalacion:
 def perfil_efectivo(
     nombre: str,
     ajustes: dict[str, Any] | None = None,
-    ruta_calibracion: str | Path = rutas.CALIBRACION,
+    ruta_calibracion: str | Path | None = rutas.CALIBRACION,
     hash_corpus: str | None = None,
 ) -> PerfilInstalacion:
     """Perfil ← ajustes del proyecto ← calibración vigente.
@@ -99,7 +99,7 @@ def perfil_efectivo(
     La calibración solo se aplica si está en estado ``calibrado`` y se hizo
     con este perfil, estos modelos y este corpus indexado (``hash_corpus`` del
     manifiesto del índice). Sin ``hash_corpus`` (p. ej. antes de abrir el
-    índice) nunca se aplica.
+    índice) nunca se aplica. Con ``ruta_calibracion=None`` no se lee calibración.
     """
     from rag.configuracion.calibracion import normalizar_umbrales, umbrales_aplicables
 
@@ -111,6 +111,8 @@ def perfil_efectivo(
     datos = _fusionar(_datos_perfil(nombre), ajustes)
     datos["umbrales_por_defecto"] = normalizar_umbrales(datos.get("umbrales_por_defecto"))
     perfil = PerfilInstalacion.model_validate(datos)
+    if ruta_calibracion is None:
+        return perfil
     calibrados = umbrales_aplicables(ruta_calibracion, perfil=perfil.perfil, modelos=perfil.modelos.model_dump(),
                                      hash_corpus=hash_corpus)
     if calibrados:

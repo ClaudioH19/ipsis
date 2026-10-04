@@ -3,27 +3,42 @@ from __future__ import annotations
 
 import argparse
 
-from rag.aplicacion.diagnostico import ejecutar_diagnostico
+from rag.aplicacion.diagnostico import Estado, ProyectoNoEncontrado, diagnosticar
 from rag.aplicacion.proyecto import guardar_snapshot
 from rag.cli.base import Comando
 
 
+# ASCII: la salida redirigida en Windows puede ser cp1252.
+MARCAS = {Estado.OK: "[OK]", Estado.AVISO: "[AVISO]", Estado.ERROR: "[ERROR]", Estado.NO_EVALUADO: "[--]"}
+
+
 class ComandoDoctor(Comando):
     nombre = "doctor"
-    ayuda = "Diagnóstico: configuración, índice, modelos, Qdrant."
+    ayuda = "Diagnóstico de solo lectura: configuración, perfil, idioma, modelos, índice, calibración, golden y CORS."
 
     def ejecutar(self, args: argparse.Namespace) -> int:
-        hay_fallas = False
-        for r in ejecutar_diagnostico():
-            marca = "OK  " if r.ok else "FALLA"
-            print(f"[{marca}] {r.nombre}: {r.mensaje}")
-            if not r.ok:
-                hay_fallas = True
-                if r.comando_sugerido:
-                    print(f"        -> corré: {r.comando_sugerido}")
+        try:
+            reporte = diagnosticar()
+        except ProyectoNoEncontrado:
+            print("No se encontró un proyecto RAG en esta carpeta.")
+            print("  Acción: rag init")
+            return 1
+        print("Diagnóstico del proyecto\n")
+        for c in reporte.chequeos:
+            print(f"{MARCAS[c.estado]:9} {c.nombre}: {c.mensaje}")
+            for detalle in c.detalles:
+                print(f"            {detalle}")
+            for accion in c.acciones:
+                print(f"            Acción: {accion}")
+        errores, avisos = len(reporte.errores), len(reporte.avisos)
         print()
-        print("Todo listo." if not hay_fallas else "Hay puntos por resolver (ver '-> corré:' arriba).")
-        return 1 if hay_fallas else 0
+        print(f"{errores} error{'es' if errores != 1 else ''}, {avisos} aviso{'s' if avisos != 1 else ''}. "
+              + ("El proyecto puede funcionar." if reporte.listo else "El proyecto no está listo."))
+        if reporte.acciones:
+            print("Acciones:")
+            for accion in reporte.acciones:
+                print(f"  {accion}")
+        return 0 if reporte.listo else 1
 
 
 class ComandoSnapshotConfig(Comando):
