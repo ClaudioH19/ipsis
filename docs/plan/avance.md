@@ -634,5 +634,18 @@ Anota aquí lo que una tarea descubrió y que afecta a tareas posteriores.
     mismo cálculo (en `aplicacion/modelos` y `aplicacion/proyecto`). No lee
     la calibración, así que un `calibracion.yaml` roto ya no rompe
     `rag modelos` ni `rag perfil`.
+- **P12 replanificada (2026-10-04).** Tonos de respuesta, widget embebible,
+  avatar y configuración por CLI, API y panel (ver `tareas.md` §P12).
+  - Decisiones resueltas por el usuario:
+    - D1: repositorio público y libre, AGPL-3.0 (la misma licencia que
+      `@bible-strong/avatar-web`);
+    - D2: avatar «Folio», diseñado por el agente;
+    - D3: tono `directo`;
+    - D4: self-hosted en VPS, con `/admin` remoto, token y HTTPS.
+  - El seguimiento del puntero lo implementa el widget: una grilla de mirada
+    generada desde `neutral` con `head` y `eyes`. La librería no lo trae.
+  - **Pendiente encontrado al replanificar:** `comandos-y-golden.md`
+    documentaba `rag auditar [--desde fecha]`, pero P11.6 no implementó
+    `--desde`. Queda abierto.
 - **P8.4 — preguntas en otro idioma que el corpus.** Con `s_oov` 1,0 nunca dan `ok`
   (sin_respuesta o relacionado): el proyecto responde en el idioma de su corpus.
