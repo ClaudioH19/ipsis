@@ -7,6 +7,7 @@ con su manifiesto, y el golden se importa de verdad (no usa modelos).
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 
 import pytest
@@ -583,3 +584,42 @@ def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
     assert main(["desplegar", "preparar"]) == 0
     assert Path("dist/LEEME_despliegue.md").read_text(encoding="utf-8").startswith("# Implantação de")
     assert "Copie este arquivo" in Path("dist/.env.ejemplo").read_text(encoding="utf-8")
+
+
+def test_ready_vencido_responde_sin_esperar_y_refresca_en_segundo_plano(proyecto, monkeypatch):
+    import threading
+
+    import rag.aplicacion.diagnostico as diagnostico
+    import rag.servicio.api as api
+    from fastapi.testclient import TestClient
+
+    from rag.servicio.api import crear_app
+
+    proyecto("light")
+    sano("light")
+    original = diagnostico.diagnosticar
+    llamadas, liberar = [], threading.Event()
+
+    def lento(**k):
+        llamadas.append(k)
+        if len(llamadas) > 1:
+            liberar.wait(5)  # el refresco tarda; /ready no debe esperarlo
+        return original(**k)
+
+    monkeypatch.setattr(diagnostico, "diagnosticar", lento)
+    app = crear_app(_MotorListo())
+    with TestClient(app) as cliente:
+        assert llamadas == [{"abrir_indice": False}]  # se calculó al arrancar
+        servicio = app.state.servicio
+        servicio.diagnostico = (servicio.diagnostico[0] - api._TTL_DIAGNOSTICO_S - 1, servicio.diagnostico[1])
+        inicio = time.monotonic()
+        assert cliente.get("/ready").status_code == 200
+        assert time.monotonic() - inicio < 2  # devuelve el vigente sin esperar
+        assert servicio.refrescando_diagnostico
+        cliente.get("/ready")
+        liberar.set()
+        for _ in range(100):
+            if not servicio.refrescando_diagnostico:
+                break
+            time.sleep(0.05)
+        assert len(llamadas) == 2  # un solo refresco aunque llegaron dos /ready
