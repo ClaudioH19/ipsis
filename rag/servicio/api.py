@@ -18,7 +18,14 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from rag import __version__
-from rag.aplicacion.consulta import Motor, MotorNoListo, MotorSaturado, construir_motor_del_proyecto
+from rag.aplicacion.consulta import (
+    Motor,
+    MotorNoListo,
+    MotorSaturado,
+    construir_motor_del_proyecto,
+    recargar_presentacion,
+)
+from rag.aplicacion.modo import ModoServicio, modo_servicio
 from rag.aplicacion.proyecto import (
     configuracion_asistente,
     interfaz_del_idioma,
@@ -107,6 +114,8 @@ class ConfigWidget(BaseModel):
     microcopia: dict[str, list[str]] = {}
     # estilos.yaml::ubicacion: posición, desplazamientos, z_index, tamaño y lanzador.
     ubicacion: dict[str, str | int] = {}
+    # personalidad.yaml::avatar efectivo; activo=False si falta (el widget usa el ícono).
+    avatar: dict = {}
 
 
 @dataclass
@@ -145,17 +154,33 @@ def _verificar_seguridad(
         )
 
 
+class _CORSSinAdmin(CORSMiddleware):
+    """CORS para el widget, nunca para ``/admin``: el panel es del mismo origen."""
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope["path"].startswith("/admin"):
+            await self.app(scope, receive, send)
+            return
+        await super().__call__(scope, receive, send)
+
+
+_ESTATICOS = ("/widget.js", "/estilos.css", "/avatar.js")
+
+
 def crear_app(
     motor: Motor | None = None,
     *,
     constructor_motor: ConstructorMotor | None = None,
+    modo: ModoServicio | None = None,
 ) -> FastAPI:
     """Crea una aplicación aislada e inyecta su motor.
 
     Sin motor explícito, la entrada de producción lo construye al iniciar.
     Antes del lifespan queda un motor vacío que permite probar la capa HTTP
-    y resolver conversación sin abrir modelos ni índices.
+    y resolver conversación sin abrir modelos ni índices. ``modo`` sale de las
+    variables de entorno si no se da (``rag.aplicacion.modo``).
     """
+    modo = modo or modo_servicio()
     cfg_dominio = configuracion_asistente()
     cfg_limite = limite_de_peticiones()
     estado = EstadoAplicacion(
@@ -192,18 +217,57 @@ def crear_app(
             servicio.motor.cerrar()
             servicio.listo = False
 
-    aplicacion = FastAPI(title="rag-extractivo", version=__version__, lifespan=lifespan)
+    docs = {} if modo.docs_activos else {"docs_url": None, "redoc_url": None, "openapi_url": None}
+    aplicacion = FastAPI(title="rag-extractivo", version=__version__, lifespan=lifespan, **docs)
     aplicacion.state.servicio = estado
+    aplicacion.state.modo = modo
     aplicacion.add_middleware(
-        CORSMiddleware,
+        _CORSSinAdmin,
         allow_origins=cfg_dominio.get("cors_origenes", []),
         allow_methods=["*"],
         allow_headers=["*", NOMBRE_CABECERA_CLAVE_WIDGET],
     )
 
+    @aplicacion.middleware("http")
+    async def cache_de_estaticos(request: Request, siguiente):
+        respuesta = await siguiente(request)
+        ruta = request.url.path
+        if ruta in _ESTATICOS or ruta.startswith("/admin/panel") or ruta.startswith("/avatares/"):
+            if modo.desarrollo:
+                respuesta.headers["Cache-Control"] = "no-store"  # los cambios se ven al recargar
+            elif request.query_params.get("v"):
+                respuesta.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            else:
+                respuesta.headers["Cache-Control"] = "public, max-age=300"
+        return respuesta
+
+    @aplicacion.exception_handler(Exception)
+    async def error_interno(request: Request, exc: Exception):
+        import uuid
+
+        from fastapi.responses import JSONResponse
+
+        identificador = uuid.uuid4().hex[:12]
+        _log.exception("error %s en %s", identificador, request.url.path)
+        detalle = f"{type(exc).__name__}: {exc}" if modo.desarrollo else "error interno"
+        return JSONResponse(status_code=500, content={"detail": detalle, "id": identificador})
+
+    def _refrescar(servicio: EstadoAplicacion) -> None:
+        try:
+            recargar_presentacion(servicio.motor)
+        except Exception as exc:  # noqa: BLE001 -- un tono roto no tumba el servicio; doctor lo explica
+            _log.warning("no se pudo recargar la personalidad: %s", exc)
+
+    if modo.admin_activo:
+        from rag.servicio.admin import crear_router_admin
+
+        aplicacion.include_router(crear_router_admin(modo, estado.limitador, al_cambiar=lambda: _refrescar(estado)))
+    for problema in modo.problemas:
+        _log.warning(problema)
+
     @aplicacion.get("/health")
     def health():
-        return {"estado": "vivo"}
+        return {"estado": "vivo", "modo": modo.modo}
 
     @aplicacion.get("/ready")
     def ready(request: Request):
@@ -218,6 +282,7 @@ def crear_app(
         control = motor_activo.control_admision
         return {
             "estado": "listo",
+            "modo": modo.modo,
             "backend": motor_activo.backend,
             "coleccion": getattr(coleccion, "nombre", motor_activo.backend),
             "n_chunks": motor_activo.n_chunks(),
@@ -229,6 +294,9 @@ def crear_app(
     @aplicacion.get("/config", response_model=ConfigWidget)
     def configuracion_widget(request: Request):
         from rag.aplicacion.estilos import cargar_estilos
+        from rag.aplicacion.personalidad import config_avatar_publica
+
+        _refrescar(_estado(request))
         from rag.aplicacion.widget import citas_presentacion, ubicacion_widget
 
         dominio = configuracion_asistente()
@@ -248,7 +316,17 @@ def crear_app(
             interfaz=interfaz,
             microcopia=microcopia_del_widget(idioma, nombre),
             ubicacion=ubicacion_widget(estilos),
+            avatar=config_avatar_publica(),
         )
+
+    @aplicacion.get("/avatares/{nombre}.avatar.json")
+    def avatar_definicion(nombre: str):
+        from rag.aplicacion.personalidad import definicion_publica
+
+        try:
+            return definicion_publica(nombre)
+        except (FileNotFoundError, ValueError) as exc:  # nombre inválido, inexistente o definición rota
+            raise HTTPException(status_code=404, detail="avatar no disponible") from exc
 
     @aplicacion.get("/widget.js")
     def widget_js():
@@ -262,6 +340,8 @@ def crear_app(
 
     @aplicacion.get("/widget/demo.html")
     def widget_demo():
+        if not modo.demo_activa:
+            raise HTTPException(status_code=404, detail="no disponible en producción (RAG_DEMO=1 lo activa)")
         return FileResponse(_DIR_ESTATICOS / "demo.html", media_type="text/html; charset=utf-8")
 
     @aplicacion.post(
@@ -273,6 +353,7 @@ def crear_app(
     )
     def consultar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
         servicio = _estado(request)
+        _refrescar(servicio)
         try:
             resultado = servicio.motor.consultar(peticion.pregunta, peticion.id_sesion)
         except MotorNoListo as exc:

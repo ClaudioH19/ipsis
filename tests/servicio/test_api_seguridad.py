@@ -209,11 +209,16 @@ def test_widget_js_no_usa_innerhtml_en_ningun_punto():
     assert ".innerHTML" not in texto, "el widget no debe usar innerHTML en ningún punto (política de este proyecto)"
 
 
-def test_widget_demo_html_responde_200_y_referencia_el_widget():
-    r = client.get("/widget/demo.html")
-    assert r.status_code == 200
-    assert "text/html" in r.headers["content-type"].lower()
-    assert "/widget.js" in r.text
+def test_widget_demo_html_solo_en_desarrollo_o_con_rag_demo():
+    from rag.aplicacion.modo import ModoServicio
+    from rag.servicio.api import crear_app
+
+    assert client.get("/widget/demo.html").status_code == 404  # producción por defecto
+    for modo in (ModoServicio(modo="desarrollo", demo=True), ModoServicio(demo=True)):
+        r = TestClient(crear_app(modo=modo)).get("/widget/demo.html")
+        assert r.status_code == 200
+        assert "text/html" in r.headers["content-type"].lower()
+        assert "/widget.js" in r.text
 
 
 # ---------------------------------------------------------------------------

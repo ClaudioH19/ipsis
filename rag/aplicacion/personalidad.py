@@ -260,4 +260,88 @@ __all__ = [
     "EstadoAvatar", "PersonalidadInvalida", "ResumenPersonalidad", "SinProyecto", "TonoDisponible", "aplicar_avatar",
     "aplicar_tono", "asignar_evento", "colores_avatar", "estado_avatar", "importar_avatar", "listar_avatares",
     "listar_tonos", "probar_tono", "resumen_personalidad", "validar_personalidad",
+    "actualizar_personalidad", "config_avatar_publica", "definicion_publica", "importar_avatar_desde", "resumen_admin",
 ]
+
+
+# --- para la API (/admin y /config) --------------------------------------------------------------
+def _fusionar(base: dict, cambios: dict) -> dict:
+    salida = dict(base)
+    for clave, valor in cambios.items():
+        if isinstance(valor, dict) and isinstance(salida.get(clave), dict) and clave not in ("plantillas", "eventos"):
+            salida[clave] = _fusionar(salida[clave], valor)
+        else:
+            salida[clave] = valor  # plantillas y eventos se reemplazan completos
+    return salida
+
+
+def actualizar_personalidad(cambios: dict) -> PersonalidadConfig:
+    """Fusiona ``cambios`` (parcial) sobre la personalidad y escribe si todo es válido."""
+    _exigir_proyecto()
+    if not isinstance(cambios, dict):
+        raise PersonalidadInvalida(["el cuerpo debe ser un objeto JSON"])
+    return _escribir(_fusionar(_config().model_dump(mode="json"), cambios))
+
+
+def importar_avatar_desde(contenido: bytes, nombre: str):
+    """Como ``importar_avatar`` pero desde el contenido (lo usa la API)."""
+    import os
+    import tempfile
+
+    from rag.aplicacion.avatar import importar_avatar as importar
+
+    _exigir_proyecto()
+    descriptor, temporal = tempfile.mkstemp(suffix=".avatar.json")
+    try:
+        with os.fdopen(descriptor, "wb") as archivo:
+            archivo.write(contenido)
+        return importar(temporal, nombre)
+    finally:
+        os.unlink(temporal)
+
+
+def resumen_admin() -> dict:
+    """Todo lo que el panel necesita para mostrar y editar la personalidad."""
+    from rag.lenguaje.tonos import SITUACIONES
+
+    resumen = resumen_personalidad()
+    avatares, _ = listar_avatares()
+    return {
+        "config": resumen.config.model_dump(mode="json"),
+        "tonos": [t.__dict__ for t in listar_tonos()],
+        "situaciones": {s: {"origen": r.origen, "variables": sorted(r.permitidas)} for s, r in SITUACIONES.items()},
+        "eventos": {e: {"sugerida": s, "respaldo": r} for e, (s, r) in EVENTOS.items()},
+        "avatares": [{"nombre": a.nombre, "origen": a.origen, "animaciones": list(a.animaciones),
+                      "expresiones": list(a.expresiones)} if not isinstance(a, tuple)
+                     else {"nombre": a[0], "origen": a[1], "error": a[2]} for a in avatares],
+        "avatar": {"nombre": resumen.avatar.nombre, "estado": resumen.avatar.estado,
+                   "mensaje": resumen.avatar.mensaje, "claves": resumen.avatar.claves,
+                   "respaldos": resumen.avatar.respaldos},
+    }
+
+
+def config_avatar_publica() -> dict:
+    """Lo que el widget necesita del avatar (``/config``). ``activo`` es falso si
+    falta o no es válido: el widget muestra el ícono."""
+    config = _config()
+    estado = estado_avatar(config)
+    a = config.avatar
+    activo = estado.estado == "ok"
+    return {
+        "activo": activo,
+        "nombre": a.definicion,
+        "url_definicion": f"/avatares/{a.definicion}.avatar.json" if activo else None,
+        "url_motor": "/avatar.js" if activo else None,
+        "ubicacion": a.ubicacion, "tamano": a.tamano, "en_lanzador": a.en_lanzador,
+        "mirada": a.mirada.model_dump(), "inactividad_min": a.inactividad_min,
+        "eventos": estado.claves,
+    }
+
+
+def definicion_publica(nombre: str) -> dict:
+    """Definición del avatar con los colores del proyecto aplicados."""
+    from rag.aplicacion.avatar import cargar_avatar, con_colores
+
+    _, datos = cargar_avatar(nombre)
+    colores = _config().avatar.colores
+    return con_colores(datos, colores.cuerpo, colores.ojos)

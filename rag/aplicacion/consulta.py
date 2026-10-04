@@ -134,6 +134,7 @@ def construir_motor(
             stride=perfil_instalacion.cascada.stride,
         )
     motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
+    motor._marca_presentacion = _marca_presentacion()  # base para recargar_presentacion
     return motor
 
 
@@ -212,4 +213,39 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
 
 
 __all__ = ["DiagnosticoConsulta", "Motor", "MotorNoListo", "MotorSaturado", "construir_motor",
-           "construir_motor_del_proyecto", "diagnosticar_pregunta"]
+           "construir_motor_del_proyecto", "diagnosticar_pregunta", "recargar_presentacion"]
+
+
+def _marca_presentacion() -> tuple:
+    """mtime de los archivos que cambian el texto que redacta el motor."""
+    from rag.configuracion import rutas
+
+    marcas = []
+    for ruta in (rutas.PERSONALIDAD, rutas.IDIOMA, rutas.ASISTENTE):
+        try:
+            marcas.append(Path(ruta).stat().st_mtime_ns)
+        except OSError:
+            marcas.append(None)
+    return tuple(marcas)
+
+
+def recargar_presentacion(motor: Motor) -> bool:
+    """Si cambió el tono o los textos del proyecto, el motor toma las plantillas
+    nuevas sin reiniciar (un ``stat`` por llamada). Las consultas en curso
+    terminan con las anteriores: el cambio es una asignación atómica."""
+    from rag.configuracion.carga import cargar_dominio
+    from rag.consulta.variantes import SelectorVariantes
+
+    marca = _marca_presentacion()
+    anterior = getattr(motor, "_marca_presentacion", None)
+    if anterior is None:
+        motor._marca_presentacion = marca
+        return False
+    if marca == anterior or motor.idioma is None:
+        return False
+    plantillas = cargar_plantillas(motor.idioma, cargar_dominio())
+    motor.selector_variantes = SelectorVariantes(tono=plantillas.get("tono") or "cordial",
+                                                 fija=plantillas.get("variedad") == "fija")
+    motor.plantillas = plantillas
+    motor._marca_presentacion = marca
+    return True

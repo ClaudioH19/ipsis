@@ -33,6 +33,27 @@ class ComandoServir(Comando):
                             help="Puerto donde escucha el servicio (por defecto: 8000).")
         parser.add_argument("--reindexar", action="store_true",
                             help="Reconstruye el índice aunque el catálogo no haya cambiado.")
+        parser.add_argument("--modo", choices=["produccion", "desarrollo"], default=None,
+                            help="produccion (por defecto, o RAG_MODO): /admin exige HTTPS desde fuera. "
+                                 "desarrollo: /admin por HTTP, /docs y sin caché de los archivos del widget.")
+
+    def _preparar_modo(self, modo: str | None) -> dict:
+        """Fija RAG_MODO para el proceso del servicio y devuelve las opciones de proxy de uvicorn."""
+        from rag.aplicacion.modo import generar_token, modo_servicio
+
+        if modo:
+            os.environ["RAG_MODO"] = modo
+        efectivo = modo_servicio()
+        if efectivo.desarrollo:
+            print("Modo desarrollo: /admin acepta HTTP desde cualquier IP. No lo uses en un servicio público.")
+            if not os.environ.get("RAG_ADMIN_TOKEN"):
+                os.environ["RAG_ADMIN_TOKEN"] = generar_token()
+                print(f"Token temporal de /admin (solo esta ejecución): {os.environ['RAG_ADMIN_TOKEN']}")
+        for problema in efectivo.problemas:
+            print(f"Aviso: {problema}")
+        # El esquema (https) y la IP real solo se aceptan de los X-Forwarded-* del proxy declarado.
+        return {"proxy_headers": True,
+                "forwarded_allow_ips": ",".join(efectivo.proxy_confiable) or "127.0.0.1"}
 
     def _preparar_carpeta(self, carpeta: str, *, reindexar: bool = False) -> Path:
         """Completa un proyecto o crea uno privado junto a una carpeta documental."""
@@ -82,8 +103,9 @@ class ComandoServir(Comando):
             if args.carpeta:
                 proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
                 print(f"Proyecto activo: {proyecto}")
+            proxy = self._preparar_modo(args.modo)
             print(f"Sirviendo en http://{args.host}:{args.port} (Ctrl+C para detener)...")
-            uvicorn.run("rag.servicio.api:app", host=args.host, port=args.port, log_level="info")
+            uvicorn.run("rag.servicio.api:app", host=args.host, port=args.port, log_level="info", **proxy)
             return 0
         except (OSError, RuntimeError, ValueError) as exc:
             print(f"No se pudo preparar el servicio: {exc}")

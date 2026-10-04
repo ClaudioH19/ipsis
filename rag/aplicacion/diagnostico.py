@@ -86,11 +86,11 @@ class ProyectoNoEncontrado(RuntimeError):
 
 
 ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
-         "personalidad")
+         "personalidad", "modo")
 NOMBRES = {
     "configuracion": "Configuración", "perfil": "Perfil", "idioma": "Idioma", "stemmer": "Stemmer",
     "modelos": "Modelos", "indice": "Índice", "calibracion": "Calibración", "golden": "Golden", "cors": "CORS",
-    "personalidad": "Personalidad",
+    "personalidad": "Personalidad", "modo": "Modo",
 }
 _PERFIL_CAMBIAR = "rag perfil cambiar light|medium|heavy"
 _GOLDEN_IMPORTAR = "rag golden importar <archivo>"
@@ -451,10 +451,31 @@ def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
     return _chequeo("personalidad", Estado.OK, mensaje, tono=resumen.tono, avatar=resumen.avatar.estado)
 
 
+def _modo(ctx: _Contexto) -> ChequeoDoctor:
+    """Modo del servicio según las variables de entorno de esta terminal (RAG_MODO, RAG_ADMIN_TOKEN…)."""
+    from rag.aplicacion.modo import modo_servicio
+
+    try:
+        modo = modo_servicio()
+    except ValueError as e:
+        return _chequeo("modo", Estado.ERROR, str(e), ["usa RAG_MODO=produccion o RAG_MODO=desarrollo"])
+    if modo.problemas:
+        return _chequeo("modo", Estado.ERROR, "; ".join(modo.problemas),
+                        ['genera uno: python -c "import secrets; print(secrets.token_urlsafe(32))"'], modo=modo.modo)
+    if modo.desarrollo:
+        return _chequeo("modo", Estado.AVISO, "desarrollo: /admin acepta HTTP desde cualquier IP; no lo uses en un "
+                        "servicio público", ["RAG_MODO=produccion (o quita --modo desarrollo)"], modo=modo.modo)
+    admin = "con /admin" if modo.admin_activo else "sin /admin"
+    if modo.admin_activo and not modo.proxy_confiable:
+        return _chequeo("modo", Estado.AVISO, f"producción {admin}: sin proxy declarado, /admin solo responde desde "
+                        "esta máquina", ["declara la IP del proxy HTTPS en RAG_PROXY_CONFIABLE"], modo=modo.modo)
+    return _chequeo("modo", Estado.OK, f"producción {admin}", modo=modo.modo)
+
+
 CHEQUEOS: tuple[tuple[str, Callable[[_Contexto], ChequeoDoctor]], ...] = (
     ("configuracion", _configuracion), ("perfil", _perfil), ("idioma", _idioma), ("stemmer", _stemmer),
     ("modelos", _modelos), ("indice", _indice), ("calibracion", _calibracion), ("golden", _golden), ("cors", _cors),
-    ("personalidad", _personalidad),
+    ("personalidad", _personalidad), ("modo", _modo),
 )
 
 

@@ -39,6 +39,8 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(huggingface_hub, "snapshot_download", snapshot_download)
     monkeypatch.setenv("RAG_MODELOS_DIR", str(cache))
     monkeypatch.chdir(tmp_path)
+    for variable in ("RAG_MODO", "RAG_ADMIN_TOKEN", "RAG_PROXY_CONFIABLE"):
+        monkeypatch.delenv(variable, raising=False)  # el modo lo fija el entorno de quien corre doctor
 
     def crear(perfil: str = "light") -> Path:
         assert main(["init", "--perfil", perfil]) == 0
@@ -150,7 +152,7 @@ def test_proyecto_sano_sin_golden_ni_calibracion_esta_listo(proyecto):
     assert [c.clave for c in r.chequeos] == list(ORDEN)
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "ok",
                           "indice": "ok", "calibracion": "aviso", "golden": "aviso", "cors": "ok",
-                          "personalidad": "aviso"}  # avatar Folio: llega en P12.10
+                          "personalidad": "aviso", "modo": "ok"}  # avatar Folio: llega en P12.10
     assert r.listo and r.errores == [] and r.perfil == "medium"
     assert r.chequeo("modelos").datos["faltantes"] == []
     assert r.chequeo("calibracion").acciones == () and r.chequeo("golden").acciones == ()
@@ -180,7 +182,7 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     r = reporte()
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
-                          "personalidad": "aviso"}
+                          "personalidad": "aviso", "modo": "ok"}
     assert r.chequeo("modelos").datos["faltantes"] == [MMARCO, LECTOR]
     assert r.chequeo("modelos").acciones == ("rag modelos descargar",)
     assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("rag indexar",)

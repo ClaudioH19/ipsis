@@ -156,7 +156,7 @@ perfil, con los modelos incluidos y sin red. **(P12.13)**:
 `rag desplegar preparar`, que genera `docker-compose.yml` con un servicio
 Caddy opcional.
 
-## Modos de ejecución: desarrollo y producción (P12.6)
+## Modos de ejecución: desarrollo y producción
 
 El servicio corre en uno de dos modos, con `rag servir --modo` o
 `RAG_MODO`. **Por defecto es `produccion`.**
@@ -174,15 +174,30 @@ Usa `desarrollo` en tu máquina o para probar en un VPS sin certificado.
 Usa `produccion` en cualquier servicio público. El modo no cambia las
 respuestas del asistente.
 
-Variables del panel **(P12.6)**:
+Variables del modo y del panel `/admin`:
 
 | Variable | Efecto |
 |---|---|
 | `RAG_ADMIN_TOKEN` | Activa `/admin`; al menos 32 caracteres. Genera uno con `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
 | `RAG_PROXY_CONFIABLE` | IP del proxy (por ejemplo, Caddy) del que se aceptan `X-Forwarded-*` |
 | `RAG_ADMIN_IPS` | Opcional: IPs permitidas para `/admin` |
+| `RAG_MODO` | `produccion` (por defecto) o `desarrollo`; también `rag servir --modo` |
+| `RAG_DOCS=1`, `RAG_DEMO=1` | `/docs` y `/widget/demo.html` también en producción |
 
-Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos.
+Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
+queda en `.rag/registros/admin.jsonl`: fecha, IP, acción y claves, nunca el
+token. `rag doctor` revisa el modo: avisa en desarrollo y da error con un
+token corto.
+
+En un VPS con Caddy delante:
+
+```bash
+export RAG_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+export RAG_PROXY_CONFIABLE=127.0.0.1      # Caddy en la misma máquina
+rag servir --modo produccion
+```
+
+Para rotar el token, cámbialo y reinicia el servicio.
 
 ## Licencia
 

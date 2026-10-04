@@ -94,6 +94,7 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
         assert respuesta.status_code == 200
         assert respuesta.json() == {
             "estado": "listo",
+            "modo": "produccion",
             "backend": "memoria",
             "coleccion": "memoria",
             "n_chunks": 4,
@@ -125,7 +126,7 @@ def test_health_sigue_vivo_y_ready_diagnostica_un_arranque_fallido():
         ready = cliente.get("/ready")
 
     assert health.status_code == 200
-    assert health.json() == {"estado": "vivo"}
+    assert health.json() == {"estado": "vivo", "modo": "produccion"}
     assert ready.status_code == 503
     assert "RuntimeError: índice ausente para la prueba" in ready.json()["detail"]
 
