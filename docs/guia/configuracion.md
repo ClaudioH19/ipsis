@@ -172,9 +172,9 @@ como aviso.
 ### Tono de las respuestas
 
 Lo que el asistente dice alrededor del texto del documento viene de un
-**tono**, en `rag/recursos/tonos/<idioma>/<tono>.yaml`. Hoy está `cordial`;
-`formal`, `serio`, `animoso`, `cercano`, `empatico` y `directo` llegan en
-P12.3.
+**tono**, en `rag/recursos/tonos/<idioma>/<tono>.yaml`: `cordial` (por
+defecto), `formal`, `serio`, `animoso`, `cercano`, `empatico` y `directo`.
+Ver [personalidad.md](personalidad.md).
 
 Cada tono tiene 18 situaciones con 5 variantes cada una:
 - motor: saludo, agradecimiento, despedida, capacidad, apertura,

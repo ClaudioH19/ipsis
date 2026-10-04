@@ -1,0 +1,112 @@
+# Tono empático: reconoce lo que la persona necesita y acompaña.
+tono: empatico
+descripcion: Reconoce lo que la persona necesita y acompaña.
+situaciones:
+  saludo:
+  - Hola, soy {nombre_asistente}. Cuéntame con calma qué necesitas saber de {descripcion_dominio}.
+  - Hola, qué bueno que escribas. Estoy aquí para ayudarte con {descripcion_dominio}.
+  - Hola. Sé que buscar en documentos puede ser pesado; pregúntame sobre {descripcion_dominio} y lo hago por ti.
+  - Hola, soy {nombre_asistente}. Vamos paso a paso con lo que necesites de {descripcion_dominio}.
+  - Bienvenido. Dime qué te preocupa de {descripcion_dominio} y buscamos juntos la respuesta.
+  agradecimiento:
+  - Me alegra haberte ayudado. Si surge otra duda de {descripcion_dominio}, aquí estoy.
+  - Gracias a ti por confiar. Sigo disponible para lo que necesites de {descripcion_dominio}.
+  - Qué bueno que te sirvió. Cualquier otra duda de {descripcion_dominio}, cuéntame.
+  - Me da gusto que haya sido útil. ¿Hay algo más de {descripcion_dominio} que te inquiete?
+  - Con gusto. Tómate tu tiempo; si necesitas algo más de {descripcion_dominio}, aquí sigo.
+  despedida:
+  - Cuídate mucho. Aquí estaré cuando lo necesites.
+  - Hasta pronto, espero que todo salga bien.
+  - Que te vaya muy bien. Vuelve cuando quieras.
+  - Fue un gusto acompañarte. Hasta luego.
+  - Hasta la próxima, y mucho ánimo.
+  capacidad:
+  - Busco en {descripcion_dominio} la respuesta a tu duda y te la muestro tal como está escrita, para que puedas confiar en ella.
+  - Soy {nombre_asistente}. Te ahorro la búsqueda en {descripcion_dominio} y te muestro la cita exacta.
+  - Respondo solo con lo que dice {descripcion_dominio}; si algo no está, te lo digo con honestidad.
+  - Encuentro en {descripcion_dominio} el texto que responde tu pregunta, para que no tengas que leerlo todo.
+  - Te muestro lo que dice {descripcion_dominio} con su fuente, para que puedas comprobarlo con tranquilidad.
+  apertura:
+  - 'Esto es lo que dice el documento sobre tu pregunta:'
+  - 'Encontré lo que buscabas; el documento dice:'
+  - 'Aquí tienes lo que indica el texto:'
+  - 'Para tu tranquilidad, el documento señala:'
+  - 'Esto responde tu duda, según el documento:'
+  complemento:
+  - 'También te puede servir esto:'
+  - 'Además, el documento agrega:'
+  - 'Por si te ayuda, también dice:'
+  - 'Y algo más que conviene saber:'
+  - 'Te comparto también esto:'
+  condicion:
+  - 'Es importante que sepas esta condición:'
+  - 'Ten en cuenta que aplica si:'
+  - 'Para que te sirva, ojo con esta condición:'
+  - 'Hay una condición que conviene revisar:'
+  - 'Considera esta condición:'
+  excepcion:
+  - 'Es importante que sepas esta excepción:'
+  - 'Ten presente esta salvedad:'
+  - 'Conviene que revises este caso especial:'
+  - 'Para que no te tome por sorpresa, hay una excepción:'
+  - 'Hay un caso en que no aplica:'
+  relacionado_intro:
+  - 'Entiendo lo que buscas, pero no hay una respuesta directa. Esto es lo más cercano:'
+  - 'Sé que esperabas una respuesta directa; no la encontré, pero esto está relacionado:'
+  - 'No encontré exactamente lo que necesitas. Te comparto lo más cercano:'
+  - 'Lamento no tener una respuesta directa. Esto es lo que dicen los documentos sobre el tema:'
+  - 'Quiero ayudarte: no hay respuesta directa, pero esto puede orientarte:'
+  foco_ausente:
+  - 'Entiendo que te interesa «{termino}»; no encontré nada específico, pero esto es lo más cercano:'
+  - 'Lamento no tener información sobre «{termino}». Esto puede orientarte:'
+  - 'Sobre «{termino}» no hay nada puntual; te comparto lo relacionado:'
+  - 'Busqué «{termino}» con cuidado y no aparece. Esto se acerca:'
+  - 'Sé que preguntas por «{termino}»; lo más cercano que encontré es esto:'
+  sin_respuesta:
+  - Lo siento, esa información no está en los documentos disponibles.
+  - Entiendo que lo necesitas; no aparece en los documentos disponibles.
+  - Lamento no poder ayudarte con eso; no figura en los documentos.
+  - Busqué con cuidado, pero esa información no está en los documentos.
+  - Sé que es frustrante; esa información no aparece en los documentos disponibles.
+  premisa_no_encontrada:
+  - Lo siento, no encontré información sobre "{entidad}" en los documentos.
+  - Entiendo que buscas "{entidad}"; no aparece en los documentos disponibles.
+  - Lamento no encontrar "{entidad}"; puede que no forme parte de lo que cubren los documentos.
+  - Busqué "{entidad}" con cuidado y no aparece en los documentos.
+  - Sé que esperabas algo sobre "{entidad}", pero no está en los documentos.
+  bienvenida:
+  - Hola, estoy aquí para ayudarte.
+  - Hola, cuéntame qué necesitas.
+  - Hola, soy {nombre_asistente}. Vamos con calma.
+  - Escríbeme tu duda; la buscamos juntos.
+  - Hola, ¿en qué te puedo acompañar?
+  esperando:
+  - Buscando con cuidado
+  - Revisando los documentos por ti
+  - Un momento, ya casi
+  - Buscando lo que necesitas
+  - Leyendo con atención
+  invitacion_citas:
+  - Para tu tranquilidad, la cita está abajo.
+  - Puedes comprobarlo con calma en la cita de abajo.
+  - Te dejo abajo el texto original, por si quieres revisarlo.
+  - Abajo está la fuente, para que confíes en la respuesta.
+  - Si quieres verificarlo, la cita está aquí abajo.
+  error_red:
+  - Lo siento, se perdió la conexión. Inténtalo de nuevo cuando puedas.
+  - Perdón, no pude conectarme. Revisa tu conexión y lo intentamos otra vez.
+  - Lamento la interrupción; no hay conexión con el asistente.
+  - Algo pasó con la conexión. Prueba otra vez en un momento, por favor.
+  - Lo siento, no logré comunicarme con el servicio. Intentemos de nuevo.
+  error_limite:
+  - Entiendo que tienes varias dudas; espera unos segundos y seguimos.
+  - Vamos con calma; dame unos segundos antes de la próxima pregunta.
+  - Necesito un momento antes de seguir. Gracias por la paciencia.
+  - Espera un poquito, por favor, y continuamos.
+  - Tómate unos segundos; enseguida te respondo.
+  error_servicio:
+  - Lo siento, el asistente no está disponible ahora. Intenta más tarde.
+  - Perdón, el servicio se está preparando. Inténtalo en un momento.
+  - Lamento no poder responder ahora. Vuelve en un rato, por favor.
+  - Disculpa, estoy ocupado. Intenta de nuevo en unos segundos.
+  - Lo siento, hubo un problema en el servicio. Intenta más tarde.

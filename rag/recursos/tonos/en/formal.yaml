@@ -1,0 +1,112 @@
+# Formal tone: polite register, no exclamations.
+tono: formal
+descripcion: Polite, careful register without exclamations.
+situaciones:
+  saludo:
+  - Good day. This is {nombre_asistente}. I answer enquiries about {descripcion_dominio} quoting the document verbatim. How may I assist you?
+  - Welcome. You may consult me about {descripcion_dominio}; every answer will indicate its exact source.
+  - Greetings. I am {nombre_asistente}, at your disposal for enquiries about {descripcion_dominio}.
+  - This is {nombre_asistente}. Please indicate what you wish to consult about {descripcion_dominio}.
+  - It is a pleasure to assist you. Please state your enquiry about {descripcion_dominio}.
+  agradecimiento:
+  - You are welcome. I remain at your disposal for further enquiries about {descripcion_dominio}.
+  - It has been a pleasure. You may consult me about {descripcion_dominio} at any time.
+  - Thank you. Should you need to review another aspect of {descripcion_dominio}, please let me know.
+  - With pleasure. I remain available for any enquiry about {descripcion_dominio}.
+  - I appreciate your enquiry. I am at your service regarding {descripcion_dominio}.
+  despedida:
+  - Have a good day.
+  - Until next time. I remain at your disposal.
+  - It has been a pleasure assisting you. Goodbye.
+  - I wish you a pleasant day. You may return whenever necessary.
+  - Until your next enquiry.
+  capacidad:
+  - I am {nombre_asistente}. I answer enquiries about {descripcion_dominio} quoting the document verbatim; if the information is not included, I will say so.
+  - I locate the relevant passage in {descripcion_dominio} and present it literally, with its reference.
+  - 'My role is as follows: to search {descripcion_dominio} and show you the exact text that answers your enquiry.'
+  - I do not draft content of my own. I present what {descripcion_dominio} states, with the corresponding citation.
+  - You may consult me about {descripcion_dominio}; each answer includes the original text and its location.
+  apertura:
+  - 'The document states the following:'
+  - 'In accordance with the document:'
+  - 'According to the available text:'
+  - 'The document indicates the following:'
+  - 'As recorded in the document:'
+  complemento:
+  - 'Additionally, the document notes:'
+  - 'Likewise, it states the following:'
+  - 'Another section adds:'
+  - 'The document further adds:'
+  - 'It is worth adding the following:'
+  condicion:
+  - 'The above is subject to the following condition:'
+  - 'The following condition applies:'
+  - 'The document qualifies it as follows:'
+  - 'Please note the following condition:'
+  - 'For it to apply, the document establishes:'
+  excepcion:
+  - 'The following exception is provided:'
+  - 'With the following proviso:'
+  - 'The document excepts the following:'
+  - 'Please note this exception:'
+  - 'It does not apply in the following case:'
+  relacionado_intro:
+  - 'No direct answer was found. Here is what the documents state on the subject:'
+  - 'The documents do not contain a direct answer; this is the most closely related content:'
+  - 'There is no direct answer to your enquiry. The closest content is as follows:'
+  - 'A direct answer cannot be provided. The documents indicate the following on the subject:'
+  - 'Your enquiry has no direct answer in the documents. The related content is:'
+  foco_ausente:
+  - 'No specific information on «{termino}» was found. The closest content is:'
+  - 'The documents do not specifically address «{termino}». The closest content is:'
+  - 'There is no specific record of «{termino}»; the related content follows:'
+  - '«{termino}» was not found in the documents. The closest content is:'
+  - 'Regarding «{termino}» there is no direct answer. The related content follows:'
+  sin_respuesta:
+  - Unfortunately, that information is not included in the available documents.
+  - That information was not found in the available documents.
+  - The available documents contain no information on your enquiry.
+  - I regret to inform you that this information is not recorded in the documents.
+  - 'Having reviewed the documents, your enquiry cannot be answered: the information is not included.'
+  premisa_no_encontrada:
+  - No information about "{entidad}" was found in the available documents. It may not exist or may fall outside their scope.
+  - The documents make no reference to "{entidad}".
+  - There is no record of "{entidad}" in the available documents.
+  - I regret to inform you that "{entidad}" does not appear in the documents.
+  - Having reviewed the documents, no reference to "{entidad}" was found.
+  bienvenida:
+  - Good day. How may I assist you?
+  - Welcome. Please state your enquiry.
+  - This is {nombre_asistente}. What would you like to consult?
+  - I am at your disposal. Every answer includes its source.
+  - Please indicate your enquiry and I will show you the relevant text.
+  esperando:
+  - Consulting the document
+  - Reviewing the documentation
+  - Locating the exact reference
+  - One moment, please
+  - Searching for the relevant passage
+  invitacion_citas:
+  - You may verify it in the citation below.
+  - The original text is shown below for your verification.
+  - Please refer to the citation below to confirm its origin.
+  - The exact source is indicated below.
+  - I invite you to verify it in the citation below.
+  error_red:
+  - It was not possible to connect to the assistant. Please check your connection and try again.
+  - A connection problem occurred. Kindly try again in a few moments.
+  - The service could not be reached. Please check your connection.
+  - The connection to the assistant was interrupted. Please try again.
+  - Communication with the service failed. Kindly try again later.
+  error_limite:
+  - The limit of consecutive enquiries has been reached. Kindly wait a few seconds.
+  - Please wait a few seconds before your next enquiry.
+  - Several enquiries were made in a short time. Please try again shortly.
+  - Kindly wait a moment before continuing.
+  - A few seconds are required before your next enquiry can be handled.
+  error_servicio:
+  - The service is not available at the moment. Kindly try again later.
+  - The assistant is starting up. Please try again in a few moments.
+  - Your enquiry cannot be handled at this time. Please try again later.
+  - The service is busy. Kindly try again in a few seconds.
+  - A problem occurred in the service. Kindly try again later.

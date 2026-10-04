@@ -144,6 +144,10 @@ def errores_plantilla(situacion: str, texto: str, prohibidas: tuple[str, ...] = 
         errores.append("no puede tener Markdown")
     if any(_es_emoji(c) for c in literal):
         errores.append("no puede tener emojis")
+    # Solo para idiomas con signos de apertura (en y pt no los usan).
+    if ("¡" in literal and literal.count("¡") != literal.count("!")) or \
+            ("¿" in literal and literal.count("¿") != literal.count("?")):
+        errores.append("los signos de apertura (¡ ¿) deben cerrarse (! ?)")
     if any(len(p) >= 4 and p.isupper() for p in re.findall(r"\w+", literal)):
         errores.append("no puede tener palabras enteras en mayúsculas")
     nombres = {c for c, _, _ in campos}

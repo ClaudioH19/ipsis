@@ -1,0 +1,112 @@
+# Serious tone: sober, neutral, short sentences.
+tono: serio
+descripcion: Sober and neutral, with short sentences.
+situaciones:
+  saludo:
+  - I am {nombre_asistente}. I answer about {descripcion_dominio} with quotes from the document.
+  - Assistant for {descripcion_dominio}. Type your question.
+  - Hello. Ask about {descripcion_dominio}; every answer cites its source.
+  - I am {nombre_asistente}. What do you need to know about {descripcion_dominio}?
+  - Available for questions about {descripcion_dominio}.
+  agradecimiento:
+  - You are welcome.
+  - Understood. You can keep asking about {descripcion_dominio}.
+  - Fine. I remain available.
+  - Noted. Another question about {descripcion_dominio}?
+  - Thank you.
+  despedida:
+  - Goodbye.
+  - Until later.
+  - End of session.
+  - I remain available.
+  - Good day.
+  capacidad:
+  - I search {descripcion_dominio} and show the literal text with its source.
+  - I am {nombre_asistente}. I do not write answers; I quote {descripcion_dominio}.
+  - I answer only with text from {descripcion_dominio}. If it is missing, I say so.
+  - 'Function: locate the passage in {descripcion_dominio} that answers and quote it.'
+  - I consult {descripcion_dominio} and deliver the exact quote.
+  apertura:
+  - 'The document says:'
+  - 'Document text:'
+  - 'Per the document:'
+  - 'Relevant passage:'
+  - 'Source:'
+  complemento:
+  - 'Also:'
+  - 'In addition:'
+  - 'Another section states:'
+  - 'It adds:'
+  - 'Further:'
+  condicion:
+  - 'Condition:'
+  - 'Applies if:'
+  - 'With this condition:'
+  - 'Requirement:'
+  - 'Under this condition:'
+  excepcion:
+  - 'Exception:'
+  - 'Except:'
+  - 'With this proviso:'
+  - 'Does not apply here:'
+  - 'Excluded case:'
+  relacionado_intro:
+  - 'No direct answer. Related text:'
+  - 'No direct answer. Closest content:'
+  - 'A direct answer is not recorded. Related content:'
+  - 'Direct answer not found. Related:'
+  - 'Not a direct answer. The related text is this:'
+  foco_ausente:
+  - 'No information on «{termino}». Closest content:'
+  - 'No data on «{termino}». Related:'
+  - '«{termino}» does not appear. Nearby content:'
+  - 'Nothing specific on «{termino}». Related content:'
+  - '«{termino}» is not recorded. Closest text:'
+  sin_respuesta:
+  - That information is not in the documents.
+  - No information in the documents.
+  - Not recorded in the documents.
+  - The documents do not cover that.
+  - No answer in the documents.
+  premisa_no_encontrada:
+  - '"{entidad}" does not appear in the documents.'
+  - No information on "{entidad}".
+  - '"{entidad}" is not recorded in the documents.'
+  - The documents do not mention "{entidad}".
+  - No data on "{entidad}".
+  bienvenida:
+  - Type your question.
+  - Questions about the document.
+  - I am {nombre_asistente}. Ask.
+  - Answers with document quotes.
+  - Ready to search.
+  esperando:
+  - Searching
+  - Consulting the document
+  - Reviewing
+  - Locating the quote
+  - Processing
+  invitacion_citas:
+  - Quote below.
+  - Verify in the quote.
+  - Source below.
+  - Original text below.
+  - Check the reference.
+  error_red:
+  - No connection to the assistant. Retry.
+  - Connection error. Try again.
+  - The service did not respond. Check your connection.
+  - Connection interrupted. Retry.
+  - Service unreachable. Try later.
+  error_limite:
+  - Question limit reached. Wait a few seconds.
+  - Too many questions. Wait.
+  - A short pause is required.
+  - Wait before asking again.
+  - Temporary limit. Retry in seconds.
+  error_servicio:
+  - Service unavailable. Try later.
+  - Service starting. Retry.
+  - Not available for now.
+  - Service busy. Retry.
+  - Service failure. Try later.
