@@ -241,7 +241,12 @@ ESTRATEGIAS = {
 }
 
 
-def construir_texto_embebido(doc_titulo: str, seccion_path: list[str], texto: str) -> str:
-    """Header contextual (sección 3.3, campo texto_embebido)."""
-    seccion_str = " > ".join(seccion_path) if seccion_path else "(sin sección)"
-    return f"Documento: {doc_titulo} | Sección: {seccion_str}\n{texto}"
+def construir_texto_embebido(doc_titulo: str, seccion_path: list[str], texto: str, paquete=None) -> str:
+    """Header contextual (sección 3.3, campo texto_embebido) en el idioma de
+    ``paquete`` (sin paquete, en español, como antes)."""
+    if paquete is None:
+        cabecera, sin_seccion = "Documento: {documento} | Sección: {seccion}", "(sin sección)"
+    else:
+        cabecera, sin_seccion = paquete.mensajes.cabecera_embebido, paquete.mensajes.sin_seccion
+    seccion_str = " > ".join(seccion_path) if seccion_path else sin_seccion
+    return f"{cabecera.format(documento=doc_titulo, seccion=seccion_str)}\n{texto}"

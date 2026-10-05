@@ -34,7 +34,7 @@ code: everything that depends on the language lives in a pack.
 - **Pack entities:** those written with words ("six months", "March
   fifteenth", "article four").
 - **Sentences:** a single `dividir_oraciones()` with `. ? ! 。 ！ ？ ؟ ।`.
-- **Tones:** 7 tones × 18 situations × 5 variants per language. The variant
+- **Tones:** 7 tones × 18 situations × 7 to 12 variants per language (154 per tone). The variant
   is chosen by (session, turn, situation) and does not repeat in consecutive
   turns.
 
@@ -76,7 +76,7 @@ No effect.
 
 ## 11. Technical tests
 
-`tests/lenguaje/` (packs, entities, the linter over 1,890 templates and
+`tests/lenguaje/` (packs, entities, the linter over 3,234 templates and
 neutrality) and the universal bank in three languages.
 
 ## 12. Limitations

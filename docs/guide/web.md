@@ -95,7 +95,7 @@ The widget uses three public endpoints; you can call them too:
 
 | Endpoint | What it returns |
 |---|---|
-| `POST /ask` with `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` when the reader marked a span, and `conversational_category` |
+| `POST /ask` with `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` by paragraph: `type` is `lead`, `passage` or `message`, with `text`, `connector`, `citation` and `chunk_id`; `passage` text is literal from the document), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` when the reader marked a span, and `conversational_category` |
 | `GET /config` | What the widget needs: `assistant_name`, `greeting`, `preset`, `density`, `citations`, `interface` texts, `microcopy` of the tone, `placement` and `avatar` |
 | `GET /health`, `GET /ready` | Liveness and readiness (with the same diagnosis as `ipsis doctor` under `project`) |
 
@@ -147,7 +147,7 @@ they show:
 
 - **From the active tone** (see [personality.md](personality.md)): the
   welcome, "searching…", the invitation to the citations and the error
-  messages come from `/config` in 5 variants, and the widget rotates them.
+  messages come from `/config` in 7 variants, and the widget rotates them.
 - **Interface texts** (button labels, placeholder…) come from the language
   pack of the project.
 - **Accessibility:** "searching…" and the errors are announced to screen

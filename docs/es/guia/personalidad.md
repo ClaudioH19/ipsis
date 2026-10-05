@@ -70,14 +70,19 @@ ipsis personality avatar colors --body "#f5f1e8" --eyes "#1e293b"
 
 ### Folio, el avatar por defecto
 
-Una hoja de papel viva: ladeada, con la esquina que se levanta y dos ojos de
-tinta. No tiene boca: expresa con los ojos y el giro. Es lo que hace el
+La hoja del logo, viva: ladeada, con la esquina doblada, dos ojos de tinta y
+dos renglones de texto. No tiene boca: expresa con la forma y el ángulo de
+los ojos, hacia dónde mira y el giro de la cabeza. Es lo que hace el
 proyecto: lee, mira la cita antes de afirmar y no exagera.
 
-- `happy` es sobrio: primero mira hacia las citas y después se alegra.
+- `happy` es sobrio: primero mira hacia las citas y después se alegra (ojos
+  en arco).
 - En `unsure` y `sorry` nunca hay gesto de éxito.
+- En reposo mira a los lados y de vez en cuando relee la página; saluda y se
+  despide con un guiño.
 - Colores: papel `#f5f1e8` y tinta `#1e293b`; se cambian con
-  `ipsis personality avatar colors`.
+  `ipsis personality avatar colors`. El widget agrega el contorno y el tono
+  del pliegue y los renglones (`--rw-folio-borde`, `--rw-folio-pliegue`).
 
 Para revisar todas sus animaciones, desde la raíz del repositorio:
 `python -m http.server 8765` y abre
@@ -122,8 +127,10 @@ En español, inglés y portugués:
 | `empathetic` | reconoce lo que la persona necesita | «Entiendo que lo necesitas; no aparece en los documentos disponibles.» |
 | `direct` | seco e imperativo, nunca agresivo | «No está en los documentos. Pregunta otra cosa.» |
 
-Cada tono trae 18 situaciones con 5 variantes cada una: 90 por tono e
-idioma, 1.890 en total.
+Cada tono trae 18 situaciones: 12 variantes en las cuatro que se ven en
+casi toda respuesta (`opening`, `addition`, `no_answer`, `related_intro`), 7
+en las del widget y 8 en el resto. Son 154 por tono e idioma, 3.234 en
+total, y todos los idiomas tienen la misma cantidad por situación.
 
 ## Situaciones
 
@@ -173,8 +180,13 @@ Las comprueba un linter; las mismas reglas aplican a tus sobrescrituras:
   - palabras enteras en mayúsculas.
 - Variables: solo las de su situación, sin formato.
 - Conectores: los que introducen texto del documento terminan en «:».
-- Variedad: las 5 variantes son distintas, y ninguna se repite en otra
-  situación del mismo tono.
+- Variedad: las variantes son distintas y ninguna se repite en otra
+  situación del mismo tono. En los tonos incluidos, además, dos variantes de
+  una situación no pueden ser casi copias (casi las mismas palabras, o una
+  sola palabra cambiada en una frase de cinco o más); las cortas como «Si:»
+  y «Salvo:» sí pueden.
+- Cantidad: los tonos incluidos cumplen la cuenta de arriba; una
+  sobrescritura del proyecto necesita al menos una variante.
 - Ninguna expresión de la lista prohibida del idioma
   (`ipsis/recursos/tonos/<idioma>/_reglas.yaml`): insultos, culpar al
   usuario, condescendencia.
@@ -213,7 +225,7 @@ panel habla inglés por defecto y español con `IPSIS_LANG=es` en el servicio.
 
 | Pestaña | Qué hace |
 |---|---|
-| **Tono** | Elige el tono y la variedad. Por situación, muestra las 5 variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
+| **Tono** | Elige el tono y la variedad. Por situación, muestra las variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
 | **Avatar** | Importa un `.avatar.json` (se valida antes de guardar), elige el avatar, sus colores, ubicación y tamaño, y asigna cada evento a una animación. El botón ▶ dispara el evento en la vista previa |
 | **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas. «Estilo completo» edita cada valor de `styles.yaml`: colores claros y oscuros, tipografía, formas, sombras y animaciones |
 
@@ -256,7 +268,7 @@ no se revisa.
 El linter no juzga el sentido. Antes de publicar un tono, una persona
 revisa:
 
-1. **Tono reconocible:** las 90 variantes suenan al mismo carácter.
+1. **Tono reconocible:** las 154 variantes suenan al mismo carácter.
 2. **Honestidad:** `related_intro` y `missing_focus` dicen que no es una
    respuesta directa; `no_answer` y `premise_not_found` no sugieren que la
    información exista en otra parte.

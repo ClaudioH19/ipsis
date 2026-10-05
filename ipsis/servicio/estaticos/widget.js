@@ -179,6 +179,7 @@
     densidad: "comoda",
     citas: "acordeon",
     mostrarEtiquetaEstado: true,
+    alineacion: "justificada",
   };
   function emitir(nombre, detalle) {
     host.dispatchEvent(new CustomEvent(nombre, { detail: detalle || {}, bubbles: true }));
@@ -289,6 +290,8 @@
     ".rw-boton:focus-visible{outline:3px solid var(--rw-acento);outline-offset:3px;}",
     ".rw-boton svg{width:var(--rw-tamano-icono);height:var(--rw-tamano-icono);display:block;}",
     ".rw-boton .rw-icono-cerrar{display:none;}",
+    // El papel del logo llena menos que un trazo: algo más grande que los otros íconos.
+    ".rw-boton .rw-icono-chat{width:calc(var(--rw-tamano-icono) * 1.45);height:calc(var(--rw-tamano-icono) * 1.45);}",
     ".rw-boton[aria-expanded='true'] .rw-icono-chat{display:none;}",
     ".rw-boton[aria-expanded='true'] .rw-icono-cerrar{display:block;}",
 
@@ -332,12 +335,18 @@
     "  border-bottom:1px solid var(--rw-borde);}",
     ".rw-avatar{width:34px;height:34px;border-radius:50%;background:var(--rw-acento);",
     "  color:var(--rw-acento-texto);display:flex;align-items:center;justify-content:center;flex:none;}",
-    ".rw-avatar svg{width:18px;height:18px;}",
+    ".rw-avatar svg{width:26px;height:26px;}",
     // Avatar animado (opcional): reemplaza al ícono solo cuando ya está montado.
     ".rw-avatar.rw-avatar-vivo{width:var(--rw-avatar-tamano,56px);height:var(--rw-avatar-tamano,56px);",
     "  background:transparent;border-radius:0;}",
     ".rw-avatar-lienzo{width:100%;height:100%;display:block;pointer-events:none;}",
     ".rw-avatar-lienzo svg{width:100%;height:100%;}",
+    // Folio como el logo: la librería pinta el cuerpo de un solo color; aquí
+    // el contorno del papel y, en las piezas de delante (el pliegue y los
+    // renglones), el tono del doblez. Los ojos van dentro del <g>.
+    ".rw-avatar-lienzo[data-avatar='folio'] svg > path{stroke:var(--rw-folio-borde,#d6cdb8);",
+    "  stroke-width:7px;stroke-linejoin:round;}",
+    ".rw-avatar-lienzo[data-avatar='folio'] svg > g ~ path{fill:var(--rw-folio-pliegue,#e4dac4);}",
     ".rw-boton.rw-con-avatar[aria-expanded='false'] .rw-icono-chat{display:none;}",
     ".rw-boton .rw-avatar-lienzo{width:84%;height:84%;}",
     ".rw-boton[aria-expanded='true'] .rw-avatar-lienzo{display:none;}",
@@ -369,6 +378,17 @@
     "  white-space:pre-wrap;overflow-wrap:anywhere;",
     "  animation:rw-burbuja var(--rw-dur-burbuja) ease-out;}",
     "@keyframes rw-burbuja{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}",
+    // Párrafos de la respuesta (answer_blocks): el pasaje es texto del documento;
+    // el conector y la cita, frases del asistente, van más suaves.
+    ".rw-parrafo{margin:0;}",
+    ".rw-parrafo + .rw-parrafo{margin-top:.6em;}",
+    ".rw-conector,.rw-cita-breve{color:var(--rw-texto-suave);}",
+    ".rw-cita-breve{font-size:var(--rw-tamano-cita);}",
+    // Justificado opcional (presentation.text_align): solo el texto del
+    // documento, con guiones para que no queden huecos en una burbuja angosta.
+    ".rw-panel[data-alineacion='justificada'] .rw-parrafo-pasaje,",
+    ".rw-panel[data-alineacion='justificada'] .rw-cita-texto{text-align:justify;",
+    "  -webkit-hyphens:auto;hyphens:auto;}",
     ".rw-msg-usuario{align-self:flex-end;background:var(--rw-acento);color:var(--rw-acento-texto);",
     "  border-bottom-right-radius:5px;}",
     ".rw-msg-ok{align-self:flex-start;background:var(--rw-superficie);color:var(--rw-texto);",
@@ -476,7 +496,6 @@
   // createElementNS porque este archivo no usa innerHTML en ningun punto.
   var NS_SVG = "http://www.w3.org/2000/svg";
   var TRAZOS = {
-    chat: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z",
     cerrar: "M18 6 6 18M6 6l12 12",
     enviar: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
   };
@@ -494,6 +513,40 @@
     var path = document.createElementNS(NS_SVG, "path");
     path.setAttribute("d", TRAZOS[nombre]);
     svg.appendChild(path);
+    return svg;
+  }
+
+  // El ícono del asistente: el logo de ipsis en miniatura (docs/assets/logo.svg,
+  // mismas coordenadas, recortado al papel). Los colores son variables para
+  // que un tema los cambie; por defecto, los del logo.
+  var FOLIO_ICONO = [
+    ["path", { d: "M32 18h48l18 18v62a12 12 0 0 1-12 12H32a12 12 0 0 1-12-12V30a12 12 0 0 1 12-12z",
+               "stroke-width": "4", "stroke-linejoin": "round" }, "papel", "borde"],
+    ["path", { d: "M80 18v12a6 6 0 0 0 6 6h12z", "stroke-width": "4", "stroke-linejoin": "round" }, "pliegue", "borde"],
+    ["rect", { x: "42", y: "42", width: "12", height: "24", rx: "6" }, "tinta"],
+    ["rect", { x: "64", y: "42", width: "12", height: "24", rx: "6" }, "tinta"],
+    ["rect", { x: "34", y: "78", width: "52", height: "6", rx: "3" }, "renglon"],
+    ["rect", { x: "34", y: "89", width: "34", height: "9", rx: "4.5" }, "resalte"],
+    ["rect", { x: "72", y: "91", width: "14", height: "6", rx: "3" }, "renglon"]
+  ];
+  var FOLIO_COLORES = { papel: "#f5f1e8", borde: "#d6cdb8", pliegue: "#e4dac4", tinta: "#1e293b",
+                        renglon: "#cbd5e1", resalte: "#93c5fd" };
+
+  function iconoFolio(clase) {
+    var svg = document.createElementNS(NS_SVG, "svg");
+    svg.setAttribute("viewBox", "14 12 100 104");
+    svg.setAttribute("aria-hidden", "true");
+    if (clase) svg.setAttribute("class", clase);
+    var grupo = document.createElementNS(NS_SVG, "g");
+    grupo.setAttribute("transform", "rotate(-5 64 64)");
+    FOLIO_ICONO.forEach(function (pieza) {
+      var el = document.createElementNS(NS_SVG, pieza[0]);
+      Object.keys(pieza[1]).forEach(function (k) { el.setAttribute(k, pieza[1][k]); });
+      el.style.fill = "var(--rw-folio-" + pieza[2] + "," + FOLIO_COLORES[pieza[2]] + ")";
+      if (pieza[3]) el.style.stroke = "var(--rw-folio-" + pieza[3] + "," + FOLIO_COLORES[pieza[3]] + ")";
+      grupo.appendChild(el);
+    });
+    svg.appendChild(grupo);
     return svg;
   }
 
@@ -529,7 +582,7 @@
   boton.setAttribute("aria-label", texto("open", { title: TITULO_INICIAL }));
   // Dos iconos fijos: el CSS muestra uno u otro segun aria-expanded, asi
   // el mismo boton abre y cierra sin que nada dependa de la API.
-  boton.appendChild(icono("chat", "rw-icono-chat"));
+  boton.appendChild(iconoFolio("rw-icono-chat"));
   boton.appendChild(icono("cerrar", "rw-icono-cerrar"));
   // Texto visible solo con el lanzador «pestana».
   var botonTexto = document.createElement("span");
@@ -542,6 +595,7 @@
 
   var panel = document.createElement("div");
   panel.className = "rw-panel";
+  panel.setAttribute("data-alineacion", PRESENTACION.alineacion);
   // Incrustado: parte de la página, no un diálogo modal.
   panel.setAttribute("role", INCRUSTADO ? "region" : "dialog");
   if (!INCRUSTADO) panel.setAttribute("aria-modal", "true");
@@ -554,7 +608,7 @@
 
   var avatar = document.createElement("div");
   avatar.className = "rw-avatar";
-  avatar.appendChild(icono("chat"));
+  avatar.appendChild(iconoFolio());
 
   var cabeceraTextos = document.createElement("div");
   cabeceraTextos.className = "rw-cabecera-textos";
@@ -730,6 +784,9 @@
     return {
       estado: ESTADOS_INTERNOS[r.status] || "sin_respuesta",
       respuesta: r.answer,
+      bloques: (r.answer_blocks || []).map(function (b) {
+        return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
+      }),
       fragmentos: (r.fragments || []).map(function (f) {
         return { chunk_id: f.chunk_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
                  offset_inicio: f.offset_start, offset_fin: f.offset_end };
@@ -737,6 +794,27 @@
       respuesta_exacta: exacta ? { chunk_id: exacta.chunk_id, texto: exacta.text, offset_inicio: exacta.offset_start,
                                    offset_fin: exacta.offset_end } : null
     };
+  }
+
+  // Texto de la API, siempre por textContent: conector, pasaje literal y cita
+  // en elementos separados para darles estilo distinto.
+  function parrafoDeBloque(bloque) {
+    var parrafo = document.createElement("p");
+    parrafo.className = "rw-parrafo rw-parrafo-" + (bloque.tipo === "passage" ? "pasaje" : "frase");
+    if (bloque.conector) {
+      var conector = document.createElement("span");
+      conector.className = "rw-conector";
+      conector.textContent = bloque.conector + " ";
+      parrafo.appendChild(conector);
+    }
+    parrafo.appendChild(document.createTextNode(bloque.texto || ""));
+    if (bloque.cita) {
+      var cita = document.createElement("span");
+      cita.className = "rw-cita-breve";
+      cita.textContent = " " + bloque.cita + ".";
+      parrafo.appendChild(cita);
+    }
+    return parrafo;
   }
 
   function agregarMensajeAsistente(respuesta) {
@@ -752,10 +830,12 @@
       burbuja.appendChild(spanAviso);
     }
 
-    var parrafo = document.createElement("p");
-    parrafo.style.margin = "0";
-    parrafo.textContent = respuesta.respuesta || ""; // texto de la API -> textContent
-    burbuja.appendChild(parrafo);
+    // Un párrafo por bloque; sin bloques (API anterior), el texto completo.
+    var bloques = respuesta.bloques && respuesta.bloques.length
+      ? respuesta.bloques : [{ tipo: "message", texto: respuesta.respuesta || "" }];
+    bloques.forEach(function (bloque) {
+      burbuja.appendChild(parrafoDeBloque(bloque));
+    });
 
     if (estadoResp === "ok" || estadoResp === "relacionado") {
       agregarCitas(burbuja, respuesta.fragmentos, respuesta.respuesta_exacta);
@@ -837,7 +917,13 @@
         // Las citas nunca se ocultan: acordeón (desplegable) o lista (a la vista).
         PRESENTACION.citas = cfg.citations === "list" ? "lista" : "acordeon";
         PRESENTACION.mostrarEtiquetaEstado = cfg.show_status_label !== false;
+        PRESENTACION.alineacion = cfg.text_align === "start" ? "inicio" : "justificada";
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
+        panel.setAttribute("data-alineacion", PRESENTACION.alineacion);
+        // hyphens:auto parte las palabras con las reglas del idioma de lang.
+        if (typeof cfg.language === "string" && /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(cfg.language)) {
+          panel.setAttribute("lang", cfg.language);
+        }
         if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
         aplicarInterfaz(cfg.interface);
         if (cfg.microcopy && typeof cfg.microcopy === "object") MICROCOPIA = cfg.microcopy;
@@ -1099,6 +1185,7 @@
   function montarAvatar(motor, definicion) {
     var lienzo = document.createElement("span");
     lienzo.className = "rw-avatar-lienzo";
+    if (/^[a-z0-9-]+$/.test(String(AVATAR.config.nombre || ""))) lienzo.setAttribute("data-avatar", AVATAR.config.nombre);
     // Decorativo: los estados ya tienen texto y etiqueta propios.
     lienzo.setAttribute("aria-hidden", "true");
     var ajustes = AVATAR.config.mirada || {};

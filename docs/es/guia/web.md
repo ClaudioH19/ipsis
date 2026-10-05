@@ -99,7 +99,7 @@ El widget usa tres endpoints públicos; también puedes llamarlos tú:
 
 | Endpoint | Qué devuelve |
 |---|---|
-| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, y `conversational_category` |
+| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, y `conversational_category` |
 | `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `placement` y `avatar` |
 | `GET /health`, `GET /ready` | Vida y preparación (con el mismo diagnóstico que `ipsis doctor` en `project`) |
 
@@ -150,7 +150,7 @@ comprobarla:
 
 - **Del tono activo** (ver [personalidad.md](personalidad.md)): la
   bienvenida, «buscando…», la invitación a las citas y los mensajes de error
-  vienen de `/config` en 5 variantes, y el widget rota entre ellas.
+  vienen de `/config` en 7 variantes, y el widget rota entre ellas.
 - **Textos de la interfaz** (etiquetas de botones, placeholder…): vienen del
   paquete de idioma del proyecto.
 - **Accesibilidad:** «buscando…» y los errores se anuncian a los lectores

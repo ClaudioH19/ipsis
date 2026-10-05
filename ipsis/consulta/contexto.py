@@ -40,6 +40,7 @@ class ContextoConsulta:
     evidencias: list[EvidenceSpan] = field(default_factory=list)
     payloads: list[dict] = field(default_factory=list)
     texto: str = ""
+    bloques: list[dict] = field(default_factory=list)  # párrafos de ``texto`` (redaccion.py)
     estado: AssistantState | None = None
     plan: str = ""
     resultado: AssistantResult | None = None

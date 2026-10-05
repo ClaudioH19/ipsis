@@ -273,6 +273,7 @@ mensajes:
   sin_seccion: (sin sección)
   cita_breve: '(Fuente: {documento})'
   cita_completa: '(Fuente: {documento}, sección: {seccion})'
+  cabecera_embebido: 'Documento: {documento} | Sección: {seccion}'
 interfaz:
   default_assistant_name: Asistente documental
   default_domain_description: los documentos cargados

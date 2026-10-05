@@ -8,105 +8,169 @@ situations:
   - Olá. Consulte sobre {domain_description}; cada resposta traz sua fonte.
   - Sou {assistant_name}. O que precisa saber de {domain_description}?
   - Disponível para consultas sobre {domain_description}.
+  - Assistente {assistant_name}. Consultas sobre {domain_description}.
+  - Escreva sua consulta sobre {domain_description}.
+  - Sou {assistant_name}. Cito {domain_description} textualmente.
   thanks:
   - De nada.
   - Entendido. Pode fazer outra consulta sobre {domain_description}.
   - Certo. Sigo disponível.
   - De acordo. Outra consulta sobre {domain_description}?
   - Obrigado a você.
+  - Correto. Permaneço à disposição.
+  - De acordo.
+  - Agradeço. Pode continuar com {domain_description}.
   farewell:
   - Até logo.
   - Até breve.
   - Fim da consulta.
   - Sigo disponível.
   - Até outra consulta.
+  - Consulta finalizada.
+  - Até a próxima.
+  - Adeus.
   capability:
   - Busco em {domain_description} e mostro o texto literal com sua fonte.
   - Sou {assistant_name}. Não redijo respostas; cito {domain_description}.
   - Respondo só com texto de {domain_description}. Se não estiver, aviso.
   - 'Função: localizar o trecho de {domain_description} que responde e citá-lo.'
   - Consulto {domain_description} e entrego a citação exata.
+  - Cito {domain_description}. Não gero texto próprio.
+  - Localizo em {domain_description} o trecho pertinente e o mostro com sua fonte.
+  - Se {domain_description} não o contém, eu indico.
   opening:
   - 'O documento diz:'
   - 'Texto do documento:'
   - 'Segundo o documento:'
   - 'Trecho pertinente:'
   - 'Fonte:'
+  - 'Texto pertinente:'
+  - 'Conteúdo do documento:'
+  - 'Referência:'
+  - 'O texto indica:'
+  - 'Conforme o documento:'
+  - 'Trecho citado:'
+  - 'Resposta do documento:'
   addition:
   - 'Além disso:'
   - 'Também:'
   - 'Outra seção indica:'
   - 'Acrescenta-se:'
   - 'Ainda indica:'
+  - 'Igualmente:'
+  - 'Adicionalmente:'
+  - 'Outro trecho:'
+  - 'Complemento:'
+  - 'O documento acrescenta:'
+  - 'Em outra seção:'
+  - 'Indica-se também:'
   condition:
   - 'Condição:'
   - 'Aplica-se se:'
   - 'Com esta condição:'
   - 'Requisito:'
   - 'Sob esta condição:'
+  - 'Sujeito a:'
+  - 'Condição aplicável:'
+  - 'Requer-se:'
   exception:
   - 'Exceção:'
   - 'Salvo:'
   - 'Com esta ressalva:'
   - 'Não se aplica neste caso:'
   - 'Caso excetuado:'
+  - 'Excetua-se:'
+  - 'Não se aplica se:'
+  - 'Exclusão:'
   related_intro:
   - 'Não há resposta direta. Texto relacionado:'
   - 'Sem resposta direta. O mais próximo:'
   - 'Não consta resposta direta. Conteúdo relacionado:'
   - 'Resposta direta não encontrada. Relacionado:'
   - 'Não responde diretamente. O relacionado é isto:'
+  - 'Resposta direta indisponível. Conteúdo próximo:'
+  - 'Não há correspondência direta. Texto vinculado:'
+  - 'Sem resposta exata. Trechos relacionados:'
+  - 'Não consta resposta direta. O pertinente:'
+  - 'Sem resposta direta. Texto próximo:'
+  - 'Não se achou resposta direta. Relacionado:'
+  - 'A resposta direta não consta. Conteúdo vizinho:'
   missing_focus:
   - 'Não há informação sobre «{term}». O mais próximo:'
   - 'Sem dados sobre «{term}». Relacionado:'
   - '«{term}» não aparece. Conteúdo próximo:'
   - 'Nada específico sobre «{term}». O relacionado:'
   - 'Não consta «{term}». Texto mais próximo:'
+  - '«{term}» não consta. Relacionado:'
+  - 'Sem correspondências para «{term}». O mais próximo:'
+  - 'Nenhuma referência a «{term}». Conteúdo próximo:'
   no_answer:
   - Essa informação não está nos documentos.
   - Sem informação nos documentos.
   - Não consta nos documentos.
   - Os documentos não cobrem isso.
   - Não há resposta nos documentos.
+  - Esse dado não consta.
+  - Sem resposta disponível.
+  - Os documentos não tratam desse ponto.
+  - Informação indisponível.
+  - Consulta fora do conteúdo dos documentos.
+  - Essa informação não foi achada.
+  - Dado não localizado nos documentos.
   premise_not_found:
   - '"{entity}" não aparece nos documentos.'
   - Sem informação sobre "{entity}".
   - Não consta "{entity}" nos documentos.
   - Os documentos não mencionam "{entity}".
   - Não há dados sobre "{entity}".
+  - '"{entity}" não figura.'
+  - Sem referências a "{entity}".
+  - Não se achou "{entity}".
   welcome:
   - Escreva sua pergunta.
   - Consultas sobre o documento.
   - Sou {assistant_name}. Pergunte.
   - Respostas com citação do documento.
   - Pronto para consultar.
+  - Consulte quando precisar.
+  - Respostas citadas do documento.
   waiting:
   - Em busca
   - Consulta em curso
   - Em revisão
   - Localização da citação
   - Em processamento
+  - Em localização
+  - Verificação da fonte
   citations_hint:
   - Citação abaixo.
   - Verifique na citação.
   - Fonte abaixo.
   - Texto original abaixo.
   - Confira a referência.
+  - Referência abaixo.
+  - Origem do texto abaixo.
   network_error:
   - Sem conexão com o assistente. Tente de novo.
   - Erro de conexão. Tente novamente.
   - O serviço não respondeu. Verifique sua conexão.
   - Conexão interrompida. Tente de novo.
   - Serviço inacessível. Tente mais tarde.
+  - Falha de rede. Repita.
+  - Conexão indisponível. Tente mais tarde.
   rate_limit_error:
   - Limite de consultas atingido. Aguarde alguns segundos.
   - Consultas demais. Aguarde.
   - Pausa breve necessária.
   - Aguarde antes de consultar de novo.
   - Limite temporário. Tente em segundos.
+  - Aguarde alguns segundos.
+  - Solicitações demais. Repita em breve.
   service_error:
   - Serviço indisponível. Tente mais tarde.
   - Serviço iniciando. Tente de novo.
   - Indisponível por enquanto.
-  - Serviço ocupado. Tente de novo.
+  - Serviço ocupado. Aguarde e repita.
   - Falha do serviço. Tente mais tarde.
+  - Serviço temporariamente fora do ar. Repita.
+  - Erro interno. Tente mais tarde.

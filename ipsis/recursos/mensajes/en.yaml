@@ -754,6 +754,7 @@ lint:
   min_variants: '{situation}: needs at least {minimum} variants'
   repeats_own: '{situation}[{index}]: repeats another variant of the same situation'
   repeats_other: '{situation}[{index}]: repeats a variant of {other}'
+  near_duplicate: '{situation}[{index}]: is nearly identical to variant {other}; change more than one word'
   no_tone: 'there is no tone {tone!r} for the language {language!r}; available: {available}'
 panel:
   lang: en
@@ -874,6 +875,7 @@ styles:
   density: presentation.density must be 'comfortable' or 'compact'
   citations: presentation.citations must be accordion or list (citations are always shown)
   status_label: presentation.show_status_label must be a boolean
+  text_align: presentation.text_align must be 'start' or 'justify'
   unknown_keys: 'placement: unknown keys {keys}'
   one_of: 'placement.{key} must be one of: {values}'
   integer_between: placement.{key} must be an integer between {minimum} and {maximum}

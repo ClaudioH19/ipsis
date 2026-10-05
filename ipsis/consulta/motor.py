@@ -225,6 +225,7 @@ class Motor:
         fragmentos_http: list[dict[str, Any]] | None = None,
         diagnostico: dict[str, Any] | None = None,
         respuesta_exacta: dict[str, Any] | None = None,
+        bloques: list[dict[str, Any]] | None = None,
     ) -> AssistantResult:
         estados_http = {
             AssistantState.RESPUESTA_DIRECTA: "ok",
@@ -236,6 +237,8 @@ class Motor:
             "estado": estados_http[estado],
             "nivel_servicio": "normal",
             "respuesta": mensaje,
+            # Los párrafos de ``respuesta``; abstenciones y saludos son un solo mensaje.
+            "bloques": bloques or [{"tipo": "mensaje", "texto": mensaje}],
             "plan": plan,
             "fragmentos": fragmentos_http or [],
             "confianza": confianza,

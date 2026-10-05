@@ -8,105 +8,169 @@ situations:
   - Olá, aqui é {assistant_name}. Pergunte o que quiser de {domain_description}.
   - Olá! Me diz o que te interessa em {domain_description} e procuramos.
   - Olá! Ajudo com {domain_description}, sempre com a citação à mão.
+  - Olá, tudo bem? Sou {assistant_name}. O que procuramos em {domain_description}?
+  - Olá! Pergunte o que quiser de {domain_description}, que eu procuro.
+  - Olá, estou aqui para {domain_description}. Do que você precisa?
   thanks:
   - De nada! Se surgir outra dúvida de {domain_description}, diga.
   - É para isso que estou aqui! Mais alguma coisa de {domain_description}?
   - Foi um prazer! Sigo por aqui se precisar de mais coisa de {domain_description}.
   - Quando quiser! Seguimos com {domain_description}?
   - Não precisa agradecer. Se quiser, seguimos com {domain_description}.
+  - Eu que agradeço! Se houver mais de {domain_description}, estou aqui.
+  - Que bom! Vemos algo mais de {domain_description}?
+  - De nada, é para isso que estou aqui. Outra de {domain_description}?
   farewell:
   - Adeus! Até à próxima.
   - Até mais!
   - Se cuida! Estarei por aqui.
   - Até a próxima!
   - Combinado, até quando quiser.
+  - Até logo!
+  - Até mais, que tudo corra bem.
+  - Até breve! Volte quando quiser.
   capability:
   - Busco em {domain_description} e te mostro o texto do jeito que está, com a fonte. Se não estiver, te aviso.
   - Sou {assistant_name}. Acho em {domain_description} o que você pergunta e te passo a citação exata.
   - O meu negócio é procurar em {domain_description} e te mostrar o que diz, sem inventar nada.
   - Você me pergunta algo de {domain_description} e eu trago o pedacinho do texto que responde.
   - Leio {domain_description} por você e mostro de onde sai cada resposta.
+  - Você pergunta algo de {domain_description} e eu mostro exatamente o pedaço que responde.
+  - 'Sou {assistant_name}: procuro em {domain_description}, passo a citação e pronto.'
+  - Se algo não está em {domain_description}, aviso em vez de inventar.
   opening:
   - 'Olha, o documento diz:'
   - 'Te conto o que diz o texto:'
   - 'Isto é o que encontrei:'
   - 'Repara, segundo o documento:'
   - 'Vamos lá, o texto diz assim:'
+  - 'Te passo o que diz o documento:'
+  - 'Encontrei isto, olha:'
+  - 'Segundo o texto, é assim:'
+  - 'Aqui está:'
+  - 'O documento conta assim:'
+  - 'O que o texto diz é isto:'
+  - 'Leio para você o que aparece:'
   addition:
   - 'E ainda diz:'
   - 'Também aparece isto:'
   - 'Por outro lado, acrescenta:'
   - 'E atenção, também diz:'
   - 'Soma isto aqui:'
+  - 'E outra coisa:'
+  - 'Além disso, olha isto:'
+  - 'Tem mais, repara:'
+  - 'Isto também serve:'
+  - 'E por via das dúvidas:'
+  - 'Outra parte diz:'
+  - 'Acrescento isto:'
   condition:
   - 'Mas atenção, vale se:'
   - 'Tem uma condição, viu:'
   - 'Repara nesta condição:'
   - 'Só vale se:'
   - 'Com uma condição:'
+  - 'Agora, depende disto:'
+  - 'Só se isto se cumprir:'
+  - 'Mas olha a condição:'
   exception:
   - 'Só que tem uma exceção:'
   - 'Menos neste caso:'
   - 'Cuidado com esta ressalva:'
   - 'Mas não vale quando:'
   - 'Tem uma exceção, olha:'
+  - 'Embora haja um caso à parte:'
+  - 'Menos se acontecer isto:'
+  - 'Salvo neste caso, olha:'
   related_intro:
   - 'Não achei uma resposta direta, mas olha o que tem sobre o tema:'
   - 'Isso exatamente não está, mas isto se parece:'
   - 'Não tem resposta direta; te deixo o mais próximo:'
   - 'Isso não aparece desse jeito. O mais parecido é isto:'
   - 'Não achei direto, mas isto pode te servir:'
+  - 'Não está exatamente assim, mas olha o que encontrei:'
+  - 'Resposta direta não há, embora isto se aproxime:'
+  - 'Exatamente isso eu não achei; deixo algo relacionado:'
+  - 'Não sai direto, mas isto vai por esse caminho:'
+  - 'O exato não está, olha o mais parecido:'
+  - 'Isso direto não aparece; isto pode orientar você:'
+  - 'Não há resposta exata. Te passo o relacionado:'
   missing_focus:
   - 'De «{term}» não achei nada, mas olha isto:'
   - 'Ah, «{term}» não aparece. O mais próximo é isto:'
   - 'Sobre «{term}» não tem nada pontual; te deixo o relacionado:'
   - 'Procurei «{term}» e não está. Isto chega perto:'
   - '«{term}» não aparece nos documentos, mas olha:'
+  - 'Não achei «{term}», mas isto se parece:'
+  - '«{term}» não aparece em lugar nenhum; olha o relacionado:'
+  - 'Nada de «{term}», embora isto vá por esse caminho:'
   no_answer:
   - Ah, isso não encontro nos seus documentos.
   - Isso não aparece nos documentos, desculpe.
   - Procurei e nada, isso não está nos documentos.
   - Hum, isso não vem nos documentos que tenho.
   - Não tenho isso nos documentos, vamos tentar outra pergunta?
+  - Nada por aqui, isso não está nos documentos.
+  - Procurei, mas não aparece nos seus documentos.
+  - Isso eu não tenho nos documentos, desculpe.
+  - Pois é, isso não sai nos documentos.
+  - Não há nada disso no que você carregou.
+  - Hum, não encontrei isso nos documentos.
+  - 'Essa me escapa: não está nos documentos.'
   premise_not_found:
   - Procurei "{entity}" e não aparece nos seus documentos.
   - Ah, "{entity}" não aparece nos documentos.
   - Não achei nada de "{entity}"; talvez não esteja no que você carregou.
   - '"{entity}" não aparece em lugar nenhum dos documentos.'
   - Nem sinal de "{entity}" nos documentos, desculpe.
+  - Nada sobre "{entity}" nos documentos, desculpe.
+  - Procurei e "{entity}" não sai em parte alguma.
+  - '"{entity}" não está no que você carregou.'
   welcome:
   - Olá! Do que precisa?
   - Olá! Pergunte o que quiser.
   - Olá, sou {assistant_name}. O que procuramos?
   - Olá! Me diz o que te interessa.
   - Conte a sua dúvida e procuramos.
+  - Olá! Em que posso ajudar você?
+  - Pergunte o que precisar, estou aqui.
   waiting:
   - Busca em andamento…
   - Só um segundo
   - Revisão dos documentos
   - Quase lá
   - Quase com a citação
+  - Só um segundinho
+  - Uma olhada nos documentos
   citations_hint:
   - Olhe a citação abaixo para conferir.
   - Aqui embaixo está o texto original.
   - Se quiser conferir, a citação está abaixo.
   - A fonte eu deixei aqui embaixo.
   - Dá uma olhada na citação abaixo.
+  - Deixo a citação abaixo para você ver.
+  - Abaixo está de onde tirei.
   network_error:
   - Ah, a conexão caiu. Tenta de novo?
   - Não foi possível conectar. Confira a sua internet e tentamos de novo.
   - A conexão falhou, tente de novo daqui a pouco.
   - Parece que está sem conexão. Tenta outra vez.
   - Não cheguei ao serviço. Tenta de novo?
+  - Xi, sem conexão. Tenta de novo?
+  - Algo aconteceu com a conexão. Tente em um momento.
   rate_limit_error:
   - Estamos indo muito rápido. Espera uns segundos.
   - Muita pergunta seguida, me dá um respiro.
   - Espere um pouco e continuamos.
   - Para um segundo e pergunta de novo.
   - Com calma, em alguns segundos continuamos.
+  - Um momento, estamos rápidos. Já seguimos.
+  - Me dê uns segundos e continuamos.
   service_error:
   - Agora não estou disponível. Tenta mais tarde.
   - Estou me preparando, tenta daqui a pouco.
   - Agora não consigo responder, volta daqui a pouco.
   - Tenho muito trabalho, tente em alguns segundos.
   - Algo deu errado por aqui. Tenta mais tarde.
+  - Hum, não posso responder agora. Tente daqui a pouquinho.
+  - Estou com problemas técnicos, volte daqui a pouco.

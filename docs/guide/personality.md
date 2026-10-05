@@ -68,15 +68,20 @@ ipsis personality avatar colors --body "#f5f1e8" --eyes "#1e293b"
 
 ### Folio, the default avatar
 
-A living sheet of paper: tilted, with a lifting corner and two ink eyes. It
-has no mouth: it expresses itself with its eyes and the turn of its head.
-It does what the project does: it reads, looks at the citation before
-asserting and never exaggerates.
+The sheet of the logo, alive: tilted, with the folded corner, two ink eyes
+and two lines of text. It has no mouth: it expresses itself with the shape
+and angle of its eyes, where they look and the turn of its head. It does
+what the project does: it reads, looks at the citation before asserting and
+never exaggerates.
 
-- `happy` is sober: it first looks at the citations and only then lights up.
+- `happy` is sober: it first looks at the citations and only then lights up
+  (eyes in an arc).
 - `unsure` and `sorry` never show a gesture of success.
+- At rest it glances to the sides and now and then rereads the page; it
+  greets and says goodbye with a wink.
 - Colors: paper `#f5f1e8` and ink `#1e293b`; change them with
-  `ipsis personality avatar colors`.
+  `ipsis personality avatar colors`. The widget adds the outline and the
+  tone of the fold and the lines (`--rw-folio-borde`, `--rw-folio-pliegue`).
 
 To review all its animations, from the repository root:
 `python -m http.server 8765` and open
@@ -122,8 +127,10 @@ In English, Spanish and Portuguese:
 | `empathetic` | acknowledges what the person needs | "I'm sorry, that information is not in the available documents." |
 | `direct` | blunt and imperative, never aggressive | "Not in the documents. Ask something else." |
 
-Each tone brings 18 situations with 5 variants each: 90 per tone and
-language, 1,890 in total.
+Each tone brings 18 situations: 12 variants in the four the user sees in
+almost every answer (`opening`, `addition`, `no_answer`, `related_intro`), 7
+in the widget ones and 8 in the rest. That is 154 per tone and language,
+3,234 in total, and every language has the same count per situation.
 
 ## Situations
 
@@ -173,8 +180,13 @@ A linter checks them; the same rules apply to your overrides:
   - whole words in capitals.
 - Variables: only those of its situation, without formatting.
 - Connectors: those that introduce document text end with ":".
-- Variety: the 5 variants are different, and none repeats in another
-  situation of the same tone.
+- Variety: the variants are different and none repeats in another
+  situation of the same tone. In the bundled tones, two variants of a
+  situation also cannot be near copies (nearly the same words, or one word
+  swapped in a sentence of five or more); short ones like "If:" and
+  "Unless:" are fine.
+- Quantity: the bundled tones meet the count above; a project override
+  needs at least one variant.
 - None of the language's forbidden expressions
   (`ipsis/recursos/tonos/<language>/_reglas.yaml`): insults, blaming the
   user, condescension.
@@ -214,7 +226,7 @@ service.
 
 | Tab | What it does |
 |---|---|
-| **Tone** | Chooses the tone and the variety. Per situation, it shows the 5 variants with the project variables and lets you write your own texts. If a text fails the linter, it shows the errors and saves nothing |
+| **Tone** | Chooses the tone and the variety. Per situation, it shows the variants with the project variables and lets you write your own texts. If a text fails the linter, it shows the errors and saves nothing |
 | **Avatar** | Imports an `.avatar.json` (validated before saving), chooses the avatar, its colors, placement and size, and assigns each event to an animation. The ▶ button triggers the event in the preview |
 | **Widget** | Applies a preset and changes the accent color, position, size, launcher and how citations show. "Full style" edits every value of `styles.yaml`: light and dark colors, typography, shapes, shadows and animations |
 
@@ -258,7 +270,7 @@ checked.
 The linter does not judge meaning. Before publishing a tone, a person
 checks:
 
-1. **Recognizable tone:** the 90 variants sound like the same character.
+1. **Recognizable tone:** the 154 variants sound like the same character.
 2. **Honesty:** `related_intro` and `missing_focus` say it is not a direct
    answer; `no_answer` and `premise_not_found` never suggest the
    information exists elsewhere.

@@ -8,105 +8,169 @@ situations:
   - Olá. Sei que procurar em documentos pode cansar; pergunte sobre {domain_description} e eu faço isso por você.
   - Olá, sou {assistant_name}. Vamos passo a passo com o que você precisar de {domain_description}.
   - Boas-vindas. Diga o que o preocupa em {domain_description} e buscamos juntos a resposta.
+  - Olá, aqui é {assistant_name}. Pergunte sem pressa o que precisar de {domain_description}.
+  - Olá. Estou aqui para ajudar você a encontrar o que precisa em {domain_description}.
+  - Olá, conte sua dúvida sobre {domain_description}; procuramos com calma.
   thanks:
   - Fico feliz por ter ajudado. Se surgir outra dúvida de {domain_description}, estou aqui.
   - Obrigado a você pela confiança. Sigo disponível para o que precisar de {domain_description}.
   - Que bom que serviu. Qualquer outra dúvida de {domain_description}, me conte.
   - Fico contente que tenha sido útil. Há algo mais de {domain_description} que te preocupa?
   - Com prazer. Fique à vontade; se precisar de mais algo de {domain_description}, sigo aqui.
+  - Agradeço por contar. Se precisar de algo mais de {domain_description}, estou aqui para você.
+  - Fico feliz que tenha servido. Pergunte quando quiser sobre {domain_description}.
+  - Foi um prazer ajudar. Continuo aqui para {domain_description}.
   farewell:
   - Cuide-se. Estarei aqui quando precisar.
   - Até breve, espero que tudo dê certo.
   - Tudo de bom. Volte quando quiser.
   - Foi bom te acompanhar. Até logo.
   - Até a próxima, e muita força.
+  - Fique bem. Continuo aqui se precisar.
+  - Até logo, cuide-se.
+  - Agradeço sua confiança. Até breve.
   capability:
   - Busco em {domain_description} a resposta para sua dúvida e mostro exatamente como está escrita, para que você possa confiar.
   - Sou {assistant_name}. Te poupo a busca em {domain_description} e mostro a citação exata.
   - Respondo só com o que diz {domain_description}; se algo não estiver lá, digo com honestidade.
   - Encontro em {domain_description} o texto que responde sua pergunta, para você não ter que ler tudo.
   - Mostro o que diz {domain_description} com a fonte, para você conferir com tranquilidade.
+  - Sei que ler todo {domain_description} cansa; eu encontro o trecho e mostro com sua fonte.
+  - Sou {assistant_name}. Acompanho você para encontrar em {domain_description} o que precisa, citado tal como está.
+  - Se a resposta não está em {domain_description}, digo com clareza para você não perder tempo.
   opening:
   - 'Isto é o que o documento diz sobre sua pergunta:'
   - 'Encontrei o que você buscava; o documento diz:'
   - 'Aqui está o que o texto indica:'
   - 'Para sua tranquilidade, o documento diz:'
   - 'Isto responde sua dúvida, segundo o documento:'
+  - 'Mostro o que encontrei para sua dúvida:'
+  - 'Aqui está a parte do documento que ajuda você:'
+  - 'Para que fique claro, o texto diz:'
+  - 'Procurei com cuidado; o documento indica:'
+  - 'Isto é o que pode ajudar você, segundo o texto:'
+  - 'Sei que isto importa para você; o texto diz:'
+  - 'Encontrei isto para você no documento:'
   addition:
   - 'Isto também pode te servir:'
   - 'Além disso, o documento acrescenta:'
   - 'Caso ajude, também diz:'
   - 'E mais algo que vale saber:'
   - 'Compartilho também isto:'
+  - 'Há algo mais que pode ajudar:'
+  - 'Deixo também esta parte:'
+  - 'Para você ter o panorama completo:'
+  - 'Além disso, vale a pena ver isto:'
+  - 'O texto também menciona:'
+  - 'Algo mais que vai ser útil:'
+  - 'E para complementar, diz:'
   condition:
   - 'É importante que você saiba desta condição:'
   - 'Tenha em mente que vale se:'
   - 'Para que te sirva, atenção a esta condição:'
   - 'Há uma condição que vale revisar:'
   - 'Considere esta condição:'
+  - 'Para não haver surpresas, confira esta condição:'
+  - 'Convém ter presente o seguinte:'
+  - 'Isto depende de uma condição:'
   exception:
   - 'É importante que você saiba desta exceção:'
   - 'Tenha presente esta ressalva:'
   - 'Vale revisar este caso especial:'
   - 'Para não te pegar de surpresa, há uma exceção:'
   - 'Há um caso em que não se aplica:'
+  - 'Há um caso diferente que convém conhecer:'
+  - 'Para evitar confusões, há uma ressalva:'
+  - 'Tenha em conta este caso à parte:'
   related_intro:
   - 'Entendo o que você procura, mas não há uma resposta direta. Isto é o mais próximo:'
   - 'Sei que você esperava uma resposta direta; não encontrei, mas isto está relacionado:'
   - 'Não encontrei exatamente o que você precisa. Compartilho o mais próximo:'
   - 'Lamento não ter uma resposta direta. Isto é o que os documentos dizem sobre o tema:'
   - 'Quero te ajudar: não há resposta direta, mas isto pode te orientar:'
+  - 'Sei que não é exatamente o que você procura, mas isto pode ajudar:'
+  - 'Não há uma resposta direta, embora isto talvez oriente você:'
+  - 'Lamento não ter a resposta exata. Deixo o que mais se aproxima:'
+  - 'Compreendo sua pergunta; ela não tem resposta direta, mas isto se relaciona:'
+  - 'Não consegui achar uma resposta direta. Isto talvez sirva:'
+  - 'Para não deixar você sem nada, isto é o relacionado que encontrei:'
+  - 'Procurei com cuidado e não há resposta direta; isto é o mais próximo:'
   missing_focus:
   - 'Entendo que «{term}» te interessa; não encontrei nada específico, mas isto é o mais próximo:'
   - 'Lamento não ter informação sobre «{term}». Isto pode te orientar:'
   - 'Sobre «{term}» não há nada pontual; compartilho o relacionado:'
   - 'Procurei «{term}» com cuidado e não aparece. Isto se aproxima:'
   - 'Sei que você pergunta por «{term}»; o mais próximo que encontrei é isto:'
+  - 'Compreendo que você procura «{term}»; não achei, mas isto se relaciona:'
+  - 'Sinto não achar «{term}» nos documentos. Compartilho o mais próximo:'
+  - 'Não há nada pontual sobre «{term}»; talvez isto ajude:'
   no_answer:
   - Sinto muito, essa informação não está nos documentos disponíveis.
   - Entendo que você precisa; não aparece nos documentos disponíveis.
   - Lamento não poder te ajudar com isso; não consta nos documentos.
   - Procurei com cuidado, mas essa informação não está nos documentos.
   - Sei que é frustrante; essa informação não aparece nos documentos disponíveis.
+  - Lamento dizer que isso não aparece nos documentos.
+  - Revisei com atenção e não encontrei essa informação.
+  - Sinto não ter essa resposta; os documentos não a incluem.
+  - Compreendo sua dúvida, mas ela não está coberta nos documentos.
+  - Gostaria de ter ajudado; essa informação não consta nos documentos.
+  - Desculpe, não encontrei nada sobre isso nos documentos.
+  - Essa resposta não está nos documentos; se quiser, tentamos outra pergunta.
   premise_not_found:
   - Sinto muito, não encontrei informação sobre "{entity}" nos documentos.
   - Entendo que você busca "{entity}"; não aparece nos documentos disponíveis.
   - Lamento não encontrar "{entity}"; talvez não faça parte do que os documentos cobrem.
   - Procurei "{entity}" com cuidado e não aparece nos documentos.
   - Sei que você esperava algo sobre "{entity}", mas não está nos documentos.
+  - Desculpe, "{entity}" não aparece nos documentos disponíveis.
+  - Compreendo que "{entity}" interessa a você, mas não consta nos documentos.
+  - Revisei com atenção e não há nada sobre "{entity}".
   welcome:
   - Olá, estou aqui para te ajudar.
   - Olá, me conte o que você precisa.
   - Olá, sou {assistant_name}. Vamos com calma.
   - Escreva sua dúvida; buscamos juntos.
   - Olá, em que posso te acompanhar?
+  - Olá, conte sua dúvida com calma.
+  - Estou aqui para o que você precisar.
   waiting:
   - Procura cuidadosa em curso
   - Revisão cuidadosa dos documentos
   - Um momento, quase lá
   - Busca do que você precisa
   - Leitura atenta em curso
+  - Um instante, procuro a resposta para você
+  - Revisão cuidadosa em curso
   citations_hint:
   - Para sua tranquilidade, a citação está abaixo.
   - Você pode conferir com calma na citação abaixo.
   - Deixo abaixo o texto original, caso queira revisar.
   - A fonte está abaixo, para você confiar na resposta.
   - Se quiser verificar, a citação está logo abaixo.
+  - Deixo a citação abaixo, caso queira confirmar.
+  - A fonte está logo abaixo; pode revisá-la sem pressa.
   network_error:
   - Sinto muito, a conexão caiu. Tente de novo quando puder.
   - Desculpe, não consegui conectar. Verifique sua conexão e tentamos de novo.
   - Lamento a interrupção; não há conexão com o assistente.
   - Algo aconteceu com a conexão. Tente de novo em um momento, por favor.
   - Sinto muito, não consegui falar com o serviço. Vamos tentar de novo.
+  - Desculpe, a conexão falhou. Quando puder, tente outra vez.
+  - Sinto o incômodo; não há conexão agora. Tente em um momento.
   rate_limit_error:
   - Entendo que você tem várias dúvidas; espere alguns segundos e seguimos.
   - Vamos com calma; me dê alguns segundos antes da próxima pergunta.
   - Preciso de um momento antes de seguir. Obrigado pela paciência.
   - Espere um pouquinho, por favor, e continuamos.
   - Respire alguns segundos; já te respondo.
+  - Agradeço sua paciência; espere alguns segundos e seguimos.
+  - Um passo de cada vez; em alguns segundos continuo.
   service_error:
   - Sinto muito, o assistente não está disponível agora. Tente mais tarde.
   - Desculpe, o serviço está se preparando. Tente em um momento.
   - Lamento não poder responder agora. Volte daqui a pouco, por favor.
   - Desculpe, estou ocupado. Tente de novo em alguns segundos.
   - Sinto muito, houve um problema no serviço. Tente mais tarde.
+  - Desculpe, o serviço teve um problema. Tente daqui a pouco.
+  - Sinto não poder atender agora; tente de novo em alguns minutos.

@@ -180,6 +180,40 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     assert "Pertinente." in solo_uno and "Algo pertinente." not in solo_uno
 
 
+def test_apertura_y_cada_fragmento_van_en_su_propio_parrafo(monkeypatch):
+    """El widget pinta los saltos de línea: la respuesta no sale como un solo bloque."""
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": True,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    texto = redactar([_fragmento("Primero.", chunk_id="a"), _fragmento("Segundo.", chunk_id="b")])
+    apertura, primero, segundo = texto.split("\n\n")
+    assert apertura.endswith(":") and primero == "Primero." and segundo.endswith(": Segundo.")
+    intro, cuerpo = redactar_zona_gris([_fragmento("Tercero.")]).split("\n\n", 1)
+    assert intro.endswith(":") and cuerpo.startswith("Tercero.")
+
+
+def test_los_bloques_reproducen_el_texto_y_marcan_lo_literal(monkeypatch):
+    """`answer_blocks`: el pasaje es el texto literal; conector y cita van aparte."""
+    from ipsis.consulta.etapas.redaccion import redactar_bloques, redactar_zona_gris_bloques, texto_de_bloques
+
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "breve", "incluir_apertura": True,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    frags = [_fragmento("Primero.", chunk_id="a"), _fragmento("Segundo.", chunk_id="b", condicion=True)]
+    bloques = redactar_bloques(frags)
+    assert [b["tipo"] for b in bloques] == ["encabezado", "pasaje", "pasaje"]
+    assert [b["texto"] for b in bloques[1:]] == ["Primero.", "Segundo."]
+    assert bloques[1]["conector"] is None and bloques[2]["conector"].endswith(":")
+    assert all("Manual X100" in b["cita"] for b in bloques[1:]) and bloques[2]["chunk_id"] == "b"
+    assert texto_de_bloques(bloques) == redactar(frags)
+    gris = redactar_zona_gris_bloques(frags[:1], termino_ausente="X900")
+    assert gris[0]["tipo"] == "encabezado" and "X900" in gris[0]["texto"] and gris[1]["texto"] == "Primero."
+
+
 def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
     frag = _fragmento("Texto de contexto general sobre el tema.")
     texto = redactar_zona_gris([frag])

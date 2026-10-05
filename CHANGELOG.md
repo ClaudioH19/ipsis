@@ -4,6 +4,61 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 the project follows [SemVer](https://semver.org/). While the version is 0.x,
 a minor change may break compatibility and is marked as such.
 
+## [Unreleased]
+
+### Added
+
+- **`answer_blocks` in `POST /ask`:** the answer by paragraph, so a site can
+  render it with structure. Each block has a `type` (`lead` for the tone's
+  opening or intro, `passage` for literal document text, `message` for
+  abstentions and conversational replies), `text`, and, for passages,
+  `connector`, `citation` and `chunk_id`. Joining them reproduces `answer`.
+  The widget renders one paragraph per block, with the connector and the
+  citation in a softer color.
+- **`presentation.text_align` in `styles.yaml`:** `justify` (default) or
+  `start`. Justified applies only to document passages and citations, with
+  hyphenation in the assistant's language; `/config` now also returns
+  `text_align` and `language`.
+
+### Changed
+
+- **Folio, the default avatar, now matches the logo:** the paper's
+  proportions and outline, the folded corner as a triangle, two lines of
+  text and larger pill-shaped eyes. Expressions are much more marked (eyes in
+  an arc in `happy`, drooping in `sorry`, one open and one half-closed in
+  `unsure`), and there are four new ones: `look-left`, `look-right`,
+  `curious` and `wink`, used at rest, while typing and in greetings. The
+  event keys do not change.
+- **Widget icon:** the launcher and the header show the ipsis logo in
+  miniature instead of a chat bubble (colors in `--rw-folio-*` variables).
+- **Answers:** the opening, each passage and the related-answer intro go in
+  their own paragraph (separated by a blank line) instead of one block. The
+  widget already shows line breaks; integrations that render `answer` as
+  plain text may want `white-space: pre-wrap`.
+- **Tones:** every tone grows from 90 to 154 variants per language: 12 in
+  `opening`, `addition`, `no_answer` and `related_intro`, 7 in the widget
+  situations and 8 in the rest. Which variant an answer uses may change.
+- **Parsing keeps the structure the text shows** (re-run `ipsis index`;
+  offsets of affected documents change, so re-check a golden set built on
+  them):
+  - Markdown, TXT and PDF: each bullet or numbered item is its own block
+    (`content_type` `lista`), so answers keep one item per line; DOCX list
+    styles are marked the same way.
+  - Markdown tables: one block per row (`a | b`), like DOCX tables.
+  - TXT: a one-line paragraph that looks like a title and is followed by
+    content becomes a section; the "no sections" warning appears only when
+    there is none.
+  - PDF: words hyphenated at a line break are joined; paragraphs are rebuilt
+    when the PDF has no blank lines; without bookmarks, lines in a larger
+    font become sections (largest size = level 1).
+- **Embedding header** (`Document: … | Section: …`) is now in the corpus
+  language; Spanish is unchanged, English and Portuguese projects need
+  `ipsis index` again.
+- **Tone linter:** in the bundled tones, rejects near-copies within a
+  situation and checks the count per situation (project overrides keep the
+  previous rules); a test keeps es, en and pt in
+  parity.
+
 ## [0.9.0] - 2026-10-05
 
 The project is renamed **ipsis** (from *ipsissima verba*, "the very words")

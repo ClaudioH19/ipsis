@@ -105,6 +105,7 @@ ESTILOS = {
         "densidad": _c("density", valores={"comoda": "comfortable", "compacta": "compact"}),
         "citas": _c("citations", valores={"acordeon": "accordion", "lista": "list"}),
         "mostrar_etiqueta_estado": _c("show_status_label"),
+        "alineacion": _c("text_align", valores={"inicio": "start", "justificada": "justify"}),
     }),
     "ubicacion": _c("placement", {
         "posicion": _c("position", valores=POSICIONES), "desplazamiento_x": _c("offset_x"),

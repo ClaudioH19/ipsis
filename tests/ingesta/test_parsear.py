@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from apoyo import _combinar_con_outline, _pdf_pagina_con_texto, _pdf_pagina_vacia
+from apoyo import _combinar_con_outline, _pdf_pagina_con_lineas, _pdf_pagina_con_texto, _pdf_pagina_vacia
 from ipsis.ingesta.parsear import (
     DocumentoEscaneadoError,
     parsear_documento,
@@ -186,3 +186,73 @@ def test_parsear_documento_formato_no_soportado_falla_explicito(tmp_path: Path):
     ruta.write_text("contenido", encoding="utf-8")
     with pytest.raises(ValueError, match="no soportado"):
         parsear_documento(str(ruta), doc_id="x", doc_titulo="X", version="1")
+
+
+# ---------------------------------------------------------------------------
+# Estructura que el texto no declara: listas, tablas, títulos sueltos
+# ---------------------------------------------------------------------------
+
+def test_markdown_separa_items_de_lista_y_filas_de_tabla(tmp_path: Path):
+    ruta = tmp_path / "pasos.md"
+    ruta.write_text(
+        "# Instalación\n\nAntes de empezar:\n- Corta el agua.\n- Abre la llave\n  de paso.\n"
+        "1. Conecta el equipo.\n\n| Pieza | Vida útil |\n|---|---|\n| Filtro | seis meses |\n",
+        encoding="utf-8")
+    doc = parsear_markdown(str(ruta), doc_id="d", doc_titulo="D", version="1")
+    _verifica_offsets(doc)
+    contenido = [(b.tipo_contenido, b.texto) for b in doc.bloques if b.tipo_contenido != "titulo"]
+    assert contenido == [
+        ("narrativo", "Antes de empezar:"),
+        ("lista", "- Corta el agua."),
+        ("lista", "- Abre la llave de paso."),  # la línea de continuación sigue en su ítem
+        ("lista", "1. Conecta el equipo."),
+        ("tabla", "Pieza | Vida útil"),
+        ("tabla", "Filtro | seis meses"),
+    ]
+    assert all(b.seccion_path == ["Instalación"] for b in doc.bloques)
+
+
+def test_texto_plano_reconoce_titulos_sueltos_y_listas(tmp_path: Path):
+    ruta = tmp_path / "notas.txt"
+    ruta.write_text(
+        "Garantía\n\nEl equipo tiene garantía de dos años.\n\nCubre:\n• piezas\n• mano de obra\n\n"
+        "Fin del documento sin título final\n", encoding="utf-8")
+    doc = parsear_texto_plano(str(ruta), doc_id="n", doc_titulo="N", version="1")
+    _verifica_offsets(doc)
+    assert doc.bloques[0].tipo_contenido == "titulo" and doc.bloques[0].texto == "Garantía"
+    assert [b.texto for b in doc.bloques if b.tipo_contenido == "lista"] == ["• piezas", "• mano de obra"]
+    assert all(b.seccion_path == ["Garantía"] for b in doc.bloques)
+    # La última línea no es título: no la sigue ningún contenido.
+    assert doc.bloques[-1].tipo_contenido == "narrativo"
+    assert doc.advertencias == []
+
+
+def test_pdf_sin_marcadores_toma_titulos_por_tamano_y_rearma_parrafos(tmp_path: Path):
+    ruta = tmp_path / "manual.pdf"
+    ruta.write_bytes(_pdf_pagina_con_lineas([
+        ("Garantia", 18),
+        ("El equipo tiene una garantia de dos anos desde la fecha de compra del", 11),
+        ("cliente en la tienda.", 11),
+        ("- Cubre las piezas.", 11),
+        ("- Cubre la mano de obra.", 11),
+        ("Mantenimiento", 18),
+        ("Cambie el filtro cada seis meses para conservar la calidad del agua y", 11),
+        ("evitar obstrucciones.", 11),
+    ]))
+    doc = parsear_pdf(str(ruta), doc_id="m", doc_titulo="M", version="1")
+    _verifica_offsets(doc)
+    resumen = [(b.tipo_contenido, b.seccion_path, b.texto) for b in doc.bloques]
+    assert resumen[0] == ("titulo", ["Garantia"], "Garantia")
+    assert ("narrativo", ["Garantia"],
+            "El equipo tiene una garantia de dos anos desde la fecha de compra del cliente en la tienda.") in resumen
+    assert [r[2] for r in resumen if r[0] == "lista"] == ["- Cubre las piezas.", "- Cubre la mano de obra."]
+    assert ("titulo", ["Mantenimiento"], "Mantenimiento") in resumen
+    assert doc.advertencias == []
+
+
+def test_pdf_une_palabras_cortadas_con_guion():
+    from ipsis.ingesta.parsear import _parrafos_pdf
+
+    assert _parrafos_pdf("La garan-\ntia cubre el equipo.") == ["La garantia cubre el equipo."]
+    # Un guion seguido de mayúscula o número no es una palabra cortada.
+    assert _parrafos_pdf("Modelo X-\nTres") == ["Modelo X-\nTres"]

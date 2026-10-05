@@ -231,7 +231,7 @@ Lo que el asistente dice alrededor del texto del documento viene de un
 defecto), `formal`, `serious`, `upbeat`, `friendly`, `empathetic` y
 `direct`. Ver [personalidad.md](personalidad.md).
 
-Cada tono tiene 18 situaciones con 5 variantes cada una:
+Cada tono tiene 18 situaciones, con 7 a 12 variantes cada una:
 
 - motor: `greeting`, `thanks`, `farewell`, `capability`, `opening`,
   `addition`, `condition`, `exception`, `related_intro`, `missing_focus`,
@@ -403,6 +403,7 @@ presentation:
   density: comfortable
   citations: list          # accordion | list (las citas siempre se muestran)
   show_status_label: true
+  text_align: justify      # justify | start (pasajes del documento)
 ```
 
 Los presets se administran con `ipsis widget theme`, y cada valor con

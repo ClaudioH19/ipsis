@@ -15,7 +15,16 @@ BANCO_SINTETICO = DATOS / "banco" / "manifiesto.json"
 CARACTERIZACION = DATOS / "caracterizacion"
 
 
-def _pdf_pagina_con_texto(texto: str) -> bytes:
+def _pdf_pagina_con_lineas(lineas: list[tuple[str, int]]) -> bytes:
+    """Una página con varias líneas ``(texto, tamaño de letra)``, de arriba abajo."""
+    operaciones, y = [], 720
+    for texto, tamano in lineas:
+        operaciones.append(f"BT /F1 {tamano} Tf 72 {y} Td ({texto}) Tj ET")
+        y -= tamano + 8
+    return _pdf_pagina_con_texto("", contenido=" ".join(operaciones))
+
+
+def _pdf_pagina_con_texto(texto: str, *, contenido: str | None = None) -> bytes:
     objs = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
@@ -23,7 +32,7 @@ def _pdf_pagina_con_texto(texto: str) -> bytes:
         b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
     ]
-    stream = f"BT /F1 12 Tf 72 700 Td ({texto}) Tj ET".encode("latin-1")
+    stream = (contenido or f"BT /F1 12 Tf 72 700 Td ({texto}) Tj ET").encode("latin-1")
     objs.append(b"<< /Length %d >>\nstream\n" % len(stream) + stream + b"\nendstream")
 
     out = io.BytesIO()

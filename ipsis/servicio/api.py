@@ -90,10 +90,24 @@ class RespuestaExacta(BaseModel):
     offset_end: int
 
 
+class BloqueRespuesta(BaseModel):
+    """Un párrafo de ``answer``. ``passage`` es texto literal del documento;
+    ``lead`` y ``message`` son frases fijas del tono."""
+
+    type: Literal["lead", "passage", "message"]
+    text: str
+    connector: Optional[str] = None
+    citation: Optional[str] = None
+    chunk_id: Optional[str] = None
+
+
 class RespuestaConsulta(BaseModel):
     status: Literal["ok", "related", "conversational", "no_answer", "degraded", "saturated"]
     service_level: Literal["normal", "medium", "high"]
     answer: Optional[str]
+    # ``answer`` por párrafos, para pintarlo con estructura: unirlos con una
+    # línea en blanco (conector + texto + cita) reproduce ``answer``.
+    answer_blocks: list[BloqueRespuesta] = Field(default_factory=list)
     plan: Optional[Literal[
         "definition", "procedure", "requirement", "specific_fact",
         "comparison", "exception", "extractive", "gray_zone",
@@ -117,6 +131,9 @@ _PLANES = {"definicion": "definition", "procedimiento": "procedure", "requisito"
            "conversacional": "conversational"}
 
 
+_BLOQUES = {"encabezado": "lead", "pasaje": "passage", "mensaje": "message"}
+
+
 def respuesta_publica(contrato: dict) -> dict:
     """``diagnostico["contrato_http"]`` del motor con los nombres del contrato público."""
     def fragmento(f: dict) -> dict:
@@ -124,11 +141,19 @@ def respuesta_publica(contrato: dict) -> dict:
                 "version": f["version"], "page": f.get("pagina"), "offset_start": f["offset_inicio"],
                 "offset_end": f["offset_fin"], "text": f["texto"], "score": f["score"]}
 
+    def bloque(b: dict) -> dict:
+        return {"type": _BLOQUES[b["tipo"]], "text": b["texto"], "connector": b.get("conector"),
+                "citation": b.get("cita"), "chunk_id": b.get("chunk_id")}
+
     confianza = contrato.get("confianza") or {}
+    bloques = contrato.get("bloques")
+    if bloques is None and contrato.get("respuesta"):
+        bloques = [{"tipo": "mensaje", "texto": contrato["respuesta"]}]
     publica = {
         "status": _ESTADOS[contrato["estado"]],
         "service_level": _NIVELES[contrato["nivel_servicio"]],
         "answer": contrato.get("respuesta"),
+        "answer_blocks": [bloque(b) for b in bloques or []],
         "plan": _PLANES.get(contrato.get("plan"), contrato.get("plan")),
         "fragments": [fragmento(f) for f in contrato.get("fragmentos") or []],
         "confidence": {"top1": confianza.get("top1"), "margin": confianza.get("margen"),
@@ -152,6 +177,9 @@ class ConfigWidget(BaseModel):
     density: Literal["comfortable", "compact"] = "comfortable"
     citations: Literal["accordion", "list"] = "accordion"  # las citas nunca se ocultan
     show_status_label: bool = True
+    # Pasajes del documento justificados (con guiones según ``language``) o alineados al inicio.
+    text_align: Literal["start", "justify"] = "justify"
+    language: str = "es"  # idioma del asistente: el atributo lang del widget
     interface: dict[str, str] = {}
     # Variantes del tono para welcome, waiting, citations_hint y errores.
     microcopy: dict[str, list[str]] = {}
@@ -421,6 +449,8 @@ def crear_app(
             density=presentacion["density"],
             citations=citas_presentacion(presentacion["citations"]),
             show_status_label=presentacion["show_status_label"],
+            text_align=presentacion["text_align"],
+            language=idioma,
             interface=interfaz,
             microcopy=microcopia_del_widget(idioma, nombre),
             placement=ubicacion_publica(ubicacion_widget(estilos)),

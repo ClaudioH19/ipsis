@@ -316,3 +316,19 @@ def test_motor_desde_configuracion_rechaza_nombre_desconocido_antes_de_construir
 
     with pytest.raises(KeyError, match="response_renderer/inexistente"):
         construir_motor(cfg, cfg_dominio=cargar_dominio())
+
+
+def test_answer_blocks_traduce_los_bloques_y_cubre_contratos_sin_ellos():
+    from ipsis.servicio.api import respuesta_publica
+
+    base = {"estado": "ok", "nivel_servicio": "normal", "plan": "extractivo", "fragmentos": [],
+            "confianza": {}, "latencia_ms": 1, "respuesta": "Dice:\n\nEl plazo. (Fuente: M)."}
+    con = respuesta_publica({**base, "bloques": [
+        {"tipo": "encabezado", "texto": "Dice:"},
+        {"tipo": "pasaje", "texto": "El plazo.", "conector": None, "cita": "(Fuente: M)", "chunk_id": "c1"}]})
+    assert con["answer_blocks"] == [
+        {"type": "lead", "text": "Dice:", "connector": None, "citation": None, "chunk_id": None},
+        {"type": "passage", "text": "El plazo.", "connector": None, "citation": "(Fuente: M)", "chunk_id": "c1"}]
+    # Un contrato anterior (o un estado sin redacción) trae el texto como un solo mensaje.
+    assert respuesta_publica(base)["answer_blocks"] == [
+        {"type": "message", "text": base["respuesta"], "connector": None, "citation": None, "chunk_id": None}]

@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from ipsis.aplicacion.modo import ModoServicio
 from ipsis.cli import main
+from ipsis.lenguaje.tonos import CUOTAS_PAQUETE
 
 TOKEN = "t" * 40
 REMOTA = ("203.0.113.5", 50000)  # IP de documentación (no loopback)
@@ -143,7 +144,7 @@ def test_vista_previa_y_estilos(proyecto):
     c = _cliente(PRODUCCION)
     previa = c.post("/admin/personality/preview", headers=_auth(),
                     json={"tone": "formal", "situation": "no_answer"}).json()
-    assert list(previa) == ["no_answer"] and len(previa["no_answer"]) == 5
+    assert list(previa) == ["no_answer"] and len(previa["no_answer"]) == CUOTAS_PAQUETE["no_answer"]
     r = c.put("/admin/styles", headers=_auth(), json={"placement": {"position": "top-left"}})
     assert r.status_code == 200 and r.json()["placement"]["position"] == "top-left"
     assert c.get("/config").json()["placement"]["position"] == "top-left"

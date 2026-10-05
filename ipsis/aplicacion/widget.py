@@ -112,6 +112,8 @@ def validar_tema(tema: dict) -> None:
         raise ValueError(t("styles.citations"))
     if not isinstance(presentacion.get("mostrar_etiqueta_estado", True), bool):
         raise ValueError(t("styles.status_label"))
+    if presentacion.get("alineacion", "justificada") not in {"inicio", "justificada"}:
+        raise ValueError(t("styles.text_align"))
     ubicacion_widget(tema)  # valida tema.ubicacion
     render_css(tema=tema)
 
@@ -173,7 +175,8 @@ def presentacion_publica(tema: dict) -> dict:
     presentacion = externo.get("presentation") or {}
     return {"preset": externo["preset"], "density": presentacion.get("density", "comfortable"),
             "citations": presentacion.get("citations", "accordion"),
-            "show_status_label": presentacion.get("show_status_label", True)}
+            "show_status_label": presentacion.get("show_status_label", True),
+            "text_align": presentacion.get("text_align", "justify")}
 
 
 def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | None = None) -> str:

@@ -10,6 +10,11 @@ from copy import deepcopy
 from ipsis.consulta.etapas.base import _Etapa
 from ipsis.consulta.variantes import elegir
 
+# La apertura y cada fragmento van en su propio párrafo: el widget pinta los
+# saltos de línea (``white-space: pre-wrap``) y un integrador puede partir por
+# aquí. Un conector queda en el párrafo del fragmento que introduce.
+SEPARADOR_PARRAFOS = "\n\n"
+
 
 def _lista(valor) -> list[str]:
     """Plantillas de un dict anterior a los tonos pueden traer un texto suelto."""
@@ -158,16 +163,29 @@ def _formatear_cita(frag: dict, estilo: str, citas: dict) -> str:
     return citas["completa"].format(documento=frag["doc_titulo"], seccion=seccion)
 
 
-def _ensamblar_fragmentos_con_citas(
+def texto_de_bloques(bloques: list[dict]) -> str:
+    """El texto plano de la respuesta (``answer``): los bloques en párrafos."""
+    partes = []
+    for bloque in bloques:
+        cuerpo = bloque["texto"]
+        if bloque.get("cita"):
+            cuerpo = f"{cuerpo} {bloque['cita']}."
+        if bloque.get("conector"):
+            cuerpo = f"{bloque['conector']} {cuerpo}"
+        partes.append(cuerpo)
+    return SEPARADOR_PARRAFOS.join(partes)
+
+
+def _bloques_fragmentos_con_citas(
     fragmentos: list[dict],
     con_apertura: bool = True,
     *,
     plantillas: dict | None = None,
     cfg_redaccion: dict | None = None,
-) -> str:
-    """Concatena el texto LITERAL de cada fragmento (nunca lo reescribe) con
-    su cita y, entre fragmentos, un conector FIJO de
-    los ``mensajes`` del paquete de idioma -- la unica "redaccion" permitida.
+) -> list[dict]:
+    """Un bloque por párrafo: la apertura (``encabezado``) y cada fragmento
+    (``pasaje``) con su texto LITERAL (nunca reescrito), su cita y, desde el
+    segundo, un conector FIJO del tono -- la unica "redaccion" permitida.
 
     La CATEGORIA del conector la decide metadata determinista calculada en
     la ingesta (``tiene_excepcion``/``tiene_condicion``), nunca un modelo;
@@ -188,60 +206,57 @@ def _ensamblar_fragmentos_con_citas(
 
     elegidos = _fragmentos_para_el_texto(fragmentos, cfg)
     usadas: set[str] = set()
-    partes: list[str] = []
+    bloques: list[dict] = []
 
     if con_apertura and cfg.get("incluir_apertura", True) and conectores.get("opening"):
         semilla = str(elegidos[0].get("chunk_id", "")) if elegidos else ""
         apertura = elegir("opening", list(conectores["opening"]), semilla)
         if apertura:
-            partes.append(apertura)
+            bloques.append({"tipo": "encabezado", "texto": apertura})
             usadas.add(apertura)
 
     for i, frag in enumerate(elegidos):
-        texto = frag["texto"].strip()
-        cita = _formatear_cita(frag, estilo_cita, citas)
-        cuerpo = f"{texto} {cita}." if cita else texto
-        if i == 0:
-            partes.append(cuerpo)
-            continue
-        if frag.get("tiene_excepcion"):
-            categoria = "exception"
-        elif frag.get("tiene_condicion"):
-            categoria = "condition"
-        else:
-            categoria = "addition"
-        opciones = list(conectores.get(categoria) or [])
-        conector = elegir(categoria, opciones, str(frag.get("chunk_id", i)), usadas)
-        if conector:
-            usadas.add(conector)
-            partes.append(f"{conector} {cuerpo}")
-        else:
-            partes.append(cuerpo)
-    return " ".join(partes)
+        conector = None
+        if i > 0:
+            if frag.get("tiene_excepcion"):
+                categoria = "exception"
+            elif frag.get("tiene_condicion"):
+                categoria = "condition"
+            else:
+                categoria = "addition"
+            opciones = list(conectores.get(categoria) or [])
+            conector = elegir(categoria, opciones, str(frag.get("chunk_id", i)), usadas) or None
+            if conector:
+                usadas.add(conector)
+        bloques.append({"tipo": "pasaje", "texto": frag["texto"].strip(), "conector": conector,
+                        "cita": _formatear_cita(frag, estilo_cita, citas) or None,
+                        "chunk_id": frag.get("chunk_id")})
+    return bloques
 
 
-def redactar(
+def redactar_bloques(
     fragmentos: list[dict],
     *,
     plantillas: dict | None = None,
     cfg_redaccion: dict | None = None,
-) -> str:
-    """Respuesta normal (estado ``ok``): fragmentos literales + citas +
-    conectores fijos, sin ningún encabezado adicional."""
-    return _ensamblar_fragmentos_con_citas(
-        fragmentos,
-        plantillas=plantillas,
-        cfg_redaccion=cfg_redaccion,
-    )
+) -> list[dict]:
+    """Respuesta normal (estado ``ok``) en bloques: apertura y fragmentos
+    literales con citas y conectores fijos."""
+    return _bloques_fragmentos_con_citas(fragmentos, plantillas=plantillas, cfg_redaccion=cfg_redaccion)
 
 
-def redactar_zona_gris(
+def redactar(fragmentos: list[dict], **kwargs) -> str:
+    """Texto plano de :func:`redactar_bloques`."""
+    return texto_de_bloques(redactar_bloques(fragmentos, **kwargs))
+
+
+def redactar_zona_gris_bloques(
     fragmentos: list[dict],
     *,
     plantillas: dict | None = None,
     cfg_redaccion: dict | None = None,
     termino_ausente: str | None = None,
-) -> str:
+) -> list[dict]:
     """Estado propio ``"relacionado"`` (activo por defecto): cuando la pregunta
     pasa las dos capas de abstención pero el score denso es "intermedio"
     (ni claramente fuera de dominio ni un match fuerte), en vez de
@@ -250,7 +265,7 @@ def redactar_zona_gris(
     -- con citas literales y el encuadre explícito, mostrar texto
     relacionado no es una afirmación directa.
     Sigue siendo texto literal + cita; el único agregado es la frase de
-    encabezado fija (``mensajes.relacionado_intro`` del paquete de idioma).
+    encabezado fija (``related_intro`` o ``missing_focus`` del tono).
     Lo decide ``cascada_v1`` (regla «relacionado»)."""
     plantillas = plantillas or _cargar_plantillas()
     # Si falta el término de foco, el mensaje lo nombra («No encontré información sobre «X»»).
@@ -263,7 +278,14 @@ def redactar_zona_gris(
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
-    return f"{intro} {_ensamblar_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas, cfg_redaccion=cfg_redaccion)}"
+    return [{"tipo": "encabezado", "texto": intro},
+            *_bloques_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas,
+                                           cfg_redaccion=cfg_redaccion)]
+
+
+def redactar_zona_gris(fragmentos: list[dict], **kwargs) -> str:
+    """Texto plano de :func:`redactar_zona_gris_bloques`."""
+    return texto_de_bloques(redactar_zona_gris_bloques(fragmentos, **kwargs))
 
 
 def construir_mensaje_abstencion(
@@ -296,11 +318,14 @@ class EtapaRedaccion(_Etapa):
         m = self.motor
         if ctx.decision.resultado == "relacionado":
             termino = ctx.decision.entidad_texto if ctx.decision.motivo == "foco_ausente" else None
-            ctx.texto = redactar_zona_gris(ctx.payloads, plantillas=m.plantillas,
-                                           cfg_redaccion=m.configuracion_redaccion, termino_ausente=termino)
+            ctx.bloques = redactar_zona_gris_bloques(ctx.payloads, plantillas=m.plantillas,
+                                                     cfg_redaccion=m.configuracion_redaccion,
+                                                     termino_ausente=termino)
+            ctx.texto = texto_de_bloques(ctx.bloques)
             ctx.estado = AssistantState.RELACIONADO
             ctx.plan = "zona_gris"
             return
-        ctx.texto = redactar(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
+        ctx.bloques = redactar_bloques(ctx.payloads, plantillas=m.plantillas, cfg_redaccion=m.configuracion_redaccion)
+        ctx.texto = texto_de_bloques(ctx.bloques)
         ctx.estado = AssistantState.RESPUESTA_DIRECTA
         ctx.plan = "extractivo"

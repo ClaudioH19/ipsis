@@ -169,6 +169,7 @@ def test_config_devuelve_los_textos_del_dominio():
     assert body["density"] in {"comfortable", "compact"}
     assert body["citations"] in {"accordion", "list"}
     assert isinstance(body["show_status_label"], bool)
+    assert body["text_align"] in {"start", "justify"} and body["language"]
     # el saludo real del paquete de idioma, con las variables ya
     # sustituidas (nunca la plantilla cruda con '{assistant_name}' sin
     # rellenar) -- misma función que responde un "hola" real.

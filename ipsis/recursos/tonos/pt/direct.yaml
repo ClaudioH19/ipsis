@@ -9,105 +9,169 @@ situations:
   - 'Aqui {assistant_name}. O que precisa de {domain_description}?'
   - Escreva sua pergunta sobre {domain_description}.
   - Pronto. Pergunte o que precisar de {domain_description}.
+  - Sou {assistant_name}. Cito {domain_description}. Pergunte.
+  - O que procura em {domain_description}?
+  - Pergunta direta sobre {domain_description}, resposta com citação.
   thanks:
   - Certo. Mais algo?
   - Ok. Continue perguntando se precisar.
   - Feito. Outra pergunta sobre {domain_description}?
   - Entendido.
   - Certo. Próxima pergunta.
+  - De nada.
+  - Ok. Próxima?
+  - Bem. Pergunte se houver mais sobre {domain_description}.
   farewell:
   - Adeus.
   - Pronto.
   - Até logo.
   - Fim.
   - Até mais.
+  - Encerrado.
+  - Até breve.
+  - Até outra.
   capability:
   - Busco em {domain_description} e mostro o texto exato com a fonte. Se não estiver, aviso.
   - Cito {domain_description}. Não invento.
   - 'Sou {assistant_name}: texto literal de {domain_description}, com citação.'
   - Respondo com o que diz {domain_description}. Nada mais.
   - Pergunte sobre {domain_description}; você recebe a citação exata.
+  - Texto exato de {domain_description} e sua fonte. Sem inventar.
+  - Sou {assistant_name}. Procuro, cito, não redijo.
+  - Se não está em {domain_description}, eu digo.
   opening:
   - 'Diz:'
   - 'O documento:'
   - 'Resposta:'
   - 'Texto:'
   - 'Isto:'
+  - 'Segundo o texto:'
+  - 'Do documento:'
+  - 'Citação:'
+  - 'O que diz:'
+  - 'Trecho:'
+  - 'Achado:'
+  - 'Isto responde:'
   addition:
   - 'Mais:'
   - 'Acrescenta:'
   - 'Segue:'
   - 'Outra parte:'
   - 'E também:'
+  - 'Além disso:'
+  - 'Também:'
+  - 'À parte:'
+  - 'E isto:'
+  - 'Outra citação:'
+  - 'Soma-se:'
+  - 'Junta:'
   condition:
   - 'Se:'
   - 'Só se:'
   - 'Condição:'
   - 'Exige:'
   - 'Vale quando:'
+  - 'Depende de:'
+  - 'Com condição:'
+  - 'Requer:'
   exception:
   - 'Exceto:'
   - 'Salvo:'
   - 'Não vale se:'
   - 'Exceção:'
   - 'Menos quando:'
+  - 'Fora disto:'
+  - 'Não vale para:'
+  - 'Ressalva:'
   related_intro:
   - 'Não há resposta direta. O mais próximo:'
   - 'Direto não está. Relacionado:'
   - 'Sem resposta direta. Isto se aproxima:'
   - 'Não responde sua pergunta exatamente. Veja isto:'
   - 'Resposta exata não há. Relacionado:'
+  - 'Direto, não. Próximo:'
+  - 'Não há resposta exata. Isto se relaciona:'
+  - 'Sem resposta direta. Relacionado:'
+  - 'Não responde direto. O relacionado:'
+  - 'Falta resposta direta. Veja:'
+  - 'Não exato. O mais próximo:'
+  - 'Resposta direta: nenhuma. Próximo:'
   missing_focus:
   - '«{term}» não está. O mais próximo:'
   - 'Nada sobre «{term}». Relacionado:'
   - 'Sem «{term}» nos documentos. Isto:'
   - '«{term}» não aparece. Veja isto:'
   - 'Não há «{term}». O próximo:'
+  - '«{term}»: sem dados. Próximo:'
+  - 'Não acho «{term}». Relacionado:'
+  - '«{term}» não consta. O próximo:'
   no_answer:
   - Não está nos documentos. Pergunte outra coisa.
   - Isso não está.
   - Sem resposta nos documentos.
   - Não aparece. Reformule ou pergunte outra coisa.
   - Os documentos não cobrem isso.
+  - Não há dados sobre isso.
+  - Fora dos documentos.
+  - Não encontrado.
+  - Isso não consta.
+  - Nada nos documentos.
+  - Não cobrem isso. Tente outra pergunta.
+  - Sem dados. Pergunte outra coisa.
   premise_not_found:
   - '"{entity}" não está nos documentos.'
   - Não há nada sobre "{entity}".
   - '"{entity}" não aparece. Pergunte outra coisa.'
   - Sem dados de "{entity}".
   - Os documentos não mencionam "{entity}".
+  - '"{entity}": sem dados.'
+  - Não acho "{entity}".
+  - Nenhuma menção a "{entity}".
   welcome:
   - Pergunte.
   - Escreva sua pergunta.
   - '{assistant_name}. O que precisa?'
   - Diga o que procura.
   - Pronto para responder.
+  - O que procura?
+  - Pergunte e eu cito.
   waiting:
   - Em busca
   - Um momento
   - Em leitura
   - Localização da citação
   - Em revisão
+  - Em consulta
+  - Em análise
   citations_hint:
   - Citação abaixo. Verifique.
   - A fonte está abaixo.
   - Confira abaixo.
   - Texto original abaixo.
   - Veja a citação.
+  - Fonte abaixo.
+  - Verifique abaixo.
   network_error:
   - Sem conexão. Tente de novo.
   - Falhou a conexão. Tente novamente.
   - Sem rede. Verifique sua conexão.
   - Conexão caiu. Tente de novo.
   - O serviço não responde. Tente outra vez.
+  - Erro de rede. Tente de novo.
+  - Sem resposta do servidor. Repita.
   rate_limit_error:
   - Rápido demais. Espere alguns segundos.
   - Limite atingido. Espere.
   - Pare um momento. Depois siga.
   - Espere antes de perguntar de novo.
   - Perguntas demais. Pausa breve.
+  - Rápido demais. Espere.
+  - Pausa. Depois pergunte.
   service_error:
   - Indisponível. Tente mais tarde.
   - Iniciando. Tente em um momento.
   - Ocupado. Tente de novo.
   - Serviço fora do ar. Mais tarde.
   - Falha do serviço. Tente depois.
+  - Serviço indisponível. Tente depois.
+  - Erro do serviço. Mais tarde.

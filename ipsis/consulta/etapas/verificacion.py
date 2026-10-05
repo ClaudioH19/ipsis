@@ -77,4 +77,5 @@ class EtapaVerificacion(_Etapa):
             fragmentos_http=m._fragmentos_http(ctx.evidencias, ctx.candidatos),
             diagnostico=ctx.diagnostico,
             respuesta_exacta=ctx.respuesta_exacta if ctx.estado.value == "respuesta_directa" else None,
+            bloques=ctx.bloques,
         )

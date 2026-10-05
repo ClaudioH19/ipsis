@@ -230,7 +230,7 @@ What the assistant says around the document text comes from a **tone**, in
 `formal`, `serious`, `upbeat`, `friendly`, `empathetic` and `direct`. See
 [personality.md](personality.md).
 
-Each tone has 18 situations with 5 variants each:
+Each tone has 18 situations, with 7 to 12 variants each:
 
 - engine: `greeting`, `thanks`, `farewell`, `capability`, `opening`,
   `addition`, `condition`, `exception`, `related_intro`, `missing_focus`,
@@ -402,6 +402,7 @@ presentation:
   density: comfortable
   citations: list          # accordion | list (citations are always shown)
   show_status_label: true
+  text_align: justify      # justify | start (document passages)
 ```
 
 Presets are managed with `ipsis widget theme`, and each value with

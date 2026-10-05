@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import pytest
 
 from apoyo import leer_proyecto
+from ipsis.lenguaje.tonos import CUOTAS_PAQUETE
 from ipsis.cli import main
 from ipsis.aplicacion.widget import (
     aplicar_preset,
@@ -162,7 +164,7 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert set(cfg["microcopy"]) == {"welcome", "waiting", "citations_hint", "network_error", "rate_limit_error",
                                       "service_error"}
     assert cfg["microcopy"]["waiting"][0] == "Buscando"  # tono serio
-    assert all(len(v) == 5 for v in cfg["microcopy"].values())
+    assert all(len(v) == CUOTAS_PAQUETE[s] for s, v in cfg["microcopy"].items())
     assert "{" not in " ".join(sum(cfg["microcopy"].values(), []))  # variables reemplazadas
     assert cfg["interface"]["sources_many"] == "{n} fuentes del documento"  # plantilla del widget
 
@@ -199,3 +201,13 @@ def test_estilo_rechaza_erratas_tipos_y_css_peligroso(tmp_path, monkeypatch, cap
         assert main(["widget", "style", "set", malo]) == 1, malo
         assert mensaje in capsys.readouterr().out, malo
     assert Path("config/styles.yaml").read_text(encoding="utf-8") == antes  # nada se escribió
+
+
+def test_alineacion_justificada_es_opcional_y_se_valida():
+    from ipsis.aplicacion.widget import presentacion_publica
+
+    assert presentacion_publica({})["text_align"] == "justify"  # por defecto, justificado
+    assert presentacion_publica({"presentacion": {"alineacion": "inicio"}})["text_align"] == "start"
+    validar_tema({"presentacion": {"alineacion": "justificada"}})
+    with pytest.raises(ValueError, match="text_align"):
+        validar_tema({"presentacion": {"alineacion": "centrada"}})

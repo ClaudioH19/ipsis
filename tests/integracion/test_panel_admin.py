@@ -16,6 +16,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from apoyo import leer_proyecto
+from ipsis.lenguaje.tonos import CUOTAS_PAQUETE
 from ipsis.aplicacion.modo import ModoServicio
 from ipsis.cli import main
 
@@ -173,7 +174,7 @@ def test_cambiar_el_tono_actualiza_la_vista_previa_y_guarda(servidor, pagina, pr
     page.wait_for_selector("#contenido:not([hidden])")
     page.wait_for_selector("#variantes li")
     antes = page.locator("#variantes li").all_text_contents()
-    assert len(antes) == 5
+    assert len(antes) == CUOTAS_PAQUETE["greeting"]  # la primera situación
     page.select_option("#tono-activo", "formal")
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
     assert page.locator("#variantes li").all_text_contents() != antes

@@ -5,6 +5,7 @@ presentation:
   density: "comfortable"       # comfortable | compact
   citations: "accordion"       # accordion | list (citations are always shown)
   show_status_label: true
+  text_align: "justify"        # justify | start (document passages, hyphenated by language)
 # Where and how the widget appears on your site. Attributes on the <script> or
 # <ipsis-chat> tag (position, size, launcher…) take precedence.
 placement:

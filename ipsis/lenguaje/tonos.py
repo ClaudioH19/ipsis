@@ -3,8 +3,9 @@
 Un tono (``cordial``, ``formal``, ``direct``…) solo cambia cómo se enmarca
 una respuesta, nunca su contenido: el texto del corpus va literal en su
 propio bloque y las citas van debajo. Cada tono vive en
-``ipsis/recursos/tonos/<idioma>/<tono>.yaml`` con 18 situaciones de al menos 5
-variantes cada una; el linter de este módulo hace cumplir las reglas del
+``ipsis/recursos/tonos/<idioma>/<tono>.yaml`` con 18 situaciones; cada paquete
+incluido cumple ``CUOTAS_PAQUETE`` (más variantes donde más se repiten) y las
+de un proyecto, al menos una. El linter de este módulo hace cumplir las reglas del
 catálogo (``docs/guide/personality.md``).
 
 Un proyecto puede sobrescribir situaciones en
@@ -32,6 +33,10 @@ from ipsis.configuracion.personalidad import TONOS, VARIABLES_ANTERIORES  # vive
 TONO_POR_DEFECTO = "cordial"
 MINIMO_VARIANTES = 5
 LARGO_MAXIMO = 200
+# Dos variantes de una situación son casi iguales si comparten casi todas sus
+# palabras o si, con varias palabras, solo cambian una: rellenan sin variar.
+PARECIDO_MAXIMO = 0.8
+PALABRAS_MINIMAS_PARECIDO = 4
 
 
 @dataclass(frozen=True)
@@ -62,6 +67,13 @@ SITUACIONES: dict[str, Situacion] = {
     "network_error": Situacion("widget"),
     "rate_limit_error": Situacion("widget"),
     "service_error": Situacion("widget"),
+}
+
+# Variantes que debe traer cada situación en los paquetes incluidos: más
+# donde el usuario las ve en casi toda respuesta (~150 por paquete).
+_FRECUENTES = ("opening", "addition", "no_answer", "related_intro")
+CUOTAS_PAQUETE: dict[str, int] = {
+    s: 12 if s in _FRECUENTES else 7 if SITUACIONES[s].origen == "widget" else 8 for s in SITUACIONES
 }
 
 # Claves de config/language.yaml anteriores a los tonos → situación.
@@ -182,9 +194,44 @@ def _normalizar(texto: str) -> str:
     return re.sub(r"[\W_]+", " ", texto.casefold()).strip()
 
 
+def _palabras(texto: str) -> list[str]:
+    try:
+        literal = _campos(texto)[0]
+    except ValueError:
+        literal = texto
+    return re.findall(r"\w+", literal.casefold())
+
+
+def _distancia(a: list[str], b: list[str]) -> int:
+    """Distancia de edición entre dos secuencias de palabras."""
+    fila = list(range(len(b) + 1))
+    for i, x in enumerate(a, start=1):
+        diagonal, fila[0] = fila[0], i
+        for j, y in enumerate(b, start=1):
+            diagonal, fila[j] = fila[j], min(fila[j] + 1, fila[j - 1] + 1, diagonal + (x != y))
+    return fila[-1]
+
+
+def casi_iguales(a: str, b: str) -> bool:
+    """Las frases cortas («Si:», «Salvo:») son legítimas aunque cambien una palabra."""
+    pa, pb = _palabras(a), _palabras(b)
+    if min(len(pa), len(pb)) < PALABRAS_MINIMAS_PARECIDO:
+        return False
+    union = set(pa) | set(pb)
+    if len(set(pa) & set(pb)) / len(union) >= PARECIDO_MAXIMO:
+        return True
+    return min(len(pa), len(pb)) > PALABRAS_MINIMAS_PARECIDO and _distancia(pa, pb) <= 1
+
+
 def errores_tono(situaciones: dict[str, list[str]], prohibidas: tuple[str, ...] = (), *,
-                 completo: bool = True, minimo: int = MINIMO_VARIANTES) -> list[str]:
-    """Errores de un conjunto de situaciones. ``completo``: exige las 18 situaciones."""
+                 completo: bool = True, minimo: int | dict[str, int] = MINIMO_VARIANTES,
+                 parecidas: bool = True) -> list[str]:
+    """Errores de un conjunto de situaciones. ``completo``: exige las 18 situaciones.
+
+    ``minimo``: variantes por situación, un número para todas o por situación
+    (``CUOTAS_PAQUETE`` para los paquetes incluidos). ``parecidas``: rechaza
+    variantes casi iguales; es una regla de calidad de los paquetes incluidos,
+    no de las sobrescrituras de un proyecto (que antes eran válidas)."""
     errores = []
     if completo and (faltan := [s for s in SITUACIONES if s not in situaciones]):
         errores.append(t("lint.missing_situations", missing=faltan))
@@ -193,8 +240,9 @@ def errores_tono(situaciones: dict[str, list[str]], prohibidas: tuple[str, ...] 
         if situacion not in SITUACIONES:
             errores.append(t("lint.unknown_situation", situation=situacion))
             continue
-        if not isinstance(textos, list) or len(textos) < minimo:
-            errores.append(t("lint.min_variants", situation=situacion, minimum=minimo))
+        requeridas = minimo.get(situacion, MINIMO_VARIANTES) if isinstance(minimo, dict) else minimo
+        if not isinstance(textos, list) or len(textos) < requeridas:
+            errores.append(t("lint.min_variants", situation=situacion, minimum=requeridas))
             continue
         propias: set[str] = set()
         for i, texto in enumerate(textos, start=1):
@@ -204,6 +252,10 @@ def errores_tono(situaciones: dict[str, list[str]], prohibidas: tuple[str, ...] 
                 errores.append(t("lint.repeats_own", situation=situacion, index=i))
             elif clave in vistas and vistas[clave] != situacion:
                 errores.append(t("lint.repeats_other", situation=situacion, index=i, other=vistas[clave]))
+            elif parecidas and isinstance(texto, str) and (parecida := next(
+                    (j for j, previo in enumerate(textos[:i - 1], start=1)
+                     if isinstance(previo, str) and casi_iguales(previo, texto)), None)):
+                errores.append(t("lint.near_duplicate", situation=situacion, index=i, other=parecida))
             propias.add(clave)
             vistas.setdefault(clave, situacion)
     return errores
@@ -318,7 +370,7 @@ def cargar_tono(idioma: str, tono: str = TONO_POR_DEFECTO, *, proyecto: str | Pa
     situaciones = {s: list(v) for s, v in (datos.get("situations") or {}).items()}
     propias = {**(sobrescrituras or {}), **_sobrescrituras_personalidad(proyecto)}
     if propias:
-        errores = errores_tono(propias, prohibidas(carpeta), completo=False, minimo=1)
+        errores = errores_tono(propias, prohibidas(carpeta), completo=False, minimo=1, parecidas=False)
         if errores:
             raise TonoInvalido([f"sobrescritura del proyecto: {e}" for e in errores])
         situaciones.update(propias)
@@ -327,7 +379,7 @@ def cargar_tono(idioma: str, tono: str = TONO_POR_DEFECTO, *, proyecto: str | Pa
 
 
 __all__ = [
-    "LARGO_MAXIMO", "MINIMO_VARIANTES", "PaqueteTono", "SITUACIONES", "Situacion", "TONOS", "TONO_POR_DEFECTO",
-    "TonoInvalido", "cargar_tono", "carpeta_idioma", "errores_plantilla", "errores_tono", "extraer_legado",
+    "CUOTAS_PAQUETE", "LARGO_MAXIMO", "MINIMO_VARIANTES", "PaqueteTono", "SITUACIONES", "Situacion", "TONOS", "TONO_POR_DEFECTO",
+    "TonoInvalido", "cargar_tono", "carpeta_idioma", "casi_iguales", "errores_plantilla", "errores_tono", "extraer_legado",
     "prohibidas", "regionalismos_en", "tonos_disponibles",
 ]

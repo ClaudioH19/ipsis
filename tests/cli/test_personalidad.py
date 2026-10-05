@@ -75,7 +75,10 @@ def test_listar_aplicar_y_probar_tono(proyecto, capsys):
     capsys.readouterr()
     assert main(["personality", "tone", "try", "--situation", "no_answer"]) == 0
     lineas = capsys.readouterr().out.splitlines()
-    assert lineas[0] == "no_answer:" and len(lineas) == 6 and lineas[1].startswith("  1. Lamentablemente")
+    from ipsis.lenguaje.tonos import CUOTAS_PAQUETE
+
+    assert lineas[0] == "no_answer:" and len(lineas) == 1 + CUOTAS_PAQUETE["no_answer"]
+    assert lineas[1].startswith("  1. Lamentablemente")
 
 
 def test_probar_reemplaza_las_variables_del_proyecto(proyecto, capsys):

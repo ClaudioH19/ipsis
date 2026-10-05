@@ -229,6 +229,7 @@ mensajes:
   sin_seccion: (no section)
   cita_breve: '(Source: {documento})'
   cita_completa: '(Source: {documento}, section: {seccion})'
+  cabecera_embebido: 'Document: {documento} | Section: {seccion}'
 interfaz:
   default_assistant_name: Document assistant
   default_domain_description: the loaded documents

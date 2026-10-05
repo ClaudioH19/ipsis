@@ -48,6 +48,8 @@ class Mensajes(_Estricto):
     sin_seccion: str
     cita_breve: str  # {documento}
     cita_completa: str  # {documento}, {seccion}
+    # Encabezado del texto que se embebe (``texto_embebido``): cambiarlo exige reindexar.
+    cabecera_embebido: str = "Documento: {documento} | Sección: {seccion}"
     conectores: dict[str, list[str]] = Field(default_factory=dict)  # secuencia, contraste_version
 
 

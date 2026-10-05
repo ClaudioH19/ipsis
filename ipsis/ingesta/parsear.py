@@ -70,7 +70,7 @@ class Bloque:
     indice: int
     seccion_path: list[str]
     seccion_nivel: int
-    tipo_contenido: str  # "narrativo" | "tabla" | "titulo"
+    tipo_contenido: str  # "narrativo" | "lista" | "tabla" | "titulo"
     texto: str
     offset_inicio: int
     offset_fin: int
@@ -154,7 +154,7 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
                 seccion_path_bloque = [t for (_, t) in pila_secciones]
                 seccion_nivel = nivel_heading
             else:
-                tipo_contenido = "narrativo"
+                tipo_contenido = "lista" if estilo.startswith("List") else "narrativo"
                 seccion_path_bloque = [t for (_, t) in pila_secciones]
                 seccion_nivel = pila_secciones[-1][0] if pila_secciones else 0
 
@@ -221,12 +221,16 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
 # PDF), que es justamente la duplicación que este proyecto evita a propósito.
 # ---------------------------------------------------------------------------
 
-def _ensamblar_bloques(eventos: list[tuple[str, int | None]]) -> tuple[str, list[Bloque]]:
+Evento = tuple  # (texto, nivel_heading) o (texto, None, tipo_contenido)
+
+
+def _ensamblar_bloques(eventos: list[Evento]) -> tuple[str, list[Bloque]]:
     """``eventos``: lista de ``(texto, nivel_heading)``. ``nivel_heading`` no
     ``None`` marca un título que actualiza la pila de secciones (mismo
     criterio que los estilos Heading de Word: descarta niveles >= al actual y
-    agrega el nuevo); ``None`` es contenido narrativo bajo la sección
-    vigente. Devuelve ``(texto_completo, bloques)`` con la misma invariante de
+    agrega el nuevo); ``None`` es contenido bajo la sección vigente, narrativo
+    salvo que el evento traiga un tercer elemento (``"lista"`` o ``"tabla"``).
+    Devuelve ``(texto_completo, bloques)`` con la misma invariante de
     offsets reconstructivos que :func:`parsear_docx`."""
     bloques: list[Bloque] = []
     texto_partes: list[str] = []
@@ -234,8 +238,9 @@ def _ensamblar_bloques(eventos: list[tuple[str, int | None]]) -> tuple[str, list
     pila_secciones: list[tuple[int, str]] = []
     indice = 0
 
-    for texto, nivel_heading in eventos:
-        texto = texto.strip()
+    for evento in eventos:
+        texto, nivel_heading = evento[0].strip(), evento[1]
+        tipo_evento = evento[2] if len(evento) > 2 else "narrativo"
         if not texto:
             continue
 
@@ -246,7 +251,7 @@ def _ensamblar_bloques(eventos: list[tuple[str, int | None]]) -> tuple[str, list
             seccion_path_bloque = [t for (_, t) in pila_secciones]
             seccion_nivel = nivel_heading
         else:
-            tipo_contenido = "narrativo"
+            tipo_contenido = tipo_evento
             seccion_path_bloque = [t for (_, t) in pila_secciones]
             seccion_nivel = pila_secciones[-1][0] if pila_secciones else 0
 
@@ -284,9 +289,67 @@ def _leer_texto_archivo(ruta: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Estructura que el texto plano no declara pero se ve: viñetas y numeración
+# (cada ítem es un bloque ``lista``, así la respuesta conserva un ítem por
+# línea) y títulos sueltos. El texto de cada bloque sigue siendo el del
+# documento, con su viñeta: solo cambia por dónde se corta.
+# ---------------------------------------------------------------------------
+_RE_ITEM = re.compile(r"^(?:[-*+\u2022\u2023\u25e6\u25aa\u2013\u2014]|\(?\d{1,3}[.)]|\(?[a-zA-Z][)])\s+\S")
+_RE_FIN_DE_FRASE = re.compile(r"[.,;:!?\u2026)\]\u00bb\"']$")
+
+
+def _es_item(linea: str) -> bool:
+    return bool(_RE_ITEM.match(linea.strip()))
+
+
+def _parece_titulo(linea: str) -> bool:
+    """Una línea corta, sin puntuación final y que empieza en mayúscula o
+    número: «Garantía», «3. Mantenimiento». Heurística conservadora para
+    documentos que no marcan sus títulos (``.txt``, PDF sin marcadores)."""
+    linea = linea.strip()
+    if not linea or len(linea) > 80 or len(linea.split()) > 10 or _RE_FIN_DE_FRASE.search(linea):
+        return False
+    inicial = next((c for c in linea if c.isalnum()), "")
+    return bool(inicial) and (inicial.isupper() or inicial.isdigit()) and any(c.isalpha() for c in linea)
+
+
+def _eventos_de_lineas(lineas: list[str]) -> list[Evento]:
+    """Las líneas de un párrafo: los ítems de lista por separado (con sus
+    líneas de continuación) y el resto unido con espacios, como antes."""
+    eventos: list[Evento] = []
+    actual: list[str] = []
+    tipo = "narrativo"
+
+    def cerrar():
+        if actual:
+            eventos.append((" ".join(actual), None, tipo))
+            actual.clear()
+
+    for linea in (l.strip() for l in lineas):
+        if not linea:
+            continue
+        if _es_item(linea):
+            cerrar()
+            tipo = "lista"
+        actual.append(linea)
+    cerrar()
+    return eventos
+
+
+# ---------------------------------------------------------------------------
 # Markdown: los `#` dan el seccion_path directamente.
 # ---------------------------------------------------------------------------
 _RE_HEADING_MD = re.compile(r"^(#{1,6})\s+(.*)$")
+_RE_SEPARADOR_TABLA_MD = re.compile(r"^\|?[\s:|-]+\|?$")
+
+
+def _fila_tabla_md(linea: str) -> str | None:
+    """``| a | b |`` → ``a | b`` (como las filas de ``.docx``); ``None`` si no es fila."""
+    linea = linea.strip()
+    if not (linea.startswith("|") and linea.endswith("|") and len(linea) > 1):
+        return None
+    celdas = [c.strip() for c in linea[1:-1].split("|")]
+    return " | ".join(c for c in celdas if c)
 
 
 def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
@@ -298,22 +361,27 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
     texto = _leer_texto_archivo(ruta)
     lineas = texto.split("\n")
 
-    eventos: list[tuple[str, int | None]] = []
+    eventos: list[Evento] = []
     parrafo_actual: list[str] = []
     hay_encabezados = False
 
     def _cerrar_parrafo():
         if parrafo_actual:
-            eventos.append((" ".join(parrafo_actual), None))
+            eventos.extend(_eventos_de_lineas(parrafo_actual))
             parrafo_actual.clear()
 
     for linea in lineas:
         m = _RE_HEADING_MD.match(linea.strip())
+        fila = _fila_tabla_md(linea)
         if m:
             _cerrar_parrafo()
             nivel = len(m.group(1))
             eventos.append((m.group(2).strip(), nivel))
             hay_encabezados = True
+        elif fila is not None:
+            _cerrar_parrafo()
+            if not _RE_SEPARADOR_TABLA_MD.match(linea.strip()) and fila:
+                eventos.append((fila, None, "tabla"))
         elif linea.strip():
             parrafo_actual.append(linea.strip())
         else:
@@ -331,20 +399,38 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
 
 
 # ---------------------------------------------------------------------------
-# Texto plano: párrafos separados por líneas en blanco, sin secciones.
+# Texto plano: párrafos separados por líneas en blanco.
 # ---------------------------------------------------------------------------
 
+def _eventos_de_parrafos(parrafos: list[str]) -> tuple[list[Evento], bool]:
+    """Párrafos sueltos (``.txt``, PDF): un párrafo de una sola línea con
+    forma de título (:func:`_parece_titulo`) y seguido de contenido es un
+    título de nivel 1; el resto, ítems de lista o texto unido con espacios.
+    Devuelve los eventos y si encontró algún título."""
+    eventos: list[Evento] = []
+    hay_titulos = False
+    for i, parrafo in enumerate(parrafos):
+        lineas = [l for l in parrafo.split("\n") if l.strip()]
+        if (len(lineas) == 1 and i + 1 < len(parrafos) and not _es_item(lineas[0])
+                and _parece_titulo(lineas[0])):
+            eventos.append((lineas[0].strip(), 1))
+            hay_titulos = True
+            continue
+        eventos.extend(_eventos_de_lineas(lineas))
+    return eventos, hay_titulos
+
+
 def parsear_texto_plano(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
-    """Parsea un ``.txt``: párrafos separados por una o más líneas en blanco.
-    Nunca hay ``seccion_path`` (el formato no declara ninguna estructura) --
-    se advierte siempre, a diferencia de Markdown/PDF donde la ausencia de
-    encabezados es la excepción."""
+    """Parsea un ``.txt``: párrafos separados por una o más líneas en blanco,
+    con sus listas por ítem. El formato no declara secciones: solo se
+    reconocen títulos sueltos evidentes (:func:`_eventos_de_parrafos`) y, si
+    no hay ninguno, se advierte."""
     texto = _leer_texto_archivo(ruta)
     parrafos = [p.strip() for p in re.split(r"\n\s*\n", texto) if p.strip()]
-    eventos: list[tuple[str, int | None]] = [(p.replace("\n", " "), None) for p in parrafos]
+    eventos, hay_titulos = _eventos_de_parrafos(parrafos)
 
     texto_completo, bloques = _ensamblar_bloques(eventos)
-    advertencias = [t("runtime.plain_text_sections")]
+    advertencias = [] if hay_titulos else [t("runtime.plain_text_sections")]
     return DocumentoParseado(
         doc_id=doc_id, doc_titulo=doc_titulo, version=version, ruta_origen=ruta,
         texto_completo=texto_completo, bloques=bloques, advertencias=advertencias,
@@ -408,18 +494,75 @@ def _mapear_outline_a_paginas(reader) -> dict[int, list[tuple[int, str]]]:
     return resultado
 
 
+# Palabra cortada al final de una línea («garan-\ntía»): se une solo si sigue una minúscula.
+_RE_GUION_FINAL = re.compile(r"(?<=[^\W\d_])-\n(?=[^\W\d_A-ZÁÉÍÓÚÑÜÀÂÊÔÃÕÇ])")
+# Un título se distingue del cuerpo por un tamaño de letra al menos así de mayor.
+FACTOR_TITULO_PDF = 1.15
+
+
+def _titulos_por_tamano(pagina) -> tuple[str, dict[str, float]]:
+    """Texto de la página y, para las líneas escritas en letra más grande que
+    el cuerpo, ``{línea normalizada: tamaño}``. Lee el tamaño de cada trozo
+    con el ``visitor_text`` de pypdf; agrupa los trozos por altura."""
+    lineas: dict[float, list] = {}
+
+    def visitor(texto, cm, tm, _fuente, tamano):
+        if not texto or not texto.strip() or not tamano:
+            return
+        escala = abs(tm[3]) if tm[3] else 1.0
+        efectivo = float(tamano) * escala * (abs(cm[3]) if cm[3] else 1.0)
+        altura = round(float(tm[5]) * (cm[3] or 1.0) + float(cm[5]), 0)
+        datos = lineas.setdefault(altura, [[], 0.0])
+        datos[0].append(texto)
+        datos[1] = max(datos[1], efectivo)
+
+    texto_pagina = pagina.extract_text(visitor_text=visitor) or ""
+    if not lineas:
+        return texto_pagina, {}
+    # Tamaño del cuerpo: el que más caracteres escribe.
+    por_tamano: dict[float, int] = {}
+    for trozos, tamano in lineas.values():
+        por_tamano[round(tamano, 1)] = por_tamano.get(round(tamano, 1), 0) + sum(len(x) for x in trozos)
+    cuerpo = max(por_tamano, key=por_tamano.get)
+    grandes = {}
+    for trozos, tamano in lineas.values():
+        linea = " ".join("".join(trozos).split())
+        if tamano >= cuerpo * FACTOR_TITULO_PDF and _parece_titulo(linea):
+            grandes[linea] = tamano
+    return texto_pagina, grandes
+
+
+def _parrafos_pdf(texto_pagina: str) -> list[str]:
+    """Párrafos de una página. Si el PDF no trae líneas en blanco (lo común),
+    corta donde una línea termina una frase y queda claramente más corta que
+    las demás, o antes de un ítem de lista; nunca reescribe las líneas."""
+    texto_pagina = _RE_GUION_FINAL.sub("", texto_pagina)
+    if re.search(r"\n\s*\n", texto_pagina):
+        return [p.strip() for p in re.split(r"\n\s*\n", texto_pagina) if p.strip()]
+    lineas = [l.strip() for l in texto_pagina.split("\n") if l.strip()]
+    if not lineas:
+        return []
+    ancho = max(len(l) for l in lineas)
+    parrafos, actual = [], [lineas[0]]
+    for previa, linea in zip(lineas, lineas[1:]):
+        fin_de_frase = previa.endswith((".", ":", "!", "?", ";")) and len(previa) < 0.85 * ancho
+        titulo = len(actual) == 1 and len(previa) < 0.6 * ancho and _parece_titulo(previa)
+        if fin_de_frase or titulo or _es_item(linea):
+            parrafos.append("\n".join(actual))
+            actual = []
+        actual.append(linea)
+    parrafos.append("\n".join(actual))
+    return parrafos
+
+
 def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
     """Parsea un ``.pdf`` con capa de texto real. Secciones desde el
     outline/marcadores del PDF si existen (:func:`_mapear_outline_a_paginas`);
-    si no, se indexa sin ``seccion_path`` y se advierte -- se acepta
-    esto como "peor caso" ("heurística por tamaño de letra; en el peor caso,
-    indexar sin secciones y advertir"). **Decisión de alcance de esta tanda**:
-    no se implementó además la heurística intermedia por tamaño de letra
-    (requiere leer el tamaño de fuente de cada fragmento de texto vía
-    ``visitor_text`` de pypdf y agrupar líneas en encabezados por umbral, una
-    pieza bastante más grande que el resto de este módulo) -- queda como
-    mejora futura; por ahora se informa explícitamente la falta de estructura
-    si aparece un PDF real sin outline que la necesite.
+    si no, desde las líneas en letra más grande que el cuerpo
+    (:func:`_titulos_por_tamano`, el tamaño mayor es el nivel 1), y si
+    tampoco hay, se indexa sin ``seccion_path`` y se advierte. Los párrafos
+    se reconstruyen con :func:`_parrafos_pdf` (palabras cortadas con guion
+    unidas, ítems de lista por separado).
 
     Rechaza con :class:`DocumentoEscaneadoError` si la extracción de texto
     devuelve casi nada (PDF escaneado, sin capa de texto) -- nunca indexa un
@@ -431,7 +574,8 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     if n_paginas == 0:
         raise DocumentoEscaneadoError(t("core.pdf_no_pages", path=ruta))
 
-    textos_paginas = [(pagina.extract_text() or "") for pagina in reader.pages]
+    paginas = [_titulos_por_tamano(pagina) for pagina in reader.pages]
+    textos_paginas = [texto for texto, _ in paginas]
     total_chars = sum(len(t.strip()) for t in textos_paginas)
     promedio = total_chars / n_paginas
     if promedio < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
@@ -439,21 +583,25 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
                                         threshold=UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA, pages=n_paginas))
 
     encabezados_por_pagina = _mapear_outline_a_paginas(reader)
-    advertencias = []
-    if not encabezados_por_pagina:
-        advertencias.append(t("core.pdf_no_outline"))
+    # Sin marcadores, los títulos salen del tamaño de letra: el mayor es el nivel 1.
+    tamanos = sorted({tam for _, grandes in paginas for tam in grandes.values()}, reverse=True)
+    nivel_por_tamano = {tam: min(i + 1, 3) for i, tam in enumerate(tamanos)}
+    hay_estructura = bool(encabezados_por_pagina) or bool(tamanos)
+    advertencias = [] if hay_estructura else [t("core.pdf_no_outline")]
 
-    eventos: list[tuple[str, int | None]] = []
-    for i, texto_pagina in enumerate(textos_paginas):
+    eventos: list[Evento] = []
+    for i, (texto_pagina, grandes) in enumerate(paginas):
         for nivel, titulo in encabezados_por_pagina.get(i, []):
             eventos.append((titulo, nivel))
-        parrafos = [p.strip() for p in re.split(r"\n\s*\n", texto_pagina) if p.strip()]
-        if not parrafos and texto_pagina.strip():
-            # el PDF no trae líneas en blanco entre párrafos (común en
-            # extracción de PDF): toda la página queda como un solo bloque.
-            parrafos = [texto_pagina.strip()]
-        for p in parrafos:
-            eventos.append((" ".join(p.split()), None))
+        for parrafo in _parrafos_pdf(texto_pagina):
+            lineas = parrafo.split("\n")
+            normal = " ".join(lineas[0].split())
+            if not encabezados_por_pagina and normal in grandes:
+                eventos.append((normal, nivel_por_tamano[grandes[normal]]))
+                lineas = lineas[1:]
+            # dentro de un párrafo, los espacios repetidos de la extracción se colapsan
+            eventos.extend((" ".join(texto.split()), nivel, *resto)
+                           for texto, nivel, *resto in _eventos_de_lineas(lineas))
 
     texto_completo, bloques = _ensamblar_bloques(eventos)
     return DocumentoParseado(
