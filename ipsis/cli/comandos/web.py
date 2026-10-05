@@ -174,7 +174,7 @@ class ComandoDesplegarPreparar(Comando):
                 n=len(resumen.archivos)))
         for aviso in resumen.avisos:
             print(t("cli.warning_indented", warning=aviso))
-        print(t("deploy.next", path=resumen.destino / "LEEME_despliegue.md"))
+        print(t("deploy.next", path=resumen.destino / "DEPLOY.md"))
         return 0
 
 

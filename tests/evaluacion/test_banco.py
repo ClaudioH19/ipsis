@@ -106,6 +106,6 @@ def test_loader_rechaza_version_de_caso_distinta(tmp_path):
 
 
 def test_el_repositorio_documenta_el_golden_pero_no_incluye_uno():
-    assert (RAIZ_REPO / "docs" / "guia" / "golden.md").is_file()
+    assert (RAIZ_REPO / "docs" / "guide" / "golden.md").is_file()
     assert not (RAIZ_REPO / "golden").exists()
     assert not (RAIZ_REPO / "data").exists()

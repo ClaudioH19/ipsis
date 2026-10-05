@@ -3,7 +3,7 @@
 #   docker compose up -d --build                    # solo el asistente, en 127.0.0.1:8000
 #   docker compose --profile https up -d --build    # además Caddy con HTTPS para {{dominio}}
 #
-# Los secretos (IPSIS_ADMIN_TOKEN) van en .env (copia .env.ejemplo); nunca en este archivo.
+# Los secretos (IPSIS_ADMIN_TOKEN) van en .env (copia .env.example); nunca en este archivo.
 
 services:
   asistente:

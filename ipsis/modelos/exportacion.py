@@ -1,4 +1,4 @@
-"""Exportar un modelo de Hugging Face a ONNX (solo desarrollo, extra ``[exportar]``).
+"""Exportar un modelo de Hugging Face a ONNX (solo desarrollo, extra ``[export]``).
 
 Usa ``optimum`` (que necesita ``torch``) y, con ``int8``, la cuantización
 dinámica post-entrenamiento de onnxruntime. Nada de esto se importa fuera de
@@ -14,11 +14,11 @@ from pathlib import Path
 from ipsis.recursos.mensajes import t
 
 DEPENDENCIAS = ("optimum", "torch")
-CARPETA = Path("exportados")
+CARPETA = Path("exported")
 
 
 class ExportacionNoDisponible(RuntimeError):
-    """Faltan las dependencias del extra ``[exportar]``."""
+    """Faltan las dependencias del extra ``[export]``."""
 
     def __init__(self, faltantes: list[str], instalar: str) -> None:
         super().__init__(f"faltan {', '.join(faltantes)}")
@@ -42,7 +42,7 @@ def comando_instalacion() -> str:
     from importlib.metadata import packages_distributions
 
     nombre = (packages_distributions().get("ipsis") or ["ipsis"])[0]
-    return f'pip install "{nombre}[exportar]"'
+    return f'pip install "{nombre}[export]"'
 
 
 def dependencias_faltantes() -> list[str]:
@@ -66,7 +66,7 @@ def _cuantizar(origen: Path, destino: Path) -> None:
 
 
 def exportar(id_hf: str, int8: bool = False) -> Exportado:
-    """Convierte ``id_hf`` a ``exportados/<org>--<modelo>/model.onnx`` (y ``model_int8.onnx``)."""
+    """Convierte ``id_hf`` a ``exported/<org>--<modelo>/model.onnx`` (y ``model_int8.onnx``)."""
     if faltan := dependencias_faltantes():
         raise ExportacionNoDisponible(faltan, comando_instalacion())
     salida = carpeta_salida(id_hf)

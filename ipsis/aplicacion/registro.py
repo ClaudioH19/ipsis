@@ -82,7 +82,7 @@ class ProblemaEvidencia:
     doc_id: str | None
     offset_inicio: int | None
     offset_fin: int | None
-    motivo: str  # "alterada" | "documento_ausente" | "fuera_de_rango" | "tramo_alterado"
+    motivo: str  # "altered" | "missing_document" | "out_of_range" | "altered_span"
     detalle: str
 
 
@@ -107,17 +107,16 @@ class ReporteAuditoria:
 
 
 def _verificar(linea: int, doc_id, inicio, fin, texto, textos: dict[str, str],
-               motivo_alterado: str = "alterada") -> ProblemaEvidencia | None:
+               motivo_alterado: str = "altered") -> ProblemaEvidencia | None:
     if doc_id not in textos:
-        return ProblemaEvidencia(linea, doc_id, inicio, fin, "documento_ausente",
-                                 "el documento ya no está en el corpus vigente")
+        return ProblemaEvidencia(linea, doc_id, inicio, fin, "missing_document", t("app.audit_missing_document"))
     documento = textos[doc_id]
     if not (isinstance(inicio, int) and isinstance(fin, int) and 0 <= inicio <= fin <= len(documento)):
-        return ProblemaEvidencia(linea, doc_id, inicio, fin, "fuera_de_rango",
-                                 f"offsets fuera del documento (largo {len(documento)})")
+        return ProblemaEvidencia(linea, doc_id, inicio, fin, "out_of_range",
+                                 t("app.audit_out_of_range", length=len(documento)))
     if documento[inicio:fin] != texto:
         return ProblemaEvidencia(linea, doc_id, inicio, fin, motivo_alterado,
-                                 f"registrado «{_corto(texto)}», en el corpus «{_corto(documento[inicio:fin])}»")
+                                 t("app.audit_altered", logged=_corto(texto), current=_corto(documento[inicio:fin])))
     return None
 
 
@@ -203,7 +202,7 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: date
         if exacta:
             reporte.evidencias += 1
             problema = _verificar(numero, exacta.get("doc_id"), exacta.get("offset_inicio"),
-                                  exacta.get("offset_fin"), exacta.get("texto"), textos, "tramo_alterado")
+                                  exacta.get("offset_fin"), exacta.get("texto"), textos, "altered_span")
             if problema:
                 reporte.problemas.append(problema)
     return reporte

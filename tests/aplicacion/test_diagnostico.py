@@ -545,8 +545,8 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     dist = Path("dist")
     for archivo in ("config/assistant.yaml", "config/personality.yaml", "config/styles.yaml",
                     "config/calibration.yaml", "config/avatars/propio.avatar.json",
-                    "documents/catalog.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo",
-                    "LEEME_despliegue.md", "paquete/ipsis-0-py3-none-any.whl"):
+                    "documents/catalog.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.example",
+                    "DEPLOY.md", "paquete/ipsis-0-py3-none-any.whl"):
         assert (dist / archivo).is_file(), archivo
     assert any((dist / ".ipsis/index").rglob("*.manifest.json"))
     assert not (dist / ".ipsis/logs/queries.jsonl").exists()  # los registros no viajan
@@ -558,11 +558,11 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     assert compose["services"]["asistente"]["build"]["args"]["PERFIL"] == "light"
     assert "IPSIS_ADMIN_TOKEN" not in compose["services"]["asistente"]["environment"]  # el secreto va en .env
     assert "asistente.ejemplo.cl {" in (dist / "Caddyfile").read_text(encoding="utf-8")
-    leeme = (dist / "LEEME_despliegue.md").read_text(encoding="utf-8")
+    leeme = (dist / "DEPLOY.md").read_text(encoding="utf-8")
     assert leeme.startswith("# Despliegue de") and "https://asistente.ejemplo.cl/widget.js" in leeme
     assert "/admin/panel" in leeme and "{{" not in leeme
     assert "ARG PERFIL=light" in (dist / "Dockerfile").read_text(encoding="utf-8")
-    for generado in ("Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo", "LEEME_despliegue.md"):
+    for generado in ("Dockerfile", "docker-compose.yml", "Caddyfile", ".env.example", "DEPLOY.md"):
         assert b"\r" not in (dist / generado).read_bytes(), generado  # LF también en Windows
 
     # Regenerar exige --force; una carpeta ajena nunca se borra.
@@ -582,8 +582,8 @@ def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
     proyecto("light")
     editar("config/assistant.yaml", idioma="pt-br")
     assert main(["deploy", "prepare"]) == 0
-    assert Path("dist/LEEME_despliegue.md").read_text(encoding="utf-8").startswith("# Implantação de")
-    assert "Copie este arquivo" in Path("dist/.env.ejemplo").read_text(encoding="utf-8")
+    assert Path("dist/DEPLOY.md").read_text(encoding="utf-8").startswith("# Implantação de")
+    assert "Copie este arquivo" in Path("dist/.env.example").read_text(encoding="utf-8")
 
 
 def test_ready_vencido_responde_sin_esperar_y_refresca_en_segundo_plano(proyecto, monkeypatch):

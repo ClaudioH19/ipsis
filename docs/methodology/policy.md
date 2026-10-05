@@ -1,0 +1,123 @@
+# The `cascade_v1` policy
+
+## 1. Purpose
+
+Decide the status of every answer (`ok`, `related` or `no_answer`) with all
+the cascade's signals, so that an `ok` is always literal text that answers
+the question, and abstain when it is not.
+
+## 2. Scope and non-scope
+
+- **Scope:** apply the rules in order and leave the deciding rule and every
+  signal in the diagnostics.
+- **Non-scope:** retrieving, reading or writing. The policy knows nothing of
+  Qdrant or the models.
+
+## 3. Versioned inputs and outputs
+
+- **Input:** `SenalesPolitica` (`s_ret`, `s_oov`, `s_foco`, `s_cov`, `s_rr`,
+  `s_qa`; `None` when the stage did not run) and the effective thresholds.
+- **Output:** `DecisionAbstencion` (result, reason, rule and the domain
+  signal used). The rule travels in the diagnostics
+  (`ipsis ask --diagnostics`) and in the query log.
+
+## 4. Algorithm and tie-breaking
+
+Rules in order; the first that holds decides (`regla_cascada`, a pure
+function). Rule names are the internal ones shown in the diagnostics:
+
+1. **`premisa` (premise):** the question asks for a closed entity (date,
+   amount, article) that is neither in the candidates nor in the corpus →
+   `no_answer`.
+2. **`fuera_dominio` (out of domain):** `s_oov ≥ τ_oov_domain` and
+   domain < `τ_domain` → `no_answer`. Domain = `max(s_ret, s_rr)` (see
+   [reranker](reranker.md)).
+3. **`ok_lector` / `ok_lexico`:** `s_foco ≥ τ_focus` and
+   `s_oov < τ_oov_ok` and:
+   - with a reader: `s_qa ≥ τ_ok`;
+   - without a reader (light): `s_ret ≥ τ_ok` and `s_cov ≥ τ_cov`.
+4. **`relacionado` (related):** domain ≥ `τ_related`. If the focus failed,
+   the message names the missing term ("I couldn't find specific information
+   about «warranty»…").
+5. **`sin_respuesta` (no answer)** in any other case.
+
+In heavy, **agreement** lowers an `ok` to `related` if two reliable spans
+contradict each other.
+
+**The decision rules over the reader.** In `related` there is no
+`exact_answer` and the passages go under a "not a direct answer" heading. In
+`ok`, the answering sentence goes first.
+
+After the policy, verification checks that every piece of evidence is
+`corpus[start:end]` and that the entities of the answer are in the source.
+
+## 5. Assumptions
+
+The signals are in [0, 1] and comparable across queries of the same profile
+(that is why `s_ret` is normalized from the dense model's floor).
+
+## 6. Invariants
+
+- Production and [calibration](calibration.md) use the **same**
+  `regla_cascada`: they cannot diverge.
+- An `ok` always carries literal, verified evidence.
+- Re-deciding the stored signals with the profile thresholds reproduces
+  every status (a non-regression test over 180 cases of the universal bank).
+
+## 7. Parameters and defaults
+
+The profile's default thresholds (conservative, uncalibrated):
+
+| Threshold | light | medium / heavy |
+|---|---|---|
+| `oov_domain`, `oov_ok` | 0.6 | 0.6 |
+| `domain`, `related` | 0.33 | 0.33 |
+| `focus` | 0.5 | 0.5 |
+| `ok` | 0.5 (on `s_ret`) | 0.8 (on `s_qa`) |
+| `cov` | 0.6 | 0.6 (not used with a reader) |
+
+Order of application: profile ← `engine.yaml::profile_overrides` ←
+`calibration.yaml` (only when its provenance matches).
+
+## 8. Complexity and resources
+
+Constant; under 1 ms.
+
+## 9. Failures and fallback
+
+A missing threshold prevents building the engine, with a message naming the
+thresholds. Without a current calibration the profile's are used and
+`ipsis doctor` warns about it.
+
+## 10. Security and privacy
+
+It uses no data beyond the query.
+
+## 11. Technical tests
+
+`tests/consulta/test_cascada.py`, the synthetic bank v1.1.0 (27 cases, 56%
+unanswerable) and the universal bank (90 cases in es, en and pt).
+
+## 12. Limitations
+
+Universal bank benchmark (regression, it **does not certify**; uncalibrated
+defaults; local CPU):
+
+| Profile | Direct coverage | False ok | p95 | Budget |
+|---|---|---|---|---|
+| light | 22/45 | 1/45 | 85 ms | 150 ms |
+| medium | 32/45 | 3/45 | 815 ms | 1,000 ms |
+| heavy | 31/45 | 2/45 | 2,130 ms | 4,000 ms |
+
+Out-of-domain and false-premise questions are rejected 100% of the time in
+every profile. "Same topic, missing fact" traps are the residual risk; a
+calibrated `τ_ok` controls them.
+
+## 13. References and provenance
+
+Our own design; it replaces the previous layered policy and the per-question
+regex guards (see [ADR 0004](../decisions/0004-lexical-cascade-and-removal-of-regex-guards.md)).
+
+## 14. Status
+
+Stable; thresholds pending calibration per project.

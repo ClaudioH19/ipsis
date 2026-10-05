@@ -161,8 +161,8 @@ def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, ca
                  "--output", str(salida)]) == 0
     texto = capsys.readouterr().out
     assert "no certifican" in texto and "[cumple]" in texto
-    assert (salida / "benchmark-perfiles.json").is_file() and (salida / "benchmark-perfiles.md").is_file()
-    datos = json.loads((salida / "benchmark-perfiles.json").read_text(encoding="utf-8"))
+    assert (salida / "benchmark-profiles.json").is_file() and (salida / "benchmark-profiles.md").is_file()
+    datos = json.loads((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     assert [p["nombre"] for p in datos["perfiles"]] == ["bm25", "light", "medium"]
     assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "heavy", "--output", str(salida)]) == 1
     assert "EXCEDE" in capsys.readouterr().out
@@ -176,7 +176,7 @@ def test_benchmark_real_light_y_medium_sobre_el_mismo_banco(tmp_path, capsys):
     salida = tmp_path / "reportes"
     codigo = main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
                    "--output", str(salida)])
-    reporte = ReporteBenchmark.model_validate_json((salida / "benchmark-perfiles.json").read_text(encoding="utf-8"))
+    reporte = ReporteBenchmark.model_validate_json((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     bm25, light, medium = reporte.perfiles
     assert bm25.cascada["recuperacion"] == "dispersa" and light.cascada["recuperacion"] == "hibrida"
     assert codigo == codigo_salida(reporte)

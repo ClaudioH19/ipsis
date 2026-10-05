@@ -2,255 +2,263 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-oscuro.svg">
-  <img alt="ipsis: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-claro.svg" width="100%">
+  <img alt="ipsis: answers cited from your documents, never made up" src="docs/assets/banner-claro.svg" width="100%">
 </picture>
 
-[![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
-[![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/guia/instalacion.md)
-[![Versión 0.8.0](https://img.shields.io/badge/versi%C3%B3n-0.8.0-0f172a)](CHANGELOG.md)
-[![Sin LLM](https://img.shields.io/badge/LLM-ninguno-16a34a)](docs/decisiones/0001-respuestas-no-generativas.md)
-[![Solo CPU](https://img.shields.io/badge/GPU-no%20necesita-64748b)](docs/decisiones/0003-onnx-y-perfiles.md)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-2563eb)](LICENSE)
+[![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/guide/installation.md)
+[![Version 0.9.0](https://img.shields.io/badge/version-0.9.0-0f172a)](CHANGELOG.md)
+[![No LLM](https://img.shields.io/badge/LLM-none-16a34a)](docs/decisions/0001-non-generative-answers.md)
+[![CPU only](https://img.shields.io/badge/GPU-not%20needed-64748b)](docs/decisions/0003-onnx-and-profiles.md)
 
-**[Inicio rápido](#-inicio-rápido)** ·
-**[Cómo funciona](#-cómo-funciona)** ·
-**[Documentación](#-documentación)** ·
-**[Arquitectura](docs/arquitectura.md)** ·
-**[Despliegue](docs/guia/despliegue.md)**
+**[Quick start](#-quick-start)** ·
+**[How it works](#-how-it-works)** ·
+**[Documentation](#-documentation)** ·
+**[Architecture](docs/architecture.md)** ·
+**[Deployment](docs/guide/deployment.md)** ·
+**[Español](README.es.md)**
 
 </div>
 
 ---
 
-**ipsis** es un asistente para tu sitio que responde preguntas sobre
-tus documentos **mostrando el texto literal que lo respalda**, con documento,
-sección y posición exacta. No redacta con un modelo generativo: si los
-documentos no contienen la respuesta, lo dice. Corre en CPU, en tu propio
-servidor y, una vez descargados los modelos, sin red.
+**ipsis** is an assistant for your website that answers questions about your
+documents **by showing the literal text that supports the answer**, with its
+document, section and exact position. It does not write with a generative
+model: if the documents do not contain the answer, it says so. It runs on
+CPU, on your own server and, once the models are downloaded, without
+network access.
+
+The name comes from the Latin *ipsissima verba*, "the very words": the
+assistant answers with the document's own words.
 
 <div align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-respuesta-oscuro.png">
-  <img alt="El widget responde «cada 6 meses» y marca ese tramo dentro de la cita del manual" src="docs/assets/widget-respuesta.png" width="88%">
+  <img alt="The widget answers with a literal span and highlights it inside the citation of the manual" src="docs/assets/widget-respuesta.png" width="88%">
 </picture>
 </div>
 
-## ✨ Características
+## ✨ Features
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-**🔎 Extractivo y verificable**<br>
-Cada respuesta es un tramo literal del documento, con la cita debajo y el
-dato marcado. `ipsis audit` comprueba que siga siéndolo.
+**🔎 Extractive and verifiable**<br>
+Every answer is a literal span of the document, with the citation underneath
+and the key fact highlighted. `ipsis audit` checks that it stays that way.
 
-**🛑 Sabe cuándo no responder**<br>
-Estados `ok`, `relacionado` y `sin_respuesta`, decididos por señales
-explicables. Los umbrales se calibran con riesgo controlado
-(Clopper-Pearson).
+**🛑 Knows when not to answer**<br>
+`ok`, `related` and `no_answer` statuses, decided by explainable signals.
+Thresholds are calibrated under risk control (Clopper-Pearson).
 
-**⚡ Tres perfiles**<br>
-`light` (~85 ms), `medium` (+ reranker y lector QA, ~0,8 s) y `heavy`
-(modelos grandes y más comprobaciones). Todo en CPU con ONNX.
+**⚡ Three profiles**<br>
+`light` (~85 ms), `medium` (+ reranker and QA reader, ~0.8 s) and `heavy`
+(larger models and more checks). All on CPU with ONNX.
 
 </td>
 <td width="50%" valign="top">
 
-**🌎 Multilingüe**<br>
-Paquetes `es`, `en` y `pt`; cualquier otro idioma funciona con reglas
-universales.
+**🌎 Multilingual**<br>
+`en`, `es` and `pt` packs; any other language works with universal rules.
 
-**💬 Widget embebible**<br>
-Una línea de HTML, responsive, aislado en Shadow DOM, con 7 tonos de
-respuesta y **Folio**, un avatar que reacciona a cada evento.
+**💬 Embeddable widget**<br>
+One line of HTML, responsive, isolated in Shadow DOM, with 7 answer tones and
+**Folio**, an avatar that reacts to every event.
 
-**🏠 Self-hosted de verdad**<br>
-Imagen Docker por perfil, `ipsis deploy prepare` con HTTPS (Caddy) y un
-panel `/admin` para ajustar la personalidad sin terminal.
+**🏠 Truly self-hosted**<br>
+A Docker image per profile, `ipsis deploy prepare` with HTTPS (Caddy) and an
+`/admin` panel to tune the personality without a terminal.
 
 </td>
 </tr>
 </table>
 
-### ¿Por qué extractivo?
+### Why extractive?
 
-| | RAG generativo | **ipsis** |
+| | Generative RAG | **ipsis** |
 |---|---|---|
-| Qué devuelve | Texto nuevo redactado por un LLM | **El texto del documento, literal** |
-| ¿Puede inventar? | Sí (alucinaciones) | **No: si no está, lo dice** |
-| Cómo se verifica | Hay que leer las fuentes | **La cita marca el tramo exacto** |
-| Hardware | GPU o una API externa | **CPU, en tu servidor** |
-| Tus datos | Suelen salir a un proveedor | **Nunca salen de tu máquina** |
-| Ideal para | Resúmenes y conversación abierta | **Manuales, reglamentos, políticas, soporte** |
+| What it returns | New text written by an LLM | **The document's text, verbatim** |
+| Can it make things up? | Yes (hallucinations) | **No: if it is not there, it says so** |
+| How you verify it | Read the sources yourself | **The citation highlights the exact span** |
+| Hardware | A GPU or an external API | **CPU, on your server** |
+| Your data | Usually sent to a provider | **Never leaves your machine** |
+| Best for | Summaries and open conversation | **Manuals, regulations, policies, support** |
 
-## 🧭 Cómo funciona
+## 🧭 How it works
 
 ```mermaid
 flowchart LR
-    P([Pregunta]) --> R["Recuperación híbrida<br/>e5 + BM25 en Qdrant"]
-    R --> F{"¿Algún candidato<br/>trata el tema?"}
-    F -- sí --> L["Reranker + lector QA<br/>(medium, heavy)"]
+    Q([Question]) --> R["Hybrid retrieval<br/>e5 + BM25 in Qdrant"]
+    R --> F{"Does any candidate<br/>cover the topic?"}
+    F -- yes --> L["Reranker + QA reader<br/>(medium, heavy)"]
     F -- no --> D
-    L --> D{"Política cascada_v1<br/>señales explicables"}
-    D -- ok --> OK(["Tramo literal + cita"])
-    D -- relacionado --> REL(["Lo más cercano,<br/>dicho como tal"])
-    D -- sin_respuesta --> NO(["«No está en<br/>los documentos»"])
+    L --> D{"cascade_v1 policy<br/>explainable signals"}
+    D -- ok --> OK(["Literal span + citation"])
+    D -- related --> REL(["The closest passage,<br/>presented as such"])
+    D -- no_answer --> NO(["“It is not in<br/>the documents”"])
 ```
 
-Cada decisión deja su regla y sus señales en el diagnóstico
-(`ipsis ask --diagnostics`). Detalle en [arquitectura](docs/arquitectura.md)
-y en las [fichas metodológicas](docs/metodologia/README.md).
+Every decision records its rule and its signals in the diagnostics
+(`ipsis ask --diagnostics`). Details in the [architecture](docs/architecture.md)
+and the [methodology notes](docs/methodology/README.md).
 
-## 🚀 Inicio rápido
+## 🚀 Quick start
 
-Requiere Python 3.11 o 3.12. No necesita GPU.
+Requires Python 3.11 or 3.12. No GPU needed.
 
 ```bash
-pip install "ipsis @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
+pip install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
 
-mkdir mi-asistente && cd mi-asistente
-ipsis init --profile medium --language es
-ipsis models download            # una sola vez por máquina
-ipsis load /ruta/a/documentos    # PDF con texto, DOCX, Markdown o TXT
+mkdir my-assistant && cd my-assistant
+ipsis init --profile medium --language en
+ipsis models download            # once per machine
+ipsis load /path/to/documents    # PDF with text, DOCX, Markdown or TXT
 ipsis index
-ipsis doctor                       # ¿puede funcionar? Si no, qué comando ejecutar
-ipsis serve                       # http://127.0.0.1:8000
+ipsis doctor                     # can it run? If not, which command to run
+ipsis serve                      # http://127.0.0.1:8000
 ```
 
-Pregunta desde otra terminal:
+Ask from another terminal:
 
 ```bash
-ipsis ask "¿Cada cuánto se cambia el filtro?"
+ipsis ask "How often should the filter be replaced?"
 ```
+
+The command line speaks English; set `IPSIS_LANG=es` for Spanish.
 
 <details>
-<summary><b>Elegir perfil</b></summary>
+<summary><b>Choosing a profile</b></summary>
 
-| Perfil | Modelos | Disco | p95 objetivo | p95 medido |
+| Profile | Models | Disk | Target p95 | Measured p95 |
 |---|---|---|---|---|
-| `light` | e5-small | 0,5 GB | 150 ms | 85 ms |
-| `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s | 815 ms |
-| `heavy` | e5-base + reranker bge-m3 + lector mDeBERTa | 2,8 GB | 5 s | 2.130 ms |
+| `light` | e5-small | 0.5 GB | 150 ms | 85 ms |
+| `medium` | e5-small + mMiniLM reranker + mDeBERTa reader | 1.7 GB | 1 s | 815 ms |
+| `heavy` | e5-base + bge-m3 reranker + mDeBERTa reader | 2.8 GB | 5 s | 2,130 ms |
 
-Se cambia después con `ipsis profile set <perfil>`. Medido en CPU con el
-banco universal de 90 preguntas; ver [ADR 0003](docs/decisiones/0003-onnx-y-perfiles.md).
+Change it later with `ipsis profile set <profile>`. Measured on CPU with the
+90-question universal bank; see [ADR 0003](docs/decisions/0003-onnx-and-profiles.md).
 
 </details>
 
 <details>
-<summary><b>Instalación en Windows, entorno de desarrollo y Docker</b></summary>
+<summary><b>Windows, development environment and Docker</b></summary>
 
-Todo el detalle está en la [guía de instalación](docs/guia/instalacion.md).
-Para un servidor con HTTPS:
+All the details are in the [installation guide](docs/guide/installation.md).
+For a server with HTTPS:
 
 ```bash
-ipsis deploy prepare --domain asistente.tu-dominio.com
-# copia dist/ al VPS y ejecuta:
+ipsis deploy prepare --domain assistant.your-domain.com
+# copy dist/ to the server and run:
 docker compose --profile https up -d --build
 ```
 
-Ver la [guía de despliegue](docs/guia/despliegue.md).
+See the [deployment guide](docs/guide/deployment.md).
 
 </details>
 
-## 🧩 En tu sitio
+## 🧩 On your site
 
 ```bash
-ipsis configure cors_origenes=https://www.tu-sitio.com
-ipsis widget snippet --api https://asistente.tu-dominio.com
+ipsis configure cors_origins=https://www.your-site.com
+ipsis widget snippet --api https://assistant.your-domain.com
 ```
 
 ```html
-<script src="https://asistente.tu-dominio.com/widget.js"
-        data-api="https://asistente.tu-dominio.com" defer></script>
+<script src="https://assistant.your-domain.com/widget.js"
+        data-api="https://assistant.your-domain.com" defer></script>
 ```
 
-Hay ejemplos para [HTML](ejemplos/html/), [React](ejemplos/react/) y
-[WordPress](ejemplos/wordpress/). Posición, tamaño, tema, citas y avatar se
-configuran sin tocar código ([guía web](docs/guia/web.md)).
+There are examples for [HTML](examples/html/), [React](examples/react/) and
+[WordPress](examples/wordpress/). Position, size, theme, citations and avatar
+are configured without touching code ([web guide](docs/guide/web.md)).
 
 <table>
 <tr>
-<td width="62%"><img alt="Panel /admin: tono de las respuestas con sus variantes y vista previa del widget" src="docs/assets/panel-tono.png"></td>
-<td width="38%"><img alt="El widget en el teléfono: la cita marca «24 meses»" src="docs/assets/widget-movil.png"></td>
+<td width="62%"><img alt="/admin panel: answer tone with its variants and a live widget preview" src="docs/assets/panel-tono.png"></td>
+<td width="38%"><img alt="The widget on a phone: the citation highlights the answer" src="docs/assets/widget-movil.png"></td>
 </tr>
 <tr>
-<td align="center"><sub>Panel <code>/admin</code>: tono, avatar y widget con vista previa en vivo</sub></td>
-<td align="center"><sub>En el teléfono, a pantalla completa</sub></td>
+<td align="center"><sub><code>/admin</code> panel: tone, avatar and widget with a live preview</sub></td>
+<td align="center"><sub>Full screen on a phone</sub></td>
 </tr>
 </table>
 
-## 📏 Medir y calibrar
+## 📏 Measure and calibrate
 
 ```bash
-ipsis golden template              # propone preguntas a partir de tus documentos
+ipsis golden template              # proposes questions from your documents
 ipsis golden import golden/golden.csv
-ipsis evaluate                       # cobertura, falsos «ok» y latencia
-ipsis calibrate --apply            # umbrales con riesgo de falso «ok» ≤ 5 %, si la muestra alcanza
+ipsis evaluate                     # coverage, false "ok" answers and latency
+ipsis calibrate --apply            # thresholds with false "ok" risk ≤ 5%, if the sample allows
 ```
 
-La calibración no entrena nada: elige umbrales entre valores observados y
-certifica el riesgo solo cuando hay muestra suficiente (≥ 59 respuestas
-aceptadas sin error). Ver [calibración](docs/metodologia/calibracion.md).
+Calibration trains nothing: it picks thresholds among observed values and
+certifies the risk only when the sample is large enough (≥ 59 accepted
+answers without errors). See [calibration](docs/methodology/calibration.md).
 
-## 📚 Documentación
+## 📚 Documentation
 
-| Guía | Contenido |
+| Guide | Contents |
 |---|---|
-| [Instalación](docs/guia/instalacion.md) | Requisitos, perfiles, modelos, caché y Qdrant |
-| [Uso](docs/guia/uso.md) | Ciclo de trabajo y referencia de todos los comandos |
-| [Configuración](docs/guia/configuracion.md) | Cada archivo del proyecto |
-| [Golden set](docs/guia/golden.md) | Preguntas de prueba, evaluación y calibración |
-| [Web](docs/guia/web.md) | Widget, ubicación, API JavaScript, CSP y avatar |
-| [Personalidad](docs/guia/personalidad.md) | Tonos, Folio y panel `/admin` |
-| [Despliegue](docs/guia/despliegue.md) | VPS con HTTPS, Docker, modos y lista antes de lanzar |
-| [Arquitectura](docs/arquitectura.md) | Módulos, flujos y diagramas |
+| [Installation](docs/guide/installation.md) | Requirements, profiles, models, cache and Qdrant |
+| [Usage](docs/guide/usage.md) | Workflow and reference of every command |
+| [Configuration](docs/guide/configuration.md) | Every project file |
+| [Golden set](docs/guide/golden.md) | Test questions, evaluation and calibration |
+| [Web](docs/guide/web.md) | Widget, placement, JavaScript API, CSP and avatar |
+| [Personality](docs/guide/personality.md) | Tones, Folio and the `/admin` panel |
+| [Deployment](docs/guide/deployment.md) | Server with HTTPS, Docker, modes and a pre-launch checklist |
+| [Architecture](docs/architecture.md) | Modules, flows and diagrams |
 
-Por dentro: [fichas metodológicas](docs/metodologia/README.md),
-[decisiones de arquitectura](docs/decisiones/) y [cambios](CHANGELOG.md).
+Under the hood: [methodology notes](docs/methodology/README.md),
+[architecture decisions](docs/decisions/) and the [changelog](CHANGELOG.md).
+Guides in Spanish: [docs/es/](docs/es/README.md).
 
-## 🛠️ Desarrollo
+## 🛠️ Development
 
 ```bash
-git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git ipsis
+git clone https://github.com/ClaudioH19/ipsis.git
 cd ipsis
 python -m venv .venv && .venv/bin/python -m pip install -e ".[test]"
-python -m pytest -m "not slow and not browser"     # rápidas
+python -m pytest -m "not slow and not browser"     # fast tests
 ```
 
-Las pruebas usan documentos sintéticos; el repositorio no distribuye corpus
-ni métricas de una institución. Lee [CONTRIBUTING.md](CONTRIBUTING.md) antes
-de abrir un pull request.
+The tests use synthetic documents; the repository distributes no corpus or
+metrics from any institution. The code's internal identifiers are in
+Spanish; everything user-facing is in English. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 <details>
-<summary><b>Límites conocidos</b></summary>
+<summary><b>Known limitations</b></summary>
 
-- Los PDF escaneados necesitan OCR externo; se rechazan para no indexar
-  contenido vacío.
-- Un sinónimo que no aparece en el documento puede llevar a abstenerse: es el
-  lado seguro del error.
-- No usa el historial de la conversación para preguntas de seguimiento.
-- Un idioma por proyecto; no detecta el idioma de cada pregunta.
-- En modo local, Qdrant bloquea su carpeta mientras otro proceso la usa.
+- Scanned PDFs need external OCR; they are rejected so as not to index empty
+  content.
+- A synonym that does not appear in the document may lead to abstaining: it
+  is the safe side of the error.
+- It does not use the conversation history for follow-up questions.
+- One language per project; it does not detect the language of each
+  question.
+- In local mode, Qdrant locks its folder while another process uses it.
 
 </details>
 
-## ⚖️ Licencia
+## ⚖️ License
 
-[GNU AGPL-3.0](LICENSE) (`AGPL-3.0-only`), la misma licencia que el motor del
-avatar ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab)).
+[GNU AGPL-3.0](LICENSE) (`AGPL-3.0-only`), the same license as the avatar
+engine ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab)).
 
-- **Puedes** usarlo con cualquier fin, también comercial; estudiarlo,
-  modificarlo y redistribuirlo.
-- **Si lo instalas sin cambios** en tu servidor, no tienes obligaciones
-  nuevas: el servicio ya enlaza a este repositorio.
-- **Si lo modificas y lo ofreces por red,** ofrece el código fuente de tu
-  versión (§13): el widget y el panel muestran «Código fuente» (`GET /fuente`);
-  apunta `IPSIS_SOURCE_URL` a tu repositorio.
-- **Si lo redistribuyes** (por ejemplo, una imagen Docker), incluye la licencia
-  y el código fuente.
+- **You may** use it for any purpose, including commercial; study, modify
+  and redistribute it.
+- **If you install it unchanged** on your server, you have no new
+  obligations: the service already links to this repository.
+- **If you modify it and offer it over a network,** offer the source code of
+  your version (§13): the widget and the panel show "Source code"
+  (`GET /source`); point `IPSIS_SOURCE_URL` to your repository.
+- **If you redistribute it** (for example, a Docker image), include the
+  license and the source code.
 
-Las licencias de los paquetes incluidos en el motor del avatar están en
+The licenses of the packages bundled in the avatar engine are in
 `ipsis/servicio/estaticos/avatar.js.LICENSE.txt`.
 
-<div align="center"><sub>Hecho para que un asistente pueda decir «no está en los documentos».</sub></div>
+<div align="center"><sub>Built so an assistant can say "it is not in the documents".</sub></div>

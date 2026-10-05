@@ -225,7 +225,7 @@ models:
   verified: 'Verificación completa: todos los modelos cargan e infieren.'
   incomplete: Verificación incompleta.
   redownload: borra ese modelo de la caché y vuelve a ejecutar 'ipsis models download'
-  export_help: 'Desarrollo: convierte un modelo de Hugging Face a ONNX (requiere el extra [exportar]).'
+  export_help: 'Desarrollo: convierte un modelo de Hugging Face a ONNX (requiere el extra [export]).'
   arg_model: Repositorio de Hugging Face, p.ej. organizacion/modelo.
   opt_int8: Además genera model_int8.onnx con cuantización dinámica de onnxruntime.
   export_missing: 'Error: la exportación requiere las dependencias de desarrollo ({missing} no están instaladas).'
@@ -507,6 +507,9 @@ app:
   path_missing: no existe {path}
   no_components: la configuración no define componentes
   unknown_stage: el perfil {profile!r} declara la etapa desconocida {stage!r}. Revisa profile_overrides.stages en config/engine.yaml. {error}
+  audit_missing_document: el documento ya no está en el corpus vigente
+  audit_out_of_range: offsets fuera del documento (largo {length})
+  audit_altered: registrado «{logged}», en el corpus «{current}»
 bankfile:
   missing_columns: '{file}: faltan las columnas {columns}'
   unsupported_format: 'formato no soportado: {suffix}; usa .csv, .jsonl o .json (SQuAD 2.0)'

@@ -507,6 +507,9 @@ app:
   path_missing: '{path} does not exist'
   no_components: the configuration defines no components
   unknown_stage: the profile {profile!r} declares the unknown stage {stage!r}. Review profile_overrides.stages in config/engine.yaml. {error}
+  audit_missing_document: the document is no longer in the current corpus
+  audit_out_of_range: offsets outside the document (length {length})
+  audit_altered: logged «{logged}», in the corpus «{current}»
 bankfile:
   missing_columns: '{file}: the columns {columns} are missing'
   unsupported_format: 'unsupported format: {suffix}; use .csv, .jsonl or .json (SQuAD 2.0)'

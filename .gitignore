@@ -11,11 +11,11 @@ dist/
 # Lo que generan los comandos `ipsis` si se ejecutan dentro del clon
 .ipsis/
 .ipsis-project/
-exportados/
+exported/
 
-# Herramientas y ejemplos con npm
+# npm tools and examples
 node_modules/
-ejemplos/react/dist/
+examples/react/dist/
 
 # Sistema y editores
 .DS_Store

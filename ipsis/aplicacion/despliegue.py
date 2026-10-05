@@ -4,7 +4,7 @@ Reúne lo que el servicio necesita en ejecución (configuración con
 personalidad, estilos, calibración y avatares importados; documentos; índice)
 y genera desde ``ipsis/recursos/despliegue/preparar/`` el ``Dockerfile``, el
 ``docker-compose.yml`` con un Caddy opcional (perfil ``https``), el
-``Caddyfile``, un ``.env.ejemplo`` y ``LEEME_despliegue.md`` en el idioma del
+``Caddyfile``, un ``.env.example`` y ``DEPLOY.md`` en el idioma del
 proyecto. Nunca copia secretos ni los registros de consultas.
 """
 from __future__ import annotations
@@ -116,7 +116,7 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
     }
     generados = {
         "Dockerfile": "Dockerfile", "docker-compose.yml": "docker-compose.yml", "Caddyfile": "Caddyfile",
-        ".env.ejemplo": f"env.ejemplo.{idioma}", "LEEME_despliegue.md": f"LEEME_despliegue.{idioma}.md",
+        ".env.example": f"env.example.{idioma}", "DEPLOY.md": f"DEPLOY.{idioma}.md",
     }
     for nombre, plantilla in generados.items():
         # Siempre LF: estos archivos se usan en un servidor Linux (un \r final rompería el token de .env).

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ipsis"
-version = "0.8.0"
+version = "0.9.0"
 description = "Answers in the exact words of your documents: an extractive, self-hosted, CPU-only assistant that never invents."
 requires-python = ">=3.11"
 readme = "README.md"
@@ -30,7 +30,7 @@ test = ["pytest>=8,<10"]
 browser = ["pytest>=8,<10", "playwright>=1.55,<2"]
 # Solo desarrollo: convertir un modelo a ONNX (ipsis models export).
 # optimum 2.x movió el exportador ONNX a optimum-onnx; este fija transformers < 4.58.
-exportar = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
+export = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
 
 [project.scripts]
 ipsis = "ipsis.cli:main"

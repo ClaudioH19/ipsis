@@ -243,7 +243,7 @@ def escribir_reporte_benchmark(reporte: ReporteBenchmark, salida: str | Path) ->
     from ipsis.evaluacion.golden import escribir_atomico
 
     salida = Path(salida)
-    json_ruta, md_ruta = salida / "benchmark-perfiles.json", salida / "benchmark-perfiles.md"
+    json_ruta, md_ruta = salida / "benchmark-profiles.json", salida / "benchmark-profiles.md"
     escribir_atomico(json_ruta, reporte.model_dump_json(indent=2) + "\n")
     escribir_atomico(md_ruta, markdown(reporte))
     return json_ruta, md_ruta

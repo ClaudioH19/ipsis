@@ -1,7 +1,7 @@
 """Rutas del proyecto del cliente, relativas a su raíz.
 
 Es la única fuente de verdad sobre dónde vive cada archivo. Ver la estructura
-completa en ``docs/guia/configuracion.md``.
+completa en ``docs/guide/configuration.md``.
 """
 from __future__ import annotations
 

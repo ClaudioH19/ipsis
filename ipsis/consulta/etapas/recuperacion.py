@@ -42,11 +42,12 @@ class RetrieverQdrant:
         from ipsis.indice.qdrant import (
             cargar_estadisticas,
             crear_cliente_qdrant,
+            modo_del_entorno,
             nombre_coleccion_versionada,
         )
 
         qdrant = qdrant or {}
-        modo_cliente = os.environ.get("QDRANT_MODO") or qdrant.get("modo")
+        modo_cliente = modo_del_entorno() or qdrant.get("modo")
         url_servidor = os.environ.get("QDRANT_URL") or qdrant.get("url_servidor")
         client = crear_cliente_qdrant(qdrant_path=recuperacion["qdrant_path"], modo=modo_cliente,
                                       url_servidor=url_servidor)

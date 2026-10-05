@@ -5,7 +5,7 @@ solo con observaciones ya producidas (señales guardadas por caso) y re-decide
 cada caso con ``regla_cascada``, la misma función que usa la política en
 producción, sin volver a correr modelos.
 
-Criterio (docs/metodologia/calibracion.md): maximizar la cobertura directa
+Criterio (docs/methodology/calibration.md): maximizar la cobertura directa
 sujeta a que la cota superior de Clopper-Pearson del riesgo de las respuestas
 aceptadas sea ≤ α. Los umbrales se eligen en ``dev``; ``test`` solo verifica.
 """

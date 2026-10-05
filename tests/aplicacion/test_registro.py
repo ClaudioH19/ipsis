@@ -112,8 +112,8 @@ def test_una_evidencia_alterada_a_mano_se_reporta(corpus, capsys):
     assert main(["audit"]) == 1
     salida = capsys.readouterr().out
     assert "con problemas: 2" in salida
-    assert f"línea 2: manual offsets {corpus['inicio']}-{corpus['fin']}: alterada" in salida
-    assert "tramo_alterado" in salida and "«9 meses»" in salida
+    assert f"línea 2: manual offsets {corpus['inicio']}-{corpus['fin']}: altered" in salida
+    assert "altered_span" in salida and "«9 meses»" in salida
     assert "Líneas ilegibles: 3" in salida
 
 
@@ -127,7 +127,7 @@ def test_documento_retirado_del_corpus_se_reporta(corpus):
     datos["documentos"][0]["vigente"] = False
     escribir_proyecto(catalogo, datos)
     r = auditar_registro()
-    assert not r.ok and {p.motivo for p in r.problemas} == {"documento_ausente"}
+    assert not r.ok and {p.motivo for p in r.problemas} == {"missing_document"}
 
 
 def test_sin_registro_auditar_dice_como_activarlo(capsys):

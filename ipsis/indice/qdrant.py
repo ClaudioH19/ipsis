@@ -176,6 +176,18 @@ def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_versi
 # tal como exige la tabla 3.4 (no se infieren con modelos).
 
 
+# Modo de Qdrant como se escribe (engine.yaml, QDRANT_MODE) → interno.
+_MODOS = {"local": "local", "server": "servidor", "servidor": "servidor"}
+
+
+def modo_del_entorno() -> str | None:
+    """``QDRANT_MODE`` (``local`` o ``server``; también ``QDRANT_MODO`` y ``servidor``) en el modo interno."""
+    import os
+
+    valor = (os.environ.get("QDRANT_MODE") or os.environ.get("QDRANT_MODO") or "").strip().lower()
+    return _MODOS.get(valor) if valor else None
+
+
 def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None,
                           url_servidor: str | None = None):
     """Único punto donde se decide LOCAL (on-disk) vs. SERVIDOR (docker
@@ -195,7 +207,7 @@ def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None
     import os
     from qdrant_client import QdrantClient
 
-    modo = (modo or os.environ.get("QDRANT_MODO") or "local").strip().lower()
+    modo = _MODOS.get((modo or modo_del_entorno() or "local").strip().lower(), "local")
     if modo == "servidor":
         url = url_servidor or os.environ.get("QDRANT_URL") or "http://localhost:6333"
         return QdrantClient(url=url)

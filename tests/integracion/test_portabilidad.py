@@ -198,7 +198,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         assert frag_manual["text"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
 
         # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Con tres chunks
-        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/metodologia/lexico.md: sinónimos).
+        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/methodology/lexical.md: sinónimos).
         # Se conserva para que una regresión sea visible: puede mejorar a 'ok', pero
         # nunca perder el pasaje con «18 meses».
         resp = httpx.post(

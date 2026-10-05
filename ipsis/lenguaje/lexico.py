@@ -2,7 +2,7 @@
 
 Reciben términos ya producidos por ``ipsis.lenguaje.texto.terminos`` y un objeto
 de estadísticas del corpus (``ipsis.indice.estadisticas.EstadisticasLexicas`` o
-cualquiera con la misma forma). Ver ``docs/metodologia/lexico.md``.
+cualquiera con la misma forma). Ver ``docs/methodology/lexical.md``.
 """
 from __future__ import annotations
 

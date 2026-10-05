@@ -2,7 +2,7 @@
 
 Cada entrada dice qué archivos descargar de Hugging Face, con qué licencia y
 cómo usar el modelo. Los datos se verificaron en la tarea P5.1 del plan V3
-(ver ``docs/decisiones/0003-onnx-y-perfiles.md``).
+(ver ``docs/decisions/0003-onnx-and-profiles.md``).
 """
 from __future__ import annotations
 

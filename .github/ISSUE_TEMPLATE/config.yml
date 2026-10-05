@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 📚 Documentación
-    url: https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat/tree/main/docs
-    about: Instalación, uso, configuración, despliegue y arquitectura.
-  - name: 🔒 Reportar una vulnerabilidad
-    url: https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat/security/advisories/new
-    about: De forma privada; no abras un issue público.
+  - name: 📚 Documentation
+    url: https://github.com/ClaudioH19/ipsis/tree/main/docs
+    about: Installation, usage, configuration, deployment and architecture.
+  - name: 🔒 Report a vulnerability
+    url: https://github.com/ClaudioH19/ipsis/security/advisories/new
+    about: Privately; do not open a public issue.

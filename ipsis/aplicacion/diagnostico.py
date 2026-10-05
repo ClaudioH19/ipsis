@@ -542,7 +542,9 @@ def verificar_indice() -> ChequeoDoctor:
         return _chequeo("indice", Estado.ERROR, t("check.retriever_unknown", name=backend),
                         [t("check.review_retriever", path=rutas.MOTOR)])
 
-    modo = os.environ.get("QDRANT_MODO") or cfg.get("qdrant", {}).get("modo", "local")
+    from ipsis.indice.qdrant import modo_del_entorno
+
+    modo = modo_del_entorno() or cfg.get("qdrant", {}).get("modo", "local")
     url_servidor = os.environ.get("QDRANT_URL") or cfg.get("qdrant", {}).get("url_servidor")
     nombre_col = nombre_coleccion_versionada(cfg_rec["coleccion_base"], cfg_rec["modelo"],
                                              cfg_rec["version_coleccion"])

@@ -21,7 +21,7 @@ def test_el_paquete_espanol_esta_completo():
 
 
 def test_idioma_sin_paquete_usa_el_respaldo_universal():
-    """docs/metodologia/multilenguaje.md: reglas universales, términos sin stem y mensajes de en."""
+    """docs/methodology/multilingual.md: reglas universales, términos sin stem y mensajes de en."""
     from ipsis.lenguaje.texto import terminos
 
     ru, en = cargar_paquete("ru"), cargar_paquete("en")

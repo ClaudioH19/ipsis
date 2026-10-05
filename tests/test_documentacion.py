@@ -1,10 +1,14 @@
-"""La guía de uso documenta todos los comandos de la CLI."""
+"""Las guías de uso (inglés y español) documentan todos los comandos de la CLI."""
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
 
-GUIA = Path(__file__).resolve().parents[1] / "docs" / "guia" / "uso.md"
+import pytest
+
+RAIZ = Path(__file__).resolve().parents[1]
+GUIA = RAIZ / "docs" / "guide" / "usage.md"
+GUIA_ES = RAIZ / "docs" / "es" / "guia" / "uso.md"
 
 
 def _comandos(parser, ruta=()):
@@ -17,22 +21,23 @@ def _comandos(parser, ruta=()):
                     yield ruta + (nombre,)
 
 
-def test_cada_comando_aparece_en_la_guia_de_uso():
+@pytest.mark.parametrize("guia", [GUIA, GUIA_ES], ids=["en", "es"])
+def test_cada_comando_aparece_en_la_guia_de_uso(guia):
     from ipsis.cli import construir_parser
 
-    guia = GUIA.read_text(encoding="utf-8")
-    faltan = [" ".join(c) for c in _comandos(construir_parser()) if f"ipsis {' '.join(c)}" not in guia]
-    assert not faltan, f"documenta en docs/guia/uso.md: {faltan}"
+    texto = guia.read_text(encoding="utf-8")
+    faltan = [" ".join(c) for c in _comandos(construir_parser()) if f"ipsis {' '.join(c)}" not in texto]
+    assert not faltan, f"documenta en {guia.relative_to(RAIZ)}: {faltan}"
 
 
 def test_los_enlaces_relativos_de_la_documentacion_existen():
     import re
 
-    raiz = GUIA.parents[2]
-    archivos = [raiz / "README.md", raiz / "CHANGELOG.md", raiz / "CONTRIBUTING.md", raiz / "SECURITY.md",
+    raiz = RAIZ
+    archivos = [raiz / "README.md", raiz / "README.es.md", raiz / "CHANGELOG.md", raiz / "CONTRIBUTING.md", raiz / "SECURITY.md",
                 raiz / "CODE_OF_CONDUCT.md", raiz / ".github" / "PULL_REQUEST_TEMPLATE.md",
                 raiz / "tests" / "datos" / "banco_universal" / "README.md", *sorted((raiz / "docs").rglob("*.md")),
-                *sorted((raiz / "ejemplos").rglob("*.md")), raiz / "herramientas" / "avatar" / "LEEME.md"]
+                *sorted((raiz / "examples").rglob("*.md")), raiz / "herramientas" / "avatar" / "LEEME.md"]
     rotos = []
     for archivo in archivos:
         if not archivo.is_file() or "node_modules" in archivo.parts:

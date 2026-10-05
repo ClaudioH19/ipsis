@@ -63,10 +63,11 @@ class RegistroComponentes:
             if isinstance(especificacion, str):
                 nombre, opciones = especificacion, {}
             elif isinstance(especificacion, dict):
-                nombre = especificacion.get("nombre")
-                opciones = {k: v for k, v in especificacion.items() if k != "nombre"}
+                # «name» en engine.yaml; «nombre» en configuraciones anteriores.
+                nombre = especificacion.get("name", especificacion.get("nombre"))
+                opciones = {k: v for k, v in especificacion.items() if k not in ("name", "nombre")}
                 if not isinstance(nombre, str):
-                    raise ValueError(f"configuracion de {tipo} requiere la clave 'nombre'")
+                    raise ValueError(f"the {tipo} component needs the 'name' key")
             else:
                 raise TypeError(f"configuracion de {tipo} debe ser texto, objeto o null")
             resultado[tipo] = self.crear(tipo, nombre, **opciones)

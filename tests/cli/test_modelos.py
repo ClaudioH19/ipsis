@@ -212,13 +212,13 @@ def test_inferencia_invalida_identifica_al_modelo(hub, capsys, monkeypatch):
 # --- exportar -----------------------------------------------------------------------------
 def test_exportar_sin_el_extra_dice_que_instalar(tmp_path, capsys, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setitem(sys.modules, "optimum", None)  # simula un entorno sin [exportar]
+    monkeypatch.setitem(sys.modules, "optimum", None)  # simula un entorno sin [export]
     monkeypatch.setitem(sys.modules, "torch", None)
     assert main(["models", "export", "org/modelo", "--int8"]) == 1
     salida = capsys.readouterr().out
-    assert 'Acción: pip install "ipsis[exportar]"' in salida
+    assert 'Acción: pip install "ipsis[export]"' in salida
     assert "Traceback" not in salida and "ModuleNotFoundError" not in salida
-    assert not Path("exportados").exists()
+    assert not Path("exported").exists()
 
 
 def test_exportar_int8_llega_al_caso_de_uso_y_no_registra_el_modelo(tmp_path, capsys, monkeypatch):
@@ -240,7 +240,7 @@ def test_exportar_int8_llega_al_caso_de_uso_y_no_registra_el_modelo(tmp_path, ca
     assert main(["models", "export", "org/modelo", "--int8"]) == 0
     assert llamadas == [("convertir", "org/modelo"), ("int8", "model.onnx", "model_int8.onnx")]
     salida = capsys.readouterr().out
-    assert str(Path("exportados/org--modelo/model.onnx")) in salida and "model_int8.onnx" in salida
+    assert str(Path("exported/org--modelo/model.onnx")) in salida and "model_int8.onnx" in salida
     assert "org/modelo" not in CATALOGO
 
     assert main(["models", "export", "otra/cosa"]) == 0
@@ -262,7 +262,7 @@ def test_exportacion_que_falla_no_muestra_traceback_ni_deja_carpeta(tmp_path, ca
     assert main(["models", "export", "org/modelo"]) == 1
     salida = capsys.readouterr().out
     assert "falló" in salida and "get_parameter_dtype" in salida and "Traceback" not in salida
-    assert not Path("exportados/org--modelo").exists()
+    assert not Path("exported/org--modelo").exists()
 
 
 # --- imports ------------------------------------------------------------------------------
