@@ -176,6 +176,10 @@ def texto_de_bloques(bloques: list[dict]) -> str:
     return SEPARADOR_PARRAFOS.join(partes)
 
 
+def _documento(frag: dict) -> str:
+    return str(frag.get("doc_id") or frag.get("doc_titulo") or "")
+
+
 def _bloques_fragmentos_con_citas(
     fragmentos: list[dict],
     con_apertura: bool = True,
@@ -218,9 +222,12 @@ def _bloques_fragmentos_con_citas(
     for i, frag in enumerate(elegidos):
         conector = None
         if i > 0:
-            if frag.get("tiene_excepcion"):
+            # Condición y excepción afirman que el pasaje matiza al primero: solo
+            # tiene sentido dentro del mismo documento. De otro documento, se suma.
+            mismo_documento = _documento(frag) == _documento(elegidos[0])
+            if mismo_documento and frag.get("tiene_excepcion"):
                 categoria = "exception"
-            elif frag.get("tiene_condicion"):
+            elif mismo_documento and frag.get("tiene_condicion"):
                 categoria = "condition"
             else:
                 categoria = "addition"

@@ -214,6 +214,24 @@ def test_los_bloques_reproducen_el_texto_y_marcan_lo_literal(monkeypatch):
     assert gris[0]["tipo"] == "encabezado" and "X900" in gris[0]["texto"] and gris[1]["texto"] == "Primero."
 
 
+def test_condicion_y_excepcion_solo_dentro_del_mismo_documento(monkeypatch):
+    """Un pasaje de otro documento no se presenta como condición del primero."""
+    from ipsis.consulta.etapas.redaccion import redactar_bloques
+    from ipsis.lenguaje.tonos import cargar_tono
+
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    tono = cargar_tono("es")
+    primero = _fragmento("Para pedir un libro se necesita la credencial.", doc="Biblioteca", chunk_id="a")
+    ajeno = _fragmento("La garantía dura dos años.", doc="Cafetera", condicion=True, chunk_id="b")
+    propio = _fragmento("Solo si no hay multas.", doc="Biblioteca", condicion=True, chunk_id="c")
+    assert redactar_bloques([primero, ajeno])[1]["conector"] in tono.variantes("addition")
+    assert redactar_bloques([primero, propio])[1]["conector"] in tono.variantes("condition")
+
+
 def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
     frag = _fragmento("Texto de contexto general sobre el tema.")
     texto = redactar_zona_gris([frag])

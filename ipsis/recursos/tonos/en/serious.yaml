@@ -18,7 +18,7 @@ situations:
   - Noted. Another question about {domain_description}?
   - Thank you.
   - Noted. Still available.
-  - Agreed.
+  - Understood.
   - Thank you. You may continue with {domain_description}.
   farewell:
   - Goodbye.

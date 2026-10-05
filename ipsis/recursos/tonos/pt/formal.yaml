@@ -26,7 +26,7 @@ situations:
   - Foi um prazer prestar este apoio. Até logo.
   - Desejo-lhe um ótimo dia. Pode voltar quando precisar.
   - Até a próxima consulta.
-  - Até logo. Tenha uma boa jornada.
+  - Até logo. Desejo-lhe tudo de bom.
   - Permaneço à disposição para futuras consultas.
   - Agradeço a sua consulta. Até breve.
   capability:
@@ -62,7 +62,7 @@ situations:
   - 'Complementa o anterior o seguinte trecho:'
   - 'Noutro ponto, o texto prevê:'
   - 'Ao anterior soma-se o seguinte:'
-  - 'O documento precisa, ainda:'
+  - 'O documento especifica, ainda:'
   - 'Cabe considerar também o seguinte:'
   condition:
   - 'O exposto está sujeito à seguinte condição:'

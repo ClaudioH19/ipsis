@@ -535,10 +535,11 @@ def _titulos_por_tamano(pagina) -> tuple[str, dict[str, float]]:
 def _parrafos_pdf(texto_pagina: str) -> list[str]:
     """Párrafos de una página. Si el PDF no trae líneas en blanco (lo común),
     corta donde una línea termina una frase y queda claramente más corta que
-    las demás, o antes de un ítem de lista; nunca reescribe las líneas."""
-    texto_pagina = _RE_GUION_FINAL.sub("", texto_pagina)
+    las demás, o antes de un ítem de lista; nunca reescribe las líneas. Las
+    palabras cortadas con guion se unen después de cortar: unidas antes, la
+    línea corta que cierra un párrafo dejaría de parecerlo."""
     if re.search(r"\n\s*\n", texto_pagina):
-        return [p.strip() for p in re.split(r"\n\s*\n", texto_pagina) if p.strip()]
+        return [_RE_GUION_FINAL.sub("", p.strip()) for p in re.split(r"\n\s*\n", texto_pagina) if p.strip()]
     lineas = [l.strip() for l in texto_pagina.split("\n") if l.strip()]
     if not lineas:
         return []
@@ -546,13 +547,14 @@ def _parrafos_pdf(texto_pagina: str) -> list[str]:
     parrafos, actual = [], [lineas[0]]
     for previa, linea in zip(lineas, lineas[1:]):
         fin_de_frase = previa.endswith((".", ":", "!", "?", ";")) and len(previa) < 0.85 * ancho
-        titulo = len(actual) == 1 and len(previa) < 0.6 * ancho and _parece_titulo(previa)
+        titulo = (len(actual) == 1 and len(previa) < 0.6 * ancho and not previa.endswith("-")
+                  and _parece_titulo(previa))
         if fin_de_frase or titulo or _es_item(linea):
             parrafos.append("\n".join(actual))
             actual = []
         actual.append(linea)
     parrafos.append("\n".join(actual))
-    return parrafos
+    return [_RE_GUION_FINAL.sub("", parrafo) for parrafo in parrafos]
 
 
 def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:

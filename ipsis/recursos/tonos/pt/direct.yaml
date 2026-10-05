@@ -64,7 +64,7 @@ situations:
   - 'E isto:'
   - 'Outra citação:'
   - 'Soma-se:'
-  - 'Junta:'
+  - 'Ainda:'
   condition:
   - 'Se:'
   - 'Só se:'
@@ -116,7 +116,7 @@ situations:
   - Não encontrado.
   - Isso não consta.
   - Nada nos documentos.
-  - Não cobrem isso. Tente outra pergunta.
+  - Fora do que os documentos cobrem. Tente outra pergunta.
   - Sem dados. Pergunte outra coisa.
   premise_not_found:
   - '"{entity}" não está nos documentos.'

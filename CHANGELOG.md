@@ -6,6 +6,17 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Connectors across documents:** a passage from another document is no
+  longer introduced as a condition or an exception of the first one ("This
+  applies under a condition:"); it is added with an `addition` connector.
+- **PDF paragraphs:** a word hyphenated at the end of a paragraph's last
+  line no longer glues the next paragraph to it, and a line ending in a
+  hyphen is never taken for a title.
+- **Tone wording:** Portuguese and English variants that were calques
+  ("Tenha uma boa jornada", "O documento precisa, ainda:", "Demands:"…).
+
 ### Added
 
 - **`answer_blocks` in `POST /ask`:** the answer by paragraph, so a site can

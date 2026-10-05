@@ -28,7 +28,7 @@ situations:
   - Até breve. Quando quiser, continuamos a consulta.
   - Adeus, e obrigado por perguntar.
   - Até a próxima.
-  - Tenha uma boa jornada.
+  - Até mais, e tudo de bom.
   - Quando quiser, estarei aqui para continuar a consulta.
   capability:
   - Sou {assistant_name}. Respondo perguntas sobre {domain_description} citando o texto exato do documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.

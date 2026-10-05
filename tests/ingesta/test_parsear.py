@@ -256,3 +256,10 @@ def test_pdf_une_palabras_cortadas_con_guion():
     assert _parrafos_pdf("La garan-\ntia cubre el equipo.") == ["La garantia cubre el equipo."]
     # Un guion seguido de mayúscula o número no es una palabra cortada.
     assert _parrafos_pdf("Modelo X-\nTres") == ["Modelo X-\nTres"]
+    # Unir la palabra no borra el corte: la línea corta sigue cerrando su párrafo.
+    pagina = ("La garantia dura veinticuatro meses desde la fecha de compra de la fe-\n"
+              "cha indicada.\n"
+              "La garantia cubre el motor y la bomba de presion durante todo ese plazo.")
+    assert _parrafos_pdf(pagina) == [
+        "La garantia dura veinticuatro meses desde la fecha de compra de la fecha indicada.",
+        "La garantia cubre el motor y la bomba de presion durante todo ese plazo."]

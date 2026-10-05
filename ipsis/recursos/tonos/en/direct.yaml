@@ -73,7 +73,7 @@ situations:
   - 'Applies when:'
   - 'Depends on:'
   - 'With condition:'
-  - 'Demands:'
+  - 'Needs:'
   exception:
   - 'Except:'
   - 'Unless:'
