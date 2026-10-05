@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ipsis.modelos.exportacion import ExportacionFallida, ExportacionNoDisponible, Exportado
+from ipsis.recursos.mensajes import t
 
 
 class SinProyecto(RuntimeError):
@@ -81,7 +82,7 @@ def _perfil(perfil: str | None):
 
     if perfil is None:
         if not Path(rutas.MOTOR).is_file():
-            raise SinProyecto("no hay un proyecto en esta carpeta, así que no hay perfil activo")
+            raise SinProyecto(t("app.no_project_profile"))
         perfil = cargar_dominio().get("perfil", "light")
     # Dentro de un proyecto, sus ajustes_perfil pueden cambiar modelos: el mismo perfil que el motor.
     return perfil_de_instalacion(validar_perfil_instalable(perfil))

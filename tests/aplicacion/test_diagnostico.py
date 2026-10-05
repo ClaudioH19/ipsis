@@ -214,7 +214,7 @@ def test_configuracion_invalida_nombra_el_archivo_y_no_evalua_lo_que_depende_de_
     r = reporte()
     configuracion = r.chequeo("configuracion")
     assert configuracion.estado.value == "error" and "config/assistant.yaml" in configuracion.mensaje
-    assert "perfil" in configuracion.mensaje and configuracion.acciones
+    assert "profile" in configuracion.mensaje and configuracion.acciones
     for clave in ("perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "cors"):
         assert r.chequeo(clave).estado.value == "no_evaluado", clave
 
@@ -241,8 +241,8 @@ def test_ajustes_perfil_invalidos_son_error(proyecto):
     proyecto("light")
     editar("config/engine.yaml", ajustes_perfil={"cascada": {"rerank_k": -3}})
     perfil = reporte().chequeo("perfil")
-    assert perfil.estado.value == "error" and "ajustes_perfil" in perfil.mensaje
-    assert "ajustes_perfil" in perfil.acciones[0]
+    assert perfil.estado.value == "error" and "profile_overrides" in perfil.mensaje and "cascade.rerank_k" in perfil.mensaje
+    assert "profile_overrides" in perfil.acciones[0]
 
 
 # --- idioma y stemmer -----------------------------------------------------------------------

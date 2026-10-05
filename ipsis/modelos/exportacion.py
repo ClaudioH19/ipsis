@@ -11,6 +11,8 @@ import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
 
+from ipsis.recursos.mensajes import t
+
 DEPENDENCIAS = ("optimum", "torch")
 CARPETA = Path("exportados")
 
@@ -69,13 +71,13 @@ def exportar(id_hf: str, int8: bool = False) -> Exportado:
         raise ExportacionNoDisponible(faltan, comando_instalacion())
     salida = carpeta_salida(id_hf)
     if salida.exists():
-        raise FileExistsError(f"{salida} ya existe; bórrala o muévela antes de exportar de nuevo")
+        raise FileExistsError(t("core.export_exists", path=salida))
     onnx = salida / "model.onnx"
     cuantizado = salida / "model_int8.onnx" if int8 else None
     try:
         _convertir(id_hf, salida)
         if not onnx.is_file():
-            raise FileNotFoundError(f"la exportación no produjo {onnx}")
+            raise FileNotFoundError(t("core.export_no_output", path=onnx))
         if cuantizado is not None:
             _cuantizar(onnx, cuantizado)
     except Exception as exc:  # noqa: BLE001 -- optimum, transformers y la red lanzan tipos propios

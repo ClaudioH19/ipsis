@@ -12,6 +12,7 @@ from ipsis.consulta.motor import Motor, MotorNoListo, MotorSaturado
 from ipsis.lenguaje.paquete import cargar_paquete
 from ipsis.configuracion.perfiles import perfil_efectivo
 from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.recursos.mensajes import t
 
 
 def _hash_corpus_indexado(retriever) -> str | None:
@@ -52,7 +53,7 @@ def construir_motor(
 
     componentes = dict(cfg.get("componentes") or {})
     if not componentes:
-        raise ValueError("la configuración no define componentes")
+        raise ValueError(t("app.no_components"))
     registro = registrar_componentes_base(registro or RegistroComponentes())
     for tipo, nombre in componentes.items():
         if nombre is not None:
@@ -64,10 +65,8 @@ def construir_motor(
         try:
             registro.obtener("etapa", nombre_etapa)
         except KeyError as exc:
-            raise ValueError(
-                f"el perfil {perfil_instalacion.perfil!r} declara la etapa desconocida {nombre_etapa!r}. "
-                f"Revisa ajustes_perfil.etapas en config/engine.yaml. {exc}"
-            ) from exc
+            raise ValueError(t("app.unknown_stage", profile=perfil_instalacion.perfil, stage=nombre_etapa,
+                               error=exc)) from exc
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
     plantillas = cargar_plantillas(idioma, cfg_dominio)

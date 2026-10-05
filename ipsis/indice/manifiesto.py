@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ipsis.configuracion import rutas
 from ipsis.nucleo.esquemas import SCHEMA_VERSION
+from ipsis.recursos.mensajes import t
 
 VERSION_MANIFIESTO = 1
 
@@ -66,10 +67,7 @@ def guardar_manifiesto(manifiesto: ManifiestoIndice, directorio: str = rutas.IND
 def cargar_manifiesto(coleccion: str, directorio: str = rutas.INDICE) -> ManifiestoIndice:
     ruta = ruta_manifiesto(coleccion, directorio)
     if not ruta.is_file():
-        raise FileNotFoundError(
-            f"el índice {coleccion!r} no tiene manifiesto ({ruta}); es de una versión anterior. "
-            f"Ejecuta 'ipsis index'."
-        )
+        raise FileNotFoundError(t("core.index_no_manifest", name=coleccion, path=ruta))
     return ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
 
 

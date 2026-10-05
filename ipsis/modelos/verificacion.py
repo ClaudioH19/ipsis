@@ -10,6 +10,7 @@ import math
 from pathlib import Path
 
 from ipsis.modelos.catalogo import ModeloSpec
+from ipsis.recursos.mensajes import t
 
 PREGUNTA = "¿Cada cuánto se cambia el filtro?"
 PASAJE = "El filtro se cambia cada 6 meses."
@@ -60,11 +61,11 @@ def probar(spec: ModeloSpec, carpeta: Path) -> None:
         modelo.sesion  # noqa: B018 -- fuerza la carga para distinguirla de la inferencia
         modelo.tokenizador  # noqa: B018
     except Exception as exc:  # noqa: BLE001 -- onnxruntime y tokenizers lanzan tipos propios
-        raise ModeloNoUtilizable("carga", f"{spec.archivo_onnx()} no carga: {exc}") from exc
+        raise ModeloNoUtilizable("carga", t("core.model_not_loading", file=spec.archivo_onnx(), error=exc)) from exc
     try:
         _inferir(spec, modelo)
     except Exception as exc:  # noqa: BLE001
-        raise ModeloNoUtilizable("inferencia", f"la inferencia de prueba falló: {exc}") from exc
+        raise ModeloNoUtilizable("inferencia", t("core.test_inference_failed", error=exc)) from exc
 
 
 __all__ = ["ModeloNoUtilizable", "probar"]

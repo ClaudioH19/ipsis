@@ -17,6 +17,7 @@ from pathlib import Path
 
 from ipsis import __version__
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 MARCA = ".ipsis-despliegue"  # identifica una carpeta generada (se puede regenerar con --force)
 DOMINIO_EJEMPLO = "asistente.tu-dominio.cl"
@@ -62,9 +63,9 @@ def _idioma_leeme(idioma: str) -> str:
 def _validar_dominio(dominio: str) -> str:
     dominio = dominio.strip().lower()
     if dominio.startswith(("http://", "https://")) or "/" in dominio:
-        raise DespliegueInvalido(f"--domain {dominio!r}: escribe solo el nombre, p. ej. {DOMINIO_EJEMPLO}")
+        raise DespliegueInvalido(t("app.domain_only_name", domain=dominio, example=DOMINIO_EJEMPLO))
     if not re.fullmatch(r"[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+", dominio):
-        raise DespliegueInvalido(f"--domain {dominio!r} no es un nombre de dominio válido")
+        raise DespliegueInvalido(t("app.domain_invalid", domain=dominio))
     return dominio
 
 
@@ -77,19 +78,18 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
     from ipsis.configuracion.carga import cargar_dominio
 
     if not Path(rutas.ASISTENTE).is_file():
-        raise DespliegueInvalido("no hay un proyecto en esta carpeta: ejecuta 'ipsis init' primero")
+        raise DespliegueInvalido(t("app.deploy_no_project"))
     salida = Path(destino).resolve()
     if salida == Path.cwd().resolve() or Path.cwd().resolve().is_relative_to(salida):
-        raise DespliegueInvalido(f"{destino!r} contiene al proyecto: elige otra carpeta, p. ej. dist")
+        raise DespliegueInvalido(t("app.deploy_contains_project", target=destino))
     if salida.exists() and any(salida.iterdir()):
         if not (salida / MARCA).is_file():
-            raise DespliegueInvalido(f"{salida} no está vacía y no la generó 'ipsis deploy prepare': "
-                                     "elige otra carpeta")
+            raise DespliegueInvalido(t("app.deploy_not_empty", path=salida))
         if not forzar:
-            raise DespliegueInvalido(f"{salida} ya existe: usa --force para regenerarla")
+            raise DespliegueInvalido(t("app.deploy_exists", path=salida))
         shutil.rmtree(salida)
     if wheel is not None and not (Path(wheel).is_file() and wheel.endswith(".whl")):
-        raise DespliegueInvalido(f"--wheel {wheel!r} no es un archivo .whl")
+        raise DespliegueInvalido(t("app.wheel_invalid", wheel=wheel))
     dominio = _validar_dominio(dominio) if dominio else DOMINIO_EJEMPLO
 
     datos = cargar_dominio()
@@ -100,7 +100,7 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
     for origen in COPIAR:
         if Path(origen).is_dir():
             shutil.copytree(origen, salida / origen, ignore=shutil.ignore_patterns("*.lock", ".lock"))
-    (salida / rutas.INTERNO / "registros").mkdir(parents=True, exist_ok=True)
+    (salida / rutas.REGISTRO_CONSULTAS).parent.mkdir(parents=True, exist_ok=True)
 
     (salida / "paquete").mkdir()
     if wheel is not None:
@@ -125,14 +125,11 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
 
     resumen.archivos = sorted(p.relative_to(salida).as_posix() for p in salida.rglob("*") if p.is_file())
     if dominio == DOMINIO_EJEMPLO:
-        resumen.avisos.append(f"sin --domain: el Caddyfile usa {DOMINIO_EJEMPLO}; vuelve a preparar con "
-                              "--domain tu-dominio")
+        resumen.avisos.append(t("app.deploy_no_domain", example=DOMINIO_EJEMPLO))
     if wheel is None:
-        resumen.avisos.append("sin --wheel: la imagen instalará la versión actual del repositorio público; "
-                              "para fijar esta versión, construye el wheel (python -m pip wheel . --no-deps) "
-                              "y pásalo con --wheel")
+        resumen.avisos.append(t("app.deploy_no_wheel"))
     if not Path(rutas.INDICE).is_dir():
-        resumen.avisos.append("no hay índice: ejecuta 'ipsis index' y vuelve a preparar")
+        resumen.avisos.append(t("app.deploy_no_index"))
     reporte = diagnosticar(abrir_indice=False)
     for chequeo in reporte.errores:
         acciones = f" ({'; '.join(chequeo.acciones)})" if chequeo.acciones else ""

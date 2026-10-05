@@ -11,6 +11,7 @@ from pathlib import Path
 
 from ipsis.configuracion import rutas
 from ipsis.evaluacion.golden import ErrorGolden
+from ipsis.recursos.mensajes import t
 
 FORMATOS_EXPORTACION = {"squad2": "exportado.squad2.json", "csv": "exportado.csv"}
 
@@ -46,7 +47,7 @@ def _corpus() -> _Corpus:
 
     catalogo = entradas_vigentes(rutas.CATALOGO)
     if not catalogo:
-        raise ErrorGolden(["no hay documentos en el catálogo: agrégalos con 'ipsis load <archivo|carpeta>'"])
+        raise ErrorGolden([t("app.no_documents")])
     documentos = parsear_corpus(rutas.DOCUMENTOS)
     alias: dict[str, str] = {}
     for entrada in catalogo:
@@ -115,18 +116,15 @@ def _cargar_banco_vigente():
 
     manifiesto = Path(rutas.GOLDEN_MANIFIESTO)
     if not manifiesto.is_file():
-        raise ErrorGolden(["no hay un banco golden importado. Genera la plantilla con 'ipsis golden template', "
-                           "complétala e impórtala con 'ipsis golden import golden/golden.csv'"])
+        raise ErrorGolden([t("app.no_bank")])
     try:
         banco = cargar_banco(manifiesto)
     except FileNotFoundError as e:
-        raise ErrorGolden([f"falta un documento del banco en el corpus ({Path(e.filename).name}). "
-                           "Vuelve a importar el golden con el corpus actual"]) from e
+        raise ErrorGolden([t("app.bank_document_missing", file=Path(e.filename).name)]) from e
     except ValueError as e:
         if "hash del corpus" in str(e):
-            raise ErrorGolden(["el corpus cambió desde que se importó el golden: los offsets pueden no ser "
-                               "válidos. Vuelve a importarlo ('ipsis golden import <archivo>') o revísalo"]) from e
-        raise ErrorGolden([f"banco inválido: {e}"]) from e
+            raise ErrorGolden([t("app.bank_corpus_changed")]) from e
+        raise ErrorGolden([t("app.bank_invalid", error=e)]) from e
     from ipsis.ingesta.parsear import parsear_documento
 
     textos = {}
@@ -162,7 +160,7 @@ def exportar_golden(formato: str, salida: str | Path | None = None) -> tuple[Pat
     )
 
     if formato not in FORMATOS_EXPORTACION:
-        raise ValueError(f"formato desconocido: {formato!r}; usa {', '.join(FORMATOS_EXPORTACION)}")
+        raise ValueError(t("app.unknown_format", format=formato, valid=", ".join(FORMATOS_EXPORTACION)))
     banco, textos, _ = _cargar_banco_vigente()
     destino = Path(salida) if salida else Path(rutas.GOLDEN) / FORMATOS_EXPORTACION[formato]
     if formato == "csv":

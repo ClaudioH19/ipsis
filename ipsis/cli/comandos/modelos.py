@@ -21,6 +21,10 @@ def _accion_descargar() -> str:
     return t("cli.action", action=t("models.download_action"))
 
 
+def _rol(rol: str) -> str:
+    return t(f"models.role_{rol}")
+
+
 def _mb(n: int) -> str:
     return f"{n / 1_000_000:,.0f} MB".replace(",", ".")
 
@@ -46,7 +50,7 @@ class ComandoModelosListar(Comando):
             return _sin_proyecto(e)
         print(t("models.profile", profile=r.perfil))
         for m in r.modelos:
-            print(t("models.model", role=m.rol, model=m.id_hf))
+            print(t("models.model", role=_rol(m.rol), model=m.id_hf))
             print(t("models.license", license=_licencia(m.licencia, m.atribucion)))
             print(t("models.parameters", millions=m.parametros / 1e6))
             print(t("models.onnx", file=m.archivo))
@@ -67,14 +71,15 @@ class ComandoModelosDescargar(Comando):
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             r = descargar_modelos(args.perfil,
-                                  avisar=lambda rol, id_hf: print(t("models.downloading", role=rol, model=id_hf)))
+                                  avisar=lambda rol, id_hf: print(t("models.downloading", role=_rol(rol), model=id_hf)))
         except PerfilInvalido as e:
             print(t("cli.error", error=e))
             return 1
         except SinProyecto as e:
             return _sin_proyecto(e)
         for m in r.modelos:
-            print(t("models.downloaded" if m.estado == "descargado" else "models.available", role=m.rol, model=m.id_hf))
+            clave = "models.downloaded" if m.estado == "descargado" else "models.available"
+            print(t(clave, role=_rol(m.rol), model=m.id_hf))
             print(t("models.license_short", license=_licencia(m.licencia, m.atribucion)))
         if r.error:
             print(t("cli.error", error=r.error))
@@ -99,7 +104,7 @@ class ComandoModelosVerificar(Comando):
             return _sin_proyecto(e)
         print(t("models.profile", profile=r.perfil))
         for m in r.modelos:
-            print(t("models.verify_row", role=m.rol, model=m.id_hf, state=t(_ETIQUETAS[m.estado])))
+            print(t("models.verify_row", role=_rol(m.rol), model=m.id_hf, state=t(_ETIQUETAS[m.estado])))
             if m.mensaje:
                 print(t("models.verify_message", message=m.mensaje))
         if r.ok:

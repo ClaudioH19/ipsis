@@ -34,6 +34,7 @@ from ipsis.evaluacion.benchmark import (
     nota_de,
     percentil,
 )
+from ipsis.recursos.mensajes import t
 
 PERFILES_BENCHMARK = ("bm25", "light", "medium", "heavy")
 OK_EXPERIMENTAL_MEDIUM = 0.85
@@ -112,15 +113,15 @@ def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimento
                 if banco.manifiesto.idioma:
                     init += ["--language", banco.manifiesto.idioma]
                 if main(init) != 0:
-                    raise RuntimeError(f"falló ipsis init para {perfil}")
+                    raise RuntimeError(t("app.init_failed_for", profile=perfil))
                 if perfil == "bm25":
                     _fijar_perfil("bm25")
                 for archivo in banco.manifiesto.corpus.archivos:
                     if main(["load", str(corpus / archivo.ruta)]) != 0:
-                        raise RuntimeError(f"falló la carga de {archivo.ruta}")
+                        raise RuntimeError(t("app.load_failed", file=archivo.ruta))
                 inicio = time.perf_counter()
                 if main(["index"]) != 0:
-                    raise RuntimeError(f"falló la indexación de {perfil}")
+                    raise RuntimeError(t("app.index_failed", what=perfil))
                 indexado = time.perf_counter() - inicio
                 artefacto = evaluar_backend_activo(str(manifiesto))
                 acuerdo = _acuerdo_por_caso(banco) if experimentos and perfil == "light" else None
@@ -154,7 +155,7 @@ def ejecutar_benchmark_perfiles(
 
     desconocidos = [p for p in perfiles if p not in PERFILES_BENCHMARK]
     if desconocidos:
-        raise ValueError(f"perfiles desconocidos {desconocidos}; usa {', '.join(PERFILES_BENCHMARK)}")
+        raise ValueError(t("app.unknown_profiles", profiles=desconocidos, valid=", ".join(PERFILES_BENCHMARK)))
     rutas_bancos = [Path(m).resolve() for m in manifiestos]
     bancos = [cargar_banco(m) for m in rutas_bancos]
     salida = Path(salida)
@@ -178,7 +179,7 @@ def ejecutar_benchmark_perfiles(
             artefactos.append(str(ruta))
             por_id = {o.caso_id: o for o in artefacto.observaciones}
             if set(por_id) != {c.id for c in banco.casos}:
-                raise RuntimeError(f"{perfil} no evaluó exactamente los casos de {banco.manifiesto.dataset_id}")
+                raise RuntimeError(t("app.cases_mismatch", profile=perfil, bank=banco.manifiesto.dataset_id))
             pares += [(c, por_id[c.id]) for c in banco.casos]
             observaciones += list(artefacto.observaciones)
             tono = artefacto.tono or tono

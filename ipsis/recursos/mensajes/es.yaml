@@ -9,7 +9,7 @@ cli:
   warning: 'Aviso: {warning}'
   warning_indented: '  Aviso: {warning}'
   item: '  - {item}'
-  none: —
+  none: '-'
   subcommand: Comando a ejecutar.
   'yes': sí
   'no': 'no'
@@ -142,7 +142,7 @@ ask:
   absent: 'Términos que no están en el corpus: {terms}'
   sentence: 'Oración evaluada: «{sentence}»'
   span: 'Tramo exacto: «{text}» ({chunk_id}, offsets {start}-{end})'
-  no_span: 'Tramo exacto: —'
+  no_span: 'Tramo exacto: -'
   evidence: 'Evidencia: {doc_id} offsets {start}-{end}'
   tone: 'Tono: {tone}; plantillas: {templates}'
   warning: 'Advertencia: {warning}'
@@ -193,6 +193,9 @@ snapshot:
 models:
   help: 'Modelos ONNX del perfil: listar, descargar, verificar o exportar.'
   download_action: ipsis models download
+  role_denso: denso
+  role_reranker: reranker
+  role_lector: lector
   no_project_action: ipsis init (o indica --profile en 'ipsis models download')
   license_attribution: '{license}; atribución: {attribution}'
   list_help: 'Muestra los modelos del perfil activo: licencia, archivo ONNX y si están en la caché.'
@@ -433,3 +436,242 @@ deploy:
   failed: 'No se pudo preparar el despliegue: {error}'
   done: 'Despliegue preparado en {path} (perfil {profile}, dominio {domain}): {n} archivos.'
   next: 'Siguiente paso: lee {path} y copia la carpeta al servidor.'
+app:
+  domain_only_name: '--domain {domain!r}: escribe solo el nombre, p. ej. {example}'
+  domain_invalid: --domain {domain!r} no es un nombre de dominio válido
+  deploy_no_project: 'no hay un proyecto en esta carpeta: ejecuta ''ipsis init'' primero'
+  deploy_contains_project: '{target!r} contiene al proyecto: elige otra carpeta, p. ej. dist'
+  deploy_not_empty: '{path} no está vacía y no la generó ''ipsis deploy prepare'': elige otra carpeta'
+  deploy_exists: '{path} ya existe: usa --force para regenerarla'
+  wheel_invalid: --wheel {wheel!r} no es un archivo .whl
+  deploy_no_domain: 'sin --domain: el Caddyfile usa {example}; vuelve a preparar con --domain tu-dominio.cl'
+  deploy_no_wheel: 'sin --wheel: la imagen instalará la versión actual del repositorio público; para fijar esta versión, construye el wheel (python -m pip wheel . --no-deps) y pásalo con --wheel'
+  deploy_no_index: 'no hay índice: ejecuta ''ipsis index'' y vuelve a preparar'
+  duplicate_keys: 'claves duplicadas: {keys}'
+  avatar_too_big: pesa {size} bytes; el máximo es {maximum} (256 KiB)
+  avatar_bad_json: 'no es un JSON válido: {error}'
+  avatar_not_object: la definición debe ser un objeto JSON
+  avatar_missing_field: falta el campo {field!r}
+  avatar_no_neutral: falta la expresión obligatoria 'neutral'
+  avatar_expression: expresión
+  avatar_animation: animación
+  avatar_key_pattern: '{kind} {key!r}: la clave debe cumplir {pattern} (máx. 64)'
+  avatar_too_many_expressions: '{n} expresiones; el máximo es 128'
+  avatar_too_many_animations: '{n} animaciones; el máximo es 64'
+  avatar_color: 'colors.{key} debe ser #rrggbb en minúsculas'
+  avatar_bad_name: nombre de avatar inválido {name!r}
+  avatar_none_yet: ninguno todavía
+  avatar_missing: 'no hay un avatar {name!r}; disponibles: {available}'
+  avatar_name_rules: 'nombre inválido {name!r}: usa minúsculas, números y guiones (p. ej. «mi-avatar»)'
+  expects_boolean: '{key} espera true o false, no {value!r}'
+  unknown_configure_keys: 'clave(s) desconocida(s) para ''ipsis configure'': {keys}. Válidas: {valid}'
+  unknown_profile: 'perfil desconocido {name!r} (disponibles: {available})'
+  bm25_not_installable: 'bm25 es un perfil de diagnóstico de ''ipsis benchmark'', no un perfil instalable. Perfiles disponibles: {available}'
+  unknown_profile_long: 'perfil desconocido {name!r}. Perfiles disponibles: {available}'
+  init_failed_benchmark: falló ipsis init durante el benchmark
+  load_failed: falló la carga de {file}
+  index_failed: falló la indexación de {what}
+  report_missing: no se produjo el artefacto {name}
+  init_failed_profile: falló ipsis init --profile {profile}
+  no_index_calibrate: no hay un índice válido para el proyecto ({name}). Ejecuta 'ipsis index' antes de calibrar
+  alpha_range: --alpha debe estar entre 0 y 1, sin incluirlos (se recibió {alpha})
+  golden_revalidate: Ejecuta 'ipsis golden validate' y vuelve a importar el golden si corresponde
+  init_failed_for: falló ipsis init para {profile}
+  unknown_profiles: perfiles desconocidos {profiles}; usa {valid}
+  cases_mismatch: '{profile} no evaluó exactamente los casos de {bank}'
+  no_documents: 'no hay documentos en el catálogo: agrégalos con ''ipsis load <archivo|carpeta>'''
+  no_bank: no hay un banco golden importado. Genera la plantilla con 'ipsis golden template', complétala e impórtala con 'ipsis golden import golden/golden.csv'
+  bank_document_missing: falta un documento del banco en el corpus ({file}). Vuelve a importar el golden con el corpus actual
+  bank_corpus_changed: 'el corpus cambió desde que se importó el golden: los offsets pueden no ser válidos. Vuelve a importarlo (''ipsis golden import <archivo>'') o revísalo'
+  bank_invalid: 'banco inválido: {error}'
+  unknown_format: 'formato desconocido: {format!r}; usa {valid}'
+  no_project_profile: no hay un proyecto en esta carpeta, así que no hay perfil activo
+  no_project: no hay un proyecto en esta carpeta
+  avatar_disabled: el widget muestra el ícono
+  avatar_problem: '{error}; el widget muestra el ícono'
+  tone_missing_language: el tono {tone!r} no existe para el idioma {language!r}
+  avatar_warning: 'avatar {name!r}: {message}'
+  avatar_fallback: 'al avatar le falta {requested!r} (evento {event}): usa {used!r}'
+  not_neutral_prefix: texto propio no neutro
+  not_neutral: '{prefix}: {found} (los tonos incluidos lo evitan; cámbialo si tu público es de varios países)'
+  unknown_tone: 'tono desconocido {tone!r}; disponibles: {available}'
+  unknown_situation: 'situación desconocida {situation!r}; válidas: {valid}'
+  unknown_event: 'evento desconocido {event!r}; válidos: {valid}'
+  avatar_lacks_key: 'el avatar {name!r} no tiene la clave {key!r}; animaciones: {animations}; expresiones: {expressions}'
+  color_body: cuerpo
+  color_eyes: ojos
+  invalid_color: 'color de {part} inválido {value!r}: usa #rrggbb (p. ej. #f5f1e8)'
+  body_object: el cuerpo debe ser un objeto JSON
+  invalid_date: 'fecha inválida {text!r}: usa AAAA-MM-DD o AAAA-MM-DDTHH:MM (ISO 8601)'
+  from_after_to: --from es posterior a --to
+  path_missing: no existe {path}
+  no_components: la configuración no define componentes
+  unknown_stage: el perfil {profile!r} declara la etapa desconocida {stage!r}. Revisa profile_overrides.stages en config/engine.yaml. {error}
+check:
+  name_configuracion: Configuración
+  name_perfil: Perfil
+  name_idioma: Idioma
+  name_stemmer: Stemmer
+  name_modelos: Modelos
+  name_indice: Índice
+  name_calibracion: Calibración
+  name_golden: Golden
+  name_cors: CORS
+  name_personalidad: Personalidad
+  name_modo: Modo
+  not_evaluated: 'no se evaluó: depende de {dependency}'
+  dep_language_pack: el paquete de idioma
+  dep_profile: el perfil
+  dep_config_profile: la configuración y el perfil
+  dep_profile_index: el perfil y el índice
+  root: (raíz)
+  golden_missing_document: falta un documento del banco en el corpus ({file})
+  golden_corpus_changed: el corpus cambió desde que se importó
+  fix_file: corrige {path}
+  fix_assistant: corrige {path} (o 'ipsis init --force' para reiniciarlo)
+  no_file: no existe {path}
+  init_force: ipsis init --force (crea engine.yaml; reinicia assistant.yaml con valores por defecto)
+  fix_domain: 'corrige {path} (es opcional: también puedes borrarlo)'
+  fix_policy: corrige components.abstention_policy en {path}
+  fix_styles: corrige {path} (mientras tanto el widget usa el diseño de fábrica)
+  config_ok: assistant.yaml y engine.yaml válidos
+  policy_unavailable: '{path}: política de abstención {name!r} no disponible: {error}'
+  invalid_overrides: '{profile}: los profile_overrides de {path} no son válidos: {error}'
+  fix_overrides: corrige profile_overrides en {path}
+  language_invalid: '{code}: el paquete con las sobrescrituras de {path} no es válido: {error}'
+  fix_language: corrige {path} o bórralo para usar los textos del paquete
+  language_fallback: '{code}: no hay un paquete específico (disponibles: {available}); se usan las reglas universales, términos sin stem y los textos de ''{fallback}'' (tradúcelos en {path})'
+  stemmer_none: no configurado para este idioma (términos sin stem)
+  stemmer_origin_pack: el paquete {code}
+  stemmer_unknown: '{name!r} no existe en snowballstemmer (declarado en {origin})'
+  fix_stemmer_values: 'corrige ''stemmer'' en {path} (valores válidos: {values})'
+  stemmer_failed: '{name}: no se pudo instanciar: {error}'
+  fix_stemmer: corrige 'stemmer' en {path}
+  model_available: '{role}: {model} -- disponible'
+  model_missing: '{role}: {model} -- falta'
+  models_missing: 'faltan en la caché: {models}'
+  models_ok: 'en la caché (no se cargaron; para probar la inferencia: ipsis models verify)'
+  index_missing_documents: todavía no existe y hay {n} documento(s) cargado(s) sin indexar
+  index_missing: todavía no existe (no hay documentos cargados)
+  load_action: ipsis load <archivo|carpeta>
+  index_model: se construyó con {built} y el perfil {profile} necesita {needed}
+  index_stemmer: se construyó con el stemmer {built!r} y el idioma usa {needed!r}
+  index_manifest: su manifiesto (versión de payload o dimensión) no corresponde a esta versión
+  index_incompatible: 'incompatible: {reason}'
+  index_corpus_changed: los documentos cambiaron desde la última indexación
+  index_ok: compatible ({model}, {n} fragmentos, corpus sin cambios)
+  calibration_invalid: '{path} no es válido ({error}); el motor no puede arrancar'
+  calibration_rewrite: ipsis calibrate --apply (la reescribe)
+  calibration_delete: o borra {path}
+  calibration_none: no hay (opcional); se usan los umbrales del perfil
+  calibration_current: 'vigente: sus umbrales están activos'
+  calibration_audit: guardada solo para auditoría ({reason})
+  calibration_stale: obsoleta ({reason}); rigen los umbrales del perfil y el archivo se conserva
+  golden_import: ipsis golden import <archivo>
+  golden_none: no hay (opcional)
+  golden_stale: '{reason}: no lo uses para evaluar ni calibrar hasta actualizarlo'
+  golden_unreadable: el banco importado no se puede leer ({reason}); evaluar y calibrar quedan bloqueados
+  golden_regression: 'banco de regresión {id} ({n} casos): sirve para evaluar, no para calibrar'
+  golden_ok: '{id} ({n} casos), vigente con el corpus actual'
+  cors_missing: 'cors_origins está vacío pero hay widget_keys configuradas: el navegador bloqueará las peticiones del widget desde tu sitio'
+  cors_action: ipsis configure cors_origins=https://tu-sitio.cl
+  cors_local: sin orígenes (uso local); agrégalos antes de embeber el widget
+  cors_ok: 'orígenes permitidos: {origins}'
+  fix_personality: 'corrige {path} (detalle: ipsis personality validate)'
+  personality_ok: tono {tone}; avatar {avatar} ({state})
+  personality_warnings: tono {tone}; {warnings}
+  avatar_import: ipsis personality avatar import <archivo.avatar.json>
+  review_templates: 'revisa tone.templates en {path} (detalle: ipsis personality validate)'
+  avatar_events: ipsis personality avatar events
+  mode_values: usa IPSIS_MODE=production o IPSIS_MODE=development
+  token_action: 'genera uno: python -c "import secrets; print(secrets.token_urlsafe(32))"'
+  mode_development: 'desarrollo: /admin acepta HTTP desde cualquier IP; no lo uses en un servicio público'
+  mode_production_action: IPSIS_MODE=production (o quita --mode development)
+  with_admin: con /admin
+  without_admin: sin /admin
+  mode_no_proxy: 'producción {admin}: sin proxy declarado, /admin solo responde desde esta máquina'
+  proxy_action: declara la IP del proxy HTTPS en IPSIS_TRUSTED_PROXY
+  mode_production: producción {admin}
+  no_project: no se encontró un proyecto ipsis en esta carpeta
+  check_failed: 'el chequeo falló: {error}'
+  check_failed_action: revisa los archivos de config/ y vuelve a ejecutar 'ipsis doctor'
+  config_unreadable: 'no se pudo leer la configuración: {error}'
+  retriever_unknown: 'retriever desconocido: {name!r}'
+  review_retriever: revisa components.retriever en {path}
+  qdrant_server: revisa 'docker compose up -d qdrant' y 'curl http://localhost:6333/readyz'
+  qdrant_locked: 'detén el servicio (''ipsis serve'') antes de diagnosticar: en modo local Qdrant bloquea la carpeta del índice (o usa qdrant.mode: "server")'
+  qdrant_readable: revisa que la carpeta del índice local sea legible
+  qdrant_failed: 'Qdrant (modo {mode!r}) no respondió: {error}'
+  collection_missing: la colección {name!r} no existe (modo {mode!r})
+  collection_old: la colección {name!r} es de una versión anterior (sin estadísticas léxicas)
+  collection_ok: colección {name!r} existe (modo {mode!r})
+core:
+  not_yaml_object: '{name} debe ser un objeto YAML'
+  config_version_type: '{name}.config_version debe ser un entero no negativo'
+  config_version_newer: '{name} usa config_version={version}, pero esta instalación solo soporta hasta {supported}'
+  reranker_options: retrieval.reranker con opciones no puede migrarse automáticamente; selecciona components.reranker por nombre
+  reranker_conflict: retrieval.reranker y components.reranker se contradicen
+  no_migration: no existe migración de {name} versión {version}
+  unknown_profile: 'perfil desconocido: {name!r}; disponibles: {available}'
+  unknown_event: 'evento desconocido {event!r}; válidos: {valid}'
+  invalid_event_key: 'clave inválida {key!r} para {event!r} (formato: {pattern})'
+  invalid_language_code: 'código de idioma inválido {code!r}: usa un código ISO 639 como ''es'', ''en'' o ''pt-br'''
+  moved: '{source} -> {target}'
+  domain_created: '{path} creado desde dominios/{profile}/perfil.yaml y categorias.yaml'
+  domain_header: '# Reglas y taxonomía del dominio (migrado desde perfil.yaml y categorias.yaml).
+
+    '
+  unused_domains: '[!] perfiles de dominio no usados que quedaron sin migrar: {profiles}'
+  language_created: '{path} creado con los textos personalizados de textos.yaml'
+  language_header: '# Textos propios del proyecto (migrados desde textos.yaml).
+
+    '
+  texts_removed: config/textos.yaml eliminado (los textos viven en el paquete de idioma)
+  rewritten_english: '{path}: claves y valores en inglés'
+  assistant_v3: '{path}: config_version 3 (sin la clave ''perfil'')'
+  engine_v3: '{path}: config_version 3'
+  languages_removed: config/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)
+  file_missing: no existe el archivo {path}
+  unsupported_extension: '{path}: formato {extension!r} no soportado (soportados: {supported})'
+  no_sections_document: '{doc_id}: este documento no tiene estructura de secciones, lo que degrada los filtros.'
+  no_headings: 'este documento no tiene estructura de secciones (ningún encabezado ''#''): degrada los filtros por seccion_path.'
+  pdf_no_pages: '{path!r}: el PDF no tiene páginas.'
+  pdf_scanned: '{path!r} parece un PDF ESCANEADO: la extracción de texto devolvió un promedio de {average:.1f} caracteres por página (umbral: {threshold}) sobre {pages} páginas. Este proyecto no soporta OCR -- convierte el documento a texto antes de cargarlo (p.ej. con una herramienta de OCR externa) o cárgalo como .docx/.md/.txt ya con su texto.'
+  pdf_no_outline: 'este PDF no tiene marcadores (outline): se indexa sin estructura de secciones, lo que degrada los filtros por seccion_path.'
+  unsupported_format: 'formato no soportado: {extension!r} ({path!r}). Formatos soportados: {supported}'
+  offline_missing: '{model} no está en la caché ({cache}) y HF_HUB_OFFLINE=1 impide descargarlo. Quita HF_HUB_OFFLINE, o descarga en una máquina con red y copia la caché (IPSIS_MODELS_DIR).'
+  download_failed: 'no se pudo descargar {model}: {error}'
+  download_incomplete: la descarga de {model} no trajo {files}
+  model_not_cached: el modelo {model} no está en la caché ({cache}). Ejecuta 'ipsis models download'.
+  model_files_missing: falta {files} de {model} en la caché. Ejecuta 'ipsis models download'.
+  unsupported_model: 'modelo no soportado: {model!r}; disponibles: {available}'
+  export_exists: '{path} ya existe; bórrala o muévela antes de exportar de nuevo'
+  export_no_output: la exportación no produjo {path}
+  model_not_loading: '{file} no carga: {error}'
+  test_inference_failed: 'la inferencia de prueba falló: {error}'
+  index_no_manifest: el índice {name!r} no tiene manifiesto ({path}); es de una versión anterior. Ejecuta 'ipsis index'.
+  index_no_stats: no existen las estadísticas léxicas del índice en {path!r}. Ejecuta 'ipsis index' para reconstruir el índice.
+  collection_missing: la colección Qdrant {name!r} no existe todavía. Ejecuta 'ipsis index' primero (lee la misma config/engine.yaml::retrieval que este servicio).
+styles:
+  not_object: el tema debe ser un objeto YAML
+  section_object: '{section} debe ser un objeto'
+  no_booleans: '{key} no admite booleanos'
+  scalar: '{key} debe ser un valor CSS escalar'
+  forbidden: '{key} contiene caracteres CSS no permitidos'
+  density: presentation.density debe ser 'comfortable' o 'compact'
+  citations: presentation.citations debe ser accordion o list (las citas siempre se muestran)
+  status_label: presentation.show_status_label debe ser booleano
+  unknown_keys: 'placement: claves desconocidas {keys}'
+  one_of: 'placement.{key} debe ser uno de: {values}'
+  integer_between: placement.{key} debe ser un entero entre {minimum} y {maximum}
+  unknown_preset: 'preset desconocido {name!r}; disponibles: {available}'
+  custom_css_style: custom_css no puede cerrar la etiqueta style en la vista previa
+  position: 'la posición debe ser una de: {values}'
+  body_object: el cuerpo debe ser un objeto JSON
+  expected_boolean: se esperaba true o false, no {value!r}
+  expected_integer: se esperaba un número entero, no {value!r}
+  assignment_form: '{assignment!r}: usa seccion.clave=valor, p. ej. colors.accent=#0ea5e9'
+  unknown_section: 'sección desconocida {section!r}; válidas: {valid}'
+  unknown_key: 'clave desconocida {key!r}; en {section}: {valid}'
+  key_error: '{key}: {error}'
+  no_changes: 'indica al menos un cambio: seccion.clave=valor'

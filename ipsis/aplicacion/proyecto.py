@@ -16,6 +16,7 @@ from ipsis.configuracion.carga import (
     _encabezado_comentarios,
     cargar_dominio,
 )
+from ipsis.recursos.mensajes import t
 
 
 def _booleano(clave: str, valor: str) -> bool:
@@ -24,17 +25,15 @@ def _booleano(clave: str, valor: str) -> bool:
         return True
     if texto in {"false", "no", "0", "off"}:
         return False
-    raise ValueError(f"{clave} espera true o false, no {valor!r}")
+    raise ValueError(t("app.expects_boolean", key=clave, value=valor))
 
 
 def configurar(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     """``ipsis configure key=value``: claves de ``assistant.yaml`` (inglés); devuelve el archivo con esas claves."""
     desconocidas = set(pares) - CLAVES_DOMINIO_VALIDAS
     if desconocidas:
-        raise ValueError(
-            f"clave(s) desconocida(s) para 'ipsis configure': {sorted(desconocidas)}. "
-            f"Válidas: {sorted(CLAVES_DOMINIO_VALIDAS)}"
-        )
+        raise ValueError(t("app.unknown_configure_keys", keys=sorted(desconocidas),
+                           valid=sorted(CLAVES_DOMINIO_VALIDAS)))
     from ipsis.configuracion.glosario import a_externo
 
     return a_externo(actualizar_dominio({CLAVES_DOMINIO[clave]: valor for clave, valor in pares.items()}, ruta),
@@ -58,7 +57,7 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
         from ipsis.configuracion.perfiles import PERFILES_INSTALABLES
 
         if nuevo["perfil"] not in PERFILES_INSTALABLES:
-            raise ValueError(f"perfil desconocido {nuevo['perfil']!r} (disponibles: {list(PERFILES_INSTALABLES)})")
+            raise ValueError(t("app.unknown_profile", name=nuevo["perfil"], available=list(PERFILES_INSTALABLES)))
 
     if "idioma" in pares:
         from ipsis.lenguaje.paquete import validar_codigo_idioma
@@ -312,9 +311,8 @@ def validar_perfil_instalable(nombre: str) -> str:
     if nombre in PERFILES_INSTALABLES:
         return nombre
     if nombre == "bm25":
-        raise PerfilInvalido("bm25 es un perfil de diagnóstico de 'ipsis benchmark', no un perfil instalable. "
-                             f"Perfiles disponibles: {disponibles}")
-    raise PerfilInvalido(f"perfil desconocido {nombre!r}. Perfiles disponibles: {disponibles}")
+        raise PerfilInvalido(t("app.bm25_not_installable", available=disponibles))
+    raise PerfilInvalido(t("app.unknown_profile_long", name=nombre, available=disponibles))
 
 
 def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:

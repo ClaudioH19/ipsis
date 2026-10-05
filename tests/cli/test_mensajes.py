@@ -35,6 +35,7 @@ def test_cada_clave_usada_en_el_codigo_existe_y_cada_clave_se_usa():
     usadas = {c for c in usadas if c.split(".")[0] in secciones and c.split(".")[1] not in extensiones}
     # Las claves armadas con un prefijo ("profile." + rol, f"{'doctor.errors'}_one") también cuentan como usadas.
     prefijos = set(re.findall(r'["\']([a-z_]+\.)["\']\s*\+', codigo))
+    prefijos |= set(re.findall(r'f["\']([a-z_]+\.[a-z_]*)\{', codigo))
     prefijos |= {c + "_" for c in usadas - claves if any(k.startswith(c + "_") for k in claves)}
     assert {c for c in usadas - claves if c + "_" not in prefijos} == set()
     sin_uso = {c for c in claves - usadas if not any(c.startswith(p) for p in prefijos)}

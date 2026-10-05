@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 VERSION_REGISTRO = 1
 
@@ -143,7 +144,7 @@ def interpretar_fecha(texto: str, *, fin_del_dia: bool = False) -> datetime:
             return momento + timedelta(days=1) - timedelta(microseconds=1) if fin_del_dia else momento
         momento = datetime.fromisoformat(valor.replace("Z", "+00:00"))
     except ValueError as e:
-        raise FechaInvalida(f"fecha inválida {texto!r}: usa AAAA-MM-DD o AAAA-MM-DDTHH:MM (ISO 8601)") from e
+        raise FechaInvalida(t("app.invalid_date", text=texto)) from e
     return momento if momento.tzinfo else momento.replace(tzinfo=timezone.utc)
 
 
@@ -168,7 +169,7 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: date
         raise SinRegistro(ruta)
     textos = {d.doc_id: d.texto_completo for d in parsear_corpus(rutas.DOCUMENTOS)}
     if desde is not None and hasta is not None and desde > hasta:
-        raise FechaInvalida("--from es posterior a --to")
+        raise FechaInvalida(t("app.from_after_to"))
     reporte = ReporteAuditoria(ruta, desde=desde, hasta=hasta)
     filtrar = desde is not None or hasta is not None
     for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), start=1):

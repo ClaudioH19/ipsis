@@ -6,6 +6,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from ipsis.recursos.mensajes import t
+
 CONFIG_VERSION = 5
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
@@ -117,16 +119,13 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
     obligatorio; es idempotente y deja la validación estricta para Pydantic.
     """
     if not isinstance(datos, dict):
-        raise TypeError(f"{nombre} debe ser un objeto YAML")
+        raise TypeError(t("core.not_yaml_object", name=nombre))
     salida = deepcopy(datos)
     version = salida.get("config_version", 0)
     if not isinstance(version, int) or isinstance(version, bool) or version < 0:
-        raise ValueError(f"{nombre}.config_version debe ser un entero no negativo")
+        raise ValueError(t("core.config_version_type", name=nombre))
     if version > CONFIG_VERSION:
-        raise ValueError(
-            f"{nombre} usa config_version={version}, pero esta instalación solo soporta "
-            f"hasta {CONFIG_VERSION}"
-        )
+        raise ValueError(t("core.config_version_newer", name=nombre, version=version, supported=CONFIG_VERSION))
     while version < CONFIG_VERSION:
         if version == 0:
             salida["config_version"] = 1
@@ -138,14 +137,9 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                 componentes = salida.setdefault("componentes", {})
                 seleccionado = componentes.get("reranker")
                 if isinstance(heredado, dict):
-                    raise ValueError(
-                        "recuperacion.reranker con opciones no puede migrarse "
-                        "automáticamente; selecciona componentes.reranker por nombre"
-                    )
+                    raise ValueError(t("core.reranker_options"))
                 if heredado is not None and seleccionado not in {None, heredado}:
-                    raise ValueError(
-                        "recuperacion.reranker y componentes.reranker se contradicen"
-                    )
+                    raise ValueError(t("core.reranker_conflict"))
                 if heredado is not None:
                     componentes["reranker"] = heredado
             salida["config_version"] = 2
@@ -199,7 +193,7 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             salida["config_version"] = 5
             version = 5
         else:  # protección para que añadir versiones futuras no cree bucles
-            raise ValueError(f"no existe migración de {nombre} versión {version}")
+            raise ValueError(t("core.no_migration", name=nombre, version=version))
     return salida
 
 

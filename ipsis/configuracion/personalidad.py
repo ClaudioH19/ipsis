@@ -13,6 +13,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 TONOS = ("cordial", "formal", "serio", "animoso", "cercano", "empatico", "directo")
 CLAVE_SEMANTICA = r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$"  # la de @bible-strong/avatar-core
@@ -82,9 +83,9 @@ class AvatarConfig(_Estricto):
 
         for evento, clave in valor.items():
             if evento not in EVENTOS:
-                raise ValueError(f"evento desconocido {evento!r}; válidos: {', '.join(EVENTOS)}")
+                raise ValueError(t("core.unknown_event", event=evento, valid=", ".join(EVENTOS)))
             if not re.fullmatch(CLAVE_SEMANTICA, clave or ""):
-                raise ValueError(f"clave inválida {clave!r} para {evento!r} (formato: {CLAVE_SEMANTICA})")
+                raise ValueError(t("core.invalid_event_key", key=clave, event=evento, pattern=CLAVE_SEMANTICA))
         return valor
 
 

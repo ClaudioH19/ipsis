@@ -50,6 +50,8 @@ from docx.oxml.ns import qn
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
+from ipsis.recursos.mensajes import t
+
 SEPARADOR_BLOQUE = "\n"
 
 # Formatos que reconoce el despacho de `parsear_documento`.
@@ -321,10 +323,7 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
     texto_completo, bloques = _ensamblar_bloques(eventos)
     advertencias = []
     if not hay_encabezados:
-        advertencias.append(
-            "este documento no tiene estructura de secciones (ningún encabezado "
-            "'#'): degrada los filtros por seccion_path."
-        )
+        advertencias.append(t("core.no_headings"))
     return DocumentoParseado(
         doc_id=doc_id, doc_titulo=doc_titulo, version=version, ruta_origen=ruta,
         texto_completo=texto_completo, bloques=bloques, advertencias=advertencias,
@@ -433,28 +432,19 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     reader = pypdf.PdfReader(ruta)
     n_paginas = len(reader.pages)
     if n_paginas == 0:
-        raise DocumentoEscaneadoError(f"{ruta!r}: el PDF no tiene páginas.")
+        raise DocumentoEscaneadoError(t("core.pdf_no_pages", path=ruta))
 
     textos_paginas = [(pagina.extract_text() or "") for pagina in reader.pages]
     total_chars = sum(len(t.strip()) for t in textos_paginas)
     promedio = total_chars / n_paginas
     if promedio < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
-        raise DocumentoEscaneadoError(
-            f"{ruta!r} parece un PDF ESCANEADO: la extracción de texto devolvió "
-            f"un promedio de {promedio:.1f} caracteres por página (umbral: "
-            f"{UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA}) sobre {n_paginas} páginas. "
-            f"Este proyecto no soporta OCR -- convierte el documento a texto "
-            f"antes de cargarlo (p.ej. con una herramienta de OCR externa) o "
-            f"cárgalo como .docx/.md/.txt ya con su texto."
-        )
+        raise DocumentoEscaneadoError(t("core.pdf_scanned", path=ruta, average=promedio,
+                                        threshold=UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA, pages=n_paginas))
 
     encabezados_por_pagina = _mapear_outline_a_paginas(reader)
     advertencias = []
     if not encabezados_por_pagina:
-        advertencias.append(
-            "este PDF no tiene marcadores (outline): se indexa sin estructura "
-            "de secciones, lo que degrada los filtros por seccion_path."
-        )
+        advertencias.append(t("core.pdf_no_outline"))
 
     eventos: list[tuple[str, int | None]] = []
     for i, texto_pagina in enumerate(textos_paginas):
@@ -494,10 +484,7 @@ def parsear_documento(ruta: str, doc_id: str, doc_titulo: str, version: str) -> 
         return parsear_markdown(ruta, doc_id, doc_titulo, version)
     if ext == ".txt":
         return parsear_texto_plano(ruta, doc_id, doc_titulo, version)
-    raise ValueError(
-        f"formato no soportado: {ext!r} ({ruta!r}). Formatos soportados: "
-        f"{sorted(EXTENSIONES_SOPORTADAS)}"
-    )
+    raise ValueError(t("core.unsupported_format", extension=ext, path=ruta, supported=sorted(EXTENSIONES_SOPORTADAS)))
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ from ipsis.nucleo.esquemas import (
 )
 from ipsis.indice.qdrant import ColeccionQdrant, buscar, construir_filtro_entidad
 from ipsis.indice.payload import chunk_desde_payload
+from ipsis.recursos.mensajes import t
 
 MODOS = ("vectorial", "hibrida", "dispersa")  # «dispersa»: solo BM25 (perfil de diagnóstico bm25)
 
@@ -56,10 +57,7 @@ class RetrieverQdrant:
         from ipsis.modelos.denso import CodificadorDenso
 
         if not client.collection_exists(nombre):
-            raise RuntimeError(
-                f"la colección Qdrant {nombre!r} no existe todavía. Ejecuta 'ipsis index' primero "
-                f"(lee la misma config/engine.yaml::recuperacion que este servicio)."
-            )
+            raise RuntimeError(t("core.collection_missing", name=nombre))
 
         manifiesto = cargar_manifiesto(nombre)
         coleccion = ColeccionQdrant(

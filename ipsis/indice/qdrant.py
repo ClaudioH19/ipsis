@@ -17,6 +17,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from dataclasses import dataclass
 
+from ipsis.recursos.mensajes import t
+
 
 @dataclass
 class ColeccionQdrant:
@@ -150,10 +152,7 @@ def ruta_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> 
 def cargar_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> EstadisticasLexicas:
     ruta = ruta_estadisticas(nombre_coleccion, directorio)
     if not ruta.is_file():
-        raise FileNotFoundError(
-            f"no existen las estadísticas léxicas del índice en {str(ruta)!r}. "
-            f"Ejecuta 'ipsis index' para reconstruir el índice."
-        )
+        raise FileNotFoundError(t("core.index_no_stats", path=str(ruta)))
     return EstadisticasLexicas.cargar(ruta)
 
 

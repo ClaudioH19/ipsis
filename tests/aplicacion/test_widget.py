@@ -109,8 +109,8 @@ def test_ubicacion_por_defecto_y_validacion():
     assert ubicacion_widget({}) == {"posicion": "abajo-derecha", "desplazamiento_x": 24, "desplazamiento_y": 24,
                                     "z_index": 2147483000, "tamano": "normal", "lanzador": "burbuja"}
     assert ubicacion_widget({"ubicacion": {"posicion": "incrustado", "lanzador": "oculto"}})["lanzador"] == "oculto"
-    for malo, mensaje in [({"posicion": "centro"}, "posicion"), ({"tamano": "enorme"}, "tamano"),
-                          ({"desplazamiento_x": -1}, "desplazamiento_x"), ({"z_index": "alto"}, "z_index"),
+    for malo, mensaje in [({"posicion": "centro"}, "placement.position"), ({"tamano": "enorme"}, "placement.size"),
+                          ({"desplazamiento_x": -1}, "placement.offset_x"), ({"z_index": "alto"}, "placement.z_index"),
                           ({"color": "rojo"}, "desconocidas")]:
         with pytest.raises(ValueError, match=mensaje):
             validar_tema({"ubicacion": malo})

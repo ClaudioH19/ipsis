@@ -15,6 +15,7 @@ from ipsis.indice.qdrant import (
     indexar_qdrant,
     ruta_estadisticas,
 )
+from ipsis.recursos.mensajes import t
 
 
 def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
@@ -179,9 +180,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
         if d.advertencias:
             advertencias.extend(f"{d.doc_id}: {a}" for a in d.advertencias)
         elif all(not b.seccion_path for b in d.bloques):
-            advertencias.append(
-                f"{d.doc_id}: este documento no tiene estructura de secciones, lo que degrada los filtros."
-            )
+            advertencias.append(t("core.no_sections_document", doc_id=d.doc_id))
 
     if solo_validar:
         return ResumenIngesta(resumen_docs, len(chunks), errores, advertencias, time.perf_counter() - t0)

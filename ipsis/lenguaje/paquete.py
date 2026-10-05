@@ -21,6 +21,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 
 class _Estricto(BaseModel):
@@ -123,7 +124,7 @@ def validar_codigo_idioma(codigo: str) -> str:
     import re
 
     if not re.fullmatch(_CODIGO, codigo or ""):
-        raise ValueError(f"código de idioma inválido {codigo!r}: usa un código ISO 639 como 'es', 'en' o 'pt-br'")
+        raise ValueError(t("core.invalid_language_code", code=codigo))
     return codigo
 
 

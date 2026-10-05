@@ -18,6 +18,7 @@ from ipsis.evaluacion.metricas import (
     ObservacionEvaluacion,
     evaluar_observaciones,
 )
+from ipsis.recursos.mensajes import t
 
 
 def evaluar_backend_activo(
@@ -145,10 +146,10 @@ def ejecutar_benchmark(
         try:
             os.chdir(proyecto)
             if main(["init"]) != 0:
-                raise RuntimeError("falló ipsis init durante el benchmark")
+                raise RuntimeError(t("app.init_failed_benchmark"))
             for archivo in banco.manifiesto.corpus.archivos:
                 if main(["load", str(corpus / archivo.ruta)]) != 0:
-                    raise RuntimeError(f"falló la carga de {archivo.ruta}")
+                    raise RuntimeError(t("app.load_failed", file=archivo.ruta))
 
             ruta_cfg = proyecto / rutas.MOTOR
             cfg = leer(ruta_cfg, "motor")
@@ -162,7 +163,7 @@ def ejecutar_benchmark(
                 cfg["recuperacion"]["modo"] = modo
                 escribir(ruta_cfg, cfg, "motor")
                 if reindexar and main(["index"]) != 0:
-                    raise RuntimeError(f"falló la indexación de {retriever}/{modo}")
+                    raise RuntimeError(t("app.index_failed", what=f"{retriever}/{modo}"))
                 etiqueta = f"qdrant_{modo}"
                 ruta_artefacto = salida / f"{etiqueta}.json"
                 main([
@@ -170,11 +171,11 @@ def ejecutar_benchmark(
                     "--output", str(ruta_artefacto),
                 ])
                 if not ruta_artefacto.is_file():
-                    raise RuntimeError(f"no se produjo el artefacto {etiqueta}")
+                    raise RuntimeError(t("app.report_missing", name=etiqueta))
                 artefactos.append(cargar_artefacto(ruta_artefacto))
 
             informe = comparar_artefactos(artefactos)
-            ruta_informe = salida / "comparacion.json"
+            ruta_informe = salida / "comparison.json"
             ruta_informe.write_text(informe.model_dump_json(indent=2), encoding="utf-8")
             return ruta_informe
         finally:
@@ -207,11 +208,11 @@ def medir_latencia(
             try:
                 os.chdir(temporal)
                 if main(["init", "--profile", perfil]) != 0:
-                    raise RuntimeError(f"falló ipsis init --profile {perfil}")
+                    raise RuntimeError(t("app.init_failed_profile", profile=perfil))
                 for archivo in banco.manifiesto.corpus.archivos:
                     main(["load", str(corpus / archivo.ruta)])
                 if main(["index"]) != 0:
-                    raise RuntimeError(f"falló la indexación del perfil {perfil}")
+                    raise RuntimeError(t("app.index_failed", what=perfil))
                 motor = construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
                 motor.calentar()
                 totales: list[float] = []
@@ -270,8 +271,7 @@ def hash_corpus_del_indice(cfg: dict) -> str:
     try:
         return cargar_manifiesto(nombre).hash_corpus
     except FileNotFoundError as e:
-        raise ErrorCalibracion([f"no hay un índice válido para el proyecto ({nombre}). Ejecuta 'ipsis index' "
-                                "antes de calibrar"]) from e
+        raise ErrorCalibracion([t("app.no_index_calibrate", name=nombre)]) from e
 
 
 def calibrar_proyecto(
@@ -297,7 +297,7 @@ def calibrar_proyecto(
     from ipsis.evaluacion.golden import ErrorGolden
 
     if not 0.0 < alfa < 1.0:
-        raise ErrorCalibracion([f"--alpha debe estar entre 0 y 1, sin incluirlos (se recibió {alfa})"])
+        raise ErrorCalibracion([t("app.alpha_range", alpha=alfa)])
     cfg = cargar_proyecto()
     nombre_perfil = cargar_dominio().get("perfil", "light")
     # Umbrales del perfil sin calibración previa: son la base de la búsqueda.
@@ -307,8 +307,8 @@ def calibrar_proyecto(
         banco, _textos, manifiesto = _cargar_banco_vigente()
     except ErrorGolden as e:
         errores = list(e.errores)
-        if any("corpus cambió" in m for m in errores):
-            errores.append("Ejecuta 'ipsis golden validate' y vuelve a importar el golden si corresponde")
+        if t("app.bank_corpus_changed") in errores:
+            errores.append(t("app.golden_revalidate"))
         raise ErrorCalibracion(errores) from e
     try:
         exigir_calibrable(banco)

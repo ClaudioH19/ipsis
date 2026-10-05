@@ -14,6 +14,7 @@ from pathlib import Path
 
 
 from ipsis.ingesta.parsear import parsear_documento, DocumentoParseado, EXTENSIONES_SOPORTADAS
+from ipsis.recursos.mensajes import t
 
 
 CATALOGO_PATH = rutas.CATALOGO
@@ -181,12 +182,11 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
     for ruta_str in rutas:
         ruta_origen = Path(ruta_str)
         if not ruta_origen.is_file():
-            raise FileNotFoundError(f"no existe el archivo {ruta_origen}")
+            raise FileNotFoundError(t("core.file_missing", path=ruta_origen))
         ext = ruta_origen.suffix.lower()
         if ext not in EXTENSIONES_SOPORTADAS:
-            raise ValueError(
-                f"{ruta_origen}: formato {ext!r} no soportado (soportados: {sorted(EXTENSIONES_SOPORTADAS)})"
-            )
+            raise ValueError(t("core.unsupported_extension", path=ruta_origen, extension=ext,
+                               supported=sorted(EXTENSIONES_SOPORTADAS)))
 
         contenido = ruta_origen.read_bytes()
         hash_contenido = hashlib.sha256(contenido).hexdigest()

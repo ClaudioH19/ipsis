@@ -11,6 +11,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from ipsis.recursos.mensajes import t
+
 Tarea = Literal["denso", "reranker", "lector"]
 
 
@@ -90,9 +92,7 @@ def obtener(id_hf: str) -> ModeloSpec:
     try:
         return CATALOGO[id_hf]
     except KeyError as exc:
-        raise KeyError(
-            f"modelo no soportado: {id_hf!r}; disponibles: {', '.join(sorted(CATALOGO))}"
-        ) from exc
+        raise KeyError(t("core.unsupported_model", model=id_hf, available=", ".join(sorted(CATALOGO)))) from exc
 
 
 __all__ = ["CATALOGO", "ModeloSpec", "Tarea", "obtener"]

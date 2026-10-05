@@ -12,6 +12,7 @@ from pathlib import Path
 import yaml
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 
 def _leer_yaml(ruta: Path) -> dict:
@@ -48,7 +49,7 @@ def _mover(origen: Path, destino: Path, cambios: list[str], raiz: Path) -> None:
             origen.rmdir()
     elif not destino.exists():
         shutil.move(str(origen), str(destino))
-    cambios.append(f"{origen.relative_to(raiz).as_posix()} -> {destino.relative_to(raiz).as_posix()}")
+    cambios.append(t("core.moved", source=origen.relative_to(raiz).as_posix(), target=destino.relative_to(raiz).as_posix()))
 
 
 def _migrar_dominio(raiz: Path, perfil: str, cambios: list[str]) -> None:
@@ -63,15 +64,15 @@ def _migrar_dominio(raiz: Path, perfil: str, cambios: list[str]) -> None:
         datos.pop(clave, None)  # la identidad vive en assistant.yaml
     if viejo_categorias.exists():
         datos["taxonomia"] = _leer_yaml(viejo_categorias)
-    _escribir_yaml(destino, datos, "# Reglas y taxonomía del dominio (migrado desde perfil.yaml y categorias.yaml).\n")
-    cambios.append(f"{rutas.DOMINIO} creado desde dominios/{perfil}/perfil.yaml y categorias.yaml")
+    _escribir_yaml(destino, datos, t("core.domain_header"))
+    cambios.append(t("core.domain_created", path=rutas.DOMINIO, profile=perfil))
     if viejo_perfil.exists():
         shutil.rmtree(viejo_perfil.parent)
     if viejo_categorias.exists():
         viejo_categorias.unlink()
     otros = [p.name for p in carpeta_perfiles.iterdir() if p.is_dir() and p.name != "idiomas"] if carpeta_perfiles.exists() else []
     if otros:
-        cambios.append(f"[!] perfiles de dominio no usados que quedaron sin migrar: {otros}")
+        cambios.append(t("core.unused_domains", profiles=otros))
 
 
 def _diferencias(propio, base):
@@ -140,10 +141,10 @@ def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
     propio = _diferencias(equivalente, base)
     destino = raiz / rutas.IDIOMA
     if propio and not destino.exists():
-        _escribir_yaml(destino, propio, "# Textos propios del proyecto (migrados desde textos.yaml).\n")
-        cambios.append(f"{rutas.IDIOMA} creado con los textos personalizados de textos.yaml")
+        _escribir_yaml(destino, propio, t("core.language_header"))
+        cambios.append(t("core.language_created", path=rutas.IDIOMA))
     viejo.unlink()
-    cambios.append("config/textos.yaml eliminado (los textos viven en el paquete de idioma)")
+    cambios.append(t("core.texts_removed"))
 
 
 # --- v5: estructura y claves en inglés -------------------------------------------------------------
@@ -199,7 +200,7 @@ def _reescribir_en_ingles(raiz: Path, cambios: list[str]) -> None:
                 recuperacion["qdrant_path"] = rutas.QDRANT
         if externo != datos:
             _escribir_yaml(ruta, externo, _encabezado(ruta))
-            cambios.append(f"{relativa}: claves y valores en inglés")
+            cambios.append(t("core.rewritten_english", path=relativa))
 
 
 def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
@@ -225,7 +226,7 @@ def _migrar_v3(raiz: Path) -> list[str]:
         datos["perfil"] = "light"  # perfil de instalación; sin modelos adicionales
         datos["config_version"] = 3
         _escribir_yaml(asistente, datos, _encabezado(asistente))
-        cambios.append(f"{rutas.ASISTENTE}: config_version 3 (sin la clave 'perfil')")
+        cambios.append(t("core.assistant_v3", path=rutas.ASISTENTE))
 
     motor = raiz / rutas.MOTOR
     datos_motor = _leer_yaml(motor)
@@ -235,13 +236,13 @@ def _migrar_v3(raiz: Path) -> list[str]:
             recuperacion["qdrant_path"] = rutas.QDRANT
         datos_motor["config_version"] = 3
         _escribir_yaml(motor, datos_motor, _encabezado(motor))
-        cambios.append(f"{rutas.MOTOR}: config_version 3")
+        cambios.append(t("core.engine_v3", path=rutas.MOTOR))
 
     # Las palabras de idioma viven en el paquete de idioma desde P3.1.
     carpeta_dominios = raiz / rutas.CONFIGURACION / "dominios"
     if (carpeta_dominios / "idiomas").is_dir():
         shutil.rmtree(carpeta_dominios / "idiomas")
-        cambios.append("config/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)")
+        cambios.append(t("core.languages_removed"))
     if carpeta_dominios.is_dir() and not any(carpeta_dominios.iterdir()):
         carpeta_dominios.rmdir()
 

@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 
 from ipsis.modelos.catalogo import ModeloSpec
+from ipsis.recursos.mensajes import t
 
 
 def ruta_cache() -> Path:
@@ -52,13 +53,10 @@ def descargar(spec: ModeloSpec) -> Path:
         carpeta = _snapshot(spec, solo_local=False)
     except Exception as exc:  # noqa: BLE001 -- el error de huggingface_hub varía por versión
         if _sin_red():
-            raise ErrorDescarga(
-                f"{spec.id_hf} no está en la caché ({ruta_cache()}) y HF_HUB_OFFLINE=1 impide descargarlo. "
-                "Quita HF_HUB_OFFLINE, o descarga en una máquina con red y copia la caché (IPSIS_MODELS_DIR)."
-            ) from exc
-        raise ErrorDescarga(f"no se pudo descargar {spec.id_hf}: {exc}") from exc
+            raise ErrorDescarga(t("core.offline_missing", model=spec.id_hf, cache=ruta_cache())) from exc
+        raise ErrorDescarga(t("core.download_failed", model=spec.id_hf, error=exc)) from exc
     if faltan := faltantes(spec, carpeta):
-        raise ErrorDescarga(f"la descarga de {spec.id_hf} no trajo {', '.join(faltan)}")
+        raise ErrorDescarga(t("core.download_incomplete", model=spec.id_hf, files=", ".join(faltan)))
     return carpeta
 
 
@@ -67,14 +65,9 @@ def ruta_local(spec: ModeloSpec) -> Path:
     try:
         carpeta = _snapshot(spec, solo_local=True)
     except Exception as exc:  # noqa: BLE001 -- el error de huggingface_hub varía por versión
-        raise FileNotFoundError(
-            f"el modelo {spec.id_hf} no está en la caché ({ruta_cache()}). "
-            f"Ejecuta 'ipsis models download'."
-        ) from exc
+        raise FileNotFoundError(t("core.model_not_cached", model=spec.id_hf, cache=ruta_cache())) from exc
     if faltan := faltantes(spec, carpeta):
-        raise FileNotFoundError(
-            f"falta {', '.join(faltan)} de {spec.id_hf} en la caché. Ejecuta 'ipsis models download'."
-        )
+        raise FileNotFoundError(t("core.model_files_missing", files=", ".join(faltan), model=spec.id_hf))
     return carpeta
 
 

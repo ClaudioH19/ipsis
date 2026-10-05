@@ -17,6 +17,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 PERFILES_INSTALABLES = ("light", "medium", "heavy")
 
@@ -79,7 +80,7 @@ def _fusionar(base: dict[str, Any], cambios: dict[str, Any]) -> dict[str, Any]:
 def _datos_perfil(nombre: str) -> dict[str, Any]:
     recurso = files("ipsis.recursos").joinpath("perfiles", f"{nombre}.yaml")
     if not recurso.is_file():
-        raise ValueError(f"perfil desconocido: {nombre!r}; disponibles: {', '.join(PERFILES_INSTALABLES)}")
+        raise ValueError(t("core.unknown_profile", name=nombre, available=", ".join(PERFILES_INSTALABLES)))
     from ipsis.configuracion.archivos import interpretar
 
     return interpretar(recurso.read_text(encoding="utf-8"), "perfil")

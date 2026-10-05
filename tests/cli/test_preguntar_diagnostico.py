@@ -80,7 +80,7 @@ def test_cli_sin_tramo_ni_foco_muestra_guiones(monkeypatch, capsys):
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
     assert main(["ask", "--diagnostics", "x"]) == 0
     salida = capsys.readouterr().out
-    assert "Tramo exacto: —" in salida and "encontrados: —; ausentes: —" in salida
+    assert "Tramo exacto: -" in salida and "encontrados: -; ausentes: -" in salida
 
 
 def test_cli_motor_que_no_se_puede_construir_pide_rag_doctor(monkeypatch, capsys):

@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ipsis.recursos.mensajes import t
+
 
 class ErrorConfiguracion(Exception):
     """La configuración del proyecto no permite indexar (ver ``ipsis doctor``)."""
@@ -21,7 +23,7 @@ def archivos_de_ruta(ruta: Path) -> list[Path]:
             and p.suffix.lower() in EXTENSIONES_SOPORTADAS
             and ".ipsis-project" not in p.relative_to(ruta).parts
         )
-    raise FileNotFoundError(f"no existe {ruta}")
+    raise FileNotFoundError(t("app.path_missing", path=ruta))
 
 
 def cargar_documentos(archivos: list[Path]):

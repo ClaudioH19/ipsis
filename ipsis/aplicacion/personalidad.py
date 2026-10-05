@@ -12,6 +12,7 @@ from pathlib import Path
 
 from ipsis.configuracion import rutas
 from ipsis.configuracion.personalidad import EVENTOS, HEX, TONOS, PersonalidadConfig
+from ipsis.recursos.mensajes import t
 
 
 class SinProyecto(RuntimeError):
@@ -55,7 +56,7 @@ class TonoDisponible:
 
 def _exigir_proyecto() -> None:
     if not Path(rutas.MOTOR).is_file():
-        raise SinProyecto("no hay un proyecto en esta carpeta")
+        raise SinProyecto(t("app.no_project"))
 
 
 def _idioma() -> str:
@@ -88,13 +89,13 @@ def estado_avatar(config: PersonalidadConfig) -> EstadoAvatar:
 
     nombre = config.avatar.definicion
     if not config.avatar.activo:
-        return EstadoAvatar(nombre, "desactivado", "el widget muestra el ícono")
+        return EstadoAvatar(nombre, "desactivado", t("app.avatar_disabled"))
     try:
         avatar, _ = cargar_avatar(nombre)
     except FileNotFoundError as e:
-        return EstadoAvatar(nombre, "falta", f"{e}; el widget muestra el ícono")
+        return EstadoAvatar(nombre, "falta", t("app.avatar_problem", error=e))
     except AvatarInvalido as e:
-        return EstadoAvatar(nombre, "invalido", f"{e}; el widget muestra el ícono")
+        return EstadoAvatar(nombre, "invalido", t("app.avatar_problem", error=e))
     mapa = mapa_eventos(avatar, config.avatar.eventos)
     return EstadoAvatar(nombre, "ok", "", avatar.expresiones, avatar.animaciones, mapa.respaldos, mapa.claves)
 
@@ -105,7 +106,7 @@ def _validar_tono(config: PersonalidadConfig) -> list[str]:
 
     idioma = _idioma()
     if config.tono.activo not in tonos_disponibles(idioma):
-        return [f"el tono {config.tono.activo!r} no existe para el idioma {idioma!r}"]
+        return [t("app.tone_missing_language", tone=config.tono.activo, language=idioma)]
     try:
         legado = cargar_paquete(idioma, proyecto=Path.cwd()).plantillas_legado
         plantillas = {s: ([v] if isinstance(v, str) else list(v)) for s, v in config.tono.plantillas.items()}
@@ -149,13 +150,18 @@ def validar_personalidad() -> tuple[list[str], list[str]]:
     avatar = estado_avatar(config)
     avisos = [] if errores else avisos_neutralidad(config)
     if avatar.estado in ("falta", "invalido"):
-        avisos.append(f"avatar {avatar.nombre!r}: {avatar.mensaje}")
+        avisos.append(t("app.avatar_warning", name=avatar.nombre, message=avatar.mensaje))
     for evento, pedida in avatar.respaldos.items():
-        avisos.append(f"al avatar le falta {pedida!r} (evento {evento}): usa {avatar.claves[evento]!r}")
+        avisos.append(t("app.avatar_fallback", requested=pedida, event=evento, used=avatar.claves[evento]))
     return errores, avisos
 
 
-PREFIJO_NEUTRALIDAD = "texto propio no neutro"
+_PARTES = {"cuerpo": "body", "ojos": "eyes"}  # parte del avatar → clave del mensaje
+
+
+def prefijo_neutralidad() -> str:
+    """Inicio de los avisos de neutralidad (en el idioma de la interfaz)."""
+    return t("app.not_neutral_prefix")
 
 
 def avisos_neutralidad(config: PersonalidadConfig | None = None) -> list[str]:
@@ -170,8 +176,8 @@ def avisos_neutralidad(config: PersonalidadConfig | None = None) -> list[str]:
     # Solo con reglas del propio idioma: las de respaldo (en) darían falsos avisos en otro idioma.
     if not propias or idioma != _idioma().lower().split("-")[0]:
         return []
-    return [f"{PREFIJO_NEUTRALIDAD}: {hallado} (los tonos incluidos lo evitan; cámbialo si tu público es de "
-            "varios países)" for hallado in regionalismos_en(propias, idioma)]
+    return [t("app.not_neutral", prefix=prefijo_neutralidad(), found=hallado)
+            for hallado in regionalismos_en(propias, idioma)]
 
 
 # --- tono -------------------------------------------------------------------------------------
@@ -190,7 +196,7 @@ def listar_tonos() -> list[TonoDisponible]:
 def aplicar_tono(tono: str) -> PersonalidadConfig:
     _exigir_proyecto()
     if tono not in TONOS:
-        raise PersonalidadInvalida([f"tono desconocido {tono!r}; disponibles: {', '.join(TONOS)}"])
+        raise PersonalidadInvalida([t("app.unknown_tone", tone=tono, available=", ".join(TONOS))])
     datos = _config().model_dump(mode="json")
     datos["tono"]["activo"] = tono
     return _escribir(datos)
@@ -206,9 +212,9 @@ def probar_tono(tono: str | None = None, situacion: str | None = None) -> dict[s
     config = _config()
     tono = tono or config.tono.activo
     if tono not in TONOS:
-        raise PersonalidadInvalida([f"tono desconocido {tono!r}; disponibles: {', '.join(TONOS)}"])
+        raise PersonalidadInvalida([t("app.unknown_tone", tone=tono, available=", ".join(TONOS))])
     if situacion is not None and situacion not in SITUACIONES:
-        raise PersonalidadInvalida([f"situación desconocida {situacion!r}; válidas: {', '.join(SITUACIONES)}"])
+        raise PersonalidadInvalida([t("app.unknown_situation", situation=situacion, valid=", ".join(SITUACIONES))])
     dominio = cargar_dominio()
     idioma = dominio.get("idioma", "es")
     legado = cargar_paquete(idioma, proyecto=Path.cwd()).plantillas_legado
@@ -250,13 +256,13 @@ def aplicar_avatar(nombre: str) -> PersonalidadConfig:
 def asignar_evento(evento: str, clave: str) -> PersonalidadConfig:
     _exigir_proyecto()
     if evento not in EVENTOS:
-        raise PersonalidadInvalida([f"evento desconocido {evento!r}; válidos: {', '.join(EVENTOS)}"])
+        raise PersonalidadInvalida([t("app.unknown_event", event=evento, valid=", ".join(EVENTOS))])
     config = _config()
     avatar = estado_avatar(config)
     if avatar.estado == "ok" and clave not in avatar.expresiones + avatar.animaciones:
-        raise PersonalidadInvalida([f"el avatar {avatar.nombre!r} no tiene la clave {clave!r}; "
-                                    f"animaciones: {', '.join(avatar.animaciones) or '—'}; "
-                                    f"expresiones: {', '.join(avatar.expresiones)}"])
+        raise PersonalidadInvalida([t("app.avatar_lacks_key", name=avatar.nombre, key=clave,
+                                      animations=", ".join(avatar.animaciones) or "—",
+                                      expressions=", ".join(avatar.expresiones))])
     datos = config.model_dump(mode="json")
     datos["avatar"]["eventos"][evento] = clave
     return _escribir(datos)
@@ -270,7 +276,7 @@ def colores_avatar(cuerpo: str | None = None, ojos: str | None = None) -> Person
             continue
         valor = valor.strip().lower()
         if not re.fullmatch(HEX, valor):
-            raise PersonalidadInvalida([f"color de {clave} inválido {valor!r}: usa #rrggbb (p. ej. #f5f1e8)"])
+            raise PersonalidadInvalida([t("app.invalid_color", part=t(f"app.color_{_PARTES[clave]}"), value=valor)])
         datos["avatar"]["colores"][clave] = valor
     return _escribir(datos)
 
@@ -298,7 +304,7 @@ def actualizar_personalidad(cambios: dict) -> PersonalidadConfig:
     """Fusiona ``cambios`` (parcial) sobre la personalidad y escribe si todo es válido."""
     _exigir_proyecto()
     if not isinstance(cambios, dict):
-        raise PersonalidadInvalida(["el cuerpo debe ser un objeto JSON"])
+        raise PersonalidadInvalida([t("app.body_object")])
     return _escribir(_fusionar(_config().model_dump(mode="json"), cambios))
 
 

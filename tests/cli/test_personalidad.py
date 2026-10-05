@@ -219,7 +219,7 @@ def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
     assert "Hay avisos (no bloquean)" in salida
     chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
     assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
-    assert chequeo.acciones == ("revisa tono.plantillas en config/personality.yaml "
+    assert chequeo.acciones == ("revisa tone.templates en config/personality.yaml "
                                 "(detalle: ipsis personality validate)",)
 
 

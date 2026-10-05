@@ -10,6 +10,7 @@ from typing import Any
 
 from ipsis.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 from ipsis.configuracion.archivos import escribir
 from ipsis.recursos import leer_plantilla
 
@@ -78,33 +79,40 @@ def _fusionar(destino: dict, cambios: dict) -> dict:
     return salida
 
 
+def _externo(ruta: str) -> str:
+    """``seccion.clave`` interna → la del archivo (``colores.acento`` → ``colors.accent``)."""
+    from ipsis.configuracion.glosario import nombres_externos
+
+    return nombres_externos(ruta, "estilos")
+
+
 def validar_tema(tema: dict) -> None:
     if not isinstance(tema, dict):
-        raise ValueError("el tema debe ser un objeto YAML")
+        raise ValueError(t("styles.not_object"))
     for seccion in _SECCIONES:
         valores = tema.get(seccion)
         if valores is not None and not isinstance(valores, dict):
-            raise ValueError(f"{seccion} debe ser un objeto")
+            raise ValueError(t("styles.section_object", section=_externo(seccion)))
         for clave, valor in (valores or {}).items():
             if isinstance(valor, bool):
                 if seccion != "animaciones" or clave != "activadas":
-                    raise ValueError(f"{seccion}.{clave} no admite booleanos")
+                    raise ValueError(t("styles.no_booleans", key=_externo(f"{seccion}.{clave}")))
                 continue
             if not isinstance(valor, (str, int, float)):
-                raise ValueError(f"{seccion}.{clave} debe ser un valor CSS escalar")
+                raise ValueError(t("styles.scalar", key=_externo(f"{seccion}.{clave}")))
             if any(caracter in str(valor) for caracter in (";", "{", "}", "<", ">", "\n", "\r")):
-                raise ValueError(f"{seccion}.{clave} contiene caracteres CSS no permitidos")
+                raise ValueError(t("styles.forbidden", key=_externo(f"{seccion}.{clave}")))
     presentacion = tema.get("presentacion") or {}
     if not isinstance(presentacion, dict):
-        raise ValueError("presentacion debe ser un objeto")
+        raise ValueError(t("styles.section_object", section="presentation"))
     if presentacion.get("densidad", "comoda") not in {"comoda", "compacta"}:
-        raise ValueError("presentacion.densidad debe ser 'comoda' o 'compacta'")
+        raise ValueError(t("styles.density"))
     # Las citas no se pueden ocultar: «abiertas» y «ocultas» son valores anteriores
     # que se leen como «lista» y «acordeon» (citas_presentacion).
     if presentacion.get("citas", "acordeon") not in {"acordeon", "lista", "abiertas", "ocultas"}:
-        raise ValueError("presentacion.citas debe ser acordeon o lista (las citas siempre se muestran)")
+        raise ValueError(t("styles.citations"))
     if not isinstance(presentacion.get("mostrar_etiqueta_estado", True), bool):
-        raise ValueError("presentacion.mostrar_etiqueta_estado debe ser booleano")
+        raise ValueError(t("styles.status_label"))
     ubicacion_widget(tema)  # valida tema.ubicacion
     render_css(tema=tema)
 
@@ -126,9 +134,9 @@ def ubicacion_widget(tema: dict | None = None) -> dict:
     tema = cargar_estilos() if tema is None else tema
     propia = tema.get("ubicacion") or {}
     if not isinstance(propia, dict):
-        raise ValueError("ubicacion debe ser un objeto")
+        raise ValueError(t("styles.section_object", section="placement"))
     if extra := set(propia) - set(UBICACION_POR_DEFECTO):
-        raise ValueError(f"ubicacion: claves desconocidas {sorted(extra)}")
+        raise ValueError(t("styles.unknown_keys", keys=sorted(extra)))
     base = dict(UBICACION_POR_DEFECTO)
     # Compatibilidad: forma.margen ("24px") era la distancia al borde antes de ubicacion.
     margen = str((tema.get("forma") or {}).get("margen", "")).strip().removesuffix("px")
@@ -137,12 +145,13 @@ def ubicacion_widget(tema: dict | None = None) -> dict:
     ubicacion = {**base, **propia}
     for clave, validos in (("posicion", POSICIONES), ("tamano", TAMANOS), ("lanzador", LANZADORES)):
         if ubicacion[clave] not in validos:
-            raise ValueError(f"ubicacion.{clave} debe ser uno de: {', '.join(validos)}")
+            raise ValueError(t("styles.one_of", key=_externo(clave),
+                               values=", ".join(_externo(v) for v in validos)))
     for clave, minimo, maximo in (("desplazamiento_x", 0, 400), ("desplazamiento_y", 0, 400),
                                   ("z_index", 0, 2147483647)):
         valor = ubicacion[clave]
         if isinstance(valor, bool) or not isinstance(valor, int) or not minimo <= valor <= maximo:
-            raise ValueError(f"ubicacion.{clave} debe ser un entero entre {minimo} y {maximo}")
+            raise ValueError(t("styles.integer_between", key=_externo(clave), minimum=minimo, maximum=maximo))
     return ubicacion
 
 
@@ -167,7 +176,8 @@ def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
 
     nombre = {externo: interno for interno, externo in NOMBRES_PRESETS.items()}.get(nombre, nombre)
     if nombre not in PRESETS:
-        raise ValueError(f"preset desconocido {nombre!r}; disponibles: {sorted(NOMBRES_PRESETS.values())}")
+        raise ValueError(t("styles.unknown_preset", name=nombre,
+                           available=", ".join(sorted(NOMBRES_PRESETS.values()))))
     base = _tema_base()
     actual = cargar_estilos(ruta)
     # Cada preset parte de fábrica para no heredar accidentalmente valores de
@@ -194,7 +204,7 @@ def generar_vista_previa(
     css_tema = render_css(tema=tema)
     preset = str(tema.get("preset") or "personalizado")
     if "</style" in css_tema.lower():
-        raise ValueError("css_extra no puede cerrar la etiqueta style en la vista previa")
+        raise ValueError(t("styles.custom_css_style"))
     preset_html = html.escape(preset)
     contenido_html = f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
@@ -265,7 +275,7 @@ def exportar_widget(
     posicion: str = "abajo-derecha",
 ) -> Path:
     if posicion not in POSICIONES:
-        raise ValueError(f"posición debe ser una de: {', '.join(POSICIONES)}")
+        raise ValueError(t("styles.position", values=", ".join(POSICIONES)))
     destino = Path(carpeta).resolve()
     destino.mkdir(parents=True, exist_ok=True)
     estaticos = files("ipsis.servicio").joinpath("estaticos")
@@ -298,7 +308,7 @@ def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
     """Fusiona ``cambios`` (parcial) sobre ``styles.yaml``; valida el tema completo
     antes de escribir (escritura atómica)."""
     if not isinstance(cambios, dict):
-        raise ValueError("el cuerpo debe ser un objeto JSON")
+        raise ValueError(t("styles.body_object"))
     tema = _fusionar(cargar_estilos(ruta), cambios)
     validar_tema(tema)
     escribir(ruta, tema, "estilos")
@@ -334,12 +344,12 @@ def _convertir(texto: str, ejemplo: Any) -> Any:
             return True
         if texto.lower() in ("false", "no", "0"):
             return False
-        raise ValueError(f"se esperaba true o false, no {texto!r}")
+        raise ValueError(t("styles.expected_boolean", value=texto))
     if isinstance(ejemplo, int):
         try:
             return int(texto)
         except ValueError as e:
-            raise ValueError(f"se esperaba un número entero, no {texto!r}") from e
+            raise ValueError(t("styles.expected_integer", value=texto)) from e
     return texto
 
 
@@ -355,18 +365,18 @@ def cambiar_estilo(asignaciones: list[str], ruta: str = RUTA_ESTILOS) -> dict:
         clave, separador, valor = asignacion.partition("=")
         seccion, punto, nombre = clave.strip().partition(".")
         if not separador or not punto:
-            raise ValueError(f"{asignacion!r}: usa seccion.clave=valor, p. ej. colors.accent=#0ea5e9")
+            raise ValueError(t("styles.assignment_form", assignment=asignacion))
         if seccion not in SECCIONES_EDITABLES:
-            raise ValueError(f"sección desconocida {seccion!r}; válidas: {', '.join(SECCIONES_EDITABLES)}")
+            raise ValueError(t("styles.unknown_section", section=seccion, valid=", ".join(SECCIONES_EDITABLES)))
         validas = base.get(seccion) or {}
         if nombre not in validas:
-            raise ValueError(f"clave desconocida {clave!r}; en {seccion}: {', '.join(validas)}")
+            raise ValueError(t("styles.unknown_key", key=clave, section=seccion, valid=", ".join(validas)))
         try:
             cambios.setdefault(seccion, {})[nombre] = _convertir(valor.strip(), validas[nombre])
         except ValueError as e:
-            raise ValueError(f"{clave}: {e}") from e
+            raise ValueError(t("styles.key_error", key=clave, error=e)) from e
     if not cambios:
-        raise ValueError("indica al menos un cambio: seccion.clave=valor")
+        raise ValueError(t("styles.no_changes"))
     return actualizar_estilos(a_interno(cambios, "estilos"), ruta)
 
 

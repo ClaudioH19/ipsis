@@ -22,6 +22,7 @@ from enum import Enum
 from pathlib import Path
 
 from ipsis.configuracion import rutas
+from ipsis.recursos.mensajes import t
 
 
 class Estado(str, Enum):
@@ -87,29 +88,30 @@ class ProyectoNoEncontrado(RuntimeError):
 
 ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
          "personalidad", "modo")
-NOMBRES = {
-    "configuracion": "Configuración", "perfil": "Perfil", "idioma": "Idioma", "stemmer": "Stemmer",
-    "modelos": "Modelos", "indice": "Índice", "calibracion": "Calibración", "golden": "Golden", "cors": "CORS",
-    "personalidad": "Personalidad", "modo": "Modo",
-}
 _PERFIL_CAMBIAR = "ipsis profile set light|medium|heavy"
-_GOLDEN_IMPORTAR = "ipsis golden import <archivo>"
 
 
 def _chequeo(clave: str, nivel: Estado, mensaje: str, acciones=(), detalles=(), **datos) -> ChequeoDoctor:
-    return ChequeoDoctor(clave, NOMBRES[clave], nivel, mensaje, tuple(acciones), tuple(detalles), datos)
+    return ChequeoDoctor(clave, t(f"check.name_{clave}"), nivel, mensaje, tuple(acciones), tuple(detalles), datos)
 
 
 def _no_evaluado(clave: str, depende: str) -> ChequeoDoctor:
-    return _chequeo(clave, Estado.NO_EVALUADO, f"no se evaluó: depende de {depende}")
+    return _chequeo(clave, Estado.NO_EVALUADO, t("check.not_evaluated", dependency=depende))
 
 
-def _breve(error: Exception) -> str:
-    """Error de YAML/Pydantic resumido en campo y problema."""
+def _breve(error: Exception, archivo: str | None = None) -> str:
+    """Error de YAML/Pydantic resumido en campo y problema; con ``archivo``, el campo
+    lleva los nombres de ese archivo (los que el usuario escribe), no los internos."""
+    from ipsis.configuracion.glosario import nombres_externos
+
+    def campo(loc) -> str:
+        ruta = ".".join(map(str, loc))
+        return (nombres_externos(ruta, archivo) if archivo else ruta) or t("check.root")
+
     errores = getattr(error, "errors", None)
     if callable(errores):
         try:
-            return "; ".join(f"{'.'.join(map(str, e['loc'])) or '(raíz)'}: {e['msg']}" for e in errores()[:3])
+            return "; ".join(f"{campo(e['loc'])}: {e['msg']}" for e in errores()[:3])
         except Exception:  # noqa: BLE001
             pass
     texto = str(error).strip()
@@ -141,10 +143,10 @@ class _Contexto:
                     self._golden = ("vigente", cargar_banco(manifiesto), None)
                 except FileNotFoundError as e:
                     self._golden = ("desactualizado", None,
-                                    f"falta un documento del banco en el corpus ({Path(e.filename or '').name})")
+                                    t("check.golden_missing_document", file=Path(e.filename or "").name))
                 except ValueError as e:
                     if "hash del corpus" in str(e):
-                        self._golden = ("desactualizado", None, "el corpus cambió desde que se importó")
+                        self._golden = ("desactualizado", None, t("check.golden_corpus_changed"))
                     else:
                         self._golden = ("ilegible", None, _breve(e))
                 except Exception as e:  # noqa: BLE001
@@ -161,31 +163,31 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
     try:
         ctx.dominio = cargar_dominio()
     except Exception as e:  # noqa: BLE001
-        problemas.append(f"{rutas.ASISTENTE}: {_breve(e)}")
-        acciones.append(f"corrige {rutas.ASISTENTE} (o 'ipsis init --force' para reiniciarlo)")
+        problemas.append(f"{rutas.ASISTENTE}: {_breve(e, 'asistente')}")
+        acciones.append(t("check.fix_assistant", path=rutas.ASISTENTE))
     if not Path(rutas.MOTOR).is_file():
-        problemas.append(f"no existe {rutas.MOTOR}")
-        acciones.append("ipsis init --force (crea engine.yaml; reinicia assistant.yaml con valores por defecto)")
+        problemas.append(t("check.no_file", path=rutas.MOTOR))
+        acciones.append(t("check.init_force"))
     else:
         try:
             motor = cargar_proyecto()
             config_recuperacion(motor, perfil="light")  # la sección recuperacion: existe
             ctx.motor = motor
         except Exception as e:  # noqa: BLE001
-            problemas.append(f"{rutas.MOTOR}: {_breve(e)}")
-            acciones.append(f"corrige {rutas.MOTOR}")
+            problemas.append(f"{rutas.MOTOR}: {_breve(e, 'motor')}")
+            acciones.append(t("check.fix_file", path=rutas.MOTOR))
     try:
         from ipsis.lenguaje.dominio import cargar_perfil
 
         cargar_perfil()
     except Exception as e:  # noqa: BLE001
-        problemas.append(f"{rutas.DOMINIO}: {_breve(e)}")
-        acciones.append(f"corrige {rutas.DOMINIO} (es opcional: también puedes borrarlo)")
+        problemas.append(f"{rutas.DOMINIO}: {_breve(e, 'dominio')}")
+        acciones.append(t("check.fix_domain", path=rutas.DOMINIO))
     if ctx.motor is not None:
         problema = _politica_abstencion(ctx.motor)
         if problema:
             problemas.append(problema)
-            acciones.append(f"corrige componentes.abstention_policy en {rutas.MOTOR}")
+            acciones.append(t("check.fix_policy", path=rutas.MOTOR))
     if Path(rutas.ESTILOS).is_file():
         try:
             from ipsis.aplicacion.estilos import cargar_estilos, render_css
@@ -195,11 +197,11 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
             validar_tema(tema)
             render_css(tema=tema)
         except Exception as e:  # noqa: BLE001
-            problemas.append(f"{rutas.ESTILOS}: {_breve(e)}")
-            acciones.append(f"corrige {rutas.ESTILOS} (mientras tanto el widget usa el diseño de fábrica)")
+            problemas.append(f"{rutas.ESTILOS}: {_breve(e, 'estilos')}")
+            acciones.append(t("check.fix_styles", path=rutas.ESTILOS))
     if problemas:
         return _chequeo("configuracion", Estado.ERROR, "; ".join(problemas), acciones)
-    return _chequeo("configuracion", Estado.OK, "assistant.yaml y engine.yaml válidos")
+    return _chequeo("configuracion", Estado.OK, t("check.config_ok"))
 
 
 def _politica_abstencion(motor: dict) -> str | None:
@@ -213,7 +215,7 @@ def _politica_abstencion(motor: dict) -> str | None:
         fabrica = registrar_componentes_base(RegistroComponentes()).obtener("abstention_policy", nombre)
         fabrica(umbrales=cargar_perfil_instalacion("light").umbrales_por_defecto)
     except Exception as e:  # noqa: BLE001
-        return f"{rutas.MOTOR}: política de abstención {nombre!r} no disponible: {_breve(e)}"
+        return t("check.policy_unavailable", path=rutas.MOTOR, name=nombre, error=_breve(e))
     return None
 
 
@@ -233,8 +235,8 @@ def _perfil(ctx: _Contexto) -> ChequeoDoctor:
         ctx.instalacion = perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
     except Exception as e:  # noqa: BLE001
         return _chequeo("perfil", Estado.ERROR,
-                        f"{nombre}: los ajustes_perfil de {rutas.MOTOR} no son válidos: {_breve(e)}",
-                        [f"corrige ajustes_perfil en {rutas.MOTOR}"], perfil=nombre)
+                        t("check.invalid_overrides", profile=nombre, path=rutas.MOTOR, error=_breve(e, "perfil")),
+                        [t("check.fix_overrides", path=rutas.MOTOR)], perfil=nombre)
     return _chequeo("perfil", Estado.OK, nombre, perfil=nombre)
 
 
@@ -248,38 +250,37 @@ def _idioma(ctx: _Contexto) -> ChequeoDoctor:
         ctx.paquete = cargar_paquete(codigo, proyecto=Path.cwd())
     except Exception as e:  # noqa: BLE001
         return _chequeo("idioma", Estado.ERROR,
-                        f"{codigo}: el paquete con las sobrescrituras de {rutas.IDIOMA} no es válido: {_breve(e)}",
-                        [f"corrige {rutas.IDIOMA} o bórralo para usar los textos del paquete"], idioma=codigo)
+                        t("check.language_invalid", code=codigo, path=rutas.IDIOMA, error=_breve(e)),
+                        [t("check.fix_language", path=rutas.IDIOMA)], idioma=codigo)
     if ctx.paquete.respaldo:
         return _chequeo("idioma", Estado.AVISO,
-                        f"{codigo}: no hay un paquete específico (disponibles: {', '.join(idiomas_disponibles())}); "
-                        f"se usan las reglas universales, términos sin stem y los textos de '{IDIOMA_RESPALDO}' "
-                        f"(tradúcelos en {rutas.IDIOMA})", idioma=codigo, respaldo=True)
+                        t("check.language_fallback", code=codigo, available=", ".join(idiomas_disponibles()),
+                          fallback=IDIOMA_RESPALDO, path=rutas.IDIOMA), idioma=codigo, respaldo=True)
     return _chequeo("idioma", Estado.OK, f"{codigo} ({ctx.paquete.nombre})", idioma=codigo, respaldo=False)
 
 
 def _stemmer(ctx: _Contexto) -> ChequeoDoctor:
     if ctx.paquete is None:
-        return _no_evaluado("stemmer", "el paquete de idioma")
+        return _no_evaluado("stemmer", t("check.dep_language_pack"))
     nombre = ctx.paquete.stemmer
     if not nombre:
-        return _chequeo("stemmer", Estado.OK, "no configurado para este idioma (términos sin stem)", stemmer=None)
+        return _chequeo("stemmer", Estado.OK, t("check.stemmer_none"), stemmer=None)
     import snowballstemmer
 
     from ipsis.lenguaje.texto import terminos
 
     disponibles = snowballstemmer.algorithms()
-    origen = rutas.IDIOMA if "stemmer" in _sobrescrituras_idioma() else f"el paquete {ctx.paquete.codigo}"
+    origen = (rutas.IDIOMA if "stemmer" in _sobrescrituras_idioma()
+              else t("check.stemmer_origin_pack", code=ctx.paquete.codigo))
     if nombre not in disponibles:
-        return _chequeo("stemmer", Estado.ERROR,
-                        f"{nombre!r} no existe en snowballstemmer (declarado en {origen})",
-                        [f"corrige 'stemmer' en {rutas.IDIOMA} (valores válidos: {', '.join(sorted(disponibles))})"],
+        return _chequeo("stemmer", Estado.ERROR, t("check.stemmer_unknown", name=nombre, origin=origen),
+                        [t("check.fix_stemmer_values", path=rutas.IDIOMA, values=", ".join(sorted(disponibles)))],
                         stemmer=nombre)
     try:
         terminos("documentos de prueba", ctx.paquete)  # la misma conversión que indexación y consulta
     except Exception as e:  # noqa: BLE001
-        return _chequeo("stemmer", Estado.ERROR, f"{nombre}: no se pudo instanciar: {_breve(e)}",
-                        [f"corrige 'stemmer' en {rutas.IDIOMA}"], stemmer=nombre)
+        return _chequeo("stemmer", Estado.ERROR, t("check.stemmer_failed", name=nombre, error=_breve(e)),
+                        [t("check.fix_stemmer", path=rutas.IDIOMA)], stemmer=nombre)
     return _chequeo("stemmer", Estado.OK, nombre, stemmer=nombre)
 
 
@@ -297,16 +298,15 @@ def _modelos(ctx: _Contexto) -> ChequeoDoctor:
     from ipsis.aplicacion.modelos import estado_modelos
 
     if ctx.instalacion is None:
-        return _no_evaluado("modelos", "el perfil")
+        return _no_evaluado("modelos", t("check.dep_profile"))
     estados = estado_modelos(ctx.instalacion)
-    detalles = [f"{e.rol}: {e.id_hf} -- {'disponible' if e.en_cache else 'falta'}" for e in estados]
+    detalles = [t("check.model_available" if e.en_cache else "check.model_missing", role=t(f"models.role_{e.rol}"),
+                  model=e.id_hf) for e in estados]
     faltan = [e.id_hf for e in estados if not e.en_cache]
     if faltan:
-        return _chequeo("modelos", Estado.ERROR, f"faltan en la caché: {', '.join(faltan)}",
+        return _chequeo("modelos", Estado.ERROR, t("check.models_missing", models=", ".join(faltan)),
                         ["ipsis models download"], detalles, faltantes=faltan)
-    return _chequeo("modelos", Estado.OK,
-                    "en la caché (no se cargaron; para probar la inferencia: ipsis models verify)",
-                    detalles=detalles, faltantes=[])
+    return _chequeo("modelos", Estado.OK, t("check.models_ok"), detalles=detalles, faltantes=[])
 
 
 def _documentos_cargados() -> int:
@@ -320,35 +320,35 @@ def _indice(ctx: _Contexto) -> ChequeoDoctor:
     from ipsis.configuracion.carga import config_recuperacion
 
     if ctx.instalacion is None or ctx.motor is None:
-        return _no_evaluado("indice", "la configuración y el perfil")
+        return _no_evaluado("indice", t("check.dep_config_profile"))
     perfil = ctx.instalacion.perfil
     stemmer = ctx.paquete.stemmer if ctx.paquete is not None else None
     indice = ctx.indice = estado_indice(perfil, stemmer=stemmer)
     if indice.estado == "sin_indice":
         n = _documentos_cargados()
         if n:
-            return _chequeo("indice", Estado.ERROR,
-                            f"todavía no existe y hay {n} documento(s) cargado(s) sin indexar",
+            return _chequeo("indice", Estado.ERROR, t("check.index_missing_documents", n=n),
                             ["ipsis index"], estado="sin_indice")
-        return _chequeo("indice", Estado.AVISO, "todavía no existe (no hay documentos cargados)",
-                        ["ipsis load <archivo|carpeta>", "ipsis index"], estado="sin_indice")
+        return _chequeo("indice", Estado.AVISO, t("check.index_missing"),
+                        [t("check.load_action"), "ipsis index"], estado="sin_indice")
     if indice.estado == "incompatible":
         if indice.modelo_indice != indice.modelo_requerido:
-            motivo = f"se construyó con {indice.modelo_indice} y el perfil {perfil} necesita {indice.modelo_requerido}"
+            motivo = t("check.index_model", built=indice.modelo_indice, profile=perfil,
+                       needed=indice.modelo_requerido)
         elif stemmer and indice.stemmer != stemmer:
-            motivo = f"se construyó con el stemmer {indice.stemmer!r} y el idioma usa {stemmer!r}"
+            motivo = t("check.index_stemmer", built=indice.stemmer, needed=stemmer)
         else:
-            motivo = "su manifiesto (versión de payload o dimensión) no corresponde a esta versión"
-        return _chequeo("indice", Estado.ERROR, f"incompatible: {motivo}", ["ipsis index"], estado="incompatible")
+            motivo = t("check.index_manifest")
+        return _chequeo("indice", Estado.ERROR, t("check.index_incompatible", reason=motivo), ["ipsis index"],
+                        estado="incompatible")
 
     fisico = verificar_indice() if ctx.abrir_indice else None
     if fisico is not None and fisico.bloqueante:
         return _chequeo("indice", Estado.ERROR, fisico.mensaje, fisico.acciones, estado="incompatible")
     if _corpus_cambio(indice, config_recuperacion(ctx.motor, perfil=perfil)):
-        return _chequeo("indice", Estado.ERROR, "los documentos cambiaron desde la última indexación",
+        return _chequeo("indice", Estado.ERROR, t("check.index_corpus_changed"),
                         ["ipsis index"], estado="corpus_cambiado")
-    return _chequeo("indice", Estado.OK,
-                    f"compatible ({indice.modelo_indice}, {indice.n_chunks} fragmentos, corpus sin cambios)",
+    return _chequeo("indice", Estado.OK, t("check.index_ok", model=indice.modelo_indice, n=indice.n_chunks),
                     estado="compatible")
 
 
@@ -368,53 +368,48 @@ def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
     from ipsis.configuracion.calibracion import leer_calibracion
 
     if ctx.instalacion is None or ctx.indice is None:
-        return _no_evaluado("calibracion", "el perfil y el índice")
+        return _no_evaluado("calibracion", t("check.dep_profile_index"))
     try:
         leer_calibracion(rutas.CALIBRACION)
     except Exception as e:  # noqa: BLE001 -- el motor tampoco podría leerla
         return _chequeo("calibracion", Estado.ERROR,
-                        f"{rutas.CALIBRACION} no es válido ({_breve(e)}); el motor no puede arrancar",
-                        ["ipsis calibrate --apply (la reescribe)", f"o borra {rutas.CALIBRACION}"], estado="ilegible")
+                        t("check.calibration_invalid", path=rutas.CALIBRACION, error=_breve(e, "calibracion")),
+                        [t("check.calibration_rewrite"), t("check.calibration_delete", path=rutas.CALIBRACION)],
+                        estado="ilegible")
     estado = estado_calibracion(ctx.instalacion, ctx.indice)
     if estado.estado == "sin_calibracion":
-        return _chequeo("calibracion", Estado.AVISO, "no hay (opcional); se usan los umbrales del perfil",
-                        estado="sin_calibracion")
+        return _chequeo("calibracion", Estado.AVISO, t("check.calibration_none"), estado="sin_calibracion")
     if estado.estado == "vigente":
-        return _chequeo("calibracion", Estado.OK, "vigente: sus umbrales están activos", estado="vigente")
+        return _chequeo("calibracion", Estado.OK, t("check.calibration_current"), estado="vigente")
     if estado.estado == "no_habilitada":
-        return _chequeo("calibracion", Estado.AVISO,
-                        f"guardada solo para auditoría ({estado.motivo})", estado="no_habilitada")
+        return _chequeo("calibracion", Estado.AVISO, t("check.calibration_audit", reason=estado.motivo),
+                        estado="no_habilitada")
     golden, banco, _ = ctx.golden()
     calibrable = golden == "vigente" and banco.manifiesto.uso != "regresion"
-    acciones = ["ipsis calibrate --apply"] if calibrable else [_GOLDEN_IMPORTAR, "ipsis calibrate --apply"]
-    return _chequeo("calibracion", Estado.AVISO,
-                    f"obsoleta ({estado.motivo}); rigen los umbrales del perfil y el archivo se conserva",
+    acciones = ["ipsis calibrate --apply"] if calibrable else [t("check.golden_import"), "ipsis calibrate --apply"]
+    return _chequeo("calibracion", Estado.AVISO, t("check.calibration_stale", reason=estado.motivo),
                     acciones, estado="obsoleta")
 
 
 def _golden(ctx: _Contexto) -> ChequeoDoctor:
     estado, banco, motivo = ctx.golden()
     if estado == "sin_golden":
-        return _chequeo("golden", Estado.AVISO, "no hay (opcional)", estado=estado)
+        return _chequeo("golden", Estado.AVISO, t("check.golden_none"), estado=estado)
     if estado == "desactualizado":
-        return _chequeo("golden", Estado.AVISO,
-                        f"{motivo}: no lo uses para evaluar ni calibrar hasta actualizarlo",
-                        ["ipsis golden validate", _GOLDEN_IMPORTAR], estado=estado)
+        return _chequeo("golden", Estado.AVISO, t("check.golden_stale", reason=motivo),
+                        ["ipsis golden validate", t("check.golden_import")], estado=estado)
     if estado == "ilegible":
-        return _chequeo("golden", Estado.AVISO,
-                        f"el banco importado no se puede leer ({motivo}); evaluar y calibrar quedan bloqueados",
-                        [_GOLDEN_IMPORTAR], estado=estado)
+        return _chequeo("golden", Estado.AVISO, t("check.golden_unreadable", reason=motivo),
+                        [t("check.golden_import")], estado=estado)
     m = banco.manifiesto
     if m.uso == "regresion":
-        return _chequeo("golden", Estado.OK,
-                        f"banco de regresión {m.dataset_id} ({len(banco.casos)} casos): sirve para evaluar, "
-                        "no para calibrar", estado=estado)
-    return _chequeo("golden", Estado.OK, f"{m.dataset_id} ({len(banco.casos)} casos), vigente con el corpus actual",
-                    estado=estado)
+        return _chequeo("golden", Estado.OK, t("check.golden_regression", id=m.dataset_id, n=len(banco.casos)),
+                        estado=estado)
+    return _chequeo("golden", Estado.OK, t("check.golden_ok", id=m.dataset_id, n=len(banco.casos)), estado=estado)
 
 
 def _cors(ctx: _Contexto) -> ChequeoDoctor:
-    """``cors_origenes`` vacío es el valor por defecto (nunca ``"*"`` de fábrica). Solo es
+    """``cors_origins`` vacío es el valor por defecto (nunca ``"*"`` de fábrica). Solo es
     error si ya hay claves de widget: alguien preparó el widget para un sitio real y el
     navegador bloqueará sus peticiones."""
     if ctx.dominio is None:
@@ -422,13 +417,10 @@ def _cors(ctx: _Contexto) -> ChequeoDoctor:
     origenes = ctx.dominio.get("cors_origenes") or []
     claves = ctx.dominio.get("claves_widget") or []
     if not origenes and claves:
-        return _chequeo("cors", Estado.ERROR,
-                        "cors_origins está vacío pero hay widget_keys configuradas: el navegador "
-                        "bloqueará las peticiones del widget desde tu sitio",
-                        ["ipsis configure cors_origins=https://tu-sitio.cl"])
+        return _chequeo("cors", Estado.ERROR, t("check.cors_missing"), [t("check.cors_action")])
     if not origenes:
-        return _chequeo("cors", Estado.OK, "sin orígenes (uso local); agrégalos antes de embeber el widget")
-    return _chequeo("cors", Estado.OK, f"orígenes permitidos: {', '.join(origenes)}")
+        return _chequeo("cors", Estado.OK, t("check.cors_local"))
+    return _chequeo("cors", Estado.OK, t("check.cors_ok", origins=", ".join(origenes)))
 
 
 def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
@@ -441,19 +433,20 @@ def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
     errores, avisos = validar_personalidad()
     if errores:
         return _chequeo("personalidad", Estado.ERROR, "; ".join(errores),
-                        [f"corrige {rutas.PERSONALIDAD} (detalle: ipsis personality validate)"])
+                        [t("check.fix_personality", path=rutas.PERSONALIDAD)])
     resumen = resumen_personalidad()
-    mensaje = f"tono {resumen.tono}; avatar {resumen.avatar.nombre} ({resumen.avatar.estado})"
+    mensaje = t("check.personality_ok", tone=resumen.tono, avatar=resumen.avatar.nombre, state=resumen.avatar.estado)
     if avisos:
-        from ipsis.aplicacion.personalidad import PREFIJO_NEUTRALIDAD
+        from ipsis.aplicacion.personalidad import prefijo_neutralidad
 
         if resumen.avatar.estado in ("falta", "invalido"):
-            accion = "ipsis personality avatar import <archivo.avatar.json>"
-        elif all(a.startswith(PREFIJO_NEUTRALIDAD) for a in avisos):
-            accion = f"revisa tono.plantillas en {rutas.PERSONALIDAD} (detalle: ipsis personality validate)"
+            accion = t("check.avatar_import")
+        elif all(a.startswith(prefijo_neutralidad()) for a in avisos):
+            accion = t("check.review_templates", path=rutas.PERSONALIDAD)
         else:
-            accion = "ipsis personality avatar events"
-        return _chequeo("personalidad", Estado.AVISO, f"tono {resumen.tono}; {'; '.join(avisos[:2])}", [accion],
+            accion = t("check.avatar_events")
+        return _chequeo("personalidad", Estado.AVISO,
+                        t("check.personality_warnings", tone=resumen.tono, warnings="; ".join(avisos[:2])), [accion],
                         tono=resumen.tono, avatar=resumen.avatar.estado)
     return _chequeo("personalidad", Estado.OK, mensaje, tono=resumen.tono, avatar=resumen.avatar.estado)
 
@@ -465,18 +458,18 @@ def _modo(ctx: _Contexto) -> ChequeoDoctor:
     try:
         modo = modo_servicio()
     except ValueError as e:
-        return _chequeo("modo", Estado.ERROR, str(e), ["usa IPSIS_MODE=produccion o IPSIS_MODE=desarrollo"])
+        return _chequeo("modo", Estado.ERROR, str(e), [t("check.mode_values")])
     if modo.problemas:
         return _chequeo("modo", Estado.ERROR, "; ".join(modo.problemas),
-                        ['genera uno: python -c "import secrets; print(secrets.token_urlsafe(32))"'], modo=modo.modo)
+                        [t("check.token_action")], modo=modo.modo)
     if modo.desarrollo:
-        return _chequeo("modo", Estado.AVISO, "desarrollo: /admin acepta HTTP desde cualquier IP; no lo uses en un "
-                        "servicio público", ["IPSIS_MODE=produccion (o quita --mode desarrollo)"], modo=modo.modo)
-    admin = "con /admin" if modo.admin_activo else "sin /admin"
+        return _chequeo("modo", Estado.AVISO, t("check.mode_development"), [t("check.mode_production_action")],
+                        modo=modo.modo)
+    admin = t("check.with_admin" if modo.admin_activo else "check.without_admin")
     if modo.admin_activo and not modo.proxy_confiable:
-        return _chequeo("modo", Estado.AVISO, f"producción {admin}: sin proxy declarado, /admin solo responde desde "
-                        "esta máquina", ["declara la IP del proxy HTTPS en IPSIS_TRUSTED_PROXY"], modo=modo.modo)
-    return _chequeo("modo", Estado.OK, f"producción {admin}", modo=modo.modo)
+        return _chequeo("modo", Estado.AVISO, t("check.mode_no_proxy", admin=admin), [t("check.proxy_action")],
+                        modo=modo.modo)
+    return _chequeo("modo", Estado.OK, t("check.mode_production", admin=admin), modo=modo.modo)
 
 
 CHEQUEOS: tuple[tuple[str, Callable[[_Contexto], ChequeoDoctor]], ...] = (
@@ -493,15 +486,15 @@ def diagnosticar(*, abrir_indice: bool = True) -> ReporteDoctor:
     abrir Qdrant): lo usa ``/ready``, porque el servicio ya tiene la colección abierta.
     """
     if not Path(rutas.ASISTENTE).is_file() and not Path(rutas.MOTOR).is_file():
-        raise ProyectoNoEncontrado("no se encontró un proyecto RAG en esta carpeta")
+        raise ProyectoNoEncontrado(t("check.no_project"))
     ctx = _Contexto(abrir_indice)
     chequeos = []
     for clave, funcion in CHEQUEOS:
         try:
             chequeos.append(funcion(ctx))
         except Exception as e:  # noqa: BLE001 -- un chequeo roto no detiene a los demás
-            chequeos.append(_chequeo(clave, Estado.ERROR, f"el chequeo falló: {_breve(e)}",
-                                     ["revisa los archivos de config/ y vuelve a ejecutar 'ipsis doctor'"]))
+            chequeos.append(_chequeo(clave, Estado.ERROR, t("check.check_failed", error=_breve(e)),
+                                     [t("check.check_failed_action")]))
     perfil = ctx.instalacion.perfil if ctx.instalacion is not None else None
     return ReporteDoctor(tuple(chequeos), perfil)
 
@@ -535,12 +528,12 @@ def verificar_indice() -> ChequeoDoctor:
         cfg = cargar_proyecto()
         cfg_rec = config_recuperacion(cfg)
     except Exception as e:  # noqa: BLE001
-        return _chequeo("indice", Estado.ERROR, f"no se pudo leer la configuración: {_breve(e)}", ["ipsis init"])
+        return _chequeo("indice", Estado.ERROR, t("check.config_unreadable", error=_breve(e)), ["ipsis init"])
 
     backend = cfg["componentes"]["retriever"]
     if backend != "qdrant":
-        return _chequeo("indice", Estado.ERROR, f"retriever desconocido: {backend!r}",
-                        [f"revisa componentes.retriever en {rutas.MOTOR}"])
+        return _chequeo("indice", Estado.ERROR, t("check.retriever_unknown", name=backend),
+                        [t("check.review_retriever", path=rutas.MOTOR)])
 
     modo = os.environ.get("QDRANT_MODO") or cfg.get("qdrant", {}).get("modo", "local")
     url_servidor = os.environ.get("QDRANT_URL") or cfg.get("qdrant", {}).get("url_servidor")
@@ -554,27 +547,24 @@ def verificar_indice() -> ChequeoDoctor:
             cliente.close()  # libera el candado del modo local
     except Exception as e:  # noqa: BLE001
         if modo == "servidor":
-            sugerencia = "revisa 'docker compose up -d qdrant' y 'curl http://localhost:6333/readyz'"
+            sugerencia = t("check.qdrant_server")
         elif "already accessed" in str(e):
             # En modo local Qdrant bloquea la carpeta del índice: el servicio
             # corriendo impide abrirla desde otro proceso.
-            sugerencia = ("detén el servicio ('ipsis serve') antes de diagnosticar: en modo local Qdrant "
-                          "bloquea la carpeta del índice (o usa qdrant.modo: \"servidor\")")
+            sugerencia = t("check.qdrant_locked")
         else:
-            sugerencia = "revisa que la carpeta del índice local sea legible"
-        return _chequeo("indice", Estado.ERROR, f"Qdrant (modo {modo!r}) no respondió: {_breve(e)}", [sugerencia])
+            sugerencia = t("check.qdrant_readable")
+        return _chequeo("indice", Estado.ERROR, t("check.qdrant_failed", mode=modo, error=_breve(e)), [sugerencia])
 
     if not existe:
-        return _chequeo("indice", Estado.ERROR, f"la colección {nombre_col!r} no existe (modo {modo!r})",
+        return _chequeo("indice", Estado.ERROR, t("check.collection_missing", name=nombre_col, mode=modo),
                         ["ipsis index"])
     from ipsis.indice.manifiesto import ruta_manifiesto
     from ipsis.indice.qdrant import ruta_estadisticas
 
     if not ruta_estadisticas(nombre_col).is_file() or not ruta_manifiesto(nombre_col).is_file():
-        return _chequeo("indice", Estado.ERROR,
-                        f"la colección {nombre_col!r} es de una versión anterior (sin estadísticas léxicas)",
-                        ["ipsis index"])
-    return _chequeo("indice", Estado.OK, f"colección {nombre_col!r} existe (modo {modo!r})")
+        return _chequeo("indice", Estado.ERROR, t("check.collection_old", name=nombre_col), ["ipsis index"])
+    return _chequeo("indice", Estado.OK, t("check.collection_ok", name=nombre_col, mode=modo))
 
 
 __all__ = ["CHEQUEOS", "ChequeoDoctor", "Estado", "ORDEN", "ProyectoNoEncontrado", "ReporteDoctor",
