@@ -107,6 +107,22 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[f
     return [s_lex(tq, terminos(u.texto, paquete), est) for u in unidades]
 
 
+def _es_salvedad(texto: str) -> bool:
+    """Una unidad que matiza a la anterior: con un marcador de excepción, o que
+    empieza con uno de condición («Si…», «Siempre que…»). Una condición de una
+    sola palabra en medio de la frase («se», «caso») es demasiado común para contar."""
+    from ipsis.lenguaje.entidades import idioma_activo, tiene_marcador
+
+    paquete = idioma_activo()
+    if paquete is None:
+        return False
+    if tiene_marcador(texto, paquete.marcadores.excepcion):
+        return True
+    inicio = texto.lstrip(" \t\n-•*(¿¡\"'«").lower()
+    return any(inicio.startswith(m.lower() + " ") or (" " in m.strip() and tiene_marcador(texto, [m]))
+               for m in paquete.marcadores.condicion if m.strip())
+
+
 @dataclass
 class ResultadoSeleccion:
     texto: str
@@ -115,12 +131,14 @@ class ResultadoSeleccion:
     recortado: bool  # False si el chunk completo ya entraba en el límite
     score_ancla: float  # score de la unidad más pertinente del tramo -- para ORDENAR entre fragmentos
     tiene_entidad_pregunta: bool = False  # True si el ancla se forzó por contener una entidad literal de la pregunta
+    seccion_path: list[str] | None = None  # la sección del tramo, si el chunk cruza de sección
 
 
 def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_inicio: int,
                                    limite_caracteres: int, estadisticas=None,
                                    entidades_pregunta: list[dict] | None = None,
-                                   centrada: bool = False) -> ResultadoSeleccion:
+                                   centrada: bool = False,
+                                   secciones: list[tuple[int, int, list[str]]] | None = None) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
     hasta ``limite_caracteres``. ``score_ancla`` (máximo de sus unidades)
@@ -141,7 +159,11 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
 
     ``centrada=True`` es para el lector QA, no para mostrar: agrega vecinos a
     ambos lados (primero el de mayor score; en empate, el de la izquierda),
-    porque el modelo lee mejor con el contexto previo."""
+    porque el modelo lee mejor con el contexto previo.
+
+    ``secciones`` (offsets relativos a ``texto_chunk``): si el chunk cruza de
+    sección, el tramo no sale de la sección de la oración ancla y
+    ``seccion_path`` la nombra, para que la cita sea la correcta."""
     unidades_completas = dividir_en_unidades(texto_chunk)
     scores_completos = _puntuar(pregunta, unidades_completas, estadisticas)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
@@ -164,18 +186,35 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
         idx_ancla = max(indices_con_entidad_global, key=lambda i: scores[i])
     else:
         idx_ancla = max(range(len(unidades)), key=lambda i: scores[i])
+    # Si el chunk cruza de sección, el tramo se queda en la del ancla.
+    seccion_ancla, rango = None, None
+    for ini_sec, fin_sec, ruta in secciones or []:
+        if ini_sec <= unidades[idx_ancla].offset_inicio < fin_sec:
+            seccion_ancla, rango = list(ruta), (ini_sec, fin_sec)
+            break
+
+    def en_rango(i: int) -> bool:
+        return rango is None or (rango[0] <= unidades[i].offset_inicio and unidades[i].offset_fin <= rango[1])
+
     # La oración ancla va PRIMERA y el contexto solo se agrega a la derecha:
     # si se antepusiera contexto, otra cifra («5 días hábiles») podría parecer
     # la respuesta a «¿En cuántos días hábiles se paga el reembolso?».
     lo = hi = idx_ancla
     while True:
-        vecinos = [i for i in ((lo - 1) if centrada else -1, hi + 1) if 0 <= i < len(unidades)]
+        vecinos = [i for i in ((lo - 1) if centrada else -1, hi + 1) if 0 <= i < len(unidades) and en_rango(i)]
         vecinos = [i for i in vecinos
                    if unidades[max(hi, i)].offset_fin - unidades[min(lo, i)].offset_inicio <= limite_caracteres]
         if not vecinos:
             break
         elegido = max(vecinos, key=lambda i: (scores[i], i < lo))
         lo, hi = min(lo, elegido), max(hi, elegido)
+
+    # Lo que se muestra no corta la salvedad que matiza la respuesta: si la
+    # unidad siguiente es una condición o excepción («salvo que…») y quedó
+    # afuera solo por largo, entra igual, con hasta un 50 % de margen.
+    if not centrada and hi + 1 < len(unidades) and en_rango(hi + 1) and _es_salvedad(unidades[hi + 1].texto):
+        if unidades[hi + 1].offset_fin - unidades[lo].offset_inicio <= limite_caracteres * 1.5:
+            hi += 1
 
     inicio, fin = unidades[lo].offset_inicio, unidades[hi].offset_fin
     return ResultadoSeleccion(
@@ -185,6 +224,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
         recortado=(inicio, fin) != (0, len(texto_chunk)),
         score_ancla=score_ancla_global,
         tiene_entidad_pregunta=tiene_entidad,
+        seccion_path=seccion_ancla,
     )
 
 
@@ -201,11 +241,15 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     ``entidades_pregunta``: si se entrega, prioriza la
     oración que contiene LITERALMENTE una de esas entidades como ancla,
     por sobre el score de similitud (ver ``seleccionar_texto_pertinente``)."""
+    base = payload["offset_inicio"]
+    secciones = [(s["inicio"] - base, s["fin"] - base, s["ruta"]) for s in payload.get("secciones") or []]
     resultado = seleccionar_texto_pertinente(
-        pregunta, payload["texto"], payload["offset_inicio"], limite_caracteres,
-        estadisticas=estadisticas, entidades_pregunta=entidades_pregunta,
+        pregunta, payload["texto"], base, limite_caracteres,
+        estadisticas=estadisticas, entidades_pregunta=entidades_pregunta, secciones=secciones or None,
     )
     nuevo = dict(payload)
+    if resultado.seccion_path is not None:
+        nuevo["seccion_path"] = resultado.seccion_path  # la cita nombra la sección del tramo
     nuevo["texto"] = resultado.texto
     nuevo["offset_inicio"] = resultado.offset_inicio
     nuevo["offset_fin"] = resultado.offset_fin

@@ -76,6 +76,8 @@ load:
   warning: '      [!] {warning}'
   homonym: '      [!] ya había un documento con ese nombre ({doc_id!r}) y otro contenido: este se agregó aparte y ambos se indexan. Si lo reemplaza, marca ''active: false'' en la entrada de {doc_id!r} en documents/catalog.yaml y ejecuta ''ipsis index''.'
   done: '{n} documento(s) nuevo(s) agregado(s) al catálogo (documents/catalog.yaml).'
+  rejected: '  x {file}: no se cargó. {reason}'
+  rejected_summary: '{n} archivo(s) no se cargaron (ver arriba); el resto sí.'
   next: 'Siguiente paso: ''ipsis index''.'
 index:
   help: Parsea, fragmenta, vectoriza y persiste el índice.
@@ -668,6 +670,7 @@ core:
   pdf_no_pages: '{path!r}: el PDF no tiene páginas.'
   pdf_scanned: '{path!r} parece un PDF ESCANEADO: la extracción de texto devolvió un promedio de {average:.1f} caracteres por página (umbral: {threshold}) sobre {pages} páginas. Este proyecto no soporta OCR -- convierte el documento a texto antes de cargarlo (p.ej. con una herramienta de OCR externa) o cárgalo como .docx/.md/.txt ya con su texto.'
   pdf_no_outline: 'este PDF no tiene marcadores (outline): se indexa sin estructura de secciones, lo que degrada los filtros por seccion_path.'
+  pdf_pages_without_text: '{n} de {total} páginas no tienen texto extraíble (¿imágenes o escaneos?): {pages}. Su contenido no se indexa; si importa, pásalas por OCR antes de cargar el PDF.'
   unsupported_format: 'formato no soportado: {extension!r} ({path!r}). Formatos soportados: {supported}'
   offline_missing: '{model} no está en la caché ({cache}) y HF_HUB_OFFLINE=1 impide descargarlo. Quita HF_HUB_OFFLINE, o descarga en una máquina con red y copia la caché (IPSIS_MODELS_DIR).'
   download_failed: 'no se pudo descargar {model}: {error}'

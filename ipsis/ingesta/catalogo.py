@@ -162,6 +162,8 @@ class DocumentoCargado:
     # Otro documento del catálogo con el mismo nombre de archivo y distinto contenido:
     # el nuevo se agrega aparte y el anterior sigue vigente hasta que se retire.
     homonimo_de: str | None = None
+    # Motivo por el que no se cargó (PDF escaneado, archivo dañado…); el resto sigue.
+    rechazo: str | None = None
 
 
 def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas.DOCUMENTOS,
@@ -171,7 +173,9 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
     HASH de contenido ya esté registrado (misma carga repetida: se avisa y
     no se duplica). Devuelve un resumen por documento, incluidas las
     advertencias del parser (p.ej. "sin estructura de secciones") para que
-    el llamador (la CLI) las muestre."""
+    el llamador (la CLI) las muestre. Un documento que no se puede leer
+    (``DocumentoEscaneadoError`` u otro error del parser) no detiene a los
+    demás: vuelve con ``rechazo`` y no se copia ni se cataloga."""
     Path(carpeta_corpus).mkdir(parents=True, exist_ok=True)
 
     catalogo_actual = cargar_catalogo(ruta_catalogo) if Path(ruta_catalogo).exists() else []
@@ -206,7 +210,14 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
         # quedar un archivo huérfano en documents/ sin entrada en el
         # catálogo -- defecto real encontrado reproduciendo 'ipsis load' con
         # un PDF escaneado en un directorio externo al repo.
-        doc_parseado = parsear_documento(str(ruta_origen), doc_id=doc_id, doc_titulo="(pendiente)", version="1")
+        try:
+            doc_parseado = parsear_documento(str(ruta_origen), doc_id=doc_id, doc_titulo="(pendiente)",
+                                             version="1")
+        except Exception as e:  # noqa: BLE001 -- un archivo ilegible no bloquea la carpeta
+            resultado.append(DocumentoCargado(
+                archivo=ruta_origen.name, doc_id="", doc_titulo="", version="-", vigente=False,
+                hash_contenido=hash_contenido, rechazo=str(e)))
+            continue
         titulo = inferir_titulo(doc_parseado, ruta_origen.name)
 
         destino = Path(carpeta_corpus) / ruta_origen.name

@@ -590,6 +590,13 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     nivel_por_tamano = {tam: min(i + 1, 3) for i, tam in enumerate(tamanos)}
     hay_estructura = bool(encabezados_por_pagina) or bool(tamanos)
     advertencias = [] if hay_estructura else [t("core.pdf_no_outline")]
+    # Un PDF con algunas páginas escaneadas pasa el umbral promedio: esas páginas
+    # no aportan texto y se avisa cuáles son, en vez de perderlas en silencio.
+    sin_texto = [i + 1 for i, texto in enumerate(textos_paginas)
+                 if len(texto.strip()) < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA]
+    if sin_texto:
+        advertencias.append(t("core.pdf_pages_without_text", pages=", ".join(map(str, sin_texto)),
+                              n=len(sin_texto), total=n_paginas))
 
     eventos: list[Evento] = []
     for i, (texto_pagina, grandes) in enumerate(paginas):

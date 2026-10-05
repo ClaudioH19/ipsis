@@ -35,6 +35,20 @@ class Chunk:
     offset_fin: int
     estrategia: str
     bloques_origen: list[int] = field(default_factory=list)
+    # Tramos (offset_inicio, offset_fin, seccion_path) de cada sección del chunk,
+    # en offsets del documento. Un chunk puede cruzar de sección (se busca por
+    # chunk); la cita usa la sección del tramo que se muestra.
+    secciones: list[tuple[int, int, list[str]]] = field(default_factory=list)
+
+
+def _secciones(bloques: list[Bloque], offset_fin: int) -> list[tuple[int, int, list[str]]]:
+    tramos: list[tuple[int, int, list[str]]] = []
+    for b in bloques:
+        if tramos and tramos[-1][2] == b.seccion_path:
+            tramos[-1] = (tramos[-1][0], b.offset_fin, tramos[-1][2])
+        else:
+            tramos.append((b.offset_inicio, b.offset_fin, list(b.seccion_path)))
+    return [(ini, min(fin, offset_fin), ruta) for ini, fin, ruta in tramos]
 
 
 def _n_tokens(texto: str) -> int:
@@ -61,6 +75,7 @@ def _construir_chunk(doc: DocumentoParseado, bloques: list[Bloque], orden: int, 
         offset_fin=offset_fin,
         estrategia=estrategia,
         bloques_origen=[b.indice for b in bloques],
+        secciones=_secciones(bloques, offset_fin),
     )
 
 

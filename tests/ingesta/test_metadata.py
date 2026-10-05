@@ -92,3 +92,13 @@ def test_validar_chunk_detecta_offsets_de_chunk_invertidos(taxonomia):
     p["offset_inicio"], p["offset_fin"] = p["offset_fin"], p["offset_inicio"]
     errores = validar_chunk(p, taxonomia)
     assert any(e.campo == "offsets" for e in errores)
+
+
+def test_los_marcadores_cuentan_solo_como_palabras_completas():
+    from ipsis.lenguaje.entidades import tiene_marcador
+
+    assert not tiene_marcador("El sistema se revisa en cada visita.", ["si"])
+    assert tiene_marcador("Si el equipo falla, llame al servicio.", ["si"])
+    assert tiene_marcador("Aplica salvo que el equipo esté instalado.", ["salvo", "a menos que"])
+    assert tiene_marcador("No aplica a menos que haya boleta.", ["a menos que"])
+    assert not tiene_marcador("Excepcionalmente se acepta.", ["excepto"])

@@ -8,6 +8,28 @@ a minor change may break compatibility and is marked as such.
 
 ### Fixed
 
+- **Answers and citations by section:** a chunk can still span several
+  sections (retrieval is unchanged), but it now records where each section
+  starts. The passage shown stays within the section of the sentence that
+  answers, without dragging in the next heading and its text, and the
+  citation names that section (it used to name the chunk's first one).
+  Re-run `ipsis index`. Measured on the universal bank: identical results
+  and latency within noise. Splitting chunks by section was measured too and
+  discarded: more exact answers in `light`, but a new false `ok` on a
+  same-topic trap.
+- **Condition and exception markers** count only as whole words: «si» no
+  longer matches inside «sistema» or «visita», which marked almost every
+  chunk as a condition and introduced passages with "This applies under a
+  condition:" for no reason. Re-run `ipsis index`.
+- **A caveat right after the answer is kept:** when the sentence that
+  follows the answer is an exception («Salvo que…») or starts with a
+  condition («Si…», «Siempre que…») and only missed the length limit, it is
+  shown too (up to 50 % over the limit), still literal and contiguous.
+- **Loading a folder with a scanned PDF** no longer aborts the whole load:
+  the scanned or unreadable file is reported and skipped, the rest is
+  loaded, and the command exits with 1.
+- **PDFs with some scanned pages** warn which pages have no text (their
+  content is not indexed) instead of losing them silently.
 - **Connectors across documents:** a passage from another document is no
   longer introduced as a condition or an exception of the first one ("This
   applies under a condition:"); it is added with an `addition` connector.

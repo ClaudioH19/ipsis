@@ -219,3 +219,36 @@ def test_ventana_centrada_para_el_lector_incluye_contexto_previo():
     lector = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200, centrada=True)
     assert mostrada.texto.startswith("Se cobra un recargo")
     assert lector.texto == texto
+
+
+def test_lo_que_se_muestra_no_corta_la_salvedad_siguiente():
+    """Si la oración que sigue a la respuesta es una excepción y no cabe por
+    poco, entra igual: mostrar «se reembolsa en 30 días» sin «salvo que…» engaña."""
+    respuesta = "El cliente puede pedir el reembolso dentro de 30 días corridos desde la compra."
+    salvedad = "Salvo que el equipo ya haya sido instalado por el servicio técnico."
+    texto = f"{respuesta} {salvedad} El horario de atención es de lunes a viernes."
+    pregunta = "¿En cuántos días puedo pedir el reembolso?"
+    mostrado = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=len(respuesta) + 20)
+    assert mostrado.texto == f"{respuesta} {salvedad}"
+    assert mostrado.texto == texto[mostrado.offset_inicio:mostrado.offset_fin]  # sigue siendo literal
+    # Para el lector QA no cambia nada, y una oración común no se cuela.
+    qa = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=len(respuesta) + 20, centrada=True)
+    assert qa.texto == respuesta
+    comun = f"{respuesta} El equipo se entrega con su manual impreso y su garantía."
+    assert seleccionar_texto_pertinente(pregunta, comun, 0, limite_caracteres=len(respuesta) + 20).texto == respuesta
+
+
+def test_si_el_chunk_cruza_de_seccion_el_tramo_se_queda_en_la_del_ancla():
+    """Se busca por chunk, pero se muestra y se cita por sección."""
+    garantia = "La garantía dura dos años desde la compra."
+    titulo = "Mantenimiento"
+    mantenimiento = "Descalcifique la cafetera cada tres meses."
+    texto = f"{garantia}\n{titulo}\n{mantenimiento}"
+    secciones = [(0, len(garantia), ["Garantía"]),
+                 (len(garantia) + len(titulo) + 2, len(texto), ["Mantenimiento"])]
+    r = seleccionar_texto_pertinente("¿Cada cuánto se descalcifica la cafetera?", texto, 1000, 500,
+                                     secciones=secciones)
+    assert r.texto == mantenimiento and r.seccion_path == ["Mantenimiento"]
+    assert r.offset_inicio == 1000 + texto.index(mantenimiento)
+    r = seleccionar_texto_pertinente("¿Cuánto dura la garantía?", texto, 1000, 500, secciones=secciones)
+    assert r.texto == garantia and r.seccion_path == ["Garantía"]  # no arrastra el título ni la otra sección

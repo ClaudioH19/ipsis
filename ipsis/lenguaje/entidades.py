@@ -453,5 +453,7 @@ def extraer_entidades(texto: str) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def tiene_marcador(texto: str, marcadores: Iterable[str]) -> bool:
+    """Si ``texto`` contiene alguno de los ``marcadores`` como palabras completas:
+    «si» no cuenta dentro de «sistema» ni «cuando» dentro de «cuandoquiera»."""
     texto_low = texto.lower()
-    return any(m.lower() in texto_low for m in marcadores)
+    return any(re.search(rf"(?<!\w){re.escape(m.lower())}(?!\w)", texto_low) for m in marcadores if m.strip())

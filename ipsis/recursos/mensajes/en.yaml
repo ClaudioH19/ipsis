@@ -76,6 +76,8 @@ load:
   warning: '      [!] {warning}'
   homonym: '      [!] there was already a document with that name ({doc_id!r}) and different content: this one was added separately and both are indexed. If it replaces it, set ''active: false'' on the {doc_id!r} entry in documents/catalog.yaml and run ''ipsis index''.'
   done: '{n} new document(s) added to the catalog (documents/catalog.yaml).'
+  rejected: '  x {file}: not loaded. {reason}'
+  rejected_summary: '{n} file(s) were not loaded (see above); the rest were.'
   next: 'Next step: ''ipsis index''.'
 index:
   help: Parse, chunk, embed and store the index.
@@ -668,6 +670,7 @@ core:
   pdf_no_pages: '{path!r}: the PDF has no pages.'
   pdf_scanned: '{path!r} looks like a SCANNED PDF: text extraction returned an average of {average:.1f} characters per page (threshold: {threshold}) over {pages} pages. This project does not support OCR -- convert the document to text before loading it (e.g. with an external OCR tool) or load it as .docx/.md/.txt with its text.'
   pdf_no_outline: 'this PDF has no bookmarks (outline): it is indexed without section structure, which weakens the filters by section_path.'
+  pdf_pages_without_text: '{n} of {total} pages have no extractable text (images or scans?): {pages}. Their content is not indexed; if it matters, run them through OCR before loading the PDF.'
   unsupported_format: 'unsupported format: {extension!r} ({path!r}). Supported formats: {supported}'
   offline_missing: '{model} is not in the cache ({cache}) and HF_HUB_OFFLINE=1 prevents downloading it. Remove HF_HUB_OFFLINE, or download on a machine with network access and copy the cache (IPSIS_MODELS_DIR).'
   download_failed: 'could not download {model}: {error}'

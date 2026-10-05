@@ -33,6 +33,9 @@ class ComandoCargar(Comando):
             return 1
 
         for d in resultado:
+            if d.rechazo:
+                print(t("load.rejected", file=d.archivo, reason=d.rechazo))
+                continue
             if d.ya_existia:
                 print(t("load.duplicate", file=d.archivo, doc_id=d.doc_id))
                 continue
@@ -41,9 +44,14 @@ class ComandoCargar(Comando):
                 print(t("load.warning", warning=a))
             if d.homonimo_de:
                 print(t("load.homonym", doc_id=d.homonimo_de))
-        print(t("load.done", n=sum(1 for d in resultado if not d.ya_existia)))
-        print(t("load.next"))
-        return 0
+        nuevos = sum(1 for d in resultado if not d.ya_existia and not d.rechazo)
+        rechazados = sum(1 for d in resultado if d.rechazo)
+        print(t("load.done", n=nuevos))
+        if rechazados:
+            print(t("load.rejected_summary", n=rechazados))
+        if nuevos:
+            print(t("load.next"))
+        return 1 if rechazados else 0
 
 
 class ComandoIndexar(Comando):

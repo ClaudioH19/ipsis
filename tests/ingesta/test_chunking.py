@@ -59,3 +59,13 @@ def test_chunking_tamano_fijo_solapa_pero_no_pierde_contenido(documento):
     indices_contenido = [b for b in documento.bloques if b.tipo_contenido != "titulo"]
     for b in indices_contenido:
         assert all(cobertura[b.offset_inicio:b.offset_fin]), f"Bloque {b.indice} no cubierto"
+
+
+
+@pytest.mark.parametrize("nombre_estrategia", list(ESTRATEGIAS.keys()))
+def test_cada_chunk_sabe_donde_empieza_cada_seccion(documento, nombre_estrategia):
+    for ch in ESTRATEGIAS[nombre_estrategia](documento):
+        assert ch.secciones and ch.secciones[0][2] == ch.seccion_path
+        assert ch.secciones[0][0] == ch.offset_inicio and ch.secciones[-1][1] <= ch.offset_fin
+        for (_, fin, ruta), (ini, _, siguiente) in zip(ch.secciones, ch.secciones[1:]):
+            assert fin <= ini and ruta != siguiente

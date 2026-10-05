@@ -169,7 +169,7 @@ def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool
     keywords = extraer_keywords(chunk.texto, estadisticas=estadisticas)
     hash_texto = "sha256:" + hashlib.sha256(chunk.texto.encode("utf-8")).hexdigest()
 
-    return {
+    payload = {
         "chunk_id": chunk.chunk_id,
         "doc_id": chunk.doc_id,
         "doc_titulo": doc_titulo,
@@ -200,3 +200,6 @@ def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool
         "pipeline_version": pipeline_version,
         "estrategia_chunking": chunk.estrategia,
     }
+    if len(chunk.secciones) > 1:
+        payload["secciones"] = [{"inicio": ini, "fin": fin, "ruta": ruta} for ini, fin, ruta in chunk.secciones]
+    return payload
