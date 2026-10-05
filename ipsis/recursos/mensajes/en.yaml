@@ -507,6 +507,33 @@ app:
   path_missing: '{path} does not exist'
   no_components: the configuration defines no components
   unknown_stage: the profile {profile!r} declares the unknown stage {stage!r}. Review profile_overrides.stages in config/engine.yaml. {error}
+bankfile:
+  missing_columns: '{file}: the columns {columns} are missing'
+  unsupported_format: 'unsupported format: {suffix}; use .csv, .jsonl or .json (SQuAD 2.0)'
+  no_extension: (no extension)
+  unknown_document: 'unknown document: {document!r}'
+  answer_not_found: 'the answer does not appear in the documents: {answer!r}'
+  answer_repeated: the answer appears {n} times ({documents}); the first one is used. Fill in the 'document' column to choose
+  invalid_id: '{origin}: invalid id {id!r} (lowercase letters, digits, ''_'' or ''-'')'
+  repeated_id: '{origin}: id {id!r} repeated (also in {other})'
+  small: 'the golden set has {n} rows: good as a quick check; to tune thresholds and compare profiles you want at least {minimum}'
+  few_unanswerable: 'only {n} of {total} rows are no_answer or false_premise (less than {minimum:.0%}): the risk of false ok answers cannot be measured well'
+  no_traps: 'there are no ''same_topic_trap'' rows: add unanswerable questions about the same topics as the answerable ones (e.g. «What does the warranty cover?» next to «When does it expire?»)'
+  not_certifiable: 'good for practical tuning, not for certifying: with 0 errors you need at least {needed} accepted answers in test to claim α=0.05 at 95% (there are ~{n} answerable rows in test)'
+  invalid_type: '{origin}: invalid type {type!r}; use {valid}'
+  needs_answer: '{origin}: an answerable row needs literal_answer copied from the document'
+  only_answerable: '{origin}: only answerable rows carry literal_answer'
+  invalid_subtype: '{origin}: invalid subtype {subtype!r}; use {valid}'
+  trap_type: '{origin}: ''same_topic_trap'' only applies to no_answer or false_premise'
+  pair_not_answerable: '{origin}: pair {pair!r} is not the id of an answerable row'
+  no_questions: 'the golden set has no complete questions: write at least one in the ''question'' column'
+  pair_incomplete: '{origin}: its pair {pair!r} was left incomplete; it is measured without a pair'
+  context_changed: '{origin}: the source paragraph is no longer the same in the corpus; the answer is searched by its text'
+  no_text: 'there is no indexable text in the documents: load documents before generating the template'
+  few_sections: 'the corpus has {sections} sections: fewer rows than the {n} requested are generated'
+  uncovered: 'no rows for: {documents} (n too small)'
+  offset_mismatch: '{id}: the answer offset does not match its context'
+  conversational_skipped: '{n} conversational questions are not exported: SQuAD 2.0 is extractive QA'
 check:
   name_configuracion: Configuration
   name_perfil: Profile

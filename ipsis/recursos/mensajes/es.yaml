@@ -507,6 +507,33 @@ app:
   path_missing: no existe {path}
   no_components: la configuración no define componentes
   unknown_stage: el perfil {profile!r} declara la etapa desconocida {stage!r}. Revisa profile_overrides.stages en config/engine.yaml. {error}
+bankfile:
+  missing_columns: '{file}: faltan las columnas {columns}'
+  unsupported_format: 'formato no soportado: {suffix}; usa .csv, .jsonl o .json (SQuAD 2.0)'
+  no_extension: (sin extensión)
+  unknown_document: 'documento desconocido: {document!r}'
+  answer_not_found: 'la respuesta no aparece en los documentos: {answer!r}'
+  answer_repeated: la respuesta aparece {n} veces ({documents}); se usa la primera. Indica la columna 'document' para elegir
+  invalid_id: '{origin}: id {id!r} inválido (minúsculas, dígitos, ''_'' o ''-'')'
+  repeated_id: '{origin}: id {id!r} repetido (también en {other})'
+  small: 'el golden tiene {n} filas: sirve como prueba rápida; para ajustar umbrales y comparar perfiles conviene tener al menos {minimum}'
+  few_unanswerable: 'solo {n} de {total} filas son no_answer o false_premise (menos de {minimum:.0%}): no se puede medir bien el riesgo de falsos ok'
+  no_traps: 'no hay filas ''same_topic_trap'': agrega preguntas sin respuesta sobre los mismos temas que las respondibles (p. ej. «¿Qué incluye la garantía?» junto a «¿Cuándo vence?»)'
+  not_certifiable: 'sirve para ajuste práctico, no para certificar: con 0 errores hacen falta al menos {needed} respuestas aceptadas en test para afirmar α=0,05 al 95% (hay ~{n} respondibles en test)'
+  invalid_type: '{origin}: tipo {type!r} inválido; usa {valid}'
+  needs_answer: '{origin}: una fila answerable necesita literal_answer copiada del documento'
+  only_answerable: '{origin}: solo las filas answerable llevan literal_answer'
+  invalid_subtype: '{origin}: subtipo {subtype!r} inválido; usa {valid}'
+  trap_type: '{origin}: ''same_topic_trap'' solo aplica a no_answer o false_premise'
+  pair_not_answerable: '{origin}: pair {pair!r} no es el id de una fila answerable'
+  no_questions: 'el golden no tiene preguntas completas: escribe al menos una en la columna ''question'''
+  pair_incomplete: '{origin}: su par {pair!r} quedó sin completar; se mide sin par'
+  context_changed: '{origin}: el párrafo de origen ya no está igual en el corpus; la respuesta se busca por su texto'
+  no_text: 'no hay texto indexable en los documentos: carga documentos antes de generar la plantilla'
+  few_sections: 'el corpus tiene {sections} secciones: se generan menos filas que las {n} pedidas'
+  uncovered: 'sin filas para: {documents} (n demasiado chico)'
+  offset_mismatch: '{id}: el offset de la respuesta no coincide con su contexto'
+  conversational_skipped: '{n} preguntas conversacionales no se exportan: SQuAD 2.0 es QA extractivo'
 check:
   name_configuracion: Configuración
   name_perfil: Perfil

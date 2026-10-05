@@ -245,9 +245,9 @@ contracciones:
   ' em a ': ' na '
 golden_instrucciones:
   nota_respondible: 'Escreva uma pergunta cuja resposta esteja EXPLÍCITA neste trecho de «{documento}» (tema: {terminos}).
-    Em respuesta_literal copie o dado mínimo exatamente como aparece.'
+    Em literal_answer copie o dado mínimo exatamente como aparece.'
   nota_trampa: Escreva uma pergunta sobre o MESMO tema ({terminos}) e a mesma entidade da linha {par}, mas que peça
-    um dado que NÃO está em nenhum documento. Deixe respuesta_literal vazia.
+    um dado que NÃO está em nenhum documento. Deixe literal_answer vazia.
   conversacionales:
   - olá
   - obrigado
@@ -256,22 +256,22 @@ golden_instrucciones:
     Este arquivo explica como preencher golden.csv. Com ele se mede se o\nassistente responde bem, e se ele se abstém\
     \ quando os documentos não têm a\nresposta. É opcional: o assistente funciona sem golden set. Nenhum modelo\
     \ é\ntreinado: apenas se medem resultados e se ajustam limiares.\n\nCOMO PREENCHER\n--------------\n1. Abra\
-    \ golden.csv no Excel, LibreOffice ou um editor de texto.\n2. Em cada linha escreva uma pergunta na coluna «pregunta»,\
-    \ como um\n   usuário real escreveria.\n3. Não altere as colunas «id», «tipo», «par» nem «subtipo».\n4. Linhas\
+    \ golden.csv no Excel, LibreOffice ou um editor de texto.\n2. Em cada linha escreva uma pergunta na coluna «question»,\
+    \ como um\n   usuário real escreveria.\n3. Não altere as colunas «id», «type», «pair» nem «subtype».\n4. Linhas\
     \ sem pergunta são ignoradas.\n5. Você pode adicionar linhas (deixe «id» vazio; ele é gerado).\n6. Salve como\
-    \ CSV UTF-8.\n\nTIPOS DE LINHA\n--------------\nrespondible\n  A resposta EXISTE literalmente nos documentos.\
-    \ Em «respuesta_literal»\n  copie o dado mínimo exatamente como aparece.\n    Pergunta:         Quanto tempo\
-    \ dura a garantia?\n    Resposta literal: 18 meses\n\nsin_respuesta (linhas «trampa_mismo_tema»)\n  Pergunta\
-    \ sobre o MESMO tema e a mesma entidade da sua linha par (coluna\n  «par»), mas que pede um dado que NÃO está\
-    \ em nenhum documento. Deixe\n  «respuesta_literal» vazia.\n    BOM:  o documento diz quanto dura a garantia,\
-    \ mas não quem a aprova\n          ->  Quem aprova a garantia?\n    RUIM: Qual é a capital do Japão?  (não tem\
-    \ relação com os documentos:\n          não testa nada útil)\n  Estas são as linhas mais importantes: verificam\
-    \ que o assistente não\n  responda com um trecho parecido que não contém o dado.\n\npremisa_falsa (opcional,\
-    \ adicione linhas)\n  Supõe algo que não existe: «O que diz o artigo 99?» se não há artigo 99.\n\nambigua (opcional,\
-    \ adicione linhas)\n  Não pode ser respondida sem esclarecimento: «Quanto tempo dura?».\n\nconversacional\n\
-    \  Saudações e cortesia; já vêm preenchidas.\n\nAJUDAS\n------\n«fragmento_sugerido» e «terminos_clave» mostram\
-    \ de qual seção vem cada\nlinha. «documento» indica o arquivo; use-o se o mesmo texto aparece em\nvários documentos.\n\
-    \nTAMANHO\n-------\nCom 30 a 60 perguntas o golden serve para ajustar e comparar perfis. Para\nCERTIFICAR estatisticamente\
-    \ um risco de respostas falsas menor que 5% são\nnecessárias pelo menos 59 respostas aceitas sem erro na parte\
-    \ de teste\n(mais de 120 perguntas respondíveis no total). O assistente avisa ao\nimportar se o tamanho não\
-    \ for suficiente.\n\nDepois: ipsis golden import golden/golden.csv\n"
+    \ CSV UTF-8.\n\nTIPOS DE LINHA\n--------------\nanswerable\n  A resposta EXISTE literalmente nos documentos.\
+    \ Em «literal_answer»\n  copie o dado mínimo exatamente como aparece.\n    Pergunta:         Quanto tempo dura\
+    \ a garantia?\n    Resposta literal: 18 meses\n\nno_answer (linhas «same_topic_trap»)\n  Pergunta sobre o MESMO\
+    \ tema e a mesma entidade da sua linha par (coluna\n  «pair»), mas que pede um dado que NÃO está em nenhum documento.\
+    \ Deixe\n  «literal_answer» vazia.\n    BOM:  o documento diz quanto dura a garantia, mas não quem a aprova\n\
+    \          ->  Quem aprova a garantia?\n    RUIM: Qual é a capital do Japão?  (não tem relação com os documentos:\n\
+    \          não testa nada útil)\n  Estas são as linhas mais importantes: verificam que o assistente não\n  responda\
+    \ com um trecho parecido que não contém o dado.\n\nfalse_premise (opcional, adicione linhas)\n  Supõe algo que\
+    \ não existe: «O que diz o artigo 99?» se não há artigo 99.\n\nambiguous (opcional, adicione linhas)\n  Não\
+    \ pode ser respondida sem esclarecimento: «Quanto tempo dura?».\n\nconversational\n  Saudações e cortesia; já\
+    \ vêm preenchidas.\n\nAJUDAS\n------\n«suggested_passage» e «key_terms» mostram de qual seção vem cada\nlinha.\
+    \ «document» indica o arquivo; use-o se o mesmo texto aparece em\nvários documentos.\n\nTAMANHO\n-------\nCom\
+    \ 30 a 60 perguntas o golden serve para ajustar e comparar perfis. Para\nCERTIFICAR estatisticamente um risco\
+    \ de respostas falsas menor que 5% são\nnecessárias pelo menos 59 respostas aceitas sem erro na parte de teste\n\
+    (mais de 120 perguntas respondíveis no total). O assistente avisa ao\nimportar se o tamanho não for suficiente.\n\
+    \nDepois: ipsis golden import golden/golden.csv\n"

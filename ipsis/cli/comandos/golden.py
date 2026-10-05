@@ -23,7 +23,7 @@ def _imprimir_errores(e: ErrorGolden) -> int:
 
 
 def _imprimir_resumen(resumen) -> None:
-    for tipo in ("respondible", "sin_respuesta", "premisa_falsa", "ambigua", "conversacional"):
+    for tipo in ("answerable", "no_answer", "false_premise", "ambiguous", "conversational"):
         if resumen.por_tipo.get(tipo):
             print(t("golden.type_row", type=tipo, n=resumen.por_tipo[tipo]))
     print(t("golden.split_row", dev=resumen.por_split.get("dev", 0), test=resumen.por_split.get("test", 0)))

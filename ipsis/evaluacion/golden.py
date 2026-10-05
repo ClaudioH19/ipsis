@@ -23,13 +23,25 @@ from ipsis.evaluacion.banco import (
     EvidenciaEsperada,
     ManifiestoBanco,
 )
+from ipsis.recursos.mensajes import t
 
-TIPOS = ("respondible", "sin_respuesta", "premisa_falsa", "ambigua", "conversacional")
-SUBTIPOS = ("trampa_mismo_tema",)
-# ``instrucciones``, ``fragmento_sugerido`` y ``terminos_clave`` son ayudas de la
-# plantilla: se ignoran al importar. ``notas`` queda libre para quien completa.
-COLUMNAS = ("id", "pregunta", "tipo", "respuesta_literal", "documento", "subtipo", "par", "notas",
-            "instrucciones", "fragmento_sugerido", "terminos_clave")
+# Lo que el cliente escribe (columnas, tipos y subtipo) va en inglés; los nombres
+# anteriores en español se siguen aceptando al importar.
+TIPOS = ("answerable", "no_answer", "false_premise", "ambiguous", "conversational")
+SUBTIPOS = ("same_topic_trap",)
+# ``instructions``, ``suggested_passage`` y ``key_terms`` son ayudas de la
+# plantilla: se ignoran al importar. ``notes`` queda libre para quien completa.
+COLUMNAS = ("id", "question", "type", "literal_answer", "document", "subtype", "pair", "notes",
+            "instructions", "suggested_passage", "key_terms")
+COLUMNAS_ANTERIORES = {"pregunta": "question", "tipo": "type", "respuesta_literal": "literal_answer",
+                       "documento": "document", "subtipo": "subtype", "par": "pair", "notas": "notes",
+                       "instrucciones": "instructions", "fragmento_sugerido": "suggested_passage",
+                       "terminos_clave": "key_terms"}
+TIPOS_ANTERIORES = {"respondible": "answerable", "sin_respuesta": "no_answer", "premisa_falsa": "false_premise",
+                    "ambigua": "ambiguous", "conversacional": "conversational"}
+# Subtipo del archivo ↔ subtipo del banco (interno).
+SUBTIPO_INTERNO = {"same_topic_trap": "trampa_mismo_tema", "trampa_mismo_tema": "trampa_mismo_tema"}
+SUBTIPO_PUBLICO = {"trampa_mismo_tema": "same_topic_trap"}
 MINIMO_FILAS = 30
 PROPORCION_MINIMA_SIN_RESPUESTA = 0.30
 # Con 0 errores, la cota de Clopper-Pearson al 95% baja de 5% recién con 59
@@ -38,10 +50,10 @@ ACEPTADAS_PARA_CERTIFICAR = 59
 UMBRAL_EXACTA = 0.6  # s_cov(pregunta, evidencia) ≥ 0,6 → exacta; si no, parafrasis
 
 _CATEGORIA_Y_ESTADO = {
-    "sin_respuesta": (CategoriaPregunta.SIN_RESPUESTA, "sin_respuesta"),
-    "premisa_falsa": (CategoriaPregunta.PREMISA_FALSA, "sin_respuesta"),
-    "ambigua": (CategoriaPregunta.AMBIGUA, "necesita_aclaracion"),
-    "conversacional": (CategoriaPregunta.CONVERSACIONAL, "conversacional"),
+    "no_answer": (CategoriaPregunta.SIN_RESPUESTA, "sin_respuesta"),
+    "false_premise": (CategoriaPregunta.PREMISA_FALSA, "sin_respuesta"),
+    "ambiguous": (CategoriaPregunta.AMBIGUA, "necesita_aclaracion"),
+    "conversational": (CategoriaPregunta.CONVERSACIONAL, "conversacional"),
 }
 _RE_ID = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 _RE_ESPACIOS = re.compile(r"\s+")
@@ -97,15 +109,18 @@ def _limpio(valor) -> str | None:
 
 
 def _fila(datos: dict, origen: str) -> FilaGolden:
+    datos = {COLUMNAS_ANTERIORES.get(clave, clave): valor for clave, valor in datos.items()}
+    tipo = (_limpio(datos.get("type")) or "").lower()
+    subtipo = _limpio(datos.get("subtype"))
     return FilaGolden(
-        pregunta=_limpio(datos.get("pregunta")) or "",
-        tipo=(_limpio(datos.get("tipo")) or "").lower(),
+        pregunta=_limpio(datos.get("question")) or "",
+        tipo=TIPOS_ANTERIORES.get(tipo, tipo),
         id=_limpio(datos.get("id")),
-        respuesta_literal=_limpio(datos.get("respuesta_literal")),
-        documento=_limpio(datos.get("documento")),
-        subtipo=_limpio(datos.get("subtipo")),
-        par=_limpio(datos.get("par")),
-        notas=_limpio(datos.get("notas")),
+        respuesta_literal=_limpio(datos.get("literal_answer")),
+        documento=_limpio(datos.get("document")),
+        subtipo=SUBTIPO_PUBLICO.get(subtipo, subtipo),
+        par=_limpio(datos.get("pair")),
+        notas=_limpio(datos.get("notes")),
         origen=origen,
     )
 
@@ -121,9 +136,9 @@ def leer_csv(ruta: str | Path) -> list[FilaGolden]:
     cabecera = texto.splitlines()[0] if texto else ""
     separador = ";" if cabecera.count(";") > cabecera.count(",") else ","
     lector = csv.DictReader(texto.splitlines(), delimiter=separador)
-    faltantes = {"pregunta", "tipo"} - set(lector.fieldnames or [])
+    faltantes = {"question", "type"} - {COLUMNAS_ANTERIORES.get(c, c) for c in lector.fieldnames or []}
     if faltantes:
-        raise ErrorGolden([f"{ruta.name}: faltan las columnas {sorted(faltantes)}"])
+        raise ErrorGolden([t("bankfile.missing_columns", file=ruta.name, columns=sorted(faltantes))])
     filas = [_fila(datos, f"{ruta.name}:{n}") for n, datos in enumerate(lector, start=2)]
     return [f for f in filas if f.pregunta]
 
@@ -138,12 +153,12 @@ def leer_jsonl(ruta: str | Path) -> list[FilaGolden]:
 
 
 def leer_squad2(ruta: str | Path) -> list[FilaGolden]:
-    """SQuAD 2.0 como formato de intercambio: ``is_impossible`` → sin_respuesta.
+    """SQuAD 2.0 como formato de intercambio: ``is_impossible`` → no_answer.
 
     El ``title`` de cada artículo se usa como ``documento``; ``context`` y
     ``answer_start`` ubican la ocurrencia exacta de la respuesta en el corpus.
     El objeto opcional ``"ipsis"`` de cada pregunta es una extensión propia
-    (``tipo``, ``subtipo``, ``par``, ``notas``) que escribe ``exportar_squad2``;
+    (``type``, ``subtype``, ``pair``, ``notes``) que escribe ``exportar_squad2``;
     un SQuAD externo sin él se importa igual.
     """
     ruta = Path(ruta)
@@ -156,21 +171,24 @@ def leer_squad2(ruta: str | Path) -> list[FilaGolden]:
                 respuesta = None if imposible else qa["answers"][0]
                 fila = _fila({
                     "id": qa.get("id"),
-                    "pregunta": qa.get("question"),
-                    "tipo": "sin_respuesta" if imposible else "respondible",
-                    "respuesta_literal": None if imposible else respuesta["text"],
-                    "documento": articulo.get("title"),
+                    "question": qa.get("question"),
+                    "type": "no_answer" if imposible else "answerable",
+                    "literal_answer": None if imposible else respuesta["text"],
+                    "document": articulo.get("title"),
                 }, f"{ruta.name}:{qa.get('id', '?')}")
                 if respuesta is not None:
                     fila.contexto = parrafo.get("context")
                     fila.inicio_contexto = respuesta.get("answer_start")
                 extension = qa.get("ipsis") if isinstance(qa.get("ipsis"), dict) else {}
+                extension = {COLUMNAS_ANTERIORES.get(c, c): v for c, v in extension.items()}
+                tipo = TIPOS_ANTERIORES.get(extension.get("type"), extension.get("type"))
                 # El tipo de la extensión solo afina dentro de lo que dice el estándar.
-                if extension.get("tipo") in TIPOS and (extension["tipo"] == "respondible") == (not imposible):
-                    fila.tipo = extension["tipo"]
-                fila.subtipo = _limpio(extension.get("subtipo"))
-                fila.par = _limpio(extension.get("par"))
-                fila.notas = _limpio(extension.get("notas"))
+                if tipo in TIPOS and (tipo == "answerable") == (not imposible):
+                    fila.tipo = tipo
+                subtipo = _limpio(extension.get("subtype"))
+                fila.subtipo = SUBTIPO_PUBLICO.get(subtipo, subtipo)
+                fila.par = _limpio(extension.get("pair"))
+                fila.notas = _limpio(extension.get("notes"))
                 filas.append(fila)
     return filas
 
@@ -180,7 +198,7 @@ def leer_golden(ruta: str | Path) -> list[FilaGolden]:
     sufijo = Path(ruta).suffix.lower()
     lectores = {".csv": leer_csv, ".jsonl": leer_jsonl, ".json": leer_squad2}
     if sufijo not in lectores:
-        raise ErrorGolden([f"formato no soportado: {sufijo or '(sin extensión)'}; usa .csv, .jsonl o .json (SQuAD 2.0)"])
+        raise ErrorGolden([t("bankfile.unsupported_format", suffix=sufijo or t("bankfile.no_extension"))])
     return lectores[sufijo](ruta)
 
 
@@ -222,17 +240,16 @@ def ubicar_respuesta(
     if documento:
         doc_id = documento if documento in documentos else (alias or {}).get(documento)
         if doc_id is None:
-            raise ValueError(f"documento desconocido: {documento!r}")
+            raise ValueError(t("bankfile.unknown_document", document=documento))
         candidatos = {doc_id: documentos[doc_id]}
     encontrados = [(doc_id, ini, fin) for doc_id, texto in candidatos.items()
                    for ini, fin in _ocurrencias(respuesta, texto)]
     if not encontrados:
-        raise ValueError(f"la respuesta no aparece en los documentos: {respuesta!r}")
+        raise ValueError(t("bankfile.answer_not_found", answer=respuesta))
     avisos = []
     if len(encontrados) > 1 and not documento:
         docs = sorted({d for d, _, _ in encontrados})
-        avisos.append(f"la respuesta aparece {len(encontrados)} veces ({', '.join(docs)}); se usa la primera. "
-                      "Indica la columna 'documento' para elegir")
+        avisos.append(t("bankfile.answer_repeated", n=len(encontrados), documents=", ".join(docs)))
     doc_id, ini, fin = encontrados[0]
     return Ubicacion(doc_id, ini, fin, documentos[doc_id][ini:fin]), avisos
 
@@ -297,13 +314,13 @@ def asignar_ids(filas: list[FilaGolden]) -> list[str]:
     errores = []
     for fila in filas:
         if fila.id is None:
-            fila.id = f"{fila.tipo or 'fila'}_{_hash(fila.pregunta)[:8]}"
+            fila.id = f"{fila.tipo or 'row'}_{_hash(fila.pregunta)[:8]}"
         elif not _RE_ID.match(fila.id):
-            errores.append(f"{fila.origen}: id {fila.id!r} inválido (minúsculas, dígitos, '_' o '-')")
+            errores.append(t("bankfile.invalid_id", origin=fila.origen, id=fila.id))
     vistos: dict[str, str] = {}
     for fila in filas:
         if fila.id in vistos:
-            errores.append(f"{fila.origen}: id {fila.id!r} repetido (también en {vistos[fila.id]})")
+            errores.append(t("bankfile.repeated_id", origin=fila.origen, id=fila.id, other=vistos[fila.id]))
         vistos.setdefault(fila.id, fila.origen)
     return errores
 
@@ -332,38 +349,34 @@ def avisos_de_tamano(filas: list[FilaGolden]) -> list[str]:
     golden chico sirve de prueba rápida, solo no permite medir el riesgo."""
     avisos = []
     if len(filas) < MINIMO_FILAS:
-        avisos.append(f"el golden tiene {len(filas)} filas: sirve como prueba rápida; para ajustar umbrales "
-                      f"y comparar perfiles conviene tener al menos {MINIMO_FILAS}")
-    sin = sum(f.tipo in {"sin_respuesta", "premisa_falsa"} for f in filas)
+        avisos.append(t("bankfile.small", n=len(filas), minimum=MINIMO_FILAS))
+    sin = sum(f.tipo in {"no_answer", "false_premise"} for f in filas)
     if filas and sin / len(filas) < PROPORCION_MINIMA_SIN_RESPUESTA:
-        avisos.append(f"solo {sin} de {len(filas)} filas son sin_respuesta o premisa_falsa "
-                      f"(menos de {PROPORCION_MINIMA_SIN_RESPUESTA:.0%}): no se puede medir bien el riesgo de falsos ok")
-    if not any(f.subtipo == "trampa_mismo_tema" for f in filas):
-        avisos.append("no hay filas 'trampa_mismo_tema': agrega preguntas sin respuesta sobre los mismos temas "
-                      "que las respondibles (p. ej. «¿Qué incluye la garantía?» junto a «¿Cuándo vence?»)")
-    respondibles_test = sum(f.tipo == "respondible" for f in filas) // 2
+        avisos.append(t("bankfile.few_unanswerable", n=sin, total=len(filas), minimum=PROPORCION_MINIMA_SIN_RESPUESTA))
+    if not any(f.subtipo == "same_topic_trap" for f in filas):
+        avisos.append(t("bankfile.no_traps"))
+    respondibles_test = sum(f.tipo == "answerable" for f in filas) // 2
     if respondibles_test < ACEPTADAS_PARA_CERTIFICAR:
-        avisos.append(f"sirve para ajuste práctico, no para certificar: con 0 errores hacen falta al menos "
-                      f"{ACEPTADAS_PARA_CERTIFICAR} respuestas aceptadas en test para afirmar α=0,05 al 95% "
-                      f"(hay ~{respondibles_test} respondibles en test)")
+        avisos.append(t("bankfile.not_certifiable", needed=ACEPTADAS_PARA_CERTIFICAR, n=respondibles_test))
     return avisos
 
 
 def _validar_fila(fila: FilaGolden, ids_respondibles: set[str], ids: set[str]) -> list[str]:
     errores = []
     if fila.tipo not in TIPOS:
-        errores.append(f"{fila.origen}: tipo {fila.tipo!r} inválido; usa {', '.join(TIPOS)}")
-    if fila.tipo == "respondible" and not fila.respuesta_literal:
-        errores.append(f"{fila.origen}: una fila respondible necesita respuesta_literal copiada del documento")
-    if fila.tipo != "respondible" and fila.respuesta_literal:
-        errores.append(f"{fila.origen}: solo las filas respondibles llevan respuesta_literal")
+        errores.append(t("bankfile.invalid_type", origin=fila.origen, type=fila.tipo, valid=", ".join(TIPOS)))
+    if fila.tipo == "answerable" and not fila.respuesta_literal:
+        errores.append(t("bankfile.needs_answer", origin=fila.origen))
+    if fila.tipo != "answerable" and fila.respuesta_literal:
+        errores.append(t("bankfile.only_answerable", origin=fila.origen))
     if fila.subtipo is not None:
         if fila.subtipo not in SUBTIPOS:
-            errores.append(f"{fila.origen}: subtipo {fila.subtipo!r} inválido; usa {', '.join(SUBTIPOS)}")
-        elif fila.tipo not in {"sin_respuesta", "premisa_falsa"}:
-            errores.append(f"{fila.origen}: 'trampa_mismo_tema' solo aplica a sin_respuesta o premisa_falsa")
+            errores.append(t("bankfile.invalid_subtype", origin=fila.origen, subtype=fila.subtipo,
+                             valid=", ".join(SUBTIPOS)))
+        elif fila.tipo not in {"no_answer", "false_premise"}:
+            errores.append(t("bankfile.trap_type", origin=fila.origen))
     if fila.par is not None and fila.par in ids and fila.par not in ids_respondibles:
-        errores.append(f"{fila.origen}: par {fila.par!r} no es el id de una fila respondible")
+        errores.append(t("bankfile.pair_not_answerable", origin=fila.origen, pair=fila.par))
     return errores
 
 
@@ -385,12 +398,12 @@ def a_banco(
     from ipsis.lenguaje.texto import terminos
 
     if not filas:
-        raise ErrorGolden(["el golden no tiene preguntas completas: escribe al menos una en la columna 'pregunta'"])
+        raise ErrorGolden([t("bankfile.no_questions")])
     errores = asignar_ids(filas)
     if errores:  # sin ids únicos no hay split ni pares
         raise ErrorGolden(errores)
     avisos = avisos_de_tamano(filas)
-    ids_respondibles = {f.id for f in filas if f.tipo == "respondible"}
+    ids_respondibles = {f.id for f in filas if f.tipo == "answerable"}
     ids = {f.id for f in filas}
     invalidas = set()
     for fila in filas:
@@ -399,7 +412,7 @@ def a_banco(
             errores += errores_fila
             invalidas.add(fila.id)
         if fila.par is not None and fila.par not in ids:
-            avisos.append(f"{fila.origen}: su par {fila.par!r} quedó sin completar; se mide sin par")
+            avisos.append(t("bankfile.pair_incomplete", origin=fila.origen, pair=fila.par))
             fila.par = None
 
     pendientes = []  # (comunes sin split, datos del caso); el split va al final, ya con la categoría
@@ -407,13 +420,13 @@ def a_banco(
         if fila.id in invalidas:  # ya reportada; se siguen revisando las demás
             continue
         comunes = dict(schema_version=1, dataset_version=dataset_version, id=fila.id,
-                       pregunta=fila.pregunta, notas=fila.notas, subtipo=fila.subtipo, par=fila.par)
-        if fila.tipo == "respondible":
+                       pregunta=fila.pregunta, notas=fila.notas,
+                       subtipo=SUBTIPO_INTERNO.get(fila.subtipo, fila.subtipo), par=fila.par)
+        if fila.tipo == "answerable":
             ubicacion, avisos_fila = ubicar_en_contexto(fila, documentos, alias), []
             if ubicacion is None:
                 if fila.contexto:
-                    avisos.append(f"{fila.origen}: el párrafo de origen ya no está igual en el corpus; "
-                                  "la respuesta se busca por su texto")
+                    avisos.append(t("bankfile.context_changed", origin=fila.origen))
                 try:
                     ubicacion, avisos_fila = ubicar_respuesta(fila.respuesta_literal, documentos, fila.documento,
                                                               alias)
@@ -556,14 +569,14 @@ def generar_plantilla(corpus, paquete, n: int = 40) -> Plantilla:
         textos = cargar_paquete("en").golden_instrucciones
     secciones = [s for documento in corpus for s in secciones_de(documento)]
     if not secciones:
-        raise ErrorGolden(["no hay texto indexable en los documentos: carga documentos antes de generar la plantilla"])
+        raise ErrorGolden([t("bankfile.no_text")])
     est = EstadisticasLexicas.construir([s.texto for s in secciones], paquete)
     avisos: list[str] = []
     n_conversacionales = len(textos.conversacionales)
     n_trampas = round(n * PROPORCION_TRAMPAS)
     n_respondibles = n - n_conversacionales - n_trampas
     if len(secciones) < n_respondibles:
-        avisos.append(f"el corpus tiene {len(secciones)} secciones: se generan menos filas que las {n} pedidas")
+        avisos.append(t("bankfile.few_sections", sections=len(secciones), n=n))
         n_respondibles = len(secciones)
         # ~35% del total, contando las conversacionales; nunca más trampas que pares.
         n_trampas = min(n_respondibles, round((n_respondibles + n_conversacionales) * PROPORCION_TRAMPAS
@@ -572,25 +585,25 @@ def generar_plantilla(corpus, paquete, n: int = 40) -> Plantilla:
     documentos = {d.doc_id for d in corpus}
     cubiertos = {secciones[i].doc_id for i in elegidas}
     if documentos - cubiertos:
-        avisos.append(f"sin filas para: {', '.join(sorted(documentos - cubiertos))} (n demasiado chico)")
+        avisos.append(t("bankfile.uncovered", documents=", ".join(sorted(documentos - cubiertos))))
 
     filas: list[dict] = []
     for numero, i in enumerate(elegidas, start=1):
         seccion = secciones[i]
         clave = ", ".join(_terminos_clave(seccion.texto, est, paquete))
-        comunes = {"documento": seccion.doc_id, "fragmento_sugerido": _fragmento(seccion.texto),
-                   "terminos_clave": clave}
+        comunes = {"document": seccion.doc_id, "suggested_passage": _fragmento(seccion.texto),
+                   "key_terms": clave}
         id_respondible = f"r{numero:03d}"
-        filas.append({"id": id_respondible, "tipo": "respondible", **comunes,
-                      "instrucciones": textos.nota_respondible.format(documento=seccion.doc_id, terminos=clave,
+        filas.append({"id": id_respondible, "type": "answerable", **comunes,
+                      "instructions": textos.nota_respondible.format(documento=seccion.doc_id, terminos=clave,
                                                               par=id_respondible)})
         if numero <= n_trampas:
-            filas.append({"id": f"t{numero:03d}", "tipo": "sin_respuesta", "subtipo": "trampa_mismo_tema",
-                          "par": id_respondible, **comunes,
-                          "instrucciones": textos.nota_trampa.format(documento=seccion.doc_id, terminos=clave,
+            filas.append({"id": f"t{numero:03d}", "type": "no_answer", "subtype": "same_topic_trap",
+                          "pair": id_respondible, **comunes,
+                          "instructions": textos.nota_trampa.format(documento=seccion.doc_id, terminos=clave,
                                                              par=id_respondible)})
     for numero, pregunta in enumerate(textos.conversacionales, start=1):
-        filas.append({"id": f"c{numero:03d}", "pregunta": pregunta, "tipo": "conversacional"})
+        filas.append({"id": f"c{numero:03d}", "question": pregunta, "type": "conversational"})
     return Plantilla([{c: fila.get(c, "") for c in COLUMNAS} for fila in filas], textos.leeme, avisos)
 
 
@@ -598,7 +611,7 @@ def escribir_plantilla(plantilla: Plantilla, carpeta: str | Path) -> tuple[Path,
     """Escribe ``golden.csv`` (UTF-8 con BOM, para que Excel respete las tildes)
     y ``LEEME.txt`` en ``carpeta``."""
     carpeta = Path(carpeta)
-    ruta_csv, ruta_leeme = carpeta / "golden.csv", carpeta / "LEEME.txt"
+    ruta_csv, ruta_leeme = carpeta / "golden.csv", carpeta / "README.txt"
     escribir_csv(plantilla.filas, ruta_csv)
     escribir_atomico(ruta_leeme, plantilla.leeme)
     return ruta_csv, ruta_leeme
@@ -608,14 +621,14 @@ def escribir_plantilla(plantilla: Plantilla, carpeta: str | Path) -> tuple[Path,
 # Escritura y exportación (``ipsis golden import`` / ``exportar``)
 # ---------------------------------------------------------------------------
 TIPO_PUBLICO = {
-    CategoriaPregunta.EXACTA: "respondible",
-    CategoriaPregunta.PARAFRASIS: "respondible",
-    CategoriaPregunta.SIN_RESPUESTA: "sin_respuesta",
-    CategoriaPregunta.PREMISA_FALSA: "premisa_falsa",
-    CategoriaPregunta.AMBIGUA: "ambigua",
-    CategoriaPregunta.CONVERSACIONAL: "conversacional",
+    CategoriaPregunta.EXACTA: "answerable",
+    CategoriaPregunta.PARAFRASIS: "answerable",
+    CategoriaPregunta.SIN_RESPUESTA: "no_answer",
+    CategoriaPregunta.PREMISA_FALSA: "false_premise",
+    CategoriaPregunta.AMBIGUA: "ambiguous",
+    CategoriaPregunta.CONVERSACIONAL: "conversational",
 }
-COLUMNAS_EXPORTADAS = ("id", "pregunta", "tipo", "respuesta_literal", "documento", "subtipo", "par", "notas")
+COLUMNAS_EXPORTADAS = ("id", "question", "type", "literal_answer", "document", "subtype", "pair", "notes")
 
 
 def escribir_atomico(ruta: Path, texto: str, encoding: str = "utf-8") -> None:
@@ -657,16 +670,17 @@ def escribir_banco(banco: BancoEvaluacion, carpeta: str | Path) -> Path:
 def exportar_filas_csv(banco: BancoEvaluacion) -> list[dict]:
     """El banco como filas del golden: tipo público, sin offsets ni split."""
     return [{
-        "id": caso.id, "pregunta": caso.pregunta, "tipo": TIPO_PUBLICO[caso.categoria],
-        "respuesta_literal": caso.respuesta_literal,
-        "documento": caso.evidencias[0].doc_id if caso.evidencias else None,
-        "subtipo": caso.subtipo, "par": caso.par, "notas": caso.notas,
+        "id": caso.id, "question": caso.pregunta, "type": TIPO_PUBLICO[caso.categoria],
+        "literal_answer": caso.respuesta_literal,
+        "document": caso.evidencias[0].doc_id if caso.evidencias else None,
+        "subtype": SUBTIPO_PUBLICO.get(caso.subtipo, caso.subtipo), "pair": caso.par, "notes": caso.notas,
     } for caso in banco.casos]
 
 
 def _qa(caso: CasoEvaluacion, respuestas: list[dict]) -> dict:
-    extension = {k: v for k, v in {"tipo": TIPO_PUBLICO[caso.categoria], "subtipo": caso.subtipo,
-                                    "par": caso.par, "notas": caso.notas}.items() if v}
+    extension = {k: v for k, v in {"type": TIPO_PUBLICO[caso.categoria],
+                                    "subtype": SUBTIPO_PUBLICO.get(caso.subtipo, caso.subtipo),
+                                    "pair": caso.par, "notes": caso.notas}.items() if v}
     return {"id": caso.id, "question": caso.pregunta, "answers": respuestas,
             "is_impossible": not respuestas, "ipsis": extension}
 
@@ -680,7 +694,7 @@ def exportar_squad2(banco: BancoEvaluacion, documentos: dict[str, str]) -> tuple
       ``answers: []``. Una trampa con ``par`` va en el párrafo de su par (el
       estilo de SQuAD 2.0); las demás, en un párrafo con ``context`` vacío.
     - ``premisa_falsa`` y ``ambigua`` se exportan como ``is_impossible``: el
-      estándar pierde esa distinción, que conserva ``"ipsis": {"tipo": ...}``.
+      estándar pierde esa distinción, que conserva ``"ipsis": {"type": ...}``.
     - Las conversacionales no son QA extractivo: no se exportan (aviso).
     """
     parrafos: dict[tuple[str, str], list[dict]] = {}
@@ -695,7 +709,7 @@ def exportar_squad2(banco: BancoEvaluacion, documentos: dict[str, str]) -> tuple
         contexto = texto[a:b]
         inicio = inicio_respuesta - a
         if contexto[inicio:inicio + len(caso.respuesta_literal)] != caso.respuesta_literal:
-            raise ValueError(f"{caso.id}: el offset de la respuesta no coincide con su contexto")
+            raise ValueError(t("bankfile.offset_mismatch", id=caso.id))
         contexto_de[caso.id] = (evidencia.doc_id, contexto)
         parrafos.setdefault((evidencia.doc_id, contexto), []).append(
             _qa(caso, [{"text": caso.respuesta_literal, "answer_start": inicio}]))
@@ -710,7 +724,7 @@ def exportar_squad2(banco: BancoEvaluacion, documentos: dict[str, str]) -> tuple
             continue
         parrafos.setdefault(contexto_de.get(caso.par, ("", "")), []).append(_qa(caso, []))
     if conversacionales:
-        avisos.append(f"{conversacionales} preguntas conversacionales no se exportan: SQuAD 2.0 es QA extractivo")
+        avisos.append(t("bankfile.conversational_skipped", n=conversacionales))
 
     articulos: dict[str, list[dict]] = {}
     for (doc_id, contexto), qas in parrafos.items():

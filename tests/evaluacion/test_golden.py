@@ -81,7 +81,7 @@ def test_leer_csv_con_bom_y_punto_y_coma(tmp_path):
                     ";;;\n", encoding="utf-8-sig")
     filas = leer_csv(ruta)
     assert len(filas) == 1  # la fila vacía de la plantilla se ignora
-    assert (filas[0].id, filas[0].tipo, filas[0].respuesta_literal) == ("r1", "respondible", "24 meses")
+    assert (filas[0].id, filas[0].tipo, filas[0].respuesta_literal) == ("r1", "answerable", "24 meses")
     assert filas[0].origen == "golden.csv:2"
 
 
@@ -95,7 +95,7 @@ def test_leer_csv_sin_columnas_obligatorias_falla(tmp_path):
 def test_leer_jsonl_y_squad2(tmp_path):
     jsonl = tmp_path / "g.jsonl"
     jsonl.write_text(json.dumps({"pregunta": "¿Y?", "tipo": "ambigua"}) + "\n", encoding="utf-8")
-    assert leer_jsonl(jsonl)[0].tipo == "ambigua"
+    assert leer_jsonl(jsonl)[0].tipo == "ambiguous"
 
     squad = tmp_path / "g.json"
     squad.write_text(json.dumps({"version": "v2.0", "data": [{"title": "manual", "paragraphs": [{
@@ -107,8 +107,8 @@ def test_leer_jsonl_y_squad2(tmp_path):
         ]}]}]}), encoding="utf-8")
     filas = leer_squad2(squad)
     assert [(f.tipo, f.documento, f.respuesta_literal) for f in filas] == [
-        ("respondible", "manual", "24 meses"), ("sin_respuesta", "manual", None)]
-    assert (filas[1].subtipo, filas[1].par) == ("trampa_mismo_tema", "q1")
+        ("answerable", "manual", "24 meses"), ("no_answer", "manual", None)]
+    assert (filas[1].subtipo, filas[1].par) == ("same_topic_trap", "q1")
     assert len(leer_golden(squad)) == 2
     with pytest.raises(ErrorGolden, match="formato no soportado"):
         leer_golden(tmp_path / "g.xlsx")
@@ -116,10 +116,10 @@ def test_leer_jsonl_y_squad2(tmp_path):
 
 # --- separación y banco ----------------------------------------------------------
 def _filas(n_respondibles=10, n_trampas=6):
-    filas = [FilaGolden(id=f"r{i}", pregunta="¿Cuántos meses cubre la garantía?", tipo="respondible",
+    filas = [FilaGolden(id=f"r{i}", pregunta="¿Cuántos meses cubre la garantía?", tipo="answerable",
                         respuesta_literal="24 meses") for i in range(n_respondibles)]
-    filas += [FilaGolden(id=f"t{i}", pregunta=f"¿Qué incluye la garantía {i}?", tipo="sin_respuesta",
-                         subtipo="trampa_mismo_tema", par="r0") for i in range(n_trampas)]
+    filas += [FilaGolden(id=f"t{i}", pregunta=f"¿Qué incluye la garantía {i}?", tipo="no_answer",
+                         subtipo="same_topic_trap", par="r0") for i in range(n_trampas)]
     return filas
 
 
@@ -146,33 +146,33 @@ def test_separacion_por_estrato_reparte_exactas_y_parafrasis():
 def test_avisos_de_tamano_balance_y_certificacion():
     avisos = avisos_de_tamano(_filas(10, 2))
     assert any("prueba rápida" in a and "30" in a for a in avisos)  # chico: aviso, no error
-    assert any("sin_respuesta o premisa_falsa" in a for a in avisos)
+    assert any("no_answer o false_premise" in a for a in avisos)
     assert any("no para certificar" in a and "59" in a for a in avisos)
 
 
 def test_a_banco_ubica_clasifica_y_valida_contra_el_corpus():
     est, es = _est()
     filas = _filas(2, 1) + [
-        FilaGolden(id="p1", pregunta="¿Cuándo vence la garantía?", tipo="respondible",
+        FilaGolden(id="p1", pregunta="¿Cuándo vence la garantía?", tipo="answerable",
                    respuesta_literal="24 meses desde la fecha de compra"),
-        FilaGolden(pregunta="hola", tipo="conversacional"),
+        FilaGolden(pregunta="hola", tipo="conversational"),
     ]
     resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
     casos = {c.id: c for c in resultado.banco.casos}
     assert casos["r0"].categoria == CategoriaPregunta.EXACTA  # meses, cubre, garantía: en la oración
     assert casos["p1"].categoria == CategoriaPregunta.PARAFRASIS  # «vence» no está
     assert casos["t0"].subtipo == "trampa_mismo_tema" and casos["t0"].par == "r0"
-    assert any(i.startswith("conversacional_") for i in casos)
+    assert any(i.startswith("conversational_") for i in casos)
     validar_evidencias_contra_corpus(resultado.banco, DOCS)
 
 
 def test_a_banco_junta_todos_los_errores():
     est, es = _est()
     filas = [
-        FilaGolden(id="a", pregunta="¿Precio?", tipo="respondible", origen="g.csv:2"),
+        FilaGolden(id="a", pregunta="¿Precio?", tipo="answerable", origen="g.csv:2"),
         FilaGolden(id="b", pregunta="¿Otra?", tipo="inventado", origen="g.csv:3"),
-        FilaGolden(id="c", pregunta="¿Qué?", tipo="sin_respuesta", par="b", origen="g.csv:4"),
-        FilaGolden(id="d", pregunta="¿Cuánto?", tipo="respondible", respuesta_literal="99 meses", origen="g.csv:5"),
+        FilaGolden(id="c", pregunta="¿Qué?", tipo="no_answer", par="b", origen="g.csv:4"),
+        FilaGolden(id="d", pregunta="¿Cuánto?", tipo="answerable", respuesta_literal="99 meses", origen="g.csv:5"),
     ]
     with pytest.raises(ErrorGolden) as exc:
         a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
@@ -184,8 +184,8 @@ def test_a_banco_junta_todos_los_errores():
 
 def test_par_sin_completar_es_aviso_no_error():
     est, es = _est()
-    filas = [FilaGolden(id="t1", pregunta="¿Qué incluye la garantía?", tipo="sin_respuesta",
-                        subtipo="trampa_mismo_tema", par="r9", origen="g.csv:2")]
+    filas = [FilaGolden(id="t1", pregunta="¿Qué incluye la garantía?", tipo="no_answer",
+                        subtipo="same_topic_trap", par="r9", origen="g.csv:2")]
     resultado = a_banco(filas, DOCS, CORPUS, estadisticas=est, paquete=es)
     assert resultado.banco.casos[0].par is None
     assert any("r9" in a and "sin completar" in a for a in resultado.avisos)
@@ -226,20 +226,20 @@ def test_plantilla_cubre_documentos_con_pares_y_35_por_ciento_de_trampas():
     plantilla = generar_plantilla(_corpus_sintetico(), cargar_paquete("es"), n=20)
     filas = plantilla.filas
     assert len(filas) == 20 and plantilla.avisos == []
-    assert {f["documento"] for f in filas if f["documento"]} == set(TEMAS)
-    trampas = [f for f in filas if f["tipo"] == "sin_respuesta"]
+    assert {f["document"] for f in filas if f["document"]} == set(TEMAS)
+    trampas = [f for f in filas if f["type"] == "no_answer"]
     assert len(trampas) == 7  # 35% de 20
-    respondibles = {f["id"]: f for f in filas if f["tipo"] == "respondible"}
+    respondibles = {f["id"]: f for f in filas if f["type"] == "answerable"}
     for trampa in trampas:
-        assert trampa["subtipo"] == "trampa_mismo_tema"
-        par = respondibles[trampa["par"]]  # cada trampa apunta a una respondible…
-        assert par["documento"] == trampa["documento"]  # …de la misma sección
-        assert par["fragmento_sugerido"] == trampa["fragmento_sugerido"]
-        assert trampa["par"] in trampa["instrucciones"]
-        assert trampa["notas"] == ""  # notas queda libre para quien completa
-    conversacionales = [f for f in filas if f["tipo"] == "conversacional"]
-    assert [f["pregunta"] for f in conversacionales] == ["hola", "gracias", "¿Qué puedes hacer?"]
-    assert all(f["terminos_clave"] and not any(t.strip().isdigit() for t in f["terminos_clave"].split(","))
+        assert trampa["subtype"] == "same_topic_trap"
+        par = respondibles[trampa["pair"]]  # cada trampa apunta a una respondible…
+        assert par["document"] == trampa["document"]  # …de la misma sección
+        assert par["suggested_passage"] == trampa["suggested_passage"]
+        assert trampa["pair"] in trampa["instructions"]
+        assert trampa["notes"] == ""  # notas queda libre para quien completa
+    conversacionales = [f for f in filas if f["type"] == "conversational"]
+    assert [f["question"] for f in conversacionales] == ["hola", "gracias", "¿Qué puedes hacer?"]
+    assert all(f["key_terms"] and not any(t.strip().isdigit() for t in f["key_terms"].split(","))
                for f in respondibles.values())
 
 
@@ -248,9 +248,9 @@ def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
 
     corpus = _corpus_sintetico()
     ruta_csv, ruta_leeme = escribir_plantilla(generar_plantilla(corpus, cargar_paquete("es"), n=20), tmp_path)
-    assert "trampa_mismo_tema" in ruta_leeme.read_text(encoding="utf-8")
+    assert "same_topic_trap" in ruta_leeme.read_text(encoding="utf-8")
     assert ruta_csv.read_bytes().startswith(b"\xef\xbb\xbf")  # BOM: Excel respeta las tildes
-    assert [f.tipo for f in leer_csv(ruta_csv)] == ["conversacional"] * 3  # sin completar se ignoran
+    assert [f.tipo for f in leer_csv(ruta_csv)] == ["conversational"] * 3  # sin completar se ignoran
 
     # El cliente completa un par: la respondible y su trampa.
     import csv
@@ -258,11 +258,11 @@ def test_plantilla_se_relee_y_se_importa_tras_completarla(tmp_path):
     with ruta_csv.open(encoding="utf-8-sig", newline="") as archivo:
         filas = list(csv.DictReader(archivo))
     respondible = next(f for f in filas if f["id"] == "r001")
-    trampa = next(f for f in filas if f["par"] == "r001")
-    documento = next(d for d in corpus if d.doc_id == respondible["documento"])
-    respondible["pregunta"] = "¿De qué trata la sección?"
-    respondible["respuesta_literal"] = documento.texto_completo.split(". ")[0].split(" de ", 1)[1]
-    trampa["pregunta"] = "¿Quién aprueba eso?"
+    trampa = next(f for f in filas if f["pair"] == "r001")
+    documento = next(d for d in corpus if d.doc_id == respondible["document"])
+    respondible["question"] = "¿De qué trata la sección?"
+    respondible["literal_answer"] = documento.texto_completo.split(". ")[0].split(" de ", 1)[1]
+    trampa["question"] = "¿Quién aprueba eso?"
     with ruta_csv.open("w", encoding="utf-8-sig", newline="") as archivo:
         escritor = csv.DictWriter(archivo, fieldnames=list(filas[0]))
         escritor.writeheader()
@@ -285,8 +285,8 @@ def test_plantilla_en_cada_idioma(idioma):
     paquete = cargar_paquete(idioma)
     plantilla = generar_plantilla(_corpus_sintetico(), paquete, n=20)
     assert plantilla.leeme == paquete.golden_instrucciones.leeme
-    assert "{" not in "".join(f["instrucciones"] for f in plantilla.filas)  # sin variables sin reemplazar
-    assert [f["pregunta"] for f in plantilla.filas if f["tipo"] == "conversacional"] == \
+    assert "{" not in "".join(f["instructions"] for f in plantilla.filas)  # sin variables sin reemplazar
+    assert [f["question"] for f in plantilla.filas if f["type"] == "conversational"] == \
         paquete.golden_instrucciones.conversacionales
     import re
 

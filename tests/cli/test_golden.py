@@ -39,11 +39,11 @@ def _completar_un_par(ruta: Path) -> tuple[str, str]:
     """El cliente completa la primera trampa y su respondible: la respuesta
     literal sale del fragmento sugerido (texto del documento)."""
     filas = _leer(ruta)
-    trampa = next(f for f in filas if f["subtipo"] == "trampa_mismo_tema")
-    respondible = next(f for f in filas if f["id"] == trampa["par"])
-    respondible["pregunta"] = "¿Qué dice esta sección?"
-    respondible["respuesta_literal"] = " ".join(respondible["fragmento_sugerido"].split()[:6])
-    trampa["pregunta"] = "¿Quién aprueba esto?"
+    trampa = next(f for f in filas if f["subtype"] == "same_topic_trap")
+    respondible = next(f for f in filas if f["id"] == trampa["pair"])
+    respondible["question"] = "¿Qué dice esta sección?"
+    respondible["literal_answer"] = " ".join(respondible["suggested_passage"].split()[:6])
+    trampa["question"] = "¿Quién aprueba esto?"
     _escribir(ruta, filas)
     return respondible["id"], trampa["id"]
 
@@ -58,7 +58,7 @@ def test_plantilla_crea_csv_y_leeme_y_no_pisa_lo_escrito(proyecto: Path, capsys)
     assert main(["golden", "template", "--n", "20"]) == 0
     ruta = proyecto / "golden" / "golden.csv"
     assert ruta.read_bytes().startswith(b"\xef\xbb\xbf")
-    assert (proyecto / "golden" / "LEEME.txt").is_file()
+    assert (proyecto / "golden" / "README.txt").is_file()
     assert "9 secciones" in capsys.readouterr().out  # explica por qué hay menos de 20 filas
 
     _completar_un_par(ruta)
