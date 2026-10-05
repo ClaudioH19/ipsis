@@ -5,9 +5,11 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-import yaml
 
+from ipsis.configuracion import rutas
+from ipsis.configuracion.archivos import volcar
 from ipsis.configuracion.carga import (
+    CLAVES_DOMINIO,
     CLAVES_DOMINIO_VALIDAS,
     RUTA_DOMINIO,
     _CLAVES_LISTA_SEPARADA_POR_COMA,
@@ -25,13 +27,22 @@ def _booleano(clave: str, valor: str) -> bool:
     raise ValueError(f"{clave} espera true o false, no {valor!r}")
 
 
-def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
+def configurar(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
+    """``ipsis configure key=value``: claves de ``assistant.yaml`` (inglés); devuelve el archivo con esas claves."""
     desconocidas = set(pares) - CLAVES_DOMINIO_VALIDAS
     if desconocidas:
         raise ValueError(
             f"clave(s) desconocida(s) para 'ipsis configurar': {sorted(desconocidas)}. "
             f"Válidas: {sorted(CLAVES_DOMINIO_VALIDAS)}"
         )
+    from ipsis.configuracion.glosario import a_externo
+
+    return a_externo(actualizar_dominio({CLAVES_DOMINIO[clave]: valor for clave, valor in pares.items()}, ruta),
+                     "asistente")
+
+
+def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
+    """Cambia ``assistant.yaml`` con claves internas (la usan init, perfil y configurar)."""
 
     ruta_p = Path(ruta)
     nuevo = cargar_dominio(ruta)
@@ -55,11 +66,11 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
         validar_codigo_idioma(nuevo["idioma"])  # sin paquete propio, rige el respaldo
 
     ruta_p.parent.mkdir(parents=True, exist_ok=True)
-    # Temporal + os.replace: un fallo a mitad nunca deja asistente.yaml cortado.
+    # Temporal + os.replace: un fallo a mitad nunca deja assistant.yaml cortado.
     temporal = ruta_p.with_name(ruta_p.name + ".tmp")
     temporal.write_text(
         _encabezado_comentarios(ruta_p)
-        + yaml.safe_dump(nuevo, allow_unicode=True, sort_keys=False),
+        + volcar(nuevo, "asistente"),
         encoding="utf-8",
     )
     os.replace(temporal, ruta_p)
@@ -96,7 +107,7 @@ def inicializar_proyecto(
 ) -> InicioProyecto:
     """Crea la configuración de un proyecto nuevo y su corpus vacío.
 
-    Lanza ``ProyectoExistente`` si ya hay un ``asistente.yaml`` y no se pide
+    Lanza ``ProyectoExistente`` si ya hay un ``assistant.yaml`` y no se pide
     ``forzar``, y ``ValueError`` si el idioma o un valor no son válidos.
     """
     from ipsis.configuracion.carga import (
@@ -126,7 +137,7 @@ def inicializar_proyecto(
         "perfil": perfil or "medium",
     })
 
-    Path("documentos").mkdir(parents=True, exist_ok=True)
+    Path(rutas.DOCUMENTOS).mkdir(parents=True, exist_ok=True)
     ruta_catalogo = Path(CATALOGO_PATH)
     if not ruta_catalogo.exists():
         ruta_catalogo.parent.mkdir(parents=True, exist_ok=True)
@@ -172,6 +183,13 @@ def guardar_snapshot(salida: str):
     return guardar_snapshot_configuracion(salida)
 
 
+def carpeta_de_proyecto(carpeta: str | Path) -> bool:
+    """Si la carpeta ya es un proyecto (también con la estructura anterior, en español)."""
+    carpeta = Path(carpeta)
+    marcas = (rutas.ASISTENTE, rutas.CATALOGO, "configuracion/asistente.yaml", "documentos/catalogo.yaml")
+    return any((carpeta / marca).is_file() for marca in marcas)
+
+
 def migrar_proyecto_activo() -> list[str]:
     """Lleva el proyecto del directorio actual a la estructura vigente."""
     from ipsis.configuracion.migraciones import migrar_proyecto
@@ -183,12 +201,12 @@ def migrar_proyecto_activo() -> list[str]:
 # Lecturas que necesita el servicio HTTP
 # ---------------------------------------------------------------------------
 def configuracion_asistente() -> dict:
-    """``configuracion/asistente.yaml`` validado (nombre, idioma, perfil…)."""
+    """``config/assistant.yaml`` validado (nombre, idioma, perfil…)."""
     return cargar_dominio()
 
 
 def limite_de_peticiones() -> dict:
-    """``seguridad.limite_peticiones`` de ``configuracion/motor.yaml``."""
+    """``seguridad.limite_peticiones`` de ``config/engine.yaml``."""
     from ipsis.configuracion.carga import config_seguridad
 
     return config_seguridad()["limite_peticiones"]
@@ -324,7 +342,7 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
                             nombre, manifiesto.hash_corpus, manifiesto.stemmer, manifiesto.n_chunks,
                             manifiesto.hash_archivos)
     otros = []
-    for ruta in sorted(Path(rutas.INDICE).glob("*.manifiesto.json")):
+    for ruta in sorted(Path(rutas.INDICE).glob("*.manifest.json")):
         manifiesto = ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
         if manifiesto.coleccion.startswith(base + "_"):
             otros.append(manifiesto)
@@ -336,7 +354,7 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
 
 
 def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibracionPerfil:
-    """Vigencia de ``configuracion/calibracion.yaml`` con la regla del motor
+    """Vigencia de ``config/calibration.yaml`` con la regla del motor
     (``motivo_no_aplicable``): perfil, modelos y corpus del índice compatible."""
     from ipsis.configuracion import rutas
     from ipsis.configuracion.calibracion import EstadoCalibracion, leer_calibracion, motivo_no_aplicable
@@ -379,10 +397,10 @@ def resumen_perfil() -> ResumenPerfil:
 
 
 def cambiar_perfil(destino: str) -> CambioPerfil:
-    """Cambia ``asistente.yaml::perfil`` y dice qué consecuencias tiene.
+    """Cambia ``assistant.yaml::perfil`` y dice qué consecuencias tiene.
 
     No descarga modelos, no reindexa, no calibra ni borra nada: el índice y
-    ``calibracion.yaml`` quedan como estaban (el motor ignora una calibración
+    ``calibration.yaml`` quedan como estaban (el motor ignora una calibración
     de otra procedencia). Los ``ajustes_perfil`` del proyecto se conservan y se
     validan contra el perfil destino antes de escribir.
     """

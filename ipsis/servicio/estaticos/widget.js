@@ -83,7 +83,7 @@
   var AVATAR_BASE = opcion("avatar-base", "avatarBase", null);
 
   // Ubicación: lo que declare el sitio (atributos del elemento o data-* del
-  // <script>) manda; lo que no, llega de estilos.yaml vía /config.
+  // <script>) manda; lo que no, llega de styles.yaml vía /config.
   var VALIDOS = {
     posicion: ["abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda", "incrustado"],
     tamano: ["compacto", "normal", "amplio"],
@@ -203,7 +203,7 @@
 
   var estilos = document.createElement("style");
   // TODO el diseno sale de estas variables. Son los valores de repuesto,
-  // los que se usan si el servicio no responde: `configuracion/estilos.yaml`
+  // los que se usan si el servicio no responde: `config/styles.yaml`
   // las redefine y el servicio las sirve en /estilos.css, que se enlaza
   // DESPUES de este bloque (ver mas abajo) y por tanto gana.
   estilos.textContent = [
@@ -441,7 +441,7 @@
   ].join("\n");
   raiz.appendChild(estilos);
 
-  // Tema del despliegue: `configuracion/estilos.yaml`, servido en
+  // Tema del despliegue: `config/styles.yaml`, servido en
   // /estilos.css. Se enlaza DESPUES del bloque de arriba, asi que
   // redefine las variables que declare y deja el resto con su valor de
   // repuesto. Si el servicio no responde, el widget se ve igual que aqui
@@ -993,7 +993,7 @@
   botonCerrar.addEventListener("click", cerrarPanel);
   if (INCRUSTADO) botonCerrar.hidden = true;
 
-  // La configuración se pide al cargar: la ubicación de estilos.yaml aplica al
+  // La configuración se pide al cargar: la ubicación de styles.yaml aplica al
   // lanzador desde el principio, y el saludo ya está listo al abrir.
   // -------------------------------------------------------------------
   // 6. Avatar (opcional). El motor (/avatar.js, @bible-strong/avatar-web)

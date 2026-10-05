@@ -45,8 +45,8 @@ def test_codigo_con_forma_invalida_falla(codigo):
 
 
 def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
-    (tmp_path / "configuracion").mkdir()
-    (tmp_path / "configuracion" / "idioma.yaml").write_text(
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "language.yaml").write_text(
         "mensajes:\n  sin_respuesta: Nada por aquí.\n", encoding="utf-8"
     )
     paquete = cargar_paquete("es", proyecto=tmp_path)
@@ -63,11 +63,11 @@ def test_init_acepta_un_idioma_sin_paquete_y_avisa_el_respaldo(tmp_path: Path, m
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--idioma", "ru"]) == 0
     assert "no hay un paquete para 'ru'" in capsys.readouterr().out
-    assert main(["configurar", "idioma=es"]) == 0
+    assert main(["configurar", "language=es"]) == 0
     assert "Nota" not in capsys.readouterr().out
 
 
 def test_init_rechaza_un_codigo_de_idioma_invalido(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--idioma", "ruso!"]) == 1
-    assert not (tmp_path / "configuracion" / "asistente.yaml").exists()
+    assert not (tmp_path / "config" / "assistant.yaml").exists()

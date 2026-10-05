@@ -33,7 +33,7 @@ HASH = "sha256:corpus"
 
 
 def _calibracion(tmp_path, perfil, modelos, estado="calibrado", hash_corpus=HASH):
-    ruta = tmp_path / "calibracion.yaml"
+    ruta = tmp_path / "calibration.yaml"
     ruta.write_text(yaml.safe_dump({
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": modelos, "hash_corpus": hash_corpus,

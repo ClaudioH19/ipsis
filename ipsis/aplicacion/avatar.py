@@ -6,7 +6,7 @@ formato de las claves y colores). La validación completa contra el esquema la
 hace la propia librería (``herramientas/avatar``, P12.9).
 
 Los avatares incluidos viven en ``ipsis/recursos/avatares/``; los importados por
-el proyecto, en ``configuracion/avatares/``. Con el mismo nombre, manda el del
+el proyecto, en ``config/avatars/``. Con el mismo nombre, manda el del
 proyecto.
 """
 from __future__ import annotations
@@ -135,7 +135,7 @@ def listar_avatares() -> list[Avatar | tuple[str, str, str]]:
 
 
 def importar_avatar(archivo: str | Path, nombre: str | None = None) -> Avatar:
-    """Valida ``archivo`` y lo copia a ``configuracion/avatares/<nombre>.avatar.json``."""
+    """Valida ``archivo`` y lo copia a ``config/avatars/<nombre>.avatar.json``."""
     import os
 
     origen = Path(archivo)

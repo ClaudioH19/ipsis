@@ -1,7 +1,7 @@
 """Perfiles declarativos para extender la extracción sin editar Python.
 
 Las reglas propias de un dominio se declaran en
-``configuracion/dominio.yaml`` y son interpretadas por un
+``config/domain.yaml`` y son interpretadas por un
 motor genérico:
 
 - ``extractores_regex``: cada regla es un patrón regex con grupos
@@ -26,7 +26,6 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import yaml
 
 from ipsis.configuracion import rutas
 
@@ -138,13 +137,14 @@ class PerfilDominio:
 
 
 def cargar_perfil(ruta: str = rutas.DOMINIO) -> PerfilDominio:
-    """Carga las reglas propias del proyecto desde ``configuracion/dominio.yaml``.
+    """Carga las reglas propias del proyecto desde ``config/domain.yaml``.
 
     El archivo es opcional: si no existe, devuelve un perfil sin reglas y el
     núcleo extrae solo las entidades generales.
     """
-    p = Path(ruta)
-    datos = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
+    from ipsis.configuracion.archivos import leer
+
+    datos = leer(ruta, "dominio")
     reglas = []
     for r in datos.get("extractores_regex") or []:
         flags = re.IGNORECASE if r.get("ignorecase", True) else 0
@@ -156,7 +156,7 @@ def cargar_perfil(ruta: str = rutas.DOMINIO) -> PerfilDominio:
             glosa=r.get("glosa"),
         ))
     return PerfilDominio(
-        nombre=p.stem,
+        nombre=Path(ruta).stem,
         organismos=list(datos.get("organismos") or []),
         reglas=reglas,
     )

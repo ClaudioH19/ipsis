@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import yaml
 
+from apoyo import leer_proyecto
 from ipsis.cli import main
 from ipsis.aplicacion.widget import (
     aplicar_preset,
@@ -16,11 +16,11 @@ def test_catalogo_de_presets_es_estable():
 
 
 def test_aplicar_preset_preserva_css_extra_y_escribe_yaml_valido(tmp_path):
-    ruta = tmp_path / "estilos.yaml"
+    ruta = tmp_path / "styles.yaml"
     ruta.write_text("css_extra: '.marca{display:block}'\n", encoding="utf-8")
 
     tema = aplicar_preset("editorial", str(ruta))
-    persistido = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    persistido = leer_proyecto(ruta)
 
     assert tema == persistido
     assert persistido["preset"] == "editorial"
@@ -29,7 +29,7 @@ def test_aplicar_preset_preserva_css_extra_y_escribe_yaml_valido(tmp_path):
 
 
 def test_preset_contraste_desactiva_animaciones(tmp_path):
-    tema = aplicar_preset("contraste", str(tmp_path / "estilos.yaml"))
+    tema = aplicar_preset("contraste", str(tmp_path / "styles.yaml"))
 
     assert tema["animaciones"]["activadas"] is False
     assert tema["colores"]["texto"] == "#000000"
@@ -62,7 +62,7 @@ def test_validacion_rechaza_inyeccion_en_valor_css():
 
 
 def test_cli_lista_y_aplica_preset(tmp_path, capsys):
-    ruta = tmp_path / "estilos.yaml"
+    ruta = tmp_path / "styles.yaml"
 
     assert main(["widget", "tema", "listar"]) == 0
     assert "minimal:" in capsys.readouterr().out
@@ -70,11 +70,11 @@ def test_cli_lista_y_aplica_preset(tmp_path, capsys):
         "widget", "tema", "aplicar", "minimal", "--ruta", str(ruta)
     ]) == 0
 
-    assert yaml.safe_load(ruta.read_text(encoding="utf-8"))["preset"] == "minimal"
+    assert leer_proyecto(ruta)["preset"] == "minimal"
 
 
 def test_vista_previa_incluye_estados_y_cita_sin_api(tmp_path):
-    estilos = tmp_path / "estilos.yaml"
+    estilos = tmp_path / "styles.yaml"
     aplicar_preset("contraste", str(estilos))
 
     salida = generar_vista_previa(str(tmp_path / "preview.html"), str(estilos))
@@ -89,7 +89,7 @@ def test_vista_previa_incluye_estados_y_cita_sin_api(tmp_path):
 
 
 def test_cli_genera_vista_previa(tmp_path):
-    estilos = tmp_path / "estilos.yaml"
+    estilos = tmp_path / "styles.yaml"
     salida = tmp_path / "mockup.html"
     aplicar_preset("minimal", str(estilos))
 
@@ -137,9 +137,9 @@ def test_las_citas_nunca_se_ocultan():
 
 def test_snippet_usa_la_ubicacion_y_escapa(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    (tmp_path / "configuracion").mkdir()
-    (tmp_path / "configuracion" / "estilos.yaml").write_text(
-        "ubicacion:\n  posicion: arriba-izquierda\n  lanzador: pestana\n", encoding="utf-8")
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "styles.yaml").write_text(
+        "placement:\n  position: top-left\n  launcher: tab\n", encoding="utf-8")
     assert main(["widget", "snippet", "--api", "https://asistente.ejemplo.cl/"]) == 0
     salida = capsys.readouterr().out.strip()
     assert salida.startswith('<script src="https://asistente.ejemplo.cl/widget.js" data-api="https://asistente.ejemplo.cl"')
@@ -174,13 +174,13 @@ def test_estilo_mostrar_y_cambiar_por_consola(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
     capsys.readouterr()
-    assert main(["widget", "estilo", "mostrar", "--seccion", "colores"]) == 0
+    assert main(["widget", "estilo", "mostrar", "--seccion", "colors"]) == 0
     salida = capsys.readouterr().out
-    assert "colores.acento = #2563eb" in salida and "forma." not in salida
+    assert "colors.accent = #2563eb" in salida and "shape." not in salida
 
-    assert main(["widget", "estilo", "cambiar", "colores.acento=#0ea5e9", "forma.radio_panel=10px",
-                 "animaciones.activadas=false", "ubicacion.desplazamiento_x=40"]) == 0
-    tema = yaml.safe_load(Path("configuracion/estilos.yaml").read_text(encoding="utf-8"))
+    assert main(["widget", "estilo", "cambiar", "colors.accent=#0ea5e9", "shape.panel_radius=10px",
+                 "animations.enabled=false", "placement.offset_x=40"]) == 0
+    tema = leer_proyecto(Path("config/styles.yaml"))
     assert tema["colores"]["acento"] == "#0ea5e9" and tema["forma"]["radio_panel"] == "10px"
     assert tema["animaciones"]["activadas"] is False and tema["ubicacion"]["desplazamiento_x"] == 40
 
@@ -190,12 +190,12 @@ def test_estilo_rechaza_erratas_tipos_y_css_peligroso(tmp_path, monkeypatch, cap
 
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--perfil", "light"]) == 0
-    antes = Path("configuracion/estilos.yaml").read_text(encoding="utf-8")
+    antes = Path("config/styles.yaml").read_text(encoding="utf-8")
     capsys.readouterr()
-    for malo, mensaje in (("colores.acentto=#fff", "clave desconocida"), ("coloress.acento=#fff", "sección desconocida"),
-                          ("acento=#fff", "seccion.clave=valor"), ("colores.acento=red;x", "no permitidos"),
-                          ("animaciones.activadas=quizas", "true o false"),
-                          ("ubicacion.desplazamiento_x=mucho", "entero")):
+    for malo, mensaje in (("colors.acent=#fff", "clave desconocida"), ("colorss.accent=#fff", "sección desconocida"),
+                          ("accent=#fff", "seccion.clave=valor"), ("colors.accent=red;x", "no permitidos"),
+                          ("animations.enabled=quizas", "true o false"),
+                          ("placement.offset_x=mucho", "entero")):
         assert main(["widget", "estilo", "cambiar", malo]) == 1, malo
         assert mensaje in capsys.readouterr().out, malo
-    assert Path("configuracion/estilos.yaml").read_text(encoding="utf-8") == antes  # nada se escribió
+    assert Path("config/styles.yaml").read_text(encoding="utf-8") == antes  # nada se escribió

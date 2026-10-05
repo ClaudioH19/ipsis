@@ -15,10 +15,10 @@ de modo que, con 95% de confianza, la tasa de respuestas `ok` incorrectas sea
 
 ## 3. Entradas y salidas versionadas
 
-- **Entrada:** banco `golden/banco/` (casos con `split` dev/test y evidencia
+- **Entrada:** banco `golden/bank/` (casos con `split` dev/test y evidencia
   literal) y las observaciones de una evaluación del perfil activo, con sus
   señales.
-- **Salida:** `configuracion/calibracion.yaml` (versión 1) con estado,
+- **Salida:** `config/calibration.yaml` (versión 1) con estado,
   `alfa`, `confianza`, umbrales, resultado por split y **procedencia**
   (perfil, modelos, `hash_corpus` del índice, banco y su hash).
 
@@ -68,7 +68,7 @@ falsa, y pares mínimos «mismo tema, dato ausente» curados por una persona.
 - El motor aplica la calibración solo si está en estado `calibrado` **y** su
   procedencia coincide con el perfil, los modelos y el `hash_corpus` del índice
   abierto. Si algo cambió, la ignora y `ipsis doctor` lo dice.
-- `calibracion.yaml` se escribe en cualquier estado, para auditoría.
+- `calibration.yaml` se escribe en cualquier estado, para auditoría.
 
 ## 7. Parámetros y defaults
 

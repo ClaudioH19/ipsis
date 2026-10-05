@@ -54,7 +54,7 @@ def _corpus() -> _Corpus:
             if nombre:
                 alias.setdefault(str(nombre), entrada["doc_id"])
     archivos = [ArchivoCorpus(ruta=e["archivo"], doc_id=e["doc_id"]) for e in catalogo]
-    # El manifiesto vive en golden/banco/: el corpus se declara relativo a él.
+    # El manifiesto vive en golden/bank/: el corpus se declara relativo a él.
     directorio = "/".join([".."] * len(Path(rutas.GOLDEN_BANCO).parts) + [rutas.DOCUMENTOS])
     banco = CorpusBanco(directorio=directorio, archivos=archivos,
                         sha256=hash_archivos_corpus(Path(rutas.DOCUMENTOS), archivos))
@@ -62,7 +62,7 @@ def _corpus() -> _Corpus:
 
 
 def generar_plantilla_golden(n: int = 40, forzar: bool = False) -> tuple[Path, Path, list[str]]:
-    """Escribe ``golden/golden.csv`` y ``golden/LEEME.txt``.
+    """Escribe ``golden/golden.csv`` y ``golden/README.txt``.
 
     No reemplaza un ``golden.csv`` existente sin ``forzar``: puede tener
     preguntas que el cliente ya escribió.
@@ -90,7 +90,7 @@ def _resumen(banco, manifiesto: Path, avisos: list[str]) -> ResumenBanco:
 
 def importar_golden(ruta: str | Path) -> ResumenBanco:
     """Lee el golden (CSV, JSONL o SQuAD 2.0), lo valida contra el corpus y
-    escribe ``golden/banco/``. Si hay errores no escribe nada."""
+    escribe ``golden/bank/``. Si hay errores no escribe nada."""
     from ipsis.evaluacion.golden import a_banco, escribir_banco, leer_golden, secciones_de
     from ipsis.indice.estadisticas import EstadisticasLexicas
 

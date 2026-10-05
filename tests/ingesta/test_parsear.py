@@ -1,6 +1,6 @@
 """Tests del despacho por extensión de `ipsis/ingesta/parsear.py`: PDF, Markdown y texto
 plano. Cada documento de prueba lo construye el propio test, en un directorio temporal, sin material institucional -- nunca
-se toca `documentos/`.
+se toca `documents/`.
 
 La propiedad que se verifica en TODOS los formatos es la misma que ya prueba
 `tests/ingesta/test_parsear_docx.py` para `.docx`: cada bloque debe reconstruirse

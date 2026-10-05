@@ -1,6 +1,6 @@
 """Tests de ``ipsis/aplicacion/estilos.py`` y del endpoint ``/estilos.css``.
 
-La promesa que verifican: `configuracion/estilos.yaml` es el ÚNICO
+La promesa que verifican: `config/styles.yaml` es el ÚNICO
 archivo que hay que tocar para repintar el widget entero, y borrar
 cualquier clave de él nunca rompe nada — el widget vuelve a su valor de
 repuesto.
@@ -22,7 +22,7 @@ def test_el_archivo_de_estilos_del_repositorio_es_valido():
     """El tema que se distribuye tiene que cargar y rendear sin error: es el
     que `ipsis init` copia a cada proyecto nuevo."""
     tema = cargar_estilos(RUTA_ESTILOS)
-    assert tema, "configuracion/estilos.yaml está vacío o no existe"
+    assert tema, "config/styles.yaml está vacío o no existe"
     css = render_css(tema)
     assert ".rw-raiz{" in css
 
@@ -127,9 +127,9 @@ def test_init_deja_el_archivo_de_estilos(tmp_path: Path, monkeypatch):
     origen = Path(RUTA_ESTILOS).resolve()
     monkeypatch.chdir(tmp_path)
     assert inicializar_estilos_si_falta(origen=str(origen)) is True
-    creado = tmp_path / "configuracion" / "estilos.yaml"
+    creado = tmp_path / "config" / "styles.yaml"
     assert creado.exists()
-    assert "colores:" in creado.read_text(encoding="utf-8")
+    assert "colors:" in creado.read_text(encoding="utf-8")
     assert yaml.safe_load(creado.read_text(encoding="utf-8"))
     # Nunca pisa un tema ya existente.
     assert inicializar_estilos_si_falta(origen=str(origen)) is False

@@ -21,8 +21,8 @@ services:
       # Caddy (abajo) tiene IP fija en la red interna: solo sus X-Forwarded-* se aceptan.
       IPSIS_TRUSTED_PROXY: "172.30.0.10"
     volumes:
-      - ./configuracion:/app/configuracion
-      - ./documentos:/app/documentos:ro
+      - ./config:/app/config
+      - ./documents:/app/documents:ro
       - ./.ipsis:/app/.ipsis
     ports:
       - "127.0.0.1:8000:8000"

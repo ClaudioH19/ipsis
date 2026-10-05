@@ -144,7 +144,7 @@ def vector_disperso(pesos: dict[int, float]):
 
 
 def ruta_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> Path:
-    return Path(directorio) / f"{nombre_coleccion}.estadisticas.json"
+    return Path(directorio) / f"{nombre_coleccion}.stats.json"
 
 
 def cargar_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -> EstadisticasLexicas:
@@ -184,7 +184,7 @@ def crear_cliente_qdrant(qdrant_path: str | None = None, modo: str | None = None
     configuración, nunca de código duplicado.
 
     Prioridad: parámetro explícito > variable de entorno > `qdrant_path`
-    (compatibilidad hacia atrás, modo local) > `configuracion/motor.yaml`.
+    (compatibilidad hacia atrás, modo local) > `config/engine.yaml`.
 
     - "local": ``QdrantClient(path=qdrant_path)``, on-disk. `create_payload_index`
       NO tiene efecto en este modo (advertencia del propio cliente) -- solo

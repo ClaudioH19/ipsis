@@ -4,7 +4,7 @@ Este módulo NO depende de ningún modelo para los campos deterministas
 (entidades, tiene_excepcion, tiene_condicion, keywords por frecuencia).
 La categoría se asigna con un clasificador léxico determinista
 (coincidencia de palabras clave contra la descripción de cada categoría de
-la sección ``taxonomia`` de ``configuracion/dominio.yaml``): es más auditable
+la sección ``taxonomia`` de ``config/domain.yaml``): es más auditable
 que una clasificación por embeddings y no depende de un modelo. La categoría se
 marca con ``origen.categoria = "keywords_v1"`` y NUNCA se usa como filtro duro
 salvo que una evaluación confirme exactitud >= umbral_categoria_filtro_duro.
@@ -15,9 +15,7 @@ import hashlib
 from collections import Counter
 from dataclasses import dataclass
 
-from pathlib import Path
 
-import yaml
 
 from ipsis.configuracion import rutas
 from ipsis.lenguaje.texto import terminos, tokenizar
@@ -27,18 +25,18 @@ from ipsis.ingesta.chunking import Chunk
 from ipsis.recursos import leer_plantilla
 
 def cargar_taxonomia(ruta: str = rutas.DOMINIO) -> dict:
-    """Taxonomía del proyecto: sección ``taxonomia`` de ``configuracion/dominio.yaml``.
+    """Taxonomía del proyecto: sección ``taxonomia`` de ``config/domain.yaml``.
 
     Si el archivo o la sección faltan, usa la taxonomía genérica de la
     plantilla. ``id: otro`` es obligatorio: ``clasificar_categoria`` degrada a
     esa categoría y ``validar_chunk`` rechaza cualquier categoría no declarada.
     """
-    p = Path(ruta)
-    datos = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
+    from ipsis.configuracion.archivos import interpretar, leer
+
+    datos = leer(ruta, "dominio")
     if datos.get("taxonomia"):
         return datos["taxonomia"]
-    plantilla = yaml.safe_load(leer_plantilla("dominio.yaml"))
-    return plantilla["taxonomia"]
+    return interpretar(leer_plantilla("domain.yaml"), "dominio")["taxonomia"]
 
 
 @dataclass
@@ -66,7 +64,7 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
     las palabras gatillo de esa categoría.
 
     Las palabras gatillo viven en
-    ``configuracion/dominio.yaml::taxonomia.categorias[].palabras_gatillo`` -- antes eran
+    ``config/domain.yaml::taxonomia.categorias[].palabras_gatillo`` -- antes eran
     un diccionario ``GATILLOS`` fijo en este módulo, lo que acoplaba el
     núcleo a un dominio particular. El YAML de categorías es
     configuración por dominio (categorías, descripciones): las palabras
@@ -91,8 +89,7 @@ def clasificar_categoria(texto: str, taxonomia: dict) -> ResultadoCategoria:
             mejor_score = score
             mejor_cat = cid
 
-    umbral = taxonomia.get("umbral_categoria_filtro_duro", 0.95)
-    # el umbral de la taxonomía rige el uso como filtro DURO, no la asignación
+    # El umbral de la taxonomía rige el uso como filtro DURO, no la asignación
     # de la etiqueta en sí; aquí solo degradamos a "otro" si no hubo señal mínima.
     if mejor_score == 0.0:
         return ResultadoCategoria("otro", 0.0)

@@ -66,7 +66,7 @@ def construir_motor(
         except KeyError as exc:
             raise ValueError(
                 f"el perfil {perfil_instalacion.perfil!r} declara la etapa desconocida {nombre_etapa!r}. "
-                f"Revisa ajustes_perfil.etapas en configuracion/motor.yaml. {exc}"
+                f"Revisa ajustes_perfil.etapas en config/engine.yaml. {exc}"
             ) from exc
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())

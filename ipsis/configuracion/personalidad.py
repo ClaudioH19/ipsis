@@ -1,4 +1,4 @@
-"""``configuracion/personalidad.yaml``: tono de las respuestas y avatar del widget.
+"""``config/personality.yaml``: tono de las respuestas y avatar del widget.
 
 Es solo presentación: no cambia estados, umbrales, índice ni calibración. Si
 el archivo falta rigen los valores por defecto. El catálogo de eventos del
@@ -7,11 +7,9 @@ diagnóstico y el servicio usen el mismo.
 """
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Literal
 
-import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ipsis.configuracion import rutas
@@ -105,7 +103,9 @@ def cargar_personalidad(proyecto: str | Path | None = None) -> PersonalidadConfi
     ruta = ruta_personalidad(proyecto)
     if not ruta.is_file():
         return PersonalidadConfig()
-    return PersonalidadConfig.model_validate(yaml.safe_load(ruta.read_text(encoding="utf-8")) or {})
+    from ipsis.configuracion.archivos import interpretar
+
+    return PersonalidadConfig.model_validate(interpretar(ruta.read_text(encoding="utf-8"), "personalidad"))
 
 
 def guardar_personalidad(config: PersonalidadConfig, proyecto: str | Path | None = None) -> Path:
@@ -117,12 +117,9 @@ def guardar_personalidad(config: PersonalidadConfig, proyecto: str | Path | None
             if not linea.startswith("#"):
                 break
             cabecera += linea
-    datos = config.model_dump(mode="json", exclude_none=True)
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    temporal = ruta.with_name(ruta.name + ".tmp")
-    temporal.write_text(cabecera + yaml.safe_dump(datos, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    os.replace(temporal, ruta)
-    return ruta
+    from ipsis.configuracion.archivos import escribir
+
+    return escribir(ruta, config.model_dump(mode="json", exclude_none=True), "personalidad", cabecera)
 
 
 __all__ = [

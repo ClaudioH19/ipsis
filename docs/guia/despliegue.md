@@ -59,7 +59,7 @@ tu proyecto: un `Dockerfile` por perfil, con los modelos incluidos, y un
 - Sin `IPSIS_ADMIN_TOKEN`, `/admin` no existe; defínelo al ejecutar.
 - Healthcheck a `/ready`, que da 503 si algo bloquea (con la acción en
   `proyecto.bloqueante`).
-- El proyecto (`configuracion/`, `documentos/` y `.ipsis/`) se monta desde la
+- El proyecto (`config/`, `documents/` y `.ipsis/`) se monta desde la
   carpeta generada: los cambios de configuración no exigen reconstruir.
 
 ## 4. `ipsis desplegar preparar`
@@ -71,7 +71,7 @@ ipsis desplegar preparar --dominio asistente.tu-dominio.cl
 ```
 
 `dist/` incluye:
-- la configuración (con `personalidad.yaml`, `estilos.yaml`, la calibración
+- la configuración (con `personality.yaml`, `styles.yaml`, la calibración
   y los avatares importados), los documentos y el índice;
 - `Dockerfile`, `docker-compose.yml` (con un Caddy opcional, perfil `https`,
   ya declarado como proxy confiable), `Caddyfile` y `.env.ejemplo`;
@@ -124,7 +124,7 @@ Variables del modo y del panel `/admin`:
 | `IPSIS_SOURCE_URL` | URL de tu código fuente (AGPL §13) a la que redirige `GET /fuente`. Por defecto, este repositorio |
 
 Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
-queda en `.ipsis/registros/admin.jsonl`: fecha, IP, acción y claves, nunca el
+queda en `.ipsis/logs/admin.jsonl`: fecha, IP, acción y claves, nunca el
 token. `ipsis doctor` revisa el modo: avisa en desarrollo y da error con un
 token corto.
 

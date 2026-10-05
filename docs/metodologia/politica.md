@@ -73,8 +73,8 @@ Umbrales por defecto del perfil (conservadores, sin calibrar):
 | `ok` | 0,5 (sobre `s_ret`) | 0,8 (sobre `s_qa`) |
 | `cov` | 0,6 | 0,6 (no se usa con lector) |
 
-Orden de aplicación: perfil ← `motor.yaml::ajustes_perfil` ←
-`calibracion.yaml` (solo si su procedencia coincide).
+Orden de aplicación: perfil ← `engine.yaml::ajustes_perfil` ←
+`calibration.yaml` (solo si su procedencia coincide).
 
 ## 8. Complejidad y recursos
 

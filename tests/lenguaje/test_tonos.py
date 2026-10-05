@@ -118,8 +118,8 @@ def test_legado_de_idioma_yaml_se_traduce_a_situaciones():
 
 
 def test_personalidad_yaml_sobrescribe_y_se_valida(tmp_path: Path):
-    (tmp_path / "configuracion").mkdir()
-    ruta = tmp_path / "configuracion" / "personalidad.yaml"
+    (tmp_path / "config").mkdir()
+    ruta = tmp_path / "config" / "personality.yaml"
     ruta.write_text("tono:\n  plantillas:\n    sin_respuesta: Eso no está en el manual.\n", encoding="utf-8")
     tono = cargar_tono("es", proyecto=tmp_path, sobrescrituras={"sin_respuesta": ["Legado."]})
     assert tono.variantes("sin_respuesta") == ["Eso no está en el manual."]  # personalidad gana al legado
@@ -132,8 +132,8 @@ def test_el_motor_usa_el_tono_y_la_sobrescritura_del_proyecto(tmp_path: Path, mo
     from ipsis.consulta.etapas.redaccion import cargar_plantillas
     from ipsis.lenguaje.paquete import cargar_paquete
 
-    (tmp_path / "configuracion").mkdir()
-    (tmp_path / "configuracion" / "personalidad.yaml").write_text(
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "personality.yaml").write_text(
         "tono:\n  plantillas:\n    sin_respuesta: Eso no está en el manual.\n", encoding="utf-8")
     monkeypatch.chdir(tmp_path)
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "Ana", "descripcion_dominio": "el manual"})

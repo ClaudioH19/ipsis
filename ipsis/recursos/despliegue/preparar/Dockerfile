@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Generado por `ipsis desplegar preparar`. Imagen del perfil {{perfil}} con sus
-# modelos; en ejecución no usa la red. El proyecto (configuracion/, documentos/
+# modelos; en ejecución no usa la red. El proyecto (config/, documents/
 # y .ipsis/) se monta desde esta carpeta (ver docker-compose.yml).
 
 FROM python:3.12-slim

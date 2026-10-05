@@ -61,7 +61,7 @@ class ComandoAuditar(Comando):
             return 2
         except SinRegistro as e:
             print(f"No hay registro de consultas ({e}). Está apagado por defecto, por privacidad.")
-            print("  Acción: ipsis configurar registro.activo=true (y reinicia 'ipsis servir')")
+            print("  Acción: ipsis configurar query_log.enabled=true (y reinicia 'ipsis servir')")
             return 1
         rango = ""
         if r.desde or r.hasta:
@@ -91,8 +91,8 @@ class ComandoSnapshotConfig(Comando):
     ayuda = "Escribe la configuración efectiva con defaults resueltos."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--salida", default=".ipsis/configuracion-efectiva.yaml",
-                            help="Ruta del snapshot (por defecto: .ipsis/configuracion-efectiva.yaml).")
+        parser.add_argument("--salida", default=".ipsis/effective-config.yaml",
+                            help="Ruta del snapshot (por defecto: .ipsis/effective-config.yaml).")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:

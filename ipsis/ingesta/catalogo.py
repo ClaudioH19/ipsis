@@ -1,4 +1,4 @@
-"""Catálogo de documentos del proyecto (``documentos/catalogo.yaml``)."""
+"""Catálogo de documentos del proyecto (``documents/catalog.yaml``)."""
 from __future__ import annotations
 
 from ipsis.configuracion import rutas
@@ -20,14 +20,15 @@ CATALOGO_PATH = rutas.CATALOGO
 
 
 def cargar_catalogo(ruta: str = CATALOGO_PATH) -> list[dict]:
-    """Catálogo de documentos, leído de ``documentos/catalogo.yaml``.
+    """Catálogo de documentos, leído de ``documents/catalog.yaml``.
 
     Vive en configuración y no en código porque es lo primero que cambia al
     adoptar un dominio nuevo: agregar un documento debe ser agregar una
     entrada al YAML, no editar Python.
     """
-    import yaml
-    datos = yaml.safe_load(pathlib.Path(ruta).read_text(encoding="utf-8")) or {}
+    from ipsis.configuracion.archivos import interpretar
+
+    datos = interpretar(pathlib.Path(ruta).read_text(encoding="utf-8"), "catalogo")
     # `datos["documentos"]` puede ser `None` si el catálogo se creó vacío
     # (`ipsis init`, o `_append_entrada_catalogo` antes de la primera entrada:
     # "documentos:\n" sin items parsea a `None`, no a `[]`) -- se normaliza
@@ -44,7 +45,7 @@ def entradas_vigentes(ruta: str = CATALOGO_PATH) -> list[dict]:
 
 # ---------------------------------------------------------------------------
 # `ipsis cargar`: copia un documento al corpus y lo registra en
-# `documentos/catalogo.yaml`. La lógica vive aquí, no en la CLI: los comandos
+# `documents/catalog.yaml`. La lógica vive aquí, no en la CLI: los comandos
 # solo traducen argumentos y llaman a ipsis/.
 # ---------------------------------------------------------------------------
 
@@ -105,7 +106,7 @@ def _yaml_valor(valor) -> str:
 
 
 def plantilla_catalogo_vacio() -> str:
-    """Contenido inicial de ``documentos/catalogo.yaml`` sin documentos -- la usa
+    """Contenido inicial de ``documents/catalog.yaml`` sin documentos -- la usa
     tanto ``ipsis init`` (para que el archivo exista desde el principio, con
     un mensaje claro en vez de un ``FileNotFoundError``) como
     ``_append_entrada_catalogo`` (si `ipsis cargar` es lo primero que se
@@ -113,15 +114,15 @@ def plantilla_catalogo_vacio() -> str:
     ``yaml.safe_load``, no a una lista vacía -- ``cargar_catalogo`` ya lo
     normaliza."""
     return (
-        "# Catálogo de documentos del corpus.\n"
-        "# Agregado con 'ipsis cargar <archivo|carpeta>' -- no se edita a mano salvo\n"
-        "# para corregir 'doc_titulo', 'version' o 'vigente' de una entrada existente.\n"
-        "documentos:\n"
+        "# Documents in the corpus.\n"
+        "# Added by 'ipsis load <file|folder>'. Edit it by hand only to fix\n"
+        "# 'doc_title', 'version' or 'active' of an existing entry.\n"
+        "documents:\n"
     )
 
 
 def _append_entrada_catalogo(ruta_catalogo: str, entrada: dict) -> None:
-    """Agrega una entrada al FINAL de ``documentos/catalogo.yaml`` sin volver a
+    """Agrega una entrada al FINAL de ``documents/catalog.yaml`` sin volver a
     serializar el archivo completo -- es lo que garantiza que los
     comentarios existentes (y las entradas ya escritas a mano) queden
     intactos, letra por letra, en vez de depender de que un dumper YAML los
@@ -137,12 +138,12 @@ def _append_entrada_catalogo(ruta_catalogo: str, entrada: dict) -> None:
         texto_actual += "\n"
 
     bloque = (
-        f"\n  - archivo: {_yaml_valor(entrada['archivo'])}\n"
+        f"\n  - file: {_yaml_valor(entrada['archivo'])}\n"
         f"    doc_id: {entrada['doc_id']}\n"
-        f"    doc_titulo: {_yaml_valor(entrada['doc_titulo'])}\n"
+        f"    doc_title: {_yaml_valor(entrada['doc_titulo'])}\n"
         f"    version: {_yaml_valor(str(entrada['version']))}\n"
-        f"    vigente: {'true' if entrada['vigente'] else 'false'}\n"
-        f"    hash_contenido: {entrada['hash_contenido']}\n"
+        f"    active: {'true' if entrada['vigente'] else 'false'}\n"
+        f"    content_hash: {entrada['hash_contenido']}\n"
     )
     ruta.write_text(texto_actual + bloque, encoding="utf-8")
 
@@ -162,10 +163,10 @@ class DocumentoCargado:
     homonimo_de: str | None = None
 
 
-def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "documentos",
+def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas.DOCUMENTOS,
                                     ruta_catalogo: str = CATALOGO_PATH) -> list[DocumentoCargado]:
     """Copia cada archivo de ``rutas`` a ``carpeta_corpus`` (si no está ya
-    ahí) y agrega una entrada nueva a ``documentos/catalogo.yaml`` -- salvo que su
+    ahí) y agrega una entrada nueva a ``documents/catalog.yaml`` -- salvo que su
     HASH de contenido ya esté registrado (misma carga repetida: se avisa y
     no se duplica). Devuelve un resumen por documento, incluidas las
     advertencias del parser (p.ej. "sin estructura de secciones") para que
@@ -202,7 +203,7 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = "docu
 
         # Parsea desde el ORIGEN, antes de copiar nada: si el documento se
         # rechaza (p.ej. un PDF escaneado, DocumentoEscaneadoError), no debe
-        # quedar un archivo huérfano en documentos/ sin entrada en el
+        # quedar un archivo huérfano en documents/ sin entrada en el
         # catálogo -- defecto real encontrado reproduciendo 'ipsis cargar' con
         # un PDF escaneado en un directorio externo al repo.
         doc_parseado = parsear_documento(str(ruta_origen), doc_id=doc_id, doc_titulo="(pendiente)", version="1")

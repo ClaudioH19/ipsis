@@ -69,7 +69,7 @@ class ComandoPersonalidadMostrar(Comando):
 
 class ComandoPersonalidadValidar(Comando):
     nombre = "validar"
-    ayuda = "Revisa personalidad.yaml, las plantillas propias y el avatar. Sale con 1 si hay errores."
+    ayuda = "Revisa personality.yaml, las plantillas propias y el avatar. Sale con 1 si hay errores."
 
     @_errores_accionables
     def ejecutar(self, args: argparse.Namespace) -> int:
@@ -151,7 +151,7 @@ class ComandoAvatarListar(Comando):
 
 class ComandoAvatarImportar(Comando):
     nombre = "importar"
-    ayuda = "Valida un .avatar.json (exportado del Studio) y lo copia a configuracion/avatares/."
+    ayuda = "Valida un .avatar.json (exportado del Studio) y lo copia a config/avatars/."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("archivo", help="Definición exportada desde avatars.bible-strong.app.")

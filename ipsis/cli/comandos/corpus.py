@@ -42,9 +42,9 @@ class ComandoCargar(Comando):
             if d.homonimo_de:
                 print(f"      [!] ya había un documento con ese nombre ({d.homonimo_de!r}) y otro contenido: este se "
                       "agregó aparte y ambos se indexan. Si lo reemplaza, marca 'vigente: false' en la entrada "
-                      f"de {d.homonimo_de!r} en documentos/catalogo.yaml y ejecuta 'ipsis indexar'.")
+                      f"de {d.homonimo_de!r} en documents/catalog.yaml y ejecuta 'ipsis indexar'.")
         n_nuevos = sum(1 for d in resultado if not d.ya_existia)
-        print(f"{n_nuevos} documento(s) nuevo(s) agregado(s) al catálogo (documentos/catalogo.yaml).")
+        print(f"{n_nuevos} documento(s) nuevo(s) agregado(s) al catálogo (documents/catalog.yaml).")
         print("Siguiente paso: 'ipsis indexar'.")
         return 0
 
@@ -54,8 +54,8 @@ class ComandoIndexar(Comando):
     ayuda = "Parsea, fragmenta, vectoriza y persiste el índice."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--corpus", default="documentos",
-                            help="Carpeta con los documentos a indexar (por defecto: 'documentos').")
+        parser.add_argument("--corpus", default="documents",
+                            help="Carpeta con los documentos a indexar (por defecto: 'documents').")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:

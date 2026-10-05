@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+from ipsis.configuracion import rutas
 from ipsis.ingesta.parsear import parsear_documento, DocumentoParseado
 from ipsis.ingesta.chunking import ESTRATEGIAS, construir_texto_embebido, Chunk
 from ipsis.ingesta.metadata import cargar_taxonomia, construir_payload, validar_chunk
@@ -17,7 +18,7 @@ from ipsis.indice.qdrant import (
 
 
 def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
-    """Parsea todo el catálogo (``documentos/catalogo.yaml``) con el despacho por
+    """Parsea todo el catálogo (``documents/catalog.yaml``) con el despacho por
     extensión de ``ipsis/ingesta/parsear.py::parsear_documento`` -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
     tenga que saber cuál es cuál."""
@@ -104,7 +105,7 @@ class ResumenIngesta:
         return len(self.documentos)
 
 
-def huella_archivos(carpeta_corpus: str = "documentos", cfg_rec: dict | None = None) -> str:
+def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None = None) -> str:
     """Huella de lo que se indexaría, sin parsear: bytes de cada documento vigente
     y la configuración de fragmentado. Igual huella ⇒ igual ``hash_corpus``."""
     import hashlib
@@ -120,7 +121,7 @@ def huella_archivos(carpeta_corpus: str = "documentos", cfg_rec: dict | None = N
     return "sha256:" + digest.hexdigest()
 
 
-def huella_corpus(carpeta_corpus: str = "documentos", cfg_rec: dict | None = None) -> str:
+def huella_corpus(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None = None) -> str:
     """``hash_corpus`` que tendría el índice si se indexara ahora: parsea y
     fragmenta igual que ``ejecutar_ingesta``, sin modelos ni Qdrant."""
     from ipsis.configuracion.carga import config_recuperacion
@@ -131,7 +132,7 @@ def huella_corpus(carpeta_corpus: str = "documentos", cfg_rec: dict | None = Non
     return hash_corpus(payloads)
 
 
-def ejecutar_ingesta(carpeta_corpus: str = "documentos", estrategia: str | None = None,
+def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | None = None,
                       con_header: bool | None = None, modelo: str | None = None,
                       coleccion: str | None = None, qdrant_path: str | None = None,
                       version_coleccion: int | None = None, sufijo_coleccion: str | None = None,

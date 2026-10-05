@@ -49,7 +49,7 @@ def _completar_un_par(ruta: Path) -> tuple[str, str]:
 
 
 def _banco(proyecto: Path) -> dict[str, dict]:
-    lineas = (proyecto / "golden" / "banco" / "golden.jsonl").read_text(encoding="utf-8").splitlines()
+    lineas = (proyecto / "golden" / "bank" / "golden.jsonl").read_text(encoding="utf-8").splitlines()
     return {c["id"]: c for c in map(json.loads, lineas)}
 
 
@@ -83,7 +83,7 @@ def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
     id_r, id_t = _completar_un_par(proyecto / "golden" / "golden.csv")
     assert main(["golden", "importar", "golden/golden.csv"]) == 0
     original = _banco(proyecto)
-    manifiesto = json.loads((proyecto / "golden" / "banco" / "manifiesto.json").read_text(encoding="utf-8"))
+    manifiesto = json.loads((proyecto / "golden" / "bank" / "manifest.json").read_text(encoding="utf-8"))
     assert manifiesto["procedencia"] == {"formato": "csv", "archivo": "golden.csv"}
 
     assert main(["golden", "exportar", "--formato", "squad2"]) == 0
@@ -98,7 +98,7 @@ def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
     from ipsis.ingesta.ingesta import parsear_corpus
 
     evidencia = original[id_r]["evidencias"][0]
-    documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documentos")}[evidencia["doc_id"]]
+    documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documents")}[evidencia["doc_id"]]
     global_respuesta = evidencia["offset_inicio"] + evidencia["texto"].index(respuesta["text"])
     assert documento.index(parrafo["context"]) + inicio == global_respuesta
     parrafo_t, trampa = qas[id_t]
@@ -153,7 +153,7 @@ def test_squad2_externo_sin_extension_y_ocurrencia_exacta_por_contexto(proyecto:
             "a la cuenta registrada por el cliente."
     from ipsis.ingesta.ingesta import parsear_corpus
 
-    documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documentos")}["reglamento-servicio"]
+    documento = {d.doc_id: d.texto_completo for d in parsear_corpus("documents")}["reglamento-servicio"]
     assert texto in documento and documento.count("días hábiles") == 2
     _squad(proyecto / "externo.json", [
         {"id": "q1", "question": "¿En cuánto se paga?", "is_impossible": False,
@@ -177,9 +177,9 @@ def test_validar_detecta_corpus_modificado_sin_tocar_nada(proyecto: Path, capsys
     assert main(["golden", "importar", "golden/golden.csv"]) == 0
     assert main(["golden", "validar"]) == 0
 
-    banco = proyecto / "golden" / "banco"
+    banco = proyecto / "golden" / "bank"
     antes = {p.name: p.read_bytes() for p in banco.iterdir()}
-    documento = proyecto / "documentos" / "manual_purificador.md"
+    documento = proyecto / "documents" / "manual_purificador.md"
     documento.write_text(documento.read_text(encoding="utf-8").replace("24 meses", "36 meses"), encoding="utf-8")
     capsys.readouterr()
     assert main(["golden", "validar"]) == 1
@@ -199,5 +199,5 @@ def test_importar_con_errores_los_lista_y_no_escribe_el_banco(proyecto: Path, ca
     salida = capsys.readouterr().out
     assert "malo.csv:2" in salida and "999 pesos" in salida and "malo.csv:3" in salida
     assert "Traceback" not in salida
-    assert not (proyecto / "golden" / "banco").exists()
+    assert not (proyecto / "golden" / "bank").exists()
     assert main(["golden", "importar", "golden/no_existe.csv"]) == 1

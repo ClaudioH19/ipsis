@@ -33,7 +33,7 @@ def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> Resu
     ``ipsis/lenguaje/entidades.py``) presente en ``respuesta_generada`` debe
     estar también, literalmente, en el texto fuente (los fragmentos
     recuperados, más su cita determinista: título del documento y ruta de
-    sección, que también se copian del corpus vía ``documentos/catalogo.yaml`` /
+    sección, que también se copian del corpus vía ``documents/catalog.yaml`` /
     el parser — nunca las produce un modelo). Si alguna entidad de la
     respuesta no tiene respaldo literal, la guardia falla y ``api.py`` debe
     abstenerse en vez de responder.

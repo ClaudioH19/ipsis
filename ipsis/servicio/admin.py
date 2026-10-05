@@ -9,7 +9,7 @@ Solo existe si ``IPSIS_ADMIN_TOKEN`` está definido (≥ 32 caracteres). Reglas:
 - lista opcional de IPs (``IPSIS_ADMIN_IPS``);
 - tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos;
 - cuerpo ≤ 256 KiB, limitador de peticiones y sin CORS (lo excluye ``api``);
-- cada cambio queda en ``.ipsis/registros/admin.jsonl`` (sin el token ni los valores).
+- cada cambio queda en ``.ipsis/logs/admin.jsonl`` (sin el token ni los valores).
 """
 from __future__ import annotations
 

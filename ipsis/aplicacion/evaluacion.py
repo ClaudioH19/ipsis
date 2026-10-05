@@ -8,8 +8,8 @@ import os
 import tempfile
 from pathlib import Path
 
-import yaml
-
+from ipsis.configuracion import rutas
+from ipsis.configuracion.archivos import escribir, leer
 from ipsis.evaluacion.banco import cargar_banco, hash_banco
 from ipsis.evaluacion.benchmark import percentil
 from ipsis.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
@@ -150,8 +150,8 @@ def ejecutar_benchmark(
                 if main(["cargar", str(corpus / archivo.ruta)]) != 0:
                     raise RuntimeError(f"falló la carga de {archivo.ruta}")
 
-            ruta_cfg = proyecto / "configuracion" / "motor.yaml"
-            cfg = yaml.safe_load(ruta_cfg.read_text(encoding="utf-8"))
+            ruta_cfg = proyecto / rutas.MOTOR
+            cfg = leer(ruta_cfg, "motor")
             artefactos = []
             ejecuciones = [
                 ("qdrant", "vectorial", True),
@@ -160,10 +160,7 @@ def ejecutar_benchmark(
             for retriever, modo, reindexar in ejecuciones:
                 cfg["componentes"]["retriever"] = retriever
                 cfg["recuperacion"]["modo"] = modo
-                ruta_cfg.write_text(
-                    yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False),
-                    encoding="utf-8",
-                )
+                escribir(ruta_cfg, cfg, "motor")
                 if reindexar and main(["indexar"]) != 0:
                     raise RuntimeError(f"falló la indexación de {retriever}/{modo}")
                 etiqueta = f"qdrant_{modo}"
@@ -258,7 +255,7 @@ class CalibracionProyecto:
     def __init__(self, resultado, procedencia, ruta: Path | None) -> None:
         self.resultado = resultado  # ipsis.evaluacion.calibracion.ResultadoCalibracion
         self.procedencia = procedencia  # ProcedenciaCalibracion
-        self.ruta = ruta  # configuracion/calibracion.yaml si se aplicó
+        self.ruta = ruta  # config/calibration.yaml si se aplicó
 
 
 def hash_corpus_del_indice(cfg: dict) -> str:
@@ -286,7 +283,7 @@ def calibrar_proyecto(
 
     No entrena nada: ``calibrar`` elige umbrales escalares en ``dev`` y
     verifica en ``test`` (P10.2). Con ``aplicar`` escribe
-    ``configuracion/calibracion.yaml`` en cualquier estado, para auditoría;
+    ``config/calibration.yaml`` en cualquier estado, para auditoría;
     el motor solo usa sus umbrales si el estado es ``calibrado`` y la
     procedencia coincide. ``evaluar`` se inyecta en las pruebas (motor falso).
     """

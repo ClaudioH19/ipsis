@@ -317,10 +317,8 @@ def explorar_umbrales(pares: list[Par], umbrales_perfil: dict[str, float], alfa:
 # ---------------------------------------------------------------------------
 def escribir_calibracion(resultado: ResultadoCalibracion, procedencia: ProcedenciaCalibracion,
                          ruta: str | Path) -> Path:
-    """``configuracion/calibracion.yaml`` (escritura atómica). Se escribe en
+    """``config/calibration.yaml`` (escritura atómica). Se escribe en
     cualquier estado, para auditoría; solo ``calibrado`` se aplica."""
-    import yaml
-
     from ipsis.evaluacion.golden import escribir_atomico
 
     archivo = ArchivoCalibracion(
@@ -331,7 +329,9 @@ def escribir_calibracion(resultado: ResultadoCalibracion, procedencia: Procedenc
                    "verificacion_test": resultado.verificacion_test},
     )
     ruta = Path(ruta)
-    escribir_atomico(ruta, yaml.safe_dump(archivo.model_dump(mode="json"), allow_unicode=True, sort_keys=False))
+    from ipsis.configuracion.archivos import volcar
+
+    escribir_atomico(ruta, volcar(archivo.model_dump(mode="json"), "calibracion"))
     return ruta
 
 

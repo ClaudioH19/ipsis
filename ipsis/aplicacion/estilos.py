@@ -1,4 +1,4 @@
-"""Traduce ``configuracion/estilos.yaml`` a la hoja de estilos que el
+"""Traduce ``config/styles.yaml`` a la hoja de estilos que el
 widget enlaza en ``GET /estilos.css``.
 
 Consume: el YAML de estilos del despliegue. Produce: una cadena de CSS con
@@ -19,9 +19,7 @@ from __future__ import annotations
 
 from ipsis.configuracion import rutas
 
-from pathlib import Path
 
-import yaml
 
 RUTA_ESTILOS = rutas.ESTILOS
 
@@ -77,10 +75,9 @@ def cargar_estilos(ruta: str = RUTA_ESTILOS) -> dict:
     """Lee el YAML de estilos. Si no existe, devuelve un tema vacío: el
     widget se ve entonces con sus valores de repuesto, que es exactamente
     el comportamiento deseado en un proyecto recién creado."""
-    p = Path(ruta)
-    if not p.exists():
-        return {}
-    return yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    from ipsis.configuracion.archivos import leer
+
+    return leer(ruta, "estilos")
 
 
 def _declaraciones(seccion: dict | None, mapa: dict[str, str]) -> list[str]:
@@ -104,7 +101,7 @@ def render_css(tema: dict | None = None, ruta: str = RUTA_ESTILOS) -> str:
     usuario, para que pueda sobreescribir cualquier cosa anterior."""
     tema = cargar_estilos(ruta) if tema is None else tema
     partes: list[str] = [
-        "/* Generado desde configuracion/estilos.yaml -- no editar a mano. */"
+        "/* Generado desde config/styles.yaml -- no editar a mano. */"
     ]
 
     claras: list[str] = []
@@ -138,6 +135,6 @@ def render_css(tema: dict | None = None, ruta: str = RUTA_ESTILOS) -> str:
 
     extra = str(tema.get("css_extra") or "").strip()
     if extra:
-        partes.append("/* css_extra de configuracion/estilos.yaml */\n" + extra)
+        partes.append("/* css_extra de config/styles.yaml */\n" + extra)
 
     return "\n\n".join(partes) + "\n"

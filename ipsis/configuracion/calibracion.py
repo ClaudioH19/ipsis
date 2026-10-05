@@ -1,4 +1,4 @@
-"""``configuracion/calibracion.yaml``: umbrales calibrados con el golden del cliente.
+"""``config/calibration.yaml``: umbrales calibrados con el golden del cliente.
 
 Solo se aplican si la calibración está en estado ``calibrado`` y su
 procedencia coincide con la instalación actual: mismo perfil, mismos modelos
@@ -13,7 +13,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 VERSION_CALIBRACION = 1
@@ -63,8 +62,9 @@ def leer_calibracion(ruta: str | Path) -> ArchivoCalibracion | None:
     ruta = Path(ruta)
     if not ruta.is_file():
         return None
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
-    archivo = ArchivoCalibracion.model_validate(datos)
+    from ipsis.configuracion.archivos import interpretar
+
+    archivo = ArchivoCalibracion.model_validate(interpretar(ruta.read_text(encoding="utf-8"), "calibracion"))
     return archivo.model_copy(update={"umbrales": normalizar_umbrales(archivo.umbrales)})
 
 

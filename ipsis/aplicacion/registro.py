@@ -1,7 +1,7 @@
 """Registro de consultas y su auditoría (``ipsis auditar``).
 
-El registro es un JSONL en ``.ipsis/registros/consultas.jsonl``, apagado por
-defecto (privacidad: ``asistente.yaml::registro.activo``). Cada línea guarda
+El registro es un JSONL en ``.ipsis/logs/queries.jsonl``, apagado por
+defecto (privacidad: ``assistant.yaml::query_log.enabled``). Cada línea guarda
 la pregunta, el estado, la regla, las señales y las evidencias con sus
 offsets; no guarda la sesión ni la IP. Solo lo escribe el servicio.
 
@@ -213,7 +213,7 @@ __all__ = ["FechaInvalida", "ProblemaEvidencia", "RegistroConsultas", "ReporteAu
 
 
 def registrar_admin(ip: str | None, accion: str, claves: list[str] | None = None) -> None:
-    """Auditoría de ``/admin`` en ``.ipsis/registros/admin.jsonl``: quién cambió qué
+    """Auditoría de ``/admin`` en ``.ipsis/logs/admin.jsonl``: quién cambió qué
     (fecha, IP, acción y claves). Nunca guarda el token ni los valores."""
     ruta = Path(rutas.REGISTRO_CONSULTAS).with_name("admin.jsonl")
     ruta.parent.mkdir(parents=True, exist_ok=True)

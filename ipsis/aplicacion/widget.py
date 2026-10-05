@@ -1,21 +1,17 @@
 """Presentación del widget: presets visuales y exportación del cliente embebible."""
 from __future__ import annotations
 
-from ipsis.configuracion import rutas
-
-import os
-import html as html_lib
+import html
+import json
 from copy import deepcopy
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
-import yaml
-
-from ipsis.recursos import leer_plantilla
 from ipsis.aplicacion.estilos import RUTA_ESTILOS, cargar_estilos, render_css
-import html
-import json
-from importlib.resources import files
+from ipsis.configuracion import rutas
+from ipsis.configuracion.archivos import escribir
+from ipsis.recursos import leer_plantilla
 
 
 PRESETS: dict[str, dict[str, Any]] = {
@@ -126,7 +122,7 @@ def citas_presentacion(valor: str | None) -> str:
 
 
 def ubicacion_widget(tema: dict | None = None) -> dict:
-    """``estilos.yaml::ubicacion`` validada y con sus valores por defecto."""
+    """``styles.yaml::ubicacion`` validada y con sus valores por defecto."""
     tema = cargar_estilos() if tema is None else tema
     propia = tema.get("ubicacion") or {}
     if not isinstance(propia, dict):
@@ -151,7 +147,7 @@ def ubicacion_widget(tema: dict | None = None) -> dict:
 
 
 def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | None = None) -> str:
-    """Etiqueta lista para pegar en el sitio, según ``estilos.yaml::ubicacion``."""
+    """Etiqueta lista para pegar en el sitio, según ``styles.yaml::ubicacion``."""
     u = ubicacion_widget()
     api = api.rstrip("/")
     atributos = {"posicion": u["posicion"], "tamano": u["tamano"], "lanzador": u["lanzador"],
@@ -167,9 +163,12 @@ def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | No
 
 
 def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
+    from ipsis.configuracion.glosario import PRESETS as NOMBRES_PRESETS
+
+    nombre = {externo: interno for interno, externo in NOMBRES_PRESETS.items()}.get(nombre, nombre)
     if nombre not in PRESETS:
-        raise ValueError(f"preset desconocido {nombre!r}; disponibles: {sorted(PRESETS)}")
-    base = yaml.safe_load(leer_plantilla("estilos.yaml")) or {}
+        raise ValueError(f"preset desconocido {nombre!r}; disponibles: {sorted(NOMBRES_PRESETS.values())}")
+    base = _tema_base()
     actual = cargar_estilos(ruta)
     # Cada preset parte de fábrica para no heredar accidentalmente valores de
     # otro preset. Se preservan CSS explícito y extensiones ajenas al esquema.
@@ -181,15 +180,7 @@ def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
             tema[clave] = deepcopy(valor)
     tema["preset"] = nombre
     validar_tema(tema)
-
-    destino = Path(ruta)
-    destino.parent.mkdir(parents=True, exist_ok=True)
-    temporal = destino.with_name(destino.name + ".tmp")
-    temporal.write_text(
-        yaml.safe_dump(tema, allow_unicode=True, sort_keys=False),
-        encoding="utf-8",
-    )
-    os.replace(temporal, destino)
+    escribir(ruta, tema, "estilos")
     return tema
 
 
@@ -204,7 +195,7 @@ def generar_vista_previa(
     preset = str(tema.get("preset") or "personalizado")
     if "</style" in css_tema.lower():
         raise ValueError("css_extra no puede cerrar la etiqueta style en la vista previa")
-    preset_html = html_lib.escape(preset)
+    preset_html = html.escape(preset)
     contenido_html = f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -304,32 +295,34 @@ def exportar_widget(
 
 
 def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
-    """Fusiona ``cambios`` (parcial) sobre ``estilos.yaml``; valida el tema completo
+    """Fusiona ``cambios`` (parcial) sobre ``styles.yaml``; valida el tema completo
     antes de escribir (escritura atómica)."""
     if not isinstance(cambios, dict):
         raise ValueError("el cuerpo debe ser un objeto JSON")
-    tema = _fusionar(cargar_estilos(), cambios)
+    tema = _fusionar(cargar_estilos(ruta), cambios)
     validar_tema(tema)
-    destino = Path(ruta)
-    destino.parent.mkdir(parents=True, exist_ok=True)
-    temporal = destino.with_name(destino.name + ".tmp")
-    temporal.write_text(yaml.safe_dump(tema, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    os.replace(temporal, destino)
+    escribir(ruta, tema, "estilos")
     return tema
 
 
 # --- estilo clave por clave (ipsis widget estilo, panel /admin) ---------------------------------
-SECCIONES_EDITABLES = ("presentacion", "ubicacion", "colores", "colores_oscuro", "tipografia", "forma", "sombras",
-                       "animaciones")
+# Con los nombres del archivo (inglés): es lo que el usuario escribe y ve.
+SECCIONES_EDITABLES = ("presentation", "placement", "colors", "dark_colors", "typography", "shape", "shadows",
+                       "animations")
 
 
 def _tema_base() -> dict:
-    return yaml.safe_load(leer_plantilla("estilos.yaml")) or {}
+    from ipsis.configuracion.archivos import interpretar
+
+    return interpretar(leer_plantilla("styles.yaml"), "estilos")
 
 
 def estilo_plano(tema: dict | None = None) -> list[tuple[str, Any]]:
-    """Cada valor editable como ``seccion.clave`` → valor: lo del proyecto sobre la plantilla."""
-    tema = _fusionar(_tema_base(), tema if tema is not None else cargar_estilos())
+    """Cada valor editable como ``seccion.clave`` → valor (nombres y valores del archivo):
+    lo del proyecto sobre la plantilla."""
+    from ipsis.configuracion.glosario import a_externo
+
+    tema = a_externo(_fusionar(_tema_base(), tema if tema is not None else cargar_estilos()), "estilos")
     return [(f"{seccion}.{clave}", valor)
             for seccion in SECCIONES_EDITABLES for clave, valor in (tema.get(seccion) or {}).items()]
 
@@ -351,16 +344,18 @@ def _convertir(texto: str, ejemplo: Any) -> Any:
 
 
 def cambiar_estilo(asignaciones: list[str], ruta: str = RUTA_ESTILOS) -> dict:
-    """Aplica ``seccion.clave=valor`` sobre ``estilos.yaml``. Solo acepta claves que
+    """Aplica ``seccion.clave=valor`` sobre ``styles.yaml``. Solo acepta claves que
     existen en la plantilla, para que una errata no se guarde en silencio, y valida
     el tema completo antes de escribir."""
-    base = _tema_base()
+    from ipsis.configuracion.glosario import a_externo, a_interno
+
+    base = a_externo(_tema_base(), "estilos")
     cambios: dict[str, dict] = {}
     for asignacion in asignaciones:
         clave, separador, valor = asignacion.partition("=")
         seccion, punto, nombre = clave.strip().partition(".")
         if not separador or not punto:
-            raise ValueError(f"{asignacion!r}: usa seccion.clave=valor, p. ej. colores.acento=#0ea5e9")
+            raise ValueError(f"{asignacion!r}: usa seccion.clave=valor, p. ej. colors.accent=#0ea5e9")
         if seccion not in SECCIONES_EDITABLES:
             raise ValueError(f"sección desconocida {seccion!r}; válidas: {', '.join(SECCIONES_EDITABLES)}")
         validas = base.get(seccion) or {}
@@ -372,7 +367,7 @@ def cambiar_estilo(asignaciones: list[str], ruta: str = RUTA_ESTILOS) -> dict:
             raise ValueError(f"{clave}: {e}") from e
     if not cambios:
         raise ValueError("indica al menos un cambio: seccion.clave=valor")
-    return actualizar_estilos(cambios, ruta)
+    return actualizar_estilos(a_interno(cambios, "estilos"), ruta)
 
 
 __all__ += ["SECCIONES_EDITABLES", "cambiar_estilo", "estilo_plano"]

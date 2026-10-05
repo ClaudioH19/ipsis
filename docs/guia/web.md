@@ -40,7 +40,7 @@ el tráfico, no son un secreto.
 
 ## Ubicación, tamaño y lanzador
 
-Se configuran en `configuracion/estilos.yaml` (sección `ubicacion`) o con
+Se configuran en `config/styles.yaml` (sección `ubicacion`) o con
 atributos en la etiqueta. **Si el sitio declara un atributo, ese manda.**
 
 | Opción | Atributo (`data-` en el `<script>`) | Valores |
@@ -87,7 +87,7 @@ Eventos que emite el elemento: `rag:abierto`, `rag:cerrado`, `rag:pregunta`,
 
 ## Avatar
 
-Si `personalidad.yaml` tiene un avatar activo y válido, el widget lo muestra
+Si `personality.yaml` tiene un avatar activo y válido, el widget lo muestra
 en lugar del ícono:
 - **Carga bajo demanda:** el motor (`/avatar.js`, 52 KB comprimido) se pide
   al abrir el panel por primera vez. Con `avatar.en_lanzador: true` se pide
@@ -118,7 +118,7 @@ comprobarla:
   literal;
 - el tramo exacto que respondió, resaltado.
 
-`estilos.yaml::presentacion.citas` elige cómo se ven, nunca si se ven:
+`styles.yaml::presentacion.citas` elige cómo se ven, nunca si se ven:
 - `acordeon`: desplegables; la que tiene el tramo exacto viene abierta;
 - `lista`: todas a la vista.
 
@@ -137,7 +137,7 @@ Los valores anteriores siguen funcionando: `abiertas` equivale a `lista`, y
 
 ## Estilo
 
-Todo el aspecto vive en `configuracion/estilos.yaml` y se aplica sin
+Todo el aspecto vive en `config/styles.yaml` y se aplica sin
 reiniciar el servicio:
 
 - **Presets:** `ipsis widget tema listar` y `ipsis widget tema aplicar editorial`

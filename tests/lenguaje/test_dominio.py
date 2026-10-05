@@ -11,7 +11,7 @@ from ipsis.lenguaje.entidades import extraer_decimales, extraer_porcentajes
 
 @pytest.fixture()
 def perfil_sintetico(tmp_path: Path):
-    ruta = tmp_path / "dominio.yaml"
+    ruta = tmp_path / "domain.yaml"
     ruta.write_text(
         """organismos: [Mesa Técnica]
 extractores_regex:
@@ -58,8 +58,8 @@ def test_sin_dominio_yaml_el_perfil_no_aporta_entidades(tmp_path: Path):
 def test_plantilla_de_dominio_no_aporta_entidades(tmp_path: Path):
     from ipsis.recursos import leer_plantilla
 
-    ruta = tmp_path / "dominio.yaml"
-    ruta.write_text(leer_plantilla("dominio.yaml"), encoding="utf-8")
+    ruta = tmp_path / "domain.yaml"
+    ruta.write_text(leer_plantilla("domain.yaml"), encoding="utf-8")
     assert cargar_perfil(str(ruta)).tipos_aportados() == set()
 
 
@@ -67,19 +67,19 @@ def test_ejemplo_comentado_del_perfil_generico_funciona(tmp_path: Path):
     """El ejemplo de regla documentado en la plantilla debe seguir siendo válido."""
     from ipsis.recursos import leer_plantilla
 
-    lineas = leer_plantilla("dominio.yaml").splitlines()
-    inicio = lineas.index("# extractores_regex:")
+    lineas = leer_plantilla("domain.yaml").splitlines()
+    inicio = lineas.index("# regex_extractors:")
     ejemplo = []
     for linea in lineas[inicio:]:
         if not linea.startswith("#"):
             break
         ejemplo.append(linea[2:])
-    ruta = tmp_path / "dominio.yaml"
+    ruta = tmp_path / "domain.yaml"
     ruta.write_text("\n".join(ejemplo) + "\n", encoding="utf-8")
 
     perfil = cargar_perfil(str(ruta))
-    valores = [e.valor_norm for e in perfil.extraer_entidades_extra("con nota 3,9 reprueba")]
-    assert valores == ["nota_3.9"]
+    valores = [e.valor_norm for e in perfil.extraer_entidades_extra("with grade 3.9 the course is failed")]
+    assert valores == ["grade_3.9"]
 
 
 def test_entidades_del_nucleo_no_dependen_del_perfil():

@@ -46,7 +46,7 @@ def _consultar(pregunta: str = "hola", **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# CORS: cors_origenes está VACÍO por defecto (configuracion/asistente.yaml, corregido
+# CORS: cors_origenes está VACÍO por defecto (config/assistant.yaml, corregido
 # en esta tanda) -- CUALQUIER origen cuenta como "no listado".
 # ---------------------------------------------------------------------------
 

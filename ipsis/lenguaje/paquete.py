@@ -1,7 +1,7 @@
 """Paquetes de idioma: todo texto y patrón que depende del idioma.
 
 Cada idioma soportado tiene un YAML en ``ipsis/recursos/idiomas/<código>.yaml``.
-Un proyecto puede sobrescribir cualquier clave en ``configuracion/idioma.yaml``;
+Un proyecto puede sobrescribir cualquier clave en ``config/language.yaml``;
 la fusión es profunda para objetos y reemplaza listas completas.
 
 Una variante regional (``pt-br``) usa el paquete de su idioma. Un idioma sin
@@ -90,7 +90,7 @@ class PaqueteIdioma(_Estricto):
     contracciones: dict[str, str] = Field(default_factory=dict)
     golden_instrucciones: GoldenInstrucciones | None = None
     respaldo: bool = False  # True: no hay paquete para este idioma (ver docstring del módulo)
-    # Textos de configuracion/idioma.yaml anteriores a los tonos, ya traducidos a
+    # Textos de config/language.yaml anteriores a los tonos, ya traducidos a
     # situaciones de tono (``ipsis.lenguaje.tonos.extraer_legado``).
     plantillas_legado: dict[str, list[str]] = Field(default_factory=dict)
 

@@ -42,8 +42,8 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis init [--perfil light\|medium\|heavy] [--idioma es] [--nombre-asistente N] [--descripcion-dominio D] [--force]` | Crea `configuracion/` y `documentos/`. Sin `--force` no pisa un proyecto existente |
-| `ipsis configurar clave=valor …` | Edita `asistente.yaml`: `nombre_asistente`, `descripcion_dominio`, `idioma`, `perfil`, `cors_origenes`, `claves_widget` (listas separadas por coma) y `registro.activo` (true o false) |
+| `ipsis init [--perfil light\|medium\|heavy] [--idioma es] [--nombre-asistente N] [--descripcion-dominio D] [--force]` | Crea `config/` y `documents/`. Sin `--force` no pisa un proyecto existente |
+| `ipsis configurar clave=valor …` | Edita `assistant.yaml`: `nombre_asistente`, `descripcion_dominio`, `idioma`, `perfil`, `cors_origenes`, `claves_widget` (listas separadas por coma) y `registro.activo` (true o false) |
 | `ipsis perfil mostrar` | Perfil activo, modelos, presupuesto p95 y si el índice y la calibración le sirven |
 | `ipsis perfil cambiar <perfil>` | Cambia el perfil. Avisa si hay que reindexar; la calibración anterior deja de aplicarse |
 | `ipsis snapshot-config [--salida RUTA]` | Escribe la configuración efectiva, con los valores por defecto resueltos |
@@ -61,7 +61,7 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis cargar <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT) a `documentos/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `vigente: false` en `documentos/catalogo.yaml` |
+| `ipsis cargar <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `vigente: false` en `documents/catalog.yaml` |
 | `ipsis indexar [--corpus CARPETA]` | Reconstruye el índice completo. Ejecútalo después de cada cambio de documentos o de un cambio de perfil que lo pida |
 
 ### Consulta
@@ -87,12 +87,12 @@ reindexar ni recalibrar.
 | Comando | Qué hace |
 |---|---|
 | `ipsis personalidad mostrar` | Tono activo, variedad y avatar (ubicación, tamaño, mirada, colores, eventos con respaldo) |
-| `ipsis personalidad validar` | Revisa `personalidad.yaml`, las plantillas propias y el avatar. Sale con 1 si hay errores |
+| `ipsis personalidad validar` | Revisa `personality.yaml`, las plantillas propias y el avatar. Sale con 1 si hay errores |
 | `ipsis personalidad tono listar` | Tonos del idioma del proyecto, con un ejemplo de cada uno |
 | `ipsis personalidad tono aplicar <tono>` | Activa `cordial`, `formal`, `serio`, `animoso`, `cercano`, `empatico` o `directo` |
 | `ipsis personalidad tono probar [--tono T] [--situacion S]` | Imprime las variantes con las variables del proyecto |
 | `ipsis personalidad avatar listar` | Avatares incluidos e importados |
-| `ipsis personalidad avatar importar <archivo.avatar.json> [--nombre N]` | Valida un avatar exportado del Studio y lo copia a `configuracion/avatares/` |
+| `ipsis personalidad avatar importar <archivo.avatar.json> [--nombre N]` | Valida un avatar exportado del Studio y lo copia a `config/avatars/` |
 | `ipsis personalidad avatar aplicar <nombre>` | Usa ese avatar en el widget |
 | `ipsis personalidad avatar eventos` | Qué animación o expresión dispara cada evento, y cuáles usan un respaldo |
 | `ipsis personalidad avatar asignar <evento> <clave>` | Asigna a un evento una clave que el avatar tenga |
@@ -108,8 +108,8 @@ Detalle en [golden.md](golden.md).
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis golden plantilla [--n 40] [--force]` | Genera `golden/golden.csv` y `golden/LEEME.txt` a partir de tus documentos |
-| `ipsis golden importar <archivo>` | Valida el CSV, JSONL o SQuAD 2.0, ubica las respuestas, separa dev y test, y escribe `golden/banco/` |
+| `ipsis golden plantilla [--n 40] [--force]` | Genera `golden/golden.csv` y `golden/README.txt` a partir de tus documentos |
+| `ipsis golden importar <archivo>` | Valida el CSV, JSONL o SQuAD 2.0, ubica las respuestas, separa dev y test, y escribe `golden/bank/` |
 | `ipsis golden validar` | Comprueba el banco contra el corpus actual |
 | `ipsis golden exportar --formato squad2\|csv [--salida RUTA]` | Exporta el banco |
 | `ipsis evaluar [--banco MANIFIESTO] [--salida RUTA]` | Métricas del perfil activo, con la cota de falsos `ok` |
@@ -124,12 +124,12 @@ Detalle en [web.md](web.md).
 | Comando | Qué hace |
 |---|---|
 | `ipsis widget tema listar` | Presets visuales disponibles |
-| `ipsis widget tema aplicar <preset> [--ruta RUTA]` | Aplica un preset a `configuracion/estilos.yaml` |
+| `ipsis widget tema aplicar <preset> [--ruta RUTA]` | Aplica un preset a `config/styles.yaml` |
 | `ipsis widget tema vista-previa [--ruta RUTA] [--salida RUTA]` | Genera un HTML para ver el tema |
 | `ipsis widget estilo mostrar [--seccion S]` | Cada valor de estilo: `presentacion`, `ubicacion`, `colores`, `colores_oscuro`, `tipografia`, `forma`, `sombras` y `animaciones` |
 | `ipsis widget estilo cambiar seccion.clave=valor …` | Cambia uno o más valores (p. ej. `colores.acento=#0ea5e9 forma.radio_panel=10px`). Rechaza claves inexistentes y caracteres CSS peligrosos; si algo falla, no escribe nada |
 | `ipsis widget exportar <carpeta> [--api URL] [--posicion P]` | Exporta `widget.js`, `snippet.html`, el motor del avatar (`avatar.js` y sus licencias) y la definición del avatar activo, para servirlos aparte. `P`: `abajo-derecha`, `abajo-izquierda`, `arriba-derecha`, `arriba-izquierda` o `incrustado` |
-| `ipsis widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `estilos.yaml::ubicacion` |
+| `ipsis widget snippet [--api URL] [--componente] [--clave K]` | Imprime el código para pegar en tu sitio, según `styles.yaml::ubicacion` |
 
 ### Despliegue
 

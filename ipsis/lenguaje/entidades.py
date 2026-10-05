@@ -362,7 +362,7 @@ TIPOS_GENERICOS = {"decimal", "porcentaje", "plazo", "fecha", "monto", "articulo
 # ESPECIFICAS de un dominio (saberes, organismos, practicas, semanas
 # relativas... lo que antes eran extraer_saberes/extraer_semanas/
 # extraer_organismos/extraer_practicas en este mismo modulo) ya NO viven
-# aqui -- se declaran en configuracion/dominio.yaml y las interpreta
+# aqui -- se declaran en config/domain.yaml y las interpreta
 # ipsis/lenguaje/dominio.py. Este modulo solo necesita saber que existe un objeto con
 # .extraer_entidades_extra(texto), configurado UNA VEZ al arrancar el
 # proceso (la CLI de indexación y el arranque del servicio).

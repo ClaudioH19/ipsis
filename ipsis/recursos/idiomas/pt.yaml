@@ -1,6 +1,6 @@
 # Paquete de idioma: portugués. Todo texto y patrón que depende del idioma
 # vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
-# en configuracion/idioma.yaml.
+# en config/language.yaml.
 codigo: pt
 nombre: Português
 stemmer: portuguese

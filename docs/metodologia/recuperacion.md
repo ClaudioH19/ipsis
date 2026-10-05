@@ -22,7 +22,7 @@ sin redactar nada.
 - **Salida:** `RetrievalCandidate` en orden (id, payload, score) y la señal
   `s_ret`.
 - **Índice:** colección `{coleccion}_{modelo}_v{n}` con su manifiesto en
-  `.ipsis/indice/` (modelo, dimensión, stemmer, hash del corpus, versión del
+  `.ipsis/index/` (modelo, dimensión, stemmer, hash del corpus, versión del
   payload). Si el modelo cambia, se crea otra colección: nunca se mezclan
   vectores de modelos distintos.
 
@@ -64,7 +64,7 @@ sin redactar nada.
 | `recuperar_n` | 10 | 20 | 30 |
 | BM25 `k1`, `b` | 1,2 / 0,75 | 1,2 / 0,75 | 1,2 / 0,75 |
 
-Se ajustan en `configuracion/motor.yaml::ajustes_perfil`.
+Se ajustan en `config/engine.yaml::ajustes_perfil`.
 
 ## 8. Complejidad y recursos
 

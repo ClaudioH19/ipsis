@@ -1,7 +1,7 @@
 """Casos de uso de ``ipsis personalidad``: tono de las respuestas y avatar del widget.
 
 Todo cambio se valida completo (esquema, linter de plantillas y avatar) antes
-de escribir ``configuracion/personalidad.yaml``; si no pasa, no se escribe
+de escribir ``config/personality.yaml``; si no pasa, no se escribe
 nada. Es presentación: no toca índice, calibración ni umbrales.
 """
 from __future__ import annotations

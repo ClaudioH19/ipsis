@@ -114,9 +114,9 @@ class ConfigWidget(BaseModel):
     interfaz: dict[str, str] = {}
     # Variantes del tono para bienvenida, esperando, invitación a las citas y errores.
     microcopia: dict[str, list[str]] = {}
-    # estilos.yaml::ubicacion: posición, desplazamientos, z_index, tamaño y lanzador.
+    # styles.yaml::ubicacion: posición, desplazamientos, z_index, tamaño y lanzador.
     ubicacion: dict[str, str | int] = {}
-    # personalidad.yaml::avatar efectivo; activo=False si falta (el widget usa el ícono).
+    # personality.yaml::avatar efectivo; activo=False si falta (el widget usa el ícono).
     avatar: dict = {}
 
 

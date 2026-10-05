@@ -4,8 +4,8 @@ El perfil define modelos, parámetros de la cascada, etapas y umbrales por
 defecto. La configuración efectiva se arma en este orden:
 
     perfil (ipsis/recursos/perfiles/<perfil>.yaml)
-      ← configuracion/motor.yaml::ajustes_perfil
-      ← configuracion/calibracion.yaml::umbrales (solo si su procedencia coincide)
+      ← config/engine.yaml::ajustes_perfil
+      ← config/calibration.yaml::umbrales (solo si su procedencia coincide)
 """
 from __future__ import annotations
 
@@ -14,7 +14,6 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any, Literal
 
-import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipsis.configuracion import rutas
@@ -61,7 +60,7 @@ class PerfilInstalacion(_Estricto):
     etapas: list[str]
     lexico: LexicoPerfil = Field(default_factory=LexicoPerfil)
     umbrales_por_defecto: dict[str, float]
-    # Modo de recuperación propio del perfil; si falta, el de motor.yaml.
+    # Modo de recuperación propio del perfil; si falta, el de engine.yaml.
     recuperacion_modo: Literal["vectorial", "hibrida", "dispersa"] | None = None
     # Lo agrega la fusión: de dónde salieron los umbrales.
     origen_umbrales: Literal["perfil", "calibracion"] = "perfil"
@@ -81,7 +80,9 @@ def _datos_perfil(nombre: str) -> dict[str, Any]:
     recurso = files("ipsis.recursos").joinpath("perfiles", f"{nombre}.yaml")
     if not recurso.is_file():
         raise ValueError(f"perfil desconocido: {nombre!r}; disponibles: {', '.join(PERFILES_INSTALABLES)}")
-    return yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
+    from ipsis.configuracion.archivos import interpretar
+
+    return interpretar(recurso.read_text(encoding="utf-8"), "perfil")
 
 
 def cargar_perfil_instalacion(nombre: str) -> PerfilInstalacion:

@@ -24,7 +24,7 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
     Devuelve conectores, mensajes de abstención y textos conversacionales.
     ``tono`` es un ``PaqueteTono``; si falta, el tono por defecto con las
     sobrescrituras del proyecto del directorio actual. Con ``dominio``
-    (``configuracion/asistente.yaml``) sustituye ``{nombre_asistente}`` y
+    (``config/assistant.yaml``) sustituye ``{nombre_asistente}`` y
     ``{descripcion_dominio}`` en las respuestas conversacionales y aplica las
     contracciones del idioma («de el manual» -> «del manual»).
     """
@@ -78,7 +78,7 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
 def _cargar_plantillas() -> dict:
     """Textos del idioma activo (o español) para llamadas fuera de ``Motor``.
 
-    Sustituye las variables con ``configuracion/asistente.yaml`` del directorio
+    Sustituye las variables con ``config/assistant.yaml`` del directorio
     actual, igual que el motor.
     """
     from ipsis.configuracion.carga import cargar_dominio
@@ -92,7 +92,7 @@ def _fragmentos_para_el_texto(fragmentos: list[dict], cfg: dict) -> list[dict]:
     """Decide QUE fragmentos entran en la prosa de la respuesta.
 
     Consume: los fragmentos recuperados (ya ordenados por pertinencia) y la
-    seccion ``redaccion:`` de ``configuracion/motor.yaml``. Produce: el
+    seccion ``redaccion:`` de ``config/engine.yaml``. Produce: el
     subconjunto que se concatena en el texto.
 
     Antes se concatenaban los ``top_k`` completos, siempre. Con top_k=3 eso
@@ -109,7 +109,7 @@ def _fragmentos_para_el_texto(fragmentos: list[dict], cfg: dict) -> list[dict]:
 
     Ambos valores son decisiones de diseno NO MEDIDAS (no hay golden set en
     el repositorio con el que medirlas); por eso son configurables y estan
-    documentadas como tales en ``configuracion/motor.yaml``."""
+    documentadas como tales en ``config/engine.yaml``."""
     if not fragmentos:
         return []
     tope = int(cfg.get("max_fragmentos_en_respuesta", 0) or 0)

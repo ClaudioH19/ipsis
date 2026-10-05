@@ -7,7 +7,7 @@ from pathlib import Path
 
 from ipsis.aplicacion import diagnostico
 from ipsis.aplicacion.corpus import archivos_de_ruta
-from ipsis.aplicacion.proyecto import completar_proyecto_existente
+from ipsis.aplicacion.proyecto import carpeta_de_proyecto, completar_proyecto_existente, migrar_proyecto_activo
 from ipsis.cli.base import Comando
 from ipsis.cli.comandos.corpus import ComandoCargar, ComandoIndexar
 from ipsis.cli.comandos.proyecto import ComandoInit
@@ -61,17 +61,16 @@ class ComandoServir(Comando):
         if not fuente.is_dir():
             raise ValueError(f"no existe la carpeta {fuente}")
 
-        es_proyecto = (
-            (fuente / "configuracion" / "asistente.yaml").is_file()
-            or (fuente / "documentos" / "catalogo.yaml").is_file()
-        )
+        es_proyecto = carpeta_de_proyecto(fuente)
         if not es_proyecto and not archivos_de_ruta(fuente):
             raise ValueError(f"no hay documentos compatibles en {fuente}")
         proyecto = fuente if es_proyecto else fuente / ".ipsis-project"
         proyecto.mkdir(parents=True, exist_ok=True)
         os.chdir(proyecto)
+        for cambio in migrar_proyecto_activo():
+            print(f"[migración] {cambio}")
 
-        if not Path("configuracion/asistente.yaml").is_file():
+        if not Path("config/assistant.yaml").is_file():
             inicio = argparse.Namespace(nombre_asistente=None, descripcion_dominio=None, idioma=None, perfil=None,
                                         force=False)
             if self.init.ejecutar(inicio) != 0:
@@ -79,7 +78,7 @@ class ComandoServir(Comando):
         else:
             completar_proyecto_existente()
 
-        catalogo = Path("documentos/catalogo.yaml")
+        catalogo = Path("documents/catalog.yaml")
         catalogo_antes = catalogo.read_bytes() if catalogo.is_file() else b""
         if not es_proyecto:
             if self.cargar.ejecutar(argparse.Namespace(ruta=str(fuente))) != 0:
@@ -89,7 +88,7 @@ class ComandoServir(Comando):
         indice = diagnostico.verificar_indice()
         if reindexar or catalogo_antes != catalogo_despues or not indice.ok:
             print("Preparando el índice antes de iniciar el servicio...")
-            if self.indexar.ejecutar(argparse.Namespace(corpus="documentos")) != 0:
+            if self.indexar.ejecutar(argparse.Namespace(corpus="documents")) != 0:
                 raise RuntimeError("no se pudo construir el índice")
         else:
             print("El índice existente está vigente; se reutiliza.")

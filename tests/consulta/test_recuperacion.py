@@ -12,7 +12,6 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-import yaml
 
 from ipsis.ingesta.chunking import ESTRATEGIAS
 from ipsis.nucleo.contratos import Retriever
@@ -22,6 +21,7 @@ from ipsis.ingesta.parsear import parsear_markdown
 from ipsis.indice.payload import chunk_desde_payload, payload_desde_chunk
 from ipsis.recursos import leer_plantilla
 from apoyo import CORPUS
+from apoyo import plantilla_interna
 
 DIM = 64
 
@@ -53,7 +53,7 @@ class CodificadorFalso:
 
 
 def _payloads() -> list[dict]:
-    taxonomia = yaml.safe_load(leer_plantilla("dominio.yaml"))["taxonomia"]
+    taxonomia = plantilla_interna("domain.yaml")["taxonomia"]
     payloads = []
     for ruta in sorted(CORPUS.glob("*.md")):
         doc = parsear_markdown(str(ruta), doc_id=ruta.stem, doc_titulo=ruta.stem, version="1")

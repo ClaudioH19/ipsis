@@ -641,7 +641,7 @@ def escribir_csv(filas: list[dict], ruta: str | Path, columnas=COLUMNAS) -> None
 
 
 def escribir_banco(banco: BancoEvaluacion, carpeta: str | Path) -> Path:
-    """``manifiesto.json`` + casos en JSONL, cada uno escrito de forma atómica.
+    """``manifest.json`` + casos en JSONL, cada uno escrito de forma atómica.
 
     El manifiesto se reemplaza al final: un banco a medio escribir no queda
     declarado. Devuelve la ruta del manifiesto.
@@ -649,7 +649,7 @@ def escribir_banco(banco: BancoEvaluacion, carpeta: str | Path) -> Path:
     carpeta = Path(carpeta)
     lineas = [caso.model_dump_json(exclude_none=True) for caso in banco.casos]
     escribir_atomico(carpeta / banco.manifiesto.casos, "\n".join(lineas) + "\n")
-    manifiesto = carpeta / "manifiesto.json"
+    manifiesto = carpeta / "manifest.json"
     escribir_atomico(manifiesto, banco.manifiesto.model_dump_json(indent=2, exclude_none=True) + "\n")
     return manifiesto
 

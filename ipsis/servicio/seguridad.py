@@ -35,12 +35,12 @@ def verificar_clave_widget(clave_recibida: str | None, claves_validas: list[str]
     ``clave_recibida`` no es ninguna de ellas.
 
     Comportamiento por defecto, EXPLÍCITO (no accidental): si
-    ``claves_validas`` está vacía (``configuracion/asistente.yaml::claves_widget`` sin
+    ``claves_validas`` está vacía (``config/assistant.yaml::claves_widget`` sin
     configurar, el valor de fábrica de ``ipsis init``), no se exige ninguna
     clave -- cualquier petición pasa, con o sin cabecera. Es la opción que
     deja al widget funcionando de inmediato para quien recién adopta el
     plugin; un despliegue que quiera distinguir integradores agrega al menos
-    una clave (``ipsis configurar claves_widget=clave-sitio-a,clave-sitio-b``)
+    una clave (``ipsis configurar widget_keys=clave-sitio-a,clave-sitio-b``)
     y desde ese momento toda petición sin una clave de esa lista se
     rechaza."""
     if not claves_validas:

@@ -49,7 +49,7 @@ def test_otro_tono_no_cambia_estados_reglas_ni_literalidad(tmp_path: Path):
             assert main(["cargar", str(RAIZ / "es" / "corpus")]) == 0
             assert main(["indexar"]) == 0
         cordial = evaluar_backend_activo(str(manifiesto))
-        Path("configuracion/personalidad.yaml").write_text(
+        Path("config/personality.yaml").write_text(
             yaml.safe_dump({"tono": {"plantillas": _otro_tono()}}, allow_unicode=True), encoding="utf-8")
         otro = evaluar_backend_activo(str(manifiesto))
     finally:

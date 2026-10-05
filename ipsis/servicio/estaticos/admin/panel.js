@@ -378,7 +378,7 @@
     }).then(function () { return guardado(); }, fallo);
   });
 
-  // --- estilo completo: un campo por cada «seccion.clave» de estilos.yaml ----
+  // --- estilo completo: un campo por cada «seccion.clave» de styles.yaml ----
   var HEX = /^#[0-9a-fA-F]{6}$/;
   var originales = {};
 

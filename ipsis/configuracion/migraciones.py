@@ -60,7 +60,7 @@ def _migrar_dominio(raiz: Path, perfil: str, cambios: list[str]) -> None:
         return
     datos = _leer_yaml(viejo_perfil)
     for clave in ("nombre_asistente", "descripcion_dominio", "idioma"):
-        datos.pop(clave, None)  # la identidad vive en asistente.yaml
+        datos.pop(clave, None)  # la identidad vive en assistant.yaml
     if viejo_categorias.exists():
         datos["taxonomia"] = _leer_yaml(viejo_categorias)
     _escribir_yaml(destino, datos, "# Reglas y taxonomía del dominio (migrado desde perfil.yaml y categorias.yaml).\n")
@@ -107,10 +107,10 @@ def _con_textos_del_tono(base: dict, idioma: str) -> dict:
 
 
 def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
-    """``configuracion/textos.yaml`` pasa al paquete de idioma (P3.5).
+    """``config/textos.yaml`` pasa al paquete de idioma (P3.5).
 
     Solo lo que el proyecto había cambiado se conserva, en
-    ``configuracion/idioma.yaml``.
+    ``config/language.yaml``.
     """
     viejo = raiz / rutas.CONFIGURACION / "textos.yaml"
     if not viejo.is_file():
@@ -143,12 +143,77 @@ def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
         _escribir_yaml(destino, propio, "# Textos propios del proyecto (migrados desde textos.yaml).\n")
         cambios.append(f"{rutas.IDIOMA} creado con los textos personalizados de textos.yaml")
     viejo.unlink()
-    cambios.append("configuracion/textos.yaml eliminado (los textos viven en el paquete de idioma)")
+    cambios.append("config/textos.yaml eliminado (los textos viven en el paquete de idioma)")
+
+
+# --- v5: estructura y claves en inglés -------------------------------------------------------------
+_CARPETAS_V5 = (("configuracion", rutas.CONFIGURACION), ("documentos", rutas.DOCUMENTOS), (".rag", rutas.INTERNO))
+_ARCHIVOS_V5 = (
+    ("config/asistente.yaml", rutas.ASISTENTE), ("config/motor.yaml", rutas.MOTOR),
+    ("config/estilos.yaml", rutas.ESTILOS), ("config/personalidad.yaml", rutas.PERSONALIDAD),
+    ("config/dominio.yaml", rutas.DOMINIO), ("config/idioma.yaml", rutas.IDIOMA),
+    ("config/calibracion.yaml", rutas.CALIBRACION), ("config/avatares", rutas.AVATARES),
+    ("documents/catalogo.yaml", rutas.CATALOGO),
+    ("golden/banco", rutas.GOLDEN_BANCO), ("golden/bank/manifiesto.json", rutas.GOLDEN_MANIFIESTO),
+    ("golden/reportes", rutas.GOLDEN_REPORTES), ("golden/LEEME.txt", "golden/README.txt"),
+    (".ipsis/indice", rutas.INDICE), (".ipsis/registros", ".ipsis/logs"),
+    (".ipsis/logs/consultas.jsonl", rutas.REGISTRO_CONSULTAS),
+    (".ipsis/configuracion-efectiva.yaml", rutas.SNAPSHOT), (".ipsis/widget-vista-previa.html", rutas.VISTA_PREVIA),
+)
+# Archivo del proyecto → su entrada en el glosario.
+_GLOSARIO_V5 = ((rutas.ASISTENTE, "asistente"), (rutas.MOTOR, "motor"), (rutas.ESTILOS, "estilos"),
+                (rutas.PERSONALIDAD, "personalidad"), (rutas.DOMINIO, "dominio"), (rutas.CALIBRACION, "calibracion"),
+                (rutas.CATALOGO, "catalogo"))
+_QDRANT_ANTERIORES = (".cache/qdrant_local", ".rag/indice/qdrant", ".ipsis/indice/qdrant")
+
+
+def _reubicar_v5(raiz: Path, cambios: list[str]) -> None:
+    """Carpetas y archivos con nombres en español → inglés (config/, documents/, .ipsis/index…)."""
+    for viejo, nuevo in _CARPETAS_V5:
+        _mover(raiz / viejo, raiz / nuevo, cambios, raiz)
+    for viejo, nuevo in _ARCHIVOS_V5:
+        _mover(raiz / viejo, raiz / nuevo, cambios, raiz)
+    indice = raiz / rutas.INDICE
+    if indice.is_dir():
+        for viejo, nuevo in ((".manifiesto.json", ".manifest.json"), (".estadisticas.json", ".stats.json")):
+            for archivo in indice.glob("*" + viejo):
+                _mover(archivo, archivo.with_name(archivo.name[: -len(viejo)] + nuevo), cambios, raiz)
+
+
+def _reescribir_en_ingles(raiz: Path, cambios: list[str]) -> None:
+    """Reescribe con claves y valores en inglés los YAML que aún los tienen en español."""
+    from ipsis.configuracion.esquemas import CONFIG_VERSION
+    from ipsis.configuracion.glosario import a_externo
+
+    for relativa, archivo in _GLOSARIO_V5:
+        ruta = raiz / relativa
+        datos = _leer_yaml(ruta)
+        if not datos:
+            continue
+        externo = a_externo(datos, archivo)
+        if archivo in ("asistente", "motor") and int(externo.get("config_version", 0)) < CONFIG_VERSION:
+            externo["config_version"] = CONFIG_VERSION
+        if archivo == "motor":
+            recuperacion = externo.get("retrieval") or {}
+            if recuperacion.get("qdrant_path") in _QDRANT_ANTERIORES:
+                recuperacion["qdrant_path"] = rutas.QDRANT
+        if externo != datos:
+            _escribir_yaml(ruta, externo, _encabezado(ruta))
+            cambios.append(f"{relativa}: claves y valores en inglés")
 
 
 def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
-    """Lleva un proyecto v2 a la estructura v3. Devuelve los cambios hechos."""
+    """Lleva un proyecto anterior a la estructura vigente. Devuelve los cambios hechos."""
     raiz = Path(raiz).resolve()
+    cambios: list[str] = []
+    _reubicar_v5(raiz, cambios)
+    cambios.extend(_migrar_v3(raiz))
+    _reescribir_en_ingles(raiz, cambios)
+    return cambios
+
+
+def _migrar_v3(raiz: Path) -> list[str]:
+    """Lleva un proyecto v2 a la estructura v3 (ya reubicado con nombres en inglés)."""
     cambios: list[str] = []
     asistente = raiz / rutas.ASISTENTE
     if not asistente.is_file():
@@ -176,7 +241,7 @@ def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
     carpeta_dominios = raiz / rutas.CONFIGURACION / "dominios"
     if (carpeta_dominios / "idiomas").is_dir():
         shutil.rmtree(carpeta_dominios / "idiomas")
-        cambios.append("configuracion/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)")
+        cambios.append("config/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)")
     if carpeta_dominios.is_dir() and not any(carpeta_dominios.iterdir()):
         carpeta_dominios.rmdir()
 
@@ -185,6 +250,7 @@ def migrar_proyecto(raiz: str | Path = ".") -> list[str]:
     _mover(raiz / ".cache" / "qdrant_local", raiz / rutas.QDRANT, cambios, raiz)
     _mover(raiz / ".cache" / "vocab_bm25", raiz / rutas.INDICE, cambios, raiz)
     _mover(raiz / "data" / "golden", raiz / rutas.GOLDEN_BANCO, cambios, raiz)
+    _mover(raiz / rutas.GOLDEN_BANCO / "manifiesto.json", raiz / rutas.GOLDEN_MANIFIESTO, cambios, raiz)
     for vacio in (raiz / ".cache", raiz / "data"):
         if vacio.is_dir() and not any(vacio.iterdir()):
             vacio.rmdir()

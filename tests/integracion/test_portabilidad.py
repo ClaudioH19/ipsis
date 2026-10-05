@@ -11,7 +11,7 @@ que sigue viviendo DENTRO de ``ipsis/``.
 Por qué esto es necesario y ``tests/cli/test_cli.py`` no alcanza: ese archivo
 corre en el MISMO proceso de pytest (con el intérprete, las cachés de
 módulos y el `cwd` original ya cargados) y, antes de la corrección de esta
-tanda, copiaba a mano ``configuracion/dominios/_generico/`` y ``configuracion/dominios/idiomas/`` a la
+tanda, copiaba a mano ``config/dominios/_generico/`` y ``config/dominios/idiomas/`` a la
 fixture -- lo que enmascaraba exactamente el defecto que una revisión
 independiente encontró corriendo la CLI de verdad en un directorio limpio.
 Un subproceso nuevo, en un directorio nuevo, sin ningún archivo del repo
@@ -131,7 +131,7 @@ def test_portabilidad_pdf_escaneado_se_rechaza_sin_traceback(proyecto_externo: P
     assert "escane" in (r.stdout + r.stderr).lower()
 
     # No debe haber quedado catalogado ni indexado en silencio.
-    catalogo = (proyecto_externo / "documentos" / "catalogo.yaml").read_text(encoding="utf-8")
+    catalogo = (proyecto_externo / "documents" / "catalog.yaml").read_text(encoding="utf-8")
     assert "escaneado" not in catalogo
 
 
@@ -142,9 +142,9 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
     _init_cargar_indexar(proyecto_externo, docs)
 
     # El andamiaje que 'ipsis init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
-    assert (proyecto_externo / "configuracion" / "dominio.yaml").exists()
-    assert not (proyecto_externo / "configuracion" / "dominios").exists()
-    assert not (proyecto_externo / "configuracion" / "textos.yaml").exists()
+    assert (proyecto_externo / "config" / "domain.yaml").exists()
+    assert not (proyecto_externo / "config" / "dominios").exists()
+    assert not (proyecto_externo / "config" / "textos.yaml").exists()
 
 
 @pytest.mark.slow

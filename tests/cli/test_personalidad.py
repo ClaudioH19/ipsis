@@ -8,8 +8,9 @@ import pytest
 import yaml
 
 from ipsis.cli import main
+from apoyo import escribir_proyecto, leer_proyecto
 
-PERSONALIDAD = Path("configuracion/personalidad.yaml")
+PERSONALIDAD = Path("config/personality.yaml")
 
 
 def _definicion(**cambios) -> dict:
@@ -47,7 +48,7 @@ def _avatar(tmp_path: Path, nombre="prueba.avatar.json", texto: str | None = Non
 
 # --- archivo y mostrar ---------------------------------------------------------------------------
 def test_init_crea_personalidad_por_defecto_y_mostrar_la_resume(proyecto, capsys):
-    assert PERSONALIDAD.is_file() and PERSONALIDAD.read_text(encoding="utf-8").startswith("# Personalidad")
+    assert PERSONALIDAD.is_file() and PERSONALIDAD.read_text(encoding="utf-8").startswith("# Assistant personality")
     assert main(["personalidad", "mostrar"]) == 0
     salida = capsys.readouterr().out
     assert "Tono: cordial (variedad rotativa" in salida
@@ -68,8 +69,8 @@ def test_listar_aplicar_y_probar_tono(proyecto, capsys):
 
     assert main(["personalidad", "tono", "aplicar", "formal"]) == 0
     texto = PERSONALIDAD.read_text(encoding="utf-8")
-    assert texto.startswith("# Personalidad")  # conserva los comentarios
-    assert yaml.safe_load(texto)["tono"]["activo"] == "formal"
+    assert texto.startswith("# Assistant personality")  # conserva los comentarios
+    assert leer_proyecto(PERSONALIDAD)["tono"]["activo"] == "formal"
 
     capsys.readouterr()
     assert main(["personalidad", "tono", "probar", "--situacion", "sin_respuesta"]) == 0
@@ -78,7 +79,7 @@ def test_listar_aplicar_y_probar_tono(proyecto, capsys):
 
 
 def test_probar_reemplaza_las_variables_del_proyecto(proyecto, capsys):
-    assert main(["configurar", "nombre_asistente=Ana"]) == 0
+    assert main(["configurar", "assistant_name=Ana"]) == 0
     capsys.readouterr()
     assert main(["personalidad", "tono", "probar", "--tono", "serio", "--situacion", "saludo"]) == 0
     salida = capsys.readouterr().out
@@ -99,9 +100,9 @@ def test_el_motor_usa_el_tono_activo_y_la_variedad_fija(proyecto):
     from ipsis.consulta.motor import Motor
     from ipsis.lenguaje.paquete import cargar_paquete
 
-    datos = yaml.safe_load(PERSONALIDAD.read_text(encoding="utf-8"))
+    datos = leer_proyecto(PERSONALIDAD)
     datos["tono"].update(activo="directo", variedad="fija")
-    PERSONALIDAD.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    escribir_proyecto(PERSONALIDAD, datos)
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "A", "descripcion_dominio": "B"})
     assert plantillas["tono"] == "directo" and plantillas["abstencion"]["generico"][0].startswith("No está")
     motor = Motor(plantillas=plantillas)
@@ -111,9 +112,9 @@ def test_el_motor_usa_el_tono_activo_y_la_variedad_fija(proyecto):
 
 
 def test_plantilla_propia_invalida_es_error_en_validar_y_doctor(proyecto, capsys):
-    datos = yaml.safe_load(PERSONALIDAD.read_text(encoding="utf-8"))
+    datos = leer_proyecto(PERSONALIDAD)
     datos["tono"]["plantillas"] = {"apertura": ["Sin dos puntos"]}
-    PERSONALIDAD.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    escribir_proyecto(PERSONALIDAD, datos)
     assert main(["personalidad", "validar"]) == 1
     assert "[ERROR]" in capsys.readouterr().out
     from ipsis.aplicacion.diagnostico import diagnosticar
@@ -138,13 +139,13 @@ def test_cambiar_el_tono_no_toca_indice_ni_calibracion(proyecto, capsys):
 def test_snapshot_incluye_la_personalidad(proyecto):
     assert main(["snapshot-config", "--salida", "snapshot.yaml"]) == 0
     snapshot = yaml.safe_load(Path("snapshot.yaml").read_text(encoding="utf-8"))
-    assert snapshot["personalidad"]["tono"]["activo"] == "cordial"
+    assert snapshot["personality"]["tone"]["active"] == "cordial"
 
 
 # --- avatar -------------------------------------------------------------------------------------
 def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
     assert main(["personalidad", "avatar", "importar", str(_avatar(tmp_path)), "--nombre", "mi-avatar"]) == 0
-    assert Path("configuracion/avatares/mi-avatar.avatar.json").is_file()
+    assert Path("config/avatars/mi-avatar.avatar.json").is_file()
     assert main(["personalidad", "avatar", "aplicar", "mi-avatar"]) == 0
     capsys.readouterr()
     assert main(["personalidad", "avatar", "eventos"]) == 0
@@ -152,7 +153,7 @@ def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
     assert "respuesta_ok           → contento" in salida
     assert "pensando               → inactivo  (pedida: 'pensando'" in salida  # respaldo en cadena
     assert main(["personalidad", "avatar", "asignar", "pensando", "contento"]) == 0
-    assert yaml.safe_load(PERSONALIDAD.read_text(encoding="utf-8"))["avatar"]["eventos"] == {"pensando": "contento"}
+    assert leer_proyecto(PERSONALIDAD)["avatar"]["eventos"] == {"pensando": "contento"}
     capsys.readouterr()
     assert main(["personalidad", "avatar", "asignar", "pensando", "volar"]) == 1
     assert "no tiene la clave 'volar'" in capsys.readouterr().out
@@ -173,7 +174,7 @@ def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
 def test_importar_rechaza_definiciones_invalidas_sin_escribir(proyecto, tmp_path, capsys, texto, error):
     assert main(["personalidad", "avatar", "importar", str(_avatar(tmp_path, texto=texto)), "--nombre", "x"]) == 1
     assert error in capsys.readouterr().out
-    assert not Path("configuracion/avatares/x.avatar.json").exists()
+    assert not Path("config/avatars/x.avatar.json").exists()
 
 
 def test_aplicar_un_avatar_inexistente_falla(proyecto, capsys):
@@ -184,7 +185,7 @@ def test_aplicar_un_avatar_inexistente_falla(proyecto, capsys):
 
 def test_colores_se_normalizan_y_validan(proyecto, capsys):
     assert main(["personalidad", "avatar", "colores", "--cuerpo", "#F5F1E8", "--ojos", "#1e293b"]) == 0
-    colores = yaml.safe_load(PERSONALIDAD.read_text(encoding="utf-8"))["avatar"]["colores"]
+    colores = leer_proyecto(PERSONALIDAD)["avatar"]["colores"]
     assert colores == {"cuerpo": "#f5f1e8", "ojos": "#1e293b"}
     assert main(["personalidad", "avatar", "colores", "--ojos", "azul"]) == 1
 
@@ -196,15 +197,15 @@ def test_los_colores_se_aplican_sin_modificar_el_archivo(proyecto, tmp_path):
     _, datos = cargar_avatar("mi-avatar")
     pintado = con_colores(datos, "#123456", None)
     assert pintado["colors"] == {"body": "#123456", "eyes": "#000000"}
-    assert json.loads(Path("configuracion/avatares/mi-avatar.avatar.json").read_text())["colors"]["body"] == "#ffffff"
+    assert json.loads(Path("config/avatars/mi-avatar.avatar.json").read_text())["colors"]["body"] == "#ffffff"
 
 
 # --- neutralidad de los textos propios: aviso, no error ----------------------------------------
 def _textos_propios(plantillas: dict) -> None:
-    ruta = Path("configuracion/personalidad.yaml")
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    ruta = Path("config/personality.yaml")
+    datos = leer_proyecto(ruta)
     datos["tono"]["plantillas"] = plantillas
-    ruta.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    escribir_proyecto(ruta, datos)
 
 
 def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
@@ -218,7 +219,7 @@ def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
     assert "Hay avisos (no bloquean)" in salida
     chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
     assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
-    assert chequeo.acciones == ("revisa tono.plantillas en configuracion/personalidad.yaml "
+    assert chequeo.acciones == ("revisa tono.plantillas en config/personality.yaml "
                                 "(detalle: ipsis personalidad validar)",)
 
 
@@ -232,8 +233,8 @@ def test_texto_propio_neutro_no_avisa(proyecto, capsys):
 def test_idioma_sin_reglas_propias_no_se_revisa(proyecto):
     from ipsis.aplicacion.personalidad import avisos_neutralidad
 
-    datos = yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))
+    datos = leer_proyecto(Path("config/assistant.yaml"))
     datos["idioma"] = "fr"
-    Path("configuracion/asistente.yaml").write_text(yaml.safe_dump(datos), encoding="utf-8")
+    escribir_proyecto(Path("config/assistant.yaml"), datos)
     _textos_propios({"despedida": ["Hey, à bientôt."]})  # «hey» está en la lista inglesa de respaldo
     assert avisos_neutralidad() == []

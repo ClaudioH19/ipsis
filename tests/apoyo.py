@@ -129,3 +129,36 @@ def motor_minimo():
 
     recargar_presentacion(motor)  # fija la marca inicial, como construir_motor
     return motor
+
+
+_TIPOS_PROYECTO = {"assistant.yaml": "asistente", "engine.yaml": "motor", "styles.yaml": "estilos",
+                   "personality.yaml": "personalidad", "domain.yaml": "dominio",
+                   "calibration.yaml": "calibracion", "catalog.yaml": "catalogo"}
+
+
+def leer_proyecto(ruta) -> dict:
+    """Un YAML del proyecto con los nombres internos (como lo ve el código); otro YAML, tal cual."""
+    import yaml
+
+    from ipsis.configuracion.archivos import interpretar
+
+    ruta = Path(ruta)
+    texto = ruta.read_text(encoding="utf-8")
+    tipo = _TIPOS_PROYECTO.get(ruta.name)
+    return interpretar(texto, tipo) if tipo else (yaml.safe_load(texto) or {})
+
+
+def plantilla_interna(nombre: str) -> dict:
+    """Una plantilla del paquete (``ipsis/recursos/plantillas``) con los nombres internos."""
+    from ipsis.configuracion.archivos import interpretar
+    from ipsis.recursos import leer_plantilla
+
+    return interpretar(leer_plantilla(nombre), _TIPOS_PROYECTO[nombre])
+
+
+def escribir_proyecto(ruta, datos: dict) -> None:
+    """Escribe un YAML del proyecto a partir de nombres internos (inverso de ``leer_proyecto``)."""
+    from ipsis.configuracion.archivos import volcar
+
+    ruta = Path(ruta)
+    ruta.write_text(volcar(datos, _TIPOS_PROYECTO[ruta.name]), encoding="utf-8")

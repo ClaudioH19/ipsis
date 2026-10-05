@@ -5,15 +5,15 @@ import json
 from pathlib import Path
 
 import pytest
-import yaml
 from fastapi.testclient import TestClient
 
 from ipsis.cli import main
 from ipsis.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
+from apoyo import escribir_proyecto, leer_proyecto
 
 MANUAL = "# Manual\n\n## Filtro\n\nEl filtro de sedimentos se cambia cada 6 meses.\n"
 ORACION = "El filtro de sedimentos se cambia cada 6 meses."
-REGISTRO = Path(".ipsis/registros/consultas.jsonl")
+REGISTRO = Path(".ipsis/logs/queries.jsonl")
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +35,7 @@ def corpus(tmp_path: Path) -> dict[str, int]:
     origen.parent.mkdir()
     origen.write_text(MANUAL, encoding="utf-8")
     assert main(["cargar", str(origen)]) == 0
-    texto = parsear_corpus("documentos")[0].texto_completo
+    texto = parsear_corpus("documents")[0].texto_completo
     inicio = texto.index(ORACION)
     return {"inicio": inicio, "fin": inicio + len(ORACION), "tramo": texto.index("6 meses")}
 
@@ -73,11 +73,11 @@ def test_con_el_registro_apagado_no_se_escribe_nada(corpus):
 
     assert configuracion_asistente()["registro"] == {"activo": False}  # apagado por defecto
     _preguntar(corpus, "¿Cada cuánto se cambia el filtro?")
-    assert not Path(".ipsis/registros").exists()
+    assert not Path(".ipsis/logs").exists()
 
 
 def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, capsys):
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     _preguntar(corpus, "¿Cada cuánto se cambia el filtro?", "¿Y el filtro?")
     lineas = REGISTRO.read_text(encoding="utf-8").splitlines()
     assert len(lineas) == 2
@@ -100,7 +100,7 @@ def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, caps
 
 
 def test_una_evidencia_alterada_a_mano_se_reporta(corpus, capsys):
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     _preguntar(corpus, "a", "b")
     lineas = REGISTRO.read_text(encoding="utf-8").splitlines()
     alterada = json.loads(lineas[1])
@@ -120,37 +120,37 @@ def test_una_evidencia_alterada_a_mano_se_reporta(corpus, capsys):
 def test_documento_retirado_del_corpus_se_reporta(corpus):
     from ipsis.aplicacion.registro import auditar_registro
 
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     _preguntar(corpus, "a")
-    catalogo = Path("documentos/catalogo.yaml")
-    datos = yaml.safe_load(catalogo.read_text(encoding="utf-8"))
+    catalogo = Path("documents/catalog.yaml")
+    datos = leer_proyecto(catalogo)
     datos["documentos"][0]["vigente"] = False
-    catalogo.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    escribir_proyecto(catalogo, datos)
     r = auditar_registro()
     assert not r.ok and {p.motivo for p in r.problemas} == {"documento_ausente"}
 
 
 def test_sin_registro_auditar_dice_como_activarlo(capsys):
     assert main(["auditar"]) == 1
-    assert "Acción: ipsis configurar registro.activo=true" in capsys.readouterr().out
+    assert "Acción: ipsis configurar query_log.enabled=true" in capsys.readouterr().out
 
 
 def test_un_fallo_al_escribir_el_registro_no_tumba_la_respuesta(corpus, monkeypatch):
     def falla(self, pregunta, resultado):
         raise OSError("disco lleno")
 
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     monkeypatch.setattr("ipsis.aplicacion.registro.RegistroConsultas.registrar", falla)
     _preguntar(corpus, "a")
 
 
 def test_configurar_registro_activo_valida_el_booleano(capsys):
-    assert main(["configurar", "registro.activo=quizas"]) == 1
+    assert main(["configurar", "query_log.enabled=quizas"]) == 1
     assert "espera true o false" in capsys.readouterr().out
 
 
 def test_auditar_por_rango_de_fechas(corpus, capsys):
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     _preguntar(corpus, "a", "b", "c")
     lineas = [json.loads(linea) for linea in REGISTRO.read_text(encoding="utf-8").splitlines()]
     lineas[0]["fecha"] = "2026-09-30T23:59:59+00:00"
@@ -173,7 +173,7 @@ def test_auditar_por_rango_de_fechas(corpus, capsys):
 
 
 def test_auditar_con_fecha_invalida_dice_el_formato(corpus, capsys):
-    assert main(["configurar", "registro.activo=true"]) == 0
+    assert main(["configurar", "query_log.enabled=true"]) == 0
     _preguntar(corpus, "a")
     capsys.readouterr()
     assert main(["auditar", "--desde", "ayer"]) == 2

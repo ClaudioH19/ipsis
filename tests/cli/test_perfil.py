@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from ipsis.cli import main
+from apoyo import escribir_proyecto, leer_proyecto
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 HASH = "sha256:corpus-del-proyecto"
@@ -40,7 +41,7 @@ def _indice(modelo: str, dimension: int | None = None) -> Path:
 def _calibracion(perfil: str) -> Path:
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
-    ruta = Path("configuracion/calibracion.yaml")
+    ruta = Path("config/calibration.yaml")
     ruta.write_text(yaml.safe_dump({
         "estado": "calibrado", "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
@@ -51,7 +52,7 @@ def _calibracion(perfil: str) -> Path:
 
 
 def _perfil_activo() -> str:
-    return yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))["perfil"]
+    return leer_proyecto(Path("config/assistant.yaml"))["perfil"]
 
 
 # --- mostrar ----------------------------------------------------------------------------
@@ -145,12 +146,12 @@ def test_mismo_perfil_es_idempotente_y_no_toca_la_calibracion(proyecto, capsys):
     proyecto("medium")
     _indice(E5_SMALL)
     _calibracion("medium")
-    asistente = Path("configuracion/asistente.yaml").read_bytes()
+    asistente = Path("config/assistant.yaml").read_bytes()
     capsys.readouterr()
     assert main(["perfil", "cambiar", "medium"]) == 0
     salida = capsys.readouterr().out
     assert "ya está activo" in salida and "calibración" not in salida.lower()
-    assert Path("configuracion/asistente.yaml").read_bytes() == asistente
+    assert Path("config/assistant.yaml").read_bytes() == asistente
     assert main(["perfil", "mostrar"]) == 0
     assert "Calibración: vigente" in capsys.readouterr().out
 
@@ -158,24 +159,24 @@ def test_mismo_perfil_es_idempotente_y_no_toca_la_calibracion(proyecto, capsys):
 @pytest.mark.parametrize(("perfil", "mensaje"), [("bm25", "diagnóstico"), ("turbo", "desconocido")])
 def test_perfiles_no_instalables_se_rechazan_sin_tocar_el_proyecto(proyecto, capsys, perfil, mensaje):
     proyecto("light")
-    antes = Path("configuracion/asistente.yaml").read_bytes()
+    antes = Path("config/assistant.yaml").read_bytes()
     assert main(["perfil", "cambiar", perfil]) == 1
     salida = capsys.readouterr().out
     assert mensaje in salida and "light, medium, heavy" in salida and "Traceback" not in salida
-    assert Path("configuracion/asistente.yaml").read_bytes() == antes
+    assert Path("config/assistant.yaml").read_bytes() == antes
 
 
 def test_conserva_ajustes_perfil_y_rechaza_los_invalidos(proyecto, capsys):
     proyecto("light")
-    motor = Path("configuracion/motor.yaml")
-    datos = yaml.safe_load(motor.read_text(encoding="utf-8"))
+    motor = Path("config/engine.yaml")
+    datos = leer_proyecto(motor)
     datos["ajustes_perfil"] = {"cascada": {"rerank_k": 5}}
-    motor.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    escribir_proyecto(motor, datos)
     assert main(["perfil", "cambiar", "medium"]) == 0
-    assert yaml.safe_load(motor.read_text(encoding="utf-8"))["ajustes_perfil"] == {"cascada": {"rerank_k": 5}}
+    assert leer_proyecto(motor)["ajustes_perfil"] == {"cascada": {"rerank_k": 5}}
 
     datos["ajustes_perfil"] = {"cascada": {"rerank_k": -3}}  # inválido para cualquier perfil
-    motor.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    escribir_proyecto(motor, datos)
     capsys.readouterr()
     assert main(["perfil", "cambiar", "heavy"]) == 1
     assert "ajustes_perfil" in capsys.readouterr().out

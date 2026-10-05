@@ -17,7 +17,7 @@ ahorrar latencia con salidas tempranas que evitan ejecutar modelos.
 
 - `terminos(texto, paquete)`: el **único** camino de texto a términos, igual
   al indexar y al consultar.
-- `.ipsis/indice/estadisticas.json`: `n_chunks`, `largo_medio`, `df[término]` y
+- `.ipsis/index/stats.json`: `n_chunks`, `largo_medio`, `df[término]` y
   `superficie[término]` (la forma original más frecuente, para mostrarla).
   JSON legible, con el hash del corpus.
 

@@ -34,7 +34,7 @@ def _imprimir_resumen(resumen) -> None:
 
 class ComandoGoldenPlantilla(Comando):
     nombre = "plantilla"
-    ayuda = "Genera golden/golden.csv y golden/LEEME.txt para completar."
+    ayuda = "Genera golden/golden.csv y golden/README.txt para completar."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--n", type=int, default=40, help="Filas a generar (por defecto: 40).")
@@ -58,7 +58,7 @@ class ComandoGoldenPlantilla(Comando):
 
 class ComandoGoldenImportar(Comando):
     nombre = "importar"
-    ayuda = "Valida el golden y escribe golden/banco/."
+    ayuda = "Valida el golden y escribe golden/bank/."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("archivo", help="golden.csv, un .jsonl o un SQuAD 2.0 (.json).")

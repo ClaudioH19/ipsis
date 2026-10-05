@@ -8,8 +8,8 @@ variantes cada una; el linter de este módulo hace cumplir las reglas del
 catálogo (``docs/guia/personalidad.md``).
 
 Un proyecto puede sobrescribir situaciones en
-``configuracion/personalidad.yaml::tono.plantillas``. Las sobrescrituras de
-``configuracion/idioma.yaml`` anteriores a los tonos (``mensajes.sin_respuesta``,
+``config/personality.yaml::tono.plantillas``. Las sobrescrituras de
+``config/language.yaml`` anteriores a los tonos (``mensajes.sin_respuesta``,
 ``conectores.apertura``…) se siguen aceptando y se traducen aquí.
 """
 from __future__ import annotations
@@ -63,7 +63,7 @@ SITUACIONES: dict[str, Situacion] = {
     "error_servicio": Situacion("widget"),
 }
 
-# Claves de configuracion/idioma.yaml anteriores a los tonos → situación.
+# Claves de config/language.yaml anteriores a los tonos → situación.
 _LEGADO = {
     ("mensajes", "sin_respuesta"): "sin_respuesta",
     ("mensajes", "premisa_no_encontrada"): "premisa_no_encontrada",
@@ -253,7 +253,7 @@ def _base(carpeta: str, tono: str) -> dict[str, Any]:
 
 
 def extraer_legado(datos: dict[str, Any]) -> tuple[dict[str, Any], dict[str, list[str]]]:
-    """Separa de un ``idioma.yaml`` los textos que ahora son del tono.
+    """Separa de un ``language.yaml`` los textos que ahora son del tono.
 
     Devuelve los datos sin esas claves (lo que sigue validando el paquete de
     idioma) y las sobrescrituras de tono equivalentes.
@@ -295,8 +295,8 @@ def cargar_tono(idioma: str, tono: str = TONO_POR_DEFECTO, *, proyecto: str | Pa
                 sobrescrituras: dict[str, list[str]] | None = None) -> PaqueteTono:
     """El tono para ``idioma``, con las sobrescrituras del proyecto ya validadas.
 
-    Orden: el paquete del tono ← ``sobrescrituras`` (las de ``idioma.yaml``
-    anteriores a los tonos) ← ``personalidad.yaml::tono.plantillas``. Una
+    Orden: el paquete del tono ← ``sobrescrituras`` (las de ``language.yaml``
+    anteriores a los tonos) ← ``personality.yaml::tono.plantillas``. Una
     sobrescritura puede traer una sola variante; debe cumplir las mismas
     reglas que el paquete.
     """

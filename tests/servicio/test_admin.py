@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 
 import pytest
-import yaml
 from fastapi.testclient import TestClient
 
 from ipsis.aplicacion.modo import ModoServicio
@@ -24,13 +23,14 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
     assert main(["init", "--perfil", "light"]) == 0
-    datos = yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))
+    datos = leer_proyecto(Path("config/assistant.yaml"))
     datos["cors_origenes"] = ["https://www.sitio.cl"]
-    Path("configuracion/asistente.yaml").write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    escribir_proyecto(Path("config/assistant.yaml"), datos)
     return carpeta
 
 
 from apoyo import motor_minimo as _motor
+from apoyo import escribir_proyecto, leer_proyecto
 
 
 def _cliente(modo: ModoServicio, cliente=REMOTA, esquema="https", motor=None) -> TestClient:
@@ -106,10 +106,10 @@ def test_cuerpo_mayor_a_256_kib(proyecto):
 
 # --- cambios y recarga en caliente -------------------------------------------------------------
 def test_put_invalido_422_sin_escribir(proyecto):
-    antes = Path("configuracion/personalidad.yaml").read_bytes()
+    antes = Path("config/personality.yaml").read_bytes()
     r = _cliente(PRODUCCION).put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "turbo"}})
     assert r.status_code == 422 and r.json()["detail"]["errores"]
-    assert Path("configuracion/personalidad.yaml").read_bytes() == antes
+    assert Path("config/personality.yaml").read_bytes() == antes
 
 
 def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
@@ -123,7 +123,7 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
 
     assert respuesta in [v.format(nombre_asistente="Asistente documental", descripcion_dominio="los documentos cargados")
                          for v in cargar_tono("es", "directo").variantes("saludo")]
-    auditoria = Path(".ipsis/registros/admin.jsonl").read_text(encoding="utf-8")
+    auditoria = Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
     entrada = json.loads(auditoria.splitlines()[-1])
     assert entrada["accion"] == "personalidad" and entrada["claves"] == ["tono"] and entrada["ip"] == REMOTA[0]
     assert TOKEN not in auditoria
@@ -164,7 +164,7 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
     assert avatar["eventos"]["respuesta_ok"] == "contento"
     servida = c.get("/avatares/mi-avatar.avatar.json").json()
     assert servida["colors"]["body"] == "#123456"
-    assert c.get("/avatares/../motor.yaml").status_code == 404
+    assert c.get("/avatares/../engine.yaml").status_code == 404
     assert c.get("/avatares/Mal_Nombre.avatar.json").status_code == 404
     assert c.get("/avatares/nadie.avatar.json").status_code == 404
     malo = c.post("/admin/avatares", headers=_auth(), json={"nombre": "x", "definicion": {"expressions": {}}})
@@ -177,8 +177,8 @@ def test_folio_por_defecto_y_avatar_faltante_inactivo(proyecto):
     assert avatar["activo"] and avatar["url_definicion"] == "/avatares/folio.avatar.json"  # incluido
     assert c.get("/avatares/folio.avatar.json").json()["name"] == "Folio"
     assert c.get("/avatar.js").headers["content-type"].startswith("text/javascript")
-    texto = Path("configuracion/personalidad.yaml").read_text(encoding="utf-8")
-    Path("configuracion/personalidad.yaml").write_text(texto.replace("definicion: folio", "definicion: nadie"),
+    texto = Path("config/personality.yaml").read_text(encoding="utf-8")
+    Path("config/personality.yaml").write_text(texto.replace("definition: folio", "definition: nadie"),
                                                        encoding="utf-8")
     avatar = _cliente(ModoServicio()).get("/config").json()["avatar"]
     assert avatar["activo"] is False and avatar["url_definicion"] is None  # el widget muestra el ícono
@@ -243,11 +243,11 @@ def test_doctor_informa_el_modo(proyecto, monkeypatch):
 def test_estilo_plano_y_cambiar_por_admin(proyecto):
     c = _cliente(PRODUCCION)
     plano = {f["clave"]: f["valor"] for f in c.get("/admin/estilos/plano", headers=_auth()).json()}
-    assert plano["colores.acento"] == "#2563eb" and plano["animaciones.activadas"] is True
+    assert plano["colors.accent"] == "#2563eb" and plano["animations.enabled"] is True
     r = c.post("/admin/estilos/cambiar", headers=_auth(),
-               json={"asignaciones": ["colores.acento=#0ea5e9", "forma.radio_panel=10px"]})
+               json={"asignaciones": ["colors.accent=#0ea5e9", "shape.panel_radius=10px"]})
     assert r.status_code == 200 and r.json()["colores"]["acento"] == "#0ea5e9"
-    malo = c.post("/admin/estilos/cambiar", headers=_auth(), json={"asignaciones": ["colores.acentto=#fff"]})
+    malo = c.post("/admin/estilos/cambiar", headers=_auth(), json={"asignaciones": ["colors.acent=#fff"]})
     assert malo.status_code == 422 and "clave desconocida" in malo.json()["detail"]["errores"][0]
     assert c.post("/admin/estilos/cambiar", json={"asignaciones": []}).status_code == 401
-    assert "estilos" in Path(".ipsis/registros/admin.jsonl").read_text(encoding="utf-8")
+    assert "estilos" in Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")

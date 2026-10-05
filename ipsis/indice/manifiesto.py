@@ -1,6 +1,6 @@
 """Manifiesto del índice: con qué se construyó y qué contiene.
 
-Se guarda junto a la colección (``.ipsis/indice/<colección>.manifiesto.json``).
+Se guarda junto a la colección (``.ipsis/index/<colección>.manifest.json``).
 Permite auditar el índice y decidir si un perfil o modelo puede usarlo sin
 reindexar.
 """
@@ -51,7 +51,7 @@ def inventario_entidades(payloads: list[dict]) -> list[str]:
 
 
 def ruta_manifiesto(coleccion: str, directorio: str = rutas.INDICE) -> Path:
-    return Path(directorio) / f"{coleccion}.manifiesto.json"
+    return Path(directorio) / f"{coleccion}.manifest.json"
 
 
 def guardar_manifiesto(manifiesto: ManifiestoIndice, directorio: str = rutas.INDICE) -> Path:

@@ -6,7 +6,7 @@ import argparse
 from ipsis.aplicacion.proyecto import (
     PerfilInvalido,
     ProyectoExistente,
-    actualizar_dominio,
+    configurar,
     cambiar_perfil,
     idioma_con_respaldo,
     inicializar_proyecto,
@@ -16,7 +16,7 @@ from ipsis.cli.base import Comando, Grupo
 
 
 _NOTA_RESPALDO = ("  Nota: no hay un paquete para {idioma!r}: se usan las reglas universales, términos sin stem "
-                  "y los textos en inglés (tradúcelos en configuracion/idioma.yaml).")
+                  "y los textos en inglés (tradúcelos en config/language.yaml).")
 
 
 class ComandoInit(Comando):
@@ -36,7 +36,7 @@ class ComandoInit(Comando):
                             help="Perfil de instalación: light (sin modelos extra), medium o heavy "
                                  "(por defecto: medium).")
         parser.add_argument("--force", action="store_true",
-                            help="Reinicia configuracion/asistente.yaml si ya existe.")
+                            help="Reinicia config/assistant.yaml si ya existe.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
@@ -52,7 +52,7 @@ class ComandoInit(Comando):
 
         nuevo = inicio.nuevo
         if inicio.creo_estilos:
-            print("configuracion/estilos.yaml creado: ahí se cambia TODO el diseño del widget "
+            print("config/styles.yaml creado: ahí se cambia TODO el diseño del widget "
                   "(colores, tipografía, formas, sombras y animaciones), sin tocar código.")
         print(f"Dominio inicializado en {inicio.ruta_asistente}:")
         print(f"  nombre_asistente = {nuevo['nombre_asistente']!r}")
@@ -60,28 +60,28 @@ class ComandoInit(Comando):
         print(f"  idioma = {nuevo['idioma']!r}, perfil = {nuevo['perfil']!r}")
         if idioma_con_respaldo(nuevo["idioma"]):
             print(_NOTA_RESPALDO.format(idioma=nuevo["idioma"]))
-        print(f"Corpus vacío listo en documentos/ (catálogo en {inicio.ruta_catalogo}).")
+        print(f"Corpus vacío listo en documents/ (catálogo en {inicio.ruta_catalogo}).")
         if inicio.creo_motor:
-            print("configuracion/motor.yaml creado con umbrales genéricos de partida. "
+            print("config/engine.yaml creado con umbrales genéricos de partida. "
                   "La calibración se realiza al final, después de estabilizar la infraestructura.")
         else:
-            print("configuracion/motor.yaml ya existía -- no se tocó.")
+            print("config/engine.yaml ya existía -- no se tocó.")
         if inicio.creo_dominio:
-            print("configuracion/dominio.yaml creado: reglas y categorías propias de tu dominio (opcional).")
+            print("config/domain.yaml creado: reglas y categorías propias de tu dominio (opcional).")
         else:
-            print("configuracion/dominio.yaml ya existía -- no se tocó.")
+            print("config/domain.yaml ya existía -- no se tocó.")
         print("Siguiente paso: 'ipsis cargar <archivo|carpeta>', después 'ipsis indexar'.")
         return 0
 
 
 class ComandoConfigurar(Comando):
     nombre = "configurar"
-    ayuda = "Modifica configuracion/asistente.yaml (clave=valor)."
+    ayuda = "Modifica config/assistant.yaml (clave=valor)."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("pares", nargs="+",
-                            help="Uno o más pares clave=valor, p.ej. nombre_asistente='Mi asistente' "
-                                 "cors_origenes=https://mi-sitio.cl (varias claves separadas por espacio, "
+                            help="Uno o más pares clave=valor, p.ej. assistant_name='Mi asistente' "
+                                 "cors_origins=https://mi-sitio.cl (varias claves separadas por espacio, "
                                  "varios valores de una lista separados por coma dentro del mismo valor).")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
@@ -94,19 +94,19 @@ class ComandoConfigurar(Comando):
             pares[clave.strip()] = valor.strip()
 
         try:
-            nuevo = actualizar_dominio(pares)
+            nuevo = configurar(pares)
         except ValueError as e:
             print(f"Error: {e}")
             return 1
 
-        print("configuracion/asistente.yaml actualizado:")
+        print("config/assistant.yaml actualizado:")
         for clave in pares:
             valor = nuevo
-            for parte in clave.split("."):  # claves anidadas: registro.activo
+            for parte in clave.split("."):  # claves anidadas: query_log.enabled
                 valor = valor[parte]
             print(f"  {clave} = {valor!r}")
-        if "idioma" in pares and idioma_con_respaldo(nuevo["idioma"]):
-            print(_NOTA_RESPALDO.format(idioma=nuevo["idioma"]))
+        if "language" in pares and idioma_con_respaldo(nuevo["language"]):
+            print(_NOTA_RESPALDO.format(idioma=nuevo["language"]))
         return 0
 
 
@@ -165,7 +165,7 @@ class ComandoPerfilCambiar(Comando):
             print(f"Error: {e}")
             return 1
         except ValueError as e:  # ajustes_perfil del proyecto inválidos para el destino
-            print(f"Error: los ajustes_perfil de configuracion/motor.yaml no son válidos para {args.perfil}: {e}")
+            print(f"Error: los ajustes_perfil de config/engine.yaml no son válidos para {args.perfil}: {e}")
             return 1
         if not cambio.cambio_real:
             print(f"El perfil {cambio.nuevo} ya está activo. No se realizaron cambios.")

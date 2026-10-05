@@ -14,6 +14,7 @@ import pytest
 import yaml
 
 from ipsis.cli import main
+from apoyo import escribir_proyecto, leer_proyecto
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 MMARCO, LECTOR = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"
@@ -70,7 +71,7 @@ def cargar_manual(texto: str = MANUAL) -> None:
 
 def modificar_documento() -> None:
     """Cambia el documento ya cargado (lo que haría el cliente al editarlo)."""
-    documento = next(Path("documentos").glob("*.md"))
+    documento = next(Path("documents").glob("*.md"))
     documento.write_text(documento.read_text(encoding="utf-8") + "\n## Nuevo\n\nOtro texto.\n", encoding="utf-8")
 
 
@@ -95,8 +96,8 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
         cliente.close()
     ruta_estadisticas(nombre).parent.mkdir(parents=True, exist_ok=True)
     ruta_estadisticas(nombre).write_text("{}", encoding="utf-8")
-    huella = hash_corpus or huella_corpus("documentos", cfg_rec)
-    archivos = huella_archivos("documentos", cfg_rec) if con_hash_archivos else None
+    huella = hash_corpus or huella_corpus("documents", cfg_rec)
+    archivos = huella_archivos("documents", cfg_rec) if con_hash_archivos else None
     guardar_manifiesto(ManifiestoIndice(coleccion=nombre, modelo_denso=modelo, dimension=dimension,
                                         stemmer=stemmer, hash_corpus=huella, n_chunks=2, hash_archivos=archivos))
     return huella
@@ -105,7 +106,7 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
 def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> None:
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
-    Path("configuracion/calibracion.yaml").write_text(yaml.safe_dump({
+    Path("config/calibration.yaml").write_text(yaml.safe_dump({
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
                         "hash_corpus": hash_corpus, "banco": "golden@1.0.0", "hash_banco": "x"},
@@ -120,9 +121,9 @@ def importar_golden() -> None:
 
 
 def editar(ruta: str, **cambios) -> None:
-    datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8")) or {}
+    datos = leer_proyecto(Path(ruta)) or {}
     datos.update(cambios)
-    Path(ruta).write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    escribir_proyecto(Path(ruta), datos)
 
 
 def reporte():
@@ -164,7 +165,7 @@ def test_proyecto_sano_con_calibracion_y_golden_vigentes_queda_todo_ok(proyecto)
     huella = sano("light")
     importar_golden()
     calibracion("light", huella)
-    editar("configuracion/personalidad.yaml", avatar={"activo": False})  # sin avatar: el ícono, sin aviso
+    editar("config/personality.yaml", avatar={"activo": False})  # sin avatar: el ícono, sin aviso
     r = reporte()
     assert set(estados(r).values()) == {"ok"}, estados(r)
     assert "vigente" in r.chequeo("calibracion").mensaje and "vigente" in r.chequeo("golden").mensaje
@@ -179,7 +180,7 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     indexar(E5_BASE)  # índice de heavy
     calibracion("heavy", "sha256:viejo")
     modificar_documento()  # el corpus cambió después del golden y del índice
-    editar("configuracion/asistente.yaml", claves_widget=["clave-sitio"])
+    editar("config/assistant.yaml", claves_widget=["clave-sitio"])
     r = reporte()
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
@@ -191,7 +192,7 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     assert r.chequeo("golden").acciones == ("ipsis golden validar", "ipsis golden importar <archivo>")
     assert all(c.acciones for c in r.errores)
     assert not r.listo
-    assert r.acciones[:3] == ["ipsis modelos descargar", "ipsis indexar", "ipsis configurar cors_origenes=https://tu-sitio.cl"]
+    assert r.acciones[:3] == ["ipsis modelos descargar", "ipsis indexar", "ipsis configurar cors_origins=https://tu-sitio.cl"]
     assert len(r.acciones) == len(set(r.acciones))
 
 
@@ -204,15 +205,15 @@ def test_fuera_de_un_proyecto(proyecto, capsys):
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
     assert "No se encontró un proyecto RAG" in salida and "Acción: ipsis init" in salida
-    assert not Path("configuracion").exists()
+    assert not Path("config").exists()
 
 
 def test_configuracion_invalida_nombra_el_archivo_y_no_evalua_lo_que_depende_de_ella(proyecto):
     proyecto("light")
-    editar("configuracion/asistente.yaml", perfil="turbo")
+    editar("config/assistant.yaml", perfil="turbo")
     r = reporte()
     configuracion = r.chequeo("configuracion")
-    assert configuracion.estado.value == "error" and "configuracion/asistente.yaml" in configuracion.mensaje
+    assert configuracion.estado.value == "error" and "config/assistant.yaml" in configuracion.mensaje
     assert "perfil" in configuracion.mensaje and configuracion.acciones
     for clave in ("perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "cors"):
         assert r.chequeo(clave).estado.value == "no_evaluado", clave
@@ -220,8 +221,7 @@ def test_configuracion_invalida_nombra_el_archivo_y_no_evalua_lo_que_depende_de_
 
 def test_politica_de_abstencion_desconocida(proyecto):
     proyecto("light")
-    editar("configuracion/motor.yaml", componentes={**yaml.safe_load(
-        Path("configuracion/motor.yaml").read_text(encoding="utf-8"))["componentes"], "abstention_policy": "nada"})
+    editar("config/engine.yaml", componentes={**leer_proyecto(Path("config/engine.yaml"))["componentes"], "abstention_policy": "nada"})
     c = reporte().chequeo("configuracion")
     assert c.estado.value == "error" and "política de abstención 'nada'" in c.mensaje and c.acciones
 
@@ -229,7 +229,7 @@ def test_politica_de_abstencion_desconocida(proyecto):
 # --- perfil ---------------------------------------------------------------------------------
 def test_perfil_bm25_editado_a_mano_es_error(proyecto):
     proyecto("light")
-    editar("configuracion/asistente.yaml", perfil="bm25")
+    editar("config/assistant.yaml", perfil="bm25")
     r = reporte()
     perfil = r.chequeo("perfil")
     assert perfil.estado.value == "error" and "diagnóstico" in perfil.mensaje
@@ -239,7 +239,7 @@ def test_perfil_bm25_editado_a_mano_es_error(proyecto):
 
 def test_ajustes_perfil_invalidos_son_error(proyecto):
     proyecto("light")
-    editar("configuracion/motor.yaml", ajustes_perfil={"cascada": {"rerank_k": -3}})
+    editar("config/engine.yaml", ajustes_perfil={"cascada": {"rerank_k": -3}})
     perfil = reporte().chequeo("perfil")
     assert perfil.estado.value == "error" and "ajustes_perfil" in perfil.mensaje
     assert "ajustes_perfil" in perfil.acciones[0]
@@ -249,7 +249,7 @@ def test_ajustes_perfil_invalidos_son_error(proyecto):
 @pytest.mark.parametrize("codigo", ["en", "pt"])
 def test_idiomas_con_paquete(proyecto, codigo):
     proyecto("light")
-    editar("configuracion/asistente.yaml", idioma=codigo)
+    editar("config/assistant.yaml", idioma=codigo)
     r = reporte()
     assert r.chequeo("idioma").estado.value == "ok" and r.chequeo("stemmer").estado.value == "ok"
 
@@ -257,7 +257,7 @@ def test_idiomas_con_paquete(proyecto, codigo):
 def test_idioma_sin_paquete_es_aviso_y_funciona_sin_stemmer(proyecto):
     proyecto("light")
     sano("light")
-    editar("configuracion/asistente.yaml", idioma="ru")
+    editar("config/assistant.yaml", idioma="ru")
     indexar(stemmer=None)  # reindexado con el idioma nuevo
     r = reporte()
     idioma = r.chequeo("idioma")
@@ -268,19 +268,19 @@ def test_idioma_sin_paquete_es_aviso_y_funciona_sin_stemmer(proyecto):
 
 def test_idioma_yaml_invalido_es_error(proyecto):
     proyecto("light")
-    Path("configuracion/idioma.yaml").write_text("mensajes: [1, 2]\n", encoding="utf-8")
+    Path("config/language.yaml").write_text("mensajes: [1, 2]\n", encoding="utf-8")
     idioma = reporte().chequeo("idioma")
-    assert idioma.estado.value == "error" and "configuracion/idioma.yaml" in idioma.mensaje and idioma.acciones
+    assert idioma.estado.value == "error" and "config/language.yaml" in idioma.mensaje and idioma.acciones
 
 
 def test_stemmer_inexistente_es_error_y_sin_stemmer_es_valido(proyecto):
     proyecto("light")
-    Path("configuracion/idioma.yaml").write_text("stemmer: klingon\n", encoding="utf-8")
+    Path("config/language.yaml").write_text("stemmer: klingon\n", encoding="utf-8")
     stemmer = reporte().chequeo("stemmer")
     assert stemmer.estado.value == "error" and "klingon" in stemmer.mensaje
-    assert "configuracion/idioma.yaml" in stemmer.mensaje and "spanish" in stemmer.acciones[0]
+    assert "config/language.yaml" in stemmer.mensaje and "spanish" in stemmer.acciones[0]
 
-    Path("configuracion/idioma.yaml").write_text("stemmer: null\n", encoding="utf-8")
+    Path("config/language.yaml").write_text("stemmer: null\n", encoding="utf-8")
     stemmer = reporte().chequeo("stemmer")
     assert stemmer.estado.value == "ok" and "no configurado" in stemmer.mensaje
 
@@ -367,13 +367,13 @@ def test_calibracion_no_habilitada_y_obsoleta_son_avisos(proyecto):
     assert c.acciones == ("ipsis golden importar <archivo>", "ipsis calibrar --aplicar")  # no hay golden
     importar_golden()
     assert reporte().chequeo("calibracion").acciones == ("ipsis calibrar --aplicar",)
-    assert Path("configuracion/calibracion.yaml").is_file()  # doctor no la toca
+    assert Path("config/calibration.yaml").is_file()  # doctor no la toca
 
 
 def test_calibracion_ilegible_es_error(proyecto):
     proyecto("light")
     sano("light")
-    Path("configuracion/calibracion.yaml").write_text("estado: inventado\n", encoding="utf-8")
+    Path("config/calibration.yaml").write_text("estado: inventado\n", encoding="utf-8")
     c = reporte().chequeo("calibracion")
     assert c.estado.value == "error" and c.acciones
 
@@ -383,7 +383,7 @@ def test_banco_de_regresion_es_ok_e_ilegible_es_aviso(proyecto):
     proyecto("light")
     cargar_manual()
     importar_golden()
-    manifiesto = Path("golden/banco/manifiesto.json")
+    manifiesto = Path("golden/bank/manifest.json")
     datos = json.loads(manifiesto.read_text(encoding="utf-8"))
     manifiesto.write_text(json.dumps({**datos, "uso": "regresion"}), encoding="utf-8")
     golden = reporte().chequeo("golden")
@@ -397,7 +397,7 @@ def test_banco_de_regresion_es_ok_e_ilegible_es_aviso(proyecto):
 # --- CORS -------------------------------------------------------------------------------------
 def test_cors_configurado_es_ok(proyecto):
     proyecto("light")
-    editar("configuracion/asistente.yaml", cors_origenes=["https://mi-sitio.cl"], claves_widget=["k"])
+    editar("config/assistant.yaml", cors_origenes=["https://mi-sitio.cl"], claves_widget=["k"])
     cors = reporte().chequeo("cors")
     assert cors.estado.value == "ok" and "https://mi-sitio.cl" in cors.mensaje
 
@@ -406,14 +406,14 @@ def test_cors_configurado_es_ok(proyecto):
 def test_cli_resume_y_no_repite_acciones(proyecto, capsys):
     proyecto("medium")
     cargar_manual()
-    editar("configuracion/asistente.yaml", claves_widget=["k"])
+    editar("config/assistant.yaml", claves_widget=["k"])
     capsys.readouterr()
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
     assert "[ERROR]   Modelos" in salida and "[ERROR]   Índice" in salida and "[AVISO]   Golden" in salida
     assert "3 errores, 2 avisos. El proyecto no está listo." in salida
     resumen = salida.split("Acciones:\n")[1].splitlines()
-    assert resumen[:3] == ["  ipsis modelos descargar", "  ipsis indexar", "  ipsis configurar cors_origenes=https://tu-sitio.cl"]
+    assert resumen[:3] == ["  ipsis modelos descargar", "  ipsis indexar", "  ipsis configurar cors_origins=https://tu-sitio.cl"]
     assert resumen[3:] == []  # con Folio incluido, el avatar no pide acción
 
 
@@ -533,8 +533,8 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     proyecto("light")
     calibracion("light", sano("light"))
     importar_avatar_desde(_json.dumps(definicion_avatar()).encode(), "propio")
-    Path(".ipsis/registros").mkdir(parents=True, exist_ok=True)
-    Path(".ipsis/registros/consultas.jsonl").write_text("{}\n", encoding="utf-8")
+    Path(".ipsis/logs").mkdir(parents=True, exist_ok=True)
+    Path(".ipsis/logs/queries.jsonl").write_text("{}\n", encoding="utf-8")
     Path("mi.whl").write_bytes(b"x")
     Path("mi.whl").rename("ipsis-0-py3-none-any.whl")
     capsys.readouterr()
@@ -543,13 +543,13 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     salida = capsys.readouterr().out
     assert "Despliegue preparado" in salida and "perfil light" in salida
     dist = Path("dist")
-    for archivo in ("configuracion/asistente.yaml", "configuracion/personalidad.yaml", "configuracion/estilos.yaml",
-                    "configuracion/calibracion.yaml", "configuracion/avatares/propio.avatar.json",
-                    "documentos/catalogo.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo",
+    for archivo in ("config/assistant.yaml", "config/personality.yaml", "config/styles.yaml",
+                    "config/calibration.yaml", "config/avatars/propio.avatar.json",
+                    "documents/catalog.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo",
                     "LEEME_despliegue.md", "paquete/ipsis-0-py3-none-any.whl"):
         assert (dist / archivo).is_file(), archivo
-    assert any((dist / ".ipsis/indice").rglob("*.manifiesto.json"))
-    assert not (dist / ".ipsis/registros/consultas.jsonl").exists()  # los registros no viajan
+    assert any((dist / ".ipsis/index").rglob("*.manifest.json"))
+    assert not (dist / ".ipsis/logs/queries.jsonl").exists()  # los registros no viajan
 
     compose = yaml.safe_load((dist / "docker-compose.yml").read_text(encoding="utf-8"))
     assert compose["services"]["caddy"]["profiles"] == ["https"]
@@ -580,7 +580,7 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
 
 def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
     proyecto("light")
-    editar("configuracion/asistente.yaml", idioma="pt-br")
+    editar("config/assistant.yaml", idioma="pt-br")
     assert main(["desplegar", "preparar"]) == 0
     assert Path("dist/LEEME_despliegue.md").read_text(encoding="utf-8").startswith("# Implantação de")
     assert "Copie este arquivo" in Path("dist/.env.ejemplo").read_text(encoding="utf-8")

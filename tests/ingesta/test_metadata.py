@@ -11,7 +11,7 @@ from ipsis.ingesta.metadata import (
 
 @pytest.fixture(scope="module")
 def taxonomia(proyecto_suite):
-    return cargar_taxonomia(str(proyecto_suite / "configuracion" / "dominio.yaml"))
+    return cargar_taxonomia(str(proyecto_suite / "config" / "domain.yaml"))
 
 
 def test_clasificar_categoria_contenido(taxonomia):

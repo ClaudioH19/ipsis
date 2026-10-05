@@ -30,11 +30,11 @@ class ComandoTemaListar(Comando):
 
 class ComandoTemaAplicar(Comando):
     nombre = "aplicar"
-    ayuda = "Aplica un preset a estilos.yaml."
+    ayuda = "Aplica un preset a styles.yaml."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("preset", help="Nombre del preset visual.")
-        parser.add_argument("--ruta", default="configuracion/estilos.yaml", help="Archivo de estilos a modificar.")
+        parser.add_argument("--ruta", default="config/styles.yaml", help="Archivo de estilos a modificar.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
@@ -52,9 +52,9 @@ class ComandoTemaVistaPrevia(Comando):
     ayuda = "Genera un mockup HTML sin iniciar la API."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--ruta", default="configuracion/estilos.yaml",
+        parser.add_argument("--ruta", default="config/styles.yaml",
                             help="Archivo de estilos que se desea previsualizar.")
-        parser.add_argument("--salida", default=".ipsis/widget-vista-previa.html", help="Archivo HTML de salida.")
+        parser.add_argument("--salida", default=".ipsis/widget-preview.html", help="Archivo HTML de salida.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
@@ -92,7 +92,7 @@ class ComandoWidgetExportar(Comando):
 
 class ComandoWidgetSnippet(Comando):
     nombre = "snippet"
-    ayuda = "Imprime el código para pegar el widget en tu sitio, según estilos.yaml::ubicacion."
+    ayuda = "Imprime el código para pegar el widget en tu sitio, según styles.yaml::ubicacion."
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--api", default="http://127.0.0.1:8000",
@@ -105,7 +105,7 @@ class ComandoWidgetSnippet(Comando):
         try:
             print(snippet_widget(args.api, componente=args.componente, clave_widget=args.clave))
         except ValueError as e:
-            print(f"Error: configuracion/estilos.yaml: {e}")
+            print(f"Error: config/styles.yaml: {e}")
             return 1
         return 0
 
@@ -121,7 +121,7 @@ class ComandoEstiloMostrar(Comando):
         try:
             valores = estilo_plano()
         except (OSError, yaml.YAMLError) as exc:
-            print(f"No se pudo leer configuracion/estilos.yaml: {exc}")
+            print(f"No se pudo leer config/styles.yaml: {exc}")
             return 1
         for clave, valor in valores:
             if args.seccion is None or clave.startswith(args.seccion + "."):
@@ -144,7 +144,7 @@ class ComandoEstiloCambiar(Comando):
         except (OSError, ValueError, yaml.YAMLError) as exc:
             print(f"No se cambió nada: {exc}")
             return 1
-        print(f"Estilo actualizado en configuracion/estilos.yaml ({len(args.asignaciones)} cambio(s)).")
+        print(f"Estilo actualizado en config/styles.yaml ({len(args.asignaciones)} cambio(s)).")
         print("El servicio lo aplica sin reiniciar; para verlo: ipsis widget tema vista-previa")
         return 0
 

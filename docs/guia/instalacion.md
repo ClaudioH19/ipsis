@@ -113,11 +113,11 @@ En una máquina sin red, descarga en otra con
 ## Qdrant
 
 Por defecto el índice vive en el proyecto, en modo local
-(`.ipsis/indice/qdrant`). En ese modo Qdrant bloquea la carpeta: detén
+(`.ipsis/index/qdrant`). En ese modo Qdrant bloquea la carpeta: detén
 `ipsis servir` antes de ejecutar `ipsis indexar`, `ipsis doctor` o
 `ipsis preguntar --diagnostico`.
 
-Para usar Qdrant como servidor, en `configuracion/motor.yaml`:
+Para usar Qdrant como servidor, en `config/engine.yaml`:
 
 ```yaml
 qdrant:

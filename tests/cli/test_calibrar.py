@@ -8,10 +8,10 @@ import json
 from pathlib import Path
 
 import pytest
-import yaml
 from apoyo import CORPUS
 
 from ipsis.cli import main
+from apoyo import leer_proyecto
 
 LITERALES = [
     "24 meses desde la fecha de compra",
@@ -86,7 +86,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     return preparar
 
 
-CALIBRACION = Path("configuracion") / "calibracion.yaml"
+CALIBRACION = Path("config") / "calibration.yaml"
 
 
 def test_calibrado_sin_aplicar_no_escribe_nada(proyecto, capsys):
@@ -105,13 +105,13 @@ def test_calibrado_con_aplicar_guarda_procedencia_del_indice_y_se_habilita(proye
     hash_indice = proyecto(140, 20, qa_respondibles=0.9, qa_trampas=0.5)
     assert main(["calibrar", "--aplicar"]) == 0
     assert "guardada y habilitada" in capsys.readouterr().out
-    datos = yaml.safe_load(CALIBRACION.read_text(encoding="utf-8"))
+    datos = leer_proyecto(CALIBRACION)
     procedencia = datos["procedencia"]
     assert datos["estado"] == "calibrado" and datos["alfa"] == 0.05
     assert procedencia["hash_corpus"] == hash_indice  # del manifiesto del índice activo
     assert procedencia["perfil"] == "light"
     assert procedencia["modelos"] == cargar_perfil_instalacion("light").modelos.model_dump()
-    assert procedencia["hash_banco"] == hash_banco(cargar_banco("golden/banco/manifiesto.json"))
+    assert procedencia["hash_banco"] == hash_banco(cargar_banco("golden/bank/manifest.json"))
     # El motor la aplica con ese índice; con otro corpus, no.
     assert perfil_efectivo("light", hash_corpus=hash_indice).origen_umbrales == "calibracion"
     assert perfil_efectivo("light", hash_corpus="sha256:otro").origen_umbrales == "perfil"
@@ -126,7 +126,7 @@ def test_muestra_insuficiente_no_es_fallo_y_no_se_aplica(proyecto, capsys):
     assert "MUESTRA_INSUFICIENTE" in salida and "faltan al menos" in salida
     assert "inseguro" in salida and "no significa" in salida
     assert "guardado para auditoría" in salida and "habilitada" not in salida
-    assert yaml.safe_load(CALIBRACION.read_text(encoding="utf-8"))["estado"] == "muestra_insuficiente"
+    assert leer_proyecto(CALIBRACION)["estado"] == "muestra_insuficiente"
     assert perfil_efectivo("light", hash_corpus=hash_indice).origen_umbrales == "perfil"
 
 
@@ -137,7 +137,7 @@ def test_sin_umbral_seguro_sale_con_error_y_no_se_aplica(proyecto, capsys):
     assert main(["calibrar", "--aplicar"]) == 1
     salida = capsys.readouterr().out
     assert "SIN_UMBRAL_SEGURO" in salida and "Siguen vigentes los umbrales del perfil" in salida
-    datos = yaml.safe_load(CALIBRACION.read_text(encoding="utf-8"))
+    datos = leer_proyecto(CALIBRACION)
     assert datos["estado"] == "sin_umbral_seguro" and datos["umbrales"]["ok"] != 1.01
     assert perfil_efectivo("light", hash_corpus=hash_indice).origen_umbrales == "perfil"
 
@@ -163,14 +163,14 @@ def test_sin_golden_o_sin_indice(tmp_path, monkeypatch, capsys):
 
 def test_corpus_cambiado_o_banco_de_regresion(proyecto, capsys, tmp_path):
     proyecto(40, 10, 0.9, 0.5)
-    manifiesto = tmp_path / "golden" / "banco" / "manifiesto.json"
+    manifiesto = tmp_path / "golden" / "bank" / "manifest.json"
     datos = json.loads(manifiesto.read_text(encoding="utf-8"))
     manifiesto.write_text(json.dumps({**datos, "uso": "regresion"}), encoding="utf-8")
     assert main(["calibrar"]) == 1
     assert "no para calibrar" in capsys.readouterr().out
 
     manifiesto.write_text(json.dumps(datos), encoding="utf-8")
-    documento = tmp_path / "documentos" / "manual_purificador.md"
+    documento = tmp_path / "documents" / "manual_purificador.md"
     documento.write_text(documento.read_text(encoding="utf-8") + "\nNueva línea.\n", encoding="utf-8")
     assert main(["calibrar"]) == 1
     salida = capsys.readouterr().out
@@ -207,7 +207,7 @@ def test_calibrar_medium_con_el_banco_v1_1_0(tmp_path, monkeypatch, capsys):
 
     assert main(["calibrar", "--aplicar"]) == 0
     salida = capsys.readouterr().out
-    datos = yaml.safe_load(CALIBRACION.read_text(encoding="utf-8"))
+    datos = leer_proyecto(CALIBRACION)
     assert datos["estado"] == "muestra_insuficiente", salida
     assert "MUESTRA_INSUFICIENTE" in salida and "faltan al menos" in salida
     # La procedencia sale del índice realmente abierto y del perfil efectivo.

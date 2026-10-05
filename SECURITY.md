@@ -24,7 +24,7 @@ Recibirás una respuesta inicial en un plazo de 7 días.
 |---|---|
 | `/consultar` | CORS por origen, clave pública del widget, límite de peticiones y control de admisión (503) |
 | Widget | Shadow DOM; todo texto de la API se inserta con `textContent`, nunca `innerHTML` |
-| `/admin` y `/admin/panel` | Solo con `IPSIS_ADMIN_TOKEN` (≥ 32 caracteres), comparación en tiempo constante, HTTPS en producción, bloqueo tras 5 intentos fallidos, sin CORS, CSP estricta y auditoría en `.ipsis/registros/admin.jsonl` |
+| `/admin` y `/admin/panel` | Solo con `IPSIS_ADMIN_TOKEN` (≥ 32 caracteres), comparación en tiempo constante, HTTPS en producción, bloqueo tras 5 intentos fallidos, sin CORS, CSP estricta y auditoría en `.ipsis/logs/admin.jsonl` |
 | Proxy | `X-Forwarded-*` solo se acepta de `IPSIS_TRUSTED_PROXY` |
 | Imagen Docker | Usuario no root, sin red en ejecución (`HF_HUB_OFFLINE=1`) |
 | Datos | Los documentos y las preguntas no salen del servidor; el registro de consultas está apagado por defecto |

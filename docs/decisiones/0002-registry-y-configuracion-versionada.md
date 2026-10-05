@@ -12,7 +12,7 @@ Se usan contratos Python pequeños en `ipsis.nucleo.contratos`, un
 `RegistroComponentes` explícito y schemas Pydantic estrictos en
 `ipsis.configuracion.esquemas`.
 
-La selección se declara bajo `componentes` en `motor.yaml`. Las factories se
+La selección se declara bajo `componentes` en `engine.yaml`. Las factories se
 resuelven por nombre y pueden recibir opciones. Los cambios de formato pasan
 por migraciones idempotentes; una versión futura se rechaza.
 

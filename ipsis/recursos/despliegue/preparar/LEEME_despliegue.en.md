@@ -10,7 +10,7 @@ You need Docker with the `compose` plugin. Then, inside this folder:
 
 ```bash
 cp .env.ejemplo .env               # and fill in IPSIS_ADMIN_TOKEN if you want /admin
-sudo chown -R 10001:10001 configuracion .ipsis   # the container does not run as root
+sudo chown -R 10001:10001 config .ipsis   # the container does not run as root
 docker compose --profile https up -d --build
 ```
 
@@ -34,9 +34,9 @@ Paste before `</body>`:
 {{snippet}}
 ```
 
-And allow your site in the service (`cors_origenes` in
-`configuracion/asistente.yaml`), for example with
-`ipsis configurar cors_origenes=https://www.your-site.com` before preparing the
+And allow your site in the service (`cors_origins` in
+`config/assistant.yaml`), for example with
+`ipsis configurar cors_origins=https://www.your-site.com` before preparing the
 deployment.
 
 ## 3. The `/admin` panel

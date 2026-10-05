@@ -1,6 +1,6 @@
 # Paquete de idioma: español. Todo texto y patrón que depende del idioma
 # vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
-# en configuracion/idioma.yaml.
+# en config/language.yaml.
 codigo: es
 nombre: Español
 stemmer: spanish

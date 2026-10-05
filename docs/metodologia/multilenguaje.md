@@ -18,13 +18,13 @@ código Python: todo lo que depende del idioma vive en un paquete.
 - `ipsis/recursos/idiomas/<código>.yaml`: paquete del idioma.
 - `ipsis/recursos/tonos/<código>/<tono>.yaml` y `_reglas.yaml`: los 7 tonos y
   su linter.
-- `configuracion/idioma.yaml` (opcional): sobrescrituras del proyecto.
+- `config/language.yaml` (opcional): sobrescrituras del proyecto.
 - El manifiesto del índice guarda el stemmer: cambiar de idioma exige
   reindexar.
 
 ## 4. Algoritmo y desempates
 
-- `asistente.yaml::idioma` elige el paquete. Una variante regional (`pt-br`)
+- `assistant.yaml::idioma` elige el paquete. Una variante regional (`pt-br`)
   usa el de su idioma base. Un código sin paquete funciona con las reglas
   universales, `terminos()` sin stem y los textos en inglés; `ipsis doctor` lo
   advierte.

@@ -192,7 +192,7 @@ def test_escribir_y_aplicar_solo_con_la_misma_procedencia(tmp_path):
     modelos = {"denso": "e5", "reranker": None, "lector": None}
     procedencia = ProcedenciaCalibracion(perfil="light", modelos=modelos, hash_corpus="sha256:c",
                                          banco="golden@1", hash_banco="h")
-    ruta = escribir_calibracion(resultado, procedencia, tmp_path / "calibracion.yaml")
+    ruta = escribir_calibracion(resultado, procedencia, tmp_path / "calibration.yaml")
     aplicados = umbrales_aplicables(ruta, perfil="light", modelos=modelos, hash_corpus="sha256:c")
     assert aplicados["ok"] == pytest.approx(resultado.umbrales["ok"])
     assert umbrales_aplicables(ruta, perfil="light", modelos=modelos, hash_corpus="sha256:otro") is None

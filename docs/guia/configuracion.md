@@ -7,31 +7,31 @@ salvo `.ipsis/`, que es generado.
 
 ```text
 mi-asistente/
-├── configuracion/
-│   ├── asistente.yaml      # identidad, idioma, perfil, CORS, claves del widget y registro
-│   ├── motor.yaml          # recuperación, componentes, Qdrant, límites y ajustes del perfil
-│   ├── estilos.yaml        # tema y ubicación del widget
-│   ├── personalidad.yaml   # tono de las respuestas y avatar
-│   ├── dominio.yaml        # opcional: reglas y categorías propias del dominio
-│   ├── idioma.yaml         # opcional: textos del paquete de idioma sobrescritos
-│   ├── calibracion.yaml    # lo escribe `ipsis calibrar --aplicar`, con procedencia
+├── config/
+│   ├── assistant.yaml      # identidad, idioma, perfil, CORS, claves del widget y registro
+│   ├── engine.yaml          # recuperación, componentes, Qdrant, límites y ajustes del perfil
+│   ├── styles.yaml        # tema y ubicación del widget
+│   ├── personality.yaml   # tono de las respuestas y avatar
+│   ├── domain.yaml        # opcional: reglas y categorías propias del dominio
+│   ├── language.yaml         # opcional: textos del paquete de idioma sobrescritos
+│   ├── calibration.yaml    # lo escribe `ipsis calibrar --aplicar`, con procedencia
 │   └── avatares/           # avatares importados (.avatar.json)
-├── documentos/             # archivos fuente + catalogo.yaml
+├── documents/             # archivos fuente + catalog.yaml
 ├── golden/                 # golden.csv, banco/ versionado y reportes/
 └── .ipsis/                   # generado: indice/ (Qdrant, estadísticas, manifiesto) y registros/
 ```
 
 | Archivo | Se edita con | Detalle |
 |---|---|---|
-| `asistente.yaml` | `ipsis configurar clave=valor` | esta guía |
-| `motor.yaml` | a mano | esta guía; los umbrales viven en el perfil y en `calibracion.yaml` |
-| `estilos.yaml` | `ipsis widget tema`, panel `/admin` | [web.md](web.md) |
-| `personalidad.yaml` | `ipsis personalidad`, panel `/admin` | [personalidad.md](personalidad.md) |
-| `calibracion.yaml` | `ipsis calibrar --aplicar` | [metodología](../metodologia/calibracion.md) |
+| `assistant.yaml` | `ipsis configurar clave=valor` | esta guía |
+| `engine.yaml` | a mano | esta guía; los umbrales viven en el perfil y en `calibration.yaml` |
+| `styles.yaml` | `ipsis widget tema`, panel `/admin` | [web.md](web.md) |
+| `personality.yaml` | `ipsis personalidad`, panel `/admin` | [personalidad.md](personalidad.md) |
+| `calibration.yaml` | `ipsis calibrar --aplicar` | [metodología](../metodologia/calibracion.md) |
 
 ## Versionado
 
-`asistente.yaml` y `motor.yaml` declaran `config_version`. La versión vigente
+`assistant.yaml` y `engine.yaml` declaran `config_version`. La versión vigente
 es la `4`.
 
 - Un archivo sin `config_version` se lee como versión 0 y se migra paso a
@@ -42,8 +42,8 @@ es la `4`.
 | Versión | Qué cambió |
 |---|---|
 | 2 | El reranker se elige solo con `componentes.reranker` |
-| 3 | `dominio.yaml` reemplaza a los perfiles de dominio; `perfil` pasa a ser el perfil de instalación (los proyectos v2 quedan en `light`); sin torch; `.cache/` pasa a `.ipsis/` |
-| 4 | La política `cascada_v1` reemplaza a la anterior; los umbrales pasan al perfil y a `calibracion.yaml` |
+| 3 | `domain.yaml` reemplaza a los perfiles de dominio; `perfil` pasa a ser el perfil de instalación (los proyectos v2 quedan en `light`); sin torch; `.cache/` pasa a `.ipsis/` |
+| 4 | La política `cascada_v1` reemplaza a la anterior; los umbrales pasan al perfil y a `calibration.yaml` |
 
 La configuración ya validada puede cargarse desde Python:
 
@@ -107,17 +107,17 @@ indexar cuando cambia la representación persistida.
 
 ## Perfil de instalación
 
-El perfil activo está en `configuracion/asistente.yaml::perfil` (`light`,
+El perfil activo está en `config/assistant.yaml::perfil` (`light`,
 `medium` o `heavy`). `bm25` es solo un perfil de diagnóstico de
 `ipsis benchmark`, no se instala.
 
 ```
 ipsis perfil mostrar           # perfil, modelos, presupuesto p95, índice y calibración
-ipsis perfil cambiar medium    # cambia solo asistente.yaml::perfil
+ipsis perfil cambiar medium    # cambia solo assistant.yaml::perfil
 ```
 
 `ipsis perfil cambiar` no descarga modelos, no indexa, no calibra y no borra
-nada. Se conservan `ajustes_perfil`, el índice y `calibracion.yaml`. Antes de
+nada. Se conservan `ajustes_perfil`, el índice y `calibration.yaml`. Antes de
 escribir, valida los `ajustes_perfil` del proyecto contra el perfil destino.
 Repetir el perfil activo no hace nada.
 
@@ -127,7 +127,7 @@ Repetir el perfil activo no hace nada.
   Cada modelo denso vive en su colección: el índice anterior se conserva, y
   volver al perfil anterior lo hace compatible otra vez sin reindexar.
 - **Compatibilidad del índice:** se decide por el manifiesto
-  (`.ipsis/indice/<coleccion>.manifiesto.json`), con el modelo denso, la
+  (`.ipsis/index/<coleccion>.manifiesto.json`), con el modelo denso, la
   dimensión y la versión del payload. No se decide por el nombre del perfil.
 - **Calibración:** cualquier cambio de perfil la invalida, porque su
   procedencia registra perfil, modelos y corpus. El motor la ignora y rigen
@@ -185,7 +185,7 @@ ipsis modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
 
 ## Idioma
 
-`asistente.yaml::idioma` es un código ISO 639, por ejemplo `es`, `en` o
+`assistant.yaml::idioma` es un código ISO 639, por ejemplo `es`, `en` o
 `pt-br`. `es`, `en` y `pt` tienen paquete propio: stemmer, stopwords,
 números, fechas, conectores, mensajes e interfaz. Una variante regional
 (`pt-br`, `es-cl`) usa el paquete de su idioma.
@@ -194,8 +194,8 @@ Otro código funciona con un respaldo:
 - solo las reglas universales (fechas numéricas, montos, artículos);
 - términos sin stem;
 - la interfaz y los tonos de `en`, que se pueden traducir con
-  `configuracion/idioma.yaml` (interfaz) y
-  `configuracion/personalidad.yaml` (tono).
+  `config/language.yaml` (interfaz) y
+  `config/personality.yaml` (tono).
 
 `ipsis init` y `ipsis configurar idioma=` lo avisan, y `ipsis doctor` lo marca
 como aviso.
@@ -226,7 +226,7 @@ reindexar ni recalibrar.
   en `ipsis preguntar --diagnostico` y en el registro de consultas.
 
 Para cambiar textos propios del proyecto, sin tocar el paquete, usa
-`configuracion/personalidad.yaml`:
+`config/personality.yaml`:
 
 ```yaml
 tono:
@@ -245,14 +245,14 @@ cumple, el motor no arranca y el error dice qué regla falló:
 - los conectores terminan en «:»;
 - sin expresiones de la lista prohibida del idioma.
 
-Los textos de `configuracion/idioma.yaml` anteriores a los tonos
+Los textos de `config/language.yaml` anteriores a los tonos
 (`mensajes.sin_respuesta`, `mensajes.conectores.apertura`, `interfaz.saludo`…)
 siguen funcionando: se toman como sobrescrituras del tono.
-`personalidad.yaml` tiene prioridad sobre ellos.
+`personality.yaml` tiene prioridad sobre ellos.
 
 ## Documentos vigentes
 
-`documentos/catalogo.yaml` lista lo cargado. Una entrada con `vigente: false`
+`documents/catalog.yaml` lista lo cargado. Una entrada con `vigente: false`
 no se indexa ni entra en el golden (hay que ejecutar `ipsis indexar` después de
 cambiarla).
 
@@ -334,7 +334,7 @@ bloquea la carpeta del índice.
 ## Registro de consultas y auditoría (`ipsis auditar`)
 
 El servicio puede guardar una línea JSON por consulta en
-`.ipsis/registros/consultas.jsonl`. Está apagado por defecto, por privacidad:
+`.ipsis/logs/queries.jsonl`. Está apagado por defecto, por privacidad:
 
 ```
 ipsis configurar registro.activo=true   # y reiniciar 'ipsis servir'
@@ -364,7 +364,7 @@ ipsis auditar --desde 2026-10-01 --hasta 2026-10-31
 
 ## Presentación del widget
 
-`configuracion/estilos.yaml` admite un `preset` y opciones independientes del
+`config/styles.yaml` admite un `preset` y opciones independientes del
 contenido documental:
 
 ```yaml

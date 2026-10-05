@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
 from ipsis.cli import main
+from apoyo import leer_proyecto
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 MMARCO, BGE = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "onnx-community/bge-reranker-v2-m3-ONNX"
@@ -57,7 +57,7 @@ def _proyecto(perfil: str) -> None:
 
 
 def _perfil_activo() -> str:
-    return yaml.safe_load(Path("configuracion/asistente.yaml").read_text(encoding="utf-8"))["perfil"]
+    return leer_proyecto(Path("config/assistant.yaml"))["perfil"]
 
 
 # --- listar -------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ def test_descargar_otro_perfil_no_cambia_el_activo_y_reutiliza_lo_compartido(hub
 
 def test_descargar_con_perfil_funciona_fuera_de_un_proyecto(hub):
     assert main(["modelos", "descargar", "--perfil", "light"]) == 0
-    assert _descargas(hub) == [E5_SMALL] and not Path("configuracion").exists()
+    assert _descargas(hub) == [E5_SMALL] and not Path("config").exists()
     assert main(["modelos", "descargar"]) == 1  # sin --perfil necesita el perfil activo
 
 

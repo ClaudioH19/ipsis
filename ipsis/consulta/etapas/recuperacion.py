@@ -58,7 +58,7 @@ class RetrieverQdrant:
         if not client.collection_exists(nombre):
             raise RuntimeError(
                 f"la colección Qdrant {nombre!r} no existe todavía. Ejecuta 'ipsis indexar' primero "
-                f"(lee la misma configuracion/motor.yaml::recuperacion que este servicio)."
+                f"(lee la misma config/engine.yaml::recuperacion que este servicio)."
             )
 
         manifiesto = cargar_manifiesto(nombre)

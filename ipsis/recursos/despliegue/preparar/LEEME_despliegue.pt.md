@@ -10,7 +10,7 @@ e avatares. Copie a pasta inteira para o servidor (VPS).
 
 ```bash
 cp .env.ejemplo .env               # e preencha IPSIS_ADMIN_TOKEN se quiser o /admin
-sudo chown -R 10001:10001 configuracion .ipsis   # o contêiner não roda como root
+sudo chown -R 10001:10001 config .ipsis   # o contêiner não roda como root
 docker compose --profile https up -d --build
 ```
 
@@ -34,9 +34,9 @@ Cole antes de `</body>`:
 {{snippet}}
 ```
 
-E autorize o seu site no serviço (`cors_origenes` em
-`configuracion/asistente.yaml`), por exemplo com
-`ipsis configurar cors_origenes=https://www.seu-site.com` antes de preparar a
+E autorize o seu site no serviço (`cors_origins` em
+`config/assistant.yaml`), por exemplo com
+`ipsis configurar cors_origins=https://www.seu-site.com` antes de preparar a
 implantação.
 
 ## 3. Painel `/admin`

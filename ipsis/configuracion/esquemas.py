@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-CONFIG_VERSION = 4
+CONFIG_VERSION = 5
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
@@ -19,7 +19,7 @@ class ConfiguracionEstricta(BaseModel):
 
 
 class RegistroConfig(ConfiguracionEstricta):
-    """Registro de consultas (``.ipsis/registros/consultas.jsonl``): apagado por privacidad."""
+    """Registro de consultas (``.ipsis/logs/queries.jsonl``): apagado por privacidad."""
 
     activo: bool = False
 
@@ -43,7 +43,7 @@ class RecuperacionConfig(ConfiguracionEstricta):
     modo: Literal["vectorial", "hibrida", "dispersa"] = "hibrida"
     top_k: int = Field(default=3, ge=1)
     coleccion_base: str = Field(min_length=1)
-    qdrant_path: str = ".ipsis/indice/qdrant"
+    qdrant_path: str = ".ipsis/index/qdrant"
     version_coleccion: int = Field(default=1, ge=1)
 
 
@@ -151,7 +151,7 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             salida["config_version"] = 2
             version = 2
         elif version == 2:
-            # v3: un único configuracion/dominio.yaml reemplaza a los perfiles
+            # v3: un único config/domain.yaml reemplaza a los perfiles
             # de dominio con nombre, y los artefactos pasan de .cache/ a .ipsis/.
             # Los archivos los mueve ipsis.configuracion.migraciones.
             if nombre == "asistente":
@@ -170,7 +170,7 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                 recuperacion.pop("prefijo_query", None)
                 recuperacion.pop("prefijo_documento", None)
                 if recuperacion.get("qdrant_path") == ".cache/qdrant_local":
-                    recuperacion["qdrant_path"] = ".ipsis/indice/qdrant"
+                    recuperacion["qdrant_path"] = ".ipsis/index/qdrant"
             salida["config_version"] = 3
             version = 3
         elif version == 3:
@@ -181,7 +181,7 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                 componentes = salida.get("componentes") or {}
                 if componentes.get("abstention_policy") is not None:
                     componentes["abstention_policy"] = "cascada_v1"
-                # Los umbrales viven en el perfil y en calibracion.yaml; de la
+                # Los umbrales viven en el perfil y en calibration.yaml; de la
                 # abstención solo queda la recuperación dirigida por premisa.
                 abstencion = salida.get("abstencion")
                 if isinstance(abstencion, dict):
@@ -193,6 +193,11 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                     }
             salida["config_version"] = 4
             version = 4
+        elif version == 4:
+            # v5: claves y valores en inglés en el disco. El glosario (configuracion/glosario.py)
+            # traduce al cargar, así que en memoria no cambia nada.
+            salida["config_version"] = 5
+            version = 5
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(f"no existe migración de {nombre} versión {version}")
     return salida

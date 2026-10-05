@@ -9,6 +9,8 @@ from copy import deepcopy
 import yaml
 
 from ipsis.configuracion import rutas
+from ipsis.configuracion.archivos import interpretar
+from ipsis.configuracion.glosario import a_externo
 from ipsis.recursos import leer_plantilla
 from ipsis.configuracion.esquemas import (
     CONFIG_VERSION,
@@ -44,7 +46,7 @@ def slug_coleccion(valor: str) -> str:
 
 
 def cargar_proyecto(ruta: str = RUTA_PROYECTO) -> dict:
-    datos = yaml.safe_load(Path(ruta).read_text(encoding="utf-8")) or {}
+    datos = interpretar(Path(ruta).read_text(encoding="utf-8"), "motor")
     return validar_motor(datos)
 
 
@@ -54,7 +56,7 @@ def cargar_dominio(ruta: str = RUTA_DOMINIO) -> dict:
         return dict(_DOMINIO_POR_DEFECTO)
     # Se migra antes de aplicar los valores por defecto: si no, un archivo
     # antiguo sin config_version recibiría la versión vigente sin migrarse.
-    datos = migrar_asistente(yaml.safe_load(p.read_text(encoding="utf-8")) or {})
+    datos = migrar_asistente(interpretar(p.read_text(encoding="utf-8"), "asistente"))
     salida = {**_DOMINIO_POR_DEFECTO, **datos}
     for clave, por_defecto in _DOMINIO_POR_DEFECTO.items():
         if salida.get(clave) is None:
@@ -74,12 +76,14 @@ def configuracion_efectiva(
 
     motor = deepcopy(cargar_proyecto(ruta_motor))
     dominio = deepcopy(cargar_dominio(ruta_dominio))
+    personalidad = cargar_personalidad(Path(ruta_motor).parent.parent).model_dump(mode="json")
+    # Con los nombres de los archivos (inglés): es lo que el usuario compara con su configuración.
     return {
         "snapshot_version": 1,
         "config_version": CONFIG_VERSION,
-        "motor": motor,
-        "dominio": dominio,
-        "personalidad": cargar_personalidad(Path(ruta_motor).parent.parent).model_dump(mode="json"),
+        "engine": a_externo(motor, "motor"),
+        "assistant": a_externo(dominio, "asistente"),
+        "personality": a_externo(personalidad, "personalidad"),
     }
 
 
@@ -148,10 +152,13 @@ def config_seguridad(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict
     return {"limite_peticiones": {**_LIMITE_PETICIONES_POR_DEFECTO, **limite}}
 
 
-CLAVES_DOMINIO_VALIDAS = {
-    "nombre_asistente", "descripcion_dominio", "idioma", "perfil",
-    "cors_origenes", "claves_widget", "registro.activo",
+# `ipsis configurar clave=valor`: clave del archivo (inglés) → clave interna.
+CLAVES_DOMINIO = {
+    "assistant_name": "nombre_asistente", "domain_description": "descripcion_dominio", "language": "idioma",
+    "profile": "perfil", "cors_origins": "cors_origenes", "widget_keys": "claves_widget",
+    "query_log.enabled": "registro.activo",
 }
+CLAVES_DOMINIO_VALIDAS = set(CLAVES_DOMINIO)
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
 
 
@@ -181,18 +188,18 @@ def _crear_desde_recurso_si_falta(ruta: str, recurso: str, **variables: str) -> 
 
 
 def inicializar_personalidad_si_falta(ruta: str = rutas.PERSONALIDAD) -> bool:
-    return _crear_desde_recurso_si_falta(ruta, "personalidad.yaml")
+    return _crear_desde_recurso_si_falta(ruta, "personality.yaml")
 
 
 def inicializar_asistente_si_falta(ruta: str = RUTA_DOMINIO) -> bool:
-    return _crear_desde_recurso_si_falta(ruta, "asistente.yaml")
+    return _crear_desde_recurso_si_falta(ruta, "assistant.yaml")
 
 
 def inicializar_proyecto_si_falta(
     coleccion_base: str, ruta: str = RUTA_PROYECTO
 ) -> bool:
     return _crear_desde_recurso_si_falta(
-        ruta, "motor.yaml", coleccion_base=coleccion_base
+        ruta, "engine.yaml", coleccion_base=coleccion_base
     )
 
 
@@ -209,15 +216,15 @@ def inicializar_estilos_si_falta(
             destino.parent.mkdir(parents=True, exist_ok=True)
             destino.write_text(fuente.read_text(encoding="utf-8"), encoding="utf-8")
             return True
-    return _crear_desde_recurso_si_falta(ruta, "estilos.yaml")
+    return _crear_desde_recurso_si_falta(ruta, "styles.yaml")
 
 
 def inicializar_dominio_si_falta(descripcion_dominio: str, ruta: str = rutas.DOMINIO) -> bool:
-    """Crea ``configuracion/dominio.yaml`` desde la plantilla si no existe."""
+    """Crea ``config/domain.yaml`` desde la plantilla si no existe."""
     destino = Path(ruta)
     if destino.exists():
         return False
-    texto = leer_plantilla("dominio.yaml").replace("{descripcion_dominio}", descripcion_dominio)
+    texto = leer_plantilla("domain.yaml").replace("{descripcion_dominio}", descripcion_dominio)
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(texto, encoding="utf-8")
     return True

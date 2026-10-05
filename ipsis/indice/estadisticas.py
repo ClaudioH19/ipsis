@@ -1,4 +1,4 @@
-"""Estadísticas léxicas del corpus indexado (``.ipsis/indice/estadisticas.json``).
+"""Estadísticas léxicas del corpus indexado (``.ipsis/index/stats.json``).
 
 Se calculan al indexar con la misma función ``terminos()`` que usa la consulta,
 y alimentan BM25 y todas las señales léxicas. Es un JSON legible: cualquier

@@ -63,7 +63,7 @@ def proyecto_suite(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Proyecto creado con ``ipsis init``, compartido por la suite.
 
     Reemplaza a la antigua configuración en la raíz del repositorio: las
-    pruebas leen ``configuracion/`` y ``documentos/`` relativos al directorio
+    pruebas leen ``config/`` y ``documents/`` relativos al directorio
     actual, igual que el servicio real.
     """
     from ipsis.cli import main
@@ -85,7 +85,7 @@ def _en_proyecto_suite(proyecto_suite: Path, monkeypatch: pytest.MonkeyPatch) ->
 
 @pytest.fixture(scope="session", autouse=True)
 def _perfil_generico_de_la_suite(proyecto_suite: Path):
-    configurar_perfil(cargar_perfil(str(proyecto_suite / "configuracion" / "dominio.yaml")))
+    configurar_perfil(cargar_perfil(str(proyecto_suite / "config" / "domain.yaml")))
     configurar_idioma(cargar_paquete("es"))
     yield
     configurar_perfil(None)

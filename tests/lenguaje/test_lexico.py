@@ -77,10 +77,10 @@ def test_mmr_elige_diversos(est):
 
 
 def test_guardar_y_cargar(tmp_path, est):
-    ruta = tmp_path / "estadisticas.json"
+    ruta = tmp_path / "stats.json"
     est.guardar(ruta)
     assert EstadisticasLexicas.cargar(ruta) == est
-    assert not (tmp_path / "estadisticas.json.tmp").exists()
+    assert not (tmp_path / "stats.json.tmp").exists()
 
 
 # ---------------------------------------------------------------------------

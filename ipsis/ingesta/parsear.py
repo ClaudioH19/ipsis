@@ -103,7 +103,6 @@ HEADING_NIVEL = {
 
 
 def _fila_a_texto(row) -> str:
-    celdas = [c.text.strip().replace("\n", " ") for c in row.cells]
     # colapsa celdas repetidas por merge de word (misma celda física varias veces)
     celdas_unicas: list[str] = []
     vistas: set[int] = set()

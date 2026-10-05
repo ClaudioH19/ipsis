@@ -18,7 +18,7 @@ class ControlAdmision:
     """Límite duro de peticiones concurrentes, sin cola de espera: una
     petición que no cabe se rechaza de inmediato (503), en vez de esperar y
     acumular latencia — coherente con el principio fijo de
-    ``configuracion/motor.yaml``: "ante carga, el sistema degrada en escalones y
+    ``config/engine.yaml``: "ante carga, el sistema degrada en escalones y
     rechaza con 503 antes que acumular latencia". Solo hay dos niveles:
     normal y saturado.
 

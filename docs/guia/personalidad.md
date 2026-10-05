@@ -5,7 +5,7 @@ documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
 ninguna respuesta, ni pide reindexar ni recalibrar.
 
-## Configuración: `configuracion/personalidad.yaml`
+## Configuración: `config/personality.yaml`
 
 `ipsis init` lo crea con comentarios. Se edita a mano o con `ipsis personalidad …`
 (referencia en [uso.md](uso.md)). Cada cambio por terminal se valida completo
@@ -125,7 +125,7 @@ idioma, 1.890 en total.
 
 ## Textos propios del proyecto
 
-En `configuracion/personalidad.yaml` puedes reemplazar las situaciones que
+En `config/personality.yaml` puedes reemplazar las situaciones que
 quieras:
 
 ```yaml
@@ -168,12 +168,12 @@ personalidad y el widget sin terminal (ver modos y seguridad en
 | `PUT /admin/personalidad` | Cambio parcial, p. ej. `{"tono": {"activo": "formal"}}`. Se valida completo; si falla responde 422 con los errores y no escribe |
 | `POST /admin/personalidad/vista-previa` | `{"tono": "formal", "situacion": "sin_respuesta"}` → las variantes con las variables del proyecto |
 | `GET /admin/avatares` · `POST /admin/avatares` | Lista, o importa `{"nombre": "mi-avatar", "definicion": {…}}` |
-| `GET /admin/estilos` · `PUT /admin/estilos` | Tema y ubicación del widget (`estilos.yaml`), con la misma validación que la terminal |
+| `GET /admin/estilos` · `PUT /admin/estilos` | Tema y ubicación del widget (`styles.yaml`), con la misma validación que la terminal |
 | `GET /admin/estilos/presets` · `POST /admin/estilos/preset` | Lista los presets visuales, o aplica uno: `{"nombre": "editorial"}` (`clasico`, `minimal`, `editorial`, `contraste`) |
 
 Los cambios, por HTTP o por terminal, se ven sin reiniciar:
-- el servicio revisa la fecha de `personalidad.yaml`, `idioma.yaml` y
-  `asistente.yaml` en cada consulta, y el motor toma las plantillas nuevas;
+- el servicio revisa la fecha de `personality.yaml`, `language.yaml` y
+  `assistant.yaml` en cada consulta, y el motor toma las plantillas nuevas;
 - `/config` entrega al widget la microcopia y el avatar vigentes.
 
 ## Panel gráfico (`/admin/panel`)
@@ -187,7 +187,7 @@ Es la misma API, con formularios. Abre `https://tu-dominio/admin/panel`
 |---|---|
 | **Tono** | Elige el tono y la variedad. Por situación, muestra las 5 variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
 | **Avatar** | Importa un `.avatar.json` (se valida antes de guardar), elige el avatar, sus colores, ubicación y tamaño, y asigna cada evento a una animación. El botón ▶ dispara el evento en la vista previa |
-| **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas. «Estilo completo» edita cada valor de `estilos.yaml`: colores claros y oscuros, tipografía, formas, sombras y animaciones |
+| **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas. «Estilo completo» edita cada valor de `styles.yaml`: colores claros y oscuros, tipografía, formas, sombras y animaciones |
 
 - **Vista previa:** el widget real, servido por tu servicio. Se recarga sola
   tras cada cambio guardado.

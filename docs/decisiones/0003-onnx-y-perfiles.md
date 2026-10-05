@@ -34,8 +34,8 @@ multilingüe, con licencia compatible y sin fine-tuning.
 - **Cuantización por evidencia:** el reranker usa el int8 publicado; el
   lector va en fp32 (el int8 publicado da logits planos y el int16 no carga);
   e5 va en fp32 (su int8 exige AVX-512 VNNI).
-- **Configuración por capas:** perfil ← `motor.yaml::ajustes_perfil` ←
-  `calibracion.yaml`, esta última solo si su procedencia coincide.
+- **Configuración por capas:** perfil ← `engine.yaml::ajustes_perfil` ←
+  `calibration.yaml`, esta última solo si su procedencia coincide.
 
 ## Consecuencias
 

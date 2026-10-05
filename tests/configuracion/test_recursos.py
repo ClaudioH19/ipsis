@@ -4,13 +4,14 @@ from importlib.resources import files
 import yaml
 
 from ipsis.recursos import leer_plantilla
+from apoyo import plantilla_interna
 
 
 PLANTILLAS_YAML = [
-    "asistente.yaml",
-    "dominio.yaml",
-    "motor.yaml",
-    "estilos.yaml",
+    "assistant.yaml",
+    "domain.yaml",
+    "engine.yaml",
+    "styles.yaml",
 ]
 
 
@@ -22,8 +23,8 @@ def test_todas_las_plantillas_globales_estan_empaquetadas_y_son_yaml():
 
 
 def test_plantilla_de_dominio_parte_sin_reglas_propias():
-    asistente = yaml.safe_load(leer_plantilla("asistente.yaml"))
-    dominio = yaml.safe_load(leer_plantilla("dominio.yaml"))
+    asistente = plantilla_interna("assistant.yaml")
+    dominio = plantilla_interna("domain.yaml")
     assert asistente["perfil"] == "medium"
     assert dominio["organismos"] == []
     assert dominio["extractores_regex"] == []

@@ -25,13 +25,13 @@ flowchart LR
     subgraph Servidor["Tu servidor (VPS)"]
         C["Caddy<br/>HTTPS"] --> API["Servicio FastAPI<br/>ipsis servir"]
         API --> M["Motor<br/>cascada de etapas"]
-        M --> Q[("Qdrant<br/>.ipsis/indice")]
+        M --> Q[("Qdrant<br/>.ipsis/index")]
         M --> O["Modelos ONNX<br/>caché global"]
         API --> P["Panel /admin"]
     end
     subgraph Proyecto["Carpeta del proyecto"]
-        CFG["configuracion/*.yaml"]
-        DOC["documentos/"]
+        CFG["config/*.yaml"]
+        DOC["documents/"]
         G["golden/"]
     end
     W -- "POST /consultar" --> C
@@ -44,7 +44,7 @@ flowchart LR
 - **Sin red en ejecución:** los modelos se descargan una vez a la caché global
   (`IPSIS_MODELS_DIR`) y el servicio corre con `HF_HUB_OFFLINE=1`.
 - **Sin modelo generativo:** el texto que responde es siempre un tramo literal
-  de `documentos/`; lo que se agrega alrededor son plantillas fijas (tonos).
+  de `documents/`; lo que se agrega alrededor son plantillas fijas (tonos).
 
 ## 2. Capas de `ipsis/`
 
@@ -81,16 +81,16 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | `esquemas.py` | Esquemas Pydantic estrictos que cruzan fronteras: `ChunkRecord`, `RetrievalCandidate`, `LecturaQA`, `EvidenceSpan`, `AssistantResult`, diagnóstico |
 | `registro.py` | Registry de factories por tipo y nombre |
 
-### `configuracion/` — archivos del proyecto
+### `config/` — archivos del proyecto
 
 | Módulo | Qué hace |
 |---|---|
-| `esquemas.py` | Esquemas de `asistente.yaml` y `motor.yaml`, con migraciones de `config_version` hasta la 4 |
+| `esquemas.py` | Esquemas de `assistant.yaml` y `engine.yaml`, con migraciones de `config_version` hasta la 4 |
 | `carga.py` | Carga y valida la configuración; copia las plantillas en `ipsis init` |
 | `migraciones.py` | Migra la estructura de archivos de un proyecto anterior |
-| `perfiles.py` | Perfiles `light`, `medium`, `heavy` y `bm25`; fusión perfil ← `motor.yaml` ← calibración |
-| `calibracion.py` | `calibracion.yaml` y cuándo aplica (procedencia) |
-| `personalidad.py` | `personalidad.yaml`: tono, avatar y catálogo de eventos |
+| `perfiles.py` | Perfiles `light`, `medium`, `heavy` y `bm25`; fusión perfil ← `engine.yaml` ← calibración |
+| `calibracion.py` | `calibration.yaml` y cuándo aplica (procedencia) |
+| `personalidad.py` | `personality.yaml`: tono, avatar y catálogo de eventos |
 | `rutas.py` | Rutas relativas del proyecto del cliente |
 
 ### `lenguaje/` — todo lo que depende del idioma
@@ -101,14 +101,14 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | `texto.py` | `terminos()` (el único camino de texto a términos) y `dividir_oraciones()` |
 | `lexico.py` | BM25, TF-IDF, MMR y las señales `s_oov`, foco, `s_foco`, `s_cov`, `s_lex` |
 | `entidades.py` | Entidades universales y del paquete (fechas, montos, plazos, referencias) |
-| `dominio.py` | Reglas propias del cliente (`dominio.yaml`) |
+| `dominio.py` | Reglas propias del cliente (`domain.yaml`) |
 | `tonos.py` | Tonos de respuesta, su linter y la neutralidad |
 
 ### `ingesta/` — de archivos a fragmentos
 
 | Módulo | Qué hace |
 |---|---|
-| `catalogo.py` | `documentos/catalogo.yaml`: qué está cargado y vigente |
+| `catalogo.py` | `documents/catalog.yaml`: qué está cargado y vigente |
 | `parsear.py` | PDF con texto, DOCX, Markdown y TXT a texto con estructura y offsets |
 | `chunking.py` | Fragmentos que no cruzan secciones (`CH-F256` por defecto) |
 | `metadata.py` | Entidades, palabras clave TF-IDF y categoría determinista |
@@ -129,7 +129,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | Módulo | Qué hace |
 |---|---|
 | `qdrant.py` | Colección densa + dispersa BM25, indexación y búsqueda híbrida con RRF |
-| `estadisticas.py` | `estadisticas.json`: df, N y largo medio para las señales |
+| `estadisticas.py` | `stats.json`: df, N y largo medio para las señales |
 | `manifiesto.py` | Con qué se construyó el índice (modelo, stemmer, hash del corpus) |
 | `payload.py` | Payload de Qdrant ↔ `ChunkRecord` |
 
@@ -217,14 +217,14 @@ lector (salida temprana). Detalle de las reglas: [política](metodologia/politic
 
 ```mermaid
 flowchart LR
-    D["documentos/<br/>PDF · DOCX · MD · TXT"] --> PA[parsear<br/>texto + secciones + offsets]
+    D["documents/<br/>PDF · DOCX · MD · TXT"] --> PA[parsear<br/>texto + secciones + offsets]
     PA --> CH[chunking<br/>sin cruzar secciones]
     CH --> ME[metadata<br/>entidades, palabras clave]
     ME --> EM[codificador e5<br/>passage: …]
     ME --> BM[BM25<br/>terminos con stem]
     EM --> Q[(Qdrant)]
     BM --> Q
-    CH --> ES[estadisticas.json]
+    CH --> ES[stats.json]
     Q --> MA[manifiesto.json<br/>modelo, stemmer, hash]
 ```
 
@@ -271,7 +271,7 @@ flowchart LR
     R2 -- "dist/" --> VPS
     subgraph VPS["VPS (docker compose)"]
         CA["caddy<br/>perfil https"] -- "X-Forwarded-*<br/>IP confiable" --> AS["asistente<br/>imagen por perfil<br/>sin red, no root"]
-        AS --- V[("configuracion/ · documentos/ · .ipsis/")]
+        AS --- V[("config/ · documents/ · .ipsis/")]
     end
     Internet((Internet)) -- "443" --> CA
 ```
@@ -282,12 +282,12 @@ Paso a paso en la [guía de despliegue](guia/despliegue.md).
 
 | Pregunta del auditor | Dónde se responde |
 |---|---|
-| ¿Con qué se construyó el índice? | `.ipsis/indice/*.manifiesto.json`: modelo, stemmer, hash del corpus, versión del payload |
-| ¿Por qué pesa tanto este término? | `.ipsis/indice/estadisticas.json`: df, N, largo medio |
-| ¿De dónde salen los umbrales? | `configuracion/calibracion.yaml`: banco, hashes, α y resultado en `test` |
+| ¿Con qué se construyó el índice? | `.ipsis/index/*.manifest.json`: modelo, stemmer, hash del corpus, versión del payload |
+| ¿Por qué pesa tanto este término? | `.ipsis/index/stats.json`: df, N, largo medio |
+| ¿De dónde salen los umbrales? | `config/calibration.yaml`: banco, hashes, α y resultado en `test` |
 | ¿Por qué esta consulta dio `relacionado`? | `ipsis preguntar --diagnostico` o el registro: etapas, señales y regla |
 | ¿La respuesta es literal? | `ipsis auditar`: comprueba cada evidencia del registro contra el corpus |
-| ¿Quién cambió la personalidad? | `.ipsis/registros/admin.jsonl`: fecha, IP, acción y claves (nunca el token) |
+| ¿Quién cambió la personalidad? | `.ipsis/logs/admin.jsonl`: fecha, IP, acción y claves (nunca el token) |
 
 ## 9. Patrones de diseño
 
@@ -300,5 +300,5 @@ Paso a paso en la [guía de despliegue](guia/despliegue.md).
 | Adapter | `indice/qdrant.py`, `modelos/*` | Aíslan Qdrant y onnxruntime |
 | Command | `cli/comandos/*` | Un comando, una clase |
 | Facade (casos de uso) | `aplicacion/*` | CLI y API comparten la lógica |
-| Configuración por capas | `configuracion/perfiles.py` | perfil ← `motor.yaml` ← calibración |
+| Configuración por capas | `config/perfiles.py` | perfil ← `engine.yaml` ← calibración |
 | Value objects | `nucleo/esquemas.py` | Todo dato que cruza una frontera es Pydantic estricto |

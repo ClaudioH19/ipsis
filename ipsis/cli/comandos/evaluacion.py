@@ -17,7 +17,7 @@ from ipsis.aplicacion.evaluacion import (
 )
 from ipsis.cli.base import Comando
 
-MANIFIESTO_GOLDEN = "golden/banco/manifiesto.json"
+MANIFIESTO_GOLDEN = "golden/bank/manifest.json"
 
 
 def _porcentaje(valor) -> str:
@@ -30,14 +30,14 @@ class ComandoEvaluar(Comando):
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--banco", default=MANIFIESTO_GOLDEN,
-                            help="Manifiesto versionado del banco (por defecto: golden/banco/manifiesto.json).")
+                            help="Manifiesto versionado del banco (por defecto: golden/bank/manifest.json).")
         parser.add_argument("--salida", default=None, help="Ruta opcional para guardar el reporte JSON.")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         ruta = Path(args.banco)
         if not ruta.exists():
-            print("No hay golden set en golden/banco/ todavía -- no se puede evaluar.")
-            print("El formato versionado usa manifiesto.json + golden.jsonl con pregunta, "
+            print("No hay golden set en golden/bank/ todavía -- no se puede evaluar.")
+            print("El formato versionado usa manifest.json + golden.jsonl con pregunta, "
                   "categoría, split, estado esperado y evidencia literal con offsets.")
             print("Consulta README.md para el formato y las recomendaciones de evaluación.")
             return 0
@@ -74,7 +74,7 @@ class ComandoCalibrar(Comando):
         parser.add_argument("--alfa", type=float, default=0.05,
                             help="Riesgo máximo de respuestas directas incorrectas, entre 0 y 1 (por defecto: 0.05).")
         parser.add_argument("--aplicar", action="store_true",
-                            help="Guarda el resultado en configuracion/calibracion.yaml "
+                            help="Guarda el resultado en config/calibration.yaml "
                                  "(solo se usa si queda calibrado).")
 
     def ejecutar(self, args: argparse.Namespace) -> int:
@@ -173,7 +173,7 @@ class ComandoBenchmark(Comando):
         parser.add_argument("--repeticiones", type=int, default=20,
                             help="Veces que se repite cada pregunta con --solo-latencia (por defecto: 20).")
         parser.add_argument("--salida", default=None,
-                            help="Directorio de salida (por defecto: golden/reportes con --perfiles, "
+                            help="Directorio de salida (por defecto: golden/reports con --perfiles, "
                                  "si no reportes/benchmark).")
 
     def ejecutar(self, args: argparse.Namespace) -> int:

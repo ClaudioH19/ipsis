@@ -82,7 +82,7 @@ class ReporteDoctor:
 
 
 class ProyectoNoEncontrado(RuntimeError):
-    """No hay ``configuracion/asistente.yaml`` ni ``configuracion/motor.yaml``."""
+    """No hay ``config/assistant.yaml`` ni ``config/engine.yaml``."""
 
 
 ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
@@ -165,7 +165,7 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
         acciones.append(f"corrige {rutas.ASISTENTE} (o 'ipsis init --force' para reiniciarlo)")
     if not Path(rutas.MOTOR).is_file():
         problemas.append(f"no existe {rutas.MOTOR}")
-        acciones.append("ipsis init --force (crea motor.yaml; reinicia asistente.yaml con valores por defecto)")
+        acciones.append("ipsis init --force (crea engine.yaml; reinicia assistant.yaml con valores por defecto)")
     else:
         try:
             motor = cargar_proyecto()
@@ -199,7 +199,7 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
             acciones.append(f"corrige {rutas.ESTILOS} (mientras tanto el widget usa el diseño de fábrica)")
     if problemas:
         return _chequeo("configuracion", Estado.ERROR, "; ".join(problemas), acciones)
-    return _chequeo("configuracion", Estado.OK, "asistente.yaml y motor.yaml válidos")
+    return _chequeo("configuracion", Estado.OK, "assistant.yaml y engine.yaml válidos")
 
 
 def _politica_abstencion(motor: dict) -> str | None:
@@ -423,16 +423,16 @@ def _cors(ctx: _Contexto) -> ChequeoDoctor:
     claves = ctx.dominio.get("claves_widget") or []
     if not origenes and claves:
         return _chequeo("cors", Estado.ERROR,
-                        "cors_origenes está vacío pero hay claves_widget configuradas: el navegador "
+                        "cors_origins está vacío pero hay widget_keys configuradas: el navegador "
                         "bloqueará las peticiones del widget desde tu sitio",
-                        ["ipsis configurar cors_origenes=https://tu-sitio.cl"])
+                        ["ipsis configurar cors_origins=https://tu-sitio.cl"])
     if not origenes:
         return _chequeo("cors", Estado.OK, "sin orígenes (uso local); agrégalos antes de embeber el widget")
     return _chequeo("cors", Estado.OK, f"orígenes permitidos: {', '.join(origenes)}")
 
 
 def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
-    """Tono y avatar. Un ``personalidad.yaml`` o una plantilla propia inválidos impiden
+    """Tono y avatar. Un ``personality.yaml`` o una plantilla propia inválidos impiden
     arrancar el motor (error); un avatar que falta o no carga deja el ícono (aviso)."""
     from ipsis.aplicacion.personalidad import resumen_personalidad, validar_personalidad
 
@@ -501,7 +501,7 @@ def diagnosticar(*, abrir_indice: bool = True) -> ReporteDoctor:
             chequeos.append(funcion(ctx))
         except Exception as e:  # noqa: BLE001 -- un chequeo roto no detiene a los demás
             chequeos.append(_chequeo(clave, Estado.ERROR, f"el chequeo falló: {_breve(e)}",
-                                     ["revisa los archivos de configuracion/ y vuelve a ejecutar 'ipsis doctor'"]))
+                                     ["revisa los archivos de config/ y vuelve a ejecutar 'ipsis doctor'"]))
     perfil = ctx.instalacion.perfil if ctx.instalacion is not None else None
     return ReporteDoctor(tuple(chequeos), perfil)
 

@@ -4,7 +4,7 @@ El golden set es el banco de preguntas reales del cliente con el que se mide
 y calibra el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
 se mezcla con el banco sintético de las pruebas (`tests/datos/banco/`).
 
-El banco versionado queda en `golden/banco/` (`manifiesto.json` más los casos
+El banco versionado queda en `golden/bank/` (`manifiesto.json` más los casos
 en JSONL). Se arma a partir de un CSV simple que completa una persona. Con 30 a 60 preguntas revisadas
 por una persona conocedora del corpus sirve para ajustar y comparar perfiles
 (para certificar un riesgo hace falta más: ver «Calibrar»). Debe cubrir las seis
@@ -89,7 +89,7 @@ Si `dev` no distingue dos valores de un umbral, ese umbral no se mueve.
 | `SIN_UMBRAL_SEGURO` | Hay muestra, pero ninguna combinación cumple α | 1 |
 
 - Sin `--aplicar`, solo informa y no escribe nada.
-- Con `--aplicar`, escribe `configuracion/calibracion.yaml` en cualquier
+- Con `--aplicar`, escribe `config/calibration.yaml` en cualquier
   estado, para auditoría. El motor **solo** usa sus umbrales si el estado es
   `CALIBRADO` y su procedencia coincide con el proyecto: perfil, modelos y
   `hash_corpus` del índice. Si cambia el corpus o el perfil, la calibración se

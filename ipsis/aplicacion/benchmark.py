@@ -24,7 +24,6 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 
-import yaml
 
 from ipsis.evaluacion.benchmark import (
     BancoUsado,
@@ -63,10 +62,11 @@ def _fijar_perfil(perfil: str) -> None:
     """bm25 no se ofrece en ``ipsis init``: se fija en el proyecto temporal."""
     from ipsis.configuracion import rutas
 
-    ruta = Path(rutas.ASISTENTE)
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    from ipsis.configuracion.archivos import escribir, leer
+
+    datos = leer(rutas.ASISTENTE, "asistente")
     datos["perfil"] = perfil
-    ruta.write_text(yaml.safe_dump(datos, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    escribir(rutas.ASISTENTE, datos, "asistente")
 
 
 def _acuerdo_por_caso(banco) -> tuple[dict[str, float], dict[str, float]]:

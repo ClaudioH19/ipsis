@@ -25,7 +25,7 @@ caso declara `id`, `split`, `categoria`, `pregunta`, `estado_esperado`,
 |---|---|---|
 | Sintético `aqualis_sintetico@1.1.0` | `tests/datos/banco/` | 27 casos (56% no respondibles), regresión y caracterización |
 | Universal | `tests/datos/banco_universal/{es,en,pt}` | 90 casos (30 por idioma), `uso: regresion`: no se puede calibrar con él |
-| Golden del cliente | `golden/banco/` del proyecto | el único que calibra (ver [guía](../guia/golden.md)) |
+| Golden del cliente | `golden/bank/` del proyecto | el único que calibra (ver [guía](../guia/golden.md)) |
 
 ## 4. Algoritmo y desempates
 
