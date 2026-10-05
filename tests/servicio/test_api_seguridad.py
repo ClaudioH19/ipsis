@@ -42,7 +42,7 @@ def _aislar_seguridad(monkeypatch: pytest.MonkeyPatch):
 
 
 def _consultar(pregunta: str = "hola", **kwargs):
-    return client.post("/consultar", json={"pregunta": pregunta, "id_sesion": "test-seguridad"}, **kwargs)
+    return client.post("/ask", json={"question": pregunta, "session_id": "test-seguridad"}, **kwargs)
 
 
 # ---------------------------------------------------------------------------
@@ -85,7 +85,7 @@ def test_sin_claves_configuradas_no_exige_autenticacion(monkeypatch: pytest.Monk
     monkeypatch.setattr(estado, "claves_widget", [])
     r = _consultar()  # "hola" -> conversacional, no necesita el índice
     assert r.status_code == 200
-    assert r.json()["estado"] == "conversacional"
+    assert r.json()["status"] == "conversational"
 
 
 def test_clave_invalida_no_pasa(monkeypatch: pytest.MonkeyPatch):
@@ -104,7 +104,7 @@ def test_clave_valida_si_pasa(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(estado, "claves_widget", ["clave-correcta", "clave-de-otro-sitio"])
     r = _consultar(headers={NOMBRE_CABECERA_CLAVE_WIDGET: "clave-correcta"})
     assert r.status_code == 200
-    assert r.json()["estado"] == "conversacional"
+    assert r.json()["status"] == "conversational"
 
 
 # ---------------------------------------------------------------------------
@@ -162,19 +162,19 @@ def test_config_devuelve_los_textos_del_dominio():
     r = client.get("/config")
     assert r.status_code == 200
     body = r.json()
-    assert body["nombre_asistente"]
-    assert body["descripcion_dominio"]
-    assert body["saludo"]
-    assert body["preset"] in {"clasico", "minimal", "editorial", "contraste"}
-    assert body["densidad"] in {"comoda", "compacta"}
-    assert body["citas"] in {"acordeon", "abiertas", "ocultas"}
-    assert isinstance(body["mostrar_etiqueta_estado"], bool)
+    assert body["assistant_name"]
+    assert body["domain_description"]
+    assert body["greeting"]
+    assert body["preset"] in {"classic", "minimal", "editorial", "contrast"}
+    assert body["density"] in {"comfortable", "compact"}
+    assert body["citations"] in {"accordion", "list"}
+    assert isinstance(body["show_status_label"], bool)
     # el saludo real del paquete de idioma, con las variables ya
     # sustituidas (nunca la plantilla cruda con '{assistant_name}' sin
     # rellenar) -- misma función que responde un "hola" real.
-    assert "{" not in body["saludo"]
-    assert body["interfaz"]["placeholder"]
-    assert body["interfaz"]["network_error"]
+    assert "{" not in body["greeting"]
+    assert body["interface"]["placeholder"]
+    assert body["interface"]["network_error"]
 
 
 def test_config_no_exige_clave_de_widget(monkeypatch: pytest.MonkeyPatch):

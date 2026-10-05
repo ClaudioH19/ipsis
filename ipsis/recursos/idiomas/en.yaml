@@ -228,22 +228,22 @@ mensajes:
     - In version {v1}…; in version {v2}…
   sin_seccion: (no section)
 interfaz:
-  nombre_asistente_defecto: Document assistant
-  descripcion_dominio_defecto: the loaded documents
-  fuentes_una: 1 source from the document
-  fuentes_varias: '{n} sources from the document'
-  posicion_cita: 'characters {inicio}–{fin}'
-  titulo: Assistant
-  subtitulo: Answers quoting the document
-  abrir: Open chat with {titulo}
-  cerrar: Close chat
-  etiqueta_pregunta: Type your question
+  default_assistant_name: Document assistant
+  default_domain_description: the loaded documents
+  sources_one: 1 source from the document
+  sources_many: '{n} sources from the document'
+  citation_position: 'characters {start}–{end}'
+  title: Assistant
+  subtitle: Answers quoting the document
+  open: Open chat with {title}
+  close: Close chat
+  question_label: Type your question
   placeholder: Type your question...
-  enviar: Send question
-  no_directa: Not a direct answer
-  error_origen: This site is not authorized to use the assistant.
-  error_http: The service could not answer (HTTP {estado}).
-  codigo_fuente: Source code
+  send: Send question
+  not_direct: Not a direct answer
+  origin_error: This site is not authorized to use the assistant.
+  http_error: The service could not answer (HTTP {status}).
+  source_code: Source code
 contracciones: {}
 golden_instrucciones:
   nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).

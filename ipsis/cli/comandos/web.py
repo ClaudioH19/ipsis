@@ -73,9 +73,8 @@ class ComandoWidgetExportar(Comando):
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("carpeta", metavar="folder", help=t("widget.arg_folder"))
         parser.add_argument("--api", default="http://127.0.0.1:8000", help=t("widget.opt_api"))
-        parser.add_argument("--position", dest="posicion", default="abajo-derecha",
-                            choices=["abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda",
-                                     "incrustado"],
+        parser.add_argument("--position", dest="posicion", default="bottom-right",
+                            choices=["bottom-right", "bottom-left", "top-right", "top-left", "embedded"],
                             help=t("widget.opt_position"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:

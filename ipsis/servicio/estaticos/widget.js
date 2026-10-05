@@ -10,9 +10,10 @@
  *   <ipsis-chat api="https://tu-servidor"></ipsis-chat>
  *   <script src="https://tu-servidor/widget.js"></script>
  *
- * El componente acepta `api`, `widget-key`, `color`, `titulo`, `saludo` y
- * `posicion`; emite rag:abierto, rag:cerrado, rag:pregunta, rag:respuesta y
- * rag:error.
+ * El componente acepta `api`, `widget-key`, `color`, `title`, `greeting`,
+ * `position`, `size`, `launcher`, `offset-x`, `offset-y`, `z-index` y
+ * `mode="embedded"`; emite ipsis:open, ipsis:close, ipsis:question,
+ * ipsis:answer, ipsis:error e ipsis:avatar.
  *
  * Atributos `data-` soportados en la etiqueta <script>:
  *   data-api        base del servicio (si se omite, usa el mismo origen
@@ -21,22 +22,27 @@
  *   data-widget-key clave pública de widget (opcional, ver
  *                   ipsis/servicio/seguridad.py -- NO es un secreto).
  *   data-color      color de acento (hex), por defecto "#2563eb".
- *   data-titulo     título del panel (se sobrescribe con lo que traiga
+ *   data-title      título del panel (se sobrescribe con lo que traiga
  *                   /config en cuanto responda, salvo que /config falle).
- *   data-saludo     saludo inicial de repuesto, por si /config no responde.
- *   data-posicion   "abajo-derecha" (por defecto) | "abajo-izquierda".
+ *   data-greeting   saludo inicial de repuesto, por si /config no responde.
+ *   data-position   "bottom-right" (por defecto) | "bottom-left" | "top-right"
+ *                   | "top-left" | "embedded"; también data-size, data-launcher,
+ *                   data-offset-x, data-offset-y y data-z-index.
+ *
+ * La API pública (atributos, /config, /ask, eventos y window.Ipsis) usa
+ * nombres en inglés; por dentro el widget conserva los suyos.
  *
  * Reglas de diseño del widget:
  *  - Shadow DOM: el CSS del sitio anfitrión no debe deformar el widget, ni
  *    al revés.
- *  - Los CUATRO estados de una respuesta (ok / relacionado / sin_respuesta /
- *    conversacional) se pintan DISTINTO -- es la mitad de la honestidad del
+ *  - Los CUATRO estados de una respuesta (ok / related / no_answer /
+ *    conversational) se pintan DISTINTO -- es la mitad de la honestidad del
  *    sistema.
  *  - Ningún texto que venga de la API se inserta como HTML: SIEMPRE
  *    `textContent`, nunca `innerHTML` con datos de la API interpolados.
  *  - Accesible: roles ARIA, cierre con Escape, foco atrapado en el panel
  *    abierto, pantalla completa en móvil.
- *  - Identificador de sesión en `localStorage` (la API exige `id_sesion`).
+ *  - Identificador de sesión en `localStorage` (la API exige `session_id`).
  */
 (function () {
   "use strict";
@@ -61,13 +67,13 @@
   if (window.customElements && !window.customElements.get("ipsis-chat")) {
     window.customElements.define("ipsis-chat", class extends HTMLElement {});
   }
-  var host = document.querySelector("ipsis-chat:not([data-rag-inicializado])");
+  var host = document.querySelector("ipsis-chat:not([data-ipsis-ready])");
   if (!host) {
     host = document.createElement(window.customElements ? "ipsis-chat" : "div");
     document.body.appendChild(host);
   }
-  host.id = host.id || "rag-widget-host";
-  host.setAttribute("data-rag-inicializado", "true");
+  host.id = host.id || "ipsis-widget-host";
+  host.setAttribute("data-ipsis-ready", "true");
 
   function opcion(atributo, dato, repuesto) {
     return host.getAttribute(atributo) || datos[dato] || repuesto;
@@ -75,11 +81,11 @@
   var API_BASE = opcion("api", "api", window.location.origin).replace(/\/$/, "");
   var CLAVE_WIDGET = opcion("widget-key", "widgetKey", "") || null;
   var COLOR_ACENTO = opcion("color", "color", "#2563eb");
-  var TITULO_INICIAL = opcion("titulo", "titulo", "Asistente");
-  var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
+  var TITULO_INICIAL = opcion("title", "title", "Assistant");
+  var SALUDO_INICIAL = opcion("greeting", "greeting", "Hi, how can I help you?");
   var CABECERA_CLAVE_WIDGET = "X-Ipsis-Widget-Key";
   // Carpeta alternativa para el motor y la definición del avatar (widget
-  // exportado con `ipsis widget export`): ahí están avatar.js y avatares/.
+  // exportado con `ipsis widget export`): ahí están avatar.js y avatars/.
   var AVATAR_BASE = opcion("avatar-base", "avatarBase", null);
 
   // Ubicación: lo que declare el sitio (atributos del elemento o data-* del
@@ -89,19 +95,32 @@
     tamano: ["compacto", "normal", "amplio"],
     lanzador: ["burbuja", "pestana", "oculto"]
   };
+  // Valores públicos (atributos y /config) → internos.
+  var INTERNOS = {
+    posicion: { "bottom-right": "abajo-derecha", "bottom-left": "abajo-izquierda", "top-right": "arriba-derecha",
+                "top-left": "arriba-izquierda", "embedded": "incrustado" },
+    tamano: { "compact": "compacto", "normal": "normal", "wide": "amplio" },
+    lanzador: { "bubble": "burbuja", "tab": "pestana", "hidden": "oculto" }
+  };
+  function publico(clave, valor) {
+    var mapa = INTERNOS[clave];
+    for (var externo in mapa) if (mapa[externo] === valor) return externo;
+    return valor;
+  }
   function enLista(valor, clave) {
-    return VALIDOS[clave].indexOf(valor) >= 0 ? valor : null;
+    var interno = INTERNOS[clave][valor];
+    return interno && VALIDOS[clave].indexOf(interno) >= 0 ? interno : null;
   }
   function entero(valor, minimo, maximo) {
     var n = parseInt(valor, 10);
     return isNaN(n) ? null : Math.min(Math.max(n, minimo), maximo);
   }
   var DEL_SITIO = {
-    posicion: enLista(host.getAttribute("modo") === "incrustado" ? "incrustado" : opcion("posicion", "posicion", null), "posicion"),
-    tamano: enLista(opcion("tamano", "tamano", null), "tamano"),
-    lanzador: enLista(opcion("lanzador", "lanzador", null), "lanzador"),
-    desplazamiento_x: entero(opcion("desplazamiento-x", "desplazamientoX", null), 0, 400),
-    desplazamiento_y: entero(opcion("desplazamiento-y", "desplazamientoY", null), 0, 400),
+    posicion: enLista(host.getAttribute("mode") === "embedded" ? "embedded" : opcion("position", "position", null), "posicion"),
+    tamano: enLista(opcion("size", "size", null), "tamano"),
+    lanzador: enLista(opcion("launcher", "launcher", null), "lanzador"),
+    desplazamiento_x: entero(opcion("offset-x", "offsetX", null), 0, 400),
+    desplazamiento_y: entero(opcion("offset-y", "offsetY", null), 0, 400),
     z_index: entero(opcion("z-index", "zIndex", null), 0, 2147483647)
   };
   var UBICACION = {
@@ -112,28 +131,28 @@
     if (DEL_SITIO[clave] !== null) UBICACION[clave] = DEL_SITIO[clave];
   });
   var INCRUSTADO = UBICACION.posicion === "incrustado";
-  // Textos de la interfaz. Estos valores en español son el respaldo si
+  // Textos de la interfaz. Estos valores en inglés son el respaldo si
   // /config no responde; normalmente llegan del paquete de idioma del
-  // servicio (campo `interfaz` de /config).
+  // servicio (campo `interface` de /config).
   var TEXTOS = {
-    abrir: "Abrir chat de {titulo}",
-    subtitulo: "Responde citando el documento",
-    cerrar: "Cerrar chat",
-    etiqueta_pregunta: "Escribe tu pregunta",
-    placeholder: "Escribe tu pregunta...",
-    enviar: "Enviar pregunta",
-    no_directa: "No es una respuesta directa",
-    waiting: "Buscando en el documento",
-    rate_limit_error: "Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.",
-    error_origen: "Este sitio no está autorizado para usar el asistente.",
-    error_http: "El servicio no pudo responder (HTTP {estado}).",
-    network_error: "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.",
-    service_error: "El asistente no está disponible en este momento. Intenta de nuevo más tarde.",
-    citations_hint: "Puedes comprobarlo en la cita de abajo.",
-    fuentes_una: "1 fuente del documento",
-    fuentes_varias: "{n} fuentes del documento",
-    posicion_cita: "caracteres {inicio}–{fin}",
-    codigo_fuente: "Código fuente",
+    open: "Open chat with {title}",
+    subtitle: "Answers by citing the document",
+    close: "Close chat",
+    question_label: "Type your question",
+    placeholder: "Type your question...",
+    send: "Send question",
+    not_direct: "Not a direct answer",
+    waiting: "Searching the document",
+    rate_limit_error: "Too many questions in a row. Wait a few seconds and try again.",
+    origin_error: "This site is not allowed to use the assistant.",
+    http_error: "The service could not answer (HTTP {status}).",
+    network_error: "Could not reach the assistant. Check your connection and try again.",
+    service_error: "The assistant is not available right now. Try again later.",
+    citations_hint: "You can check it in the citation below.",
+    sources_one: "1 source from the document",
+    sources_many: "{n} sources from the document",
+    citation_position: "characters {start}–{end}",
+    source_code: "Source code",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -167,8 +186,8 @@
 
   // -------------------------------------------------------------------
   // 1. Identificador de sesión: se genera una vez por navegador y se
-  //    reusa entre recargas (localStorage) -- la API exige `id_sesion`
-  //    en cada POST /consultar.
+  //    reusa entre recargas (localStorage) -- la API exige `session_id`
+  //    en cada POST /ask.
   // -------------------------------------------------------------------
   function generarIdSesion() {
     if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -176,11 +195,11 @@
     }
     // Repuesto sin crypto.randomUUID (navegadores más viejos): suficiente
     // para distinguir sesiones, no necesita ser criptográficamente fuerte.
-    return "sesion-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+    return "session-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
   }
 
   function idSesion() {
-    var CLAVE_STORAGE = "rag_widget_id_sesion";
+    var CLAVE_STORAGE = "ipsis_widget_session_id";
     try {
       var existente = window.localStorage.getItem(CLAVE_STORAGE);
       if (existente) return existente;
@@ -204,7 +223,7 @@
   var estilos = document.createElement("style");
   // TODO el diseno sale de estas variables. Son los valores de repuesto,
   // los que se usan si el servicio no responde: `config/styles.yaml`
-  // las redefine y el servicio las sirve en /estilos.css, que se enlaza
+  // las redefine y el servicio las sirve en /styles.css, que se enlaza
   // DESPUES de este bloque (ver mas abajo) y por tanto gana.
   estilos.textContent = [
     ".rw-raiz{",
@@ -442,13 +461,13 @@
   raiz.appendChild(estilos);
 
   // Tema del despliegue: `config/styles.yaml`, servido en
-  // /estilos.css. Se enlaza DESPUES del bloque de arriba, asi que
+  // /styles.css. Se enlaza DESPUES del bloque de arriba, asi que
   // redefine las variables que declare y deja el resto con su valor de
   // repuesto. Si el servicio no responde, el widget se ve igual que aqui
   // -- nunca queda sin estilos.
   var temaServidor = document.createElement("link");
   temaServidor.rel = "stylesheet";
-  temaServidor.href = API_BASE + "/estilos.css";
+  temaServidor.href = API_BASE + "/styles.css";
   raiz.appendChild(temaServidor);
 
   // Iconos en SVG en vez de emoji: un emoji se dibuja distinto en cada
@@ -507,7 +526,7 @@
   boton.type = "button";
   boton.setAttribute("aria-haspopup", "dialog");
   boton.setAttribute("aria-expanded", "false");
-  boton.setAttribute("aria-label", texto("abrir", { titulo: TITULO_INICIAL }));
+  boton.setAttribute("aria-label", texto("open", { title: TITULO_INICIAL }));
   // Dos iconos fijos: el CSS muestra uno u otro segun aria-expanded, asi
   // el mismo boton abre y cierra sin que nada dependa de la API.
   boton.appendChild(icono("chat", "rw-icono-chat"));
@@ -549,7 +568,7 @@
   var puntoVivo = document.createElement("span");
   puntoVivo.className = "rw-punto-vivo";
   var subtituloTexto = document.createElement("span");
-  subtituloTexto.textContent = texto("subtitulo");
+  subtituloTexto.textContent = texto("subtitle");
   subtitulo.appendChild(puntoVivo);
   subtitulo.appendChild(subtituloTexto);
   cabeceraTextos.appendChild(tituloEl);
@@ -558,7 +577,7 @@
   var botonCerrar = document.createElement("button");
   botonCerrar.type = "button";
   botonCerrar.className = "rw-cerrar";
-  botonCerrar.setAttribute("aria-label", texto("cerrar"));
+  botonCerrar.setAttribute("aria-label", texto("close"));
   botonCerrar.appendChild(icono("cerrar"));
 
   cabecera.appendChild(avatar);
@@ -578,7 +597,7 @@
   var etiquetaInput = document.createElement("label");
   etiquetaInput.className = "rw-sr-solo";
   etiquetaInput.setAttribute("for", "rw-input");
-  etiquetaInput.textContent = texto("etiqueta_pregunta");
+  etiquetaInput.textContent = texto("question_label");
   var input = document.createElement("input");
   input.id = "rw-input";
   input.type = "text";
@@ -587,7 +606,7 @@
   var botonEnviar = document.createElement("button");
   botonEnviar.type = "submit";
   botonEnviar.className = "rw-enviar";
-  botonEnviar.setAttribute("aria-label", texto("enviar"));
+  botonEnviar.setAttribute("aria-label", texto("send"));
   botonEnviar.appendChild(icono("enviar"));
   input.addEventListener("input", function () { avatarAlTeclear(); });
   form.appendChild(etiquetaInput);
@@ -597,10 +616,10 @@
   // AGPL §13: quien usa el servicio por red puede obtener su código fuente.
   var enlaceFuente = document.createElement("a");
   enlaceFuente.className = "rw-fuente";
-  enlaceFuente.href = API_BASE + "/fuente";
+  enlaceFuente.href = API_BASE + "/source";
   enlaceFuente.target = "_blank";
   enlaceFuente.rel = "noopener noreferrer";
-  enlaceFuente.textContent = texto("codigo_fuente");
+  enlaceFuente.textContent = texto("source_code");
   panel.appendChild(enlaceFuente);
 
   // -------------------------------------------------------------------
@@ -622,7 +641,7 @@
 
   var ETIQUETAS_ESTADO = {
     ok: null,
-    relacionado: texto("no_directa"),
+    relacionado: texto("not_direct"),
     sin_respuesta: null,
     conversacional: null,
   };
@@ -669,7 +688,7 @@
     var titulo = document.createElement("p");
     titulo.className = "rw-citas-titulo";
     titulo.textContent = fragmentos.length === 1
-      ? texto("fuentes_una") : texto("fuentes_varias", { n: fragmentos.length });
+      ? texto("sources_one") : texto("sources_many", { n: fragmentos.length });
     caja.appendChild(titulo);
     var enLista = PRESENTACION.citas === "lista";
     fragmentos.forEach(function (frag) {
@@ -686,7 +705,7 @@
       if (typeof frag.offset_inicio === "number" && typeof frag.offset_fin === "number") {
         var posicion = document.createElement("span");
         posicion.className = "rw-cita-posicion";
-        posicion.textContent = " · " + texto("posicion_cita", { inicio: frag.offset_inicio, fin: frag.offset_fin });
+        posicion.textContent = " · " + texto("citation_position", { start: frag.offset_inicio, end: frag.offset_fin });
         origen.appendChild(posicion);
       }
       cabeceraCita.appendChild(origen);
@@ -700,6 +719,24 @@
       caja.appendChild(item);
     });
     contenedorMsg.appendChild(caja);
+  }
+
+  // Respuesta pública de /ask → la forma interna que pinta el widget.
+  var ESTADOS_INTERNOS = { ok: "ok", related: "relacionado", no_answer: "sin_respuesta",
+                           conversational: "conversacional", degraded: "degradado", saturated: "saturado" };
+  function respuestaInterna(r) {
+    r = r || {};
+    var exacta = r.exact_answer;
+    return {
+      estado: ESTADOS_INTERNOS[r.status] || "sin_respuesta",
+      respuesta: r.answer,
+      fragmentos: (r.fragments || []).map(function (f) {
+        return { chunk_id: f.chunk_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
+                 offset_inicio: f.offset_start, offset_fin: f.offset_end };
+      }),
+      respuesta_exacta: exacta ? { chunk_id: exacta.chunk_id, texto: exacta.text, offset_inicio: exacta.offset_start,
+                                   offset_fin: exacta.offset_end } : null
+    };
   }
 
   function agregarMensajeAsistente(respuesta) {
@@ -780,13 +817,13 @@
     Object.keys(TEXTOS).forEach(function (clave) {
       if (typeof interfaz[clave] === "string" && interfaz[clave]) TEXTOS[clave] = interfaz[clave];
     });
-    subtituloTexto.textContent = texto("subtitulo");
-    botonCerrar.setAttribute("aria-label", texto("cerrar"));
-    etiquetaInput.textContent = texto("etiqueta_pregunta");
+    subtituloTexto.textContent = texto("subtitle");
+    botonCerrar.setAttribute("aria-label", texto("close"));
+    etiquetaInput.textContent = texto("question_label");
     input.placeholder = texto("placeholder");
-    botonEnviar.setAttribute("aria-label", texto("enviar"));
-    ETIQUETAS_ESTADO.relacionado = texto("no_directa");
-    enlaceFuente.textContent = texto("codigo_fuente");
+    botonEnviar.setAttribute("aria-label", texto("send"));
+    ETIQUETAS_ESTADO.relacionado = texto("not_direct");
+    enlaceFuente.textContent = texto("source_code");
   }
 
   function cargarConfigServidor() {
@@ -796,15 +833,18 @@
         return r.json();
       })
       .then(function (cfg) {
-        PRESENTACION.densidad = cfg.densidad === "compacta" ? "compacta" : "comoda";
-        // Las citas nunca se ocultan: «abiertas» es el nombre anterior de «lista».
-        PRESENTACION.citas = (cfg.citas === "lista" || cfg.citas === "abiertas") ? "lista" : "acordeon";
-        PRESENTACION.mostrarEtiquetaEstado = cfg.mostrar_etiqueta_estado !== false;
+        PRESENTACION.densidad = cfg.density === "compact" ? "compacta" : "comoda";
+        // Las citas nunca se ocultan: acordeón (desplegable) o lista (a la vista).
+        PRESENTACION.citas = cfg.citations === "list" ? "lista" : "acordeon";
+        PRESENTACION.mostrarEtiquetaEstado = cfg.show_status_label !== false;
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
         if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
-        aplicarInterfaz(cfg.interfaz);
-        if (cfg.microcopia && typeof cfg.microcopia === "object") MICROCOPIA = cfg.microcopia;
-        var u = cfg.ubicacion || {};
+        aplicarInterfaz(cfg.interface);
+        if (cfg.microcopy && typeof cfg.microcopy === "object") MICROCOPIA = cfg.microcopy;
+        var p = cfg.placement || {};
+        // styles.yaml::placement con los nombres públicos → los del widget.
+        var u = { posicion: p.position, tamano: p.size, lanzador: p.launcher, desplazamiento_x: p.offset_x,
+                  desplazamiento_y: p.offset_y, z_index: p.z_index };
         Object.keys(DEL_SITIO).forEach(function (clave) {
           if (DEL_SITIO[clave] !== null || u[clave] === undefined || clave === "posicion") return;
           var valor = VALIDOS[clave] ? enLista(u[clave], clave) : entero(u[clave], 0, 2147483647);
@@ -812,18 +852,18 @@
         });
         // La posición incrustada la decide el sitio (el elemento vive en su página).
         if (DEL_SITIO.posicion === null && !INCRUSTADO && enLista(u.posicion, "posicion") &&
-            u.posicion !== "incrustado") {
-          UBICACION.posicion = u.posicion;
+            u.posicion !== "embedded") {
+          UBICACION.posicion = enLista(u.posicion, "posicion");
         }
         aplicarUbicacion();
         configurarAvatar(cfg.avatar);
-        if (cfg.nombre_asistente) {
-          tituloEl.textContent = cfg.nombre_asistente;
-          botonTexto.textContent = cfg.nombre_asistente;
-          panel.setAttribute("aria-label", cfg.nombre_asistente);
-          boton.setAttribute("aria-label", texto("abrir", { titulo: cfg.nombre_asistente }));
+        if (cfg.assistant_name) {
+          tituloEl.textContent = cfg.assistant_name;
+          botonTexto.textContent = cfg.assistant_name;
+          panel.setAttribute("aria-label", cfg.assistant_name);
+          boton.setAttribute("aria-label", texto("open", { title: cfg.assistant_name }));
         }
-        var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.saludo;
+        var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.greeting;
         if (bienvenida && mensajes.children.length === 0) {
           agregarMensajeAsistente({ estado: "conversacional", respuesta: bienvenida });
         }
@@ -846,29 +886,30 @@
     botonEnviar.disabled = true;
     mostrarEscribiendo();
 
-    fetch(API_BASE + "/consultar", {
+    fetch(API_BASE + "/ask", {
       method: "POST",
       headers: cabecerasComunes(),
-      body: JSON.stringify({ pregunta: pregunta, id_sesion: ID_SESION }),
+      body: JSON.stringify({ question: pregunta, session_id: ID_SESION }),
     })
       .then(function (r) {
         if (r.status === 429) {
           throw new Error(micro("rate_limit_error"));
         }
         if (r.status === 401 || r.status === 403) {
-          throw new Error(texto("error_origen"));
+          throw new Error(texto("origin_error"));
         }
         if (r.status === 503) {
           throw new Error(micro("service_error"));
         }
         if (!r.ok) {
-          throw new Error(texto("error_http", { estado: r.status }));
+          throw new Error(texto("http_error", { status: r.status }));
         }
         return r.json();
       })
-      .then(function (respuesta) {
+      .then(function (publica) {
+        var respuesta = respuestaInterna(publica);
         agregarMensajeAsistente(respuesta);
-        emitir("rag:respuesta", { estado: respuesta.estado, respuesta: respuesta });
+        emitir("ipsis:answer", { status: publica.status, answer: publica });
         avatarAlResponder(respuesta.estado);
       })
       .catch(function (err) {
@@ -880,7 +921,7 @@
           ? micro("network_error")
           : (err && err.message ? err.message : micro("network_error"));
         agregarMensajeError(mensajeError);
-        emitir("rag:error", { mensaje: mensajeError });
+        emitir("ipsis:error", { message: mensajeError });
         avatarAlFallar();
       })
       .finally(function () {
@@ -895,7 +936,7 @@
     ev.preventDefault();
     var texto = input.value.trim();
     if (!texto) return;
-    emitir("rag:pregunta", { pregunta: texto });
+    emitir("ipsis:question", { question: texto });
     avatarAlEnviar();
     enviarPregunta(texto);
   });
@@ -943,7 +984,7 @@
     cargarAvatar();
     ubicarAvatar();
     if (AVATAR.controlador) avatarAlAbrir();
-    emitir("rag:abierto");
+    emitir("ipsis:open");
   }
 
   function cerrarPanel() {
@@ -958,7 +999,7 @@
     } else {
       boton.focus();
     }
-    emitir("rag:cerrado");
+    emitir("ipsis:close");
   }
 
   function manejarTeclado(ev) {
@@ -1000,7 +1041,7 @@
   //    se carga bajo demanda: al abrir el panel por primera vez o, si va en
   //    el lanzador, cuando el navegador está ocioso. Si algo falla (red,
   //    CSP sin 'unsafe-eval', definición inválida) queda el ícono y se emite
-  //    rag:avatar con el error: el chat nunca se rompe.
+  //    ipsis:avatar con el error: el chat nunca se rompe.
   // -------------------------------------------------------------------
   var AVATAR = { config: null, promesa: null, controlador: null, definicion: null, lienzo: null };
 
@@ -1010,8 +1051,22 @@
     return API_BASE + ruta;
   }
 
-  function configurarAvatar(cfg) {
-    if (!cfg || typeof cfg !== "object" || !cfg.activo || !cfg.url_motor || !cfg.url_definicion) return;
+  // /config::avatar (nombres públicos) → los del widget.
+  var UBICACIONES_AVATAR = { "header": "cabecera", "top-corner": "esquina-superior", "bottom-corner": "esquina-inferior" };
+  function avatarInterno(c) {
+    if (!c || typeof c !== "object") return null;
+    var g = c.gaze || {};
+    return {
+      activo: !!c.enabled, nombre: c.name, url_definicion: c.definition_url, url_motor: c.engine_url,
+      ubicacion: UBICACIONES_AVATAR[c.placement] || "cabecera", tamano: c.size, en_lanzador: !!c.in_launcher,
+      mirada: { activa: !!g.enabled, amplitud_ojos: g.eye_range, amplitud_cabeza: g.head_range, zona_muerta: g.dead_zone },
+      inactividad_min: c.idle_minutes, eventos: c.events || {}, respaldos: c.fallbacks || {}
+    };
+  }
+
+  function configurarAvatar(publico) {
+    var cfg = avatarInterno(publico);
+    if (!cfg || !cfg.activo || !cfg.url_motor || !cfg.url_definicion) return;
     AVATAR.config = cfg;
     var tamano = entero(cfg.tamano, 32, 160);
     if (tamano !== null) contenedor.style.setProperty("--rw-avatar-tamano", tamano + "px");
@@ -1036,7 +1091,7 @@
       montarAvatar(r[0], r[1]);
     }).catch(function (error) {
       AVATAR.controlador = null;
-      emitir("rag:avatar", { estado: "error", mensaje: String((error && error.message) || error) });
+      emitir("ipsis:avatar", { state: "error", message: String((error && error.message) || error) });
     });
     return AVATAR.promesa;
   }
@@ -1055,7 +1110,7 @@
       definition: definicion,
       size: "100%",
       ariaLabel: "",
-      onError: function (e) { emitir("rag:avatar", { estado: "error", mensaje: e.message }); }
+      onError: function (e) { emitir("ipsis:avatar", { state: "error", message: e.message }); }
     };
     var inicial = claveDe("idle");
     if (definicion.animations && definicion.animations[inicial]) opciones.defaultAnimation = inicial;
@@ -1065,7 +1120,7 @@
     AVATAR.lienzo = lienzo;
     maquina.ultimoPersistente = inicial;
     ubicarAvatar();
-    emitir("rag:avatar", { estado: "listo", nombre: AVATAR.config.nombre });
+    emitir("ipsis:avatar", { state: "ready", name: AVATAR.config.nombre });
     reiniciarInactividad(false);
     if (INCRUSTADO || !panel.hidden) avatarAlAbrir();
   }
@@ -1163,7 +1218,7 @@
     if (clave === maquina.ultimoPersistente) return;
     maquina.ultimoPersistente = clave;
     reproducir(clave);
-    emitir("rag:avatar", { estado: "evento", evento: maquina.persistente, clave: clave });
+    emitir("ipsis:avatar", { state: "event", event: maquina.persistente, key: clave });
   }
 
   function persistir(estado) {
@@ -1184,7 +1239,7 @@
     maquina.prioridad = prioridad;
     maquina.ultimoPersistente = null;
     reproducir(clave);
-    emitir("rag:avatar", { estado: "evento", evento: evento, clave: clave });
+    emitir("ipsis:avatar", { state: "event", event: evento, key: clave });
     maquina.temporizador = setTimeout(function () {
       maquina.transitorio = null;
       maquina.prioridad = 0;
@@ -1369,25 +1424,25 @@
   cargarConfigServidor();
 
   // API del sitio (se supone un widget por página): abrir y cerrar desde un
-  // botón propio (lanzador «oculto») o consultar el estado.
-  window.RagChat = {
-    abrir: abrirPanel,
-    cerrar: cerrarPanel,
-    // Avatar: disparar(evento) devuelve false si todavía no hay avatar montado.
+  // botón propio (launcher «hidden») o consultar el estado.
+  window.Ipsis = {
+    open: abrirPanel,
+    close: cerrarPanel,
+    // Avatar: trigger(event) devuelve false si todavía no hay avatar montado.
     avatar: {
-      disparar: disparar,
-      estado: function () {
-        return { listo: !!AVATAR.controlador, persistente: maquina.persistente, transitorio: maquina.transitorio,
-                 mirada: AVATAR.controlador ? claveMirada(mirada.col, mirada.fila) : null };
+      trigger: disparar,
+      state: function () {
+        return { ready: !!AVATAR.controlador, persistent: maquina.persistente, transient: maquina.transitorio,
+                 gaze: AVATAR.controlador ? claveMirada(mirada.col, mirada.fila) : null };
       }
     },
-    estado: function () {
+    state: function () {
       return {
-        abierto: !panel.hidden,
-        posicion: UBICACION.posicion,
-        tamano: UBICACION.tamano,
-        lanzador: UBICACION.lanzador,
-        sesion: ID_SESION
+        open: !panel.hidden,
+        position: publico("posicion", UBICACION.posicion),
+        size: publico("tamano", UBICACION.tamano),
+        launcher: publico("lanzador", UBICACION.lanzador),
+        session: ID_SESION
       };
     }
   };

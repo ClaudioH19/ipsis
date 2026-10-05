@@ -57,7 +57,7 @@ def test_exportar_incluye_la_definicion_activa(tmp_path: Path, monkeypatch: pyte
     from ipsis.aplicacion.widget import exportar_widget
 
     destino = exportar_widget(str(tmp_path / "web"))
-    datos = json.loads((destino / "avatares/mi-avatar.avatar.json").read_text(encoding="utf-8"))
+    datos = json.loads((destino / "avatars/mi-avatar.avatar.json").read_text(encoding="utf-8"))
     assert datos["colors"]["body"] == "#123456"
     assert 'avatar-base="."' in (destino / "snippet.html").read_text(encoding="utf-8")
 
@@ -84,7 +84,7 @@ def _app(estado: dict):
     def motor():
         return FileResponse(ESTATICOS / "avatar.js", media_type="text/javascript")
 
-    @app.get("/avatares/prueba.avatar.json")
+    @app.get("/avatars/prueba.avatar.json")
     def definicion():
         if estado.get("definicion_rota"):
             return JSONResponse({"schema": "otra"})
@@ -92,18 +92,18 @@ def _app(estado: dict):
 
     @app.get("/config")
     def config():
-        return {"nombre_asistente": "Ayuda", "descripcion_dominio": "manual", "saludo": "Hola.",
-                "interfaz": {}, "microcopia": {}, "ubicacion": {},
-                "avatar": {"activo": True, "nombre": "prueba", "url_definicion": "/avatares/prueba.avatar.json",
-                           "url_motor": "/avatar.js", "ubicacion": "cabecera", "tamano": 48,
-                           "en_lanzador": estado.get("en_lanzador", False), "mirada": {"activa": False},
-                           "inactividad_min": 2, "eventos": {"idle": "idle"}}}
+        return {"assistant_name": "Ayuda", "domain_description": "manual", "greeting": "Hola.",
+                "interface": {}, "microcopy": {}, "placement": {},
+                "avatar": {"enabled": True, "name": "prueba", "definition_url": "/avatars/prueba.avatar.json",
+                           "engine_url": "/avatar.js", "placement": "header", "size": 48,
+                           "in_launcher": estado.get("en_lanzador", False), "gaze": {"enabled": False},
+                           "idle_minutes": 2, "events": {"idle": "idle"}}}
 
-    @app.post("/consultar")
+    @app.post("/ask")
     def consultar():
-        return {"estado": "conversacional", "nivel_servicio": "normal", "plan": "conversacional",
-                "latencia_ms": 1, "confianza": {"top1": 0, "margen": 0, "acuerdo_bm25": None},
-                "respuesta": "Respuesta de prueba.", "respuesta_exacta": None, "fragmentos": []}
+        return {"status": "conversational", "service_level": "normal", "plan": "conversational",
+                "latency_ms": 1, "confidence": {"top1": 0, "margin": 0, "bm25_agreement": None},
+                "answer": "Respuesta de prueba.", "exact_answer": None, "fragments": []}
 
     return app
 
@@ -138,7 +138,7 @@ def navegador():
 
 def _pagina(navegador, url: str):
     page = navegador.new_page(viewport={"width": 1280, "height": 800})
-    page.add_init_script("window.__avatar = []; document.addEventListener('rag:avatar', "
+    page.add_init_script("window.__avatar = []; document.addEventListener('ipsis:avatar', "
                          "e => window.__avatar.push(e.detail));")
     page.goto(url)
     return page
@@ -156,16 +156,16 @@ def _esperar_evento(page, limite_s: float = 10.0) -> dict:
         if eventos:
             return eventos[0]
         time.sleep(0.05)
-    raise AssertionError("no llegó rag:avatar")
+    raise AssertionError("no llegó ipsis:avatar")
 
 
 @pytest.mark.browser
 def test_csp_permisiva_monta_el_avatar(navegador, servidor):
     base, _ = servidor
     page = _pagina(navegador, f"{base}/?csp=permisiva")
-    page.evaluate("window.RagChat.abrir()")
+    page.evaluate("window.Ipsis.open()")
     evento = _esperar_evento(page)
-    assert evento == {"estado": "listo", "nombre": "prueba"}, evento
+    assert evento == {"state": "ready", "name": "prueba"}, evento
     assert _sombra(page, "!!r.querySelector('.rw-avatar.rw-avatar-vivo .rw-avatar-lienzo svg path')")
     assert _sombra(page, "r.querySelector('.rw-avatar-lienzo').getAttribute('aria-hidden')") == "true"
     assert _sombra(page, "r.querySelector('.rw-avatar').getBoundingClientRect().width") == pytest.approx(48, abs=1)
@@ -176,9 +176,9 @@ def test_csp_permisiva_monta_el_avatar(navegador, servidor):
 def test_csp_estricta_deja_el_icono_y_el_chat_funciona(navegador, servidor):
     base, _ = servidor
     page = _pagina(navegador, f"{base}/")
-    page.evaluate("window.RagChat.abrir()")
+    page.evaluate("window.Ipsis.open()")
     evento = _esperar_evento(page)
-    assert evento["estado"] == "error" and evento["mensaje"], evento
+    assert evento["state"] == "error" and evento["message"], evento
     assert _sombra(page, "!r.querySelector('.rw-avatar-lienzo')")
     assert _sombra(page, "!!r.querySelector('.rw-avatar svg')")  # el ícono sigue
     page.fill("ipsis-chat >> #rw-input", "hola")
@@ -192,9 +192,9 @@ def test_definicion_invalida_deja_el_icono(navegador, servidor):
     base, estado = servidor
     estado["definicion_rota"] = True
     page = _pagina(navegador, f"{base}/?csp=permisiva")
-    page.evaluate("window.RagChat.abrir()")
+    page.evaluate("window.Ipsis.open()")
     evento = _esperar_evento(page)
-    assert evento["estado"] == "error" and "Invalid avatar definition" in evento["mensaje"]
+    assert evento["state"] == "error" and "Invalid avatar definition" in evento["message"]
     assert _sombra(page, "!r.querySelector('.rw-avatar-lienzo')")
     page.close()
 
@@ -204,11 +204,11 @@ def test_en_el_lanzador_se_carga_sin_abrir_el_panel(navegador, servidor):
     base, estado = servidor
     estado["en_lanzador"] = True
     page = _pagina(navegador, f"{base}/?csp=permisiva")
-    assert _esperar_evento(page)["estado"] == "listo"
+    assert _esperar_evento(page)["state"] == "ready"
     assert _sombra(page, "!!r.querySelector('.rw-boton.rw-con-avatar .rw-avatar-lienzo svg')")
-    page.evaluate("window.RagChat.abrir()")
+    page.evaluate("window.Ipsis.open()")
     assert _sombra(page, "!!r.querySelector('.rw-avatar .rw-avatar-lienzo')")  # pasa a la cabecera
-    page.evaluate("window.RagChat.cerrar()")
+    page.evaluate("window.Ipsis.close()")
     assert _sombra(page, "!!r.querySelector('.rw-boton .rw-avatar-lienzo')")
     page.close()
 
@@ -222,7 +222,7 @@ def test_sin_avatar_activo_no_se_pide_el_motor(navegador, servidor):
     page.route("**/config", lambda ruta: ruta.fulfill(json={"nombre_asistente": "Ayuda", "descripcion_dominio": "x",
                                                             "saludo": "Hola.", "avatar": {"activo": False}}))
     page.goto(f"{base}/?csp=permisiva")
-    page.evaluate("window.RagChat.abrir()")
+    page.evaluate("window.Ipsis.open()")
     time.sleep(0.5)
     assert not [p for p in pedidos if p.endswith("/avatar.js")]
     page.close()

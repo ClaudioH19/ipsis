@@ -65,7 +65,7 @@ def _preguntar(offsets, *preguntas):
 
     cliente = TestClient(crear_app(MotorFalso(offsets)))
     for pregunta in preguntas:
-        assert cliente.post("/consultar", json={"pregunta": pregunta, "id_sesion": "sesion-secreta"}).status_code == 200
+        assert cliente.post("/ask", json={"question": pregunta, "session_id": "sesion-secreta"}).status_code == 200
 
 
 def test_con_el_registro_apagado_no_se_escribe_nada(corpus):

@@ -23,8 +23,8 @@ def test_ejemplo_react_declara_build_y_conecta_eventos():
     fuente = (RAIZ / "ejemplos/react/src/main.jsx").read_text(encoding="utf-8")
 
     assert paquete["scripts"]["build"] == "vite build"
-    assert "rag:respuesta" in fuente
-    assert "rag:error" in fuente
+    assert "ipsis:answer" in fuente
+    assert "ipsis:error" in fuente
     assert 'React.createElement("ipsis-chat"' in fuente
 
 

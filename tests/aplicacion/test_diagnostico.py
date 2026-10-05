@@ -477,9 +477,9 @@ def test_ready_proyecto_sano(proyecto):
     r = _ready()
     assert r.status_code == 200, r.json()
     cuerpo = r.json()
-    assert cuerpo["listo"] and cuerpo["proyecto"]["listo"] and cuerpo["proyecto"]["perfil"] == "light"
-    assert cuerpo["proyecto"]["bloqueante"] == []
-    assert cuerpo["proyecto"]["chequeos"]["indice"] == "ok" and cuerpo["proyecto"]["chequeos"]["calibracion"] == "ok"
+    assert cuerpo["ready"] and cuerpo["project"]["ready"] and cuerpo["project"]["profile"] == "light"
+    assert cuerpo["project"]["blocking"] == []
+    assert cuerpo["project"]["checks"]["index"] == "ok" and cuerpo["project"]["checks"]["calibration"] == "ok"
 
 
 def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
@@ -490,11 +490,11 @@ def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
     r = _ready()
     assert r.status_code == 503
     cuerpo = r.json()
-    assert cuerpo["listo"] is False and cuerpo["proyecto"]["listo"] is False
-    bloqueo = cuerpo["proyecto"]["bloqueante"][0]
-    assert bloqueo["clave"] == "indice" and "incompatible" in bloqueo["mensaje"]
-    assert bloqueo["acciones"] == ["ipsis index"]
-    assert "indice: incompatible" in cuerpo["detail"]
+    assert cuerpo["ready"] is False and cuerpo["project"]["ready"] is False
+    bloqueo = cuerpo["project"]["blocking"][0]
+    assert bloqueo["key"] == "index" and "incompatible" in bloqueo["message"]
+    assert bloqueo["actions"] == ["ipsis index"]
+    assert "index: incompatible" in cuerpo["detail"]
 
 
 def test_ready_sin_calibracion_esta_listo_con_aviso(proyecto):
@@ -502,8 +502,8 @@ def test_ready_sin_calibracion_esta_listo_con_aviso(proyecto):
     sano("light")
     r = _ready()
     assert r.status_code == 200
-    avisos = {a["clave"]: a for a in r.json()["proyecto"]["avisos"]}
-    assert "opcional" in avisos["calibracion"]["mensaje"]
+    avisos = {a["key"]: a for a in r.json()["project"]["warnings"]}
+    assert "opcional" in avisos["calibration"]["message"]
 
 
 def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):

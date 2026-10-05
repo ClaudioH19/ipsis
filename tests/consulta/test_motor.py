@@ -48,13 +48,16 @@ def test_endpoint_consultar_delega_en_motor():
 
     cliente = TestClient(api.crear_app(_MotorFalso()))
     respuesta = cliente.post(
-        "/consultar",
-        json={"pregunta": "¿dato?", "id_sesion": "sesión"},
+        "/ask",
+        json={"question": "¿dato?", "session_id": "sesión"},
     )
 
     assert llamadas == [("¿dato?", "sesión")]
     assert respuesta.status_code == 200
-    assert respuesta.json() == contrato
+    from ipsis.servicio.api import respuesta_publica
+
+    assert respuesta.json() == respuesta_publica(contrato)
+    assert respuesta.json()["status"] == "no_answer" and respuesta.json()["plan"] == "no_answer"
 
 
 def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
@@ -93,18 +96,18 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
         respuesta = cliente.get("/ready")
         assert respuesta.status_code == 200
         cuerpo = respuesta.json()
-        proyecto = cuerpo.pop("proyecto")
-        assert proyecto is None or proyecto["listo"]  # el diagnóstico del proyecto (P12.11)
+        proyecto = cuerpo.pop("project")
+        assert proyecto is None or proyecto["ready"]  # el diagnóstico del proyecto (P12.11)
         assert cuerpo == {
-            "estado": "listo",
-            "listo": True,
-            "modo": "produccion",
+            "status": "ready",
+            "ready": True,
+            "mode": "production",
             "backend": "memoria",
-            "coleccion": "memoria",
+            "collection": "memoria",
             "n_chunks": 4,
-            "n_entidades_inventario": 1,
-            "abstencion_calibrada": True,
-            "concurrencia_maxima": 2,
+            "n_inventory_entities": 1,
+            "calibrated_abstention": True,
+            "max_concurrency": 2,
         }
 
     assert eventos == ["calentar", "cerrar"]
@@ -130,7 +133,7 @@ def test_health_sigue_vivo_y_ready_diagnostica_un_arranque_fallido():
         ready = cliente.get("/ready")
 
     assert health.status_code == 200
-    assert health.json() == {"estado": "vivo", "modo": "produccion"}
+    assert health.json() == {"status": "alive", "mode": "production"}
     assert ready.status_code == 503
     assert "RuntimeError: índice ausente para la prueba" in ready.json()["detail"]
 

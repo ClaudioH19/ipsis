@@ -170,8 +170,8 @@
   }
   vista.addEventListener("load", function () {
     if (vista.src === "about:blank") return;
-    var chat = vista.contentWindow && vista.contentWindow.RagChat;
-    if (chat && chat.abrir) chat.abrir();
+    var chat = vista.contentWindow && vista.contentWindow.Ipsis;
+    if (chat && chat.open) chat.open();
     vista.setAttribute("data-lista", "true");
   });
 
@@ -298,9 +298,9 @@
   }
 
   function disparar(evento) {
-    var chat = vista.contentWindow && vista.contentWindow.RagChat;
-    if (chat && chat.avatar && typeof chat.avatar.disparar === "function") {
-      chat.avatar.disparar(evento);
+    var chat = vista.contentWindow && vista.contentWindow.Ipsis;
+    if (chat && chat.avatar && typeof chat.avatar.trigger === "function") {
+      chat.avatar.trigger(evento);
       avisar(textos.disparado + " " + evento);
     } else {
       avisar(textos.sinAvatar);

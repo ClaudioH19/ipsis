@@ -177,15 +177,15 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
 
         # Caso literal: 'ok' + cita literal del manual (usa el vocabulario del documento).
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuántos meses cubre la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuántos meses cubre la garantía del equipo X100?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["estado"] == "ok", datos
-        assert "18 meses" in datos["respuesta"]
-        assert len(datos["fragmentos"]) >= 1
+        assert datos["status"] == "ok", datos
+        assert "18 meses" in datos["answer"]
+        assert len(datos["fragments"]) >= 1
         # "Literal" significa substring exacto de lo que el parser extrajo
         # del documento (`texto_completo`) -- NO de los bytes crudos del
         # .md, que traen sintaxis ('# ', líneas en blanco) que el parser ya
@@ -193,33 +193,33 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         # tests/ingesta/test_parsear_docx.py y tests/ingesta/test_parsear.py.
         from ipsis.ingesta.parsear import parsear_markdown
         doc_manual = parsear_markdown(str(docs["manual"]), doc_id="x", doc_titulo="x", version="1")
-        frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)
-        assert frag_manual is not None, datos["fragmentos"]
-        assert frag_manual["texto"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
+        frag_manual = next((f for f in datos["fragments"] if "18 meses" in f["text"]), None)
+        assert frag_manual is not None, datos["fragments"]
+        assert frag_manual["text"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
 
         # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Con tres chunks
         # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/metodologia/lexico.md: sinónimos).
         # Se conserva para que una regresión sea visible: puede mejorar a 'ok', pero
         # nunca perder el pasaje con «18 meses».
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuánto dura la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuánto dura la garantía del equipo X100?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["estado"] in {"ok", "relacionado"}, datos
-        assert any("18 meses" in f["texto"] for f in datos["fragmentos"]), datos["fragmentos"]
-        assert "18 meses" in datos["respuesta"]
+        assert datos["status"] in {"ok", "related"}, datos
+        assert any("18 meses" in f["text"] for f in datos["fragments"]), datos["fragments"]
+        assert "18 meses" in datos["answer"]
 
         # Pregunta ajena: nunca debe llegar a 'ok'.
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuál es la capital de Mongolia?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuál es la capital de Mongolia?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
-        assert resp.json()["estado"] != "ok", resp.json()
+        assert resp.json()["status"] != "ok", resp.json()
     finally:
         proceso.terminate()
         try:

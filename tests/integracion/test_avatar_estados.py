@@ -70,9 +70,9 @@ def test_doctor_y_config_usan_folio(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--profile", "light"]) == 0
     publica = config_avatar_publica()
-    assert publica["activo"] and publica["url_definicion"] == "/avatares/folio.avatar.json"
-    assert publica["eventos"]["thinking_long"] == "thinking-long"
-    assert publica["respaldos"]["thinking_long"] == "thinking"
+    assert publica["enabled"] and publica["definition_url"] == "/avatars/folio.avatar.json"
+    assert publica["events"]["thinking_long"] == "thinking-long"
+    assert publica["fallbacks"]["thinking_long"] == "thinking"
 
 
 # --- navegador ---------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ def _app(estado: dict):
             return FileResponse(ESTATICOS / "avatar.js", media_type="text/javascript")
         return Response(MOTOR_FALSO, media_type="text/javascript")
 
-    @app.get("/avatares/folio.avatar.json")
+    @app.get("/avatars/folio.avatar.json")
     def definicion():
         return json.loads(FOLIO.read_text(encoding="utf-8"))
 
@@ -105,15 +105,15 @@ def _app(estado: dict):
     def config():
         eventos = {e: s for e, (s, _) in EVENTOS.items()}
         eventos.update(estado.get("eventos", {}))
-        return {"nombre_asistente": "Ayuda", "descripcion_dominio": "manual", "saludo": "Hola.", "interfaz": {},
-                "microcopia": {}, "ubicacion": {},
-                "avatar": {"activo": True, "nombre": "folio", "url_definicion": "/avatares/folio.avatar.json",
-                           "url_motor": "/avatar.js", "ubicacion": "cabecera", "tamano": 56, "en_lanzador": False,
-                           "mirada": {"activa": True, "amplitud_ojos": 6, "amplitud_cabeza": 8, "zona_muerta": 24},
-                           "inactividad_min": 2, "eventos": eventos,
-                           "respaldos": {e: r for e, (_, r) in EVENTOS.items() if r in EVENTOS}}}
+        return {"assistant_name": "Ayuda", "domain_description": "manual", "greeting": "Hola.", "interface": {},
+                "microcopy": {}, "placement": {},
+                "avatar": {"enabled": True, "name": "folio", "definition_url": "/avatars/folio.avatar.json",
+                           "engine_url": "/avatar.js", "placement": "header", "size": 56, "in_launcher": False,
+                           "gaze": {"enabled": True, "eye_range": 6, "head_range": 8, "dead_zone": 24},
+                           "idle_minutes": 2, "events": eventos,
+                           "fallbacks": {e: r for e, (_, r) in EVENTOS.items() if r in EVENTOS}}}
 
-    @app.post("/consultar")
+    @app.post("/ask")
     async def consultar(request: Request):
         import asyncio
 
@@ -121,9 +121,9 @@ def _app(estado: dict):
             await asyncio.sleep(0.02)
         if estado.get("fallar"):
             return Response(status_code=500)
-        return {"estado": estado.get("estado", "ok"), "nivel_servicio": "normal", "plan": "extractivo",
-                "latencia_ms": 1, "confianza": {"top1": 0.9, "margen": 0.1, "acuerdo_bm25": None},
-                "respuesta": "Respuesta de prueba.", "respuesta_exacta": None, "fragmentos": []}
+        return {"status": estado.get("estado", "ok"), "service_level": "normal", "plan": "extractive",
+                "latency_ms": 1, "confidence": {"top1": 0.9, "margin": 0.1, "bm25_agreement": None},
+                "answer": "Respuesta de prueba.", "exact_answer": None, "fragments": []}
 
     return app
 
@@ -176,8 +176,8 @@ def _abrir(navegador, base: str, reducido: bool = False):
                               reduced_motion="reduce" if reducido else "no-preference")
     page.clock.install()
     page.goto(base)
-    page.evaluate("window.RagChat.abrir()")
-    _esperar(page, "window.RagChat.avatar.estado().listo")
+    page.evaluate("window.Ipsis.open()")
+    _esperar(page, "window.Ipsis.avatar.state().ready")
     return page
 
 
@@ -220,8 +220,8 @@ def test_secuencia_de_una_pregunta(navegador, servidor):
 
 
 @pytest.mark.browser
-@pytest.mark.parametrize(("estado_respuesta", "clave"), [("relacionado", "unsure"), ("sin_respuesta", "sorry"),
-                                                         ("conversacional", "kind")])
+@pytest.mark.parametrize(("estado_respuesta", "clave"), [("related", "unsure"), ("no_answer", "sorry"),
+                                                         ("conversational", "kind")])
 def test_cada_estado_de_respuesta(navegador, servidor, estado_respuesta, clave):
     base, estado = servidor
     estado["estado"] = estado_respuesta
@@ -253,12 +253,12 @@ def test_prioridades_y_respaldo(navegador, servidor):
     page = _abrir(navegador, base)
     page.clock.run_for(3000)
     _limpiar(page)
-    page.evaluate("window.RagChat.avatar.disparar('error')")
-    page.evaluate("window.RagChat.avatar.disparar('launcher')")  # menor prioridad: se descarta
+    page.evaluate("window.Ipsis.avatar.trigger('error')")
+    page.evaluate("window.Ipsis.avatar.trigger('launcher')")  # menor prioridad: se descarta
     assert _llamadas(page) == [["play", "worried"]]
     page.clock.run_for(2000)
     _limpiar(page)
-    page.evaluate("window.RagChat.avatar.disparar('answer_ok')")
+    page.evaluate("window.Ipsis.avatar.trigger('answer_ok')")
     assert _llamadas(page) == [["play", "idle"]]  # la clave falta: respaldo del evento
     page.close()
 
@@ -347,14 +347,14 @@ def test_folio_real_con_la_grilla(navegador, servidor):
     page = navegador.new_page(viewport={"width": 1280, "height": 800})
     errores: list[str] = []
     page.on("pageerror", lambda e: errores.append(str(e)))
-    page.add_init_script("window.__avatar = []; document.addEventListener('rag:avatar', "
+    page.add_init_script("window.__avatar = []; document.addEventListener('ipsis:avatar', "
                          "e => window.__avatar.push(e.detail));")
     page.goto(base)
-    page.evaluate("window.RagChat.abrir()")
-    _esperar(page, "window.RagChat.avatar.estado().listo")
-    assert page.evaluate("window.__avatar[0]") == {"estado": "listo", "nombre": "folio"}
+    page.evaluate("window.Ipsis.open()")
+    _esperar(page, "window.Ipsis.avatar.state().ready")
+    assert page.evaluate("window.__avatar[0]") == {"state": "ready", "name": "folio"}
     for evento in EVENTOS:
-        assert page.evaluate(f"window.RagChat.avatar.disparar('{evento}')")
-    assert not [e for e in page.evaluate("window.__avatar") if e.get("estado") == "error"]
+        assert page.evaluate(f"window.Ipsis.avatar.trigger('{evento}')")
+    assert not [e for e in page.evaluate("window.__avatar") if e.get("state") == "error"]
     assert not errores, errores
     page.close()

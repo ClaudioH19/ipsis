@@ -43,27 +43,27 @@ def test_licencia_declarada():
 
 
 def test_fuente_redirige_a_la_url_configurada(proyecto):
-    r = _cliente(modo_servicio(entorno={}), proyecto).get("/fuente", follow_redirects=False)
+    r = _cliente(modo_servicio(entorno={}), proyecto).get("/source", follow_redirects=False)
     assert r.status_code == 307 and r.headers["location"] == URL_FUENTE_POR_DEFECTO
     propia = modo_servicio(entorno={"IPSIS_SOURCE_URL": "https://git.mi-sitio.cl/asistente"})
-    r = _cliente(propia, proyecto).get("/fuente", follow_redirects=False)
+    r = _cliente(propia, proyecto).get("/source", follow_redirects=False)
     assert r.headers["location"] == "https://git.mi-sitio.cl/asistente"
 
 
 def test_url_fuente_invalida_se_avisa_y_no_redirige_a_ella(proyecto):
     mala = modo_servicio(entorno={"IPSIS_SOURCE_URL": "javascript:alert(1)"})
     assert any("IPSIS_SOURCE_URL" in p for p in mala.problemas)
-    r = _cliente(mala, proyecto).get("/fuente", follow_redirects=False)
+    r = _cliente(mala, proyecto).get("/source", follow_redirects=False)
     assert r.headers["location"] == URL_FUENTE_POR_DEFECTO
 
 
 def test_el_widget_enlaza_al_codigo_fuente():
     codigo = (RAIZ / "ipsis/servicio/estaticos/widget.js").read_text(encoding="utf-8")
-    assert 'API_BASE + "/fuente"' in codigo and 'texto("codigo_fuente")' in codigo
+    assert 'API_BASE + "/source"' in codigo and 'texto("source_code")' in codigo
     from ipsis.lenguaje.paquete import cargar_paquete
 
     for idioma in ("es", "en", "pt"):
-        assert cargar_paquete(idioma).interfaz["codigo_fuente"]
+        assert cargar_paquete(idioma).interfaz["source_code"]
 
 
 def test_el_wheel_incluye_las_licencias(tmp_path: Path):

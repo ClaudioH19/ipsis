@@ -89,7 +89,7 @@ def test_css_extra_va_al_final():
 
 
 def test_endpoint_estilos_css_responde_con_el_tema():
-    r = client.get("/estilos.css")
+    r = client.get("/styles.css")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/css")
     assert "--rw-acento" in r.text
@@ -101,7 +101,7 @@ def test_el_widget_enlaza_la_hoja_del_servidor_despues_de_sus_repuestos():
     js = client.get("/widget.js").text
     assert "temaServidor.href" in js, "el widget no enlaza la hoja del servidor"
     # Se compara contra el appendChild real, no contra la primera mención de
-    # "/estilos.css" del archivo, que está en un comentario más arriba.
+    # "/styles.css" del archivo, que está en un comentario más arriba.
     assert js.index("raiz.appendChild(estilos)") < js.index("raiz.appendChild(temaServidor)")
 
 

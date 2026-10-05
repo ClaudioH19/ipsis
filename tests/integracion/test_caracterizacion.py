@@ -1,4 +1,4 @@
-"""Caracterización de ``POST /consultar``: congela el comportamiento actual.
+"""Caracterización de ``POST /ask``: congela el comportamiento actual.
 
 Sirve de red de seguridad para las refactorizaciones: mover código no debe
 cambiar ninguna respuesta. Congela también respuestas malas conocidas; cuando
@@ -120,25 +120,25 @@ def url_servicio(perfil):
 def _resumen(datos: dict) -> dict:
     """Todo lo observable salvo la latencia."""
     return {
-        "estado": datos["estado"],
-        "nivel_servicio": datos["nivel_servicio"],
+        "status": datos["status"],
+        "service_level": datos["service_level"],
         "plan": datos["plan"],
-        "respuesta": datos["respuesta"],
-        "confianza": {
-            "top1": round(datos["confianza"]["top1"], 5),
-            "margen": round(datos["confianza"]["margen"], 5),
+        "answer": datos["answer"],
+        "confidence": {
+            "top1": round(datos["confidence"]["top1"], 5),
+            "margin": round(datos["confidence"]["margin"], 5),
         },
-        "fragmentos": [
+        "fragments": [
             {
                 "chunk_id": f["chunk_id"],
-                "doc_titulo": f["doc_titulo"],
-                "seccion": f["seccion"],
-                "offset_inicio": f["offset_inicio"],
-                "offset_fin": f["offset_fin"],
-                "texto": f["texto"],
+                "doc_title": f["doc_title"],
+                "section": f["section"],
+                "offset_start": f["offset_start"],
+                "offset_end": f["offset_end"],
+                "text": f["text"],
                 "score": round(f["score"], 5),
             }
-            for f in datos["fragmentos"]
+            for f in datos["fragments"]
         ],
     }
 
@@ -147,8 +147,8 @@ def _resumen(datos: dict) -> dict:
 def observado(url_servicio, perfil):
     salida = {}
     for pregunta in PREGUNTAS:
-        r = httpx.post(f"{url_servicio}/consultar",
-                       json={"pregunta": pregunta, "id_sesion": "caracterizacion"}, timeout=60.0)
+        r = httpx.post(f"{url_servicio}/ask",
+                       json={"question": pregunta, "session_id": "caracterizacion"}, timeout=60.0)
         assert r.status_code == 200, r.text
         salida[pregunta] = _resumen(r.json())
     if ACTUALIZAR:
@@ -159,8 +159,8 @@ def observado(url_servicio, perfil):
 
 def _sin_scores(resumen: dict) -> dict:
     copia = json.loads(json.dumps(resumen))
-    copia.pop("confianza")
-    for f in copia["fragmentos"]:
+    copia.pop("confidence")
+    for f in copia["fragments"]:
         f.pop("score")
     return copia
 
@@ -173,16 +173,16 @@ def test_consultar_no_cambia(observado, perfil, pregunta):
     actual = observado[pregunta]
 
     assert _sin_scores(actual) == _sin_scores(esperado)
-    assert actual["confianza"]["top1"] == pytest.approx(esperado["confianza"]["top1"], abs=TOLERANCIA_SCORE)
-    assert actual["confianza"]["margen"] == pytest.approx(esperado["confianza"]["margen"], abs=TOLERANCIA_SCORE)
-    for f_act, f_esp in zip(actual["fragmentos"], esperado["fragmentos"]):
+    assert actual["confidence"]["top1"] == pytest.approx(esperado["confidence"]["top1"], abs=TOLERANCIA_SCORE)
+    assert actual["confidence"]["margin"] == pytest.approx(esperado["confidence"]["margin"], abs=TOLERANCIA_SCORE)
+    for f_act, f_esp in zip(actual["fragments"], esperado["fragments"]):
         assert f_act["score"] == pytest.approx(f_esp["score"], abs=TOLERANCIA_SCORE)
 
 
 def test_caracterizacion_cubre_todos_los_estados(observado):
     """Si una pregunta cambia de estado al regenerar, la cobertura no debe perderse."""
-    estados = {r["estado"] for r in observado.values()}
-    assert {"ok", "relacionado", "sin_respuesta", "conversacional"} <= estados
+    estados = {r["status"] for r in observado.values()}
+    assert {"ok", "related", "no_answer", "conversational"} <= estados
 
 
 def test_respuestas_son_texto_literal_del_corpus(observado):
@@ -195,7 +195,7 @@ def test_respuestas_son_texto_literal_del_corpus(observado):
         doc = parsear_markdown(str(ruta), doc_id="x", doc_titulo="x", version="1")
         textos[ruta.stem] = doc.texto_completo
     for pregunta, resumen in observado.items():
-        for f in resumen["fragmentos"]:
+        for f in resumen["fragments"]:
             assert any(
-                t[f["offset_inicio"]:f["offset_fin"]] == f["texto"] for t in textos.values()
+                t[f["offset_start"]:f["offset_end"]] == f["text"] for t in textos.values()
             ), (pregunta, f["chunk_id"])

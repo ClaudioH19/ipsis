@@ -125,7 +125,10 @@ UBICACION_POR_DEFECTO = {"posicion": "abajo-derecha", "desplazamiento_x": 24, "d
 
 
 def citas_presentacion(valor: str | None) -> str:
-    """``acordeon`` o ``lista``; los valores anteriores no ocultan las citas."""
+    """``acordeon`` o ``lista`` (también en inglés: ``accordion`` o ``list``); los valores
+    anteriores no ocultan las citas."""
+    if valor in ("accordion", "list"):
+        return "list" if valor == "list" else "accordion"
     return "lista" if valor in ("lista", "abiertas") else "acordeon"
 
 
@@ -155,12 +158,31 @@ def ubicacion_widget(tema: dict | None = None) -> dict:
     return ubicacion
 
 
+def ubicacion_publica(ubicacion: dict) -> dict:
+    """``ubicacion_widget`` con los nombres del archivo (``placement``): lo que publica /config."""
+    from ipsis.configuracion.glosario import a_externo
+
+    return a_externo({"ubicacion": ubicacion}, "estilos")["placement"]
+
+
+def presentacion_publica(tema: dict) -> dict:
+    """``preset`` y ``presentation`` del tema con los nombres y valores del archivo."""
+    from ipsis.configuracion.glosario import a_externo
+
+    externo = a_externo({"preset": tema.get("preset") or "clasico", "presentacion": tema.get("presentacion") or {}},
+                        "estilos")
+    presentacion = externo.get("presentation") or {}
+    return {"preset": externo["preset"], "density": presentacion.get("density", "comfortable"),
+            "citations": presentacion.get("citations", "accordion"),
+            "show_status_label": presentacion.get("show_status_label", True)}
+
+
 def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | None = None) -> str:
-    """Etiqueta lista para pegar en el sitio, según ``styles.yaml::ubicacion``."""
-    u = ubicacion_widget()
+    """Etiqueta lista para pegar en el sitio, según ``styles.yaml::placement``."""
+    u = ubicacion_publica(ubicacion_widget())
     api = api.rstrip("/")
-    atributos = {"posicion": u["posicion"], "tamano": u["tamano"], "lanzador": u["lanzador"],
-                 "desplazamiento-x": u["desplazamiento_x"], "desplazamiento-y": u["desplazamiento_y"]}
+    atributos = {"position": u["position"], "size": u["size"], "launcher": u["launcher"],
+                 "offset-x": u["offset_x"], "offset-y": u["offset_y"]}
     if clave_widget:
         atributos["widget-key"] = clave_widget
     if componente:
@@ -261,9 +283,9 @@ def _definicion_para_exportar() -> tuple[str, dict] | None:
 
     try:
         publica = config_avatar_publica()
-        if not publica["activo"]:
+        if not publica["enabled"]:
             return None
-        return publica["nombre"], definicion_publica(publica["nombre"])
+        return publica["name"], definicion_publica(publica["name"])
     except Exception:  # noqa: BLE001 - sin proyecto o sin avatar: se exporta sin él
         return None
 
@@ -272,10 +294,13 @@ def exportar_widget(
     carpeta: str,
     *,
     api: str = "http://127.0.0.1:8000",
-    posicion: str = "abajo-derecha",
+    posicion: str = "bottom-right",
 ) -> Path:
+    from ipsis.configuracion.glosario import POSICIONES as NOMBRES_POSICIONES
+
+    posicion = {externo: interno for interno, externo in NOMBRES_POSICIONES.items()}.get(posicion, posicion)
     if posicion not in POSICIONES:
-        raise ValueError(t("styles.position", values=", ".join(POSICIONES)))
+        raise ValueError(t("styles.position", values=", ".join(NOMBRES_POSICIONES.values())))
     destino = Path(carpeta).resolve()
     destino.mkdir(parents=True, exist_ok=True)
     estaticos = files("ipsis.servicio").joinpath("estaticos")
@@ -288,14 +313,14 @@ def exportar_widget(
     definicion = _definicion_para_exportar()
     if definicion is not None:
         nombre, datos = definicion
-        (destino / "avatares").mkdir(exist_ok=True)
-        (destino / "avatares" / f"{nombre}.avatar.json").write_text(json.dumps(datos, ensure_ascii=False),
+        (destino / "avatars").mkdir(exist_ok=True)
+        (destino / "avatars" / f"{nombre}.avatar.json").write_text(json.dumps(datos, ensure_ascii=False),
                                                                      encoding="utf-8")
         avatar_attr = ' avatar-base="."'
     api_attr = html.escape(api.rstrip("/"), quote=True)
-    posicion_attr = html.escape(posicion, quote=True)
+    posicion_attr = html.escape(ubicacion_publica({"posicion": posicion})["position"], quote=True)
     snippet = (
-        f'<ipsis-chat api="{api_attr}" posicion="{posicion_attr}"{avatar_attr}>'
+        f'<ipsis-chat api="{api_attr}" position="{posicion_attr}"{avatar_attr}>'
         "</ipsis-chat>\n"
         '<script src="./widget.js"></script>\n'
     )

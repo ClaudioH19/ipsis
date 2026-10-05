@@ -6,15 +6,15 @@ from ipsis.aplicacion.widget import exportar_widget
 
 def test_exporta_web_component_y_snippet(tmp_path):
     salida = exportar_widget(
-        str(tmp_path / "publico"), api="https://api.example/ipsis/", posicion="abajo-izquierda"
+        str(tmp_path / "publico"), api="https://api.example/ipsis/", posicion="bottom-left"
     )
 
     widget = (salida / "widget.js").read_text(encoding="utf-8")
     snippet = (salida / "snippet.html").read_text(encoding="utf-8")
     assert 'customElements.define("ipsis-chat"' in widget
-    assert "rag:respuesta" in widget
+    assert "ipsis:answer" in widget
     assert '<ipsis-chat api="https://api.example/ipsis"' in snippet
-    assert 'posicion="abajo-izquierda"' in snippet
+    assert 'position="bottom-left"' in snippet
     assert '<script src="./widget.js"></script>' in snippet
 
 

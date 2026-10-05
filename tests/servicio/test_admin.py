@@ -118,7 +118,7 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
     r = c.put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "direct"}})
     assert r.status_code == 200 and r.json()["tono"]["activo"] == "direct"
     assert motor.plantillas["tono"] == "direct"
-    respuesta = c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()["respuesta"]
+    respuesta = c.post("/ask", json={"question": "hola", "session_id": "s"}).json()["answer"]
     from ipsis.lenguaje.tonos import cargar_tono
 
     assert respuesta in [v.format(assistant_name="Asistente documental", domain_description="los documentos cargados")
@@ -132,10 +132,10 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
 def test_cambio_por_cli_se_ve_sin_reiniciar(proyecto):
     motor = _motor()
     c = _cliente(ModoServicio(), motor=motor)
-    assert c.get("/config").json()["microcopia"]["waiting"][0] == "Buscando en el documento"
+    assert c.get("/config").json()["microcopy"]["waiting"][0] == "Buscando en el documento"
     assert main(["personality", "tone", "apply", "serious"]) == 0
-    assert c.get("/config").json()["microcopia"]["waiting"][0] == "Buscando"
-    c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"})
+    assert c.get("/config").json()["microcopy"]["waiting"][0] == "Buscando"
+    c.post("/ask", json={"question": "hola", "session_id": "s"})
     assert motor.plantillas["tono"] == "serious"
 
 
@@ -146,7 +146,7 @@ def test_vista_previa_y_estilos(proyecto):
     assert list(previa) == ["no_answer"] and len(previa["no_answer"]) == 5
     r = c.put("/admin/estilos", headers=_auth(), json={"ubicacion": {"posicion": "arriba-izquierda"}})
     assert r.status_code == 200 and r.json()["ubicacion"]["posicion"] == "arriba-izquierda"
-    assert c.get("/config").json()["ubicacion"]["posicion"] == "arriba-izquierda"
+    assert c.get("/config").json()["placement"]["position"] == "top-left"
     assert c.put("/admin/estilos", headers=_auth(), json={"ubicacion": {"posicion": "centro"}}).status_code == 422
 
 
@@ -160,13 +160,13 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
     assert c.put("/admin/personalidad", headers=_auth(),
                  json={"avatar": {"definicion": "mi-avatar", "colores": {"cuerpo": "#123456"}}}).status_code == 200
     avatar = c.get("/config").json()["avatar"]
-    assert avatar["activo"] and avatar["url_definicion"] == "/avatares/mi-avatar.avatar.json"
-    assert avatar["eventos"]["answer_ok"] == "happy"
-    servida = c.get("/avatares/mi-avatar.avatar.json").json()
+    assert avatar["enabled"] and avatar["definition_url"] == "/avatars/mi-avatar.avatar.json"
+    assert avatar["events"]["answer_ok"] == "happy"
+    servida = c.get("/avatars/mi-avatar.avatar.json").json()
     assert servida["colors"]["body"] == "#123456"
-    assert c.get("/avatares/../engine.yaml").status_code == 404
-    assert c.get("/avatares/Mal_Nombre.avatar.json").status_code == 404
-    assert c.get("/avatares/nadie.avatar.json").status_code == 404
+    assert c.get("/avatars/../engine.yaml").status_code == 404
+    assert c.get("/avatars/Mal_Nombre.avatar.json").status_code == 404
+    assert c.get("/avatars/nadie.avatar.json").status_code == 404
     malo = c.post("/admin/avatares", headers=_auth(), json={"nombre": "x", "definicion": {"expressions": {}}})
     assert malo.status_code == 422
 
@@ -174,14 +174,14 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
 def test_folio_por_defecto_y_avatar_faltante_inactivo(proyecto):
     c = _cliente(ModoServicio())
     avatar = c.get("/config").json()["avatar"]
-    assert avatar["activo"] and avatar["url_definicion"] == "/avatares/folio.avatar.json"  # incluido
-    assert c.get("/avatares/folio.avatar.json").json()["name"] == "Folio"
+    assert avatar["enabled"] and avatar["definition_url"] == "/avatars/folio.avatar.json"  # incluido
+    assert c.get("/avatars/folio.avatar.json").json()["name"] == "Folio"
     assert c.get("/avatar.js").headers["content-type"].startswith("text/javascript")
     texto = Path("config/personality.yaml").read_text(encoding="utf-8")
     Path("config/personality.yaml").write_text(texto.replace("definition: folio", "definition: nadie"),
                                                        encoding="utf-8")
     avatar = _cliente(ModoServicio()).get("/config").json()["avatar"]
-    assert avatar["activo"] is False and avatar["url_definicion"] is None  # el widget muestra el ícono
+    assert avatar["enabled"] is False and avatar["definition_url"] is None  # el widget muestra el ícono
 
 
 # --- modos -------------------------------------------------------------------------------------
@@ -197,11 +197,11 @@ def test_docs_y_errores_segun_el_modo(proyecto):
 
     produccion = _cliente(ModoServicio(), motor=Roto())
     assert produccion.get("/docs").status_code == 404
-    r = produccion.post("/consultar", json={"pregunta": "x", "id_sesion": "s"})
-    assert r.status_code == 500 and r.json()["detail"] == "error interno" and r.json()["id"]
+    r = produccion.post("/ask", json={"question": "x", "session_id": "s"})
+    assert r.status_code == 500 and r.json()["detail"] == "internal error" and r.json()["id"]
     desarrollo = _cliente(ModoServicio(modo="desarrollo"), motor=Roto())
     assert desarrollo.get("/docs").status_code == 200
-    assert "detalle secreto" in desarrollo.post("/consultar", json={"pregunta": "x", "id_sesion": "s"}).json()["detail"]
+    assert "detalle secreto" in desarrollo.post("/ask", json={"question": "x", "session_id": "s"}).json()["detail"]
 
 
 def test_cache_de_estaticos_segun_el_modo(proyecto):

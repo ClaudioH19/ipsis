@@ -1,5 +1,5 @@
 """Traduce ``config/styles.yaml`` a la hoja de estilos que el
-widget enlaza en ``GET /estilos.css``.
+widget enlaza en ``GET /styles.css``.
 
 Consume: el YAML de estilos del despliegue. Produce: una cadena de CSS con
 las variables que el widget ya usa, más las reglas derivadas de apagar las

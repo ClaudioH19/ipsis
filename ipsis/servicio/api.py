@@ -1,7 +1,10 @@
 """Transporte HTTP del asistente documental.
 
-La aplicación adapta ``Motor.consultar()`` al contrato HTTP V1. El pipeline,
-sus componentes y sus recursos pertenecen al motor; FastAPI conserva solo el
+La aplicación adapta ``Motor.consultar()`` al contrato HTTP. El contrato
+público usa nombres en inglés (``POST /ask`` con ``question`` y
+``session_id``; respuesta con ``status``, ``answer``, ``fragments``…); el
+motor conserva su contrato interno y aquí se traduce. El pipeline, sus
+componentes y sus recursos pertenecen al motor; FastAPI conserva solo el
 estado propio de cada instancia de aplicación.
 """
 from __future__ import annotations
@@ -49,74 +52,111 @@ ConstructorMotor = Callable[[], Motor]
 
 class Filtros(BaseModel):
     version: Optional[str] = None
-    documento: Optional[str] = None
+    document: Optional[str] = None
 
 
 class PeticionConsulta(BaseModel):
-    pregunta: str
-    id_sesion: str
-    filtros: Filtros = Field(default_factory=Filtros)
+    question: str
+    session_id: str
+    filters: Filtros = Field(default_factory=Filtros)
     deadline_ms: int = 1500
 
 
 class Fragmento(BaseModel):
     chunk_id: str
-    doc_titulo: str
-    seccion: str
+    doc_title: str
+    section: str
     version: str
-    pagina: Optional[int] = None
-    offset_inicio: int
-    offset_fin: int
-    texto: str
+    page: Optional[int] = None
+    offset_start: int
+    offset_end: int
+    text: str
     score: float
 
 
 class Confianza(BaseModel):
     top1: float
-    margen: float
-    acuerdo_bm25: Optional[bool] = None
+    margin: float
+    bm25_agreement: Optional[bool] = None
 
 
 class RespuestaExacta(BaseModel):
     """Tramo literal que responde la pregunta (lo marca el lector QA)."""
 
     chunk_id: str
-    texto: str
-    offset_inicio: int
-    offset_fin: int
+    text: str
+    offset_start: int
+    offset_end: int
 
 
 class RespuestaConsulta(BaseModel):
-    estado: Literal["ok", "relacionado", "conversacional", "sin_respuesta", "degradado", "saturado"]
-    nivel_servicio: Literal["normal", "media", "alta"]
-    respuesta: Optional[str]
+    status: Literal["ok", "related", "conversational", "no_answer", "degraded", "saturated"]
+    service_level: Literal["normal", "medium", "high"]
+    answer: Optional[str]
     plan: Optional[Literal[
-        "definicion", "procedimiento", "requisito", "dato_puntual",
-        "comparacion", "excepcion", "extractivo", "zona_gris",
-        "sin_respuesta", "conversacional",
+        "definition", "procedure", "requirement", "specific_fact",
+        "comparison", "exception", "extractive", "gray_zone",
+        "no_answer", "conversational",
     ]]
-    fragmentos: list[Fragmento]
-    confianza: Confianza
-    latencia_ms: int
-    respuesta_exacta: Optional[RespuestaExacta] = None
+    fragments: list[Fragmento]
+    confidence: Confianza
+    latency_ms: int
+    exact_answer: Optional[RespuestaExacta] = None
     # Solo en respuestas conversacionales (para el avatar del widget).
-    categoria_conversacional: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
+    conversational_category: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
+
+
+# Contrato interno del motor → público.
+_ESTADOS = {"ok": "ok", "relacionado": "related", "conversacional": "conversational", "sin_respuesta": "no_answer",
+            "degradado": "degraded", "saturado": "saturated"}
+_NIVELES = {"normal": "normal", "media": "medium", "alta": "high"}
+_PLANES = {"definicion": "definition", "procedimiento": "procedure", "requisito": "requirement",
+           "dato_puntual": "specific_fact", "comparacion": "comparison", "excepcion": "exception",
+           "extractivo": "extractive", "zona_gris": "gray_zone", "sin_respuesta": "no_answer",
+           "conversacional": "conversational"}
+
+
+def respuesta_publica(contrato: dict) -> dict:
+    """``diagnostico["contrato_http"]`` del motor con los nombres del contrato público."""
+    def fragmento(f: dict) -> dict:
+        return {"chunk_id": f["chunk_id"], "doc_title": f["doc_titulo"], "section": f["seccion"],
+                "version": f["version"], "page": f.get("pagina"), "offset_start": f["offset_inicio"],
+                "offset_end": f["offset_fin"], "text": f["texto"], "score": f["score"]}
+
+    confianza = contrato.get("confianza") or {}
+    publica = {
+        "status": _ESTADOS[contrato["estado"]],
+        "service_level": _NIVELES[contrato["nivel_servicio"]],
+        "answer": contrato.get("respuesta"),
+        "plan": _PLANES.get(contrato.get("plan"), contrato.get("plan")),
+        "fragments": [fragmento(f) for f in contrato.get("fragmentos") or []],
+        "confidence": {"top1": confianza.get("top1"), "margin": confianza.get("margen"),
+                       "bm25_agreement": confianza.get("acuerdo_bm25")},
+        "latency_ms": contrato["latencia_ms"],
+    }
+    exacta = contrato.get("respuesta_exacta")
+    if exacta:
+        publica["exact_answer"] = {"chunk_id": exacta["chunk_id"], "text": exacta["texto"],
+                                   "offset_start": exacta["offset_inicio"], "offset_end": exacta["offset_fin"]}
+    if contrato.get("categoria_conversacional"):
+        publica["conversational_category"] = contrato["categoria_conversacional"]
+    return publica
 
 
 class ConfigWidget(BaseModel):
-    nombre_asistente: str
-    descripcion_dominio: str
-    saludo: str
-    preset: str = "clasico"
-    densidad: Literal["comoda", "compacta"] = "comoda"
-    citas: Literal["acordeon", "lista"] = "acordeon"  # las citas nunca se ocultan
-    mostrar_etiqueta_estado: bool = True
-    interfaz: dict[str, str] = {}
-    # Variantes del tono para bienvenida, esperando, invitación a las citas y errores.
-    microcopia: dict[str, list[str]] = {}
-    # styles.yaml::ubicacion: posición, desplazamientos, z_index, tamaño y lanzador.
-    ubicacion: dict[str, str | int] = {}
-    # personality.yaml::avatar efectivo; activo=False si falta (el widget usa el ícono).
+    assistant_name: str
+    domain_description: str
+    greeting: str
+    preset: str = "classic"
+    density: Literal["comfortable", "compact"] = "comfortable"
+    citations: Literal["accordion", "list"] = "accordion"  # las citas nunca se ocultan
+    show_status_label: bool = True
+    interface: dict[str, str] = {}
+    # Variantes del tono para welcome, waiting, citations_hint y errores.
+    microcopy: dict[str, list[str]] = {}
+    # styles.yaml::placement: position, offset_x, offset_y, z_index, size y launcher.
+    placement: dict[str, str | int] = {}
+    # personality.yaml::avatar efectivo; enabled=false si falta (el widget usa el ícono).
     avatar: dict = {}
 
 
@@ -154,7 +194,7 @@ def _verificar_seguridad(
     if not estado.limitador.permitir(identificador):
         raise HTTPException(
             status_code=429,
-            detail="límite de peticiones excedido, reintenta en unos segundos",
+            detail="rate limit exceeded, retry in a few seconds",
             headers={"Retry-After": "3"},
         )
 
@@ -169,7 +209,7 @@ class _CORSSinAdmin(CORSMiddleware):
         await super().__call__(scope, receive, send)
 
 
-_ESTATICOS = ("/widget.js", "/estilos.css", "/avatar.js")
+_ESTATICOS = ("/widget.js", "/styles.css", "/avatar.js")
 
 
 _TTL_DIAGNOSTICO_S = 30.0
@@ -279,7 +319,7 @@ def crear_app(
     async def cache_de_estaticos(request: Request, siguiente):
         respuesta = await siguiente(request)
         ruta = request.url.path
-        if ruta in _ESTATICOS or ruta.startswith("/admin/panel") or ruta.startswith("/avatares/"):
+        if ruta in _ESTATICOS or ruta.startswith("/admin/panel") or ruta.startswith("/avatars/"):
             if modo.desarrollo:
                 respuesta.headers["Cache-Control"] = "no-store"  # los cambios se ven al recargar
             elif request.query_params.get("v"):
@@ -296,7 +336,7 @@ def crear_app(
 
         identificador = uuid.uuid4().hex[:12]
         _log.exception("error %s en %s", identificador, request.url.path)
-        detalle = f"{type(exc).__name__}: {exc}" if modo.desarrollo else "error interno"
+        detalle = f"{type(exc).__name__}: {exc}" if modo.desarrollo else "internal error"
         return JSONResponse(status_code=500, content={"detail": detalle, "id": identificador})
 
     def _refrescar(servicio: EstadoAplicacion) -> None:
@@ -313,7 +353,7 @@ def crear_app(
     for problema in modo.problemas:
         _log.warning(problema)
 
-    @aplicacion.get("/fuente", include_in_schema=False)
+    @aplicacion.get("/source", include_in_schema=False)
     def fuente():
         """AGPL §13: enlace al código fuente del servicio (``IPSIS_SOURCE_URL``)."""
         from fastapi.responses import RedirectResponse
@@ -322,37 +362,38 @@ def crear_app(
 
     @aplicacion.get("/health")
     def health():
-        return {"estado": "vivo", "modo": modo.modo}
+        return {"status": "alive", "mode": modo.publico}
 
     @aplicacion.get("/ready")
     def ready(request: Request):
         """Listo para consultas: el motor cargó y el diagnóstico del proyecto no
-        tiene nada bloqueante. ``proyecto`` separa lo que bloquea (con su acción)
+        tiene nada bloqueante. ``project`` separa lo que bloquea (con su acción)
         de lo opcional; es ``None`` si el servicio corre fuera de un proyecto."""
         from fastapi.responses import JSONResponse
 
         servicio = _estado(request)
         proyecto = _diagnostico_cacheado(servicio)
-        bloquea = proyecto is not None and not proyecto["listo"]
+        bloquea = proyecto is not None and not proyecto["ready"]
         if not servicio.listo or bloquea:
-            motivo = (servicio.error_arranque or "modelos/índice todavía no cargados") if not servicio.listo                 else "; ".join(f"{b['clave']}: {b['mensaje']}" for b in proyecto["bloqueante"])
+            motivo = (servicio.error_arranque or "models/index not loaded yet") if not servicio.listo \
+                else "; ".join(f"{b['key']}: {b['message']}" for b in proyecto["blocking"])
             return JSONResponse(status_code=503, content={
-                "estado": "no_listo", "listo": False, "modo": modo.modo, "detail": f"no listo: {motivo}",
-                "proyecto": proyecto})
+                "status": "not_ready", "ready": False, "mode": modo.publico, "detail": f"not ready: {motivo}",
+                "project": proyecto})
         motor_activo = servicio.motor
         coleccion = getattr(getattr(motor_activo, "retriever", None), "coleccion", None)
         control = motor_activo.control_admision
         return {
-            "estado": "listo",
-            "listo": True,
-            "modo": modo.modo,
+            "status": "ready",
+            "ready": True,
+            "mode": modo.publico,
             "backend": motor_activo.backend,
-            "coleccion": getattr(coleccion, "nombre", motor_activo.backend),
+            "collection": getattr(coleccion, "nombre", motor_activo.backend),
             "n_chunks": motor_activo.n_chunks(),
-            "n_entidades_inventario": len(motor_activo.inventario_entidades()),
-            "abstencion_calibrada": servicio.abstencion_calibrada,
-            "concurrencia_maxima": control.config.concurrencia_maxima if control is not None else None,
-            "proyecto": proyecto,
+            "n_inventory_entities": len(motor_activo.inventario_entidades()),
+            "calibrated_abstention": servicio.abstencion_calibrada,
+            "max_concurrency": control.config.concurrencia_maxima if control is not None else None,
+            "project": proyecto,
         }
 
     @aplicacion.get("/config", response_model=ConfigWidget)
@@ -363,34 +404,36 @@ def crear_app(
         _refrescar(_estado(request))
         from ipsis.aplicacion.widget import citas_presentacion, ubicacion_widget
 
+        from ipsis.aplicacion.widget import presentacion_publica, ubicacion_publica
+
         dominio = configuracion_asistente()
         idioma = dominio.get("idioma", "es")
-        nombre = dominio.get("nombre_asistente", "Asistente documental")
         interfaz = interfaz_del_idioma(idioma)
+        nombre = dominio.get("nombre_asistente") or interfaz.get("default_assistant_name", "")
         estilos = cargar_estilos()
-        presentacion = estilos.get("presentacion") or {}
+        presentacion = presentacion_publica(estilos)
         return ConfigWidget(
-            nombre_asistente=nombre,
-            descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados"),
-            saludo=_estado(request).motor.respuesta_conversacional("greeting"),
-            preset=str(estilos.get("preset") or "clasico"),
-            densidad=presentacion.get("densidad", "comoda"),
-            citas=citas_presentacion(presentacion.get("citas")),
-            mostrar_etiqueta_estado=presentacion.get("mostrar_etiqueta_estado", True),
-            interfaz=interfaz,
-            microcopia=microcopia_del_widget(idioma, nombre),
-            ubicacion=ubicacion_widget(estilos),
+            assistant_name=nombre,
+            domain_description=dominio.get("descripcion_dominio") or interfaz.get("default_domain_description", ""),
+            greeting=_estado(request).motor.respuesta_conversacional("greeting"),
+            preset=presentacion["preset"],
+            density=presentacion["density"],
+            citations=citas_presentacion(presentacion["citations"]),
+            show_status_label=presentacion["show_status_label"],
+            interface=interfaz,
+            microcopy=microcopia_del_widget(idioma, nombre),
+            placement=ubicacion_publica(ubicacion_widget(estilos)),
             avatar=config_avatar_publica(),
         )
 
-    @aplicacion.get("/avatares/{nombre}.avatar.json")
+    @aplicacion.get("/avatars/{nombre}.avatar.json")
     def avatar_definicion(nombre: str):
         from ipsis.aplicacion.personalidad import definicion_publica
 
         try:
             return definicion_publica(nombre)
         except (FileNotFoundError, ValueError) as exc:  # nombre inválido, inexistente o definición rota
-            raise HTTPException(status_code=404, detail="avatar no disponible") from exc
+            raise HTTPException(status_code=404, detail="avatar not available") from exc
 
     @aplicacion.get("/widget.js")
     def widget_js():
@@ -405,7 +448,7 @@ def crear_app(
     def avatar_licencia():
         return FileResponse(_DIR_ESTATICOS / "avatar.js.LICENSE.txt", media_type="text/plain; charset=utf-8")
 
-    @aplicacion.get("/estilos.css")
+    @aplicacion.get("/styles.css")
     def estilos_css():
         from ipsis.aplicacion.estilos import render_css
 
@@ -414,35 +457,35 @@ def crear_app(
     @aplicacion.get("/widget/demo.html")
     def widget_demo():
         if not modo.demo_activa:
-            raise HTTPException(status_code=404, detail="no disponible en producción (IPSIS_DEMO=1 lo activa)")
+            raise HTTPException(status_code=404, detail="not available in production (IPSIS_DEMO=1 enables it)")
         return FileResponse(_DIR_ESTATICOS / "demo.html", media_type="text/html; charset=utf-8")
 
     @aplicacion.post(
-        "/consultar",
+        "/ask",
         response_model=RespuestaConsulta,
-        # respuesta_exacta solo aparece cuando el lector la marcó.
+        # exact_answer solo aparece cuando el lector la marcó.
         response_model_exclude_unset=True,
         dependencies=[Depends(_verificar_seguridad)],
     )
-    def consultar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
+    def preguntar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
         servicio = _estado(request)
         _refrescar(servicio)
         try:
-            resultado = servicio.motor.consultar(peticion.pregunta, peticion.id_sesion)
+            resultado = servicio.motor.consultar(peticion.question, peticion.session_id)
         except MotorNoListo as exc:
-            raise HTTPException(status_code=503, detail="servicio no listo, ver /ready") from exc
+            raise HTTPException(status_code=503, detail="service not ready, see /ready") from exc
         except MotorSaturado as exc:
             raise HTTPException(
                 status_code=503,
-                detail="servicio saturado (límite de concurrencia alcanzado), reintente en un momento",
+                detail="service saturated (concurrency limit reached), retry in a moment",
                 headers={"Retry-After": "1"},
             ) from exc
         if servicio.registro is not None:
             try:
-                servicio.registro.registrar(peticion.pregunta, resultado)
+                servicio.registro.registrar(peticion.question, resultado)
             except OSError as exc:  # el registro nunca tumba una respuesta
                 _log.warning("no se pudo escribir el registro de consultas: %s", exc)
-        return RespuestaConsulta.model_validate(resultado.diagnostico["contrato_http"])
+        return RespuestaConsulta.model_validate(respuesta_publica(resultado.diagnostico["contrato_http"]))
 
     return aplicacion
 
@@ -453,5 +496,5 @@ app = crear_app()
 
 __all__ = [
     "Confianza", "ConfigWidget", "Filtros", "Fragmento", "PeticionConsulta",
-    "RespuestaConsulta", "app", "crear_app",
+    "RespuestaConsulta", "app", "crear_app", "respuesta_publica",
 ]

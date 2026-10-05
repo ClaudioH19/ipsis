@@ -353,16 +353,22 @@ def config_avatar_publica() -> dict:
     estado = estado_avatar(config)
     a = config.avatar
     activo = estado.estado == "ok"
+    from ipsis.configuracion.glosario import a_externo
+
+    ubicacion = a_externo({"avatar": {"ubicacion": a.ubicacion}}, "personalidad")["avatar"]["placement"]
+    mirada = a.mirada
     return {
-        "activo": activo,
-        "nombre": a.definicion,
-        "url_definicion": f"/avatares/{a.definicion}.avatar.json" if activo else None,
-        "url_motor": "/avatar.js" if activo else None,
-        "ubicacion": a.ubicacion, "tamano": a.tamano, "en_lanzador": a.en_lanzador,
-        "mirada": a.mirada.model_dump(), "inactividad_min": a.inactividad_min,
-        "eventos": estado.claves,
+        "enabled": activo,
+        "name": a.definicion,
+        "definition_url": f"/avatars/{a.definicion}.avatar.json" if activo else None,
+        "engine_url": "/avatar.js" if activo else None,
+        "placement": ubicacion, "size": a.tamano, "in_launcher": a.en_lanzador,
+        "gaze": {"enabled": mirada.activa, "eye_range": mirada.amplitud_ojos, "head_range": mirada.amplitud_cabeza,
+                 "dead_zone": mirada.zona_muerta},
+        "idle_minutes": a.inactividad_min,
+        "events": estado.claves,
         # Respaldo de cada evento: el widget lo usa si la definición no trae la clave.
-        "respaldos": {evento: respaldo for evento, (_, respaldo) in EVENTOS.items() if respaldo in EVENTOS},
+        "fallbacks": {evento: respaldo for evento, (_, respaldo) in EVENTOS.items() if respaldo in EVENTOS},
     }
 
 

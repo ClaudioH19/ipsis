@@ -46,8 +46,8 @@ def verificar_clave_widget(clave_recibida: str | None, claves_validas: list[str]
     if not claves_validas:
         return
     if clave_recibida not in claves_validas:
-        raise HTTPException(status_code=401, detail="clave de widget inválida o ausente "
-                             f"(cabecera {NOMBRE_CABECERA_CLAVE_WIDGET!r})")
+        raise HTTPException(status_code=401, detail="invalid or missing widget key "
+                             f"(header {NOMBRE_CABECERA_CLAVE_WIDGET!r})")
 
 
 # ---------------------------------------------------------------------------

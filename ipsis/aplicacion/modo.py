@@ -44,6 +44,11 @@ class ModoServicio:
         return self.modo == "desarrollo"
 
     @property
+    def publico(self) -> str:
+        """El modo como se escribe en IPSIS_MODE y en la API: production o development."""
+        return {interno: externo for externo, interno in _MODOS_EXTERNOS.items()}[self.modo]
+
+    @property
     def docs_activos(self) -> bool:
         return self.desarrollo or self.docs
 

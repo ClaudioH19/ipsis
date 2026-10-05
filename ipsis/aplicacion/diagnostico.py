@@ -499,18 +499,25 @@ def diagnosticar(*, abrir_indice: bool = True) -> ReporteDoctor:
     return ReporteDoctor(tuple(chequeos), perfil)
 
 
+# Chequeo y estado como los publica /ready.
+CLAVE_PUBLICA = {"configuracion": "configuration", "perfil": "profile", "idioma": "language", "stemmer": "stemmer",
+                 "modelos": "models", "indice": "index", "calibracion": "calibration", "golden": "golden",
+                 "cors": "cors", "personalidad": "personality", "modo": "mode"}
+ESTADO_PUBLICO = {Estado.OK: "ok", Estado.AVISO: "warning", Estado.ERROR: "error", Estado.NO_EVALUADO: "not_evaluated"}
+
+
 def resumen_para_servicio(reporte: ReporteDoctor) -> dict:
     """Lo que ``/ready`` publica: el estado de cada chequeo y, aparte, lo que
     bloquea (con su acción) y lo opcional. Sin ``detalles``: es un endpoint público."""
     def item(c: ChequeoDoctor) -> dict:
-        return {"clave": c.clave, "mensaje": c.mensaje, "acciones": list(c.acciones)}
+        return {"key": CLAVE_PUBLICA[c.clave], "message": c.mensaje, "actions": list(c.acciones)}
 
     return {
-        "listo": reporte.listo,
-        "perfil": reporte.perfil,
-        "chequeos": {c.clave: c.estado.value for c in reporte.chequeos},
-        "bloqueante": [item(c) for c in reporte.errores],
-        "avisos": [item(c) for c in reporte.avisos],
+        "ready": reporte.listo,
+        "profile": reporte.perfil,
+        "checks": {CLAVE_PUBLICA[c.clave]: ESTADO_PUBLICO[c.estado] for c in reporte.chequeos},
+        "blocking": [item(c) for c in reporte.errores],
+        "warnings": [item(c) for c in reporte.avisos],
     }
 
 

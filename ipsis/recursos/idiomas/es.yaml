@@ -272,22 +272,22 @@ mensajes:
     - En la versión {v1}…; en la {v2}…
   sin_seccion: (sin sección)
 interfaz:
-  nombre_asistente_defecto: Asistente documental
-  descripcion_dominio_defecto: los documentos cargados
-  fuentes_una: 1 fuente del documento
-  fuentes_varias: '{n} fuentes del documento'
-  posicion_cita: 'caracteres {inicio}–{fin}'
-  titulo: Asistente
-  subtitulo: Responde citando el documento
-  abrir: Abrir chat de {titulo}
-  cerrar: Cerrar chat
-  etiqueta_pregunta: Escribe tu pregunta
+  default_assistant_name: Asistente documental
+  default_domain_description: los documentos cargados
+  sources_one: 1 fuente del documento
+  sources_many: '{n} fuentes del documento'
+  citation_position: 'caracteres {start}–{end}'
+  title: Asistente
+  subtitle: Responde citando el documento
+  open: Abrir chat de {title}
+  close: Cerrar chat
+  question_label: Escribe tu pregunta
   placeholder: Escribe tu pregunta...
-  enviar: Enviar pregunta
-  no_directa: No es una respuesta directa
-  error_origen: Este sitio no está autorizado para usar el asistente.
-  error_http: El servicio no pudo responder (HTTP {estado}).
-  codigo_fuente: Código fuente
+  send: Enviar pregunta
+  not_direct: No es una respuesta directa
+  origin_error: Este sitio no está autorizado para usar el asistente.
+  http_error: El servicio no pudo responder (HTTP {status}).
+  source_code: Código fuente
 contracciones:
   ' de el ': ' del '
   ' a el ': ' al '

@@ -134,8 +134,8 @@ def inicializar_proyecto(
 
     inicializar_asistente_si_falta()
     nuevo = actualizar_dominio({
-        "nombre_asistente": nombre_asistente or interfaz["nombre_asistente_defecto"],
-        "descripcion_dominio": descripcion_dominio or interfaz["descripcion_dominio_defecto"],
+        "nombre_asistente": nombre_asistente or interfaz["default_assistant_name"],
+        "descripcion_dominio": descripcion_dominio or interfaz["default_domain_description"],
         "idioma": idioma,
         "perfil": perfil or "medium",
     })

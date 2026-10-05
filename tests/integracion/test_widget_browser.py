@@ -48,24 +48,24 @@ def _crear_app_prueba(base: str) -> FastAPI:
     @app.get("/config")
     def config():
         return {
-            "nombre_asistente": "Biblioteca",
-            "descripcion_dominio": "Prueba de navegador",
-            "saludo": "Hola desde la prueba.",
-            "preset": "clasico",
-            "densidad": "comoda",
-            "citas": "acordeon",
-            "mostrar_etiqueta_estado": True,
+            "assistant_name": "Biblioteca",
+            "domain_description": "Prueba de navegador",
+            "greeting": "Hola desde la prueba.",
+            "preset": "classic",
+            "density": "comfortable",
+            "citations": "accordion",
+            "show_status_label": True,
         }
 
-    @app.post("/consultar")
+    @app.post("/ask")
     def consultar():
         return {
-            "estado": "ok",
-            "respuesta": "La respuesta está respaldada por el manual.",
-            "fragmentos": [{
-                "doc_titulo": "Manual",
-                "seccion": "Inicio",
-                "texto": "Texto literal de respaldo.",
+            "status": "ok",
+            "answer": "La respuesta está respaldada por el manual.",
+            "fragments": [{
+                "doc_title": "Manual",
+                "section": "Inicio",
+                "text": "Texto literal de respaldo.",
             }],
         }
     return app
@@ -105,7 +105,7 @@ def navegador():
 def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
     page = navegador.new_page()
     page.goto(servidor_widget)
-    abrir = page.get_by_role("button", name=re.compile("Abrir chat"))
+    abrir = page.get_by_role("button", name=re.compile("Open chat"))
     abrir.focus()
     page.keyboard.press("Enter")
 
@@ -114,7 +114,7 @@ def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
     assert dialogo.get_attribute("aria-modal") == "true"
     assert page.evaluate("document.querySelector('ipsis-chat').shadowRoot.activeElement.id") == "rw-input"
 
-    cerrar = page.get_by_role("button", name="Cerrar chat")
+    cerrar = page.get_by_role("button", name="Close chat")
     cerrar.focus()
     page.keyboard.press("Shift+Tab")
     # El último enfocable es el enlace «Código fuente» (AGPL §13), bajo el campo.
@@ -138,7 +138,7 @@ def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
 def test_movil_ocupa_la_ventana_completa(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})
     page.goto(servidor_widget)
-    page.get_by_role("button", name=re.compile("Abrir chat")).click()
+    page.get_by_role("button", name=re.compile("Open chat")).click()
     caja = page.get_by_role("dialog").bounding_box()
 
     assert caja is not None
@@ -153,12 +153,12 @@ def test_movil_ocupa_la_ventana_completa(navegador, servidor_widget):
 def test_respuesta_y_cita_se_renderizan(navegador, servidor_widget):
     page = navegador.new_page()
     page.goto(servidor_widget)
-    page.get_by_role("button", name=re.compile("Abrir chat")).click()
-    page.get_by_label("Escribe tu pregunta").fill("¿Qué dice el manual?")
-    page.get_by_role("button", name="Enviar pregunta").click()
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    page.get_by_label("Type your question").fill("¿Qué dice el manual?")
+    page.get_by_role("button", name="Send question").click()
 
     expect(page.get_by_text("La respuesta está respaldada por el manual.")).to_be_visible()
-    expect(page.get_by_text("1 fuente del documento")).to_be_visible()
+    expect(page.get_by_text("1 source from the document")).to_be_visible()
     expect(page.get_by_text("Manual › Inicio")).to_be_visible()
     page.close()
 
@@ -167,12 +167,12 @@ def test_respuesta_y_cita_se_renderizan(navegador, servidor_widget):
 def test_error_de_red_es_claro_y_permite_reintentar(navegador, servidor_widget):
     page = navegador.new_page()
     page.goto(servidor_widget + "/fallo")
-    page.get_by_role("button", name=re.compile("Abrir chat")).click()
-    entrada = page.get_by_label("Escribe tu pregunta")
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    entrada = page.get_by_label("Type your question")
     entrada.fill("¿Hay conexión?")
-    page.get_by_role("button", name="Enviar pregunta").click()
+    page.get_by_role("button", name="Send question").click()
 
-    expect(page.get_by_text("No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.")).to_be_visible()
+    expect(page.get_by_text("Could not reach the assistant. Check your connection and try again.")).to_be_visible()
     expect(entrada).to_be_enabled()
     expect(entrada).to_be_focused()
     page.close()

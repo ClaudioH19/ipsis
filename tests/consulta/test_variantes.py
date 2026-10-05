@@ -85,8 +85,8 @@ def test_la_respuesta_http_publica_la_categoria_solo_si_es_conversacional(motor)
     from ipsis.servicio.api import crear_app
 
     cliente = TestClient(crear_app(motor))
-    datos = cliente.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()
-    assert datos["estado"] == "conversacional" and datos["categoria_conversacional"] == "greeting"
+    datos = cliente.post("/ask", json={"question": "hola", "session_id": "s"}).json()
+    assert datos["status"] == "conversational" and datos["conversational_category"] == "greeting"
 
 
 def test_la_abstencion_varia_por_turno_y_queda_trazada():

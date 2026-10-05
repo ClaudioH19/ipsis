@@ -143,7 +143,7 @@ def test_snippet_usa_la_ubicacion_y_escapa(tmp_path, monkeypatch, capsys):
     assert main(["widget", "snippet", "--api", "https://asistente.ejemplo.cl/"]) == 0
     salida = capsys.readouterr().out.strip()
     assert salida.startswith('<script src="https://asistente.ejemplo.cl/widget.js" data-api="https://asistente.ejemplo.cl"')
-    assert 'data-posicion="arriba-izquierda"' in salida and 'data-lanzador="pestana"' in salida
+    assert 'data-position="top-left"' in salida and 'data-launcher="tab"' in salida
     assert main(["widget", "snippet", "--component", "--key", 'a"b']) == 0
     componente = capsys.readouterr().out
     assert "<ipsis-chat" in componente and 'widget-key="a&quot;b"' in componente
@@ -158,13 +158,13 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     from ipsis.servicio.api import crear_app
 
     cfg = TestClient(crear_app()).get("/config").json()
-    assert cfg["citas"] == "acordeon" and cfg["ubicacion"]["posicion"] == "abajo-derecha"
-    assert set(cfg["microcopia"]) == {"welcome", "waiting", "citations_hint", "network_error", "rate_limit_error",
+    assert cfg["citations"] == "accordion" and cfg["placement"]["position"] == "bottom-right"
+    assert set(cfg["microcopy"]) == {"welcome", "waiting", "citations_hint", "network_error", "rate_limit_error",
                                       "service_error"}
-    assert cfg["microcopia"]["waiting"][0] == "Buscando"  # tono serio
-    assert all(len(v) == 5 for v in cfg["microcopia"].values())
-    assert "{" not in " ".join(sum(cfg["microcopia"].values(), []))  # variables reemplazadas
-    assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget
+    assert cfg["microcopy"]["waiting"][0] == "Buscando"  # tono serio
+    assert all(len(v) == 5 for v in cfg["microcopy"].values())
+    assert "{" not in " ".join(sum(cfg["microcopy"].values(), []))  # variables reemplazadas
+    assert cfg["interface"]["sources_many"] == "{n} fuentes del documento"  # plantilla del widget
 
 
 # --- ipsis widget style: cada valor, por consola ----------------------------------------------
