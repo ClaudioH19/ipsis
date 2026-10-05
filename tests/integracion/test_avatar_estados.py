@@ -178,6 +178,8 @@ def _abrir(navegador, base: str, reducido: bool = False):
     page.goto(base)
     page.evaluate("window.Ipsis.open()")
     _esperar(page, "window.Ipsis.avatar.state().ready")
+    # Con el reloj simulado las animaciones CSS no avanzan: el panel queda abierto del todo.
+    page.evaluate("document.querySelector('ipsis-chat').shadowRoot.getAnimations().forEach(a => a.finish())")
     return page
 
 

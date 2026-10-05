@@ -31,6 +31,18 @@ a minor change may break compatibility and is marked as such.
   event keys do not change.
 - **Widget icon:** the launcher and the header show the ipsis logo in
   miniature instead of a chat bubble (colors in `--rw-folio-*` variables).
+- **Smoother widget motion:**
+  - the panel grows from the launcher's corner and shrinks back into it
+    when closing (it used to vanish at once);
+  - the launcher's paper and close icons cross with a turn;
+  - messages rise in with a light scale, and an answer reveals paragraph by
+    paragraph before its citations;
+  - the typing dots fade in, the list scrolls smoothly, the send button
+    "flies" when a question is sent, and the field gets a focus ring.
+
+  Everything respects `prefers-reduced-motion` and
+  `animations.enabled: false`. New projects get the new durations
+  (`.34s` panel, `.36s` bubble); existing `styles.yaml` files keep theirs.
 - **Answers:** the opening, each passage and the related-answer intro go in
   their own paragraph (separated by a blank line) instead of one block. The
   widget already shows line breaks; integrations that render `answer` as

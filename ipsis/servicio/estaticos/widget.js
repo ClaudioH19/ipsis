@@ -255,13 +255,14 @@
     "  --rw-tamano-icono:26px;",
     "  --rw-separacion:12px;",
     "  --rw-relleno:16px;",
-    "  --rw-dur-panel:.22s;",
-    "  --rw-dur-burbuja:.2s;",
-    "  --rw-dur-control:.18s;",
+    "  --rw-dur-panel:.34s;",
+    "  --rw-dur-salida:.2s;",
+    "  --rw-dur-burbuja:.36s;",
+    "  --rw-dur-control:.22s;",
     "  --rw-dur-latido:1.2s;",
     "  --rw-curva:cubic-bezier(.16,1,.3,1);",
-    "  --rw-desplazamiento-entrada:12px;",
-    "  --rw-escala-entrada:.96;",
+    "  --rw-desplazamiento-entrada:16px;",
+    "  --rw-escala-entrada:.92;",
     "  --rw-escala-hover:1.04;",
     "  --rw-margen-x:24px;--rw-margen-y:24px;",
     "  position:fixed;z-index:var(--rw-z,2147483000);font-family:var(--rw-fuente);",
@@ -308,6 +309,14 @@
     "  transform-origin:bottom center;}",
     ".rw-raiz[data-posicion^='arriba'] .rw-panel{top:calc(var(--rw-margen-y) + var(--rw-tamano-boton) + 16px);",
     "  transform-origin:top center;}",
+    // Crece desde la esquina del lanzador, no desde el centro.
+    ".rw-raiz[data-posicion='abajo-derecha'] .rw-panel{transform-origin:bottom right;}",
+    ".rw-raiz[data-posicion='abajo-izquierda'] .rw-panel{transform-origin:bottom left;}",
+    ".rw-raiz[data-posicion='arriba-derecha'] .rw-panel{transform-origin:top right;}",
+    ".rw-raiz[data-posicion='arriba-izquierda'] .rw-panel{transform-origin:top left;}",
+    // Al cerrar se encoge hacia el lanzador; recién al terminar queda hidden.
+    ".rw-panel.rw-saliendo{animation:rw-salir var(--rw-dur-salida) cubic-bezier(.4,0,1,1) forwards;",
+    "  pointer-events:none;}",
     ".rw-raiz[data-lanzador='oculto'] .rw-panel{top:auto;bottom:var(--rw-margen-y);}",
     ".rw-raiz[data-lanzador='oculto'][data-posicion^='arriba'] .rw-panel{bottom:auto;top:var(--rw-margen-y);}",
     ".rw-panel[hidden]{display:none;}",
@@ -326,9 +335,27 @@
     "@keyframes rw-aparecer{from{opacity:0;}to{opacity:1;}}",
     "@keyframes rw-entrar{",
     "  from{opacity:0;transform:translateY(var(--rw-desplazamiento-entrada)) scale(var(--rw-escala-entrada));}",
+    "  60%{opacity:1;}",
     "  to{opacity:1;transform:translateY(0) scale(1);}}",
+    "@keyframes rw-salir{",
+    "  to{opacity:0;transform:translateY(calc(var(--rw-desplazamiento-entrada) / 2)) scale(var(--rw-escala-entrada));}}",
+    "@keyframes rw-subir{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}",
+
+    // Lanzador (burbuja): el papel y la X se cruzan con un giro en vez de saltar.
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton{position:relative;}",
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton > svg{position:absolute;left:50%;top:50%;",
+    "  transition:opacity var(--rw-dur-control) ease, transform var(--rw-dur-panel) var(--rw-curva);}",
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton .rw-icono-chat{transform:translate(-50%,-50%);}",
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton .rw-icono-cerrar{display:block;opacity:0;",
+    "  transform:translate(-50%,-50%) rotate(-90deg) scale(.5);}",
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton[aria-expanded='true'] .rw-icono-chat{display:block;",
+    "  opacity:0;transform:translate(-50%,-50%) rotate(90deg) scale(.5);}",
+    ".rw-raiz:not([data-lanzador='pestana']) .rw-boton[aria-expanded='true'] .rw-icono-cerrar{opacity:1;",
+    "  transform:translate(-50%,-50%);}",
+
     "@media (prefers-reduced-motion:reduce){",
-    "  .rw-panel,.rw-msg,.rw-punto{animation:none;} .rw-boton,.rw-enviar{transition:none;}}",
+    "  .rw-panel,.rw-msg,.rw-punto,.rw-parrafo,.rw-citas,.rw-escribiendo,.rw-enviando svg{animation:none;}",
+    "  .rw-boton,.rw-enviar,.rw-boton > svg,.rw-form input{transition:none;}}",
 
     ".rw-cabecera{background:var(--rw-superficie);color:var(--rw-texto);",
     "  padding:14px var(--rw-relleno);display:flex;align-items:center;gap:11px;flex:none;",
@@ -376,8 +403,14 @@
     ".rw-msg{max-width:86%;padding:10px 13px;border-radius:var(--rw-radio-burbuja);",
     "  font-size:var(--rw-tamano-mensaje);line-height:var(--rw-interlineado);",
     "  white-space:pre-wrap;overflow-wrap:anywhere;",
-    "  animation:rw-burbuja var(--rw-dur-burbuja) ease-out;}",
-    "@keyframes rw-burbuja{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}",
+    "  animation:rw-burbuja var(--rw-dur-burbuja) var(--rw-curva) both;transform-origin:bottom left;}",
+    "@keyframes rw-burbuja{from{opacity:0;transform:translateY(10px) scale(.96);}to{opacity:1;transform:none;}}",
+    // Lo que escribe la persona sale desde el campo (abajo a la derecha).
+    ".rw-msg.rw-msg-usuario{transform-origin:bottom right;}",
+    // La respuesta se revela párrafo a párrafo (el retraso lo pone el JS) y las citas al final.
+    ".rw-msg .rw-parrafo{animation:rw-parrafo var(--rw-dur-burbuja) var(--rw-curva) both;}",
+    "@keyframes rw-parrafo{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}",
+    ".rw-msg .rw-citas{animation:rw-aparecer var(--rw-dur-burbuja) ease-out both;}",
     // Párrafos de la respuesta (answer_blocks): el pasaje es texto del documento;
     // el conector y la cita, frases del asistente, van más suaves.
     ".rw-parrafo{margin:0;}",
@@ -430,7 +463,8 @@
 
     ".rw-escribiendo{align-self:flex-start;display:flex;gap:4px;padding:12px 14px;",
     "  background:var(--rw-superficie);border:1px solid var(--rw-borde);",
-    "  border-radius:var(--rw-radio-burbuja);border-bottom-left-radius:5px;}",
+    "  border-radius:var(--rw-radio-burbuja);border-bottom-left-radius:5px;",
+    "  animation:rw-burbuja var(--rw-dur-burbuja) var(--rw-curva) both;transform-origin:bottom left;}",
     ".rw-punto{width:6px;height:6px;border-radius:50%;background:var(--rw-texto-suave);",
     "  animation:rw-latir var(--rw-dur-latido) infinite ease-in-out;}",
     ".rw-punto:nth-child(2){animation-delay:.15s;} .rw-punto:nth-child(3){animation-delay:.3s;}",
@@ -442,9 +476,10 @@
     ".rw-form input{flex:1;padding:11px 14px;border:1px solid var(--rw-borde);",
     "  border-radius:var(--rw-radio-control);font-size:var(--rw-tamano-mensaje);",
     "  font-family:inherit;background:var(--rw-fondo);color:var(--rw-texto);",
-    "  transition:border-color .15s ease;}",
+    "  transition:border-color var(--rw-dur-control) ease, box-shadow var(--rw-dur-control) ease;}",
     ".rw-form input::placeholder{color:var(--rw-texto-suave);}",
-    ".rw-form input:focus{outline:none;border-color:var(--rw-acento);}",
+    ".rw-form input:focus{outline:none;border-color:var(--rw-acento);",
+    "  box-shadow:0 0 0 3px color-mix(in srgb, var(--rw-acento) 18%, transparent);}",
     ".rw-form input:disabled{opacity:.6;}",
     ".rw-fuente{flex:none;display:block;text-align:center;font-size:var(--rw-tamano-etiqueta);",
     "  color:var(--rw-texto-suave);padding:0 0 6px;background:var(--rw-superficie);text-decoration:none;}",
@@ -456,6 +491,13 @@
     ".rw-enviar svg{width:18px;height:18px;}",
     ".rw-enviar:hover:not(:disabled){transform:scale(var(--rw-escala-hover));}",
     ".rw-enviar:disabled{opacity:.45;cursor:default;}",
+    ".rw-enviar:active:not(:disabled){transform:scale(.92);}",
+    // Al enviar, el avión sale por la esquina y vuelve a entrar.
+    ".rw-enviando svg{animation:rw-despegar .5s var(--rw-curva);}",
+    "@keyframes rw-despegar{0%{transform:none;opacity:1;}",
+    "  40%{transform:translate(9px,-9px) scale(.7);opacity:0;}",
+    "  41%{transform:translate(-9px,9px) scale(.7);opacity:0;}",
+    "  100%{transform:none;opacity:1;}}",
     ".rw-enviar:focus-visible{outline:3px solid var(--rw-acento);outline-offset:2px;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
 
@@ -467,7 +509,7 @@
     "    top:var(--rw-vv-arriba,0px);bottom:auto;width:100%;max-width:100%;",
     "    height:var(--rw-vv-alto,100dvh);max-height:none;border-radius:0;border:none;",
     "    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)",
-    "      env(safe-area-inset-left);animation:rw-aparecer var(--rw-dur-panel) ease-out;}",
+    "      env(safe-area-inset-left);animation:rw-subir var(--rw-dur-panel) var(--rw-curva);}",
     "  .rw-msg{max-width:92%;}",
     "  .rw-raiz{--rw-avatar-tamano:40px !important;}",
     "  .rw-avatar-esquina[data-esquina='esquina-superior']{top:8px;right:56px;}",
@@ -681,8 +723,16 @@
   //    `textContent`, nunca `innerHTML`: un documento con una comilla
   //    angular no debe poder inyectar marcado en el sitio anfitrión.
   // -------------------------------------------------------------------
+  function sinMovimiento() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
   function desplazarAlFinal() {
-    mensajes.scrollTop = mensajes.scrollHeight;
+    if (sinMovimiento() || typeof mensajes.scrollTo !== "function") {
+      mensajes.scrollTop = mensajes.scrollHeight;
+      return;
+    }
+    mensajes.scrollTo({ top: mensajes.scrollHeight, behavior: "smooth" });
   }
 
   function agregarMensajeUsuario(texto) {
@@ -833,12 +883,17 @@
     // Un párrafo por bloque; sin bloques (API anterior), el texto completo.
     var bloques = respuesta.bloques && respuesta.bloques.length
       ? respuesta.bloques : [{ tipo: "message", texto: respuesta.respuesta || "" }];
-    bloques.forEach(function (bloque) {
-      burbuja.appendChild(parrafoDeBloque(bloque));
+    bloques.forEach(function (bloque, i) {
+      var parrafo = parrafoDeBloque(bloque);
+      // Se revela párrafo a párrafo, con un tope para que una respuesta larga no tarde.
+      parrafo.style.animationDelay = Math.min(i, 5) * 70 + "ms";
+      burbuja.appendChild(parrafo);
     });
 
     if (estadoResp === "ok" || estadoResp === "relacionado") {
       agregarCitas(burbuja, respuesta.fragmentos, respuesta.respuesta_exacta);
+      var citas = burbuja.querySelector(".rw-citas");
+      if (citas) citas.style.animationDelay = (Math.min(bloques.length, 6) * 70 + 80) + "ms";
     }
 
     mensajes.appendChild(burbuja);
@@ -1023,6 +1078,9 @@
     var texto = input.value.trim();
     if (!texto) return;
     emitir("ipsis:question", { question: texto });
+    botonEnviar.classList.remove("rw-enviando");
+    void botonEnviar.offsetWidth; // reinicia la animación si se envía otra vez enseguida
+    botonEnviar.classList.add("rw-enviando");
     avatarAlEnviar();
     enviarPregunta(texto);
   });
@@ -1063,6 +1121,7 @@
     // elemento interno permite devolver el foco al botón que abrió el diálogo.
     elementoFocoPrevio = raiz.activeElement || document.activeElement;
     ajustarViewport();
+    terminarSalida(false);
     panel.hidden = false;
     boton.setAttribute("aria-expanded", "true");
     input.focus();
@@ -1073,9 +1132,33 @@
     emitir("ipsis:open");
   }
 
+  // La salida se anima y recién al terminar el panel queda hidden. Sin
+  // animación (prefers-reduced-motion o `animations.enabled: false`) se oculta al tiro.
+  var temporizadorSalida = null;
+  function terminarSalida(ocultar) {
+    if (temporizadorSalida) clearTimeout(temporizadorSalida);
+    temporizadorSalida = null;
+    panel.classList.remove("rw-saliendo");
+    panel.removeEventListener("animationend", alTerminarSalida);
+    if (ocultar) panel.hidden = true;
+  }
+  function alTerminarSalida(ev) {
+    if (ev.target === panel) terminarSalida(true);
+  }
+  function panelAbierto() {
+    return !panel.hidden && !panel.classList.contains("rw-saliendo");
+  }
+
   function cerrarPanel() {
     if (INCRUSTADO) return;
-    panel.hidden = true;
+    panel.classList.add("rw-saliendo");
+    var estilo = window.getComputedStyle(panel);
+    if (sinMovimiento() || estilo.animationName === "none" || parseFloat(estilo.animationDuration) === 0) {
+      terminarSalida(true);
+    } else {
+      panel.addEventListener("animationend", alTerminarSalida);
+      temporizadorSalida = setTimeout(function () { terminarSalida(true); }, 600);  // por si no llega el evento
+    }
     boton.setAttribute("aria-expanded", "false");
     document.removeEventListener("keydown", manejarTeclado, true);
     ubicarAvatar();
@@ -1114,7 +1197,7 @@
   }
 
   boton.addEventListener("click", function () {
-    if (panel.hidden) abrirPanel();
+    if (!panelAbierto()) abrirPanel();
     else cerrarPanel();
   });
   botonCerrar.addEventListener("click", cerrarPanel);
@@ -1156,7 +1239,7 @@
     AVATAR.config = cfg;
     var tamano = entero(cfg.tamano, 32, 160);
     if (tamano !== null) contenedor.style.setProperty("--rw-avatar-tamano", tamano + "px");
-    if (INCRUSTADO || !panel.hidden) {
+    if (INCRUSTADO || panelAbierto()) {
       cargarAvatar();
     } else if (cfg.en_lanzador) {
       var ocioso = window.requestIdleCallback || function (fn) { return setTimeout(fn, 1500); };
@@ -1209,7 +1292,7 @@
     ubicarAvatar();
     emitir("ipsis:avatar", { state: "ready", name: AVATAR.config.nombre });
     reiniciarInactividad(false);
-    if (INCRUSTADO || !panel.hidden) avatarAlAbrir();
+    if (INCRUSTADO || panelAbierto()) avatarAlAbrir();
   }
 
   // Lleva el lienzo a donde corresponde: el lanzador con el panel cerrado
@@ -1218,7 +1301,7 @@
   function ubicarAvatar() {
     var lienzo = AVATAR.lienzo, cfg = AVATAR.config;
     if (!lienzo || !cfg) return;
-    var abierto = INCRUSTADO || !panel.hidden;
+    var abierto = INCRUSTADO || panelAbierto();
     var destino;
     if (!abierto) {
       if (!cfg.en_lanzador) return;
@@ -1347,7 +1430,7 @@
   function reiniciarInactividad(despertar) {
     clearTimeout(maquina.inactividad);
     if (despertar && maquina.persistente === "sleepy") {
-      maquina.persistente = (INCRUSTADO || !panel.hidden) ? "attentive" : "idle";
+      maquina.persistente = (INCRUSTADO || panelAbierto()) ? "attentive" : "idle";
       transitar("wake_up");
     }
     var minutos = Number((AVATAR.config || {}).inactividad_min) || 2;
@@ -1525,7 +1608,7 @@
     },
     state: function () {
       return {
-        open: !panel.hidden,
+        open: panelAbierto(),
         position: publico("posicion", UBICACION.posicion),
         size: publico("tamano", UBICACION.tamano),
         launcher: publico("lanzador", UBICACION.lanzador),

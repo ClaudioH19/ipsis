@@ -139,6 +139,7 @@ def test_movil_ocupa_la_ventana_completa(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})
     page.goto(servidor_widget)
     page.get_by_role("button", name=re.compile("Open chat")).click()
+    page.evaluate("document.querySelector('ipsis-chat').shadowRoot.getAnimations().forEach(a => a.finish())")  # medir con la animación de entrada ya terminada
     caja = page.get_by_role("dialog").bounding_box()
 
     assert caja is not None
@@ -181,3 +182,28 @@ def test_error_de_red_es_claro_y_permite_reintentar(navegador, servidor_widget):
 if __name__ == "__main__":
     puerto = 8765
     uvicorn.run(_crear_app_prueba(f"http://127.0.0.1:{puerto}"), host="127.0.0.1", port=puerto)
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("movimiento", ["no-preference", "reduce"])
+def test_cerrar_anima_la_salida_y_luego_oculta(navegador, servidor_widget, movimiento):
+    page = navegador.new_page(reduced_motion=movimiento)
+    page.goto(servidor_widget)
+    boton = page.get_by_role("button", name=re.compile("Open chat"))
+    boton.click()
+    dialogo = page.get_by_role("dialog")
+    expect(dialogo).to_be_visible()
+    page.keyboard.press("Escape")
+    # El estado cambia en el acto, aunque el panel todavía se esté encogiendo.
+    assert page.evaluate("window.Ipsis.state().open") is False
+    assert boton.get_attribute("aria-expanded") == "false"
+    if movimiento == "reduce":
+        assert page.evaluate("document.querySelector('ipsis-chat').shadowRoot"
+                             ".querySelector('.rw-panel').hidden") is True
+    expect(dialogo).to_be_hidden()
+    # Reabrir enseguida cancela una salida a medias.
+    boton.click()
+    expect(dialogo).to_be_visible()
+    page.wait_for_timeout(700)
+    expect(dialogo).to_be_visible()
+    page.close()
