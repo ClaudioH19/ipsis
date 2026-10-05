@@ -682,6 +682,79 @@ core:
   index_no_manifest: el índice {name!r} no tiene manifiesto ({path}); es de una versión anterior. Ejecuta 'ipsis index'.
   index_no_stats: no existen las estadísticas léxicas del índice en {path!r}. Ejecuta 'ipsis index' para reconstruir el índice.
   collection_missing: la colección Qdrant {name!r} no existe todavía. Ejecuta 'ipsis index' primero (lee la misma config/engine.yaml::retrieval que este servicio).
+evaluation:
+  calibrated: 'Calibrado en dev: {n} respuestas directas, {x} erróneas, cota {bound} ≤ α={alpha}; cobertura directa {coverage}.'
+  insufficient_sample: 'Muestra insuficiente: hasta {without_errors} respuestas directas sin error en dev. Para certificar α={alpha} con {confidence} de confianza hacen falta al menos {needed} si siguen sin errores (faltan {missing}). No es evidencia de inseguridad: se mantienen los umbrales del perfil.'
+  no_safe_threshold: 'Sin umbral seguro: hay hasta {accepted} respuestas directas en dev, pero ninguna combinación deja la cota ≤ α={alpha}. Se mantienen los umbrales del perfil.'
+  calibration_status: 'la calibración quedó en estado {status}: se usan los umbrales del perfil'
+  calibration_profile: se calibró con el perfil {calibrated!r} y el proyecto usa {profile!r}
+  calibration_models: se calibró con otros modelos
+  calibration_corpus: el corpus indexado cambió desde la calibración (o no hay índice)
+  offsets_mismatch: los offsets de evidencia no coinciden con el texto literal
+  answerable_needs_evidence: una pregunta respondible exige respuesta literal y evidencia
+  literal_in_evidence: la respuesta literal debe estar contenida en una evidencia
+  answerable_status: una pregunta respondible exige un estado de respuesta
+  unanswerable_evidence: una pregunta no respondible no debe declarar evidencia
+  status_category: estado esperado incompatible con la categoría
+  duplicate_ids: el banco contiene IDs de caso duplicados
+  case_version: la versión de un caso no coincide con el manifiesto
+  missing_categories: 'faltan categorías requeridas: {categories}'
+  stable_split: un banco estable debe separar dev y test
+  corpus_hash: el hash del corpus no coincide con el manifiesto
+  regression_bank: 'el banco {bank!r} es de regresión del software: sirve para medir y comparar, no para calibrar umbrales. Calibra con el golden del cliente'
+  unknown_document: '{case}: documento desconocido {document!r}'
+  not_literal: '{case}: evidencia no literal o offsets inválidos'
+  compare_two: se requieren al menos dos ejecuciones para comparar
+  compare_labels: cada ejecución debe tener una etiqueta de backend distinta
+  compare_identity: las ejecuciones no usan el mismo dataset, corpus y k
+  note_regression: 'Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no certifican a ningún cliente; eso lo hace «ipsis calibrate» con el golden del cliente.'
+  note_evaluation: 'Banco de evaluación del cliente: la guardia de falsos ok (como en «ipsis evaluate») exige 0 en los perfiles; las cotas solo se certifican con «ipsis calibrate».'
+  variant_medium_ok: 'medium con τ_ok = {value} (perfil: {profile_value}). Re-decide las observaciones de medium con la regla de producción; un umbral no cambia el costo, así que la latencia es la de medium.'
+  variant_light_agreement: light exigiendo acuerdo ≥ 0,5 (top-1 denso en el top-3 BM25 y viceversa) para un ok léxico. Agrega dos búsquedas por pregunta; la latencia suma su costo medido a cada consulta de light.
+  extra_p50: búsquedas extra p50 ms
+  extra_p95: búsquedas extra p95 ms
+  report_title: '# Benchmark por perfiles'
+  report_bank: '- Banco `{bank}` ({language}, uso {use}, {cases} casos)'
+  report_project_language: idioma del proyecto
+  report_quality: '## Calidad, seguridad y latencia'
+  report_quality_header: '| Perfil | Cobertura directa | Exactas | Paráfrasis | Falsos ok | Trampas con falso ok | Riesgo aceptadas x/n | p50 ms | p95 ms | Presupuesto p95 | Cumple |'
+  report_yes: sí
+  report_no: 'NO'
+  report_rejection: '## Rechazo correcto'
+  report_rejection_header: '| Perfil | Fuera de dominio | Premisa falsa | Ambiguas con falso ok | Relacionadas (respondibles) | Directas sin literal |'
+  report_by_language: '## Por idioma (cobertura directa · exactas · falsos ok)'
+  report_profile: Perfil
+  report_false_ok: '## Falsos ok por perfil (hard negatives)'
+  report_none: ninguno
+  report_cost: '## Costo'
+  report_cost_header: '| Perfil | Modelos (parámetros · ONNX en disco) | recuperar_n / rerank_k / leer_m | Indexado (s) | Extra |'
+  report_onnx_note: El tamaño ONNX es el del archivo en disco, no la memoria usada (no se mide RSS).
+  report_stage_latency: '## Latencia por etapa (p95 ms)'
+  report_variants: '## Variantes experimentales (no son defaults)'
+lint:
+  unknown_situation: situación desconocida {situation!r}
+  empty: vacía
+  bad_braces: 'llaves mal formadas: {error}'
+  one_line: debe ser una sola línea
+  too_long: tiene {length} caracteres (máximo {maximum})
+  digits: no puede tener dígitos (afirmaría un dato)
+  urls: no puede tener URLs
+  html_tags: no puede tener HTML
+  markdown: no puede tener Markdown
+  emojis: no puede tener emojis
+  opening_marks: los signos de apertura (¡ ¿) deben cerrarse (! ?)
+  capitals: no puede tener palabras enteras en mayúsculas
+  variables_not_allowed: 'variables no permitidas: {extra} (permitidas: {allowed})'
+  none_allowed: ninguna
+  missing_variables: le falta {missing}
+  variable_format: las variables no admiten formato ni conversión
+  colon: debe terminar en «:» porque introduce el texto del documento
+  forbidden: 'contiene una expresión prohibida: {expression!r}'
+  missing_situations: 'faltan situaciones: {missing}'
+  min_variants: '{situation}: necesita al menos {minimum} variantes'
+  repeats_own: '{situation}[{index}]: repite otra variante de la misma situación'
+  repeats_other: '{situation}[{index}]: repite una variante de {other}'
+  no_tone: 'no hay tono {tone!r} para el idioma {language!r}; disponibles: {available}'
 panel:
   lang: es
   title: Panel del asistente
@@ -757,6 +830,41 @@ presets:
   minimal: Interfaz compacta, radios discretos y sombras suaves.
   editorial: Paleta cálida y tipografía serif para documentación extensa.
   contrast: Contraste alto, controles marcados y animaciones desactivadas.
+runtime:
+  short_token: 'IPSIS_ADMIN_TOKEN tiene {length} caracteres; se necesitan {minimum} o más: /admin queda apagado'
+  bad_source_url: 'IPSIS_SOURCE_URL={url!r} no es una URL http(s): /source usa {default}'
+  positive: '{name} debe ser mayor que cero'
+  not_negative: '{name} no puede ser negativo'
+  reader_disagreement: los dos mejores tramos dan valores distintos del mismo tipo
+  unsupported_entity: 'entidad en la respuesta sin respaldo literal en los fragmentos: {entities}'
+  already_loaded: (ya estaba en el catálogo, mismo contenido)
+  plain_text_sections: 'el texto plano no declara estructura de secciones: todo el documento queda sin seccion_path, lo que degrada los filtros deterministas.'
+  assistant_header: '# Identidad del asistente. Editable con `ipsis configure clave=valor`.
+
+    '
+  api_description: 'Código fuente (AGPL-3.0): {url}'
+  vector_shape: vector de forma {shape}, se esperaba (1, {dimension})
+  vector_invalid: el vector no es finito o no está normalizado
+  score_invalid: 'puntaje inválido: {score}'
+  log_ready: no se pudo refrescar el diagnóstico de /ready
+  log_personality: 'no se pudo recargar la personalidad: {error}'
+  log_query_log: 'no se pudo escribir el registro de consultas: {error}'
+  preview_lang: es
+  preview_title: Vista previa del widget — {preset}
+  preview_label: Mockup del widget
+  preview_header: Asistente documental · preset {preset}
+  preview_question: ¿Cada cuánto debo cambiar el filtro?
+  preview_direct: Respuesta directa
+  preview_answer: El filtro se cambia cada 6 meses.
+  preview_citation_title: Manual · Filtros
+  preview_citation: El filtro de sedimentos se cambia cada 6 meses.
+  preview_related_label: Información relacionada
+  preview_related: El documento describe la garantía, pero no confirma ese supuesto.
+  preview_no_answer: No encontré una respuesta respaldada por los documentos.
+  preview_conversational: Hola, puedo ayudarte a consultar la documentación.
+  preview_heading: Vista previa
+  preview_text: Este mockup no consulta el índice. Permite revisar paleta, tipografía, forma, estados y citas antes de publicar.
+  preview_preset: 'Preset activo:'
 styles:
   not_object: el tema debe ser un objeto YAML
   section_object: '{section} debe ser un objeto'

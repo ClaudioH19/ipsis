@@ -227,6 +227,8 @@ mensajes:
     contraste_version:
     - In version {v1}…; in version {v2}…
   sin_seccion: (no section)
+  cita_breve: '(Source: {documento})'
+  cita_completa: '(Source: {documento}, section: {seccion})'
 interfaz:
   default_assistant_name: Document assistant
   default_domain_description: the loaded documents

@@ -23,6 +23,7 @@ from ipsis.configuracion.calibracion import (
 )
 from ipsis.consulta.etapas.politica import RESULTADO_DE_REGLA, SenalesPolitica, regla_cascada
 from ipsis.evaluacion.banco import BancoEvaluacion, CasoEvaluacion, exigir_calibrable
+from ipsis.recursos.mensajes import t
 from ipsis.evaluacion.metricas import (
     ObservacionEvaluacion,
     RiesgoAceptadas,
@@ -278,18 +279,16 @@ def _calibrar_pares(pares: list[Par], umbrales_perfil: dict[str, float], alfa: f
         riesgo = metricas_dev.riesgo
         if riesgo.cota_superior is None or riesgo.cota_superior > alfa:
             raise AssertionError("la verificación completa en dev no reproduce el barrido")  # nunca debería
-        resultado.mensaje = (f"Calibrado en dev: {riesgo.n} respuestas directas, {riesgo.x} erróneas, cota "
-                             f"{riesgo.cota_superior:.4f} ≤ α={alfa}; cobertura directa "
-                             f"{metricas_dev.cobertura_directa if respondibles_dev else 0:.3f}.")
+        resultado.mensaje = t("evaluation.calibrated", n=riesgo.n, x=riesgo.x, bound=f"{riesgo.cota_superior:.4f}",
+                              alpha=alfa,
+                              coverage=f"{metricas_dev.cobertura_directa if respondibles_dev else 0:.3f}")
     elif estado == EstadoCalibracion.MUESTRA_INSUFICIENTE:
         resultado.faltan_aceptadas = necesarias - sin_error_max
-        resultado.mensaje = (f"Muestra insuficiente: hasta {sin_error_max} respuestas directas sin error en dev. "
-                             f"Para certificar α={alfa} con {confianza:.0%} de confianza hacen falta al menos "
-                             f"{necesarias} si siguen sin errores (faltan {necesarias - sin_error_max}). No es "
-                             "evidencia de inseguridad: se mantienen los umbrales del perfil.")
+        resultado.mensaje = t("evaluation.insufficient_sample", without_errors=sin_error_max, alpha=alfa,
+                              confidence=f"{confianza:.0%}", needed=necesarias,
+                              missing=necesarias - sin_error_max)
     else:
-        resultado.mensaje = (f"Sin umbral seguro: hay hasta {aceptadas_max} respuestas directas en dev, pero ninguna "
-                             f"combinación deja la cota ≤ α={alfa}. Se mantienen los umbrales del perfil.")
+        resultado.mensaje = t("evaluation.no_safe_threshold", accepted=aceptadas_max, alpha=alfa)
 
     if test:
         metricas_test = metricas_split(redecidir_pares(test, umbrales_finales), confianza)

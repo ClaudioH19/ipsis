@@ -4,6 +4,7 @@ from __future__ import annotations
 from ipsis.consulta.etapas.base import _Etapa
 from ipsis.lenguaje.texto import dividir_oraciones
 from ipsis.nucleo.esquemas import EvidenceSpan
+from ipsis.recursos.mensajes import t
 
 
 def oracion_que_contiene(texto: str, inicio: int, fin: int) -> tuple[int, int]:
@@ -73,7 +74,7 @@ class EtapaLectura(_Etapa):
         if perfil is not None and perfil.cascada.concordancia:
             ctx.discordancia = hay_discordancia(ctx.lecturas)
             if ctx.discordancia:
-                ctx.diagnostico["advertencias"].append("los dos mejores tramos dan valores distintos del mismo tipo")
+                ctx.diagnostico["advertencias"].append(t("runtime.reader_disagreement"))
         mejor = max(ctx.lecturas, key=lambda lec: (lec.s_qa, -lec.indice_pasaje))
         if not mejor.texto or mejor.s_qa <= 0:
             return

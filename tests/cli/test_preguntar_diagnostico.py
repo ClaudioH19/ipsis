@@ -48,7 +48,7 @@ def test_el_caso_de_uso_lee_el_diagnostico_del_motor():
     motor = MotorFalso()
     d = diagnosticar_pregunta("¿Cada cuánto se cambia el filtro?", motor=motor)
     assert (d.estado, d.regla, d.motivo, d.perfil) == ("ok", "ok_lector", "lector", "medium")
-    assert d.etapas == [("filtros", 3), ("recuperacion", 12), ("lectura", 40), ("politica", 0)]
+    assert d.etapas == [("filters", 3), ("retrieval", 12), ("reading", 40), ("policy", 0)]
     assert d.total_ms == 55
     assert d.senales["s_qa"] == 0.93
     assert (d.foco_encontrados, d.foco_ausentes) == (["filtro"], ["sedimentos"])
@@ -63,7 +63,7 @@ def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
     assert main(["ask", "--diagnostics", "¿Cada cuánto se cambia el filtro?"]) == 0
     salida = capsys.readouterr().out
     assert "[OK]" in salida and "Regla: ok_lector (motivo: lector; perfil: medium)" in salida
-    for linea in ("  filtros               3", "  lectura              40", "  total                55"):
+    for linea in ("  filters               3", "  reading              40", "  total                55"):
         assert linea in salida
     assert "s_qa=0.930" in salida and "s_foco=0.500" in salida
     assert "Términos foco: encontrados: filtro; ausentes: sedimentos" in salida

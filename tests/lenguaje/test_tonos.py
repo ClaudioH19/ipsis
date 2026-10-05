@@ -142,3 +142,10 @@ def test_el_motor_usa_el_tono_y_la_sobrescritura_del_proyecto(tmp_path: Path, mo
     assert plantillas["conectores"]["secuencia"] == ["Primero", "Luego", "Por último"]  # estructural, del idioma
     assert len(plantillas["conectores"]["opening"]) == 5
     assert all("Ana" in r or "manual" in r for r in plantillas["conversacional"]["respuestas"]["capability"])
+
+
+def test_los_errores_del_linter_salen_en_el_idioma_de_la_interfaz(monkeypatch):
+    monkeypatch.setenv("IPSIS_LANG", "en")
+    assert errores_plantilla("no_answer", "Hay 3 cosas") == ["cannot contain digits (it would assert a fact)"]
+    monkeypatch.setenv("IPSIS_LANG", "es")
+    assert errores_plantilla("no_answer", "Hay 3 cosas") == ["no puede tener dígitos (afirmaría un dato)"]

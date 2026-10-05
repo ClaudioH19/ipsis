@@ -125,3 +125,18 @@ def test_todas_las_variantes_de_conectores_pasan_la_fidelidad():
                 texto = redactar(fragmentos, plantillas=plantillas, cfg_redaccion={"incluir_apertura": True})
                 assert texto.startswith(apertura) and condicion in texto
                 assert verificar_fidelidad(texto, fragmentos).fiel, texto
+
+
+@pytest.mark.parametrize("codigo, etiqueta", [("en", "(Source: Manual, section: Filter)"),
+                                               ("es", "(Fuente: Manual, sección: Filter)"),
+                                               ("pt", "(Fonte: Manual, seção: Filter)")])
+def test_la_cita_en_el_texto_sale_del_paquete_de_idioma(tmp_path, monkeypatch, codigo, etiqueta):
+    from ipsis.consulta.etapas.redaccion import cargar_plantillas, redactar
+    from ipsis.lenguaje.paquete import cargar_paquete
+
+    monkeypatch.chdir(tmp_path)
+    fragmentos = [{"chunk_id": "c1", "texto": "The filter is replaced every 6 months.", "doc_titulo": "Manual",
+                   "score": 0.9, "seccion_path": ["Filter"]}]
+    texto = redactar(fragmentos, plantillas=cargar_plantillas(cargar_paquete(codigo)),
+                     cfg_redaccion={"incluir_apertura": False, "cita_en_texto": "completa"})
+    assert texto == f"The filter is replaced every 6 months. {etiqueta}."

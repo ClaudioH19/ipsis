@@ -18,6 +18,7 @@ import secrets
 from dataclasses import dataclass, field
 from typing import Mapping
 
+from ipsis.recursos.mensajes import t
 MODOS = ("produccion", "desarrollo")
 # Valor de IPSIS_MODE / --mode → modo interno.
 _MODOS_EXTERNOS = {"production": "produccion", "development": "desarrollo"}
@@ -65,11 +66,9 @@ class ModoServicio:
         """Configuración que impide lo que el usuario quiso activar."""
         salida = []
         if self.token_admin and len(self.token_admin) < LARGO_MINIMO_TOKEN:
-            salida.append(f"IPSIS_ADMIN_TOKEN tiene {len(self.token_admin)} caracteres; se necesitan "
-                          f"{LARGO_MINIMO_TOKEN} o más: /admin queda apagado")
+            salida.append(t("runtime.short_token", length=len(self.token_admin), minimum=LARGO_MINIMO_TOKEN))
         if not self.url_fuente.startswith(("https://", "http://")):
-            salida.append(f"IPSIS_SOURCE_URL={self.url_fuente!r} no es una URL http(s): /fuente usa "
-                          f"{URL_FUENTE_POR_DEFECTO}")
+            salida.append(t("runtime.bad_source_url", url=self.url_fuente, default=URL_FUENTE_POR_DEFECTO))
         return salida
 
     @property

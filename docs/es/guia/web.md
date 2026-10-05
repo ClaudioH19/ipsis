@@ -7,7 +7,7 @@ La integración tiene dos partes:
 - el **widget**, un solo archivo `widget.js` sin dependencias que el
   servicio publica en `/widget.js`.
 
-![El widget responde citando el manual y marca el dato dentro de la cita](../../assets/widget-respuesta.png)
+![El widget responde citando el manual y marca el dato dentro de la cita](../../assets/widget-answer.png)
 
 ## Insertarlo
 

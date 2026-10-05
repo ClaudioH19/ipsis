@@ -46,6 +46,8 @@ class Mensajes(_Estricto):
     ``ipsis/recursos/tonos/``."""
 
     sin_seccion: str
+    cita_breve: str  # {documento}
+    cita_completa: str  # {documento}, {seccion}
     conectores: dict[str, list[str]] = Field(default_factory=dict)  # secuencia, contraste_version
 
 

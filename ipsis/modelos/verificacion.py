@@ -41,13 +41,13 @@ def _inferir(spec: ModeloSpec, modelo) -> None:
     if spec.tarea == "denso":
         vectores = np.asarray(modelo.codificar_consultas([PREGUNTA]))
         if vectores.shape != (1, spec.dimension):
-            raise ValueError(f"vector de forma {vectores.shape}, se esperaba (1, {spec.dimension})")
+            raise ValueError(t("runtime.vector_shape", shape=vectores.shape, dimension=spec.dimension))
         if not np.all(np.isfinite(vectores)) or abs(float(np.linalg.norm(vectores[0])) - 1.0) > 1e-3:
-            raise ValueError("el vector no es finito o no está normalizado")
+            raise ValueError(t("runtime.vector_invalid"))
     elif spec.tarea == "reranker":
         puntajes = modelo.puntuar(PREGUNTA, [PASAJE])
         if len(puntajes) != 1 or not math.isfinite(puntajes[0]):
-            raise ValueError(f"puntaje inválido: {puntajes}")
+            raise ValueError(t("runtime.score_invalid", score=puntajes))
     else:
         lectura = modelo.leer(PREGUNTA, [PASAJE])[0]
         if not (math.isfinite(lectura.prob_respuesta) and math.isfinite(lectura.prob_sin_respuesta)):

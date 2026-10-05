@@ -682,6 +682,79 @@ core:
   index_no_manifest: the index {name!r} has no manifest ({path}); it is from an earlier version. Run 'ipsis index'.
   index_no_stats: the lexical statistics of the index do not exist at {path!r}. Run 'ipsis index' to rebuild the index.
   collection_missing: the Qdrant collection {name!r} does not exist yet. Run 'ipsis index' first (it reads the same config/engine.yaml::retrieval as this service).
+evaluation:
+  calibrated: 'Calibrated on dev: {n} direct answers, {x} wrong, bound {bound} ≤ α={alpha}; direct coverage {coverage}.'
+  insufficient_sample: 'Insufficient sample: up to {without_errors} direct answers without errors in dev. Certifying α={alpha} with {confidence} confidence needs at least {needed} if they stay error-free ({missing} missing). It is not evidence of being unsafe: the profile thresholds are kept.'
+  no_safe_threshold: 'No safe threshold: there are up to {accepted} direct answers in dev, but no combination keeps the bound ≤ α={alpha}. The profile thresholds are kept.'
+  calibration_status: 'the calibration ended with status {status}: the profile thresholds are used'
+  calibration_profile: it was calibrated with the profile {calibrated!r} and the project uses {profile!r}
+  calibration_models: it was calibrated with other models
+  calibration_corpus: the indexed corpus changed since the calibration (or there is no index)
+  offsets_mismatch: the evidence offsets do not match the literal text
+  answerable_needs_evidence: an answerable question needs a literal answer and evidence
+  literal_in_evidence: the literal answer must be contained in a piece of evidence
+  answerable_status: an answerable question needs an answer status
+  unanswerable_evidence: an unanswerable question must not declare evidence
+  status_category: expected status incompatible with the category
+  duplicate_ids: the bank has duplicate case IDs
+  case_version: the version of a case does not match the manifest
+  missing_categories: 'required categories are missing: {categories}'
+  stable_split: a stable bank must split dev and test
+  corpus_hash: the corpus hash does not match the manifest
+  regression_bank: 'the bank {bank!r} is a software regression bank: it is for measuring and comparing, not for calibrating thresholds. Calibrate with your golden set'
+  unknown_document: '{case}: unknown document {document!r}'
+  not_literal: '{case}: evidence not literal or invalid offsets'
+  compare_two: at least two runs are needed to compare
+  compare_labels: each run needs a different backend label
+  compare_identity: the runs do not use the same dataset, corpus and k
+  note_regression: 'Regression bank: it compares profiles on the same cases. Its risk bounds certify no client; ''ipsis calibrate'' does that with the client''s golden set.'
+  note_evaluation: 'Client evaluation bank: the false ok guard (as in ''ipsis evaluate'') requires 0 in the profiles; the bounds are only certified with ''ipsis calibrate''.'
+  variant_medium_ok: 'medium with τ_ok = {value} (profile: {profile_value}). It re-decides the medium observations with the production rule; a threshold does not change the cost, so the latency is medium''s.'
+  variant_light_agreement: light requiring agreement ≥ 0.5 (dense top-1 in the BM25 top-3 and vice versa) for a lexical ok. It adds two searches per question; the latency adds their measured cost to each light query.
+  extra_p50: extra searches p50 ms
+  extra_p95: extra searches p95 ms
+  report_title: '# Benchmark by profile'
+  report_bank: '- Bank `{bank}` ({language}, use {use}, {cases} cases)'
+  report_project_language: project language
+  report_quality: '## Quality, safety and latency'
+  report_quality_header: '| Profile | Direct coverage | Exact | Paraphrase | False ok | Traps with false ok | Accepted risk x/n | p50 ms | p95 ms | p95 budget | Meets |'
+  report_yes: 'yes'
+  report_no: 'NO'
+  report_rejection: '## Correct rejection'
+  report_rejection_header: '| Profile | Out of domain | False premise | Ambiguous with false ok | Related (answerable) | Direct without literal |'
+  report_by_language: '## By language (direct coverage · exact · false ok)'
+  report_profile: Profile
+  report_false_ok: '## False ok per profile (hard negatives)'
+  report_none: none
+  report_cost: '## Cost'
+  report_cost_header: '| Profile | Models (parameters · ONNX on disk) | retrieve_n / rerank_k / read_m | Indexing (s) | Extra |'
+  report_onnx_note: The ONNX size is that of the file on disk, not the memory used (RSS is not measured).
+  report_stage_latency: '## Latency per stage (p95 ms)'
+  report_variants: '## Experimental variants (not defaults)'
+lint:
+  unknown_situation: unknown situation {situation!r}
+  empty: empty
+  bad_braces: 'malformed braces: {error}'
+  one_line: must be a single line
+  too_long: has {length} characters (maximum {maximum})
+  digits: cannot contain digits (it would assert a fact)
+  urls: cannot contain URLs
+  html_tags: cannot contain HTML
+  markdown: cannot contain Markdown
+  emojis: cannot contain emojis
+  opening_marks: opening marks (¡ ¿) must be closed (! ?)
+  capitals: cannot contain whole words in capitals
+  variables_not_allowed: 'variables not allowed: {extra} (allowed: {allowed})'
+  none_allowed: none
+  missing_variables: missing {missing}
+  variable_format: variables accept no format or conversion
+  colon: must end with ":" because it introduces the document text
+  forbidden: 'contains a forbidden expression: {expression!r}'
+  missing_situations: 'missing situations: {missing}'
+  min_variants: '{situation}: needs at least {minimum} variants'
+  repeats_own: '{situation}[{index}]: repeats another variant of the same situation'
+  repeats_other: '{situation}[{index}]: repeats a variant of {other}'
+  no_tone: 'there is no tone {tone!r} for the language {language!r}; available: {available}'
 panel:
   lang: en
   title: Assistant panel
@@ -757,6 +830,41 @@ presets:
   minimal: Compact interface, subtle radii and soft shadows.
   editorial: Warm palette and serif typography for long documentation.
   contrast: High contrast, marked controls and animations off.
+runtime:
+  short_token: 'IPSIS_ADMIN_TOKEN has {length} characters; {minimum} or more are needed: /admin stays off'
+  bad_source_url: 'IPSIS_SOURCE_URL={url!r} is not an http(s) URL: /source uses {default}'
+  positive: '{name} must be greater than zero'
+  not_negative: '{name} cannot be negative'
+  reader_disagreement: the two best spans give different values of the same type
+  unsupported_entity: 'entity in the answer without literal support in the fragments: {entities}'
+  already_loaded: (already in the catalog, same content)
+  plain_text_sections: 'the plain text declares no section structure: the whole document has no seccion_path, which weakens the deterministic filters.'
+  assistant_header: '# Assistant identity. Edit it with `ipsis configure key=value`.
+
+    '
+  api_description: 'Source code (AGPL-3.0): {url}'
+  vector_shape: vector of shape {shape}, expected (1, {dimension})
+  vector_invalid: the vector is not finite or not normalized
+  score_invalid: 'invalid score: {score}'
+  log_ready: could not refresh the /ready diagnosis
+  log_personality: 'could not reload the personality: {error}'
+  log_query_log: 'could not write the query log: {error}'
+  preview_lang: en
+  preview_title: Widget preview — {preset}
+  preview_label: Widget mockup
+  preview_header: Document assistant · preset {preset}
+  preview_question: How often should I replace the filter?
+  preview_direct: Direct answer
+  preview_answer: The filter is replaced every 6 months.
+  preview_citation_title: Manual · Filters
+  preview_citation: The sediment filter is replaced every 6 months.
+  preview_related_label: Related information
+  preview_related: The document describes the warranty, but does not confirm that case.
+  preview_no_answer: I found no answer backed by the documents.
+  preview_conversational: Hi, I can help you look things up in the documentation.
+  preview_heading: Preview
+  preview_text: This mockup does not query the index. It lets you review the palette, typography, shape, states and citations before publishing.
+  preview_preset: 'Active preset:'
 styles:
   not_object: the theme must be a YAML object
   section_object: '{section} must be an object'

@@ -194,7 +194,7 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
         if hash_contenido in hashes_existentes:
             resultado.append(DocumentoCargado(
                 archivo=ruta_origen.name, doc_id=hashes_existentes[hash_contenido],
-                doc_titulo="(ya estaba en el catálogo, mismo contenido)", version="-", vigente=True,
+                doc_titulo=t("runtime.already_loaded"), version="-", vigente=True,
                 hash_contenido=hash_contenido, ya_existia=True,
             ))
             continue

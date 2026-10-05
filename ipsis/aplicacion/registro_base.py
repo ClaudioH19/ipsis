@@ -10,6 +10,7 @@ import re
 from typing import Any, Sequence
 
 from ipsis.nucleo.registro import RegistroComponentes, registro_componentes
+from ipsis.recursos.mensajes import t
 from ipsis.nucleo.esquemas import EvidenceSpan, RetrievalCandidate
 
 
@@ -59,7 +60,7 @@ class SparseEncoderBM25:
 class FusionRRF:
     def __init__(self, k: int = 60) -> None:
         if k < 1:
-            raise ValueError("k debe ser mayor que cero")
+            raise ValueError(t("runtime.positive", name="k"))
         self.k = k
 
     def fusionar(
@@ -94,7 +95,7 @@ class SentenceSelectorExtractor:
         estadisticas: Any = None,
     ) -> None:
         if limite_caracteres < 1:
-            raise ValueError("limite_caracteres debe ser mayor que cero")
+            raise ValueError(t("runtime.positive", name="limite_caracteres"))
         self.limite_caracteres = limite_caracteres
         self.estadisticas = estadisticas
 

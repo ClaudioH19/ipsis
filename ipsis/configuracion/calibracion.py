@@ -15,6 +15,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from ipsis.recursos.mensajes import t
 VERSION_CALIBRACION = 1
 
 
@@ -77,14 +78,14 @@ def motivo_no_aplicable(
 ) -> str | None:
     """Por qué no se aplica la calibración (``None`` si se aplica)."""
     if archivo.estado != EstadoCalibracion.CALIBRADO:
-        return f"la calibración quedó en estado {archivo.estado.value}: se usan los umbrales del perfil"
+        return t("evaluation.calibration_status", status=archivo.estado.value)
     procedencia = archivo.procedencia
     if procedencia.perfil != perfil:
-        return f"se calibró con el perfil {procedencia.perfil!r} y el proyecto usa {perfil!r}"
+        return t("evaluation.calibration_profile", calibrated=procedencia.perfil, profile=perfil)
     if procedencia.modelos != modelos:
-        return "se calibró con otros modelos"
+        return t("evaluation.calibration_models")
     if hash_corpus is None or procedencia.hash_corpus != hash_corpus:
-        return "el corpus indexado cambió desde la calibración (o no hay índice)"
+        return t("evaluation.calibration_corpus")
     return None
 
 

@@ -205,10 +205,8 @@ def ejecutar_benchmark_perfiles(
         umbrales = {**perfil_efectivo("medium").umbrales_por_defecto, "ok": OK_EXPERIMENTAL_MEDIUM}
         resultados.append(base.model_copy(update={
             "nombre": f"medium+ok{OK_EXPERIMENTAL_MEDIUM}",
-            "variante": (f"medium con τ_ok = {OK_EXPERIMENTAL_MEDIUM} (perfil: "
-                         f"{perfil_efectivo('medium').umbrales_por_defecto['ok']}). Re-decide las observaciones "
-                         "de medium con la regla de producción; un umbral no cambia el costo, así que la "
-                         "latencia es la de medium."),
+            "variante": t("evaluation.variant_medium_ok", value=OK_EXPERIMENTAL_MEDIUM,
+                          profile_value=perfil_efectivo("medium").umbrales_por_defecto["ok"]),
             "cobertura": reporte_cobertura(redecidir_pares(pares_de["medium"], umbrales)),
         }))
     if experimentos and "light" in pares_de and acuerdos:
@@ -224,13 +222,11 @@ def ejecutar_benchmark_perfiles(
         extra = list(costo_acuerdo.values())
         resultados.append(base.model_copy(update={
             "nombre": "light+acuerdo",
-            "variante": ("light exigiendo acuerdo ≥ 0,5 (top-1 denso en el top-3 BM25 y viceversa) para un ok "
-                         "léxico. Agrega dos búsquedas por pregunta; la latencia suma su costo medido a cada "
-                         "consulta de light."),
+            "variante": t("evaluation.variant_light_agreement"),
             "latencia": latencia, "cumple_presupuesto": latencia.p95 <= base.presupuesto_p95_ms,
             "cobertura": reporte_cobertura(pares),
-            "costo_extra": {"búsquedas extra p50 ms": round(percentil(extra, 0.5), 1),
-                            "búsquedas extra p95 ms": round(percentil(extra, 0.95), 1)},
+            "costo_extra": {t("evaluation.extra_p50"): round(percentil(extra, 0.5), 1),
+                            t("evaluation.extra_p95"): round(percentil(extra, 0.95), 1)},
         }))
 
     usados = [BancoUsado(dataset_id=b.manifiesto.dataset_id, dataset_version=b.manifiesto.dataset_version,

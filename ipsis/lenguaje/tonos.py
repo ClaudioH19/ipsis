@@ -26,6 +26,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from ipsis.recursos.mensajes import t
 from ipsis.configuracion.personalidad import TONOS, VARIABLES_ANTERIORES  # viven en la configuración
 
 TONO_POR_DEFECTO = "cordial"
@@ -131,48 +132,49 @@ def _es_emoji(caracter: str) -> bool:
 def errores_plantilla(situacion: str, texto: str, prohibidas: tuple[str, ...] = ()) -> list[str]:
     """Infracciones de una plantilla a las reglas de su situación."""
     if situacion not in SITUACIONES:
-        return [f"situación desconocida {situacion!r}"]
+        return [t("lint.unknown_situation", situation=situacion)]
     regla = SITUACIONES[situacion]
     if not isinstance(texto, str) or not texto.strip():
-        return ["vacía"]
+        return [t("lint.empty")]
     try:
         literal, campos = _campos(texto)
     except ValueError as e:
-        return [f"llaves mal formadas: {e}"]
+        return [t("lint.bad_braces", error=e)]
     errores = []
     if "\n" in texto:
-        errores.append("debe ser una sola línea")
+        errores.append(t("lint.one_line"))
     if len(texto) > LARGO_MAXIMO:
-        errores.append(f"tiene {len(texto)} caracteres (máximo {LARGO_MAXIMO})")
+        errores.append(t("lint.too_long", length=len(texto), maximum=LARGO_MAXIMO))
     if _DIGITOS.search(literal):
-        errores.append("no puede tener dígitos (afirmaría un dato)")
+        errores.append(t("lint.digits"))
     if _URL.search(literal):
-        errores.append("no puede tener URLs")
+        errores.append(t("lint.urls"))
     if _HTML.search(literal):
-        errores.append("no puede tener HTML")
+        errores.append(t("lint.html_tags"))
     if _MARKDOWN.search(literal):
-        errores.append("no puede tener Markdown")
+        errores.append(t("lint.markdown"))
     if any(_es_emoji(c) for c in literal):
-        errores.append("no puede tener emojis")
+        errores.append(t("lint.emojis"))
     # Solo para idiomas con signos de apertura (en y pt no los usan).
     if ("¡" in literal and literal.count("¡") != literal.count("!")) or \
             ("¿" in literal and literal.count("¿") != literal.count("?")):
-        errores.append("los signos de apertura (¡ ¿) deben cerrarse (! ?)")
+        errores.append(t("lint.opening_marks"))
     if any(len(p) >= 4 and p.isupper() for p in re.findall(r"\w+", literal)):
-        errores.append("no puede tener palabras enteras en mayúsculas")
+        errores.append(t("lint.capitals"))
     nombres = {c for c, _, _ in campos}
     if extra := sorted(nombres - regla.permitidas):
-        errores.append(f"variables no permitidas: {extra} (permitidas: {sorted(regla.permitidas) or 'ninguna'})")
+        errores.append(t("lint.variables_not_allowed", extra=extra,
+                          allowed=sorted(regla.permitidas) or t("lint.none_allowed")))
     if falta := sorted(regla.requeridas - nombres):
-        errores.append(f"le falta {falta}")
+        errores.append(t("lint.missing_variables", missing=falta))
     if any(formato or conversion for _, formato, conversion in campos):
-        errores.append("las variables no admiten formato ni conversión")
+        errores.append(t("lint.variable_format"))
     if regla.dos_puntos and not texto.rstrip().endswith(":"):
-        errores.append("debe terminar en «:» porque introduce el texto del documento")
+        errores.append(t("lint.colon"))
     minusculas = literal.casefold()
     for prohibida in prohibidas:
         if re.search(rf"\b{re.escape(prohibida.casefold())}\b", minusculas):
-            errores.append(f"contiene una expresión prohibida: {prohibida!r}")
+            errores.append(t("lint.forbidden", expression=prohibida))
     return errores
 
 
@@ -185,23 +187,23 @@ def errores_tono(situaciones: dict[str, list[str]], prohibidas: tuple[str, ...] 
     """Errores de un conjunto de situaciones. ``completo``: exige las 18 situaciones."""
     errores = []
     if completo and (faltan := [s for s in SITUACIONES if s not in situaciones]):
-        errores.append(f"faltan situaciones: {faltan}")
+        errores.append(t("lint.missing_situations", missing=faltan))
     vistas: dict[str, str] = {}
     for situacion, textos in situaciones.items():
         if situacion not in SITUACIONES:
-            errores.append(f"situación desconocida {situacion!r}")
+            errores.append(t("lint.unknown_situation", situation=situacion))
             continue
         if not isinstance(textos, list) or len(textos) < minimo:
-            errores.append(f"{situacion}: necesita al menos {minimo} variantes")
+            errores.append(t("lint.min_variants", situation=situacion, minimum=minimo))
             continue
         propias: set[str] = set()
         for i, texto in enumerate(textos, start=1):
             errores += [f"{situacion}[{i}]: {e}" for e in errores_plantilla(situacion, texto, prohibidas)]
             clave = _normalizar(texto) if isinstance(texto, str) else ""
             if clave in propias:
-                errores.append(f"{situacion}[{i}]: repite otra variante de la misma situación")
+                errores.append(t("lint.repeats_own", situation=situacion, index=i))
             elif clave in vistas and vistas[clave] != situacion:
-                errores.append(f"{situacion}[{i}]: repite una variante de {vistas[clave]}")
+                errores.append(t("lint.repeats_other", situation=situacion, index=i, other=vistas[clave]))
             propias.add(clave)
             vistas.setdefault(clave, situacion)
     return errores
@@ -258,8 +260,8 @@ def regionalismos_en(situaciones: dict[str, list[str]], idioma: str) -> list[str
 def _base(carpeta: str, tono: str) -> dict[str, Any]:
     recurso = _raiz().joinpath(carpeta, f"{tono}.yaml")
     if not recurso.is_file():
-        raise TonoInvalido([f"no hay tono {tono!r} para el idioma {carpeta!r}; "
-                            f"disponibles: {', '.join(tonos_disponibles(carpeta))}"])
+        raise TonoInvalido([t("lint.no_tone", tone=tono, language=carpeta,
+                              available=", ".join(tonos_disponibles(carpeta)))])
     return yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}
 
 

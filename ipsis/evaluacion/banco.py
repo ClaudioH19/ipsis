@@ -9,6 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from ipsis.recursos.mensajes import t
 BANCO_SCHEMA_VERSION = 1
 
 
@@ -32,7 +33,7 @@ class EvidenciaEsperada(BaseModel):
     @model_validator(mode="after")
     def validar_offsets(self):
         if self.offset_fin - self.offset_inicio != len(self.texto):
-            raise ValueError("los offsets de evidencia no coinciden con el texto literal")
+            raise ValueError(t("evaluation.offsets_mismatch"))
         return self
 
 
@@ -69,14 +70,14 @@ class CasoEvaluacion(BaseModel):
         respondibles = {CategoriaPregunta.EXACTA, CategoriaPregunta.PARAFRASIS}
         if self.categoria in respondibles:
             if not self.respondible or not self.evidencias or not self.respuesta_literal:
-                raise ValueError("una pregunta respondible exige respuesta literal y evidencia")
+                raise ValueError(t("evaluation.answerable_needs_evidence"))
             if not any(self.respuesta_literal in evidencia.texto for evidencia in self.evidencias):
-                raise ValueError("la respuesta literal debe estar contenida en una evidencia")
+                raise ValueError(t("evaluation.literal_in_evidence"))
             if self.estado_esperado not in {"respuesta_directa", "respuesta_parcial"}:
-                raise ValueError("una pregunta respondible exige un estado de respuesta")
+                raise ValueError(t("evaluation.answerable_status"))
         else:
             if self.respondible or self.evidencias or self.respuesta_literal is not None:
-                raise ValueError("una pregunta no respondible no debe declarar evidencia")
+                raise ValueError(t("evaluation.unanswerable_evidence"))
 
         esperado_por_categoria = {
             CategoriaPregunta.PREMISA_FALSA: {"sin_respuesta"},
@@ -86,7 +87,7 @@ class CasoEvaluacion(BaseModel):
         }
         permitidos = esperado_por_categoria.get(self.categoria)
         if permitidos is not None and self.estado_esperado not in permitidos:
-            raise ValueError("estado esperado incompatible con la categoría")
+            raise ValueError(t("evaluation.status_category"))
         return self
 
 
@@ -167,28 +168,27 @@ def cargar_banco(ruta_manifiesto: str | Path) -> BancoEvaluacion:
     ]
     ids = [caso.id for caso in casos]
     if len(ids) != len(set(ids)):
-        raise ValueError("el banco contiene IDs de caso duplicados")
+        raise ValueError(t("evaluation.duplicate_ids"))
     if any(caso.dataset_version != manifiesto.dataset_version for caso in casos):
-        raise ValueError("la versión de un caso no coincide con el manifiesto")
+        raise ValueError(t("evaluation.case_version"))
     categorias = {caso.categoria for caso in casos}
     faltantes = set(manifiesto.categorias_requeridas) - categorias
     if faltantes:
-        raise ValueError(f"faltan categorías requeridas: {sorted(c.value for c in faltantes)}")
+        raise ValueError(t("evaluation.missing_categories", categories=sorted(c.value for c in faltantes)))
     if manifiesto.estado == "estable" and {caso.split for caso in casos} != {"dev", "test"}:
-        raise ValueError("un banco estable debe separar dev y test")
+        raise ValueError(t("evaluation.stable_split"))
 
     directorio_corpus = (ruta.parent / manifiesto.corpus.directorio).resolve()
     actual = hash_archivos_corpus(directorio_corpus, manifiesto.corpus.archivos)
     if actual != manifiesto.corpus.sha256:
-        raise ValueError("el hash del corpus no coincide con el manifiesto")
+        raise ValueError(t("evaluation.corpus_hash"))
     return BancoEvaluacion(manifiesto=manifiesto, casos=casos)
 
 
 def exigir_calibrable(banco: BancoEvaluacion) -> None:
     """Solo el golden del cliente calibra: un banco de regresión no."""
     if banco.manifiesto.uso == "regresion":
-        raise ValueError(f"el banco {banco.manifiesto.dataset_id!r} es de regresión del software: sirve para "
-                         "medir y comparar, no para calibrar umbrales. Calibra con el golden del cliente")
+        raise ValueError(t("evaluation.regression_bank", bank=banco.manifiesto.dataset_id))
 
 
 def validar_evidencias_contra_corpus(
@@ -201,11 +201,11 @@ def validar_evidencias_contra_corpus(
     for caso in banco.casos:
         for evidencia in caso.evidencias:
             if evidencia.doc_id not in documentos:
-                errores.append(f"{caso.id}: documento desconocido {evidencia.doc_id!r}")
+                errores.append(t("evaluation.unknown_document", case=caso.id, document=evidencia.doc_id))
                 continue
             texto = documentos[evidencia.doc_id]
             if texto[evidencia.offset_inicio:evidencia.offset_fin] != evidencia.texto:
-                errores.append(f"{caso.id}: evidencia no literal o offsets inválidos")
+                errores.append(t("evaluation.not_literal", case=caso.id))
     if errores:
         raise ValueError("\n".join(errores))
 

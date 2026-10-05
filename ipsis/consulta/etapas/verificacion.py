@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 
 from ipsis.consulta.etapas.base import _Etapa
 from ipsis.lenguaje.entidades import extraer_entidades
+from ipsis.recursos.mensajes import t
 
 # ==========================================================================
 # GUARDIA (sección 6.3 — verificación de fidelidad en línea)
@@ -48,7 +49,7 @@ def verificar_fidelidad(respuesta_generada: str, fragmentos: list[dict]) -> Resu
     if faltantes:
         return ResultadoFidelidad(
             fiel=False,
-            motivos=[f"entidad en la respuesta sin respaldo literal en los fragmentos: {sorted(faltantes)}"],
+            motivos=[t("runtime.unsupported_entity", entities=sorted(faltantes))],
         )
     return ResultadoFidelidad(fiel=True)
 

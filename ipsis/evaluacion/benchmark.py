@@ -13,6 +13,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from ipsis.evaluacion.metricas import ObservacionEvaluacion, ReporteCobertura
+from ipsis.recursos.mensajes import t
 
 
 def percentil(valores: list[float], q: float) -> float:
@@ -88,14 +89,9 @@ class ReporteBenchmark(BaseModel):
     artefactos: list[str] = Field(default_factory=list)  # ArtefactoEvaluacion por perfil y banco (ipsis compare)
 
 
-NOTA_REGRESION = ("Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no "
-                  "certifican a ningún cliente; eso lo hace «ipsis calibrate» con el golden del cliente.")
-NOTA_EVALUACION = ("Banco de evaluación del cliente: la guardia de falsos ok (como en «ipsis evaluate») exige 0 en "
-                   "los perfiles; las cotas solo se certifican con «ipsis calibrate».")
-
-
 def nota_de(bancos: list[BancoUsado]) -> str:
-    return NOTA_REGRESION if any(b.uso == "regresion" for b in bancos) else NOTA_EVALUACION
+    regresion = any(b.uso == "regresion" for b in bancos)
+    return t("evaluation.note_regression" if regresion else "evaluation.note_evaluation")
 
 
 def codigo_salida(reporte: ReporteBenchmark) -> int:
@@ -124,14 +120,14 @@ def _fraccion(grupos, nombre: str) -> str:
 
 
 def markdown(reporte: ReporteBenchmark) -> str:
-    lineas = ["# Benchmark por perfiles", ""]
+    perfil = t("evaluation.report_profile")
+    lineas = [t("evaluation.report_title"), ""]
     for b in reporte.bancos:
-        lineas.append(f"- Banco `{b.dataset_id}@{b.dataset_version}` ({b.idioma or 'idioma del proyecto'}, "
-                      f"uso {b.uso}, {b.n_casos} casos)")
+        lineas.append(t("evaluation.report_bank", bank=f"{b.dataset_id}@{b.dataset_version}",
+                        language=b.idioma or t("evaluation.report_project_language"), use=b.uso, cases=b.n_casos))
     lineas += ["", f"> {reporte.nota}", "",
-               "## Calidad, seguridad y latencia", "",
-               "| Perfil | Cobertura directa | Exactas | Paráfrasis | Falsos ok | Trampas con falso ok | "
-               "Riesgo aceptadas x/n | p50 ms | p95 ms | Presupuesto p95 | Cumple |",
+               t("evaluation.report_quality"), "",
+               t("evaluation.report_quality_header"),
                "|---|---|---|---|---|---|---|---|---|---|---|"]
     for p in reporte.perfiles:
         c, g, r = p.cobertura.total, p.cobertura.por_grupo, p.cobertura.riesgo_aceptadas
@@ -141,10 +137,9 @@ def markdown(reporte: ReporteBenchmark) -> str:
             f"{_fraccion(g, 'exacta')} | {_fraccion(g, 'parafrasis')} | {c.falsos_ok}/{c.no_respondibles} | "
             f"{trampas.falsos_ok if trampas else 0}/{trampas.n if trampas else 0} | {r.x}/{r.n} | "
             f"{p.latencia.p50} | {p.latencia.p95} | {p.presupuesto_p95_ms} | "
-            f"{'sí' if p.cumple_presupuesto else 'NO'} |")
-    lineas += ["", "## Rechazo correcto", "",
-               "| Perfil | Fuera de dominio | Premisa falsa | Ambiguas con falso ok | Relacionadas (respondibles) | "
-               "Directas sin literal |", "|---|---|---|---|---|---|"]
+            f"{t('evaluation.report_yes') if p.cumple_presupuesto else t('evaluation.report_no')} |")
+    lineas += ["", t("evaluation.report_rejection"), "",
+               t("evaluation.report_rejection_header"), "|---|---|---|---|---|---|"]
     for p in reporte.perfiles:
         g, c = p.cobertura.por_grupo, p.cobertura.total
         ambiguas = g.get("ambigua")
@@ -155,8 +150,8 @@ def markdown(reporte: ReporteBenchmark) -> str:
             f"{_pct(c.cobertura_relacionada)} | {c.directas_sin_literal} |")
     idiomas = sorted({i for p in reporte.perfiles for i in p.cobertura.por_idioma})
     if len(idiomas) > 1:
-        lineas += ["", "## Por idioma (cobertura directa · exactas · falsos ok)", "",
-                   "| Perfil | " + " | ".join(idiomas) + " |", "|---|" + "---|" * len(idiomas)]
+        lineas += ["", t("evaluation.report_by_language"), "",
+                   f"| {perfil} | " + " | ".join(idiomas) + " |", "|---|" + "---|" * len(idiomas)]
         for p in reporte.perfiles:
             celdas = []
             for i in idiomas:
@@ -166,14 +161,13 @@ def markdown(reporte: ReporteBenchmark) -> str:
                               f"{_pct(v.cobertura_directa)} · {ex.directas if ex else 0}/{ex.n if ex else 0} · "
                               f"{v.falsos_ok}")
             lineas.append(f"| {p.nombre} | " + " | ".join(celdas) + " |")
-    lineas += ["", "## Falsos ok por perfil (hard negatives)", ""]
+    lineas += ["", t("evaluation.report_false_ok"), ""]
     for p in reporte.perfiles:
         falsos = [f for f in p.cobertura.casos if f.falso_ok]
-        lineas.append(f"- **{p.nombre}**: " + ("ninguno" if not falsos else
+        lineas.append(f"- **{p.nombre}**: " + (t("evaluation.report_none") if not falsos else
                       "; ".join(f"`{f.caso_id}` «{f.pregunta}»" for f in falsos)))
-    lineas += ["", "## Costo", "",
-               "| Perfil | Modelos (parámetros · ONNX en disco) | recuperar_n / rerank_k / leer_m | "
-               "Indexado (s) | Extra |", "|---|---|---|---|---|"]
+    lineas += ["", t("evaluation.report_cost"), "",
+               t("evaluation.report_cost_header"), "|---|---|---|---|---|"]
     for p in reporte.perfiles:
         modelos = "<br>".join(
             f"{m.rol}: {m.id_hf.split('/')[-1]} ({m.parametros / 1e6:.0f} M · "
@@ -183,22 +177,22 @@ def markdown(reporte: ReporteBenchmark) -> str:
         lineas.append(f"| {p.nombre} | {modelos} | {k.get('recuperar_n')} / {k.get('rerank_k')} / "
                       f"{k.get('leer_m')} | {p.tiempo_indexado_s if p.tiempo_indexado_s is not None else '—'} | "
                       f"{extra} |")
-    lineas += ["", "El tamaño ONNX es el del archivo en disco, no la memoria usada (no se mide RSS).", "",
-               "## Latencia por etapa (p95 ms)", ""]
+    lineas += ["", t("evaluation.report_onnx_note"), "",
+               t("evaluation.report_stage_latency"), ""]
     etapas = list(dict.fromkeys(e for p in reporte.perfiles if p.variante is None for e in p.latencia.etapas))
-    lineas += ["| Perfil | " + " | ".join(etapas) + " |", "|---|" + "---|" * len(etapas)]
+    lineas += [f"| {perfil} | " + " | ".join(etapas) + " |", "|---|" + "---|" * len(etapas)]
     for p in reporte.perfiles:
         if p.variante is None:
             lineas.append(f"| {p.nombre} | " + " | ".join(
                 str(p.latencia.etapas.get(e, {}).get("p95", "—")) for e in etapas) + " |")
     variantes = [p for p in reporte.perfiles if p.variante]
     if variantes:
-        lineas += ["", "## Variantes experimentales (no son defaults)", ""]
+        lineas += ["", t("evaluation.report_variants"), ""]
         lineas += [f"- **{p.nombre}**: {p.variante}" for p in variantes]
     return "\n".join(lineas) + "\n"
 
 
 __all__ = [
-    "BancoUsado", "Latencia", "ModeloCargado", "NOTA_EVALUACION", "NOTA_REGRESION", "ReporteBenchmark",
+    "BancoUsado", "Latencia", "ModeloCargado", "ReporteBenchmark",
     "ResultadoPerfil", "codigo_salida", "latencia_de", "markdown", "nota_de", "percentil",
 ]

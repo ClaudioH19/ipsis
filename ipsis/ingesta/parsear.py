@@ -344,10 +344,7 @@ def parsear_texto_plano(ruta: str, doc_id: str, doc_titulo: str, version: str) -
     eventos: list[tuple[str, int | None]] = [(p.replace("\n", " "), None) for p in parrafos]
 
     texto_completo, bloques = _ensamblar_bloques(eventos)
-    advertencias = [
-        "el texto plano no declara estructura de secciones: todo el documento "
-        "queda sin seccion_path, lo que degrada los filtros deterministas."
-    ]
+    advertencias = [t("runtime.plain_text_sections")]
     return DocumentoParseado(
         doc_id=doc_id, doc_titulo=doc_titulo, version=version, ruta_origen=ruta,
         texto_completo=texto_completo, bloques=bloques, advertencias=advertencias,

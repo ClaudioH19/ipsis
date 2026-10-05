@@ -223,14 +223,14 @@ def generar_vista_previa(
     tema = cargar_estilos(ruta_estilos)
     validar_tema(tema)
     css_tema = render_css(tema=tema)
-    preset = str(tema.get("preset") or "personalizado")
+    preset = str(tema.get("preset") or "custom")
     if "</style" in css_tema.lower():
         raise ValueError(t("styles.custom_css_style"))
     preset_html = html.escape(preset)
     contenido_html = f"""<!doctype html>
-<html lang="es"><head><meta charset="utf-8">
+<html lang="{t('runtime.preview_lang')}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vista previa del widget — {preset_html}</title>
+<title>{html.escape(t('runtime.preview_title', preset=preset))}</title>
 <style>
 {css_tema}
 *{{box-sizing:border-box}} body{{margin:0;padding:32px;background:#dfe3e8;font-family:Arial,sans-serif}}
@@ -250,19 +250,19 @@ def generar_vista_previa(
 .info{{background:white;padding:22px;border-radius:12px}} code{{background:#eef1f4;padding:2px 5px}}
 @media(max-width:720px){{body{{padding:14px}}.preview{{grid-template-columns:1fr}}}}
 </style></head><body><main class="preview">
-<section class="rw-raiz" aria-label="Mockup del widget">
-  <div class="cabecera">Asistente documental · preset {preset_html}</div>
+<section class="rw-raiz" aria-label="{t('runtime.preview_label')}">
+  <div class="cabecera">{html.escape(t('runtime.preview_header', preset=preset))}</div>
   <div class="mensajes">
-    <div class="rw-msg rw-msg-usuario">¿Cada cuánto debo cambiar el filtro?</div>
-    <div class="rw-msg rw-msg-ok"><div class="etiqueta">Respuesta directa</div>El filtro se cambia cada 6 meses.
-      <div class="rw-citas"><details open><summary>Manual · Filtros</summary><p class="rw-cita-texto">El filtro de sedimentos se cambia cada 6 meses.</p></details></div>
+    <div class="rw-msg rw-msg-usuario">{t('runtime.preview_question')}</div>
+    <div class="rw-msg rw-msg-ok"><div class="etiqueta">{t('runtime.preview_direct')}</div>{t('runtime.preview_answer')}
+      <div class="rw-citas"><details open><summary>{t('runtime.preview_citation_title')}</summary><p class="rw-cita-texto">{t('runtime.preview_citation')}</p></details></div>
     </div>
-    <div class="rw-msg rw-msg-relacionado"><div class="etiqueta">Información relacionada</div>El documento describe la garantía, pero no confirma ese supuesto.</div>
-    <div class="rw-msg rw-msg-sin_respuesta">No encontré una respuesta respaldada por los documentos.</div>
-    <div class="rw-msg rw-msg-conversacional">Hola, puedo ayudarte a consultar la documentación.</div>
+    <div class="rw-msg rw-msg-relacionado"><div class="etiqueta">{t('runtime.preview_related_label')}</div>{t('runtime.preview_related')}</div>
+    <div class="rw-msg rw-msg-sin_respuesta">{t('runtime.preview_no_answer')}</div>
+    <div class="rw-msg rw-msg-conversacional">{t('runtime.preview_conversational')}</div>
   </div>
 </section>
-<aside class="info"><h1>Vista previa</h1><p>Este mockup no consulta el índice. Permite revisar paleta, tipografía, forma, estados y citas antes de publicar.</p><p>Preset activo: <code>{preset_html}</code></p></aside>
+<aside class="info"><h1>{t('runtime.preview_heading')}</h1><p>{t('runtime.preview_text')}</p><p>{t('runtime.preview_preset')} <code>{preset_html}</code></p></aside>
 </main></body></html>"""
     destino = Path(salida)
     destino.parent.mkdir(parents=True, exist_ok=True)

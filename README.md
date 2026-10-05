@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-oscuro.svg">
-  <img alt="ipsis: answers cited from your documents, never made up" src="docs/assets/banner-claro.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
+  <img alt="ipsis: answers cited from your documents, never made up" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-2563eb)](LICENSE)
@@ -34,8 +34,8 @@ assistant answers with the document's own words.
 
 <div align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-respuesta-oscuro.png">
-  <img alt="The widget answers with a literal span and highlights it inside the citation of the manual" src="docs/assets/widget-respuesta.png" width="88%">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-answer-dark.png">
+  <img alt="The widget answers with a literal span and highlights it inside the citation of the manual" src="docs/assets/widget-answer.png" width="88%">
 </picture>
 </div>
 
@@ -176,8 +176,8 @@ are configured without touching code ([web guide](docs/guide/web.md)).
 
 <table>
 <tr>
-<td width="62%"><img alt="/admin panel: answer tone with its variants and a live widget preview" src="docs/assets/panel-tono.png"></td>
-<td width="38%"><img alt="The widget on a phone: the citation highlights the answer" src="docs/assets/widget-movil.png"></td>
+<td width="62%"><img alt="/admin panel: answer tone with its variants and a live widget preview" src="docs/assets/panel-tone.png"></td>
+<td width="38%"><img alt="The widget on a phone: the citation highlights the answer" src="docs/assets/widget-mobile.png"></td>
 </tr>
 <tr>
 <td align="center"><sub><code>/admin</code> panel: tone, avatar and widget with a live preview</sub></td>

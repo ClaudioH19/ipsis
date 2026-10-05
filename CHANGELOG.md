@@ -55,6 +55,18 @@ and rewritten, keeping their comments, and the index is kept. What does
 - Documentation in English (guides, architecture, methodology notes and
   ADRs), plus `CONTRIBUTING.md`, `SECURITY.md`, the code of conduct and the
   issue and pull request templates.
+- The tone linter, calibration results, bank and comparison errors, doctor
+  reasons and the benchmark report (`benchmark-profiles.md`) come from the
+  message catalog too, in English or Spanish.
+- Screenshots, banners and the social preview in English, with the new
+  name.
+
+### Fixed
+
+- The citation inside the answer text was always in Spanish
+  ("(Fuente: …)"): it now comes from the language pack ("(Source: …)",
+  "(Fonte: …)").
+- `ipsis ask --diagnostics` listed the stages with their internal names.
 
 ## [0.8.0] - 2026-10-04
 

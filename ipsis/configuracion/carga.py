@@ -12,6 +12,7 @@ from ipsis.configuracion import rutas
 from ipsis.configuracion.archivos import interpretar
 from ipsis.configuracion.glosario import a_externo
 from ipsis.recursos import leer_plantilla
+from ipsis.recursos.mensajes import t
 from ipsis.configuracion.esquemas import (
     CONFIG_VERSION,
     migrar_asistente,
@@ -164,7 +165,7 @@ _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
 
 def _encabezado_comentarios(ruta: Path) -> str:
     if not ruta.exists():
-        return "# Identidad del asistente. Editable con `ipsis configure clave=valor`.\n"
+        return t("runtime.assistant_header")
     lineas = ruta.read_text(encoding="utf-8").splitlines(keepends=True)
     fin = 0
     for linea in lineas:

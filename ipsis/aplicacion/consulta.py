@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from ipsis.modelos.catalogo import obtener as obtener_modelo
+from ipsis.configuracion.glosario import ETAPAS
 from ipsis.consulta.etapas.redaccion import cargar_plantillas
 # El servicio usa el motor y sus errores a través de esta capa.
 from ipsis.consulta.motor import Motor, MotorNoListo, MotorSaturado
@@ -195,7 +196,8 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         regla=d.get("regla"),
         motivo=resultado.motivo,
         perfil=d.get("perfil"),
-        etapas=[(nombre.removesuffix("_ms"), ms) for nombre, ms in (d.get("etapas") or {}).items()],
+        etapas=[(ETAPAS.get(nombre.removesuffix("_ms"), nombre.removesuffix("_ms")), ms)
+                for nombre, ms in (d.get("etapas") or {}).items()],
         senales=dict(d.get("senales_politica") or {}),
         foco_encontrados=list(lexicas.get("foco_encontrados") or []),
         foco_ausentes=list(lexicas.get("foco_ausentes") or []),

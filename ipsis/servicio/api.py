@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from ipsis import __version__
+from ipsis.recursos.mensajes import t
 from ipsis.aplicacion.consulta import (
     Motor,
     MotorNoListo,
@@ -228,7 +229,7 @@ def _refrescar_diagnostico(servicio) -> None:
     try:
         servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
     except Exception:  # noqa: BLE001 -- se conserva el último diagnóstico y se reintenta luego
-        _log.exception("no se pudo refrescar el diagnóstico de /ready")
+        _log.exception(t("runtime.log_ready"))
     finally:
         servicio.refrescando_diagnostico = False
 
@@ -305,7 +306,7 @@ def crear_app(
     docs = {} if modo.docs_activos else {"docs_url": None, "redoc_url": None, "openapi_url": None}
     aplicacion = FastAPI(title="ipsis", version=__version__, lifespan=lifespan,
                          license_info={"name": "AGPL-3.0-only", "identifier": "AGPL-3.0-only"},
-                         description=f"Código fuente (AGPL-3.0): {modo.fuente}", **docs)
+                         description=t("runtime.api_description", url=modo.fuente), **docs)
     aplicacion.state.servicio = estado
     aplicacion.state.modo = modo
     aplicacion.add_middleware(
@@ -343,7 +344,7 @@ def crear_app(
         try:
             recargar_presentacion(servicio.motor)
         except Exception as exc:  # noqa: BLE001 -- un tono roto no tumba el servicio; doctor lo explica
-            _log.warning("no se pudo recargar la personalidad: %s", exc)
+            _log.warning(t("runtime.log_personality", error=exc))
 
     if modo.admin_activo:
         from ipsis.servicio.admin import crear_router_admin, crear_router_panel
@@ -484,7 +485,7 @@ def crear_app(
             try:
                 servicio.registro.registrar(peticion.question, resultado)
             except OSError as exc:  # el registro nunca tumba una respuesta
-                _log.warning("no se pudo escribir el registro de consultas: %s", exc)
+                _log.warning(t("runtime.log_query_log", error=exc))
         return RespuestaConsulta.model_validate(respuesta_publica(resultado.diagnostico["contrato_http"]))
 
     return aplicacion

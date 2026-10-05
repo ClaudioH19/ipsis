@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from ipsis.evaluacion.metricas import ArtefactoEvaluacion
+from ipsis.recursos.mensajes import t
 
 
 
@@ -47,10 +48,10 @@ def cargar_artefacto(ruta: str | Path) -> ArtefactoEvaluacion:
 
 def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeComparativo:
     if len(artefactos) < 2:
-        raise ValueError("se requieren al menos dos ejecuciones para comparar")
+        raise ValueError(t("evaluation.compare_two"))
     nombres = [artefacto.backend for artefacto in artefactos]
     if len(nombres) != len(set(nombres)):
-        raise ValueError("cada ejecución debe tener una etiqueta de backend distinta")
+        raise ValueError(t("evaluation.compare_labels"))
     referencia = artefactos[0]
     identidad = (
         referencia.dataset_id,
@@ -66,7 +67,7 @@ def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeCompara
             artefacto.reporte.k,
         )
         if actual != identidad:
-            raise ValueError("las ejecuciones no usan el mismo dataset, corpus y k")
+            raise ValueError(t("evaluation.compare_identity"))
     filas = [
         FilaComparacion(
             backend=artefacto.backend,

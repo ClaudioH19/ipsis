@@ -50,6 +50,11 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
             "zona_gris_intro": tono.variantes("related_intro"),
             "foco_ausente": tono.variantes("missing_focus"),
         },
+        "citas": {
+            "breve": paquete.mensajes.cita_breve,
+            "completa": paquete.mensajes.cita_completa,
+            "sin_seccion": paquete.mensajes.sin_seccion,
+        },
         "conversacional": {
             **paquete.conversacional.model_dump(mode="python"),
             "respuestas": {c: tono.variantes(c) for c in ("greeting", "thanks", "farewell", "capability")},
@@ -58,8 +63,8 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
     if dominio is None:
         return datos
     variables = {
-        "assistant_name": dominio.get("nombre_asistente", "el asistente"),
-        "domain_description": dominio.get("descripcion_dominio", "los documentos cargados"),
+        "assistant_name": dominio.get("nombre_asistente", paquete.interfaz.get("default_assistant_name", "")),
+        "domain_description": dominio.get("descripcion_dominio", paquete.interfaz.get("default_domain_description", "")),
     }
 
     def sustituir(texto: str) -> str:
@@ -127,7 +132,17 @@ def _fragmentos_para_el_texto(fragmentos: list[dict], cfg: dict) -> list[dict]:
     return salida
 
 
-def _formatear_cita(frag: dict, estilo: str) -> str:
+def _textos_de_cita(plantillas: dict) -> dict:
+    """Formatos de la cita en el texto; los dicts armados a mano (pruebas) pueden no traerlos."""
+    if "citas" in plantillas:
+        return plantillas["citas"]
+    from ipsis.lenguaje.paquete import cargar_paquete
+
+    mensajes = cargar_paquete("es").mensajes
+    return {"breve": mensajes.cita_breve, "completa": mensajes.cita_completa, "sin_seccion": mensajes.sin_seccion}
+
+
+def _formatear_cita(frag: dict, estilo: str, citas: dict) -> str:
     """Cita que va DENTRO del texto de la respuesta.
 
     ``completa`` trae documento y ruta de seccion; ``breve``, solo el
@@ -138,9 +153,9 @@ def _formatear_cita(frag: dict, estilo: str) -> str:
     if estilo == "ninguna":
         return ""
     if estilo == "breve":
-        return f"(Fuente: {frag['doc_titulo']})"
-    seccion = " > ".join(frag.get("seccion_path") or []) or "(sin seccion)"
-    return f"(Fuente: {frag['doc_titulo']}, seccion: {seccion})"
+        return citas["breve"].format(documento=frag["doc_titulo"])
+    seccion = " > ".join(frag.get("seccion_path") or []) or citas["sin_seccion"]
+    return citas["completa"].format(documento=frag["doc_titulo"], seccion=seccion)
 
 
 def _ensamblar_fragmentos_con_citas(
@@ -169,6 +184,7 @@ def _ensamblar_fragmentos_con_citas(
     conectores = plantillas["conectores"]
     cfg = cfg_redaccion or config_redaccion()
     estilo_cita = str(cfg.get("cita_en_texto", "completa"))
+    citas = _textos_de_cita(plantillas)
 
     elegidos = _fragmentos_para_el_texto(fragmentos, cfg)
     usadas: set[str] = set()
@@ -183,7 +199,7 @@ def _ensamblar_fragmentos_con_citas(
 
     for i, frag in enumerate(elegidos):
         texto = frag["texto"].strip()
-        cita = _formatear_cita(frag, estilo_cita)
+        cita = _formatear_cita(frag, estilo_cita, citas)
         cuerpo = f"{texto} {cita}." if cita else texto
         if i == 0:
             partes.append(cuerpo)

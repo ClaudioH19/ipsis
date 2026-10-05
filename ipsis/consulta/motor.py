@@ -4,6 +4,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from ipsis.recursos.mensajes import t
 from ipsis.consulta.etapas.politica import verificar_premisa_candidatos, separar_entidades_ausentes
 from ipsis.consulta.contexto import ContextoConsulta
 from ipsis.nucleo.contratos import (
@@ -60,9 +61,9 @@ class Motor:
         lector: Any = None,
     ) -> None:
         if top_k < 1:
-            raise ValueError("top_k debe ser mayor que cero")
+            raise ValueError(t("runtime.positive", name="top_k"))
         if max_fragmentos_adicionales < 0:
-            raise ValueError("max_fragmentos_adicionales no puede ser negativo")
+            raise ValueError(t("runtime.not_negative", name="max_fragmentos_adicionales"))
         self.retriever = retriever
         self.analizador = analizador
         self.politica_abstencion = politica_abstencion

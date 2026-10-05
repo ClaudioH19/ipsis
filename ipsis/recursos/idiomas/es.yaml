@@ -271,6 +271,8 @@ mensajes:
     contraste_version:
     - En la versión {v1}…; en la {v2}…
   sin_seccion: (sin sección)
+  cita_breve: '(Fuente: {documento})'
+  cita_completa: '(Fuente: {documento}, sección: {seccion})'
 interfaz:
   default_assistant_name: Asistente documental
   default_domain_description: los documentos cargados

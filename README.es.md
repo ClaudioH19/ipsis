@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-oscuro.svg">
-  <img alt="ipsis: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-claro.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.es.svg">
+  <img alt="ipsis: respuestas citadas de tus documentos, nunca inventadas" src="docs/assets/banner-light.es.svg" width="100%">
 </picture>
 
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
@@ -33,8 +33,8 @@ asistente responde con las palabras del propio documento.
 
 <div align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-respuesta-oscuro.png">
-  <img alt="El widget responde con un tramo literal y lo marca dentro de la cita del manual" src="docs/assets/widget-respuesta.png" width="88%">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-answer-dark.png">
+  <img alt="El widget responde con un tramo literal y lo marca dentro de la cita del manual" src="docs/assets/widget-answer.png" width="88%">
 </picture>
 </div>
 
@@ -178,8 +178,8 @@ configuran sin tocar código ([guía web](docs/es/guia/web.md)).
 
 <table>
 <tr>
-<td width="62%"><img alt="Panel /admin: tono de las respuestas con sus variantes y vista previa del widget" src="docs/assets/panel-tono.png"></td>
-<td width="38%"><img alt="El widget en el teléfono: la cita marca la respuesta" src="docs/assets/widget-movil.png"></td>
+<td width="62%"><img alt="Panel /admin: tono de las respuestas con sus variantes y vista previa del widget" src="docs/assets/panel-tone.png"></td>
+<td width="38%"><img alt="El widget en el teléfono: la cita marca la respuesta" src="docs/assets/widget-mobile.png"></td>
 </tr>
 <tr>
 <td align="center"><sub>Panel <code>/admin</code>: tono, avatar y widget con vista previa en vivo</sub></td>

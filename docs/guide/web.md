@@ -6,7 +6,7 @@ The integration has two parts:
 - the **widget**, a single dependency-free `widget.js` file the service
   publishes at `/widget.js`.
 
-![The widget answers citing the manual and marks «6 months» inside the citation](../assets/widget-respuesta.png)
+![The widget answers citing the manual and marks «6 months» inside the citation](../assets/widget-answer.png)
 
 ## Add it
 
