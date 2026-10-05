@@ -679,6 +679,81 @@ core:
   index_no_manifest: el índice {name!r} no tiene manifiesto ({path}); es de una versión anterior. Ejecuta 'ipsis index'.
   index_no_stats: no existen las estadísticas léxicas del índice en {path!r}. Ejecuta 'ipsis index' para reconstruir el índice.
   collection_missing: la colección Qdrant {name!r} no existe todavía. Ejecuta 'ipsis index' primero (lee la misma config/engine.yaml::retrieval que este servicio).
+panel:
+  lang: es
+  title: Panel del asistente
+  note: 'Solo presentación: nada de esto cambia qué responde el asistente.'
+  access: Acceso
+  token: Token de administración
+  enter: Entrar
+  sections: Secciones
+  tab_tone: Tono
+  tab_avatar: Avatar
+  tab_widget: Widget
+  sign_out: Salir
+  tone_title: Tono de las respuestas
+  active_tone: Tono activo
+  variety: Variedad
+  rotating: Rotativa (no repite en turnos seguidos)
+  fixed: Fija (siempre la primera)
+  situation: Situación
+  variants: Variantes
+  own_texts: Textos propios para esta situación
+  own_texts_note: Una variante por línea. Se validan con las mismas reglas que los tonos incluidos.
+  save_own: Guardar textos propios
+  use_tone: Usar los del tono
+  avatar_title: Avatar
+  avatar: Avatar
+  import_file: Importar un .avatar.json (exportado del Studio)
+  project_name: Nombre en el proyecto
+  name_placeholder: mi-avatar
+  import: Importar
+  body: Cuerpo
+  eyes: Ojos
+  save_colors: Guardar colores
+  placement: Ubicación
+  header: Cabecera
+  top_corner: Esquina superior
+  bottom_corner: Esquina inferior
+  size_px: Tamaño (px)
+  in_launcher: En el botón de abrir
+  follow_pointer: Sigue el puntero
+  save: Guardar
+  events: Eventos
+  event: Evento
+  animation: Animación o expresión
+  try: Probar
+  widget_title: Widget
+  preset: Preset visual
+  apply_preset: Aplicar preset
+  accent: Color de acento
+  position: Posición
+  size: Tamaño
+  launcher: Lanzador
+  citations: Citas
+  full_style: 'Estilo completo: colores, tipografía, formas, sombras y animaciones'
+  full_style_note: Cada valor de styles.yaml. Solo se guardan los que cambies; se validan antes de escribir.
+  save_style: Guardar estilo
+  preview: Vista previa
+  preview_frame: Vista previa del widget
+  source_code: Código fuente
+  loading: Cargando…
+  saved: Guardado. La vista previa se recargó.
+  preset_applied: Preset aplicado.
+  imported: 'Avatar importado:'
+  no_file: Elige un archivo .avatar.json y un nombre.
+  invalid_json: 'El archivo no es JSON válido; no se guardó nada:'
+  triggered: 'Evento enviado a la vista previa:'
+  no_avatar: La vista previa todavía no tiene un avatar animado; se guardó la asignación.
+  suggested: (sugerida)
+  session_ended: La sesión terminó o el token cambió. Vuelve a entrar.
+  network_error: No se pudo conectar con el servicio.
+  no_changes: No hay cambios de estilo para guardar.
+presets:
+  classic: Azul neutro, cómodo y equivalente al diseño de fábrica.
+  minimal: Interfaz compacta, radios discretos y sombras suaves.
+  editorial: Paleta cálida y tipografía serif para documentación extensa.
+  contrast: Contraste alto, controles marcados y animaciones desactivadas.
 styles:
   not_object: el tema debe ser un objeto YAML
   section_object: '{section} debe ser un objeto'

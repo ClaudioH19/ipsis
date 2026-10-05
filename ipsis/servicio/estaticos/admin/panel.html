@@ -1,35 +1,36 @@
 <!doctype html>
-<html lang="es">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Panel del asistente</title>
+<title>{{title}}</title>
 <link rel="stylesheet" href="/admin/panel/panel.css">
 </head>
 <body>
+<!-- Las claves entre llaves dobles las rellena el servicio con la sección «panel» del catálogo de mensajes. -->
 <header class="cabecera">
-  <h1>Panel del asistente</h1>
-  <p class="nota">Solo presentación: nada de esto cambia qué responde el asistente.</p>
+  <h1>{{title}}</h1>
+  <p class="nota">{{note}}</p>
 </header>
 
 <main>
   <section id="acceso" class="tarjeta" aria-labelledby="titulo-acceso">
-    <h2 id="titulo-acceso">Acceso</h2>
+    <h2 id="titulo-acceso">{{access}}</h2>
     <form id="form-acceso">
-      <label for="token">Token de administración (<code>IPSIS_ADMIN_TOKEN</code>)</label>
+      <label for="token">{{token}} (<code>IPSIS_ADMIN_TOKEN</code>)</label>
       <input id="token" type="password" autocomplete="off" required minlength="32">
-      <button type="submit">Entrar</button>
+      <button type="submit">{{enter}}</button>
     </form>
     <p id="error-acceso" class="error" role="alert"></p>
   </section>
 
   <div id="contenido" hidden>
-    <nav class="pestanas" role="tablist" aria-label="Secciones">
-      <button role="tab" id="pestana-tono" aria-controls="seccion-tono" aria-selected="true">Tono</button>
-      <button role="tab" id="pestana-avatar" aria-controls="seccion-avatar" aria-selected="false">Avatar</button>
-      <button role="tab" id="pestana-widget" aria-controls="seccion-widget" aria-selected="false">Widget</button>
-      <button type="button" id="salir" class="secundario">Salir</button>
+    <nav class="pestanas" role="tablist" aria-label="{{sections}}">
+      <button role="tab" id="pestana-tono" aria-controls="seccion-tono" aria-selected="true">{{tab_tone}}</button>
+      <button role="tab" id="pestana-avatar" aria-controls="seccion-avatar" aria-selected="false">{{tab_avatar}}</button>
+      <button role="tab" id="pestana-widget" aria-controls="seccion-widget" aria-selected="false">{{tab_widget}}</button>
+      <button type="button" id="salir" class="secundario">{{sign_out}}</button>
     </nav>
     <p id="estado" class="estado" role="status" aria-live="polite"></p>
     <div id="errores" class="error" role="alert"></div>
@@ -37,121 +38,121 @@
     <div class="columnas">
       <div class="controles">
         <section id="seccion-tono" role="tabpanel" aria-labelledby="pestana-tono" class="tarjeta">
-          <h2>Tono de las respuestas</h2>
-          <label for="tono-activo">Tono activo</label>
+          <h2>{{tone_title}}</h2>
+          <label for="tono-activo">{{active_tone}}</label>
           <select id="tono-activo"></select>
           <p id="tono-descripcion" class="nota"></p>
           <ul id="tono-avisos" class="aviso" aria-live="polite"></ul>
           <fieldset>
-            <legend>Variedad</legend>
-            <label><input type="radio" name="variedad" value="rotativa"> Rotativa (no repite en turnos seguidos)</label>
-            <label><input type="radio" name="variedad" value="fija"> Fija (siempre la primera)</label>
+            <legend>{{variety}}</legend>
+            <label><input type="radio" name="variedad" value="rotating"> {{rotating}}</label>
+            <label><input type="radio" name="variedad" value="fixed"> {{fixed}}</label>
           </fieldset>
-          <label for="situacion">Situación</label>
+          <label for="situacion">{{situation}}</label>
           <select id="situacion"></select>
-          <h3>Variantes</h3>
+          <h3>{{variants}}</h3>
           <ol id="variantes" class="variantes"></ol>
           <details>
-            <summary>Textos propios para esta situación</summary>
-            <p class="nota">Una variante por línea. Se validan con las mismas reglas que los tonos incluidos.</p>
+            <summary>{{own_texts}}</summary>
+            <p class="nota">{{own_texts_note}}</p>
             <textarea id="propias" rows="5"></textarea>
             <div class="fila">
-              <button type="button" id="guardar-propias">Guardar textos propios</button>
-              <button type="button" id="quitar-propias" class="secundario">Usar los del tono</button>
+              <button type="button" id="guardar-propias">{{save_own}}</button>
+              <button type="button" id="quitar-propias" class="secundario">{{use_tone}}</button>
             </div>
           </details>
         </section>
 
         <section id="seccion-avatar" role="tabpanel" aria-labelledby="pestana-avatar" class="tarjeta" hidden>
-          <h2>Avatar</h2>
+          <h2>{{avatar_title}}</h2>
           <p id="avatar-estado" class="nota"></p>
-          <label for="avatar-activo-sel">Avatar</label>
+          <label for="avatar-activo-sel">{{avatar}}</label>
           <select id="avatar-activo-sel"></select>
-          <label for="avatar-archivo">Importar un .avatar.json (exportado del Studio)</label>
+          <label for="avatar-archivo">{{import_file}}</label>
           <input id="avatar-archivo" type="file" accept=".json,application/json">
-          <label for="avatar-nombre">Nombre en el proyecto</label>
-          <input id="avatar-nombre" type="text" pattern="[a-z][a-z0-9]*(-[a-z0-9]+)*" placeholder="mi-avatar">
-          <button type="button" id="avatar-importar">Importar</button>
+          <label for="avatar-nombre">{{project_name}}</label>
+          <input id="avatar-nombre" type="text" pattern="[a-z][a-z0-9]*(-[a-z0-9]+)*" placeholder="{{name_placeholder}}">
+          <button type="button" id="avatar-importar">{{import}}</button>
           <div class="fila">
-            <label>Cuerpo <input id="color-cuerpo" type="color"></label>
-            <label>Ojos <input id="color-ojos" type="color"></label>
-            <button type="button" id="guardar-colores">Guardar colores</button>
+            <label>{{body}} <input id="color-cuerpo" type="color"></label>
+            <label>{{eyes}} <input id="color-ojos" type="color"></label>
+            <button type="button" id="guardar-colores">{{save_colors}}</button>
           </div>
           <div class="fila">
-            <label>Ubicación
+            <label>{{placement}}
               <select id="avatar-ubicacion">
-                <option value="cabecera">Cabecera</option>
-                <option value="esquina-superior">Esquina superior</option>
-                <option value="esquina-inferior">Esquina inferior</option>
+                <option value="header">{{header}}</option>
+                <option value="top-corner">{{top_corner}}</option>
+                <option value="bottom-corner">{{bottom_corner}}</option>
               </select>
             </label>
-            <label>Tamaño (px) <input id="avatar-tamano" type="number" min="32" max="160"></label>
-            <label><input id="avatar-lanzador" type="checkbox"> En el botón de abrir</label>
-            <label><input id="avatar-mirada" type="checkbox"> Sigue el puntero</label>
-            <button type="button" id="guardar-avatar">Guardar</button>
+            <label>{{size_px}} <input id="avatar-tamano" type="number" min="32" max="160"></label>
+            <label><input id="avatar-lanzador" type="checkbox"> {{in_launcher}}</label>
+            <label><input id="avatar-mirada" type="checkbox"> {{follow_pointer}}</label>
+            <button type="button" id="guardar-avatar">{{save}}</button>
           </div>
-          <h3>Eventos</h3>
+          <h3>{{events}}</h3>
           <table class="eventos">
-            <thead><tr><th scope="col">Evento</th><th scope="col">Animación o expresión</th><th scope="col">Probar</th></tr></thead>
+            <thead><tr><th scope="col">{{event}}</th><th scope="col">{{animation}}</th><th scope="col">{{try}}</th></tr></thead>
             <tbody id="tabla-eventos"></tbody>
           </table>
         </section>
 
         <section id="seccion-widget" role="tabpanel" aria-labelledby="pestana-widget" class="tarjeta" hidden>
-          <h2>Widget</h2>
-          <label for="preset">Preset visual</label>
+          <h2>{{widget_title}}</h2>
+          <label for="preset">{{preset}}</label>
           <select id="preset"></select>
-          <button type="button" id="aplicar-preset">Aplicar preset</button>
-          <label for="color-acento">Color de acento</label>
+          <button type="button" id="aplicar-preset">{{apply_preset}}</button>
+          <label for="color-acento">{{accent}}</label>
           <input id="color-acento" type="color">
           <div class="fila">
-            <label>Posición
+            <label>{{position}}
               <select id="posicion">
-                <option>abajo-derecha</option><option>abajo-izquierda</option>
-                <option>arriba-derecha</option><option>arriba-izquierda</option>
+                <option>bottom-right</option><option>bottom-left</option>
+                <option>top-right</option><option>top-left</option>
               </select>
             </label>
-            <label>Tamaño
-              <select id="tamano"><option>compacto</option><option>normal</option><option>amplio</option></select>
+            <label>{{size}}
+              <select id="tamano"><option>compact</option><option>normal</option><option>wide</option></select>
             </label>
-            <label>Lanzador
-              <select id="lanzador"><option>burbuja</option><option>pestana</option><option>oculto</option></select>
+            <label>{{launcher}}
+              <select id="lanzador"><option>bubble</option><option>tab</option><option>hidden</option></select>
             </label>
-            <label>Citas
-              <select id="citas"><option>acordeon</option><option>lista</option></select>
+            <label>{{citations}}
+              <select id="citas"><option>accordion</option><option>list</option></select>
             </label>
           </div>
-          <button type="button" id="guardar-widget">Guardar</button>
+          <button type="button" id="guardar-widget">{{save}}</button>
           <details id="estilo-completo">
-            <summary>Estilo completo: colores, tipografía, formas, sombras y animaciones</summary>
-            <p class="nota">Cada valor de <code>styles.yaml</code>. Solo se guardan los que cambies; se validan antes de escribir.</p>
+            <summary>{{full_style}}</summary>
+            <p class="nota">{{full_style_note}}</p>
             <div id="campos-estilo" class="campos-estilo"></div>
-            <button type="button" id="guardar-estilo">Guardar estilo</button>
+            <button type="button" id="guardar-estilo">{{save_style}}</button>
           </details>
         </section>
       </div>
 
       <section class="tarjeta vista" aria-labelledby="titulo-vista">
-        <h2 id="titulo-vista">Vista previa</h2>
-        <iframe id="vista-previa" title="Vista previa del widget" src="about:blank"></iframe>
+        <h2 id="titulo-vista">{{preview}}</h2>
+        <iframe id="vista-previa" title="{{preview_frame}}" src="about:blank"></iframe>
       </section>
     </div>
   </div>
 </main>
-<footer><a href="/source" rel="noopener">Código fuente</a></footer>
+<footer><a href="/source" rel="noopener">{{source_code}}</a></footer>
 <div id="textos" hidden
-  data-cargando="Cargando…"
-  data-guardado="Guardado. La vista previa se recargó."
-  data-preset="Preset aplicado."
-  data-importado="Avatar importado:"
-  data-sin-archivo="Elige un archivo .avatar.json y un nombre."
-  data-json-invalido="El archivo no es JSON válido; no se guardó nada:"
-  data-disparado="Evento enviado a la vista previa:"
-  data-sin-avatar="La vista previa todavía no tiene un avatar animado; se guardó la asignación."
-  data-sugerida="(sugerida)"
-  data-sin-sesion="La sesión terminó o el token cambió. Vuelve a entrar."
-  data-error-red="No se pudo conectar con el servicio."
-  data-sin-cambios="No hay cambios de estilo para guardar."></div>
+  data-cargando="{{loading}}"
+  data-guardado="{{saved}}"
+  data-preset="{{preset_applied}}"
+  data-importado="{{imported}}"
+  data-sin-archivo="{{no_file}}"
+  data-json-invalido="{{invalid_json}}"
+  data-disparado="{{triggered}}"
+  data-sin-avatar="{{no_avatar}}"
+  data-sugerida="{{suggested}}"
+  data-sin-sesion="{{session_ended}}"
+  data-error-red="{{network_error}}"
+  data-sin-cambios="{{no_changes}}"></div>
 <script src="/admin/panel/panel.js"></script>
 </body>
 </html>

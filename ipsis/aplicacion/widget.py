@@ -17,11 +17,9 @@ from ipsis.recursos import leer_plantilla
 
 PRESETS: dict[str, dict[str, Any]] = {
     "clasico": {
-        "descripcion": "Azul neutro, cómodo y equivalente al diseño de fábrica.",
         "tema": {},
     },
     "minimal": {
-        "descripcion": "Interfaz compacta, radios discretos y sombras suaves.",
         "tema": {
             "colores": {"acento": "#334155", "fondo": "#f8fafc", "borde": "#e2e8f0"},
             "forma": {"radio_panel": "12px", "radio_burbuja": "10px", "radio_control": "8px"},
@@ -30,7 +28,6 @@ PRESETS: dict[str, dict[str, Any]] = {
         },
     },
     "editorial": {
-        "descripcion": "Paleta cálida y tipografía serif para documentación extensa.",
         "tema": {
             "colores": {
                 "acento": "#8b2f3c", "acento_texto": "#fffaf3", "superficie": "#fffdf8",
@@ -43,7 +40,6 @@ PRESETS: dict[str, dict[str, Any]] = {
         },
     },
     "contraste": {
-        "descripcion": "Contraste alto, controles marcados y animaciones desactivadas.",
         "tema": {
             "colores": {
                 "acento": "#ffd400", "acento_texto": "#000000", "superficie": "#ffffff",
@@ -66,7 +62,10 @@ _SECCIONES = {"colores", "colores_oscuro", "tipografia", "forma", "sombras", "an
 
 
 def listar_presets() -> dict[str, str]:
-    return {nombre: datos["descripcion"] for nombre, datos in PRESETS.items()}
+    """Nombre del preset (como en ``styles.yaml``) → su descripción en el idioma de la interfaz."""
+    from ipsis.configuracion.glosario import PRESETS as NOMBRES_PRESETS
+
+    return {NOMBRES_PRESETS[nombre]: t(f"presets.{NOMBRES_PRESETS[nombre]}") for nombre in PRESETS}
 
 
 def _fusionar(destino: dict, cambios: dict) -> dict:

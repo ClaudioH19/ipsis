@@ -49,57 +49,57 @@ PRODUCCION = ModoServicio(token_admin=TOKEN)
 
 # --- existencia, token y transporte --------------------------------------------------------------
 def test_sin_token_admin_no_existe(proyecto):
-    assert _cliente(ModoServicio()).get("/admin/personalidad", headers=_auth()).status_code == 404
+    assert _cliente(ModoServicio()).get("/admin/personality", headers=_auth()).status_code == 404
     corto = ModoServicio(token_admin="corto")
-    assert corto.problemas and _cliente(corto).get("/admin/personalidad", headers=_auth("corto")).status_code == 404
+    assert corto.problemas and _cliente(corto).get("/admin/personality", headers=_auth("corto")).status_code == 404
 
 
 def test_token_incorrecto_401_y_correcto_200(proyecto):
     c = _cliente(PRODUCCION)
-    assert c.get("/admin/personalidad").status_code == 401
-    assert c.get("/admin/personalidad", headers=_auth("x" * 40)).status_code == 401
-    datos = c.get("/admin/personalidad", headers=_auth()).json()
-    assert set(datos) == {"config", "tonos", "situaciones", "eventos", "avatares", "avatar", "avisos_tono"}
-    assert datos["avisos_tono"] == []
-    assert len(datos["tonos"]) == 7 and datos["config"]["tono"]["activo"] == "cordial"
+    assert c.get("/admin/personality").status_code == 401
+    assert c.get("/admin/personality", headers=_auth("x" * 40)).status_code == 401
+    datos = c.get("/admin/personality", headers=_auth()).json()
+    assert set(datos) == {"config", "tones", "situations", "events", "avatars", "avatar", "tone_warnings"}
+    assert datos["tone_warnings"] == []
+    assert len(datos["tones"]) == 7 and datos["config"]["tone"]["active"] == "cordial"
 
 
 def test_https_obligatorio_en_produccion_salvo_desde_la_maquina(proyecto):
-    assert _cliente(PRODUCCION, esquema="http").get("/admin/personalidad", headers=_auth()).status_code == 403
+    assert _cliente(PRODUCCION, esquema="http").get("/admin/personality", headers=_auth()).status_code == 403
     assert _cliente(PRODUCCION, cliente=LOCAL, esquema="http").get(
-        "/admin/personalidad", headers=_auth()).status_code == 200
+        "/admin/personality", headers=_auth()).status_code == 200
     desarrollo = ModoServicio(modo="desarrollo", token_admin=TOKEN)
-    assert _cliente(desarrollo, esquema="http").get("/admin/personalidad", headers=_auth()).status_code == 200
+    assert _cliente(desarrollo, esquema="http").get("/admin/personality", headers=_auth()).status_code == 200
 
 
 def test_lista_de_ips(proyecto):
     modo = ModoServicio(token_admin=TOKEN, admin_ips=("198.51.100.7",))
-    assert _cliente(modo).get("/admin/personalidad", headers=_auth()).status_code == 403
-    assert _cliente(modo, cliente=("198.51.100.7", 1)).get("/admin/personalidad", headers=_auth()).status_code == 200
+    assert _cliente(modo).get("/admin/personality", headers=_auth()).status_code == 403
+    assert _cliente(modo, cliente=("198.51.100.7", 1)).get("/admin/personality", headers=_auth()).status_code == 200
 
 
 def test_bloqueo_tras_cinco_tokens_incorrectos(proyecto):
     c = _cliente(PRODUCCION)
-    codigos = [c.get("/admin/personalidad", headers=_auth("x" * 40)).status_code for _ in range(6)]
+    codigos = [c.get("/admin/personality", headers=_auth("x" * 40)).status_code for _ in range(6)]
     assert codigos == [401] * 5 + [429]
-    assert c.get("/admin/personalidad", headers=_auth()).status_code == 429  # el correcto también espera
+    assert c.get("/admin/personality", headers=_auth()).status_code == 429  # el correcto también espera
     # Otra IP no está bloqueada.
     assert _cliente(PRODUCCION, cliente=("198.51.100.9", 1)).get(
-        "/admin/personalidad", headers=_auth()).status_code == 200
+        "/admin/personality", headers=_auth()).status_code == 200
 
 
 def test_sin_cors_en_admin(proyecto):
     c = _cliente(PRODUCCION)
     origen = {"Origin": "https://www.sitio.cl"}
     assert "access-control-allow-origin" in c.get("/health", headers=origen).headers  # el widget sí
-    r = c.get("/admin/personalidad", headers={**origen, **_auth()})
+    r = c.get("/admin/personality", headers={**origen, **_auth()})
     assert r.status_code == 200 and "access-control-allow-origin" not in r.headers
-    previa = c.options("/admin/personalidad", headers={**origen, "Access-Control-Request-Method": "PUT"})
+    previa = c.options("/admin/personality", headers={**origen, "Access-Control-Request-Method": "PUT"})
     assert "access-control-allow-origin" not in previa.headers
 
 
 def test_cuerpo_mayor_a_256_kib(proyecto):
-    r = _cliente(PRODUCCION).put("/admin/personalidad", headers=_auth(),
+    r = _cliente(PRODUCCION).put("/admin/personality", headers=_auth(),
                                  content=json.dumps({"x": "a" * (256 * 1024)}))
     assert r.status_code == 413
 
@@ -107,16 +107,16 @@ def test_cuerpo_mayor_a_256_kib(proyecto):
 # --- cambios y recarga en caliente -------------------------------------------------------------
 def test_put_invalido_422_sin_escribir(proyecto):
     antes = Path("config/personality.yaml").read_bytes()
-    r = _cliente(PRODUCCION).put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "turbo"}})
-    assert r.status_code == 422 and r.json()["detail"]["errores"]
+    r = _cliente(PRODUCCION).put("/admin/personality", headers=_auth(), json={"tone": {"active": "turbo"}})
+    assert r.status_code == 422 and r.json()["detail"]["errors"]
     assert Path("config/personality.yaml").read_bytes() == antes
 
 
 def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
     motor = _motor()
     c = _cliente(PRODUCCION, motor=motor)
-    r = c.put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "direct"}})
-    assert r.status_code == 200 and r.json()["tono"]["activo"] == "direct"
+    r = c.put("/admin/personality", headers=_auth(), json={"tone": {"active": "direct"}})
+    assert r.status_code == 200 and r.json()["tone"]["active"] == "direct"
     assert motor.plantillas["tono"] == "direct"
     respuesta = c.post("/ask", json={"question": "hola", "session_id": "s"}).json()["answer"]
     from ipsis.lenguaje.tonos import cargar_tono
@@ -125,7 +125,7 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
                          for v in cargar_tono("es", "direct").variantes("greeting")]
     auditoria = Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
     entrada = json.loads(auditoria.splitlines()[-1])
-    assert entrada["accion"] == "personalidad" and entrada["claves"] == ["tono"] and entrada["ip"] == REMOTA[0]
+    assert entrada["accion"] == "personality" and entrada["claves"] == ["tone"] and entrada["ip"] == REMOTA[0]
     assert TOKEN not in auditoria
 
 
@@ -141,13 +141,13 @@ def test_cambio_por_cli_se_ve_sin_reiniciar(proyecto):
 
 def test_vista_previa_y_estilos(proyecto):
     c = _cliente(PRODUCCION)
-    previa = c.post("/admin/personalidad/vista-previa", headers=_auth(),
-                    json={"tono": "formal", "situacion": "no_answer"}).json()
+    previa = c.post("/admin/personality/preview", headers=_auth(),
+                    json={"tone": "formal", "situation": "no_answer"}).json()
     assert list(previa) == ["no_answer"] and len(previa["no_answer"]) == 5
-    r = c.put("/admin/estilos", headers=_auth(), json={"ubicacion": {"posicion": "arriba-izquierda"}})
-    assert r.status_code == 200 and r.json()["ubicacion"]["posicion"] == "arriba-izquierda"
+    r = c.put("/admin/styles", headers=_auth(), json={"placement": {"position": "top-left"}})
+    assert r.status_code == 200 and r.json()["placement"]["position"] == "top-left"
     assert c.get("/config").json()["placement"]["position"] == "top-left"
-    assert c.put("/admin/estilos", headers=_auth(), json={"ubicacion": {"posicion": "centro"}}).status_code == 422
+    assert c.put("/admin/styles", headers=_auth(), json={"placement": {"position": "center"}}).status_code == 422
 
 
 # --- avatar público ----------------------------------------------------------------------------
@@ -155,10 +155,10 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
     from apoyo import definicion_avatar
 
     c = _cliente(PRODUCCION)
-    r = c.post("/admin/avatares", headers=_auth(), json={"nombre": "mi-avatar", "definicion": definicion_avatar()})
+    r = c.post("/admin/avatars", headers=_auth(), json={"name": "mi-avatar", "definition": definicion_avatar()})
     assert r.status_code == 200
-    assert c.put("/admin/personalidad", headers=_auth(),
-                 json={"avatar": {"definicion": "mi-avatar", "colores": {"cuerpo": "#123456"}}}).status_code == 200
+    assert c.put("/admin/personality", headers=_auth(),
+                 json={"avatar": {"definition": "mi-avatar", "colors": {"body": "#123456"}}}).status_code == 200
     avatar = c.get("/config").json()["avatar"]
     assert avatar["enabled"] and avatar["definition_url"] == "/avatars/mi-avatar.avatar.json"
     assert avatar["events"]["answer_ok"] == "happy"
@@ -167,7 +167,7 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
     assert c.get("/avatars/../engine.yaml").status_code == 404
     assert c.get("/avatars/Mal_Nombre.avatar.json").status_code == 404
     assert c.get("/avatars/nadie.avatar.json").status_code == 404
-    malo = c.post("/admin/avatares", headers=_auth(), json={"nombre": "x", "definicion": {"expressions": {}}})
+    malo = c.post("/admin/avatars", headers=_auth(), json={"name": "x", "definition": {"expressions": {}}})
     assert malo.status_code == 422
 
 
@@ -242,12 +242,22 @@ def test_doctor_informa_el_modo(proyecto, monkeypatch):
 
 def test_estilo_plano_y_cambiar_por_admin(proyecto):
     c = _cliente(PRODUCCION)
-    plano = {f["clave"]: f["valor"] for f in c.get("/admin/estilos/plano", headers=_auth()).json()}
+    plano = {f["key"]: f["value"] for f in c.get("/admin/styles/flat", headers=_auth()).json()}
     assert plano["colors.accent"] == "#2563eb" and plano["animations.enabled"] is True
-    r = c.post("/admin/estilos/cambiar", headers=_auth(),
-               json={"asignaciones": ["colors.accent=#0ea5e9", "shape.panel_radius=10px"]})
-    assert r.status_code == 200 and r.json()["colores"]["acento"] == "#0ea5e9"
-    malo = c.post("/admin/estilos/cambiar", headers=_auth(), json={"asignaciones": ["colors.acent=#fff"]})
-    assert malo.status_code == 422 and "clave desconocida" in malo.json()["detail"]["errores"][0]
-    assert c.post("/admin/estilos/cambiar", json={"asignaciones": []}).status_code == 401
-    assert "estilos" in Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
+    r = c.post("/admin/styles/set", headers=_auth(),
+               json={"assignments": ["colors.accent=#0ea5e9", "shape.panel_radius=10px"]})
+    assert r.status_code == 200 and r.json()["colors"]["accent"] == "#0ea5e9"
+    malo = c.post("/admin/styles/set", headers=_auth(), json={"assignments": ["colors.acent=#fff"]})
+    assert malo.status_code == 422 and "clave desconocida" in malo.json()["detail"]["errors"][0]
+    assert c.post("/admin/styles/set", json={"assignments": []}).status_code == 401
+    assert "styles" in Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
+
+
+def test_el_panel_habla_el_idioma_de_la_interfaz(proyecto, monkeypatch):
+    c = _cliente(PRODUCCION)
+    monkeypatch.setenv("IPSIS_LANG", "en")
+    ingles = c.get("/admin/panel").text
+    assert "<title>Assistant panel</title>" in ingles and 'lang="en"' in ingles and "{{" not in ingles
+    monkeypatch.setenv("IPSIS_LANG", "es")
+    espanol = c.get("/admin/panel").text
+    assert "<title>Panel del asistente</title>" in espanol and 'lang="es"' in espanol

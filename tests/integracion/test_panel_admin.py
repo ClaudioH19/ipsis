@@ -160,7 +160,7 @@ def test_sin_token_no_muestra_nada(servidor, pagina):
     assert page.is_hidden("#contenido") and page.is_visible("#acceso")
     _entrar(page, servidor, "x" * 40)
     _esperar(page, "document.getElementById('error-acceso').textContent.length > 0")
-    assert "inválido" in page.text_content("#error-acceso")
+    assert "invalid" in page.text_content("#error-acceso")
     assert page.is_hidden("#contenido")
     assert page.evaluate("sessionStorage.getItem('rag-admin-token')") is None
     assert not [e for e in errores if "401" not in e], errores  # solo el 401 esperado
@@ -273,7 +273,7 @@ def test_preset_y_ubicacion_del_widget(servidor, pagina, proyecto):
     page.select_option("#preset", otro)
     page.click("#aplicar-preset")
     _esperar(page, "document.getElementById('estado').textContent.length > 0")
-    page.select_option("#posicion", "abajo-izquierda")
+    page.select_option("#posicion", "bottom-left")
     page.click("#guardar-widget")
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
     estilos = leer_proyecto(proyecto / "config/styles.yaml")

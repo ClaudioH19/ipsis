@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  var CLAVE_TOKEN = "rag-admin-token";
+  var CLAVE_TOKEN = "ipsis-admin-token";
   var $ = function (id) { return document.getElementById(id); };
   var textos = $("textos").dataset;
   var estado = { datos: null, estilos: null, situacion: null };
@@ -50,7 +50,7 @@
 
   function erroresDe(cuerpo) {
     var d = cuerpo && cuerpo.detail;
-    if (d && d.errores) return d.errores;
+    if (d && d.errors) return d.errors;
     if (typeof d === "string") return [d];
     if (Array.isArray(d)) return d.map(function (x) { return x.msg || JSON.stringify(x); });
     return [JSON.stringify(cuerpo)];
@@ -130,8 +130,8 @@
 
   // --- carga ------------------------------------------------------------
   function cargarTodo() {
-    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos"), api("GET", "/estilos/presets"),
-                        api("GET", "/estilos/plano")])
+    return Promise.all([api("GET", "/personality"), api("GET", "/styles"), api("GET", "/styles/presets"),
+                        api("GET", "/styles/flat")])
       .then(function (r) {
         estado.datos = r[0];
         estado.estilos = r[1];
@@ -143,7 +143,7 @@
       });
   }
   function recargarDatos() {
-    return Promise.all([api("GET", "/personalidad"), api("GET", "/estilos"), api("GET", "/estilos/plano")])
+    return Promise.all([api("GET", "/personality"), api("GET", "/styles"), api("GET", "/styles/flat")])
       .then(function (r) {
         estado.datos = r[0];
         estado.estilos = r[1];
@@ -177,18 +177,18 @@
 
   // --- tono -------------------------------------------------------------
   function pintarTono() {
-    var d = estado.datos, tono = d.config.tono;
-    opciones($("tono-activo"), d.tonos.map(function (t) { return t.tono; }), tono.activo);
-    var actual = d.tonos.filter(function (t) { return t.tono === tono.activo; })[0];
-    $("tono-descripcion").textContent = actual ? actual.descripcion : "";
+    var d = estado.datos, tono = d.config.tone;
+    opciones($("tono-activo"), d.tones.map(function (t) { return t.tone; }), tono.active);
+    var actual = d.tones.filter(function (t) { return t.tone === tono.active; })[0];
+    $("tono-descripcion").textContent = actual ? actual.description : "";
     // Textos propios no neutros: aviso, no error (se guardan igual).
     var avisos = $("tono-avisos");
     vaciar(avisos);
-    (d.avisos_tono || []).forEach(function (texto) { avisos.appendChild(elemento("li", texto)); });
+    (d.tone_warnings || []).forEach(function (texto) { avisos.appendChild(elemento("li", texto)); });
     Array.prototype.forEach.call(document.getElementsByName("variedad"), function (r) {
-      r.checked = r.value === tono.variedad;
+      r.checked = r.value === tono.variety;
     });
-    var situaciones = Object.keys(d.situaciones);
+    var situaciones = Object.keys(d.situations);
     if (!estado.situacion || situaciones.indexOf(estado.situacion) < 0) estado.situacion = situaciones[0];
     opciones($("situacion"), situaciones, estado.situacion);
     pintarPropias();
@@ -196,13 +196,13 @@
   }
 
   function pintarPropias() {
-    var propias = estado.datos.config.tono.plantillas[estado.situacion];
+    var propias = (estado.datos.config.tone.templates || {})[estado.situacion];
     if (typeof propias === "string") propias = [propias];
     $("propias").value = (propias || []).join("\n");
   }
 
   function pintarVariantes(tono) {
-    return api("POST", "/personalidad/vista-previa", { tono: tono, situacion: estado.situacion })
+    return api("POST", "/personality/preview", { tone: tono, situation: estado.situacion })
       .then(function (r) {
         var lista = $("variantes");
         vaciar(lista);
@@ -212,11 +212,11 @@
 
   $("tono-activo").addEventListener("change", function () {
     var tono = $("tono-activo").value;
-    api("PUT", "/personalidad", { tono: { activo: tono } }).then(function () { return guardado(); }, fallo);
+    api("PUT", "/personality", { tone: { active: tono } }).then(function () { return guardado(); }, fallo);
   });
   Array.prototype.forEach.call(document.getElementsByName("variedad"), function (r) {
     r.addEventListener("change", function () {
-      api("PUT", "/personalidad", { tono: { variedad: r.value } }).then(function () { return guardado(); }, fallo);
+      api("PUT", "/personality", { tone: { variety: r.value } }).then(function () { return guardado(); }, fallo);
     });
   });
   $("situacion").addEventListener("change", function () {
@@ -226,57 +226,57 @@
   });
 
   function guardarPlantillas(nuevas) {
-    // plantillas se reemplaza completo: se envía el mapa entero.
-    api("PUT", "/personalidad", { tono: { plantillas: nuevas } }).then(function () { return guardado(); }, fallo);
+    // templates se reemplaza completo: se envía el mapa entero.
+    api("PUT", "/personality", { tone: { templates: nuevas } }).then(function () { return guardado(); }, fallo);
   }
   $("guardar-propias").addEventListener("click", function () {
     var lineas = $("propias").value.split("\n").map(function (l) { return l.trim(); })
       .filter(function (l) { return l; });
-    var nuevas = Object.assign({}, estado.datos.config.tono.plantillas);
+    var nuevas = Object.assign({}, estado.datos.config.tone.templates);
     if (lineas.length) nuevas[estado.situacion] = lineas; else delete nuevas[estado.situacion];
     guardarPlantillas(nuevas);
   });
   $("quitar-propias").addEventListener("click", function () {
-    var nuevas = Object.assign({}, estado.datos.config.tono.plantillas);
+    var nuevas = Object.assign({}, estado.datos.config.tone.templates);
     delete nuevas[estado.situacion];
     guardarPlantillas(nuevas);
   });
 
   // --- avatar -----------------------------------------------------------
   function clavesDe(nombre) {
-    var a = estado.datos.avatares.filter(function (x) { return x.nombre === nombre; })[0];
+    var a = estado.datos.avatars.filter(function (x) { return x.name === nombre; })[0];
     if (!a || a.error) return [];
-    return a.animaciones.concat(a.expresiones.filter(function (e) { return a.animaciones.indexOf(e) < 0; }));
+    return a.animations.concat(a.expressions.filter(function (e) { return a.animations.indexOf(e) < 0; }));
   }
 
   function pintarAvatar() {
-    var d = estado.datos, a = d.config.avatar;
-    $("avatar-estado").textContent = d.avatar.mensaje || d.avatar.estado || "";
-    var nombres = d.avatares.map(function (x) { return x.nombre; });
-    if (nombres.indexOf(a.definicion) < 0) nombres.unshift(a.definicion);
-    opciones($("avatar-activo-sel"), nombres, a.definicion);
-    $("color-cuerpo").value = a.colores.cuerpo || "#f5f1e8";
-    $("color-ojos").value = a.colores.ojos || "#1e293b";
-    $("avatar-ubicacion").value = a.ubicacion;
-    $("avatar-tamano").value = a.tamano;
-    $("avatar-lanzador").checked = !!a.en_lanzador;
-    $("avatar-mirada").checked = !!a.mirada.activa;
+    var d = estado.datos, a = d.config.avatar, colores = a.colors || {};
+    $("avatar-estado").textContent = d.avatar.message || d.avatar.state || "";
+    var nombres = d.avatars.map(function (x) { return x.name; });
+    if (nombres.indexOf(a.definition) < 0) nombres.unshift(a.definition);
+    opciones($("avatar-activo-sel"), nombres, a.definition);
+    $("color-cuerpo").value = colores.body || "#f5f1e8";
+    $("color-ojos").value = colores.eyes || "#1e293b";
+    $("avatar-ubicacion").value = a.placement;
+    $("avatar-tamano").value = a.size;
+    $("avatar-lanzador").checked = !!a.in_launcher;
+    $("avatar-mirada").checked = !!(a.gaze && a.gaze.enabled);
     pintarEventos();
   }
 
   function pintarEventos() {
     var d = estado.datos, a = d.config.avatar, cuerpo = $("tabla-eventos");
-    var claves = clavesDe(a.definicion);
+    var claves = clavesDe(a.definition);
     vaciar(cuerpo);
-    Object.keys(d.eventos).forEach(function (evento) {
+    Object.keys(d.events).forEach(function (evento) {
       var fila = elemento("tr", null, { "data-evento": evento });
       fila.appendChild(elemento("th", evento, { scope: "row" }));
       var celda = elemento("td");
       var sel = elemento("select", null, { "aria-label": evento });
-      var sugerida = d.eventos[evento].sugerida;
+      var sugerida = d.events[evento].suggested;
       var lista = [{ valor: "", texto: sugerida + " " + textos.sugerida }].concat(
         claves.map(function (k) { return { valor: k, texto: k }; }));
-      var propia = a.eventos[evento];
+      var propia = (a.events || {})[evento];
       if (propia && claves.indexOf(propia) < 0) lista.push({ valor: propia, texto: propia });
       opciones(sel, lista, propia || "");
       sel.addEventListener("change", function () { asignarEvento(evento, sel.value); });
@@ -292,9 +292,9 @@
   }
 
   function asignarEvento(evento, clave) {
-    var eventos = Object.assign({}, estado.datos.config.avatar.eventos);
+    var eventos = Object.assign({}, estado.datos.config.avatar.events);
     if (clave) eventos[evento] = clave; else delete eventos[evento];
-    api("PUT", "/personalidad", { avatar: { eventos: eventos } }).then(function () { return guardado(); }, fallo);
+    api("PUT", "/personality", { avatar: { events: eventos } }).then(function () { return guardado(); }, fallo);
   }
 
   function disparar(evento) {
@@ -308,19 +308,19 @@
   }
 
   $("avatar-activo-sel").addEventListener("change", function () {
-    api("PUT", "/personalidad", { avatar: { definicion: $("avatar-activo-sel").value } })
+    api("PUT", "/personality", { avatar: { definition: $("avatar-activo-sel").value } })
       .then(function () { return guardado(); }, fallo);
   });
   $("guardar-colores").addEventListener("click", function () {
-    api("PUT", "/personalidad", { avatar: { colores: { cuerpo: $("color-cuerpo").value, ojos: $("color-ojos").value } } })
+    api("PUT", "/personality", { avatar: { colors: { body: $("color-cuerpo").value, eyes: $("color-ojos").value } } })
       .then(function () { return guardado(); }, fallo);
   });
   $("guardar-avatar").addEventListener("click", function () {
-    api("PUT", "/personalidad", { avatar: {
-      ubicacion: $("avatar-ubicacion").value,
-      tamano: parseInt($("avatar-tamano").value, 10),
-      en_lanzador: $("avatar-lanzador").checked,
-      mirada: { activa: $("avatar-mirada").checked }
+    api("PUT", "/personality", { avatar: {
+      placement: $("avatar-ubicacion").value,
+      size: parseInt($("avatar-tamano").value, 10),
+      in_launcher: $("avatar-lanzador").checked,
+      gaze: { enabled: $("avatar-mirada").checked }
     } }).then(function () { return guardado(); }, fallo);
   });
 
@@ -343,15 +343,15 @@
         mostrarErrores([textos.jsonInvalido + " " + e.message]);
         return;
       }
-      api("POST", "/avatares", { nombre: nombre, definicion: definicion })
-        .then(function (r) { return guardado(textos.importado + " " + r.nombre); }, fallo);
+      api("POST", "/avatars", { name: nombre, definition: definicion })
+        .then(function (r) { return guardado(textos.importado + " " + r.name); }, fallo);
     };
     lector.readAsText(archivo);
   });
 
   // --- widget -----------------------------------------------------------
   function pintarWidget(presets) {
-    var e = estado.estilos, u = e.ubicacion || {}, p = e.presentacion || {};
+    var e = estado.estilos, u = e.placement || {}, p = e.presentation || {};
     if (presets) {
       opciones($("preset"), Object.keys(presets).map(function (k) {
         return { valor: k, texto: k + " — " + presets[k] };
@@ -359,22 +359,22 @@
     } else if (e.preset) {
       $("preset").value = e.preset;
     }
-    $("color-acento").value = (e.colores && e.colores.acento) || "#2563eb";
-    if (u.posicion) $("posicion").value = u.posicion;
-    if (u.tamano) $("tamano").value = u.tamano;
-    if (u.lanzador) $("lanzador").value = u.lanzador;
-    if (p.citas) $("citas").value = p.citas;
+    $("color-acento").value = (e.colors && e.colors.accent) || "#2563eb";
+    if (u.position) $("posicion").value = u.position;
+    if (u.size) $("tamano").value = u.size;
+    if (u.launcher) $("lanzador").value = u.launcher;
+    if (p.citations) $("citas").value = p.citations;
   }
 
   $("aplicar-preset").addEventListener("click", function () {
-    api("POST", "/estilos/preset", { nombre: $("preset").value })
+    api("POST", "/styles/preset", { name: $("preset").value })
       .then(function () { return guardado(textos.preset); }, fallo);
   });
   $("guardar-widget").addEventListener("click", function () {
-    api("PUT", "/estilos", {
-      colores: { acento: $("color-acento").value },
-      ubicacion: { posicion: $("posicion").value, tamano: $("tamano").value, lanzador: $("lanzador").value },
-      presentacion: { citas: $("citas").value }
+    api("PUT", "/styles", {
+      colors: { accent: $("color-acento").value },
+      placement: { position: $("posicion").value, size: $("tamano").value, launcher: $("lanzador").value },
+      presentation: { citations: $("citas").value }
     }).then(function () { return guardado(); }, fallo);
   });
 
@@ -388,26 +388,26 @@
     originales = {};
     var seccionActual = null;
     campos.forEach(function (campo) {
-      var seccion = campo.clave.split(".")[0];
+      var seccion = campo.key.split(".")[0];
       if (seccion !== seccionActual) {
         caja.appendChild(elemento("h4", seccion));
         seccionActual = seccion;
       }
-      var valor = campo.valor;
-      var etiqueta = elemento("label", campo.clave.split(".")[1] + " ");
-      var entrada = elemento("input", null, { "data-clave": campo.clave });
+      var valor = campo.value;
+      var etiqueta = elemento("label", campo.key.split(".")[1] + " ");
+      var entrada = elemento("input", null, { "data-clave": campo.key });
       if (typeof valor === "boolean") {
         entrada.type = "checkbox";
         entrada.checked = valor;
-        originales[campo.clave] = String(valor);
+        originales[campo.key] = String(valor);
       } else if (typeof valor === "string" && HEX.test(valor)) {
         entrada.type = "color";
         entrada.value = valor.toLowerCase();
-        originales[campo.clave] = entrada.value;
+        originales[campo.key] = entrada.value;
       } else {
         entrada.type = "text";
         entrada.value = String(valor);
-        originales[campo.clave] = entrada.value;
+        originales[campo.key] = entrada.value;
       }
       etiqueta.appendChild(entrada);
       caja.appendChild(etiqueta);
@@ -422,7 +422,7 @@
       if (valor !== originales[clave]) asignaciones.push(clave + "=" + valor);
     });
     if (!asignaciones.length) { avisar(textos.sinCambios); return; }
-    api("POST", "/estilos/cambiar", { asignaciones: asignaciones }).then(function () { return guardado(); }, fallo);
+    api("POST", "/styles/set", { assignments: asignaciones }).then(function () { return guardado(); }, fallo);
   });
 
   // --- arranque ---------------------------------------------------------

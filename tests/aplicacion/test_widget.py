@@ -12,7 +12,7 @@ from ipsis.aplicacion.widget import (
 
 
 def test_catalogo_de_presets_es_estable():
-    assert list(listar_presets()) == ["clasico", "minimal", "editorial", "contraste"]
+    assert list(listar_presets()) == ["classic", "minimal", "editorial", "contrast"]
 
 
 def test_aplicar_preset_preserva_css_extra_y_escribe_yaml_valido(tmp_path):

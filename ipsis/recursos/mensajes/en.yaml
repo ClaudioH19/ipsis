@@ -679,6 +679,81 @@ core:
   index_no_manifest: the index {name!r} has no manifest ({path}); it is from an earlier version. Run 'ipsis index'.
   index_no_stats: the lexical statistics of the index do not exist at {path!r}. Run 'ipsis index' to rebuild the index.
   collection_missing: the Qdrant collection {name!r} does not exist yet. Run 'ipsis index' first (it reads the same config/engine.yaml::retrieval as this service).
+panel:
+  lang: en
+  title: Assistant panel
+  note: 'Presentation only: nothing here changes what the assistant answers.'
+  access: Access
+  token: Admin token
+  enter: Sign in
+  sections: Sections
+  tab_tone: Tone
+  tab_avatar: Avatar
+  tab_widget: Widget
+  sign_out: Sign out
+  tone_title: Answer tone
+  active_tone: Active tone
+  variety: Variety
+  rotating: Rotating (no repeats in consecutive turns)
+  fixed: Fixed (always the first)
+  situation: Situation
+  variants: Variants
+  own_texts: Your own texts for this situation
+  own_texts_note: One variant per line. They are checked with the same rules as the included tones.
+  save_own: Save own texts
+  use_tone: Use the tone's texts
+  avatar_title: Avatar
+  avatar: Avatar
+  import_file: Import an .avatar.json (exported from the Studio)
+  project_name: Name in the project
+  name_placeholder: my-avatar
+  import: Import
+  body: Body
+  eyes: Eyes
+  save_colors: Save colors
+  placement: Placement
+  header: Header
+  top_corner: Top corner
+  bottom_corner: Bottom corner
+  size_px: Size (px)
+  in_launcher: In the open button
+  follow_pointer: Follows the pointer
+  save: Save
+  events: Events
+  event: Event
+  animation: Animation or expression
+  try: Try
+  widget_title: Widget
+  preset: Visual preset
+  apply_preset: Apply preset
+  accent: Accent color
+  position: Position
+  size: Size
+  launcher: Launcher
+  citations: Citations
+  full_style: 'Full style: colors, typography, shapes, shadows and animations'
+  full_style_note: Every value of styles.yaml. Only the ones you change are saved; they are checked before writing.
+  save_style: Save style
+  preview: Preview
+  preview_frame: Widget preview
+  source_code: Source code
+  loading: Loading…
+  saved: Saved. The preview was reloaded.
+  preset_applied: Preset applied.
+  imported: 'Avatar imported:'
+  no_file: Choose an .avatar.json file and a name.
+  invalid_json: 'The file is not valid JSON; nothing was saved:'
+  triggered: 'Event sent to the preview:'
+  no_avatar: The preview has no animated avatar yet; the assignment was saved.
+  suggested: (suggested)
+  session_ended: The session ended or the token changed. Sign in again.
+  network_error: Could not connect to the service.
+  no_changes: There are no style changes to save.
+presets:
+  classic: Neutral blue, comfortable, the same as the factory design.
+  minimal: Compact interface, subtle radii and soft shadows.
+  editorial: Warm palette and serif typography for long documentation.
+  contrast: High contrast, marked controls and animations off.
 styles:
   not_object: the theme must be a YAML object
   section_object: '{section} must be an object'

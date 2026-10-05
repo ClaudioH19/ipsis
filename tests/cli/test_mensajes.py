@@ -31,8 +31,11 @@ def test_cada_clave_usada_en_el_codigo_existe_y_cada_clave_se_usa():
     usadas = set(re.findall(r'["\']([a-z_]+\.[a-z0-9_]+)["\']', codigo))
     claves = set(catalogo("en"))
     secciones = {c.split(".")[0] for c in claves}
-    extensiones = {"yaml", "js", "json", "jsonl", "csv", "md", "html", "txt"}  # nombres de archivo, no claves
+    extensiones = {"yaml", "js", "json", "jsonl", "csv", "md", "html", "txt", "css"}  # nombres de archivo, no claves
     usadas = {c for c in usadas if c.split(".")[0] in secciones and c.split(".")[1] not in extensiones}
+    # panel.html: el servicio reemplaza cada {{clave}} por panel.clave.
+    panel = (RAIZ / "ipsis/servicio/estaticos/admin/panel.html").read_text(encoding="utf-8")
+    usadas |= {f"panel.{c}" for c in re.findall(r"\{\{(\w+)\}\}", panel)}
     # Las claves armadas con un prefijo ("profile." + rol, f"{'doctor.errors'}_one") también cuentan como usadas.
     prefijos = set(re.findall(r'["\']([a-z_]+\.)["\']\s*\+', codigo))
     prefijos |= set(re.findall(r'f["\']([a-z_]+\.[a-z_]*)\{', codigo))
