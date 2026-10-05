@@ -154,14 +154,14 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
 
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--profile", "light"]) == 0
-    assert main(["personality", "tone", "apply", "serio"]) == 0
+    assert main(["personality", "tone", "apply", "serious"]) == 0
     from ipsis.servicio.api import crear_app
 
     cfg = TestClient(crear_app()).get("/config").json()
     assert cfg["citas"] == "acordeon" and cfg["ubicacion"]["posicion"] == "abajo-derecha"
-    assert set(cfg["microcopia"]) == {"bienvenida", "esperando", "invitacion_citas", "error_red", "error_limite",
-                                      "error_servicio"}
-    assert cfg["microcopia"]["esperando"][0] == "Buscando"  # tono serio
+    assert set(cfg["microcopia"]) == {"welcome", "waiting", "citations_hint", "network_error", "rate_limit_error",
+                                      "service_error"}
+    assert cfg["microcopia"]["waiting"][0] == "Buscando"  # tono serio
     assert all(len(v) == 5 for v in cfg["microcopia"].values())
     assert "{" not in " ".join(sum(cfg["microcopia"].values(), []))  # variables reemplazadas
     assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget

@@ -36,12 +36,12 @@ REFERENCIAS = {
            ("o anexo 2", "anexo_2"), ("os artigos 20 a 23", "articulo_20_a_23")],
 }
 CONVERSACION = {
-    "es": [("hola", "saludo"), ("muchas gracias", "agradecimiento"), ("chao", "despedida"),
-           ("¿qué puedes hacer?", "capacidad"), ("¿cuánto dura la garantía?", None)],
-    "en": [("hello there", "saludo"), ("thanks a lot", "agradecimiento"), ("bye", "despedida"),
-           ("what can you do?", "capacidad"), ("how long is the warranty?", None)],
-    "pt": [("olá", "saludo"), ("muito obrigado", "agradecimiento"), ("tchau", "despedida"),
-           ("o que você pode fazer?", "capacidad"), ("quanto dura a garantia?", None)],
+    "es": [("hola", "greeting"), ("muchas gracias", "thanks"), ("chao", "farewell"),
+           ("¿qué puedes hacer?", "capability"), ("¿cuánto dura la garantía?", None)],
+    "en": [("hello there", "greeting"), ("thanks a lot", "thanks"), ("bye", "farewell"),
+           ("what can you do?", "capability"), ("how long is the warranty?", None)],
+    "pt": [("olá", "greeting"), ("muito obrigado", "thanks"), ("tchau", "farewell"),
+           ("o que você pode fazer?", "capability"), ("quanto dura a garantia?", None)],
 }
 
 

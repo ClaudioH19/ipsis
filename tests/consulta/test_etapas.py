@@ -140,7 +140,7 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
              _fragmento("Tercero.", chunk_id="c")]
     texto = redactar(frags)
     from ipsis.consulta.etapas.redaccion import _cargar_plantillas
-    usados = [c for c in _cargar_plantillas()["conectores"]["complemento"] if c in texto]
+    usados = [c for c in _cargar_plantillas()["conectores"]["addition"] if c in texto]
     assert len(usados) == 2, f"se esperaban dos conectores distintos, hubo {usados}"
 
 
@@ -151,7 +151,7 @@ def test_ningun_conector_es_subordinante(monkeypatch):
     cita literal. Ahora todos cierran en dos puntos."""
     from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     conectores = _cargar_plantillas()["conectores"]
-    for categoria in ("apertura", "complemento", "condicion", "excepcion"):
+    for categoria in ("opening", "addition", "condition", "exception"):
         for frase in conectores[categoria]:
             assert frase.rstrip().endswith(":"), (categoria, frase)
 
@@ -186,7 +186,7 @@ def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
     # El encabezado es una variante del tono (todas dicen que no es una respuesta directa).
     from ipsis.lenguaje.tonos import cargar_tono
 
-    assert any(texto.startswith(v) for v in cargar_tono("es").variantes("relacionado_intro"))
+    assert any(texto.startswith(v) for v in cargar_tono("es").variantes("related_intro"))
     assert "Texto de contexto general sobre el tema." in texto
 
 
@@ -231,20 +231,20 @@ def test_separar_entidades_ausentes_todas_en_corpus():
 # ---------------------------------------------------------------------------
 
 def test_detectar_conversacional_saludo():
-    assert detectar_conversacional("hola") == "saludo"
-    assert detectar_conversacional("Buenos días, ¿cómo estás?") == "saludo"
+    assert detectar_conversacional("hola") == "greeting"
+    assert detectar_conversacional("Buenos días, ¿cómo estás?") == "greeting"
 
 
 def test_detectar_conversacional_agradecimiento():
-    assert detectar_conversacional("muchas gracias por la ayuda") == "agradecimiento"
+    assert detectar_conversacional("muchas gracias por la ayuda") == "thanks"
 
 
 def test_detectar_conversacional_despedida():
-    assert detectar_conversacional("chao, nos vemos") == "despedida"
+    assert detectar_conversacional("chao, nos vemos") == "farewell"
 
 
 def test_detectar_conversacional_capacidad():
-    assert detectar_conversacional("¿qué puedes hacer?") == "capacidad"
+    assert detectar_conversacional("¿qué puedes hacer?") == "capability"
 
 
 def test_detectar_conversacional_pregunta_del_corpus_no_matchea():
@@ -255,7 +255,7 @@ def test_detectar_conversacional_pregunta_del_corpus_no_matchea():
 
 
 def test_respuesta_conversacional_no_esta_vacia_para_cada_categoria():
-    for categoria in ("saludo", "agradecimiento", "despedida", "capacidad"):
+    for categoria in ("greeting", "thanks", "farewell", "capability"):
         texto = respuesta_conversacional(categoria)
         assert isinstance(texto, str) and len(texto) > 0
 
@@ -265,8 +265,8 @@ def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():
     pregunta: la MISMA pregunta devuelve siempre el mismo texto (testeable),
     pero distintos saludos no contestan todos lo mismo (suena menos a
     máquina). Nada de esto lo redacta un modelo."""
-    assert respuesta_conversacional("saludo", "hola") == respuesta_conversacional("saludo", "hola")
-    variantes = {respuesta_conversacional("saludo", p)
+    assert respuesta_conversacional("greeting", "hola") == respuesta_conversacional("greeting", "hola")
+    variantes = {respuesta_conversacional("greeting", p)
                  for p in ("hola", "buenas", "qué tal", "buenos días", "hey", "buenas tardes")}
     assert len(variantes) > 1, "todos los saludos contestan exactamente lo mismo"
 
@@ -274,7 +274,7 @@ def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():
 def test_respuesta_conversacional_sin_pregunta_sigue_funcionando():
     """La firma acepta la pregunta como opcional: /config pide el saludo sin
     tener ninguna pregunta que pasarle."""
-    texto = respuesta_conversacional("saludo")
+    texto = respuesta_conversacional("greeting")
     assert texto and isinstance(texto, str)
 
 
@@ -287,14 +287,14 @@ def test_zona_gris_no_apila_dos_encabezados():
     from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     frag = _fragmento("Texto pertinente sobre el tema.")
     texto = redactar_zona_gris([frag])
-    for apertura in _cargar_plantillas()["conectores"]["apertura"]:
+    for apertura in _cargar_plantillas()["conectores"]["opening"]:
         assert apertura not in texto, f"la apertura {apertura!r} se apiló sobre el encabezado"
 
 
 def test_contraccion_castellana_en_los_textos_conversacionales():
     """Regresión de un defecto real: `descripcion_dominio` la escribe el
     usuario y puede empezar con artículo ("el manual de..."), así que
-    una plantilla que diga "de {descripcion_dominio}" producía "de el
+    una plantilla que diga "de {domain_description}" producía "de el
     manual"."""
     from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     respuestas = _cargar_plantillas()["conversacional"]["respuestas"]

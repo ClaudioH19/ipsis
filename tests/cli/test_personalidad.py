@@ -18,14 +18,14 @@ def _definicion(**cambios) -> dict:
     expresion = {"head": {"x": 0, "y": 0, "z": 0}, "perspective": 1, "motion": {"eyes": "none", "body": "none"},
                  "eyes": {"spacing": 1, "left": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0},
                           "right": {"width": 1, "height": 1, "x": 0, "y": 0, "angle": 0}}}
-    paso = {"expression": "contento", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
+    paso = {"expression": "happy", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
     datos = {"schema": "bible-strong-avatar", "schemaVersion": 1, "name": "Prueba", "body": {},
              "colors": {"body": "#ffffff", "eyes": "#000000"},
-             "expressions": {"neutral": expresion, "contento": expresion},
-             "expressionOrder": ["neutral", "contento"],
-             "animations": {"inactivo": {"playbackMode": "loop", "steps": [paso], "blink": {}},
-                            "contento": {"playbackMode": "once", "steps": [paso], "blink": {}}},
-             "animationOrder": ["inactivo", "contento"]}
+             "expressions": {"neutral": expresion, "happy": expresion},
+             "expressionOrder": ["neutral", "happy"],
+             "animations": {"idle": {"playbackMode": "loop", "steps": [paso], "blink": {}},
+                            "happy": {"playbackMode": "once", "steps": [paso], "blink": {}}},
+             "animationOrder": ["idle", "happy"]}
     datos.update(cambios)
     return datos
 
@@ -65,7 +65,7 @@ def test_sin_proyecto_pide_rag_init(tmp_path, monkeypatch, capsys):
 def test_listar_aplicar_y_probar_tono(proyecto, capsys):
     assert main(["personality", "tone", "list"]) == 0
     salida = capsys.readouterr().out
-    assert "* cordial" in salida and "  directo" in salida and salida.count("«") == 7
+    assert "* cordial" in salida and "  direct" in salida and salida.count("«") == 7
 
     assert main(["personality", "tone", "apply", "formal"]) == 0
     texto = PERSONALIDAD.read_text(encoding="utf-8")
@@ -73,15 +73,15 @@ def test_listar_aplicar_y_probar_tono(proyecto, capsys):
     assert leer_proyecto(PERSONALIDAD)["tono"]["activo"] == "formal"
 
     capsys.readouterr()
-    assert main(["personality", "tone", "try", "--situation", "sin_respuesta"]) == 0
+    assert main(["personality", "tone", "try", "--situation", "no_answer"]) == 0
     lineas = capsys.readouterr().out.splitlines()
-    assert lineas[0] == "sin_respuesta:" and len(lineas) == 6 and lineas[1].startswith("  1. Lamentablemente")
+    assert lineas[0] == "no_answer:" and len(lineas) == 6 and lineas[1].startswith("  1. Lamentablemente")
 
 
 def test_probar_reemplaza_las_variables_del_proyecto(proyecto, capsys):
     assert main(["configure", "assistant_name=Ana"]) == 0
     capsys.readouterr()
-    assert main(["personality", "tone", "try", "--tone", "serio", "--situation", "saludo"]) == 0
+    assert main(["personality", "tone", "try", "--tone", "serious", "--situation", "greeting"]) == 0
     salida = capsys.readouterr().out
     assert "Ana" in salida and "{" not in salida
 
@@ -101,19 +101,19 @@ def test_el_motor_usa_el_tono_activo_y_la_variedad_fija(proyecto):
     from ipsis.lenguaje.paquete import cargar_paquete
 
     datos = leer_proyecto(PERSONALIDAD)
-    datos["tono"].update(activo="directo", variedad="fija")
+    datos["tono"].update(activo="direct", variedad="fija")
     escribir_proyecto(PERSONALIDAD, datos)
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "A", "descripcion_dominio": "B"})
-    assert plantillas["tono"] == "directo" and plantillas["abstencion"]["generico"][0].startswith("No está")
+    assert plantillas["tono"] == "direct" and plantillas["abstencion"]["generico"][0].startswith("No está")
     motor = Motor(plantillas=plantillas)
-    assert motor.selector_variantes.fija and motor.selector_variantes.tono == "directo"
+    assert motor.selector_variantes.fija and motor.selector_variantes.tono == "direct"
     textos = {motor.consultar("hola", "s").mensaje_usuario for _ in range(3)}
     assert len(textos) == 1  # fija: siempre la primera variante
 
 
 def test_plantilla_propia_invalida_es_error_en_validar_y_doctor(proyecto, capsys):
     datos = leer_proyecto(PERSONALIDAD)
-    datos["tono"]["plantillas"] = {"apertura": ["Sin dos puntos"]}
+    datos["tono"]["plantillas"] = {"opening": ["Sin dos puntos"]}
     escribir_proyecto(PERSONALIDAD, datos)
     assert main(["personality", "validate"]) == 1
     assert "[ERROR]" in capsys.readouterr().out
@@ -129,7 +129,7 @@ def test_cambiar_el_tono_no_toca_indice_ni_calibracion(proyecto, capsys):
     antes = {c.clave: c.estado for c in diagnosticar().chequeos}
     assert main(["profile", "show"]) == 0
     perfil_antes = capsys.readouterr().out
-    assert main(["personality", "tone", "apply", "animoso"]) == 0
+    assert main(["personality", "tone", "apply", "upbeat"]) == 0
     capsys.readouterr()
     assert main(["profile", "show"]) == 0
     assert capsys.readouterr().out == perfil_antes
@@ -150,14 +150,14 @@ def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
     capsys.readouterr()
     assert main(["personality", "avatar", "events"]) == 0
     salida = capsys.readouterr().out
-    assert "respuesta_ok           → contento" in salida
-    assert "pensando               → inactivo  (pedida: 'pensando'" in salida  # respaldo en cadena
-    assert main(["personality", "avatar", "assign", "pensando", "contento"]) == 0
-    assert leer_proyecto(PERSONALIDAD)["avatar"]["eventos"] == {"pensando": "contento"}
+    assert f"{'answer_ok':22} → happy" in salida
+    assert f"{'thinking':22} → idle  (pedida: 'thinking'" in salida  # respaldo en cadena
+    assert main(["personality", "avatar", "assign", "thinking", "happy"]) == 0
+    assert leer_proyecto(PERSONALIDAD)["avatar"]["eventos"] == {"thinking": "happy"}
     capsys.readouterr()
-    assert main(["personality", "avatar", "assign", "pensando", "volar"]) == 1
+    assert main(["personality", "avatar", "assign", "thinking", "volar"]) == 1
     assert "no tiene la clave 'volar'" in capsys.readouterr().out
-    assert main(["personality", "avatar", "assign", "bailar", "contento"]) == 1
+    assert main(["personality", "avatar", "assign", "bailar", "happy"]) == 1
     from ipsis.aplicacion.diagnostico import diagnosticar
 
     assert diagnosticar().chequeo("personalidad").estado.value == "aviso"  # faltan claves del mapa
@@ -211,11 +211,11 @@ def _textos_propios(plantillas: dict) -> None:
 def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
     from ipsis.aplicacion.diagnostico import Estado, diagnosticar
 
-    _textos_propios({"despedida": ["Chao, nos vemos pronto."]})
+    _textos_propios({"farewell": ["Chao, nos vemos pronto."]})
     capsys.readouterr()
     assert main(["personality", "validate"]) == 0  # no bloquea
     salida = capsys.readouterr().out
-    assert "[AVISO] texto propio no neutro: despedida[1]: 'chao'" in salida
+    assert "[AVISO] texto propio no neutro: farewell[1]: 'chao'" in salida
     assert "Hay avisos (no bloquean)" in salida
     chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
     assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
@@ -224,7 +224,7 @@ def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
 
 
 def test_texto_propio_neutro_no_avisa(proyecto, capsys):
-    _textos_propios({"despedida": ["Hasta pronto."]})
+    _textos_propios({"farewell": ["Hasta pronto."]})
     capsys.readouterr()
     assert main(["personality", "validate"]) == 0
     assert "[AVISO]" not in capsys.readouterr().out
@@ -236,5 +236,5 @@ def test_idioma_sin_reglas_propias_no_se_revisa(proyecto):
     datos = leer_proyecto(Path("config/assistant.yaml"))
     datos["idioma"] = "fr"
     escribir_proyecto(Path("config/assistant.yaml"), datos)
-    _textos_propios({"despedida": ["Hey, à bientôt."]})  # «hey» está en la lista inglesa de respaldo
+    _textos_propios({"farewell": ["Hey, à bientôt."]})  # «hey» está en la lista inglesa de respaldo
     assert avisos_neutralidad() == []

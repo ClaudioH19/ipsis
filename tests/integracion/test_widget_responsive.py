@@ -69,9 +69,9 @@ def _app(base: str, estado: dict):
         return {"nombre_asistente": "Ayuda", "descripcion_dominio": "manual", "saludo": "Hola.",
                 "preset": "clasico", "densidad": "comoda", "citas": estado.get("citas", "acordeon"),
                 "mostrar_etiqueta_estado": True, "interfaz": {},
-                "microcopia": {"bienvenida": ["Bienvenida de prueba."], "esperando": ["Buscando de prueba"],
-                               "invitacion_citas": ["Compruébalo abajo, prueba."], "error_red": ["Red caída."],
-                               "error_limite": ["Muy rápido."], "error_servicio": ["Servicio en pausa."]},
+                "microcopia": {"welcome": ["Bienvenida de prueba."], "waiting": ["Buscando de prueba"],
+                               "citations_hint": ["Compruébalo abajo, prueba."], "network_error": ["Red caída."],
+                               "rate_limit_error": ["Muy rápido."], "service_error": ["Servicio en pausa."]},
                 "ubicacion": estado.get("ubicacion", {})}
 
     @app.post("/consultar")

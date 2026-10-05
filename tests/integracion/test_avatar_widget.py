@@ -97,7 +97,7 @@ def _app(estado: dict):
                 "avatar": {"activo": True, "nombre": "prueba", "url_definicion": "/avatares/prueba.avatar.json",
                            "url_motor": "/avatar.js", "ubicacion": "cabecera", "tamano": 48,
                            "en_lanzador": estado.get("en_lanzador", False), "mirada": {"activa": False},
-                           "inactividad_min": 2, "eventos": {"inactivo": "inactivo"}}}
+                           "inactividad_min": 2, "eventos": {"idle": "idle"}}}
 
     @app.post("/consultar")
     def consultar():

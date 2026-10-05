@@ -262,11 +262,11 @@ tone:
   row: '{mark} {tone:9} {description}'
   example: '            «{example}»'
   apply_help: Activate a tone. Needs no reindexing or recalibration.
-  arg_tone: cordial, formal, serio, animoso, cercano, empatico or directo.
+  arg_tone: cordial, formal, serious, upbeat, friendly, empathetic or direct.
   applied: 'Active tone: {tone}. Restart ''ipsis serve'' (or wait for the hot reload) to see it.'
   try_help: Print the variants of a tone, with the project variables.
   opt_tone: 'Tone to try (default: the active one).'
-  opt_situation: A single situation (e.g. sin_respuesta).
+  opt_situation: A single situation (e.g. no_answer).
   situation: '{situation}:'
   variant: '  {i}. {text}'
 avatar:

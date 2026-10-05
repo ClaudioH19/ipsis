@@ -1,6 +1,6 @@
-# Expresiones que ningún tono puede usar (incluido «directo»): insultos,
+# Expresiones que ningún tono puede usar (incluido «direct»): insultos,
 # culpar al usuario o tratarlo con condescendencia.
-prohibidas:
+forbidden:
 - idiota
 - estúpido
 - estúpida
@@ -17,7 +17,7 @@ prohibidas:
 # Regionalismos, formas con género y saludos según la hora: los tonos incluidos
 # deben ser neutros (una prueba lo exige). En las sobrescrituras de un proyecto
 # son un aviso de 'ipsis personality validate' y 'ipsis doctor', no un error.
-regionalismos:
+regionalisms:
 - chao
 - tranqui
 - pega

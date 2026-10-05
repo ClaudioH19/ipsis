@@ -1,6 +1,6 @@
-# Expressions no tone may use (including «directo»): insults, blaming the
+# Expressions no tone may use (including «direct»): insults, blaming the
 # user or condescension.
-prohibidas:
+forbidden:
 - idiot
 - stupid
 - dumb
@@ -14,7 +14,7 @@ prohibidas:
 # Regional idioms: the bundled tones must be neutral (a test enforces it).
 # In a project's own overrides they are a warning from 'ipsis personality validate'
 # and 'ipsis doctor', not an error.
-regionalismos:
+regionalisms:
 - fire away
 - no worries
 - sure thing

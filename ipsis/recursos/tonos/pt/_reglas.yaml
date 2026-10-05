@@ -1,6 +1,6 @@
 # Expressões que nenhum tom pode usar (inclusive «directo»): insultos,
 # culpar o usuário ou condescendência.
-prohibidas:
+forbidden:
 - idiota
 - estúpido
 - estúpida
@@ -17,7 +17,7 @@ prohibidas:
 # Regionalismos (do Brasil ou de Portugal), formas com género e gerúndios: os
 # tons incluídos devem ser neutros (um teste exige). Nas substituições de um
 # projeto são um aviso de 'ipsis personality validate' e 'ipsis doctor', não um erro.
-regionalismos:
+regionalisms:
 - oi
 - tchau
 - e aí

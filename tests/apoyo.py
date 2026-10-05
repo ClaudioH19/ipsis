@@ -102,17 +102,17 @@ def definicion_avatar(**cambios) -> dict:
 
     parpadeo = {"enabled": True, "initialDelayMs": 1000, "minIntervalMs": 3000, "maxIntervalMs": 6000,
                 "durationMs": 150}
-    paso = {"expression": "contento", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
+    paso = {"expression": "happy", "holdMs": 400, "transitionMs": 100, "transition": "smooth"}
     datos = {"schema": "bible-strong/avatar-definition", "schemaVersion": 1, "name": "Prueba",
              "body": {"primary": {"type": "sphere", "width": 200, "height": 200, "depth": 200, "roundness": 1},
                       "nodes": []},
              "colors": {"body": "#ffffff", "eyes": "#000000"},
-             "expressions": {"neutral": expresion(40), "contento": expresion(16)},
-             "expressionOrder": ["neutral", "contento"],
-             "animations": {"inactivo": {"playbackMode": "loop", "steps": [{**paso, "expression": "neutral"}],
+             "expressions": {"neutral": expresion(40), "happy": expresion(16)},
+             "expressionOrder": ["neutral", "happy"],
+             "animations": {"idle": {"playbackMode": "loop", "steps": [{**paso, "expression": "neutral"}],
                                          "blink": parpadeo},
-                            "contento": {"playbackMode": "once", "steps": [paso], "blink": parpadeo}},
-             "animationOrder": ["inactivo", "contento"]}
+                            "happy": {"playbackMode": "once", "steps": [paso], "blink": parpadeo}},
+             "animationOrder": ["idle", "happy"]}
     datos.update(cambios)
     return datos
 

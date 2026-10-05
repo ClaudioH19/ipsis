@@ -15,7 +15,7 @@ def test_el_paquete_espanol_esta_completo():
     assert paquete.stemmer == "spanish"
     assert paquete.numeros["dos"] == 2
     assert "enero" in paquete.meses
-    assert paquete.conversacional.patrones["saludo"]
+    assert paquete.conversacional.patrones["greeting"]
     assert paquete.mensajes.sin_seccion and paquete.mensajes.conectores["secuencia"]
     assert paquete.interfaz["placeholder"]
 
@@ -51,12 +51,12 @@ def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
     )
     paquete = cargar_paquete("es", proyecto=tmp_path)
     # Ese texto ahora es del tono: el paquete lo entrega como sobrescritura de tono.
-    assert paquete.plantillas_legado == {"sin_respuesta": ["Nada por aquí."]}
+    assert paquete.plantillas_legado == {"no_answer": ["Nada por aquí."]}
     from ipsis.lenguaje.tonos import cargar_tono
 
     tono = cargar_tono("es", sobrescrituras=paquete.plantillas_legado)
-    assert tono.variantes("sin_respuesta") == ["Nada por aquí."]
-    assert tono.variantes("premisa_no_encontrada") == cargar_tono("es").variantes("premisa_no_encontrada")
+    assert tono.variantes("no_answer") == ["Nada por aquí."]
+    assert tono.variantes("premise_not_found") == cargar_tono("es").variantes("premise_not_found")
 
 
 def test_init_acepta_un_idioma_sin_paquete_y_avisa_el_respaldo(tmp_path: Path, monkeypatch, capsys):

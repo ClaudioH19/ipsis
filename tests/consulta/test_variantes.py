@@ -8,7 +8,7 @@ from ipsis.consulta.variantes import SelectorVariantes, elegir, en_consulta, usa
 OPCIONES = ["a", "b", "c", "d", "e"]
 
 
-def _secuencia(selector, sesion, n, situacion="sin_respuesta"):
+def _secuencia(selector, sesion, n, situacion="no_answer"):
     salida = []
     for _ in range(n):
         with en_consulta(selector, sesion):
@@ -28,18 +28,18 @@ def test_misma_sesion_y_turno_dan_el_mismo_texto():
 
 
 def test_fuera_de_una_consulta_depende_solo_de_la_semilla():
-    assert elegir("sin_respuesta", OPCIONES, "x") == elegir("sin_respuesta", OPCIONES, "x")
-    assert elegir("sin_respuesta", OPCIONES, "x", evitar={elegir("sin_respuesta", OPCIONES, "x")}) != \
-        elegir("sin_respuesta", OPCIONES, "x")
+    assert elegir("no_answer", OPCIONES, "x") == elegir("no_answer", OPCIONES, "x")
+    assert elegir("no_answer", OPCIONES, "x", evitar={elegir("no_answer", OPCIONES, "x")}) != \
+        elegir("no_answer", OPCIONES, "x")
     assert usadas() == (None, [])
 
 
 def test_registra_el_plantilla_id_y_respeta_variedad_fija():
     selector = SelectorVariantes(tono="formal")
     with en_consulta(selector, "s"):
-        texto = elegir("despedida", OPCIONES)
+        texto = elegir("farewell", OPCIONES)
         tono, ids = usadas()
-    assert tono == "formal" and ids == [f"formal.despedida.{OPCIONES.index(texto) + 1}"]
+    assert tono == "formal" and ids == [f"formal.farewell.{OPCIONES.index(texto) + 1}"]
     fija = SelectorVariantes(fija=True)
     assert _secuencia(fija, "s", 3) == ["a", "a", "a"]
 
@@ -68,13 +68,13 @@ def test_el_motor_varia_el_saludo_y_lo_deja_trazado(motor):
     textos = [r.mensaje_usuario for r in resultados]
     assert all(a != b for a, b in zip(textos, textos[1:]))
     d = resultados[0].diagnostico
-    assert d["tono"] == "cordial" and d["plantillas"][0].startswith("cordial.saludo.")
-    assert d["contrato_http"]["categoria_conversacional"] == "saludo"
+    assert d["tono"] == "cordial" and d["plantillas"][0].startswith("cordial.greeting.")
+    assert d["contrato_http"]["categoria_conversacional"] == "greeting"
 
 
 def test_categoria_conversacional_por_cada_categoria(motor):
-    for pregunta, categoria in [("hola", "saludo"), ("gracias", "agradecimiento"), ("chao", "despedida"),
-                                ("¿qué puedes hacer?", "capacidad")]:
+    for pregunta, categoria in [("hola", "greeting"), ("gracias", "thanks"), ("chao", "farewell"),
+                                ("¿qué puedes hacer?", "capability")]:
         contrato = motor.consultar(pregunta, "s").diagnostico["contrato_http"]
         assert contrato["categoria_conversacional"] == categoria
 
@@ -86,7 +86,7 @@ def test_la_respuesta_http_publica_la_categoria_solo_si_es_conversacional(motor)
 
     cliente = TestClient(crear_app(motor))
     datos = cliente.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()
-    assert datos["estado"] == "conversacional" and datos["categoria_conversacional"] == "saludo"
+    assert datos["estado"] == "conversacional" and datos["categoria_conversacional"] == "greeting"
 
 
 def test_la_abstencion_varia_por_turno_y_queda_trazada():
@@ -99,7 +99,7 @@ def test_la_abstencion_varia_por_turno_y_queda_trazada():
             textos.append(construir_mensaje_abstencion("generico"))
             ids += usadas()[1]
     assert all(a != b for a, b in zip(textos, textos[1:]))
-    assert all(i.startswith("cordial.sin_respuesta.") for i in ids)
+    assert all(i.startswith("cordial.no_answer.") for i in ids)
     with en_consulta(selector, "s"):
         premisa = construir_mensaje_abstencion("premisa", "X900")
     assert "X900" in premisa
@@ -119,9 +119,9 @@ def test_todas_las_variantes_de_conectores_pasan_la_fidelidad():
     ]
     for tono in tonos_disponibles("es"):
         paquete = cargar_tono("es", tono)
-        for apertura in paquete.variantes("apertura"):
-            for condicion in paquete.variantes("condicion"):
-                plantillas = {"conectores": {"apertura": [apertura], "condicion": [condicion]}}
+        for apertura in paquete.variantes("opening"):
+            for condicion in paquete.variantes("condition"):
+                plantillas = {"conectores": {"opening": [apertura], "condition": [condicion]}}
                 texto = redactar(fragmentos, plantillas=plantillas, cfg_redaccion={"incluir_apertura": True})
                 assert texto.startswith(apertura) and condicion in texto
                 assert verificar_fidelidad(texto, fragmentos).fiel, texto

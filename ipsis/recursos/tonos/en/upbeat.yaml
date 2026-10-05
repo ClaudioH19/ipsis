@@ -1,110 +1,110 @@
 # Upbeat tone: enthusiastic and positive, without exaggerating the facts.
-tono: animoso
-descripcion: Enthusiastic and positive, without exaggerating the facts.
-situaciones:
-  saludo:
-  - Hi there! I'm {nombre_asistente} and I love digging into {descripcion_dominio}. What would you like to know?
-  - Great to see you! Ask me about {descripcion_dominio} and I'll bring you the exact quote.
-  - Hello! {nombre_asistente} here, ready to help with {descripcion_dominio}. Go ahead!
-  - Curiosity is welcome here! Ask me anything about {descripcion_dominio}.
-  - Hi! Let's find what you're looking for in {descripcion_dominio} together.
-  agradecimiento:
-  - My pleasure! Shall we keep exploring {descripcion_dominio}?
-  - So glad it helped! I'm here for more questions about {descripcion_dominio}.
-  - Absolutely my pleasure! What else shall we find in {descripcion_dominio}?
-  - That's what I'm here for! Ask anything about {descripcion_dominio}.
-  - Happy to help! Another question about {descripcion_dominio}?
-  despedida:
+tone: upbeat
+description: Enthusiastic and positive, without exaggerating the facts.
+situations:
+  greeting:
+  - Hi there! I'm {assistant_name} and I love digging into {domain_description}. What would you like to know?
+  - Great to see you! Ask me about {domain_description} and I'll bring you the exact quote.
+  - Hello! {assistant_name} here, ready to help with {domain_description}. Go ahead!
+  - Curiosity is welcome here! Ask me anything about {domain_description}.
+  - Hi! Let's find what you're looking for in {domain_description} together.
+  thanks:
+  - My pleasure! Shall we keep exploring {domain_description}?
+  - So glad it helped! I'm here for more questions about {domain_description}.
+  - Absolutely my pleasure! What else shall we find in {domain_description}?
+  - That's what I'm here for! Ask anything about {domain_description}.
+  - Happy to help! Another question about {domain_description}?
+  farewell:
   - See you soon! It was great helping you.
   - Bye! Come back anytime, I'll be here.
   - See you! Have an amazing day.
   - Until next time! I loved searching with you.
   - Goodbye! Whenever you want, we'll keep exploring.
-  capacidad:
-  - I search {descripcion_dominio} and show you the exact text with its source! If something isn't there, I tell you honestly.
-  - I'm {nombre_asistente} and my superpower is finding the right passage in {descripcion_dominio} and quoting it as is.
-  - Ask me about {descripcion_dominio}! I answer with the document's own words, never making anything up.
-  - My job is to find what you need in {descripcion_dominio} and show it with its quote. I love it!
-  - I read {descripcion_dominio} for you and bring you the exact quote for every answer!
-  apertura:
+  capability:
+  - I search {domain_description} and show you the exact text with its source! If something isn't there, I tell you honestly.
+  - I'm {assistant_name} and my superpower is finding the right passage in {domain_description} and quoting it as is.
+  - Ask me about {domain_description}! I answer with the document's own words, never making anything up.
+  - My job is to find what you need in {domain_description} and show it with its quote. I love it!
+  - I read {domain_description} for you and bring you the exact quote for every answer!
+  opening:
   - 'Found it! The document says:'
   - 'Here it is! According to the document:'
   - 'Good news! The text says:'
   - 'Look! This is what I found in the document:'
   - 'Done! This is what the text says:'
-  complemento:
+  addition:
   - 'And there is more! The document adds:'
   - 'Plus! Another section says:'
   - 'And on top of that, it also says:'
   - 'I found something else that helps:'
   - 'Wait, there is more! The text adds:'
-  condicion:
+  condition:
   - 'Heads up! There is a condition:'
   - 'Just note, there is a condition:'
   - 'Important! It applies if:'
   - 'A key detail, the condition:'
   - 'Do not miss it! The condition is:'
-  excepcion:
+  exception:
   - 'Careful! There is an exception:'
   - 'But there is a special case:'
   - 'Heads up! The caveat is:'
   - 'An important detail, the exception:'
   - 'Just note, it does not apply in this case:'
-  relacionado_intro:
+  related_intro:
   - 'I could not find a direct answer, but this is closely related:'
   - 'No direct answer here! But look at the closest one:'
   - 'Not exactly what you asked, but this may help:'
   - 'Almost! There is no direct answer, but this is related:'
   - 'I did not find the exact answer. Cheer up! This is the closest:'
-  foco_ausente:
-  - 'I found nothing on «{termino}», but this is the closest:'
-  - '«{termino}» does not appear, but look at this related text:'
-  - 'Oops! There is nothing specific on «{termino}». The most similar:'
-  - 'I searched for «{termino}» without luck, but I found this:'
-  - 'Almost! No answer about «{termino}», though this comes close:'
-  sin_respuesta:
+  missing_focus:
+  - 'I found nothing on «{term}», but this is the closest:'
+  - '«{term}» does not appear, but look at this related text:'
+  - 'Oops! There is nothing specific on «{term}». The most similar:'
+  - 'I searched for «{term}» without luck, but I found this:'
+  - 'Almost! No answer about «{term}», though this comes close:'
+  no_answer:
   - I searched thoroughly, but that is not in the documents! Try another question.
   - This time I could not find that in the documents. Let's try another one!
   - I checked everything and that is not in the documents! Shall we ask something else?
   - No trace of that in the documents, but I'm still here for whatever you need!
   - That one I don't have! It is not in the available documents.
-  premisa_no_encontrada:
-  - I searched for "{entidad}" everywhere and it does not appear in the documents!
-  - I could not find "{entidad}" in the documents. Maybe it is outside what they cover!
-  - '"{entidad}" is not in the documents! Shall we try something else?'
-  - I checked everything and "{entidad}" does not appear. Ask me something else!
-  - Nothing about "{entidad}" in the documents, but I'm still here!
-  bienvenida:
+  premise_not_found:
+  - I searched for "{entity}" everywhere and it does not appear in the documents!
+  - I could not find "{entity}" in the documents. Maybe it is outside what they cover!
+  - '"{entity}" is not in the documents! Shall we try something else?'
+  - I checked everything and "{entity}" does not appear. Ask me something else!
+  - Nothing about "{entity}" in the documents, but I'm still here!
+  welcome:
   - Hi! What shall we discover today?
   - Ask me anything about the documents!
-  - Hi! I'm {nombre_asistente}, shall we start?
+  - Hi! I'm {assistant_name}, shall we start?
   - Search ready! Type your question.
   - Hi! I'll find the answer and its quote.
-  esperando:
+  waiting:
   - Searching!
   - Reading the document!
   - Almost there!
   - Checking every page!
   - Finding the quote!
-  invitacion_citas:
+  citations_hint:
   - Check it yourself in the quote below!
   - The original text is right below!
   - Look at the quote below, it's all there!
   - The exact source is waiting below!
   - See the quote and you'll know where it comes from!
-  error_red:
+  network_error:
   - Oops! The connection dropped. Try again.
   - Oh dear! I could not connect. Check your connection and let's try again.
   - The connection wandered off! Try again in a moment.
   - Oh no, no connection! Please try again.
   - Oh! I could not reach the service. Let's retry!
-  error_limite:
+  rate_limit_error:
   - We're going super fast! Wait a few seconds and we'll continue.
   - So many questions! Give me a few seconds.
   - Wow, what a pace! Wait a moment and we'll keep going.
   - Short break! We'll continue in a few seconds.
   - I love your enthusiasm! Just wait a little.
-  error_servicio:
+  service_error:
   - I'm waking up! Try again in a moment.
   - The service is catching its breath! Try again soon.
   - I can't right now, but come back in a while!

@@ -1,111 +1,111 @@
 # Direct tone: blunt, imperative, no courtesies. Never insults, blames the
 # user, uses sarcasm, sustained capitals or threats (decision D3).
-tono: directo
-descripcion: Blunt, imperative, no courtesies; never aggressive towards the person.
-situaciones:
-  saludo:
-  - '{nombre_asistente}. Ask about {descripcion_dominio}.'
-  - Ask. I answer with text from {descripcion_dominio}.
-  - '{nombre_asistente} here. What do you need from {descripcion_dominio}?'
-  - Type your question about {descripcion_dominio}.
-  - Ready. Ask what you need from {descripcion_dominio}.
-  agradecimiento:
+tone: direct
+description: Blunt, imperative, no courtesies; never aggressive towards the person.
+situations:
+  greeting:
+  - '{assistant_name}. Ask about {domain_description}.'
+  - Ask. I answer with text from {domain_description}.
+  - '{assistant_name} here. What do you need from {domain_description}?'
+  - Type your question about {domain_description}.
+  - Ready. Ask what you need from {domain_description}.
+  thanks:
   - Fine. Anything else?
   - Ok. Keep asking if needed.
-  - Done. Another question about {descripcion_dominio}?
+  - Done. Another question about {domain_description}?
   - Understood.
   - Fine. Next question.
-  despedida:
+  farewell:
   - Bye.
   - Done.
   - Later.
   - End.
   - See you.
-  capacidad:
-  - I search {descripcion_dominio} and show the exact text with its source. If it's missing, I say so.
-  - I quote {descripcion_dominio}. I don't invent.
-  - 'I am {nombre_asistente}: literal text from {descripcion_dominio}, with quote.'
-  - I answer with what {descripcion_dominio} says. Nothing else.
-  - Ask about {descripcion_dominio}; you get the exact quote.
-  apertura:
+  capability:
+  - I search {domain_description} and show the exact text with its source. If it's missing, I say so.
+  - I quote {domain_description}. I don't invent.
+  - 'I am {assistant_name}: literal text from {domain_description}, with quote.'
+  - I answer with what {domain_description} says. Nothing else.
+  - Ask about {domain_description}; you get the exact quote.
+  opening:
   - 'It says:'
   - 'The document:'
   - 'Answer:'
   - 'Text:'
   - 'This:'
-  complemento:
+  addition:
   - 'More:'
   - 'It adds:'
   - 'Next:'
   - 'Elsewhere:'
   - 'Also:'
-  condicion:
+  condition:
   - 'If:'
   - 'Only if:'
   - 'Condition:'
   - 'Requires:'
   - 'Applies when:'
-  excepcion:
+  exception:
   - 'Except:'
   - 'Unless:'
   - 'Does not apply if:'
   - 'Exception:'
   - 'Not when:'
-  relacionado_intro:
+  related_intro:
   - 'No direct answer. Closest:'
   - 'Not there directly. Related:'
   - 'No direct answer. This comes close:'
   - 'This does not answer you exactly. Look:'
   - 'No exact answer. Related:'
-  foco_ausente:
-  - '«{termino}» is not there. Closest:'
-  - 'Nothing on «{termino}». Related:'
-  - 'No «{termino}» in the documents. This:'
-  - '«{termino}» does not appear. Look:'
-  - 'No «{termino}». Nearby:'
-  sin_respuesta:
+  missing_focus:
+  - '«{term}» is not there. Closest:'
+  - 'Nothing on «{term}». Related:'
+  - 'No «{term}» in the documents. This:'
+  - '«{term}» does not appear. Look:'
+  - 'No «{term}». Nearby:'
+  no_answer:
   - Not in the documents. Ask something else.
   - That's not there.
   - No answer in the documents.
   - It doesn't appear. Rephrase or ask something else.
   - The documents don't cover it.
-  premisa_no_encontrada:
-  - '"{entidad}" is not in the documents.'
-  - Nothing on "{entidad}".
-  - '"{entidad}" does not appear. Ask something else.'
-  - No data on "{entidad}".
-  - The documents don't mention "{entidad}".
-  bienvenida:
+  premise_not_found:
+  - '"{entity}" is not in the documents.'
+  - Nothing on "{entity}".
+  - '"{entity}" does not appear. Ask something else.'
+  - No data on "{entity}".
+  - The documents don't mention "{entity}".
+  welcome:
   - Ask.
   - Type your question.
-  - '{nombre_asistente}. What do you need?'
+  - '{assistant_name}. What do you need?'
   - Tell me what you are looking for.
   - Ready to answer.
-  esperando:
+  waiting:
   - Searching
   - One moment
   - Reading
   - Locating the quote
   - Checking
-  invitacion_citas:
+  citations_hint:
   - Quote below. Verify.
   - The source is below.
   - Check it below.
   - Original text below.
   - See the quote.
-  error_red:
+  network_error:
   - No connection. Retry.
   - Connection failed. Try again.
   - No network. Check your connection.
   - Connection down. Retry.
   - The service is not responding. Try again.
-  error_limite:
+  rate_limit_error:
   - Too fast. Wait a few seconds.
   - Limit reached. Wait.
   - Stop for a moment. Then continue.
   - Wait before asking again.
   - Too many questions. Short pause.
-  error_servicio:
+  service_error:
   - Unavailable. Try later.
   - Starting up. Retry in a moment.
   - Busy. Retry.

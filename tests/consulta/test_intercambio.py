@@ -138,19 +138,19 @@ class PoliticaForzada:
 
 _PLANTILLAS = {
     "conversacional": {
-        "categorias": ["saludo"],
-        "patrones": {"saludo": [r"^hola$"]},
-        "respuestas": {"saludo": "Hola desde memoria."},
+        "categorias": ["greeting"],
+        "patrones": {"greeting": [r"^hola$"]},
+        "respuestas": {"greeting": "Hola desde memoria."},
     },
     "conectores": {
-        "apertura": [],
-        "complemento": ["Además:"],
-        "condicion": ["Como condición:"],
-        "excepcion": ["Como excepción:"],
+        "opening": [],
+        "addition": ["Además:"],
+        "condition": ["Como condición:"],
+        "exception": ["Como excepción:"],
     },
     "abstencion": {
         "generico": "No encontré información suficiente.",
-        "premisa_no_encontrada": "No encontré {entidad}.",
+        "premisa_no_encontrada": "No encontré {entity}.",
         "zona_gris_intro": "Encontré información relacionada:",
     },
 }

@@ -1,110 +1,110 @@
 # Friendly tone: casual and close, still respectful.
-tono: cercano
-descripcion: Casual and close, still respectful.
-situaciones:
-  saludo:
-  - Hey! I'm {nombre_asistente}. Tell me what you need from {descripcion_dominio}.
-  - Hi there! What are we looking for in {descripcion_dominio} today?
-  - Hey, {nombre_asistente} here. Ask me whatever you like about {descripcion_dominio}.
-  - Hi! Tell me what you're curious about in {descripcion_dominio} and we'll look it up.
-  - Hello! I'll help with {descripcion_dominio}, always with the quote at hand.
-  agradecimiento:
-  - Happy to help! If another question about {descripcion_dominio} comes up, just say.
-  - Anytime, that's what I'm here for! Anything else about {descripcion_dominio}?
-  - Glad to! I'm around if you need more on {descripcion_dominio}.
-  - Of course! Shall we keep going with {descripcion_dominio}?
-  - No need to thank me. We can keep going with {descripcion_dominio} if you want.
-  despedida:
+tone: friendly
+description: Casual and close, still respectful.
+situations:
+  greeting:
+  - Hey! I'm {assistant_name}. Tell me what you need from {domain_description}.
+  - Hi there! What are we looking for in {domain_description} today?
+  - Hey, {assistant_name} here. Ask me whatever you like about {domain_description}.
+  - Hi! Tell me what you're curious about in {domain_description} and we'll look it up.
+  - Hello! I'll help with {domain_description}, always with the quote at hand.
+  thanks:
+  - Happy to help! If another question about {domain_description} comes up, just say.
+  - Anytime, that's what I'm here for! Anything else about {domain_description}?
+  - Glad to! I'm around if you need more on {domain_description}.
+  - Of course! Shall we keep going with {domain_description}?
+  - No need to thank me. We can keep going with {domain_description} if you want.
+  farewell:
   - Bye! See you.
   - See you soon!
   - Take care! I'll be around.
   - Until next time!
   - Okay, see you whenever you like.
-  capacidad:
-  - I search {descripcion_dominio} and show you the text as it is, with its source. If it's not there, I'll tell you.
-  - I'm {nombre_asistente}. I find what you ask in {descripcion_dominio} and pass you the exact quote.
-  - My thing is searching {descripcion_dominio} and showing you what it says, without making anything up.
-  - You ask me about {descripcion_dominio} and I bring you the piece of text that answers it.
-  - I read {descripcion_dominio} for you and show you where every answer comes from.
-  apertura:
+  capability:
+  - I search {domain_description} and show you the text as it is, with its source. If it's not there, I'll tell you.
+  - I'm {assistant_name}. I find what you ask in {domain_description} and pass you the exact quote.
+  - My thing is searching {domain_description} and showing you what it says, without making anything up.
+  - You ask me about {domain_description} and I bring you the piece of text that answers it.
+  - I read {domain_description} for you and show you where every answer comes from.
+  opening:
   - 'Look, the document says:'
   - 'Here is what the text says:'
   - 'This is what I found:'
   - 'Check it out, the document says:'
   - 'Okay, the text goes like this:'
-  complemento:
+  addition:
   - 'And it also says:'
   - 'This shows up too:'
   - 'On the other hand, it adds:'
   - 'And heads up, it also says:'
   - 'Add this to it:'
-  condicion:
+  condition:
   - 'But careful, it applies if:'
   - 'There is a condition, though:'
   - 'Watch this condition:'
   - 'It only counts if:'
   - 'With one condition:'
-  excepcion:
+  exception:
   - 'Though there is an exception:'
   - 'Except in this case:'
   - 'Watch out for this caveat:'
   - 'But it does not apply when:'
   - 'There is an exception, look:'
-  relacionado_intro:
+  related_intro:
   - 'I could not find a direct answer, but look at what there is on the topic:'
   - 'That exact thing is not there, but this is similar:'
   - 'No direct answer; here is the closest:'
   - 'It does not appear as such. The closest thing is this:'
   - 'Not a direct hit, but this might help:'
-  foco_ausente:
-  - 'Found nothing on «{termino}», but look at this:'
-  - 'Oops, «{termino}» is not there. The closest is this:'
-  - 'Nothing specific on «{termino}»; here is the related part:'
-  - 'I looked for «{termino}» and it is not there. This comes close:'
-  - '«{termino}» does not show up in the documents, but look:'
-  sin_respuesta:
+  missing_focus:
+  - 'Found nothing on «{term}», but look at this:'
+  - 'Oops, «{term}» is not there. The closest is this:'
+  - 'Nothing specific on «{term}»; here is the related part:'
+  - 'I looked for «{term}» and it is not there. This comes close:'
+  - '«{term}» does not show up in the documents, but look:'
+  no_answer:
   - Hmm, I can't find that in your documents.
   - That doesn't show up in the documents, sorry.
   - I looked and nothing, that's not in the documents.
   - Hmm, that's not in the documents I have.
   - I don't have that in the documents. Want to try another question?
-  premisa_no_encontrada:
-  - I looked for "{entidad}" and it's not in your documents.
-  - Oops, "{entidad}" doesn't show up in the documents.
-  - Found nothing on "{entidad}"; maybe it's not in what you uploaded.
-  - '"{entidad}" doesn''t appear anywhere in the documents.'
-  - Not a trace of "{entidad}" in the documents, sorry.
-  bienvenida:
+  premise_not_found:
+  - I looked for "{entity}" and it's not in your documents.
+  - Oops, "{entity}" doesn't show up in the documents.
+  - Found nothing on "{entity}"; maybe it's not in what you uploaded.
+  - '"{entity}" doesn''t appear anywhere in the documents.'
+  - Not a trace of "{entity}" in the documents, sorry.
+  welcome:
   - Hey! What do you need?
   - Hi! Ask me anything.
-  - Hi, I'm {nombre_asistente}. What are we looking for?
+  - Hi, I'm {assistant_name}. What are we looking for?
   - Hello! Tell me what you're curious about.
   - Tell me your question and we'll find it.
-  esperando:
+  waiting:
   - Looking…
   - Give me a sec
   - Checking the documents
   - Almost there
   - Finding the quote
-  invitacion_citas:
+  citations_hint:
   - Check the quote below to confirm.
   - The original text is right below.
   - If you want to double-check, the quote is below.
   - I left the source down here.
   - Take a look at the quote below.
-  error_red:
+  network_error:
   - Oops, the connection dropped. Try again?
   - I couldn't connect. Check your internet and let's try again.
   - The connection is down, try again in a moment.
   - Looks like there's no connection. Try once more.
   - I couldn't reach the service. Try again?
-  error_limite:
+  rate_limit_error:
   - We're going really fast. Wait a few seconds.
   - Lots of questions in a row, give me a moment.
   - Hang on a moment and we'll keep going.
   - Pause for a second, then ask again.
   - No rush, we'll continue in a few seconds.
-  error_servicio:
+  service_error:
   - I'm not available right now. Try later.
   - I'm getting ready, give it a moment.
   - Can't answer right now, come back in a while.

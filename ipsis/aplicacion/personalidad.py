@@ -189,7 +189,7 @@ def listar_tonos() -> list[TonoDisponible]:
     salida = []
     for tono in tonos_disponibles(idioma):
         paquete = cargar_tono(idioma, tono)
-        salida.append(TonoDisponible(tono, paquete.descripcion, paquete.variantes("sin_respuesta")[0], tono == activo))
+        salida.append(TonoDisponible(tono, paquete.descripcion, paquete.variantes("no_answer")[0], tono == activo))
     return salida
 
 
@@ -221,9 +221,9 @@ def probar_tono(tono: str | None = None, situacion: str | None = None) -> dict[s
     propias = config.tono.plantillas if tono == config.tono.activo else {}
     paquete = cargar_tono(idioma, tono, sobrescrituras={
         **legado, **{s: ([v] if isinstance(v, str) else list(v)) for s, v in propias.items()}})
-    variables = {"nombre_asistente": dominio.get("nombre_asistente", ""),
-                 "descripcion_dominio": dominio.get("descripcion_dominio", ""),
-                 "termino": "…", "entidad": "…"}
+    variables = {"assistant_name": dominio.get("nombre_asistente", ""),
+                 "domain_description": dominio.get("descripcion_dominio", ""),
+                 "term": "…", "entity": "…"}
     elegidas = [situacion] if situacion else list(SITUACIONES)
     return {s: [v.format(**variables) for v in paquete.variantes(s)] for s in elegidas}
 

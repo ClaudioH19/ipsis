@@ -115,14 +115,14 @@ def test_put_invalido_422_sin_escribir(proyecto):
 def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
     motor = _motor()
     c = _cliente(PRODUCCION, motor=motor)
-    r = c.put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "directo"}})
-    assert r.status_code == 200 and r.json()["tono"]["activo"] == "directo"
-    assert motor.plantillas["tono"] == "directo"
+    r = c.put("/admin/personalidad", headers=_auth(), json={"tono": {"activo": "direct"}})
+    assert r.status_code == 200 and r.json()["tono"]["activo"] == "direct"
+    assert motor.plantillas["tono"] == "direct"
     respuesta = c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"}).json()["respuesta"]
     from ipsis.lenguaje.tonos import cargar_tono
 
-    assert respuesta in [v.format(nombre_asistente="Asistente documental", descripcion_dominio="los documentos cargados")
-                         for v in cargar_tono("es", "directo").variantes("saludo")]
+    assert respuesta in [v.format(assistant_name="Asistente documental", domain_description="los documentos cargados")
+                         for v in cargar_tono("es", "direct").variantes("greeting")]
     auditoria = Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
     entrada = json.loads(auditoria.splitlines()[-1])
     assert entrada["accion"] == "personalidad" and entrada["claves"] == ["tono"] and entrada["ip"] == REMOTA[0]
@@ -132,18 +132,18 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
 def test_cambio_por_cli_se_ve_sin_reiniciar(proyecto):
     motor = _motor()
     c = _cliente(ModoServicio(), motor=motor)
-    assert c.get("/config").json()["microcopia"]["esperando"][0] == "Buscando en el documento"
-    assert main(["personality", "tone", "apply", "serio"]) == 0
-    assert c.get("/config").json()["microcopia"]["esperando"][0] == "Buscando"
+    assert c.get("/config").json()["microcopia"]["waiting"][0] == "Buscando en el documento"
+    assert main(["personality", "tone", "apply", "serious"]) == 0
+    assert c.get("/config").json()["microcopia"]["waiting"][0] == "Buscando"
     c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"})
-    assert motor.plantillas["tono"] == "serio"
+    assert motor.plantillas["tono"] == "serious"
 
 
 def test_vista_previa_y_estilos(proyecto):
     c = _cliente(PRODUCCION)
     previa = c.post("/admin/personalidad/vista-previa", headers=_auth(),
-                    json={"tono": "formal", "situacion": "sin_respuesta"}).json()
-    assert list(previa) == ["sin_respuesta"] and len(previa["sin_respuesta"]) == 5
+                    json={"tono": "formal", "situacion": "no_answer"}).json()
+    assert list(previa) == ["no_answer"] and len(previa["no_answer"]) == 5
     r = c.put("/admin/estilos", headers=_auth(), json={"ubicacion": {"posicion": "arriba-izquierda"}})
     assert r.status_code == 200 and r.json()["ubicacion"]["posicion"] == "arriba-izquierda"
     assert c.get("/config").json()["ubicacion"]["posicion"] == "arriba-izquierda"
@@ -161,7 +161,7 @@ def test_avatar_publico_con_colores_y_rutas_seguras(proyecto):
                  json={"avatar": {"definicion": "mi-avatar", "colores": {"cuerpo": "#123456"}}}).status_code == 200
     avatar = c.get("/config").json()["avatar"]
     assert avatar["activo"] and avatar["url_definicion"] == "/avatares/mi-avatar.avatar.json"
-    assert avatar["eventos"]["respuesta_ok"] == "contento"
+    assert avatar["eventos"]["answer_ok"] == "happy"
     servida = c.get("/avatares/mi-avatar.avatar.json").json()
     assert servida["colors"]["body"] == "#123456"
     assert c.get("/avatares/../engine.yaml").status_code == 404

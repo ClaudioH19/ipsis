@@ -24,8 +24,8 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
     Devuelve conectores, mensajes de abstención y textos conversacionales.
     ``tono`` es un ``PaqueteTono``; si falta, el tono por defecto con las
     sobrescrituras del proyecto del directorio actual. Con ``dominio``
-    (``config/assistant.yaml``) sustituye ``{nombre_asistente}`` y
-    ``{descripcion_dominio}`` en las respuestas conversacionales y aplica las
+    (``config/assistant.yaml``) sustituye ``{assistant_name}`` y
+    ``{domain_description}`` en las respuestas conversacionales y aplica las
     contracciones del idioma («de el manual» -> «del manual»).
     """
     from pathlib import Path
@@ -38,28 +38,28 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
         tono = cargar_tono(paquete.codigo, personalidad.tono.activo, proyecto=Path.cwd(),
                            sobrescrituras=paquete.plantillas_legado)
     conectores = deepcopy(paquete.mensajes.conectores)  # secuencia y contraste_version
-    for categoria in ("apertura", "complemento", "condicion", "excepcion"):
+    for categoria in ("opening", "addition", "condition", "exception"):
         conectores[categoria] = tono.variantes(categoria)
     datos = {
         "tono": tono.tono,
         "variedad": personalidad.tono.variedad,
         "conectores": conectores,
         "abstencion": {
-            "generico": tono.variantes("sin_respuesta"),
-            "premisa_no_encontrada": tono.variantes("premisa_no_encontrada"),
-            "zona_gris_intro": tono.variantes("relacionado_intro"),
-            "foco_ausente": tono.variantes("foco_ausente"),
+            "generico": tono.variantes("no_answer"),
+            "premisa_no_encontrada": tono.variantes("premise_not_found"),
+            "zona_gris_intro": tono.variantes("related_intro"),
+            "foco_ausente": tono.variantes("missing_focus"),
         },
         "conversacional": {
             **paquete.conversacional.model_dump(mode="python"),
-            "respuestas": {c: tono.variantes(c) for c in ("saludo", "agradecimiento", "despedida", "capacidad")},
+            "respuestas": {c: tono.variantes(c) for c in ("greeting", "thanks", "farewell", "capability")},
         },
     }
     if dominio is None:
         return datos
     variables = {
-        "nombre_asistente": dominio.get("nombre_asistente", "el asistente"),
-        "descripcion_dominio": dominio.get("descripcion_dominio", "los documentos cargados"),
+        "assistant_name": dominio.get("nombre_asistente", "el asistente"),
+        "domain_description": dominio.get("descripcion_dominio", "los documentos cargados"),
     }
 
     def sustituir(texto: str) -> str:
@@ -174,9 +174,9 @@ def _ensamblar_fragmentos_con_citas(
     usadas: set[str] = set()
     partes: list[str] = []
 
-    if con_apertura and cfg.get("incluir_apertura", True) and conectores.get("apertura"):
+    if con_apertura and cfg.get("incluir_apertura", True) and conectores.get("opening"):
         semilla = str(elegidos[0].get("chunk_id", "")) if elegidos else ""
-        apertura = elegir("apertura", list(conectores["apertura"]), semilla)
+        apertura = elegir("opening", list(conectores["opening"]), semilla)
         if apertura:
             partes.append(apertura)
             usadas.add(apertura)
@@ -189,11 +189,11 @@ def _ensamblar_fragmentos_con_citas(
             partes.append(cuerpo)
             continue
         if frag.get("tiene_excepcion"):
-            categoria = "excepcion"
+            categoria = "exception"
         elif frag.get("tiene_condicion"):
-            categoria = "condicion"
+            categoria = "condition"
         else:
-            categoria = "complemento"
+            categoria = "addition"
         opciones = list(conectores.get(categoria) or [])
         conector = elegir(categoria, opciones, str(frag.get("chunk_id", i)), usadas)
         if conector:
@@ -240,10 +240,10 @@ def redactar_zona_gris(
     # Si falta el término de foco, el mensaje lo nombra («No encontré información sobre «X»»).
     semilla = str(fragmentos[0].get("chunk_id", "")) if fragmentos else ""
     if termino_ausente:
-        intro = elegir("foco_ausente", _lista(plantillas["abstencion"]["foco_ausente"]), semilla)
-        intro = intro.format(termino=termino_ausente)
+        intro = elegir("missing_focus", _lista(plantillas["abstencion"]["foco_ausente"]), semilla)
+        intro = intro.format(term=termino_ausente)
     else:
-        intro = elegir("relacionado_intro", _lista(plantillas["abstencion"]["zona_gris_intro"]), semilla)
+        intro = elegir("related_intro", _lista(plantillas["abstencion"]["zona_gris_intro"]), semilla)
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
@@ -264,9 +264,9 @@ def construir_mensaje_abstencion(
     usuario, nunca inventado)."""
     textos = (plantillas or _cargar_plantillas())["abstencion"]
     if motivo == "premisa" and entidad_texto:
-        texto = elegir("premisa_no_encontrada", _lista(textos["premisa_no_encontrada"]), entidad_texto)
-        return texto.format(entidad=entidad_texto)
-    return elegir("sin_respuesta", _lista(textos["generico"]), motivo)
+        texto = elegir("premise_not_found", _lista(textos["premisa_no_encontrada"]), entidad_texto)
+        return texto.format(entity=entidad_texto)
+    return elegir("no_answer", _lista(textos["generico"]), motivo)
 
 
 class EtapaRedaccion(_Etapa):

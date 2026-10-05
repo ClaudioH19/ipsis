@@ -23,8 +23,8 @@ from ipsis.configuracion.personalidad import EVENTOS
 RAIZ = Path(__file__).resolve().parents[2]
 ESTATICOS = RAIZ / "ipsis/servicio/estaticos"
 FOLIO = RAIZ / "ipsis/recursos/avatares/folio.avatar.json"
-CONTRATO = ("inactivo", "saludo", "atento", "escuchando", "asentir", "pensando", "pensando-largo", "contento",
-            "dudoso", "apenado", "amable", "despedida", "preocupado", "somnoliento", "despertar")
+CONTRATO = ("idle", "wave", "attentive", "listening", "nod", "thinking", "thinking-long", "happy",
+            "unsure", "sorry", "kind", "goodbye", "worried", "sleepy", "wake-up")
 
 MOTOR_FALSO = """
 export function createAvatar(el, o) {
@@ -71,8 +71,8 @@ def test_doctor_y_config_usan_folio(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     assert main(["init", "--profile", "light"]) == 0
     publica = config_avatar_publica()
     assert publica["activo"] and publica["url_definicion"] == "/avatares/folio.avatar.json"
-    assert publica["eventos"]["pensando_largo"] == "pensando-largo"
-    assert publica["respaldos"]["pensando_largo"] == "pensando"
+    assert publica["eventos"]["thinking_long"] == "thinking-long"
+    assert publica["respaldos"]["thinking_long"] == "thinking"
 
 
 # --- navegador ---------------------------------------------------------------------------------
@@ -194,34 +194,34 @@ def test_secuencia_de_una_pregunta(navegador, servidor):
     base, estado = servidor
     page = _abrir(navegador, base)
     llamadas = _llamadas(page)
-    assert llamadas[0] == ["crear", "inactivo"] and ["play", "saludo"] in llamadas
+    assert llamadas[0] == ["crear", "idle"] and ["play", "wave"] in llamadas
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "atento"]  # el saludo terminó: vuelve al persistente
+    assert _ultima(page) == ["play", "attentive"]  # el saludo terminó: vuelve al persistente
 
     page.locator("ipsis-chat >> #rw-input").press_sequentially("hola")
-    assert _ultima(page) == ["play", "escuchando"]
+    assert _ultima(page) == ["play", "listening"]
     page.clock.run_for(1300)  # 1,2 s sin teclear
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
 
     estado["retener"] = True
     _limpiar(page)
     page.locator("ipsis-chat >> #rw-input").press("Enter")
-    assert _llamadas(page)[0] == ["play", "asentir"]
+    assert _llamadas(page)[0] == ["play", "nod"]
     page.clock.run_for(1700)  # asentir de Folio: 1,58 s
-    assert _ultima(page) == ["play", "pensando"]
+    assert _ultima(page) == ["play", "thinking"]
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "pensando-largo"]
+    assert _ultima(page) == ["play", "thinking-long"]
     estado["retener"] = False
     page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
-    assert _ultima(page) == ["play", "contento"]
+    assert _ultima(page) == ["play", "happy"]
     page.clock.run_for(3500)  # contento de Folio: 3,02 s
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
     page.close()
 
 
 @pytest.mark.browser
-@pytest.mark.parametrize(("estado_respuesta", "clave"), [("relacionado", "dudoso"), ("sin_respuesta", "apenado"),
-                                                         ("conversacional", "amable")])
+@pytest.mark.parametrize(("estado_respuesta", "clave"), [("relacionado", "unsure"), ("sin_respuesta", "sorry"),
+                                                         ("conversacional", "kind")])
 def test_cada_estado_de_respuesta(navegador, servidor, estado_respuesta, clave):
     base, estado = servidor
     estado["estado"] = estado_respuesta
@@ -240,26 +240,26 @@ def test_un_error_durante_pensando_gana(navegador, servidor):
     page = _abrir(navegador, base)
     page.locator("ipsis-chat >> #rw-input").fill("pregunta")
     page.locator("ipsis-chat >> #rw-input").press("Enter")
-    _esperar(page, "(window.__llamadas || []).some(l => l[1] === 'preocupado')")
+    _esperar(page, "(window.__llamadas || []).some(l => l[1] === 'worried')")
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "atento"]  # el transitorio vuelve al persistente
+    assert _ultima(page) == ["play", "attentive"]  # el transitorio vuelve al persistente
     page.close()
 
 
 @pytest.mark.browser
 def test_prioridades_y_respaldo(navegador, servidor):
     base, estado = servidor
-    estado["eventos"] = {"respuesta_ok": "no-existe"}
+    estado["eventos"] = {"answer_ok": "no-existe"}
     page = _abrir(navegador, base)
     page.clock.run_for(3000)
     _limpiar(page)
     page.evaluate("window.RagChat.avatar.disparar('error')")
-    page.evaluate("window.RagChat.avatar.disparar('lanzador')")  # menor prioridad: se descarta
-    assert _llamadas(page) == [["play", "preocupado"]]
+    page.evaluate("window.RagChat.avatar.disparar('launcher')")  # menor prioridad: se descarta
+    assert _llamadas(page) == [["play", "worried"]]
     page.clock.run_for(2000)
     _limpiar(page)
-    page.evaluate("window.RagChat.avatar.disparar('respuesta_ok')")
-    assert _llamadas(page) == [["play", "inactivo"]]  # la clave falta: respaldo del evento
+    page.evaluate("window.RagChat.avatar.disparar('answer_ok')")
+    assert _llamadas(page) == [["play", "idle"]]  # la clave falta: respaldo del evento
     page.close()
 
 
@@ -268,10 +268,10 @@ def test_inactividad_y_despertar(navegador, servidor):
     base, _ = servidor
     page = _abrir(navegador, base)
     page.clock.run_for(2 * 60_000 + 500)
-    assert _ultima(page) == ["play", "somnoliento"]
+    assert _ultima(page) == ["play", "sleepy"]
     _limpiar(page)
     page.locator("ipsis-chat >> #rw-input").press_sequentially("a")
-    assert _llamadas(page)[0] == ["play", "despertar"]
+    assert _llamadas(page)[0] == ["play", "wake-up"]
     page.close()
 
 
@@ -314,7 +314,7 @@ def test_grilla_de_mirada(navegador, servidor):
         assert _ultima(page) == ["expr", clave], (x, y)
 
     page.clock.run_for(1600)  # quieto 1,5 s: vuelve al centro y al persistente
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
 
     _limpiar(page)
     _mover(page, cx + 10, cy - 8)  # zona muerta

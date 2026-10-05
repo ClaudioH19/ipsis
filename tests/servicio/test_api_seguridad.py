@@ -170,11 +170,11 @@ def test_config_devuelve_los_textos_del_dominio():
     assert body["citas"] in {"acordeon", "abiertas", "ocultas"}
     assert isinstance(body["mostrar_etiqueta_estado"], bool)
     # el saludo real del paquete de idioma, con las variables ya
-    # sustituidas (nunca la plantilla cruda con '{nombre_asistente}' sin
+    # sustituidas (nunca la plantilla cruda con '{assistant_name}' sin
     # rellenar) -- misma función que responde un "hola" real.
     assert "{" not in body["saludo"]
     assert body["interfaz"]["placeholder"]
-    assert body["interfaz"]["error_red"]
+    assert body["interfaz"]["network_error"]
 
 
 def test_config_no_exige_clave_de_widget(monkeypatch: pytest.MonkeyPatch):
@@ -253,7 +253,7 @@ def test_widget_js_usa_svg_y_no_emoji_para_los_iconos():
 
 def test_widget_js_tiene_indicador_de_espera():
     """Entre que se envía la pregunta y llega la respuesta el widget no debe
-    quedarse mudo: hay un indicador de 'escribiendo' que se muestra y se
+    quedarse mudo: hay un indicador de 'typing' que se muestra y se
     retira en el `finally` de la petición."""
     texto = client.get("/widget.js").text
     assert "mostrarEscribiendo" in texto and "ocultarEscribiendo" in texto

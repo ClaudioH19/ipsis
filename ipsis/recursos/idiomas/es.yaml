@@ -235,12 +235,12 @@ marcadores:
   - si
 conversacional:
   categorias:
-  - saludo
-  - agradecimiento
-  - despedida
-  - capacidad
+  - greeting
+  - thanks
+  - farewell
+  - capability
   patrones:
-    saludo:
+    greeting:
     - ^\s*hola\b
     - ^\s*buenos? d[ií]as\b
     - ^\s*buenas tardes\b
@@ -248,15 +248,15 @@ conversacional:
     - ^\s*qu[eé] tal\b
     - ^\s*hey\b
     - ^\s*buenas\b
-    agradecimiento:
+    thanks:
     - \bgracias\b
-    despedida:
+    farewell:
     - ^\s*chao\b
     - ^\s*adi[oó]s\b
     - ^\s*nos vemos\b
     - ^\s*hasta luego\b
     - ^\s*bye\b
-    capacidad:
+    capability:
     - qu[eé] puedes hacer
     - qui[eé]n eres
     - para qu[eé] sirves

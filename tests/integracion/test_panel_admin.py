@@ -238,17 +238,17 @@ def test_importar_asignar_y_probar_un_evento(servidor, pagina, proyecto):
     # Cada cambio guarda y recarga la vista previa: se espera el «Guardado» de este
     # antes del siguiente, o el siguiente podría confundirse con este.
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
-    page.wait_for_selector("tr[data-evento=respuesta_ok] option[value=contento]", state="attached")
+    page.wait_for_selector("tr[data-evento=answer_ok] option[value=happy]", state="attached")
     page.evaluate("document.getElementById('estado').textContent = ''")
-    page.select_option("tr[data-evento=respuesta_ok] select", "contento")
+    page.select_option("tr[data-evento=answer_ok] select", "happy")
     # «Guardado» se anuncia después de iniciar la recarga de la vista previa.
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
     ruta = proyecto / "config/personality.yaml"
     fin = time.monotonic() + 10
-    while "respuesta_ok: contento" not in ruta.read_text(encoding="utf-8") and time.monotonic() < fin:
+    while "answer_ok: happy" not in ruta.read_text(encoding="utf-8") and time.monotonic() < fin:
         time.sleep(0.05)
     guardado = ruta.read_text(encoding="utf-8")
-    assert "definition: mi-avatar" in guardado and "respuesta_ok: contento" in guardado, guardado
+    assert "definition: mi-avatar" in guardado and "answer_ok: happy" in guardado, guardado
 
     # La vista previa monta el avatar real; el botón ▶ le dispara el evento con la clave asignada.
     page.wait_for_selector("#vista-previa[data-lista=true]", state="attached")
@@ -256,9 +256,9 @@ def test_importar_asignar_y_probar_un_evento(servidor, pagina, proyecto):
                    " return w.RagChat && w.RagChat.avatar.estado().listo; })()")
     page.evaluate("""(() => { const w = document.getElementById('vista-previa').contentWindow;
         w.__eventos = []; w.document.addEventListener('rag:avatar', e => w.__eventos.push(e.detail)); })()""")
-    page.click("button[data-probar=respuesta_ok]")
+    page.click("button[data-probar=answer_ok]")
     eventos = page.evaluate("document.getElementById('vista-previa').contentWindow.__eventos")
-    assert {"estado": "evento", "evento": "respuesta_ok", "clave": "contento"} in eventos, eventos
+    assert {"estado": "evento", "evento": "answer_ok", "clave": "happy"} in eventos, eventos
     assert not errores, errores
 
 

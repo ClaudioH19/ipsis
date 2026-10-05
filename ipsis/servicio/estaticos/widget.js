@@ -123,13 +123,13 @@
     placeholder: "Escribe tu pregunta...",
     enviar: "Enviar pregunta",
     no_directa: "No es una respuesta directa",
-    esperando: "Buscando en el documento",
-    error_limite: "Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.",
+    waiting: "Buscando en el documento",
+    rate_limit_error: "Demasiadas preguntas seguidas. Espera unos segundos e intenta de nuevo.",
     error_origen: "Este sitio no está autorizado para usar el asistente.",
     error_http: "El servicio no pudo responder (HTTP {estado}).",
-    error_red: "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.",
-    error_servicio: "El asistente no está disponible en este momento. Intenta de nuevo más tarde.",
-    invitacion_citas: "Puedes comprobarlo en la cita de abajo.",
+    network_error: "No se pudo contactar al asistente. Revisa tu conexión e intenta de nuevo.",
+    service_error: "El asistente no está disponible en este momento. Intenta de nuevo más tarde.",
+    citations_hint: "Puedes comprobarlo en la cita de abajo.",
     fuentes_una: "1 fuente del documento",
     fuentes_varias: "{n} fuentes del documento",
     posicion_cita: "caracteres {inicio}–{fin}",
@@ -662,7 +662,7 @@
     caja.className = "rw-citas";
     var invitacion = document.createElement("p");
     invitacion.className = "rw-citas-invitacion";
-    invitacion.textContent = micro("invitacion_citas");
+    invitacion.textContent = micro("citations_hint");
     caja.appendChild(invitacion);
     // Encabezado con el número de fuentes: deja ver de un vistazo que la
     // respuesta está respaldada, sin tener que desplegar nada.
@@ -737,7 +737,7 @@
     if (burbujaEspera) return;
     burbujaEspera = document.createElement("div");
     burbujaEspera.className = "rw-escribiendo";
-    var esperando = micro("esperando");
+    var esperando = micro("waiting");
     burbujaEspera.setAttribute("aria-label", esperando);
     anunciar(esperando);
     for (var i = 0; i < 3; i++) {
@@ -823,7 +823,7 @@
           panel.setAttribute("aria-label", cfg.nombre_asistente);
           boton.setAttribute("aria-label", texto("abrir", { titulo: cfg.nombre_asistente }));
         }
-        var bienvenida = (MICROCOPIA.bienvenida && MICROCOPIA.bienvenida.length) ? micro("bienvenida") : cfg.saludo;
+        var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.saludo;
         if (bienvenida && mensajes.children.length === 0) {
           agregarMensajeAsistente({ estado: "conversacional", respuesta: bienvenida });
         }
@@ -853,13 +853,13 @@
     })
       .then(function (r) {
         if (r.status === 429) {
-          throw new Error(micro("error_limite"));
+          throw new Error(micro("rate_limit_error"));
         }
         if (r.status === 401 || r.status === 403) {
           throw new Error(texto("error_origen"));
         }
         if (r.status === 503) {
-          throw new Error(micro("error_servicio"));
+          throw new Error(micro("service_error"));
         }
         if (!r.ok) {
           throw new Error(texto("error_http", { estado: r.status }));
@@ -877,8 +877,8 @@
         // HTTP creados arriba sí son deliberados y se conservan; un TypeError
         // de fetch recibe un mensaje estable para quien usa el widget.
         var mensajeError = err instanceof TypeError
-          ? micro("error_red")
-          : (err && err.message ? err.message : micro("error_red"));
+          ? micro("network_error")
+          : (err && err.message ? err.message : micro("network_error"));
         agregarMensajeError(mensajeError);
         emitir("rag:error", { mensaje: mensajeError });
         avatarAlFallar();
@@ -1057,7 +1057,7 @@
       ariaLabel: "",
       onError: function (e) { emitir("rag:avatar", { estado: "error", mensaje: e.message }); }
     };
-    var inicial = claveDe("inactivo");
+    var inicial = claveDe("idle");
     if (definicion.animations && definicion.animations[inicial]) opciones.defaultAnimation = inicial;
     // createAvatar valida la definición (y lanza si no es válida): recién
     // con el avatar montado se reemplaza el ícono.
@@ -1109,17 +1109,17 @@
   // Un transitorio de mayor prioridad interrumpe a otro; uno de menor
   // prioridad espera a que termine el actual o se descarta.
   var PRIORIDAD = {
-    error: 6, respuesta_ok: 5, respuesta_relacionada: 5, sin_respuesta: 5, conversacional: 5,
-    enviado: 4, despertar: 3, saludo: 2, despedida: 2, lanzador: 1
+    error: 6, answer_ok: 5, answer_related: 5, no_answer: 5, conversational: 5,
+    sent: 4, wake_up: 3, greeting: 2, farewell: 2, launcher: 1
   };
   var PERSISTENTES = {
-    inactivo: 1, atento: 1, escribiendo: 1, pensando: 1, pensando_largo: 1, somnoliento: 1
+    idle: 1, attentive: 1, typing: 1, thinking: 1, thinking_long: 1, sleepy: 1
   };
   var DURACION_MINIMA_MS = 600;
   var RETRASO_TECLEO_MS = 1200;
   var PENSANDO_LARGO_MS = 3000;
   var maquina = {
-    persistente: "inactivo", transitorio: null, prioridad: 0, temporizador: null,
+    persistente: "idle", transitorio: null, prioridad: 0, temporizador: null,
     tecleo: null, largo: null, inactividad: null, ultimoPersistente: null, saludado: false
   };
 
@@ -1168,7 +1168,7 @@
 
   function persistir(estado) {
     maquina.persistente = estado;
-    if (estado !== "pensando" && estado !== "pensando_largo") {
+    if (estado !== "thinking" && estado !== "thinking_long") {
       clearTimeout(maquina.largo);
       maquina.largo = null;
     }
@@ -1195,7 +1195,7 @@
   // Punto único de entrada: lo usan el widget, el panel /admin y los sitios.
   function disparar(evento) {
     if (!AVATAR.controlador) return false;
-    reiniciarInactividad(evento !== "somnoliento");
+    reiniciarInactividad(evento !== "sleepy");
     if (PERSISTENTES[evento]) persistir(evento);
     else transitar(evento);
     return true;
@@ -1204,12 +1204,12 @@
   // --- 6.2 Inactividad y visibilidad ------------------------------------
   function reiniciarInactividad(despertar) {
     clearTimeout(maquina.inactividad);
-    if (despertar && maquina.persistente === "somnoliento") {
-      maquina.persistente = (INCRUSTADO || !panel.hidden) ? "atento" : "inactivo";
-      transitar("despertar");
+    if (despertar && maquina.persistente === "sleepy") {
+      maquina.persistente = (INCRUSTADO || !panel.hidden) ? "attentive" : "idle";
+      transitar("wake_up");
     }
     var minutos = Number((AVATAR.config || {}).inactividad_min) || 2;
-    maquina.inactividad = setTimeout(function () { persistir("somnoliento"); }, minutos * 60000);
+    maquina.inactividad = setTimeout(function () { persistir("sleepy"); }, minutos * 60000);
   }
 
   document.addEventListener("visibilitychange", function () {
@@ -1227,48 +1227,48 @@
   function avatarAlAbrir() {
     if (!maquina.saludado) {
       maquina.saludado = true;
-      maquina.persistente = "atento";
-      transitar("saludo");
+      maquina.persistente = "attentive";
+      transitar("greeting");
     } else {
-      persistir("atento");
+      persistir("attentive");
     }
   }
   function avatarAlCerrar() {
-    maquina.persistente = "inactivo";
-    transitar("despedida");
+    maquina.persistente = "idle";
+    transitar("farewell");
   }
   function avatarAlTeclear() {
     if (!AVATAR.controlador) return;
     reiniciarInactividad(true);
-    if (maquina.persistente !== "pensando" && maquina.persistente !== "pensando_largo") persistir("escribiendo");
+    if (maquina.persistente !== "thinking" && maquina.persistente !== "thinking_long") persistir("typing");
     clearTimeout(maquina.tecleo);
     maquina.tecleo = setTimeout(function () {
-      if (maquina.persistente === "escribiendo") persistir("atento");
+      if (maquina.persistente === "typing") persistir("attentive");
     }, RETRASO_TECLEO_MS);
   }
   function avatarAlEnviar() {
     if (!AVATAR.controlador) return;
     clearTimeout(maquina.tecleo);
-    maquina.persistente = "pensando";
-    transitar("enviado");
+    maquina.persistente = "thinking";
+    transitar("sent");
     clearTimeout(maquina.largo);
     maquina.largo = setTimeout(function () {
-      if (maquina.persistente === "pensando") persistir("pensando_largo");
+      if (maquina.persistente === "thinking") persistir("thinking_long");
     }, PENSANDO_LARGO_MS);
   }
   var EVENTO_DE_ESTADO = {
-    ok: "respuesta_ok", relacionado: "respuesta_relacionada", sin_respuesta: "sin_respuesta",
-    conversacional: "conversacional"
+    ok: "answer_ok", relacionado: "answer_related", sin_respuesta: "no_answer",
+    conversacional: "conversational"
   };
   function avatarAlResponder(estado) {
     if (!AVATAR.controlador) return;
-    maquina.persistente = "atento";
+    maquina.persistente = "attentive";
     clearTimeout(maquina.largo);
-    transitar(EVENTO_DE_ESTADO[estado] || "respuesta_relacionada");
+    transitar(EVENTO_DE_ESTADO[estado] || "answer_related");
   }
   function avatarAlFallar() {
     if (!AVATAR.controlador) return;
-    maquina.persistente = "atento";
+    maquina.persistente = "attentive";
     clearTimeout(maquina.largo);
     transitar("error");
   }
@@ -1328,7 +1328,7 @@
     if (!AVATAR.controlador || !cfg || !cfg.mirada || !cfg.mirada.activa) return false;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
     if (maquina.transitorio) return false;
-    return maquina.persistente === "inactivo" || maquina.persistente === "atento";
+    return maquina.persistente === "idle" || maquina.persistente === "attentive";
   }
 
   function mirarHacia(x, y) {

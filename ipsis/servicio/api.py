@@ -100,7 +100,7 @@ class RespuestaConsulta(BaseModel):
     latencia_ms: int
     respuesta_exacta: Optional[RespuestaExacta] = None
     # Solo en respuestas conversacionales (para el avatar del widget).
-    categoria_conversacional: Optional[Literal["saludo", "agradecimiento", "despedida", "capacidad"]] = None
+    categoria_conversacional: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
 
 
 class ConfigWidget(BaseModel):
@@ -372,7 +372,7 @@ def crear_app(
         return ConfigWidget(
             nombre_asistente=nombre,
             descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados"),
-            saludo=_estado(request).motor.respuesta_conversacional("saludo"),
+            saludo=_estado(request).motor.respuesta_conversacional("greeting"),
             preset=str(estilos.get("preset") or "clasico"),
             densidad=presentacion.get("densidad", "comoda"),
             citas=citas_presentacion(presentacion.get("citas")),

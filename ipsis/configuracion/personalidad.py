@@ -15,32 +15,85 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from ipsis.configuracion import rutas
 from ipsis.recursos.mensajes import t
 
-TONOS = ("cordial", "formal", "serio", "animoso", "cercano", "empatico", "directo")
+TONOS = ("cordial", "formal", "serious", "upbeat", "friendly", "empathetic", "direct")
+# Variables de las plantillas anteriores a ipsis 0.9 → las actuales.
+VARIABLES_ANTERIORES = {"nombre_asistente": "assistant_name", "descripcion_dominio": "domain_description",
+                        "termino": "term", "entidad": "entity"}
+# Nombres anteriores a ipsis 0.9 (en español) → los actuales; los usa la migración.
+TONOS_ANTERIORES = {"serio": "serious", "animoso": "upbeat", "cercano": "friendly", "empatico": "empathetic",
+                    "directo": "direct"}
+SITUACIONES_ANTERIORES = {
+    "saludo": "greeting", "agradecimiento": "thanks", "despedida": "farewell", "capacidad": "capability",
+    "apertura": "opening", "complemento": "addition", "condicion": "condition", "excepcion": "exception",
+    "relacionado_intro": "related_intro", "foco_ausente": "missing_focus", "sin_respuesta": "no_answer",
+    "premisa_no_encontrada": "premise_not_found", "bienvenida": "welcome", "esperando": "waiting",
+    "invitacion_citas": "citations_hint", "error_red": "network_error", "error_limite": "rate_limit_error",
+    "error_servicio": "service_error",
+}
+EVENTOS_ANTERIORES = {
+    "inactivo": "idle", "lanzador": "launcher", "saludo": "greeting", "atento": "attentive", "escribiendo": "typing",
+    "enviado": "sent", "pensando": "thinking", "pensando_largo": "thinking_long", "respuesta_ok": "answer_ok",
+    "respuesta_relacionada": "answer_related", "sin_respuesta": "no_answer", "conversacional": "conversational",
+    "despedida": "farewell", "somnoliento": "sleepy", "despertar": "wake_up",
+}
+CLAVES_FOLIO_ANTERIORES = {
+    "atento": "attentive", "leyendo": "reading", "contento": "happy", "amable": "kind", "dudoso": "unsure",
+    "apenado": "sorry", "pensando": "thinking", "pensando-lado": "thinking-side", "somnoliento": "sleepy",
+    "ojos-cerrados": "eyes-closed", "sorprendido": "surprised", "preocupado": "worried", "asentir-abajo": "nod-down",
+    "inactivo": "idle", "saludo": "wave", "escuchando": "listening", "asentir": "nod",
+    "pensando-largo": "thinking-long", "despedida": "goodbye", "despertar": "wake-up",
+}
+
+
+def vocabulario_actual(datos: dict) -> dict:
+    """``personality.yaml`` (nombres del archivo) con tonos, situaciones, variables y eventos actuales."""
+    tono = datos.get("tone")
+    if isinstance(tono, dict):
+        if tono.get("active") in TONOS_ANTERIORES:
+            tono["active"] = TONOS_ANTERIORES[tono["active"]]
+        plantillas = tono.get("templates")
+        if isinstance(plantillas, dict):
+            def actuales(texto):
+                if not isinstance(texto, str):
+                    return texto
+                for anterior, actual in VARIABLES_ANTERIORES.items():
+                    texto = texto.replace("{" + anterior + "}", "{" + actual + "}")
+                return texto
+
+            tono["templates"] = {SITUACIONES_ANTERIORES.get(s, s): ([actuales(t) for t in v] if isinstance(v, list)
+                                                                   else actuales(v))
+                                 for s, v in plantillas.items()}
+    avatar = datos.get("avatar")
+    if isinstance(avatar, dict) and isinstance(avatar.get("events"), dict):
+        de_folio = avatar.get("definition", "folio") == "folio"
+        avatar["events"] = {EVENTOS_ANTERIORES.get(e, e): (CLAVES_FOLIO_ANTERIORES.get(c, c) if de_folio else c)
+                            for e, c in avatar["events"].items()}
+    return datos
 CLAVE_SEMANTICA = r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$"  # la de @bible-strong/avatar-core
 HEX = r"^#[0-9a-f]{6}$"
 
 # evento → (clave sugerida, respaldo si el avatar no la tiene). El respaldo
 # puede ser otro evento (se resuelve en cadena) o ``neutral``.
 EVENTOS: dict[str, tuple[str, str]] = {
-    "inactivo": ("inactivo", "neutral"),
-    "lanzador": ("inactivo", "inactivo"),
-    "saludo": ("saludo", "inactivo"),
-    "atento": ("atento", "inactivo"),
-    "escribiendo": ("escuchando", "atento"),
-    "enviado": ("asentir", "pensando"),
-    "pensando": ("pensando", "inactivo"),
-    "pensando_largo": ("pensando-largo", "pensando"),
-    "respuesta_ok": ("contento", "inactivo"),
-    "respuesta_relacionada": ("dudoso", "inactivo"),
-    "sin_respuesta": ("apenado", "inactivo"),
-    "conversacional": ("amable", "respuesta_ok"),
-    "despedida": ("despedida", "inactivo"),
-    "error": ("preocupado", "sin_respuesta"),
-    "somnoliento": ("somnoliento", "inactivo"),
-    "despertar": ("despertar", "atento"),
+    "idle": ("idle", "neutral"),
+    "launcher": ("idle", "idle"),
+    "greeting": ("wave", "idle"),
+    "attentive": ("attentive", "idle"),
+    "typing": ("listening", "attentive"),
+    "sent": ("nod", "thinking"),
+    "thinking": ("thinking", "idle"),
+    "thinking_long": ("thinking-long", "thinking"),
+    "answer_ok": ("happy", "idle"),
+    "answer_related": ("unsure", "idle"),
+    "no_answer": ("sorry", "idle"),
+    "conversational": ("kind", "answer_ok"),
+    "farewell": ("goodbye", "idle"),
+    "error": ("worried", "no_answer"),
+    "sleepy": ("sleepy", "idle"),
+    "wake_up": ("wake-up", "attentive"),
 }
 # Eventos que no se asignan a una clave: los resuelve el widget.
-EVENTOS_DEL_WIDGET = ("mirando_citas", "seguir_puntero", "oculto", "movimiento_reducido")
+EVENTOS_DEL_WIDGET = ("viewing_citations", "follow_pointer", "hidden", "reduced_motion")
 
 
 class _Estricto(BaseModel):

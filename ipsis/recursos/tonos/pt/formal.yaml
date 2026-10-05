@@ -1,110 +1,110 @@
 # Tom formal: tratamento de senhor ou senhora, sem exclamações.
-tono: formal
-descripcion: Tratamento cuidadoso, sem exclamações.
-situaciones:
-  saludo:
-  - Saudações. Aqui fala {nombre_asistente}. Respondo consultas sobre {descripcion_dominio} citando textualmente o documento. Em que posso ajudar?
-  - Boas-vindas. Pode consultar-me sobre {descripcion_dominio}; cada resposta indicará a sua fonte exata.
-  - O meu nome é {nombre_asistente} e estou à sua disposição para consultas sobre {descripcion_dominio}.
-  - Aqui fala {nombre_asistente}. Indique, por favor, o que deseja consultar sobre {descripcion_dominio}.
-  - É um prazer ajudar. Formule a sua consulta sobre {descripcion_dominio} e apresentarei o texto correspondente.
-  agradecimiento:
-  - Não há de quê. Permaneço à disposição para outras consultas sobre {descripcion_dominio}.
-  - Foi um prazer ajudar. Pode voltar a consultar sobre {descripcion_dominio} quando desejar.
-  - Eu que agradeço. Se precisar revisar outro aspecto de {descripcion_dominio}, basta indicar.
-  - Com muito gosto. Sigo disponível para qualquer consulta sobre {descripcion_dominio}.
-  - Agradeço sua consulta. Estou a seu serviço no que se refere a {descripcion_dominio}.
-  despedida:
+tone: formal
+description: Tratamento cuidadoso, sem exclamações.
+situations:
+  greeting:
+  - Saudações. Aqui fala {assistant_name}. Respondo consultas sobre {domain_description} citando textualmente o documento. Em que posso ajudar?
+  - Boas-vindas. Pode consultar-me sobre {domain_description}; cada resposta indicará a sua fonte exata.
+  - O meu nome é {assistant_name} e estou à sua disposição para consultas sobre {domain_description}.
+  - Aqui fala {assistant_name}. Indique, por favor, o que deseja consultar sobre {domain_description}.
+  - É um prazer ajudar. Formule a sua consulta sobre {domain_description} e apresentarei o texto correspondente.
+  thanks:
+  - Não há de quê. Permaneço à disposição para outras consultas sobre {domain_description}.
+  - Foi um prazer ajudar. Pode voltar a consultar sobre {domain_description} quando desejar.
+  - Eu que agradeço. Se precisar revisar outro aspecto de {domain_description}, basta indicar.
+  - Com muito gosto. Sigo disponível para qualquer consulta sobre {domain_description}.
+  - Agradeço sua consulta. Estou a seu serviço no que se refere a {domain_description}.
+  farewell:
   - Tudo de bom.
   - Até breve. Permaneço à disposição.
   - Foi um prazer prestar este apoio. Até logo.
   - Desejo-lhe um ótimo dia. Pode voltar quando precisar.
   - Até a próxima consulta.
-  capacidad:
-  - Sou {nombre_asistente}. Respondo consultas sobre {descripcion_dominio} citando textualmente o documento; se a informação não constar, eu o informo.
-  - Localizo em {descripcion_dominio} o trecho pertinente e o apresento de forma literal, com sua referência.
-  - 'Minha função é a seguinte: buscar em {descripcion_dominio} e mostrar o texto exato que responde sua consulta.'
-  - Não redijo conteúdo próprio. Apresento o que diz {descripcion_dominio}, com a citação correspondente.
-  - Pode consultar-me sobre {descripcion_dominio}; cada resposta inclui o texto original e sua localização.
-  apertura:
+  capability:
+  - Sou {assistant_name}. Respondo consultas sobre {domain_description} citando textualmente o documento; se a informação não constar, eu o informo.
+  - Localizo em {domain_description} o trecho pertinente e o apresento de forma literal, com sua referência.
+  - 'Minha função é a seguinte: buscar em {domain_description} e mostrar o texto exato que responde sua consulta.'
+  - Não redijo conteúdo próprio. Apresento o que diz {domain_description}, com a citação correspondente.
+  - Pode consultar-me sobre {domain_description}; cada resposta inclui o texto original e sua localização.
+  opening:
   - 'O documento estabelece o seguinte:'
   - 'Conforme o documento:'
   - 'De acordo com o texto disponível:'
   - 'O documento indica o seguinte:'
   - 'Segundo consta no documento:'
-  complemento:
+  addition:
   - 'Adicionalmente, o documento assinala:'
   - 'Da mesma forma, indica-se o seguinte:'
   - 'Em outra seção acrescenta-se:'
   - 'O documento acrescenta o seguinte:'
   - 'Cabe acrescentar o seguinte:'
-  condicion:
+  condition:
   - 'O exposto está sujeito à seguinte condição:'
   - 'Vigora a seguinte condição:'
   - 'O documento o condiciona desta forma:'
   - 'Observe a seguinte condição:'
   - 'Para sua aplicação, o documento estabelece:'
-  excepcion:
+  exception:
   - 'Prevê-se a seguinte exceção:'
   - 'Com a seguinte ressalva:'
   - 'O documento excetua o seguinte:'
   - 'Observe esta exceção:'
   - 'Não se aplica no caso seguinte:'
-  relacionado_intro:
+  related_intro:
   - 'Não foi encontrada uma resposta direta. Apresento o que os documentos indicam sobre o tema:'
   - 'Os documentos não contêm uma resposta direta; isto é o mais relacionado:'
   - 'Não consta uma resposta direta à sua consulta. Apresento o conteúdo mais próximo:'
   - 'Não é possível oferecer uma resposta direta. Os documentos indicam o seguinte sobre o tema:'
   - 'Sua consulta não tem resposta direta nos documentos. Isto é o relacionado:'
-  foco_ausente:
-  - 'Não foi encontrada informação específica sobre «{termino}». Apresento o mais próximo:'
-  - 'Os documentos não tratam especificamente de «{termino}». Isto é o mais próximo:'
-  - 'Não consta informação pontual sobre «{termino}»; apresento o relacionado:'
-  - 'Não foi encontrado «{termino}» nos documentos. Isto é o mais próximo:'
-  - 'Quanto a «{termino}», não há resposta direta. Apresento o relacionado:'
-  sin_respuesta:
+  missing_focus:
+  - 'Não foi encontrada informação específica sobre «{term}». Apresento o mais próximo:'
+  - 'Os documentos não tratam especificamente de «{term}». Isto é o mais próximo:'
+  - 'Não consta informação pontual sobre «{term}»; apresento o relacionado:'
+  - 'Não foi encontrado «{term}» nos documentos. Isto é o mais próximo:'
+  - 'Quanto a «{term}», não há resposta direta. Apresento o relacionado:'
+  no_answer:
   - Lamentavelmente, essa informação não consta nos documentos disponíveis.
   - Essa informação não foi encontrada nos documentos disponíveis.
   - Os documentos disponíveis não contêm informação sobre sua consulta.
   - Lamento informar que essa informação não consta nos documentos.
   - 'Após revisar os documentos, não é possível responder sua consulta: a informação não consta.'
-  premisa_no_encontrada:
-  - Não foi encontrada informação sobre "{entidad}" nos documentos disponíveis. É possível que não exista ou que esteja fora do seu alcance.
-  - Os documentos não fazem referência a "{entidad}".
-  - Não consta informação sobre "{entidad}" nos documentos disponíveis.
-  - Lamento informar que "{entidad}" não consta nos documentos.
-  - Após revisar os documentos, não foi encontrada referência a "{entidad}".
-  bienvenida:
+  premise_not_found:
+  - Não foi encontrada informação sobre "{entity}" nos documentos disponíveis. É possível que não exista ou que esteja fora do seu alcance.
+  - Os documentos não fazem referência a "{entity}".
+  - Não consta informação sobre "{entity}" nos documentos disponíveis.
+  - Lamento informar que "{entity}" não consta nos documentos.
+  - Após revisar os documentos, não foi encontrada referência a "{entity}".
+  welcome:
   - Saudações. Em que posso ajudar?
   - Boas-vindas. Formule a sua consulta, por favor.
-  - Aqui fala {nombre_asistente}. O que deseja consultar?
+  - Aqui fala {assistant_name}. O que deseja consultar?
   - Estou à sua disposição. Cada resposta inclui sua fonte.
   - Indique sua consulta e apresentarei o texto correspondente.
-  esperando:
+  waiting:
   - Consulta do documento em curso
   - Revisão da documentação em curso
   - Localização da referência exata
   - Um momento, por favor
   - Procura do trecho pertinente
-  invitacion_citas:
+  citations_hint:
   - Pode verificá-lo na citação apresentada a seguir.
   - O texto original consta abaixo para sua verificação.
   - Consulte a referência abaixo para comprovar sua origem.
   - A fonte exata é indicada a seguir.
   - Convido a verificar na citação abaixo.
-  error_red:
+  network_error:
   - Não foi possível estabelecer conexão com o assistente. Verifique sua conexão e tente novamente.
   - Ocorreu um problema de conexão. Solicito que tente novamente em instantes.
   - Não foi possível contatar o serviço. Verifique sua conexão, por favor.
   - A conexão com o assistente foi interrompida. Tente novamente.
   - Não foi possível comunicar-se com o serviço. Solicito que tente mais tarde.
-  error_limite:
+  rate_limit_error:
   - Foi atingido o limite de consultas seguidas. Solicito que aguarde alguns segundos.
   - Por favor, aguarde alguns segundos antes da próxima consulta.
   - Foram feitas várias consultas em pouco tempo. Tente novamente em breve.
   - Solicito que aguarde um momento antes de continuar.
   - É necessário aguardar alguns segundos para atender sua próxima consulta.
-  error_servicio:
+  service_error:
   - O serviço não está disponível no momento. Solicito que tente mais tarde.
   - O assistente está sendo iniciado. Tente novamente em instantes.
   - No momento não é possível atender sua consulta. Tente mais tarde.

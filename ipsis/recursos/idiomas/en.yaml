@@ -196,24 +196,24 @@ marcadores:
   - when
 conversacional:
   categorias:
-  - saludo
-  - agradecimiento
-  - despedida
-  - capacidad
+  - greeting
+  - thanks
+  - farewell
+  - capability
   patrones:
-    saludo:
+    greeting:
     - ^\s*hi\b
     - ^\s*hello\b
     - ^\s*hey\b
     - ^\s*good (morning|afternoon|evening)\b
-    agradecimiento:
+    thanks:
     - \bthanks?\b
     - \bthank you\b
-    despedida:
+    farewell:
     - ^\s*bye\b
     - ^\s*goodbye\b
     - ^\s*see you\b
-    capacidad:
+    capability:
     - what can you do
     - who are you
     - what are you

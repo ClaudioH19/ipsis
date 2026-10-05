@@ -1,110 +1,110 @@
 # Tono serio: sobrio, neutral, frases cortas.
-tono: serio
-descripcion: Sobrio y neutral, con frases cortas.
-situaciones:
-  saludo:
-  - Soy {nombre_asistente}. Respondo sobre {descripcion_dominio} con citas del documento.
-  - Asistente de {descripcion_dominio}. Escriba su pregunta.
-  - Hola. Consulte sobre {descripcion_dominio}; cada respuesta lleva su fuente.
-  - Soy {nombre_asistente}. ¿Qué necesita saber de {descripcion_dominio}?
-  - Disponible para consultas sobre {descripcion_dominio}.
-  agradecimiento:
+tone: serious
+description: Sobrio y neutral, con frases cortas.
+situations:
+  greeting:
+  - Soy {assistant_name}. Respondo sobre {domain_description} con citas del documento.
+  - Asistente de {domain_description}. Escriba su pregunta.
+  - Hola. Consulte sobre {domain_description}; cada respuesta lleva su fuente.
+  - Soy {assistant_name}. ¿Qué necesita saber de {domain_description}?
+  - Disponible para consultas sobre {domain_description}.
+  thanks:
   - De nada.
-  - Entendido. Puede seguir consultando sobre {descripcion_dominio}.
+  - Entendido. Puede seguir consultando sobre {domain_description}.
   - Bien. Quedo disponible.
-  - De acuerdo. ¿Otra consulta sobre {descripcion_dominio}?
+  - De acuerdo. ¿Otra consulta sobre {domain_description}?
   - Gracias a usted.
-  despedida:
+  farewell:
   - Hasta luego.
   - Hasta pronto.
   - Fin de la consulta.
   - Quedo disponible.
   - Hasta otra consulta.
-  capacidad:
-  - Busco en {descripcion_dominio} y muestro el texto literal con su fuente.
-  - Soy {nombre_asistente}. No redacto respuestas; cito {descripcion_dominio}.
-  - Respondo solo con texto de {descripcion_dominio}. Si no está, lo indico.
-  - 'Función: localizar el pasaje de {descripcion_dominio} que responde y citarlo.'
-  - Consulto {descripcion_dominio} y entrego la cita exacta.
-  apertura:
+  capability:
+  - Busco en {domain_description} y muestro el texto literal con su fuente.
+  - Soy {assistant_name}. No redacto respuestas; cito {domain_description}.
+  - Respondo solo con texto de {domain_description}. Si no está, lo indico.
+  - 'Función: localizar el pasaje de {domain_description} que responde y citarlo.'
+  - Consulto {domain_description} y entrego la cita exacta.
+  opening:
   - 'El documento dice:'
   - 'Texto del documento:'
   - 'Según el documento:'
   - 'Pasaje pertinente:'
   - 'Fuente:'
-  complemento:
+  addition:
   - 'Además:'
   - 'También:'
   - 'Otra sección indica:'
   - 'Se agrega:'
   - 'Además, indica:'
-  condicion:
+  condition:
   - 'Condición:'
   - 'Aplica si:'
   - 'Con esta condición:'
   - 'Requisito:'
   - 'Bajo esta condición:'
-  excepcion:
+  exception:
   - 'Excepción:'
   - 'Salvo:'
   - 'Con esta salvedad:'
   - 'No aplica en este caso:'
   - 'Caso exceptuado:'
-  relacionado_intro:
+  related_intro:
   - 'No hay respuesta directa. Texto relacionado:'
   - 'Sin respuesta directa. Lo más cercano:'
   - 'No consta una respuesta directa. Contenido relacionado:'
   - 'Respuesta directa no encontrada. Relacionado:'
   - 'No responde directamente. Lo relacionado es esto:'
-  foco_ausente:
-  - 'No hay información sobre «{termino}». Lo más cercano:'
-  - 'Sin datos sobre «{termino}». Relacionado:'
-  - '«{termino}» no aparece. Contenido cercano:'
-  - 'Nada específico sobre «{termino}». Lo relacionado:'
-  - 'No consta «{termino}». Texto más próximo:'
-  sin_respuesta:
+  missing_focus:
+  - 'No hay información sobre «{term}». Lo más cercano:'
+  - 'Sin datos sobre «{term}». Relacionado:'
+  - '«{term}» no aparece. Contenido cercano:'
+  - 'Nada específico sobre «{term}». Lo relacionado:'
+  - 'No consta «{term}». Texto más próximo:'
+  no_answer:
   - Esa información no está en los documentos.
   - Sin información en los documentos.
   - No consta en los documentos.
   - Los documentos no cubren eso.
   - No hay respuesta en los documentos.
-  premisa_no_encontrada:
-  - '"{entidad}" no aparece en los documentos.'
-  - Sin información sobre "{entidad}".
-  - No consta "{entidad}" en los documentos.
-  - Los documentos no mencionan "{entidad}".
-  - No hay datos sobre "{entidad}".
-  bienvenida:
+  premise_not_found:
+  - '"{entity}" no aparece en los documentos.'
+  - Sin información sobre "{entity}".
+  - No consta "{entity}" en los documentos.
+  - Los documentos no mencionan "{entity}".
+  - No hay datos sobre "{entity}".
+  welcome:
   - Escriba su pregunta.
   - Consultas sobre el documento.
-  - Soy {nombre_asistente}. Pregunte.
+  - Soy {assistant_name}. Pregunte.
   - Respuestas con cita del documento.
   - Listo para consultar.
-  esperando:
+  waiting:
   - Buscando
   - Consultando el documento
   - Revisando
   - Localizando la cita
   - Procesando
-  invitacion_citas:
+  citations_hint:
   - Cita abajo.
   - Verifique en la cita.
   - Fuente debajo.
   - Texto original abajo.
   - Compruebe la referencia.
-  error_red:
+  network_error:
   - Sin conexión con el asistente. Reintente.
   - Error de conexión. Intente de nuevo.
   - No hubo respuesta del servicio. Revise su conexión.
   - Conexión interrumpida. Reintente.
   - Servicio inalcanzable. Intente más tarde.
-  error_limite:
+  rate_limit_error:
   - Límite de consultas alcanzado. Espere unos segundos.
   - Demasiadas consultas. Espere.
   - Pausa breve requerida.
   - Espere antes de consultar de nuevo.
   - Límite temporal. Reintente en segundos.
-  error_servicio:
+  service_error:
   - Servicio no disponible. Intente más tarde.
   - Servicio iniciándose. Reintente.
   - No disponible por ahora.

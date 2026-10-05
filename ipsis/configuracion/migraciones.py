@@ -95,16 +95,28 @@ def _con_textos_del_tono(base: dict, idioma: str) -> dict:
     recurso = files("ipsis.recursos").joinpath("tonos", idioma, "cordial.yaml")
     if not recurso.is_file():
         return base
-    tono = (yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}).get("situaciones") or {}
+    situaciones = (yaml.safe_load(recurso.read_text(encoding="utf-8")) or {}).get("situations") or {}
+    # Con los nombres de variable anteriores, para comparar con textos.yaml tal como era.
+    tono = {s: [_variables_anteriores(v) for v in textos] for s, textos in situaciones.items()}
     mensajes = dict(base.get("mensajes") or {})
     mensajes.update({clave: tono[situacion][0] for clave, situacion in (
-        ("sin_respuesta", "sin_respuesta"), ("premisa_no_encontrada", "premisa_no_encontrada"),
-        ("relacionado_intro", "relacionado_intro"), ("relacionado_foco_ausente", "foco_ausente"))})
+        ("sin_respuesta", "no_answer"), ("premisa_no_encontrada", "premise_not_found"),
+        ("relacionado_intro", "related_intro"), ("relacionado_foco_ausente", "missing_focus"))})
     mensajes["conectores"] = {**(mensajes.get("conectores") or {}),
-                              **{c: tono[c] for c in ("apertura", "complemento", "condicion", "excepcion")}}
+                              **{c: tono[s] for c, s in (("apertura", "opening"), ("complemento", "addition"),
+                                                         ("condicion", "condition"), ("excepcion", "exception"))}}
     conversacional = {**(base.get("conversacional") or {}),
-                      "respuestas": {c: tono[c] for c in ("saludo", "agradecimiento", "despedida", "capacidad")}}
+                      "respuestas": {c: tono[s] for c, s in (("saludo", "greeting"), ("agradecimiento", "thanks"),
+                                                             ("despedida", "farewell"), ("capacidad", "capability"))}}
     return {**base, "mensajes": mensajes, "conversacional": conversacional}
+
+
+def _variables_anteriores(texto: str) -> str:
+    from ipsis.configuracion.personalidad import VARIABLES_ANTERIORES
+
+    for anterior, actual in VARIABLES_ANTERIORES.items():
+        texto = texto.replace("{" + actual + "}", "{" + anterior + "}")
+    return texto
 
 
 def _migrar_textos(raiz: Path, cambios: list[str]) -> None:
@@ -194,6 +206,10 @@ def _reescribir_en_ingles(raiz: Path, cambios: list[str]) -> None:
         externo = a_externo(datos, archivo)
         if archivo in ("asistente", "motor") and int(externo.get("config_version", 0)) < CONFIG_VERSION:
             externo["config_version"] = CONFIG_VERSION
+        if archivo == "personalidad":
+            from ipsis.configuracion.personalidad import vocabulario_actual
+
+            externo = vocabulario_actual(externo)
         if archivo == "motor":
             recuperacion = externo.get("retrieval") or {}
             if recuperacion.get("qdrant_path") in _QDRANT_ANTERIORES:

@@ -66,7 +66,7 @@
         "body": "none"
       }
     },
-    "atento": {
+    "attentive": {
       "head": {
         "x": 4,
         "y": 0,
@@ -95,7 +95,7 @@
         "body": "none"
       }
     },
-    "leyendo": {
+    "reading": {
       "head": {
         "x": -14,
         "y": 0,
@@ -124,7 +124,7 @@
         "body": "none"
       }
     },
-    "contento": {
+    "happy": {
       "head": {
         "x": 5,
         "y": 0,
@@ -153,7 +153,7 @@
         "body": "none"
       }
     },
-    "amable": {
+    "kind": {
       "head": {
         "x": 3,
         "y": -6,
@@ -182,7 +182,7 @@
         "body": "none"
       }
     },
-    "dudoso": {
+    "unsure": {
       "head": {
         "x": 0,
         "y": 8,
@@ -211,7 +211,7 @@
         "body": "none"
       }
     },
-    "apenado": {
+    "sorry": {
       "head": {
         "x": -12,
         "y": 0,
@@ -240,7 +240,7 @@
         "body": "none"
       }
     },
-    "pensando": {
+    "thinking": {
       "head": {
         "x": 10,
         "y": -14,
@@ -269,7 +269,7 @@
         "body": "slowDrift"
       }
     },
-    "pensando-lado": {
+    "thinking-side": {
       "head": {
         "x": 8,
         "y": 14,
@@ -298,7 +298,7 @@
         "body": "slowDrift"
       }
     },
-    "somnoliento": {
+    "sleepy": {
       "head": {
         "x": -8,
         "y": 0,
@@ -327,7 +327,7 @@
         "body": "none"
       }
     },
-    "ojos-cerrados": {
+    "eyes-closed": {
       "head": {
         "x": -10,
         "y": 0,
@@ -356,7 +356,7 @@
         "body": "none"
       }
     },
-    "sorprendido": {
+    "surprised": {
       "head": {
         "x": 6,
         "y": 0,
@@ -385,7 +385,7 @@
         "body": "none"
       }
     },
-    "preocupado": {
+    "worried": {
       "head": {
         "x": -4,
         "y": 0,
@@ -414,7 +414,7 @@
         "body": "none"
       }
     },
-    "asentir-abajo": {
+    "nod-down": {
       "head": {
         "x": -12,
         "y": 0,
@@ -446,22 +446,22 @@
   },
   "expressionOrder": [
     "neutral",
-    "atento",
-    "leyendo",
-    "contento",
-    "amable",
-    "dudoso",
-    "apenado",
-    "pensando",
-    "pensando-lado",
-    "somnoliento",
-    "ojos-cerrados",
-    "sorprendido",
-    "preocupado",
-    "asentir-abajo"
+    "attentive",
+    "reading",
+    "happy",
+    "kind",
+    "unsure",
+    "sorry",
+    "thinking",
+    "thinking-side",
+    "sleepy",
+    "eyes-closed",
+    "surprised",
+    "worried",
+    "nod-down"
   ],
   "animations": {
-    "inactivo": {
+    "idle": {
       "playbackMode": "loop",
       "steps": [
         {
@@ -471,7 +471,7 @@
           "transition": "smooth"
         },
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 1800,
           "transitionMs": 500,
           "transition": "smooth"
@@ -491,22 +491,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "inactivo",
-        "description": "Respira; de vez en cuando relee la página.",
-        "group": "rag-extractivo"
+        "label": "idle",
+        "description": "Breathes; now and then rereads the page.",
+        "group": "ipsis"
       }
     },
-    "saludo": {
+    "wave": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 500,
           "transitionMs": 200,
           "transition": "spring"
         },
         {
-          "expression": "amable",
+          "expression": "kind",
           "holdMs": 900,
           "transitionMs": 240,
           "transition": "smooth"
@@ -526,16 +526,16 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "saludo",
-        "description": "Se endereza y saluda con la mirada.",
-        "group": "rag-extractivo"
+        "label": "wave",
+        "description": "Straightens up and greets with its eyes.",
+        "group": "ipsis"
       }
     },
-    "atento": {
+    "attentive": {
       "playbackMode": "loop",
       "steps": [
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 4000,
           "transitionMs": 220,
           "transition": "smooth"
@@ -549,28 +549,28 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "atento",
+        "label": "attentive",
         "description": "",
-        "group": "rag-extractivo"
+        "group": "ipsis"
       }
     },
-    "escuchando": {
+    "listening": {
       "playbackMode": "loop",
       "steps": [
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 1400,
           "transitionMs": 200,
           "transition": "smooth"
         },
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 700,
           "transitionMs": 260,
           "transition": "smooth"
         },
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 1200,
           "transitionMs": 260,
           "transition": "smooth"
@@ -584,28 +584,28 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "escuchando",
-        "description": "Sigue lo que se escribe.",
-        "group": "rag-extractivo"
+        "label": "listening",
+        "description": "Follows what is being typed.",
+        "group": "ipsis"
       }
     },
-    "asentir": {
+    "nod": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "asentir-abajo",
+          "expression": "nod-down",
           "holdMs": 220,
           "transitionMs": 160,
           "transition": "snappy"
         },
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 260,
           "transitionMs": 180,
           "transition": "smooth"
         },
         {
-          "expression": "asentir-abajo",
+          "expression": "nod-down",
           "holdMs": 200,
           "transitionMs": 160,
           "transition": "snappy"
@@ -625,22 +625,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "asentir",
-        "description": "Recibió la pregunta.",
-        "group": "rag-extractivo"
+        "label": "nod",
+        "description": "Got the question.",
+        "group": "ipsis"
       }
     },
-    "pensando": {
+    "thinking": {
       "playbackMode": "loop",
       "steps": [
         {
-          "expression": "pensando",
+          "expression": "thinking",
           "holdMs": 1600,
           "transitionMs": 420,
           "transition": "smooth"
         },
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 1200,
           "transitionMs": 420,
           "transition": "smooth"
@@ -654,28 +654,28 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "pensando",
-        "description": "Busca en los documentos.",
-        "group": "rag-extractivo"
+        "label": "thinking",
+        "description": "Searches the documents.",
+        "group": "ipsis"
       }
     },
-    "pensando-largo": {
+    "thinking-long": {
       "playbackMode": "loop",
       "steps": [
         {
-          "expression": "pensando",
+          "expression": "thinking",
           "holdMs": 1400,
           "transitionMs": 420,
           "transition": "smooth"
         },
         {
-          "expression": "pensando-lado",
+          "expression": "thinking-side",
           "holdMs": 1400,
           "transitionMs": 520,
           "transition": "smooth"
         },
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 1600,
           "transitionMs": 420,
           "transition": "smooth"
@@ -689,22 +689,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "pensando-largo",
-        "description": "La búsqueda tarda: lee con más calma.",
-        "group": "rag-extractivo"
+        "label": "thinking-long",
+        "description": "The search takes a while: reads more calmly.",
+        "group": "ipsis"
       }
     },
-    "contento": {
+    "happy": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 700,
           "transitionMs": 260,
           "transition": "smooth"
         },
         {
-          "expression": "contento",
+          "expression": "happy",
           "holdMs": 1100,
           "transitionMs": 300,
           "transition": "smooth"
@@ -724,22 +724,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "contento",
-        "description": "Revisó la cita y la encontró.",
-        "group": "rag-extractivo"
+        "label": "happy",
+        "description": "Checked the citation and found it.",
+        "group": "ipsis"
       }
     },
-    "dudoso": {
+    "unsure": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 600,
           "transitionMs": 260,
           "transition": "smooth"
         },
         {
-          "expression": "dudoso",
+          "expression": "unsure",
           "holdMs": 1400,
           "transitionMs": 320,
           "transition": "smooth"
@@ -759,22 +759,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "dudoso",
-        "description": "Encontró algo relacionado, no directo.",
-        "group": "rag-extractivo"
+        "label": "unsure",
+        "description": "Found something related, not direct.",
+        "group": "ipsis"
       }
     },
-    "apenado": {
+    "sorry": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "leyendo",
+          "expression": "reading",
           "holdMs": 500,
           "transitionMs": 260,
           "transition": "smooth"
         },
         {
-          "expression": "apenado",
+          "expression": "sorry",
           "holdMs": 1600,
           "transitionMs": 380,
           "transition": "smooth"
@@ -794,16 +794,16 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "apenado",
-        "description": "No está en los documentos.",
-        "group": "rag-extractivo"
+        "label": "sorry",
+        "description": "It is not in the documents.",
+        "group": "ipsis"
       }
     },
-    "amable": {
+    "kind": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "amable",
+          "expression": "kind",
           "holdMs": 1200,
           "transitionMs": 260,
           "transition": "smooth"
@@ -823,28 +823,28 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "amable",
+        "label": "kind",
         "description": "",
-        "group": "rag-extractivo"
+        "group": "ipsis"
       }
     },
-    "despedida": {
+    "goodbye": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "amable",
+          "expression": "kind",
           "holdMs": 700,
           "transitionMs": 240,
           "transition": "smooth"
         },
         {
-          "expression": "ojos-cerrados",
+          "expression": "eyes-closed",
           "holdMs": 300,
           "transitionMs": 160,
           "transition": "smooth"
         },
         {
-          "expression": "amable",
+          "expression": "kind",
           "holdMs": 600,
           "transitionMs": 200,
           "transition": "smooth"
@@ -864,16 +864,16 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "despedida",
+        "label": "goodbye",
         "description": "",
-        "group": "rag-extractivo"
+        "group": "ipsis"
       }
     },
-    "preocupado": {
+    "worried": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "preocupado",
+          "expression": "worried",
           "holdMs": 900,
           "transitionMs": 220,
           "transition": "smooth"
@@ -893,22 +893,22 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "preocupado",
-        "description": "Falló la conexión o el servicio.",
-        "group": "rag-extractivo"
+        "label": "worried",
+        "description": "The connection or the service failed.",
+        "group": "ipsis"
       }
     },
-    "somnoliento": {
+    "sleepy": {
       "playbackMode": "loop",
       "steps": [
         {
-          "expression": "somnoliento",
+          "expression": "sleepy",
           "holdMs": 3200,
           "transitionMs": 900,
           "transition": "smooth"
         },
         {
-          "expression": "ojos-cerrados",
+          "expression": "eyes-closed",
           "holdMs": 2400,
           "transitionMs": 900,
           "transition": "smooth"
@@ -922,28 +922,28 @@
         "durationMs": 400
       },
       "metadata": {
-        "label": "somnoliento",
-        "description": "Nadie escribe desde hace rato.",
-        "group": "rag-extractivo"
+        "label": "sleepy",
+        "description": "Nobody has typed for a while.",
+        "group": "ipsis"
       }
     },
-    "despertar": {
+    "wake-up": {
       "playbackMode": "once",
       "steps": [
         {
-          "expression": "ojos-cerrados",
+          "expression": "eyes-closed",
           "holdMs": 260,
           "transitionMs": 100,
           "transition": "smooth"
         },
         {
-          "expression": "sorprendido",
+          "expression": "surprised",
           "holdMs": 500,
           "transitionMs": 180,
           "transition": "spring"
         },
         {
-          "expression": "atento",
+          "expression": "attentive",
           "holdMs": 400,
           "transitionMs": 240,
           "transition": "smooth"
@@ -957,27 +957,27 @@
         "durationMs": 160
       },
       "metadata": {
-        "label": "despertar",
+        "label": "wake-up",
         "description": "",
-        "group": "rag-extractivo"
+        "group": "ipsis"
       }
     }
   },
   "animationOrder": [
-    "inactivo",
-    "saludo",
-    "atento",
-    "escuchando",
-    "asentir",
-    "pensando",
-    "pensando-largo",
-    "contento",
-    "dudoso",
-    "apenado",
-    "amable",
-    "despedida",
-    "preocupado",
-    "somnoliento",
-    "despertar"
+    "idle",
+    "wave",
+    "attentive",
+    "listening",
+    "nod",
+    "thinking",
+    "thinking-long",
+    "happy",
+    "unsure",
+    "sorry",
+    "kind",
+    "goodbye",
+    "worried",
+    "sleepy",
+    "wake-up"
   ]
 }

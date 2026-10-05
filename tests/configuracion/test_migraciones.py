@@ -91,8 +91,9 @@ def _proyecto_v4(raiz: Path) -> None:
         encoding="utf-8",
     )
     (conf / "personalidad.yaml").write_text(
-        "config_version: 1\ntono:\n  activo: formal\n  variedad: fija\n"
-        "avatar:\n  activo: true\n  ubicacion: cabecera\n",
+        "config_version: 1\ntono:\n  activo: serio\n  variedad: fija\n"
+        "  plantillas:\n    sin_respuesta: ['No está en {descripcion_dominio}.']\n"
+        "avatar:\n  activo: true\n  ubicacion: cabecera\n  eventos:\n    respuesta_ok: contento\n",
         encoding="utf-8",
     )
     (conf / "calibracion.yaml").write_text(
@@ -143,8 +144,9 @@ def test_migra_un_proyecto_v4_a_nombres_en_ingles(tmp_path: Path):
                                           "placement": {"position": "embedded"}, "colors": {"accent": "#ff0000"},
                                           "custom_css": ""}
     personalidad = crudo("config/personality.yaml")
-    assert personalidad["tone"] == {"active": "formal", "variety": "fixed"}
-    assert personalidad["avatar"] == {"enabled": True, "placement": "header"}
+    assert personalidad["tone"] == {"active": "serious", "variety": "fixed",
+                                    "templates": {"no_answer": ["No está en {domain_description}."]}}
+    assert personalidad["avatar"] == {"enabled": True, "placement": "header", "events": {"answer_ok": "happy"}}
     assert crudo("config/calibration.yaml") == {"version": 1, "status": "calibrated", "alpha": 0.05,
                                                "thresholds": {"domain": 0.5}}
     catalogo = crudo("documents/catalog.yaml")

@@ -152,7 +152,8 @@ def observado(url_servicio, perfil):
         assert r.status_code == 200, r.text
         salida[pregunta] = _resumen(r.json())
     if ACTUALIZAR:
-        (CARACTERIZACION / f"{perfil}.json").write_text(json.dumps(salida, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        (CARACTERIZACION / f"{perfil}.json").write_text(json.dumps(salida, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+                                                        newline="\n")
     return salida
 
 

@@ -1,6 +1,6 @@
 """Tonos de respuesta: varias formulaciones fijas por situación y por idioma.
 
-Un tono (``cordial``, ``formal``, ``directo``…) solo cambia cómo se enmarca
+Un tono (``cordial``, ``formal``, ``direct``…) solo cambia cómo se enmarca
 una respuesta, nunca su contenido: el texto del corpus va literal en su
 propio bloque y las citas van debajo. Cada tono vive en
 ``ipsis/recursos/tonos/<idioma>/<tono>.yaml`` con 18 situaciones de al menos 5
@@ -26,7 +26,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-from ipsis.configuracion.personalidad import TONOS  # la lista de tonos vive en la configuración
+from ipsis.configuracion.personalidad import TONOS, VARIABLES_ANTERIORES  # viven en la configuración
 
 TONO_POR_DEFECTO = "cordial"
 MINIMO_VARIANTES = 5
@@ -41,41 +41,52 @@ class Situacion:
     dos_puntos: bool = False  # introduce texto literal: debe terminar en «:»
 
 
-_ASISTENTE = frozenset({"nombre_asistente", "descripcion_dominio"})
+_ASISTENTE = frozenset({"assistant_name", "domain_description"})
 SITUACIONES: dict[str, Situacion] = {
-    "saludo": Situacion("motor", _ASISTENTE),
-    "agradecimiento": Situacion("motor", frozenset({"descripcion_dominio"})),
-    "despedida": Situacion("motor"),
-    "capacidad": Situacion("motor", _ASISTENTE),
-    "apertura": Situacion("motor", dos_puntos=True),
-    "complemento": Situacion("motor", dos_puntos=True),
-    "condicion": Situacion("motor", dos_puntos=True),
-    "excepcion": Situacion("motor", dos_puntos=True),
-    "relacionado_intro": Situacion("motor", dos_puntos=True),
-    "foco_ausente": Situacion("motor", frozenset({"termino"}), frozenset({"termino"}), dos_puntos=True),
-    "sin_respuesta": Situacion("motor"),
-    "premisa_no_encontrada": Situacion("motor", frozenset({"entidad"}), frozenset({"entidad"})),
-    "bienvenida": Situacion("widget", frozenset({"nombre_asistente"})),
-    "esperando": Situacion("widget"),
-    "invitacion_citas": Situacion("widget"),
-    "error_red": Situacion("widget"),
-    "error_limite": Situacion("widget"),
-    "error_servicio": Situacion("widget"),
+    "greeting": Situacion("motor", _ASISTENTE),
+    "thanks": Situacion("motor", frozenset({"domain_description"})),
+    "farewell": Situacion("motor"),
+    "capability": Situacion("motor", _ASISTENTE),
+    "opening": Situacion("motor", dos_puntos=True),
+    "addition": Situacion("motor", dos_puntos=True),
+    "condition": Situacion("motor", dos_puntos=True),
+    "exception": Situacion("motor", dos_puntos=True),
+    "related_intro": Situacion("motor", dos_puntos=True),
+    "missing_focus": Situacion("motor", frozenset({"term"}), frozenset({"term"}), dos_puntos=True),
+    "no_answer": Situacion("motor"),
+    "premise_not_found": Situacion("motor", frozenset({"entity"}), frozenset({"entity"})),
+    "welcome": Situacion("widget", frozenset({"assistant_name"})),
+    "waiting": Situacion("widget"),
+    "citations_hint": Situacion("widget"),
+    "network_error": Situacion("widget"),
+    "rate_limit_error": Situacion("widget"),
+    "service_error": Situacion("widget"),
 }
 
 # Claves de config/language.yaml anteriores a los tonos → situación.
 _LEGADO = {
-    ("mensajes", "sin_respuesta"): "sin_respuesta",
-    ("mensajes", "premisa_no_encontrada"): "premisa_no_encontrada",
-    ("mensajes", "relacionado_intro"): "relacionado_intro",
-    ("mensajes", "relacionado_foco_ausente"): "foco_ausente",
-    ("interfaz", "saludo"): "bienvenida",
-    ("interfaz", "esperando"): "esperando",
-    ("interfaz", "error_red"): "error_red",
-    ("interfaz", "error_limite"): "error_limite",
+    ("mensajes", "sin_respuesta"): "no_answer",
+    ("mensajes", "premisa_no_encontrada"): "premise_not_found",
+    ("mensajes", "relacionado_intro"): "related_intro",
+    ("mensajes", "relacionado_foco_ausente"): "missing_focus",
+    ("interfaz", "saludo"): "welcome",
+    ("interfaz", "esperando"): "waiting",
+    ("interfaz", "error_red"): "network_error",
+    ("interfaz", "error_limite"): "rate_limit_error",
 }
-_CONECTORES_LEGADO = ("apertura", "complemento", "condicion", "excepcion")
-_CONVERSACIONALES = ("saludo", "agradecimiento", "despedida", "capacidad")
+def _variables_actuales(texto):
+    if isinstance(texto, str):
+        for anterior, actual in VARIABLES_ANTERIORES.items():
+            texto = texto.replace("{" + anterior + "}", "{" + actual + "}")
+    return texto
+
+
+# Claves anteriores (conectores y respuestas conversacionales) → situación.
+_CONECTORES_LEGADO = {"apertura": "opening", "complemento": "addition", "condicion": "condition",
+                      "excepcion": "exception"}
+_CONVERSACIONALES = {"saludo": "greeting", "agradecimiento": "thanks", "despedida": "farewell",
+                     "capacidad": "capability", "greeting": "greeting", "thanks": "thanks",
+                     "farewell": "farewell", "capability": "capability"}
 
 
 class PaqueteTono(BaseModel):
@@ -226,7 +237,7 @@ def _reglas(idioma: str) -> dict:
 
 def prohibidas(idioma: str) -> tuple[str, ...]:
     """Expresiones que ningún tono puede usar (insultos, culpar al usuario…)."""
-    return tuple(_reglas(idioma).get("prohibidas") or ())
+    return tuple(_reglas(idioma).get("forbidden") or ())
 
 
 def regionalismos_en(situaciones: dict[str, list[str]], idioma: str) -> list[str]:
@@ -237,7 +248,7 @@ def regionalismos_en(situaciones: dict[str, list[str]], idioma: str) -> list[str
     for situacion, textos in situaciones.items():
         for i, texto in enumerate(textos, start=1):
             minusculas = _campos(texto)[0].casefold()
-            for expresion in _reglas(idioma).get("regionalismos") or ():
+            for expresion in _reglas(idioma).get("regionalisms") or ():
                 if re.search(rf"(?<!\w){re.escape(expresion.casefold())}(?!\w)", minusculas):
                     hallados.append(f"{situacion}[{i}]: {expresion!r}")
     return hallados
@@ -264,21 +275,21 @@ def extraer_legado(datos: dict[str, Any]) -> tuple[dict[str, Any], dict[str, lis
     plantillas: dict[str, list[str]] = {}
 
     def como_lista(valor) -> list[str]:
-        return [valor] if isinstance(valor, str) else list(valor or [])
+        return [_variables_actuales(v) for v in ([valor] if isinstance(valor, str) else list(valor or []))]
 
     for (seccion, clave), situacion in _LEGADO.items():
         if isinstance(datos.get(seccion), dict) and clave in datos[seccion]:
             plantillas[situacion] = como_lista(datos[seccion].pop(clave))
     conectores = (datos.get("mensajes") or {}).get("conectores")
     if isinstance(conectores, dict):
-        for clave in _CONECTORES_LEGADO:
+        for clave, situacion in _CONECTORES_LEGADO.items():
             if clave in conectores:
-                plantillas[clave] = como_lista(conectores.pop(clave))
+                plantillas[situacion] = como_lista(conectores.pop(clave))
     respuestas = (datos.get("conversacional") or {}).pop("respuestas", None) \
         if isinstance(datos.get("conversacional"), dict) else None
     for categoria, valor in (respuestas or {}).items():
         if categoria in _CONVERSACIONALES:
-            plantillas[categoria] = como_lista(valor)
+            plantillas[_CONVERSACIONALES[categoria]] = como_lista(valor)
     return datos, plantillas
 
 
@@ -302,14 +313,14 @@ def cargar_tono(idioma: str, tono: str = TONO_POR_DEFECTO, *, proyecto: str | Pa
     """
     carpeta = carpeta_idioma(idioma)
     datos = _base(carpeta, tono)
-    situaciones = {s: list(v) for s, v in (datos.get("situaciones") or {}).items()}
+    situaciones = {s: list(v) for s, v in (datos.get("situations") or {}).items()}
     propias = {**(sobrescrituras or {}), **_sobrescrituras_personalidad(proyecto)}
     if propias:
         errores = errores_tono(propias, prohibidas(carpeta), completo=False, minimo=1)
         if errores:
             raise TonoInvalido([f"sobrescritura del proyecto: {e}" for e in errores])
         situaciones.update(propias)
-    return PaqueteTono(tono=datos.get("tono", tono), idioma=carpeta, descripcion=datos.get("descripcion", ""),
+    return PaqueteTono(tono=datos.get("tone", tono), idioma=carpeta, descripcion=datos.get("description", ""),
                        situaciones=situaciones)
 
 

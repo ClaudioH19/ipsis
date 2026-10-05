@@ -216,9 +216,9 @@ def limite_de_peticiones() -> dict:
 
 
 # Microcopia del widget que ahora es del tono: clave de la interfaz ← situación.
-_MICROCOPIA = {"saludo": "bienvenida", "esperando": "esperando", "error_red": "error_red",
-               "error_limite": "error_limite", "error_servicio": "error_servicio",
-               "invitacion_citas": "invitacion_citas"}
+_MICROCOPIA = {"saludo": "welcome", "esperando": "waiting", "error_red": "network_error",
+               "error_limite": "rate_limit_error", "error_servicio": "service_error",
+               "invitacion_citas": "citations_hint"}
 
 
 def microcopia_del_widget(idioma: str, nombre_asistente: str) -> dict[str, list[str]]:
@@ -230,7 +230,7 @@ def microcopia_del_widget(idioma: str, nombre_asistente: str) -> dict[str, list[
     paquete = cargar_paquete(idioma, proyecto=Path.cwd())
     tono = cargar_tono(idioma, cargar_personalidad(Path.cwd()).tono.activo, proyecto=Path.cwd(),
                        sobrescrituras=paquete.plantillas_legado)
-    return {s: [v.format(nombre_asistente=nombre_asistente) for v in tono.variantes(s)]
+    return {s: [v.format(assistant_name=nombre_asistente) for v in tono.variantes(s)]
             for s, regla in SITUACIONES.items() if regla.origen == "widget"}
 
 
@@ -244,7 +244,7 @@ def interfaz_del_idioma(idioma: str) -> dict:
     paquete = cargar_paquete(idioma, proyecto=Path.cwd())
     tono = cargar_tono(idioma, cargar_personalidad(Path.cwd()).tono.activo, proyecto=Path.cwd(),
                        sobrescrituras=paquete.plantillas_legado)
-    return {**paquete.interfaz, **{clave: tono.variantes(s)[0] for clave, s in _MICROCOPIA.items()}}
+    return {**paquete.interfaz, **{s: tono.variantes(s)[0] for s in _MICROCOPIA.values()}}
 
 
 # ---------------------------------------------------------------------------

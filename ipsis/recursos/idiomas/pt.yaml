@@ -189,24 +189,24 @@ marcadores:
   - se
 conversacional:
   categorias:
-  - saludo
-  - agradecimiento
-  - despedida
-  - capacidad
+  - greeting
+  - thanks
+  - farewell
+  - capability
   patrones:
-    saludo:
+    greeting:
     - ^\s*ol[aá]\b
     - ^\s*oi\b
     - ^\s*bom dia\b
     - ^\s*boa (tarde|noite)\b
-    agradecimiento:
+    thanks:
     - \bobrigad[oa]\b
     - \bvaleu\b
-    despedida:
+    farewell:
     - ^\s*tchau\b
     - ^\s*at[eé] logo\b
     - ^\s*adeus\b
-    capacidad:
+    capability:
     - o que voc[eê] pode fazer
     - quem [eé] voc[eê]
     - como voc[eê] funciona
