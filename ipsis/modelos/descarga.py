@@ -69,11 +69,11 @@ def ruta_local(spec: ModeloSpec) -> Path:
     except Exception as exc:  # noqa: BLE001 -- el error de huggingface_hub varía por versión
         raise FileNotFoundError(
             f"el modelo {spec.id_hf} no está en la caché ({ruta_cache()}). "
-            f"Ejecuta 'ipsis modelos descargar'."
+            f"Ejecuta 'ipsis models download'."
         ) from exc
     if faltan := faltantes(spec, carpeta):
         raise FileNotFoundError(
-            f"falta {', '.join(faltan)} de {spec.id_hf} en la caché. Ejecuta 'ipsis modelos descargar'."
+            f"falta {', '.join(faltan)} de {spec.id_hf} en la caché. Ejecuta 'ipsis models download'."
         )
     return carpeta
 

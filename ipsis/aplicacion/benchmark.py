@@ -1,11 +1,11 @@
-"""``ipsis benchmark --perfiles``: cada perfil sobre los mismos bancos y corpus.
+"""``ipsis benchmark --profiles``: cada perfil sobre los mismos bancos y corpus.
 
 Por perfil y banco crea un proyecto temporal (``ipsis init`` en el idioma del
 banco, ``cargar``, ``indexar``), evalúa con ``evaluar_backend_activo`` (el
 motor se calienta antes de medir) y junta las observaciones. Las métricas y
 el reporte son puros (``ipsis.evaluacion.benchmark``).
 
-Variantes experimentales (``--experimentos``), sin tocar el pipeline:
+Variantes experimentales (``--experiments``), sin tocar el pipeline:
 
 - ``medium+ok0.85``: re-decide las observaciones de medium con ``τ_ok = 0,85``
   (``redecidir``, la misma regla que producción). Cambiar un umbral no cambia
@@ -108,25 +108,25 @@ def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimento
         try:
             os.chdir(temporal)
             with contextlib.redirect_stdout(io.StringIO()):
-                init = ["init", "--perfil", "light" if perfil == "bm25" else perfil]
+                init = ["init", "--profile", "light" if perfil == "bm25" else perfil]
                 if banco.manifiesto.idioma:
-                    init += ["--idioma", banco.manifiesto.idioma]
+                    init += ["--language", banco.manifiesto.idioma]
                 if main(init) != 0:
                     raise RuntimeError(f"falló ipsis init para {perfil}")
                 if perfil == "bm25":
                     _fijar_perfil("bm25")
                 for archivo in banco.manifiesto.corpus.archivos:
-                    if main(["cargar", str(corpus / archivo.ruta)]) != 0:
+                    if main(["load", str(corpus / archivo.ruta)]) != 0:
                         raise RuntimeError(f"falló la carga de {archivo.ruta}")
                 inicio = time.perf_counter()
-                if main(["indexar"]) != 0:
+                if main(["index"]) != 0:
                     raise RuntimeError(f"falló la indexación de {perfil}")
                 indexado = time.perf_counter() - inicio
                 artefacto = evaluar_backend_activo(str(manifiesto))
                 acuerdo = _acuerdo_por_caso(banco) if experimentos and perfil == "light" else None
         finally:
             os.chdir(anterior)
-            # ipsis indexar fija el idioma y el perfil del proceso: se restauran.
+            # ipsis index fija el idioma y el perfil del proceso: se restauran.
             configurar_idioma(idioma_previo)
             configurar_perfil(perfil_previo)
     return artefacto, indexado, acuerdo
@@ -170,7 +170,7 @@ def ejecutar_benchmark_perfiles(
         pares, observaciones, indexado, tono = [], [], 0.0, None
         for manifiesto, banco in zip(rutas_bancos, bancos):
             artefacto, segundos, acuerdo = evaluar(perfil, manifiesto, banco, experimentos)
-            # ipsis comparar exige una etiqueta de backend por ejecución: la del perfil.
+            # ipsis compare exige una etiqueta de backend por ejecución: la del perfil.
             artefacto = artefacto.model_copy(update={"backend": f"{perfil}:{artefacto.backend}"})
             indexado += segundos
             ruta = salida / f"benchmark-{perfil}-{banco.manifiesto.dataset_id}.json"
@@ -250,7 +250,7 @@ def escribir_reporte_benchmark(reporte: ReporteBenchmark, salida: str | Path) ->
 
 def benchmark_perfiles(manifiestos: list[str], perfiles: list[str], main, salida: str | Path | None = None, *,
                        experimentos: bool = False):
-    """``ipsis benchmark --perfiles``: ejecuta, escribe los reportes y decide la
+    """``ipsis benchmark --profiles``: ejecuta, escribe los reportes y decide la
     salida. Devuelve ``(reporte, ruta_json, ruta_md, carpeta, codigo)``."""
     from ipsis.configuracion import rutas
     from ipsis.evaluacion.benchmark import codigo_salida

@@ -7,7 +7,7 @@ en el formato del banco interno (``ipsis.evaluacion.banco``).
 La categoría la fija el autor por el id (``exacta``, ``parafrasis``, ``trampa``,
 ``premisa``, ``ambigua``, ``fuera``), no ``s_cov``: una paráfrasis real cuenta
 como paráfrasis aunque al sistema le cueste. Las evidencias y offsets salen de
-los mismos ayudantes que ``ipsis golden importar``.
+los mismos ayudantes que ``ipsis golden import``.
 
 Regenerar tras editar una fuente::
 

@@ -29,6 +29,6 @@ def test_exportacion_escapa_la_url_en_el_snippet(tmp_path):
 def test_cli_exporta_widget(tmp_path):
     salida = tmp_path / "dist"
 
-    assert main(["widget", "exportar", str(salida), "--api", "https://api.test"]) == 0
+    assert main(["widget", "export", str(salida), "--api", "https://api.test"]) == 0
     assert (salida / "widget.js").is_file()
     assert (salida / "snippet.html").is_file()

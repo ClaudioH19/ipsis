@@ -85,7 +85,7 @@ class DocumentoParseado:
     hash_documento: str = ""
     # Advertencias accionables de la ingesta: p.ej.
     # "este documento no tiene estructura de secciones" -- degrada los
-    # filtros por seccion_path pero no impide indexar. `ipsis indexar` las
+    # filtros por seccion_path pero no impide indexar. `ipsis index` las
     # junta e imprime al final (ver ipsis/ingesta/ingesta.py::ejecutar_ingesta).
     advertencias: list[str] = field(default_factory=list)
 

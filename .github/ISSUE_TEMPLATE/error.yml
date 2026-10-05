@@ -18,8 +18,8 @@ body:
     attributes:
       label: Pasos para reproducirlo
       placeholder: |
-        1. ipsis init --perfil light
-        2. ipsis cargar …
+        1. ipsis init --profile light
+        2. ipsis load …
         3. …
     validations:
       required: true
@@ -31,7 +31,7 @@ body:
   - type: textarea
     id: diagnostico
     attributes:
-      label: Si es una respuesta equivocada, salida de `ipsis preguntar --diagnostico "…"`
+      label: Si es una respuesta equivocada, salida de `ipsis ask --diagnostics "…"`
       description: Muestra la regla que decidió y las señales. Quita lo que sea confidencial.
       render: text
   - type: input

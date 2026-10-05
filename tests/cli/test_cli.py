@@ -30,7 +30,7 @@ RAIZ = Path(__file__).resolve().parents[2]
 
 @pytest.fixture(autouse=True)
 def _restaurar_perfil_activo():
-    """``ipsis indexar``/``ipsis cargar`` configuran el perfil de dominio activo
+    """``ipsis index``/``ipsis load`` configuran el perfil de dominio activo
     como estado de PROCESO (``ipsis.lenguaje.entidades.configurar_perfil``,
     mismo criterio que ``ipsis/servicio/api.py::startup`` -- ver
     ``tests/conftest.py``). Sin restaurarlo, un test de este archivo que
@@ -80,7 +80,7 @@ def _doc_prueba_txt(tmp_path: Path) -> Path:
 
 
 def test_init_crea_configuracion_minima(proyecto_temporal: Path):
-    codigo = main(["init", "--nombre-asistente", "Asistente X100"])
+    codigo = main(["init", "--assistant-name", "Asistente X100"])
     assert codigo == 0
     assert (proyecto_temporal / "config" / "assistant.yaml").exists()
     assert (proyecto_temporal / "config" / "engine.yaml").exists()
@@ -104,7 +104,7 @@ def test_init_cors_y_claves_widget_vacios_por_defecto(proyecto_temporal: Path):
     """Corrección de seguridad de esta tanda: un
     dominio recién creado NUNCA trae 'cors_origenes: [\"*\"]' -- eso
     expondría el servicio a cualquier sitio que copie la plantilla. Ambas
-    listas empiezan vacías; se abren a mano con 'ipsis configurar'."""
+    listas empiezan vacías; se abren a mano con 'ipsis configure'."""
     assert main(["init"]) == 0
     dominio = leer_proyecto((proyecto_temporal / "config" / "assistant.yaml"))
     assert dominio["cors_origenes"] == []
@@ -128,8 +128,8 @@ def test_cargar_infiere_doc_id_y_titulo_y_conserva_comentarios(proyecto_temporal
     md = _doc_prueba_md(proyecto_temporal)
     txt = _doc_prueba_txt(proyecto_temporal)
 
-    assert main(["cargar", str(md)]) == 0
-    assert main(["cargar", str(txt)]) == 0
+    assert main(["load", str(md)]) == 0
+    assert main(["load", str(txt)]) == 0
 
     contenido_catalogo = (proyecto_temporal / "documents" / "catalog.yaml").read_text(encoding="utf-8")
     assert contenido_catalogo.startswith("# Documents in the corpus.")  # comentario original intacto
@@ -147,8 +147,8 @@ def test_cargar_infiere_doc_id_y_titulo_y_conserva_comentarios(proyecto_temporal
 def test_cargar_mismo_contenido_dos_veces_no_duplica(proyecto_temporal: Path):
     main(["init"])
     md = _doc_prueba_md(proyecto_temporal)
-    assert main(["cargar", str(md)]) == 0
-    assert main(["cargar", str(md)]) == 0  # misma ruta, mismo contenido
+    assert main(["load", str(md)]) == 0
+    assert main(["load", str(md)]) == 0  # misma ruta, mismo contenido
 
     catalogo = leer_proyecto((proyecto_temporal / "documents" / "catalog.yaml"))["documentos"]
     assert len(catalogo) == 1
@@ -159,10 +159,10 @@ def test_cargar_archivo_modificado_no_sobrescribe_la_version_anterior(
 ):
     main(["init"])
     md = _doc_prueba_md(proyecto_temporal)
-    assert main(["cargar", str(md)]) == 0
+    assert main(["load", str(md)]) == 0
     md.write_text(md.read_text(encoding="utf-8") + "\nVersión nueva.\n", encoding="utf-8")
 
-    assert main(["cargar", str(md)]) == 0
+    assert main(["load", str(md)]) == 0
 
     catalogo = leer_proyecto((proyecto_temporal / "documents" / "catalog.yaml"))["documentos"]
     assert len(catalogo) == 2
@@ -177,12 +177,12 @@ def test_cargar_avisa_el_homonimo_y_vigente_false_lo_saca_del_indice(proyecto_te
 
     main(["init"])
     md = _doc_prueba_md(proyecto_temporal)
-    assert main(["cargar", str(md)]) == 0
+    assert main(["load", str(md)]) == 0
     md.write_text(md.read_text(encoding="utf-8") + "\nVersión nueva.\n", encoding="utf-8")
     capsys.readouterr()
-    assert main(["cargar", str(md)]) == 0
+    assert main(["load", str(md)]) == 0
     salida = capsys.readouterr().out
-    assert "ya había un documento con ese nombre" in salida and "vigente: false" in salida
+    assert "ya había un documento con ese nombre" in salida and "active: false" in salida
     assert len(parsear_corpus("documents")) == 2  # mientras no se retire, se indexan ambos
 
     ruta = proyecto_temporal / "documents" / "catalog.yaml"
@@ -197,36 +197,36 @@ def test_cargar_formato_no_soportado_falla_sin_tocar_catalogo(proyecto_temporal:
     main(["init"])
     ruta = proyecto_temporal / "archivo.rtf"
     ruta.write_text("contenido", encoding="utf-8")
-    codigo = main(["cargar", str(ruta)])
+    codigo = main(["load", str(ruta)])
     assert codigo == 1
 
 
 def test_configurar_clave_desconocida_falla(proyecto_temporal: Path):
     main(["init"])
-    assert main(["configurar", "clave_rara=1"]) == 1
+    assert main(["configure", "clave_rara=1"]) == 1
 
 
 def test_configurar_cors_origenes_como_lista(proyecto_temporal: Path):
     main(["init"])
-    assert main(["configurar", "cors_origins=https://a.cl,https://b.cl"]) == 0
+    assert main(["configure", "cors_origins=https://a.cl,https://b.cl"]) == 0
     dominio = leer_proyecto((proyecto_temporal / "config" / "assistant.yaml"))
     assert dominio["cors_origenes"] == ["https://a.cl", "https://b.cl"]
 
 
 def test_configurar_claves_widget_como_lista(proyecto_temporal: Path):
     main(["init"])
-    assert main(["configurar", "widget_keys=clave-sitio-a,clave-sitio-b"]) == 0
+    assert main(["configure", "widget_keys=clave-sitio-a,clave-sitio-b"]) == 0
     dominio = leer_proyecto((proyecto_temporal / "config" / "assistant.yaml"))
     assert dominio["claves_widget"] == ["clave-sitio-a", "clave-sitio-b"]
 
 
 def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path, capsys):
     main(["init"])
-    main(["cargar", str(_doc_prueba_md(proyecto_temporal))])
+    main(["load", str(_doc_prueba_md(proyecto_temporal))])
     capsys.readouterr()
     codigo = main(["doctor"])
     assert codigo == 1  # hay un documento cargado y el índice todavía no existe
-    assert "Acción: ipsis indexar" in capsys.readouterr().out
+    assert "Acción: ipsis index" in capsys.readouterr().out
 
 
 def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temporal: Path, capsys):
@@ -234,7 +234,7 @@ def test_doctor_avisa_si_cors_vacio_con_claves_widget_configuradas(proyecto_temp
     hay claves de widget configuradas -- la señal concreta de que alguien
     preparó el widget para un sitio real y se olvidó de abrirle CORS."""
     main(["init"])
-    main(["configurar", "widget_keys=clave-sitio-a"])
+    main(["configure", "widget_keys=clave-sitio-a"])
     capsys.readouterr()  # descarta lo impreso por init/configurar
     main(["doctor"])
     salida = capsys.readouterr().out
@@ -275,7 +275,7 @@ def test_doctor_reporta_politica_abstencion_desconocida(proyecto_temporal: Path,
 
 def test_evaluar_sin_golden_set_no_falla(proyecto_temporal: Path):
     main(["init"])
-    assert main(["evaluar"]) == 0
+    assert main(["evaluate"]) == 0
 
 
 @pytest.mark.slow
@@ -287,10 +287,10 @@ def test_indexar_dominio_sintetico_multiformato(proyecto_temporal: Path):
     despacho multiformato y la CLI funcionan juntas de
     punta a punta, no solo por separado."""
     main(["init"])
-    main(["cargar", str(_doc_prueba_md(proyecto_temporal))])
-    main(["cargar", str(_doc_prueba_txt(proyecto_temporal))])
+    main(["load", str(_doc_prueba_md(proyecto_temporal))])
+    main(["load", str(_doc_prueba_txt(proyecto_temporal))])
 
-    codigo = main(["indexar"])
+    codigo = main(["index"])
     assert codigo == 0
 
     # el índice quedó donde 'ipsis doctor' y el servicio lo esperan
@@ -301,7 +301,7 @@ def test_servir_sin_carpeta_conserva_el_modo_actual(monkeypatch, proyecto_tempor
     llamadas = []
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: llamadas.append((args, kwargs)))
 
-    assert main(["servir", "--port", "8123"]) == 0
+    assert main(["serve", "--port", "8123"]) == 0
 
     assert llamadas[0][0] == ("ipsis.servicio.api:app",)
     assert llamadas[0][1]["port"] == 8123
@@ -322,7 +322,7 @@ def test_servir_carpeta_crea_proyecto_privado_y_carga_documentos(
         lambda: type("Chequeo", (), {"ok": False})(),
     )
 
-    assert main(["servir", str(fuente)]) == 0
+    assert main(["serve", str(fuente)]) == 0
 
     proyecto = fuente / ".ipsis-project"
     assert llamadas == [proyecto]
@@ -344,7 +344,7 @@ def test_servir_carpeta_reutiliza_indice_vigente(monkeypatch, proyecto_temporal)
     )
     monkeypatch.setattr("uvicorn.run", lambda *args, **kwargs: servidores.append(Path.cwd()))
 
-    assert main(["servir", str(proyecto_temporal)]) == 0
+    assert main(["serve", str(proyecto_temporal)]) == 0
 
     assert indexaciones == []
     assert servidores == [proyecto_temporal]
@@ -369,7 +369,7 @@ def test_servir_completa_proyecto_parcial_sin_pisar_asistente(
     )
     monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: None)
 
-    assert main(["servir", str(proyecto_temporal)]) == 0
+    assert main(["serve", str(proyecto_temporal)]) == 0
 
     configuracion = proyecto_temporal / "config"
     assert not anterior.exists()
@@ -385,13 +385,13 @@ def test_servir_rechaza_carpeta_sin_documentos(monkeypatch, proyecto_temporal):
     fuente.mkdir()
     monkeypatch.setattr("uvicorn.run", lambda *_args, **_kwargs: pytest.fail("no debe servir"))
 
-    assert main(["servir", str(fuente)]) == 1
+    assert main(["serve", str(fuente)]) == 1
     assert not (fuente / ".ipsis-project").exists()
     assert Path.cwd() == proyecto_temporal
 
 
 # ---------------------------------------------------------------------------
-# ipsis preguntar -- código de salida:
+# ipsis ask -- código de salida:
 # cualquier fallo de conexión o de HTTP debe devolver código ≠ 0, o un
 # script que use la CLI no se entera de que la pregunta no se respondió.
 # Se monkeypatchea 'httpx.post' en vez de levantar un servicio real: más
@@ -415,7 +415,7 @@ def test_preguntar_codigo_no_cero_si_no_conecta(monkeypatch: pytest.MonkeyPatch)
         raise httpx.ConnectError("conexión rechazada")
 
     monkeypatch.setattr(httpx, "post", _post_falla)
-    assert main(["preguntar", "¿algo?"]) != 0
+    assert main(["ask", "¿algo?"]) != 0
 
 
 def test_preguntar_codigo_no_cero_si_hay_timeout(monkeypatch: pytest.MonkeyPatch):
@@ -425,14 +425,14 @@ def test_preguntar_codigo_no_cero_si_hay_timeout(monkeypatch: pytest.MonkeyPatch
         raise httpx.TimeoutException("se agotó el tiempo")
 
     monkeypatch.setattr(httpx, "post", _post_timeout)
-    assert main(["preguntar", "¿algo?"]) != 0
+    assert main(["ask", "¿algo?"]) != 0
 
 
 def test_preguntar_codigo_no_cero_si_http_no_200(monkeypatch: pytest.MonkeyPatch):
     import httpx
 
     monkeypatch.setattr(httpx, "post", lambda *a, **k: _RespuestaFalsa(500, texto="error interno"))
-    assert main(["preguntar", "¿algo?"]) != 0
+    assert main(["ask", "¿algo?"]) != 0
 
 
 def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
@@ -440,12 +440,12 @@ def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
 
     cuerpo = {"estado": "ok", "respuesta": "texto de prueba", "fragmentos": []}
     monkeypatch.setattr(httpx, "post", lambda *a, **k: _RespuestaFalsa(200, cuerpo))
-    assert main(["preguntar", "¿algo?"]) == 0
+    assert main(["ask", "¿algo?"]) == 0
 
 
 # ---------------------------------------------------------------------------
 # Ayuda de la CLI: cada opción de cada
-# subcomando debe traer 'help=' en castellano -- antes 'ipsis servir --help'
+# subcomando debe traer 'help=' en castellano -- antes 'ipsis serve --help'
 # mostraba '--host HOST'/'--port PORT' sin ninguna explicación.
 # ---------------------------------------------------------------------------
 def _subcomandos(parser, ruta=()):
@@ -460,7 +460,7 @@ def _subcomandos(parser, ruta=()):
 
 
 def test_todas_las_opciones_de_todos_los_subcomandos_tienen_ayuda():
-    """Recorre todo el árbol (también ``ipsis golden …`` y ``ipsis widget tema …``)."""
+    """Recorre todo el árbol (también ``ipsis golden …`` y ``ipsis widget theme …``)."""
     from ipsis.cli import construir_parser
 
     rutas = list(_subcomandos(construir_parser()))

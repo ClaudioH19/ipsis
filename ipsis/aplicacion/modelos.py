@@ -1,4 +1,4 @@
-"""Casos de uso de ``ipsis modelos``: listar, descargar, verificar y exportar.
+"""Casos de uso de ``ipsis models``: listar, descargar, verificar y exportar.
 
 Toda la información de cada modelo sale del catálogo (``ipsis.modelos.catalogo``)
 y del perfil efectivo; la caché, la descarga, la prueba ONNX y la exportación
@@ -74,7 +74,7 @@ class ResultadoVerificacion:
 
 
 def _perfil(perfil: str | None):
-    """Perfil efectivo pedido (``--perfil``) o el activo del proyecto."""
+    """Perfil efectivo pedido (``--profile``) o el activo del proyecto."""
     from ipsis.aplicacion.proyecto import perfil_de_instalacion, validar_perfil_instalable
     from ipsis.configuracion import rutas
     from ipsis.configuracion.carga import cargar_dominio

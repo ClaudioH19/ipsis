@@ -1,7 +1,7 @@
 # Despliegue en un servidor propio
 
 Cómo poner el asistente en un VPS con HTTPS: el servicio, Caddy, Docker,
-`ipsis desplegar preparar` y los modos de ejecución. La instalación y los
+`ipsis deploy prepare` y los modos de ejecución. La instalación y los
 perfiles están en [instalacion.md](instalacion.md).
 
 El proyecto está pensado para self-hosting: tu servicio, tus documentos y tu
@@ -9,7 +9,7 @@ dominio.
 
 ## 1. Servicio en loopback
 
-`ipsis servir` escucha en `127.0.0.1:8000` por defecto. Déjalo así y pon un
+`ipsis serve` escucha en `127.0.0.1:8000` por defecto. Déjalo así y pon un
 proxy con HTTPS delante. Ejemplo con systemd:
 
 ```ini
@@ -22,7 +22,7 @@ After=network.target
 User=ipsis
 WorkingDirectory=/srv/mi-asistente
 Environment=HF_HUB_OFFLINE=1
-ExecStart=/srv/venv/bin/ipsis servir --host 127.0.0.1 --port 8000
+ExecStart=/srv/venv/bin/ipsis serve --host 127.0.0.1 --port 8000
 Restart=on-failure
 
 [Install]
@@ -42,13 +42,13 @@ asistente.tu-dominio.cl {
 Luego, en el proyecto:
 
 ```bash
-ipsis configurar cors_origenes=https://www.tu-sitio.cl
-ipsis configurar claves_widget=clave-publica-del-sitio   # opcional
+ipsis configure cors_origenes=https://www.tu-sitio.cl
+ipsis configure claves_widget=clave-publica-del-sitio   # opcional
 ```
 
 ## 3. Docker
 
-La imagen la genera `ipsis desplegar preparar` (siguiente sección) junto con
+La imagen la genera `ipsis deploy prepare` (siguiente sección) junto con
 tu proyecto: un `Dockerfile` por perfil, con los modelos incluidos, y un
 `docker-compose.yml`. En ejecución no usa la red.
 
@@ -62,12 +62,12 @@ tu proyecto: un `Dockerfile` por perfil, con los modelos incluidos, y un
 - El proyecto (`config/`, `documents/` y `.ipsis/`) se monta desde la
   carpeta generada: los cambios de configuración no exigen reconstruir.
 
-## 4. `ipsis desplegar preparar`
+## 4. `ipsis deploy prepare`
 
 Genera una carpeta lista para copiar al VPS:
 
 ```bash
-ipsis desplegar preparar --dominio asistente.tu-dominio.cl
+ipsis deploy prepare --domain asistente.tu-dominio.cl
 ```
 
 `dist/` incluye:
@@ -83,7 +83,7 @@ Los registros de consultas y los secretos no se copian.
 - **Versión exacta:** sin `--wheel`, la imagen instala la versión actual del
   repositorio público. Para fijar la tuya, construye el wheel
   (`python -m pip wheel . --no-deps`) y pásalo con `--wheel`.
-- **Regenerar:** `--forzar` reemplaza una carpeta preparada antes. Nunca
+- **Regenerar:** `--force` reemplaza una carpeta preparada antes. Nunca
   borra una carpeta que no haya generado este comando.
 
 En el servidor:
@@ -96,7 +96,7 @@ docker compose --profile https up -d --build
 
 ## Modos de ejecución: desarrollo y producción
 
-El servicio corre en uno de dos modos, con `ipsis servir --modo` o
+El servicio corre en uno de dos modos, con `ipsis serve --mode` o
 `IPSIS_MODE`. **Por defecto es `produccion`.**
 
 | Aspecto | `desarrollo` | `produccion` |
@@ -119,7 +119,7 @@ Variables del modo y del panel `/admin`:
 | `IPSIS_ADMIN_TOKEN` | Activa `/admin`; al menos 32 caracteres. Genera uno con `python -c "import secrets; print(secrets.token_urlsafe(32))"` |
 | `IPSIS_TRUSTED_PROXY` | IP del proxy (por ejemplo, Caddy) del que se aceptan `X-Forwarded-*` |
 | `IPSIS_ADMIN_IPS` | Opcional: IPs permitidas para `/admin` |
-| `IPSIS_MODE` | `produccion` (por defecto) o `desarrollo`; también `ipsis servir --modo` |
+| `IPSIS_MODE` | `produccion` (por defecto) o `desarrollo`; también `ipsis serve --mode` |
 | `IPSIS_DOCS=1`, `IPSIS_DEMO=1` | `/docs` y `/widget/demo.html` también en producción |
 | `IPSIS_SOURCE_URL` | URL de tu código fuente (AGPL §13) a la que redirige `GET /fuente`. Por defecto, este repositorio |
 
@@ -133,7 +133,7 @@ En un VPS con Caddy delante:
 ```bash
 export IPSIS_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
 export IPSIS_TRUSTED_PROXY=127.0.0.1      # Caddy en la misma máquina
-ipsis servir --modo produccion
+ipsis serve --mode produccion
 ```
 
 Para rotar el token, cámbialo y reinicia el servicio.
@@ -146,7 +146,7 @@ publica; ningún comando la marca solo.
 - [ ] **Golden real:** escrito y revisado por una persona, con al menos un
   30% de preguntas sin respuesta o con premisa falsa, y pares «mismo tema,
   dato ausente» (ver [golden.md](golden.md)).
-- [ ] **Calibración:** `ipsis calibrar --alfa 0.05` da `CALIBRADO` (en `test`,
+- [ ] **Calibración:** `ipsis calibrate --alpha 0.05` da `CALIBRADO` (en `test`,
   la cota superior al 95% de falsos `ok` es ≤ 5%; con 0 errores exige al
   menos 59 respuestas aceptadas en `test`). Si da `MUESTRA_INSUFICIENTE`, se
   puede lanzar con los umbrales del perfil, sin afirmar el 5%.

@@ -152,7 +152,7 @@ def config_seguridad(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict
     return {"limite_peticiones": {**_LIMITE_PETICIONES_POR_DEFECTO, **limite}}
 
 
-# `ipsis configurar clave=valor`: clave del archivo (inglés) → clave interna.
+# `ipsis configure clave=valor`: clave del archivo (inglés) → clave interna.
 CLAVES_DOMINIO = {
     "assistant_name": "nombre_asistente", "domain_description": "descripcion_dominio", "language": "idioma",
     "profile": "perfil", "cors_origins": "cors_origenes", "widget_keys": "claves_widget",
@@ -164,7 +164,7 @@ _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}
 
 def _encabezado_comentarios(ruta: Path) -> str:
     if not ruta.exists():
-        return "# Identidad del asistente. Editable con `ipsis configurar clave=valor`.\n"
+        return "# Identidad del asistente. Editable con `ipsis configure clave=valor`.\n"
     lineas = ruta.read_text(encoding="utf-8").splitlines(keepends=True)
     fin = 0
     for linea in lineas:

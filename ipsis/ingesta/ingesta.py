@@ -77,9 +77,9 @@ def validar_payloads(payloads: list[dict], taxonomia: dict) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# `ipsis indexar`: parsear, fragmentar, validar, indexar y persistir los
+# `ipsis index`: parsear, fragmentar, validar, indexar y persistir los
 # artefactos de ingesta, en una única implementación que usan la CLI y
-# `ipsis servir <carpeta>`.
+# `ipsis serve <carpeta>`.
 # ---------------------------------------------------------------------------
 
 @dataclass

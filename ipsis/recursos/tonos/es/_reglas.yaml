@@ -16,7 +16,7 @@ prohibidas:
 - como ya te dije
 # Regionalismos, formas con género y saludos según la hora: los tonos incluidos
 # deben ser neutros (una prueba lo exige). En las sobrescrituras de un proyecto
-# son un aviso de 'ipsis personalidad validar' y 'ipsis doctor', no un error.
+# son un aviso de 'ipsis personality validate' y 'ipsis doctor', no un error.
 regionalismos:
 - chao
 - tranqui

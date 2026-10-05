@@ -1,4 +1,4 @@
-"""``ipsis perfil mostrar | cambiar`` con manifiestos y calibraciones sintéticos (sin modelos)."""
+"""``ipsis profile show | cambiar`` con manifiestos y calibraciones sintéticos (sin modelos)."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -18,14 +18,14 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(tmp_path)
 
     def crear(perfil: str) -> Path:
-        assert main(["init", "--perfil", perfil]) == 0
+        assert main(["init", "--profile", perfil]) == 0
         return tmp_path
 
     return crear
 
 
 def _indice(modelo: str, dimension: int | None = None) -> Path:
-    """Manifiesto de un índice construido con ``modelo`` (lo que deja ``ipsis indexar``)."""
+    """Manifiesto de un índice construido con ``modelo`` (lo que deja ``ipsis index``)."""
     from ipsis.configuracion.carga import cargar_proyecto
     from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
     from ipsis.indice.qdrant import nombre_coleccion_versionada
@@ -60,7 +60,7 @@ def test_mostrar_lee_modelos_y_presupuesto_del_perfil(proyecto, capsys):
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     proyecto("medium")
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     salida = capsys.readouterr().out
     medium = cargar_perfil_instalacion("medium")
     assert "Perfil activo: medium" in salida and f"{medium.presupuesto_p95_ms} ms" in salida
@@ -73,18 +73,18 @@ def test_mostrar_lee_modelos_y_presupuesto_del_perfil(proyecto, capsys):
 def test_mostrar_indice_compatible_e_incompatible(proyecto, capsys):
     proyecto("heavy")
     _indice(E5_SMALL)  # el proyecto se editó a mano: heavy con un índice de e5-small
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     salida = capsys.readouterr().out
-    assert "incompatible" in salida and E5_SMALL in salida and E5_BASE in salida and "ipsis indexar" in salida
+    assert "incompatible" in salida and E5_SMALL in salida and E5_BASE in salida and "ipsis index" in salida
     _indice(E5_BASE)  # después de reindexar para heavy
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     assert "Índice: compatible" in capsys.readouterr().out
 
 
 def test_dimension_distinta_es_incompatible(proyecto, capsys):
     proyecto("light")
     _indice(E5_SMALL, dimension=768)
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     assert "incompatible" in capsys.readouterr().out
 
 
@@ -94,14 +94,14 @@ def test_mostrar_calibracion_vigente_y_obsoleta_con_la_regla_del_motor(proyecto,
     proyecto("medium")
     _indice(E5_SMALL)
     calibracion = _calibracion("medium")
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     assert "Calibración: vigente" in capsys.readouterr().out
     assert perfil_efectivo("medium", hash_corpus=HASH).origen_umbrales == "calibracion"
 
-    assert main(["perfil", "cambiar", "light"]) == 0
+    assert main(["profile", "set", "light"]) == 0
     salida = capsys.readouterr().out
-    assert "ya no corresponde al perfil activo" in salida and "ipsis calibrar --aplicar" in salida
-    assert main(["perfil", "mostrar"]) == 0
+    assert "ya no corresponde al perfil activo" in salida and "ipsis calibrate --apply" in salida
+    assert main(["profile", "show"]) == 0
     assert "Calibración: obsoleta" in capsys.readouterr().out
     assert calibracion.is_file()  # se conserva para auditoría
     assert perfil_efectivo("light", hash_corpus=HASH).origen_umbrales == "perfil"  # el motor la ignora
@@ -118,10 +118,10 @@ def test_transiciones_segun_el_manifiesto(proyecto, capsys, origen, destino, ind
     proyecto(origen)
     manifiesto = _indice(indice)
     capsys.readouterr()
-    assert main(["perfil", "cambiar", destino]) == 0  # requerir reindexar no es un fallo
+    assert main(["profile", "set", destino]) == 0  # requerir reindexar no es un fallo
     salida = capsys.readouterr().out
     assert _perfil_activo() == destino
-    assert ("Acción: ipsis indexar" in salida) is reindexar
+    assert ("Acción: ipsis index" in salida) is reindexar
     assert ("sigue siendo compatible" in salida) is not reindexar
     assert manifiesto.is_file()  # el índice no se borra
 
@@ -129,15 +129,15 @@ def test_transiciones_segun_el_manifiesto(proyecto, capsys, origen, destino, ind
 def test_volver_al_perfil_anterior_reutiliza_su_indice(proyecto, capsys):
     proyecto("medium")
     _indice(E5_SMALL)
-    assert main(["perfil", "cambiar", "heavy"]) == 0
-    assert "Acción: ipsis indexar" in capsys.readouterr().out
-    assert main(["perfil", "cambiar", "medium"]) == 0  # sin reindexar entre medio
+    assert main(["profile", "set", "heavy"]) == 0
+    assert "Acción: ipsis index" in capsys.readouterr().out
+    assert main(["profile", "set", "medium"]) == 0  # sin reindexar entre medio
     assert "sigue siendo compatible" in capsys.readouterr().out
 
 
 def test_cambio_sin_indice_no_habla_de_incompatibilidad(proyecto, capsys):
     proyecto("light")
-    assert main(["perfil", "cambiar", "heavy"]) == 0
+    assert main(["profile", "set", "heavy"]) == 0
     salida = capsys.readouterr().out
     assert "Todavía no hay índice" in salida and "incompatible" not in salida and "Acción" not in salida
 
@@ -148,11 +148,11 @@ def test_mismo_perfil_es_idempotente_y_no_toca_la_calibracion(proyecto, capsys):
     _calibracion("medium")
     asistente = Path("config/assistant.yaml").read_bytes()
     capsys.readouterr()
-    assert main(["perfil", "cambiar", "medium"]) == 0
+    assert main(["profile", "set", "medium"]) == 0
     salida = capsys.readouterr().out
     assert "ya está activo" in salida and "calibración" not in salida.lower()
     assert Path("config/assistant.yaml").read_bytes() == asistente
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     assert "Calibración: vigente" in capsys.readouterr().out
 
 
@@ -160,7 +160,7 @@ def test_mismo_perfil_es_idempotente_y_no_toca_la_calibracion(proyecto, capsys):
 def test_perfiles_no_instalables_se_rechazan_sin_tocar_el_proyecto(proyecto, capsys, perfil, mensaje):
     proyecto("light")
     antes = Path("config/assistant.yaml").read_bytes()
-    assert main(["perfil", "cambiar", perfil]) == 1
+    assert main(["profile", "set", perfil]) == 1
     salida = capsys.readouterr().out
     assert mensaje in salida and "light, medium, heavy" in salida and "Traceback" not in salida
     assert Path("config/assistant.yaml").read_bytes() == antes
@@ -172,12 +172,12 @@ def test_conserva_ajustes_perfil_y_rechaza_los_invalidos(proyecto, capsys):
     datos = leer_proyecto(motor)
     datos["ajustes_perfil"] = {"cascada": {"rerank_k": 5}}
     escribir_proyecto(motor, datos)
-    assert main(["perfil", "cambiar", "medium"]) == 0
+    assert main(["profile", "set", "medium"]) == 0
     assert leer_proyecto(motor)["ajustes_perfil"] == {"cascada": {"rerank_k": 5}}
 
     datos["ajustes_perfil"] = {"cascada": {"rerank_k": -3}}  # inválido para cualquier perfil
     escribir_proyecto(motor, datos)
     capsys.readouterr()
-    assert main(["perfil", "cambiar", "heavy"]) == 1
-    assert "ajustes_perfil" in capsys.readouterr().out
+    assert main(["profile", "set", "heavy"]) == 1
+    assert "profile_overrides" in capsys.readouterr().out
     assert _perfil_activo() == "medium"  # no quedó a medio cambiar

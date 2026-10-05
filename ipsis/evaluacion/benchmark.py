@@ -1,11 +1,11 @@
-"""Reporte del benchmark por perfiles (``ipsis benchmark --perfiles``).
+"""Reporte del benchmark por perfiles (``ipsis benchmark --profiles``).
 
 Funciones puras sobre observaciones ya producidas: compara seguridad,
 cobertura, latencia y costo de cada perfil sobre los mismos casos. Las
 métricas de calidad son las de ``reporte_cobertura`` (P10.1).
 
 Un banco de regresión (el universal) sirve para **comparar** perfiles: sus
-cotas no certifican el riesgo de ningún cliente (eso lo hace ``ipsis calibrar``
+cotas no certifican el riesgo de ningún cliente (eso lo hace ``ipsis calibrate``
 con el golden del cliente).
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ from ipsis.evaluacion.metricas import ObservacionEvaluacion, ReporteCobertura
 
 
 def percentil(valores: list[float], q: float) -> float:
-    """Percentil con interpolación lineal (el mismo de ``--solo-latencia``)."""
+    """Percentil con interpolación lineal (el mismo de ``--latency-only``)."""
     ordenados = sorted(valores)
     if not ordenados:
         return 0.0
@@ -85,13 +85,13 @@ class ReporteBenchmark(BaseModel):
     bancos: list[BancoUsado]
     nota: str
     perfiles: list[ResultadoPerfil]
-    artefactos: list[str] = Field(default_factory=list)  # ArtefactoEvaluacion por perfil y banco (ipsis comparar)
+    artefactos: list[str] = Field(default_factory=list)  # ArtefactoEvaluacion por perfil y banco (ipsis compare)
 
 
 NOTA_REGRESION = ("Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no "
-                  "certifican a ningún cliente; eso lo hace «ipsis calibrar» con el golden del cliente.")
-NOTA_EVALUACION = ("Banco de evaluación del cliente: la guardia de falsos ok (como en «ipsis evaluar») exige 0 en "
-                   "los perfiles; las cotas solo se certifican con «ipsis calibrar».")
+                  "certifican a ningún cliente; eso lo hace «ipsis calibrate» con el golden del cliente.")
+NOTA_EVALUACION = ("Banco de evaluación del cliente: la guardia de falsos ok (como en «ipsis evaluate») exige 0 en "
+                   "los perfiles; las cotas solo se certifican con «ipsis calibrate».")
 
 
 def nota_de(bancos: list[BancoUsado]) -> str:
@@ -101,7 +101,7 @@ def nota_de(bancos: list[BancoUsado]) -> str:
 def codigo_salida(reporte: ReporteBenchmark) -> int:
     """≠ 0 si un perfil (no las variantes experimentales) excede su presupuesto
     p95 o, con un banco de evaluación del cliente, da algún falso ok (la misma
-    guardia de ``ipsis evaluar``). Un banco de regresión no tiene límite de falsos
+    guardia de ``ipsis evaluate``). Un banco de regresión no tiene límite de falsos
     ok propio: los compara la línea base de las pruebas."""
     perfiles = [p for p in reporte.perfiles if p.variante is None]
     if any(not p.cumple_presupuesto for p in perfiles):

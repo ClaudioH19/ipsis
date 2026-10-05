@@ -43,7 +43,7 @@ pip install "ipsis @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-A
 ipsis --version
 ```
 
-**En un servidor con Docker:** `ipsis desplegar preparar` genera la imagen y el
+**En un servidor con Docker:** `ipsis deploy prepare` genera la imagen y el
 compose de tu proyecto (ver [despliegue.md](despliegue.md#3-docker)).
 
 ### Para desarrollar
@@ -62,7 +62,7 @@ Extras opcionales:
 |---|---|---|
 | `test` | pytest | no |
 | `browser` | pruebas de navegador con Playwright (`python -m playwright install chromium`) | no |
-| `exportar` | `ipsis modelos exportar`: convierte un modelo de Hugging Face a ONNX (`optimum-onnx` y `torch`) | no; solo desarrollo |
+| `exportar` | `ipsis models export`: convierte un modelo de Hugging Face a ONNX (`optimum-onnx` y `torch`) | no; solo desarrollo |
 
 La producción no instala torch. Una instalación editable guarda rutas
 absolutas: si mueves el clon, reinstala.
@@ -74,29 +74,29 @@ Cada asistente es una carpeta con su configuración, sus documentos y su
 
 ```bash
 mkdir mi-asistente && cd mi-asistente
-ipsis init --perfil medium --idioma es \
-  --nombre-asistente "Asistente de soporte" --descripcion-dominio "los manuales del producto"
-ipsis modelos descargar          # modelos del perfil a la caché global (una sola vez por máquina)
-ipsis modelos verificar          # carga cada modelo y hace una inferencia mínima
-ipsis cargar /ruta/a/documentos  # PDF con texto, DOCX, Markdown o TXT
-ipsis indexar
+ipsis init --profile medium --language es \
+  --assistant-name "Asistente de soporte" --domain-description "los manuales del producto"
+ipsis models download          # modelos del perfil a la caché global (una sola vez por máquina)
+ipsis models verify          # carga cada modelo y hace una inferencia mínima
+ipsis load /ruta/a/documentos  # PDF con texto, DOCX, Markdown o TXT
+ipsis index
 ipsis doctor                     # ¿puede funcionar? Si no, qué comando ejecutar
-ipsis servir                     # http://127.0.0.1:8000 (abre /widget/demo.html con --modo desarrollo)
+ipsis serve                     # http://127.0.0.1:8000 (abre /widget/demo.html con --mode desarrollo)
 ```
 
 En otra terminal:
 
 ```bash
-ipsis preguntar "¿Cada cuánto se cambia el filtro?"
+ipsis ask "¿Cada cuánto se cambia el filtro?"
 ```
 
 - **Perfil:** `light`, `medium` o `heavy` (ver la tabla de requisitos). Se
-  cambia después con `ipsis perfil cambiar <perfil>`. Entre `light` y `medium`
+  cambia después con `ipsis profile set <perfil>`. Entre `light` y `medium`
   se reutiliza el índice; `heavy` necesita reindexar.
 - **Idioma:** `es`, `en` y `pt` tienen paquete propio. Una variante regional
   (`pt-br`) usa el de su idioma. Cualquier otro código ISO funciona con
   reglas universales y textos en inglés.
-- **Atajo:** `ipsis servir ./mis-documentos` crea un proyecto privado en
+- **Atajo:** `ipsis serve ./mis-documentos` crea un proyecto privado en
   `.ipsis-project/`, carga los archivos, indexa si hace falta y sirve.
 
 ## Caché de modelos y uso sin red
@@ -108,14 +108,14 @@ ipsis preguntar "¿Cada cuánto se cambia el filtro?"
 | `IPSIS_ONNX_THREADS` | Hilos de onnxruntime por modelo |
 
 En una máquina sin red, descarga en otra con
-`ipsis modelos descargar --perfil <p>` y copia la carpeta de la caché.
+`ipsis models download --profile <p>` y copia la carpeta de la caché.
 
 ## Qdrant
 
 Por defecto el índice vive en el proyecto, en modo local
 (`.ipsis/index/qdrant`). En ese modo Qdrant bloquea la carpeta: detén
-`ipsis servir` antes de ejecutar `ipsis indexar`, `ipsis doctor` o
-`ipsis preguntar --diagnostico`.
+`ipsis serve` antes de ejecutar `ipsis index`, `ipsis doctor` o
+`ipsis ask --diagnostics`.
 
 Para usar Qdrant como servidor, en `config/engine.yaml`:
 
@@ -130,7 +130,7 @@ También sirven las variables `QDRANT_MODO` y `QDRANT_URL`.
 ## Servidor propio (VPS)
 
 El proyecto está pensado para self-hosting: tu servicio, tus documentos y tu
-dominio. El paso a paso (Caddy con HTTPS, Docker, `ipsis desplegar preparar`,
+dominio. El paso a paso (Caddy con HTTPS, Docker, `ipsis deploy prepare`,
 modos de desarrollo y producción y el panel `/admin`) está en
 [despliegue.md](despliegue.md).
 

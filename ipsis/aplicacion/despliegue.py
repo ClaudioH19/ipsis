@@ -1,4 +1,4 @@
-"""``ipsis desplegar preparar``: una carpeta lista para copiar a un VPS.
+"""``ipsis deploy prepare``: una carpeta lista para copiar a un VPS.
 
 Reúne lo que el servicio necesita en ejecución (configuración con
 personalidad, estilos, calibración y avatares importados; documentos; índice)
@@ -18,7 +18,7 @@ from pathlib import Path
 from ipsis import __version__
 from ipsis.configuracion import rutas
 
-MARCA = ".ipsis-despliegue"  # identifica una carpeta generada (se puede regenerar con --forzar)
+MARCA = ".ipsis-despliegue"  # identifica una carpeta generada (se puede regenerar con --force)
 DOMINIO_EJEMPLO = "asistente.tu-dominio.cl"
 IDIOMAS_LEEME = ("es", "en", "pt")
 # Dentro de .ipsis solo viaja el índice: registros, snapshots y vistas previas quedan fuera.
@@ -62,9 +62,9 @@ def _idioma_leeme(idioma: str) -> str:
 def _validar_dominio(dominio: str) -> str:
     dominio = dominio.strip().lower()
     if dominio.startswith(("http://", "https://")) or "/" in dominio:
-        raise DespliegueInvalido(f"--dominio {dominio!r}: escribe solo el nombre, p. ej. {DOMINIO_EJEMPLO}")
+        raise DespliegueInvalido(f"--domain {dominio!r}: escribe solo el nombre, p. ej. {DOMINIO_EJEMPLO}")
     if not re.fullmatch(r"[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+", dominio):
-        raise DespliegueInvalido(f"--dominio {dominio!r} no es un nombre de dominio válido")
+        raise DespliegueInvalido(f"--domain {dominio!r} no es un nombre de dominio válido")
     return dominio
 
 
@@ -83,10 +83,10 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
         raise DespliegueInvalido(f"{destino!r} contiene al proyecto: elige otra carpeta, p. ej. dist")
     if salida.exists() and any(salida.iterdir()):
         if not (salida / MARCA).is_file():
-            raise DespliegueInvalido(f"{salida} no está vacía y no la generó 'ipsis desplegar preparar': "
+            raise DespliegueInvalido(f"{salida} no está vacía y no la generó 'ipsis deploy prepare': "
                                      "elige otra carpeta")
         if not forzar:
-            raise DespliegueInvalido(f"{salida} ya existe: usa --forzar para regenerarla")
+            raise DespliegueInvalido(f"{salida} ya existe: usa --force para regenerarla")
         shutil.rmtree(salida)
     if wheel is not None and not (Path(wheel).is_file() and wheel.endswith(".whl")):
         raise DespliegueInvalido(f"--wheel {wheel!r} no es un archivo .whl")
@@ -125,14 +125,14 @@ def preparar_despliegue(destino: str = "dist", *, dominio: str | None = None, wh
 
     resumen.archivos = sorted(p.relative_to(salida).as_posix() for p in salida.rglob("*") if p.is_file())
     if dominio == DOMINIO_EJEMPLO:
-        resumen.avisos.append(f"sin --dominio: el Caddyfile usa {DOMINIO_EJEMPLO}; vuelve a preparar con "
-                              "--dominio tu-dominio")
+        resumen.avisos.append(f"sin --domain: el Caddyfile usa {DOMINIO_EJEMPLO}; vuelve a preparar con "
+                              "--domain tu-dominio")
     if wheel is None:
         resumen.avisos.append("sin --wheel: la imagen instalará la versión actual del repositorio público; "
                               "para fijar esta versión, construye el wheel (python -m pip wheel . --no-deps) "
                               "y pásalo con --wheel")
     if not Path(rutas.INDICE).is_dir():
-        resumen.avisos.append("no hay índice: ejecuta 'ipsis indexar' y vuelve a preparar")
+        resumen.avisos.append("no hay índice: ejecuta 'ipsis index' y vuelve a preparar")
     reporte = diagnosticar(abrir_indice=False)
     for chequeo in reporte.errores:
         acciones = f" ({'; '.join(chequeo.acciones)})" if chequeo.acciones else ""

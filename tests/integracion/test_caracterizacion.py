@@ -5,7 +5,7 @@ cambiar ninguna respuesta. Congela también respuestas malas conocidas; cuando
 un cambio las corrija a propósito, se regenera el archivo esperado y el
 cambio se explica en el commit y en ``CHANGELOG.md``.
 
-El servidor corre en un subproceso con ``ipsis servir`` sobre el corpus sintético
+El servidor corre en un subproceso con ``ipsis serve`` sobre el corpus sintético
 de ``tests/datos/corpus``, de modo que la prueba solo depende del
 contrato HTTP, no de la estructura interna del servicio. Corre con ``light`` y,
 si sus modelos están en caché, con ``medium`` (un archivo esperado por perfil).
@@ -85,14 +85,14 @@ def url_servicio(perfil):
     proyecto = Path(tempfile.mkdtemp(prefix="rag_caracterizacion_"))
     proceso = None
     try:
-        _rag(["init", "--nombre-asistente", "Asistente Aqualis",
-              "--descripcion-dominio", "los manuales del purificador Aqualis", "--perfil", perfil], proyecto)
-        _rag(["cargar", str(CORPUS)], proyecto)
-        _rag(["indexar"], proyecto)
+        _rag(["init", "--assistant-name", "Asistente Aqualis",
+              "--domain-description", "los manuales del purificador Aqualis", "--profile", perfil], proyecto)
+        _rag(["load", str(CORPUS)], proyecto)
+        _rag(["index"], proyecto)
 
         puerto = _puerto_libre()
         proceso = subprocess.Popen(
-            [sys.executable, "-m", "ipsis.cli", "servir", "--port", str(puerto)],
+            [sys.executable, "-m", "ipsis.cli", "serve", "--port", str(puerto)],
             cwd=str(proyecto), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         )
         url = f"http://127.0.0.1:{puerto}"

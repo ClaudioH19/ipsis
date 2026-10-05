@@ -16,7 +16,7 @@ prohibidas:
 - como eu já disse
 # Regionalismos (do Brasil ou de Portugal), formas com género e gerúndios: os
 # tons incluídos devem ser neutros (um teste exige). Nas substituições de um
-# projeto são um aviso de 'ipsis personalidad validar' e 'ipsis doctor', não um erro.
+# projeto são um aviso de 'ipsis personality validate' e 'ipsis doctor', não um erro.
 regionalismos:
 - oi
 - tchau

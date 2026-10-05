@@ -92,7 +92,7 @@ def test_tramo_del_lector_lejos_del_foco_da_s_foco_cero():
     EtapaEvidencia(motor).ejecutar(ctx)
     assert ctx.evidencias[0].texto == "El filtro se cambia cada 6 meses."
     assert ctx.lexicas.s_foco == 0.0
-    lexicas = ctx.diagnostico["senales_lexicas"]  # ipsis preguntar --diagnostico los muestra
+    lexicas = ctx.diagnostico["senales_lexicas"]  # ipsis ask --diagnostics los muestra
     assert lexicas["foco_encontrados"] == [] and lexicas["foco_ausentes"] == [est.superficie[t] for t in ctx.terminos_foco]
     assert lexicas["foco_ausentes"]
 

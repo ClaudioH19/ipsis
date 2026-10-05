@@ -31,7 +31,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.chdir(carpeta)
     for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     return carpeta
 
 

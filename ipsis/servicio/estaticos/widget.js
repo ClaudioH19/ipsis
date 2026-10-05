@@ -79,7 +79,7 @@
   var SALUDO_INICIAL = opcion("saludo", "saludo", "Hola, ¿en qué puedo ayudarte?");
   var CABECERA_CLAVE_WIDGET = "X-Ipsis-Widget-Key";
   // Carpeta alternativa para el motor y la definición del avatar (widget
-  // exportado con `ipsis widget exportar`): ahí están avatar.js y avatares/.
+  // exportado con `ipsis widget export`): ahí están avatar.js y avatares/.
   var AVATAR_BASE = opcion("avatar-base", "avatarBase", null);
 
   // Ubicación: lo que declare el sitio (atributos del elemento o data-* del

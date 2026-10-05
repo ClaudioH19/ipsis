@@ -22,7 +22,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.chdir(carpeta)
     for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     datos = leer_proyecto(Path("config/assistant.yaml"))
     datos["cors_origenes"] = ["https://www.sitio.cl"]
     escribir_proyecto(Path("config/assistant.yaml"), datos)
@@ -133,7 +133,7 @@ def test_cambio_por_cli_se_ve_sin_reiniciar(proyecto):
     motor = _motor()
     c = _cliente(ModoServicio(), motor=motor)
     assert c.get("/config").json()["microcopia"]["esperando"][0] == "Buscando en el documento"
-    assert main(["personalidad", "tono", "aplicar", "serio"]) == 0
+    assert main(["personality", "tone", "apply", "serio"]) == 0
     assert c.get("/config").json()["microcopia"]["esperando"][0] == "Buscando"
     c.post("/consultar", json={"pregunta": "hola", "id_sesion": "s"})
     assert motor.plantillas["tono"] == "serio"
@@ -216,14 +216,14 @@ def test_servir_en_desarrollo_genera_un_token_temporal(proyecto, monkeypatch, ca
 
     llamadas = []
     monkeypatch.setattr("uvicorn.run", lambda *a, **k: llamadas.append(k))
-    assert main(["servir", "--modo", "desarrollo"]) == 0
+    assert main(["serve", "--mode", "development"]) == 0
     salida = capsys.readouterr().out
     token = os.environ["IPSIS_ADMIN_TOKEN"]
     assert len(token) >= 32 and token in salida and "Modo desarrollo" in salida
     assert llamadas[0]["proxy_headers"] is True and llamadas[0]["forwarded_allow_ips"] == "127.0.0.1"
     monkeypatch.delenv("IPSIS_ADMIN_TOKEN")
     monkeypatch.setenv("IPSIS_TRUSTED_PROXY", "10.0.0.2")
-    assert main(["servir", "--modo", "produccion"]) == 0
+    assert main(["serve", "--mode", "production"]) == 0
     assert "IPSIS_ADMIN_TOKEN" not in os.environ  # producción nunca inventa un token
     assert llamadas[1]["forwarded_allow_ips"] == "10.0.0.2"
 

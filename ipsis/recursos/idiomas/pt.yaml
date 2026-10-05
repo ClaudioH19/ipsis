@@ -220,6 +220,8 @@ mensajes:
     - Na versão {v1}…; na {v2}…
   sin_seccion: (sem seção)
 interfaz:
+  nombre_asistente_defecto: Assistente documental
+  descripcion_dominio_defecto: os documentos carregados
   fuentes_una: 1 fonte do documento
   fuentes_varias: '{n} fontes do documento'
   posicion_cita: 'caracteres {inicio}–{fin}'
@@ -272,4 +274,4 @@ golden_instrucciones:
     \nTAMANHO\n-------\nCom 30 a 60 perguntas o golden serve para ajustar e comparar perfis. Para\nCERTIFICAR estatisticamente\
     \ um risco de respostas falsas menor que 5% são\nnecessárias pelo menos 59 respostas aceitas sem erro na parte\
     \ de teste\n(mais de 120 perguntas respondíveis no total). O assistente avisa ao\nimportar se o tamanho não\
-    \ for suficiente.\n\nDepois: ipsis golden importar golden/golden.csv\n"
+    \ for suficiente.\n\nDepois: ipsis golden import golden/golden.csv\n"

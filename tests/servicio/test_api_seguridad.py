@@ -6,7 +6,7 @@ los endpoints del widget (Tarea B: ``/config``, ``/widget.js``,
 A propósito, NINGUNO de estos tests requiere el corpus real ni el índice
 Qdrant: usan ``TestClient(app)`` SIN el context manager (``with``), que en
 FastAPI/Starlette es lo que dispara el evento ``startup`` -- así corren
-siempre, en cualquier máquina, sin depender de que ``ipsis indexar``
+siempre, en cualquier máquina, sin depender de que ``ipsis index``
 se haya corrido antes (a diferencia de ``tests/integracion/test_caracterizacion.py``, que sí lo
 necesita y se salta si falta). Esto es posible porque la seguridad de borde
 (clave de widget + límite de peticiones) se resuelve como una dependencia de

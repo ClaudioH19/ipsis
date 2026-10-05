@@ -69,7 +69,7 @@ y 874 ms (heavy). Disco: 1,1 GB.
 
 ## 9. Fallos y fallback
 
-- Sin modelo: el perfil no arranca y la acción es `ipsis modelos descargar`.
+- Sin modelo: el perfil no arranca y la acción es `ipsis models download`.
 - Salida temprana léxica: no corre.
 
 ## 10. Seguridad y privacidad
@@ -90,7 +90,7 @@ meses»; la pregunta por la garantía contra el pasaje del filtro da
 - Dos trampas del banco universal (`es-trampa-001`, `en-trampa-004`) dan
   `s_qa` 0,82–0,83 con `τ_ok` 0,8: falsos `ok` en medium y heavy sin calibrar.
   Con `τ_ok` 0,85 desaparecen sin perder cobertura; el umbral de cada cliente
-  lo elige `ipsis calibrar`.
+  lo elige `ipsis calibrate`.
 - Heavy usa el mismo lector que medium: `deepset/xlm-roberta-large-squad2`
   no tiene un ONNX confiable con licencia declarada.
 

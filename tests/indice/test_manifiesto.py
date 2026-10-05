@@ -38,7 +38,7 @@ def test_guardar_y_cargar(tmp_path):
 
 
 def test_sin_manifiesto_pide_reindexar(tmp_path):
-    with pytest.raises(FileNotFoundError, match="ipsis indexar"):
+    with pytest.raises(FileNotFoundError, match="ipsis index"):
         cargar_manifiesto("otro_v1", str(tmp_path))
 
 

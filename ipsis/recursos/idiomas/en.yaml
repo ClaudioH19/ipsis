@@ -228,6 +228,8 @@ mensajes:
     - In version {v1}…; in version {v2}…
   sin_seccion: (no section)
 interfaz:
+  nombre_asistente_defecto: Document assistant
+  descripcion_dominio_defecto: the loaded documents
   fuentes_una: 1 source from the document
   fuentes_varias: '{n} sources from the document'
   posicion_cita: 'characters {inicio}–{fin}'
@@ -274,4 +276,4 @@ golden_instrucciones:
     \ appears in\nseveral documents.\n\nSIZE\n----\n30 to 60 questions are enough to tune and compare profiles.\
     \ To CERTIFY\nstatistically a false-answer risk below 5%, at least 59 accepted answers\nwithout error are needed\
     \ in the test split (over 120 answerable questions\nin total). The assistant warns on import if the size is\
-    \ not enough.\n\nNext: ipsis golden importar golden/golden.csv\n"
+    \ not enough.\n\nNext: ipsis golden import golden/golden.csv\n"

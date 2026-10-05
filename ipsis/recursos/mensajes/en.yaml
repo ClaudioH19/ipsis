@@ -1,0 +1,435 @@
+# Messages of the ipsis interface (CLI). English is the default; set IPSIS_LANG=es for Spanish.
+# Variables go between braces ({name}); write a literal brace as {{ or }}.
+cli:
+  description: 'Extractive answers from your documents: literal citations, calibrated abstention, CPU only.'
+  migration: '[migration] {change}'
+  error: 'Error: {error}'
+  error_dot: 'Error: {error}.'
+  action: '  Action: {action}'
+  warning: 'Warning: {warning}'
+  warning_indented: '  Warning: {warning}'
+  item: '  - {item}'
+  none: —
+  subcommand: Command to run.
+  'yes': 'yes'
+  'no': 'no'
+init:
+  help: Create the configuration for a new project.
+  opt_name: 'Visible name of the assistant (default: ''Document assistant'', or its translation).'
+  opt_description: 'Short description of the domain, e.g. ''my team''s handbook'' (default: ''the loaded documents'').'
+  opt_language: 'Language code of the documents (default: en, or es with IPSIS_LANG=es). es, en and pt have their own pack; any other code uses the universal rules, no stemming and English texts.'
+  opt_profile: 'Installation profile: light (no extra models), medium or heavy (default: medium).'
+  opt_force: Reset config/assistant.yaml if it already exists.
+  exists: '{path} already exists -- use ''ipsis configure key=value'' to change it, or ''ipsis init --force'' to reset it to the defaults.'
+  styles_created: 'config/styles.yaml created: the whole widget design lives there (colors, typography, shapes, shadows and animations), no code needed.'
+  done: 'Project initialized in {path}:'
+  name: '  assistant_name = {value!r}'
+  description: '  domain_description = {value!r}'
+  language_profile: '  language = {language!r}, profile = {profile!r}'
+  fallback_note: '  Note: there is no pack for {language!r}: the universal rules, unstemmed terms and the English texts are used (translate them in config/language.yaml).'
+  corpus_ready: Empty corpus ready in documents/ (catalog in {path}).
+  engine_created: config/engine.yaml created with generic starting thresholds. Calibration comes last, once the setup is stable.
+  engine_kept: config/engine.yaml already existed -- left untouched.
+  domain_created: 'config/domain.yaml created: your own domain rules and categories (optional).'
+  domain_kept: config/domain.yaml already existed -- left untouched.
+  next: 'Next step: ''ipsis load <file|folder>'', then ''ipsis index''.'
+configure:
+  help: Change config/assistant.yaml (key=value).
+  arg_pairs: One or more key=value pairs, e.g. assistant_name='My assistant' cors_origins=https://my-site.com (keys separated by spaces; list values separated by commas inside the same value).
+  bad_pair: 'Error: {pair!r} is not of the form ''key=value''.'
+  done: 'config/assistant.yaml updated:'
+  value: '  {key} = {value!r}'
+profile:
+  help: Show or change the installation profile (light, medium or heavy).
+  show_help: Show the active profile, its models and budget, and whether the index and calibration fit it.
+  set_help: Change the active profile and tell whether to reindex or recalibrate (runs nothing expensive).
+  arg_profile: 'Target installation profile: light, medium or heavy.'
+  index_compatible: 'Index: compatible (built with {model}).'
+  index_missing: 'Index: does not exist yet; the next ''ipsis index'' will build it for {profile} ({model}).'
+  index_incompatible: 'Index: incompatible: it was built with {built} and the {profile} profile needs {needed}.'
+  calibration_none: 'Calibration: none (the profile thresholds apply).'
+  calibration_current: 'Calibration: current (its thresholds are active).'
+  calibration_disabled: 'Calibration: saved for auditing only, not applied ({reason}).'
+  calibration_changed: The previous calibration no longer matches the active profile
+  calibration_stale: 'Calibration: stale'
+  calibration_kept: '{prefix} ({reason}). The profile thresholds apply; the file is kept.'
+  calibration_action: ipsis calibrate --apply (if you have an imported golden set)
+  active: 'Active profile: {profile}'
+  active_described: 'Active profile: {profile} ({description})'
+  budget: 'p95 budget: {ms} ms'
+  models: 'Models:'
+  role_dense: 'dense:'
+  role_reranker: 'reranker:'
+  role_reader: 'reader:'
+  invalid_overrides: 'Error: the profile_overrides in config/engine.yaml are not valid for {profile}: {error}'
+  already_active: The {profile} profile is already active. Nothing changed.
+  changed: 'Profile changed: {old} → {new}'
+  still_compatible: 'The current index is still compatible: no need to reindex.'
+  no_index_yet: 'There is no index yet: the next ''ipsis index'' will build it for {profile}.'
+  dense_changed: 'The dense model changed: {old} → {new}. The index must be rebuilt (the previous one is kept).'
+load:
+  help: Copy a file or folder into the corpus and catalog it.
+  arg_path: File or folder with .docx/.pdf/.md/.txt
+  nothing: 'No supported file found in {path!r} (supported: .docx, .pdf, .md, .markdown, .txt).'
+  duplicate: '  = {file}: already loaded as doc_id={doc_id!r} (same content, skipped)'
+  added: '  + {file}: doc_id={doc_id!r}, title={title!r}'
+  warning: '      [!] {warning}'
+  homonym: '      [!] there was already a document with that name ({doc_id!r}) and different content: this one was added separately and both are indexed. If it replaces it, set ''active: false'' on the {doc_id!r} entry in documents/catalog.yaml and run ''ipsis index''.'
+  done: '{n} new document(s) added to the catalog (documents/catalog.yaml).'
+  next: 'Next step: ''ipsis index''.'
+index:
+  help: Parse, chunk, embed and store the index.
+  opt_corpus: 'Folder with the documents to index (default: ''documents'').'
+  config_error: 'Configuration error: {error}'
+  run_doctor: Run 'ipsis doctor' for a full diagnosis.
+  failed: 'Indexing failed: {error}'
+  parsed: 'Documents parsed: {n}'
+  document: '  - {doc_id}: {blocks} blocks, {chars} characters'
+  chunks: 'Chunks generated: {n}'
+  validation_errors: 'Ingestion validation errors: {n}'
+  validation_error: '  ! {error}'
+  warning: '  [!] {warning}'
+  indexed: 'Indexed in collection {collection!r}: BM25 ({terms} terms), entity inventory ({entities} values).'
+  time: 'Total time: {seconds:.1f}s'
+  next: 'Next step: ''ipsis serve'' (or ''ipsis ask "..."'' if it is already serving).'
+serve:
+  help: Start the service API.
+  arg_folder: Folder of documents or an existing project; it is prepared automatically.
+  opt_host: 'Address the service listens on (default: ''127.0.0.1'', local only; use ''0.0.0.0'' to accept external connections).'
+  opt_port: 'Port the service listens on (default: 8000).'
+  opt_reindex: Rebuild the index even if the catalog did not change.
+  opt_mode: 'production (default, or IPSIS_MODE): /admin requires HTTPS from outside. development: /admin over HTTP, /docs and no caching of the widget files.'
+  development: 'Development mode: /admin accepts HTTP from any IP. Do not use it for a public service.'
+  temporary_token: 'Temporary /admin token (this run only): {token}'
+  no_folder: folder {path} does not exist
+  no_documents: there are no supported documents in {path}
+  init_failed: the automatic project could not be initialized
+  load_failed: the documents could not be loaded
+  preparing_index: Preparing the index before starting the service...
+  index_failed: the index could not be built
+  index_reused: The existing index is current; reusing it.
+  active_project: 'Active project: {path}'
+  serving: Serving on http://{host}:{port} (Ctrl+C to stop)...
+  failed: 'The service could not be prepared: {error}'
+ask:
+  help: Ask the service from the terminal.
+  arg_question: The question to send (quoted if it has spaces).
+  opt_url: 'Base URL of the service (default: ''http://127.0.0.1:8000'').'
+  opt_timeout: 'Seconds to wait for an answer before failing (default: 30).'
+  opt_diagnostics: Run the question with the project engine in this process (without the service) and show the stages with their latency, signals, focus terms, the deciding rule and the exact span. With local Qdrant, stop 'ipsis serve' first.
+  status_ok: '[OK]'
+  status_related: '[RELATED -- not a direct answer]'
+  status_no_answer: '[NO ANSWER]'
+  status_conversational: '[CONVERSATIONAL]'
+  status_degraded: '[DEGRADED]'
+  status_saturated: '[SATURATED]'
+  no_connection: Could not connect to {url}. Is the service up? Run 'ipsis serve' first.
+  timeout: The service did not answer within {seconds}s.
+  http_error: 'The service answered {status}: {body}'
+  citations: '
+
+    Citations:'
+  citation: '  - {title} > {section} (offsets {start}-{end}, score={score:.3f})'
+  not_ready: 'The engine is not ready: {error}'
+  engine_failed: 'The project engine could not run: {error}'
+  rule: '
+
+    Rule: {rule} (reason: {reason}; profile: {profile})'
+  stages: 'Stages (ms):'
+  early_exit: '   (early exit: no models)'
+  signals: 'Signals:'
+  focus: 'Focus terms: found: {found}; missing: {missing}'
+  absent: 'Terms not in the corpus: {terms}'
+  sentence: 'Evaluated sentence: «{sentence}»'
+  span: 'Exact span: «{text}» ({chunk_id}, offsets {start}-{end})'
+  no_span: 'Exact span: —'
+  evidence: 'Evidence: {doc_id} offsets {start}-{end}'
+  tone: 'Tone: {tone}; templates: {templates}'
+  warning: 'Warning: {warning}'
+doctor:
+  help: 'Read-only diagnosis: configuration, profile, language, models, index, calibration, golden and CORS.'
+  no_project: No ipsis project found in this folder.
+  title: 'Project diagnosis
+
+    '
+  mark_ok: '[OK]'
+  mark_warning: '[WARNING]'
+  mark_error: '[ERROR]'
+  mark_skipped: '[--]'
+  detail: '            {detail}'
+  check_action: '            Action: {action}'
+  summary: '{errors}, {warnings}. {verdict}'
+  errors_one: 1 error
+  errors_many: '{n} errors'
+  warnings_one: 1 warning
+  warnings_many: '{n} warnings'
+  ready: The project can run.
+  not_ready: The project is not ready.
+  actions: 'Actions:'
+  action_item: '  {action}'
+audit:
+  help: 'Review the query log: statuses, rules and whether each piece of evidence is still literal.'
+  opt_from: Only queries from this date (YYYY-MM-DD or ISO 8601; UTC if it has no zone).
+  opt_to: Only queries up to this date, inclusive.
+  failed: 'Could not audit: {error}'
+  no_log: There is no query log ({path}). It is off by default, for privacy.
+  enable: ipsis configure query_log.enabled=true (and restart 'ipsis serve')
+  range: ', range {start} to {end}; {outside} outside the range'
+  log: 'Log: {path} ({n} queries{range})'
+  undated: 'Lines without a readable date (excluded from the range): {lines}'
+  statuses: 'Statuses: {values}'
+  rules: 'Rules:    {values}'
+  tones: 'Tones:    {values}'
+  checked: 'Evidence checked against the current corpus: {n}, with problems: {problems}'
+  problem: '  line {line}: {doc_id} offsets {start}-{end}: {reason}: {detail}'
+  unreadable: 'Unreadable lines: {lines}'
+  ok: All logged evidence is still literal.
+  mismatch: 'Some evidence no longer matches the corpus: the document changed after the query or the log was edited.'
+snapshot:
+  help: Write the effective configuration with resolved defaults.
+  opt_output: 'Path of the snapshot (default: .ipsis/effective-config.yaml).'
+  failed: 'Error generating the configuration snapshot: {error}'
+  done: Effective configuration snapshot written to {path}
+models:
+  help: 'ONNX models of the profile: list, download, verify or export.'
+  download_action: ipsis models download
+  no_project_action: ipsis init (or pass --profile to 'ipsis models download')
+  license_attribution: '{license}; attribution: {attribution}'
+  list_help: 'Show the models of the active profile: license, ONNX file and whether they are cached.'
+  profile: 'Profile: {profile}'
+  model: '
+
+    {role}: {model}'
+  license: '  License:    {license}'
+  parameters: '  Parameters: {millions:.0f}M'
+  onnx: '  ONNX:       {file}'
+  cached: '  Cache:      available ({size})'
+  missing: '  Cache:      missing'
+  download_help: Download the missing models of the active profile (or of --profile) to the global cache.
+  opt_profile: 'Profile whose models to download (light, medium or heavy); it does not change the active profile. Default: the project''s active profile.'
+  downloading: 'Downloading {role}: {model} ...'
+  downloaded: '{role}: {model} -- downloaded'
+  available: '{role}: {model} -- already available'
+  license_short: '  License: {license}'
+  ready: Models of the {profile} profile ready in the global cache ({path}).
+  verify_help: Check that the models of the active profile are complete and run a test inference.
+  state_ok: OK
+  state_missing: MISSING
+  state_not_loading: DOES NOT LOAD
+  state_failed: FAILS
+  verify_row: '  {role:9} {model:45} {state}'
+  verify_message: '            {message}'
+  verified: 'Verification complete: all models load and infer.'
+  incomplete: Verification incomplete.
+  redownload: delete that model from the cache and run 'ipsis models download' again
+  export_help: 'Development: convert a Hugging Face model to ONNX (needs the [export] extra).'
+  arg_model: Hugging Face repository, e.g. organization/model.
+  opt_int8: Also produce model_int8.onnx with onnxruntime dynamic quantization.
+  export_missing: 'Error: exporting needs the development dependencies ({missing} not installed).'
+  export_failed: 'Error: exporting {model} failed: {error}'
+  export_hint: '  Check the repository id and that the optimum and transformers versions are compatible.'
+  exported: 'ONNX exported: {path}'
+  exported_int8: 'ONNX int8:     {path}'
+  not_adopted: 'It was not added to the catalog or the profiles: adopting it is a separate step.'
+personality:
+  help: Answer tone and widget avatar (presentation only).
+  invalid: 'Error: the personality is not valid; nothing changed:'
+  avatar_invalid: 'Error: the avatar is not valid; nothing changed:'
+  show_help: Active tone and avatar, and how each avatar event resolves.
+  tone: 'Tone: {tone} (variety {variety}; texts of ''{language}'')'
+  own_situations: '  Project''s own situations: {situations}'
+  avatar: 'Avatar: {name} -- {state}'
+  avatar_message: 'Avatar: {name} -- {state} ({message})'
+  placement: '  Placement: {placement}; size: {size} px; in the launcher: {launcher}'
+  gaze: '  Gaze: {mode} (eyes {eyes}, head {head}°, dead zone {dead} px); idle: {idle} min'
+  gaze_follow: follows the pointer
+  gaze_fixed: fixed
+  colors: '  Colors: body {body}, eyes {eyes}'
+  avatar_color: from the avatar
+  fallbacks: '  Events with a fallback: {n} (detail: ipsis personality avatar events)'
+  validate_help: Check personality.yaml, your own templates and the avatar. Exits with 1 on errors.
+  error_line: '[ERROR] {error}'
+  warning_line: '[WARNING] {warning}'
+  not_valid: 'The personality is not valid: the engine will not start until it is fixed.'
+  valid: Personality valid.
+  valid_warnings: Personality valid. There are warnings (they do not block).
+tone:
+  help: Answer tone.
+  list_help: Tones available for the project language, with an example of each.
+  row: '{mark} {tone:9} {description}'
+  example: '            «{example}»'
+  apply_help: Activate a tone. Needs no reindexing or recalibration.
+  arg_tone: cordial, formal, serio, animoso, cercano, empatico or directo.
+  applied: 'Active tone: {tone}. Restart ''ipsis serve'' (or wait for the hot reload) to see it.'
+  try_help: Print the variants of a tone, with the project variables.
+  opt_tone: 'Tone to try (default: the active one).'
+  opt_situation: A single situation (e.g. sin_respuesta).
+  situation: '{situation}:'
+  variant: '  {i}. {text}'
+avatar:
+  help: Widget avatar.
+  list_help: Included and imported avatars.
+  none: No avatars yet. Import one with 'ipsis personality avatar import <file.avatar.json>'.
+  invalid_row: '{mark} {name} ({origin}) -- invalid: {error}'
+  row: '{mark} {name} ({origin}): {animations} animations, {expressions} expressions'
+  unavailable: '  The active avatar ({name}) is not available: the widget shows the icon.'
+  import_help: Validate a .avatar.json (exported from the Studio) and copy it to config/avatars/.
+  arg_file: Definition exported from avatars.bible-strong.app.
+  opt_name: Name in the project (lowercase and hyphens).
+  imported: 'Avatar imported: {name} ({animations} animations, {expressions} expressions). Activate it with ''ipsis personality avatar apply {name}''.'
+  apply_help: Use an avatar in the widget.
+  arg_name: Avatar name (see 'ipsis personality avatar list').
+  applied: 'Active avatar: {name}.'
+  events_help: Each widget event and the avatar animation or expression it triggers.
+  state: 'Avatar {name}: {state} ({message}).'
+  fallback_note: '  (requested: {requested!r}, does not exist; fallback)'
+  event: '  {event:22} → {key}{note}'
+  assign_help: Assign an avatar animation or expression to an event.
+  arg_event: Event (see 'ipsis personality avatar events').
+  arg_key: Avatar animation or expression.
+  assigned: '{event} → {key}'
+  colors_help: Body and eye colors of the avatar (its file is not modified).
+  opt_body: '#rrggbb color of the body.'
+  opt_eyes: '#rrggbb color of the eyes.'
+  colors: 'Avatar colors: body {body}, eyes {eyes}.'
+evaluate:
+  help: Run a quick evaluation if there is a golden set.
+  opt_bank: 'Versioned bank manifest (default: golden/bank/manifest.json).'
+  opt_output: Optional path to save the JSON report.
+  no_golden: There is no golden set in golden/bank/ yet -- nothing to evaluate.
+  format: The versioned format uses manifest.json + golden.jsonl with question, category, split, expected status and literal evidence with offsets.
+  see_docs: See docs/guide/golden.md for the format and the evaluation advice.
+  running: Evaluating the active backend against {path}...
+  failed: 'Could not evaluate: {error}'
+  line1: N={n} Recall@{k}={recall:.3f} MRR={mrr:.3f} status_accuracy={status:.3f}
+  line2: false_ok={false_ok:.3f} abstention_precision={abstention:.3f} literalness={literal:.3f} offsets={offsets:.3f}
+  line3: excessive_answers={excessive:.3f} mean_latency={mean:.1f}ms p95={p95:.1f}ms
+  written: Report written to {path}
+  guard: 'False-ok guard (must be 0): {verdict}'
+  pass: PASS
+  blocked: BLOCKED
+calibrate:
+  help: Choose thresholds with the imported golden set, under risk control.
+  opt_alpha: 'Maximum risk of wrong direct answers, between 0 and 1 (default: 0.05).'
+  opt_apply: Save the result to config/calibration.yaml (only used if it ends up calibrated).
+  failed: 'Could not calibrate:'
+  status_calibrated: CALIBRATED
+  status_insufficient_sample: INSUFFICIENT_SAMPLE
+  status_no_safe_threshold: NO_SAFE_THRESHOLD
+  header: 'Calibration: {status}  (target risk ≤ {alpha:.1%}, confidence {confidence:.0%})'
+  provenance: Profile {profile}, bank {bank}, corpus {corpus}…
+  dev: 'Dev (chooses the thresholds): {n} direct answers, {x} wrong, upper bound {bound}'
+  coverage: '  direct coverage {direct} (exact {exact}, paraphrase {paraphrase}); false ok {false_ok} (traps {traps})'
+  thresholds: 'Thresholds (profile → calibrated):'
+  threshold: '  {name:8} {before:.4f} → {after:.4f}{mark}'
+  changes: '   (changes)'
+  insufficient: 'The risk cannot be certified yet (it does not mean the profile is unsafe):'
+  accepted: '  answers accepted without error: {n}'
+  needed: '  needed for α={alpha} at {confidence:.0%}: {n}'
+  missing: '  at least {n} more'
+  profile_thresholds: The profile thresholds still apply.
+  no_safe: The sample is large enough (up to {n} direct answers in dev), but no threshold combination keeps the bound ≤ {alpha:.1%}.
+  test: 'Test (verification only): {verdict}; {n} direct answers, {x} wrong, bound {bound}; direct coverage {coverage}'
+  saved: Calibration saved and enabled in {path}.
+  saved_audit: Result saved for auditing in {path}. The profile thresholds remain active.
+  not_saved: 'Nothing was saved: use ''ipsis calibrate --apply'' to enable these thresholds.'
+compare:
+  help: Compare reports produced by 'ipsis evaluate'.
+  arg_reports: Two or more comparable JSON reports.
+  opt_output: Path of the consolidated report.
+  failed: 'Could not compare: {error}'
+  dataset: Dataset {id}@{version}, k={k}
+  row: '{backend}: Recall={recall:.3f} MRR={mrr:.3f} false_ok={false_ok:.3f} status={status:.3f} p95_latency={p95:.1f}ms'
+  written: Comparison report written to {path}
+benchmark:
+  help: Compare profiles (quality, safety, latency and cost), retrieval modes or latency only.
+  opt_bank: Versioned manifest to evaluate; repeatable (e.g. one bank per language).
+  opt_latency_only: Measure p50/p95 per stage of each profile against its budget.
+  opt_profiles: Profiles to compare (bm25,light,medium,heavy). With --latency-only, default light,medium.
+  opt_experiments: Add experimental variants (medium with τ_ok 0.85; light with agreement).
+  opt_repetitions: 'Times each question is repeated with --latency-only (default: 20).'
+  opt_output: 'Output folder (default: golden/reports with --profiles, otherwise reports/benchmark).'
+  failed: 'Could not run the benchmark: {error}'
+  written: Reproducible benchmark written to {path}
+  no_decisions: The report makes no decisions; review it before changing defaults or thresholds.
+  within: ' [within budget]'
+  over: ' [OVER budget]'
+  profile_row: '{name:16} direct coverage {coverage:.1%}  false ok {false_ok}/{unanswerable}  p50 {p50} ms  p95 {p95} ms (budget {budget}){mark}'
+  reports: Report in {md} and {json}; per-profile reports for 'ipsis compare' in {folder}.
+  ok: ok
+  over_short: OVER
+  latency_row: '{profile}: p50 {p50} ms, p95 {p95} ms (budget {budget} ms) [{mark}]'
+  stage_row: '    {stage:15} p50 {p50:7} ms   p95 {p95:7} ms'
+golden:
+  help: 'Your golden set: template, import, validate and export.'
+  failed: 'The golden operation could not be completed:'
+  type_row: '  {type:15} {n}'
+  split_row: '  dev / test      {dev} / {test}'
+  warnings: 'Warnings:'
+  template_help: Generate golden/golden.csv and golden/README.txt to fill in.
+  opt_n: 'Rows to generate (default: 40).'
+  opt_force: Replace golden/golden.csv if it already exists.
+  exists: '{path} already exists and may contain questions: it was not overwritten.'
+  regenerate: Use 'ipsis golden template --force' to regenerate it from scratch.
+  template_written: Template written to {csv} (instructions in {readme}).
+  template_next: 'Fill it in and then run: ipsis golden import golden/golden.csv'
+  import_help: Validate the golden set and write golden/bank/.
+  arg_file: golden.csv, a .jsonl or a SQuAD 2.0 (.json).
+  no_file: File {path} does not exist.
+  imported: 'Golden set imported into {path} ({n} cases):'
+  validate_help: Check the bank against the current corpus (read-only).
+  valid: 'Bank valid for the current corpus ({n} cases):'
+  export_help: Export the bank to SQuAD 2.0 or CSV.
+  opt_format: Output format.
+  opt_output: 'Output file (default: golden/exported.squad2.json or golden/exported.csv).'
+  exported: Bank exported in {format} format to {path}.
+widget:
+  help: Configure and export the embeddable widget.
+  theme_help: Manage visual presets.
+  style_help: Show or change each style value.
+  preset_row: '{name}: {description}'
+  theme_list_help: Show the available presets.
+  theme_apply_help: Apply a preset to styles.yaml.
+  arg_preset: Name of the visual preset.
+  opt_styles: Styles file to change.
+  preset_failed: 'Could not apply the preset: {error}'
+  preset_applied: Preset {preset!r} applied to {path}
+  preset_view: 'Live view: start the service and open /widget/demo.html'
+  preview_help: Generate an HTML mockup without starting the API.
+  opt_preview_styles: Styles file to preview.
+  opt_html: Output HTML file.
+  preview_failed: 'Could not generate the preview: {error}'
+  preview_written: Preview written to {path}
+  export_help: Copy widget.js and generate an integration snippet.
+  arg_folder: Folder to write the files to.
+  opt_api: Public URL of the API the widget will call.
+  opt_position: Corner where the button is shown.
+  export_failed: 'Could not export the widget: {error}'
+  exported: Widget exported to {path}
+  snippet_ready: Snippet ready in {path}
+  snippet_help: Print the code to paste the widget into your site, following styles.yaml::placement.
+  opt_service: Public URL of the service (e.g. https://assistant.your-domain.com).
+  opt_component: Use the <ipsis-chat> Web Component instead of the data-* attributes of <script>.
+  opt_key: Public widget key (widget_keys), if you use them.
+  styles_error: 'Error: config/styles.yaml: {error}'
+  style_show_help: Show each widget style value (colors, typography, shape, placement...).
+  opt_section: Only one section.
+  styles_unreadable: 'Could not read config/styles.yaml: {error}'
+  style_value: '{key} = {value}'
+  style_how: 'To change: ipsis widget style set section.key=value'
+  style_set_help: Change widget style values, e.g. colors.accent=#0ea5e9 shape.panel_radius=10px.
+  arg_assignments: One or more changes (see 'ipsis widget style show').
+  metavar_assignment: section.key=value
+  nothing_changed: 'Nothing changed: {error}'
+  style_updated: Style updated in config/styles.yaml ({n} change(s)).
+  style_live: 'The service applies it without restarting; to see it: ipsis widget theme preview'
+deploy:
+  help: Prepare the deployment on your own server.
+  prepare_help: Generate a folder ready to copy to a server (Docker, compose and optional Caddy).
+  opt_target: 'Output folder (default: dist).'
+  opt_domain: Domain of the service, for HTTPS with Caddy.
+  opt_wheel: ipsis wheel to install in the image.
+  opt_force: Regenerate a previously prepared folder.
+  failed: 'Could not prepare the deployment: {error}'
+  done: 'Deployment prepared in {path} (profile {profile}, domain {domain}): {n} files.'
+  next: 'Next step: read {path} and copy the folder to the server.'

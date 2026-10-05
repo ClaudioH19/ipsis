@@ -35,11 +35,14 @@ def registro_de_comandos() -> list[Comando | Grupo]:
 
 
 def construir_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="ipsis", description="Chatbot RAG extractivo sobre tus documentos.")
     from ipsis import __version__
+    from ipsis.recursos.mensajes import t
+
+    parser = argparse.ArgumentParser(prog="ipsis", description=t("cli.description"))
 
     parser.add_argument("--version", action="version", version=f"ipsis {__version__}")
-    subcomandos = parser.add_subparsers(dest="comando", required=True)
+    subcomandos = parser.add_subparsers(dest="comando", required=True, metavar="<command>",
+                                        help=t("cli.subcommand"))
     for elemento in registro_de_comandos():
         registrar(subcomandos, elemento)
     return parser
@@ -61,11 +64,12 @@ def _asegurar_salida_no_crashea() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     from ipsis.aplicacion.proyecto import migrar_proyecto_activo
+    from ipsis.recursos.mensajes import t
 
     _asegurar_salida_no_crashea()
     args = construir_parser().parse_args(argv)
     for cambio in migrar_proyecto_activo():
-        print(f"[migración] {cambio}")
+        print(t("cli.migration", change=cambio))
     try:
         return args.comando_cli.ejecutar(args)
     except KeyboardInterrupt:

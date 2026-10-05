@@ -12,108 +12,107 @@ from ipsis.aplicacion.golden import (
     validar_golden,
 )
 from ipsis.cli.base import Comando, Grupo
+from ipsis.recursos.mensajes import t
 
 
 def _imprimir_errores(e: ErrorGolden) -> int:
-    print("No se pudo completar la operación con el golden:")
+    print(t("golden.failed"))
     for error in e.errores:
-        print(f"  - {error}")
+        print(t("cli.item", item=error))
     return 1
 
 
 def _imprimir_resumen(resumen) -> None:
     for tipo in ("respondible", "sin_respuesta", "premisa_falsa", "ambigua", "conversacional"):
         if resumen.por_tipo.get(tipo):
-            print(f"  {tipo:15} {resumen.por_tipo[tipo]}")
-    print(f"  dev / test      {resumen.por_split.get('dev', 0)} / {resumen.por_split.get('test', 0)}")
+            print(t("golden.type_row", type=tipo, n=resumen.por_tipo[tipo]))
+    print(t("golden.split_row", dev=resumen.por_split.get("dev", 0), test=resumen.por_split.get("test", 0)))
     if resumen.avisos:
-        print("Avisos:")
+        print(t("golden.warnings"))
         for aviso in resumen.avisos:
-            print(f"  - {aviso}")
+            print(t("cli.item", item=aviso))
 
 
 class ComandoGoldenPlantilla(Comando):
-    nombre = "plantilla"
-    ayuda = "Genera golden/golden.csv y golden/README.txt para completar."
+    nombre = "template"
+    ayuda = "golden.template_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--n", type=int, default=40, help="Filas a generar (por defecto: 40).")
-        parser.add_argument("--force", action="store_true", help="Reemplaza golden/golden.csv si ya existe.")
+        parser.add_argument("--n", type=int, default=40, help=t("golden.opt_n"))
+        parser.add_argument("--force", action="store_true", help=t("golden.opt_force"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             ruta_csv, ruta_leeme, avisos = generar_plantilla_golden(n=args.n, forzar=args.force)
         except FileExistsError as e:
-            print(f"{e} ya existe y puede tener preguntas escritas: no se sobrescribió.")
-            print("Usa 'ipsis golden plantilla --force' para regenerarla desde cero.")
+            print(t("golden.exists", path=e))
+            print(t("golden.regenerate"))
             return 1
         except ErrorGolden as e:
             return _imprimir_errores(e)
-        print(f"Plantilla escrita en {ruta_csv} (instrucciones en {ruta_leeme}).")
+        print(t("golden.template_written", csv=ruta_csv, readme=ruta_leeme))
         for aviso in avisos:
-            print(f"Aviso: {aviso}")
-        print("Complétala y luego ejecuta: ipsis golden importar golden/golden.csv")
+            print(t("cli.warning", warning=aviso))
+        print(t("golden.template_next"))
         return 0
 
 
 class ComandoGoldenImportar(Comando):
-    nombre = "importar"
-    ayuda = "Valida el golden y escribe golden/bank/."
+    nombre = "import"
+    ayuda = "golden.import_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("archivo", help="golden.csv, un .jsonl o un SQuAD 2.0 (.json).")
+        parser.add_argument("archivo", metavar="file", help=t("golden.arg_file"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         if not Path(args.archivo).is_file():
-            print(f"No existe el archivo {args.archivo}.")
+            print(t("golden.no_file", path=args.archivo))
             return 1
         try:
             resumen = importar_golden(args.archivo)
         except ErrorGolden as e:
             return _imprimir_errores(e)
-        print(f"Golden importado en {resumen.manifiesto.parent} ({sum(resumen.por_tipo.values())} casos):")
+        print(t("golden.imported", path=resumen.manifiesto.parent, n=sum(resumen.por_tipo.values())))
         _imprimir_resumen(resumen)
         return 0
 
 
 class ComandoGoldenValidar(Comando):
-    nombre = "validar"
-    ayuda = "Revisa el banco contra el corpus actual (solo lectura)."
+    nombre = "validate"
+    ayuda = "golden.validate_help"
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             resumen = validar_golden()
         except ErrorGolden as e:
             return _imprimir_errores(e)
-        print(f"Banco válido para el corpus actual ({sum(resumen.por_tipo.values())} casos):")
+        print(t("golden.valid", n=sum(resumen.por_tipo.values())))
         _imprimir_resumen(resumen)
         return 0
 
 
 class ComandoGoldenExportar(Comando):
-    nombre = "exportar"
-    ayuda = "Exporta el banco a SQuAD 2.0 o CSV."
+    nombre = "export"
+    ayuda = "golden.export_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--formato", choices=["squad2", "csv"], required=True, help="Formato de salida.")
-        parser.add_argument("--salida", default=None,
-                            help="Archivo de salida (por defecto: golden/exportado.squad2.json o "
-                                 "golden/exportado.csv).")
+        parser.add_argument("--format", dest="formato", choices=["squad2", "csv"], required=True,
+                            help=t("golden.opt_format"))
+        parser.add_argument("--output", dest="salida", default=None, help=t("golden.opt_output"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             destino, avisos = exportar_golden(args.formato, args.salida)
         except ErrorGolden as e:
             return _imprimir_errores(e)
-        print(f"Banco exportado en formato {args.formato} a {destino}.")
+        print(t("golden.exported", format=args.formato, path=destino))
         for aviso in avisos:
-            print(f"Aviso: {aviso}")
+            print(t("cli.warning", warning=aviso))
         return 0
 
 
 def grupo_golden() -> Grupo:
-    return Grupo("golden", "Golden set del cliente: plantilla, importar, validar y exportar.",
-                 "Operación sobre el golden.",
+    return Grupo("golden", "golden.help",
                  [ComandoGoldenPlantilla(), ComandoGoldenImportar(), ComandoGoldenValidar(), ComandoGoldenExportar()])
 
 

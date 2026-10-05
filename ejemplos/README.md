@@ -8,8 +8,8 @@ Los tres ejemplos usan el mismo Web Component y no duplican la interfaz:
 - `wordpress/`: plugin instalable que registra el shortcode
   `[ipsis]`.
 
-Antes de abrirlos, inicia el servicio con `ipsis servir <carpeta>` y permite el
-origen del sitio mediante `ipsis configurar cors_origenes=...`. La clave pública
+Antes de abrirlos, inicia el servicio con `ipsis serve <carpeta>` y permite el
+origen del sitio mediante `ipsis configure cors_origenes=...`. La clave pública
 del widget identifica la integración, pero no reemplaza la protección del
 servidor o del proxy.
 

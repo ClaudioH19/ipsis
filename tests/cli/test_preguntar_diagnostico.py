@@ -1,4 +1,4 @@
-"""``ipsis preguntar --diagnostico`` con un motor falso: sin servicio, modelos ni índice."""
+"""``ipsis ask --diagnostics`` con un motor falso: sin servicio, modelos ni índice."""
 from __future__ import annotations
 
 import pytest
@@ -59,8 +59,8 @@ def test_el_caso_de_uso_lee_el_diagnostico_del_motor():
 def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
     motor = MotorFalso()
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: motor)
-    monkeypatch.setattr("httpx.post", lambda *a, **k: pytest.fail("--diagnostico no usa el servicio"))
-    assert main(["preguntar", "--diagnostico", "¿Cada cuánto se cambia el filtro?"]) == 0
+    monkeypatch.setattr("httpx.post", lambda *a, **k: pytest.fail("--diagnostics no usa el servicio"))
+    assert main(["ask", "--diagnostics", "¿Cada cuánto se cambia el filtro?"]) == 0
     salida = capsys.readouterr().out
     assert "[OK]" in salida and "Regla: ok_lector (motivo: lector; perfil: medium)" in salida
     for linea in ("  filtros               3", "  lectura              40", "  total                55"):
@@ -78,7 +78,7 @@ def test_cli_sin_tramo_ni_foco_muestra_guiones(monkeypatch, capsys):
     diagnostico = {**DIAGNOSTICO, "senales_lexicas": None,
                    "contrato_http": {"estado": "relacionado", "respuesta": "No encontré…"}}
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
-    assert main(["preguntar", "--diagnostico", "x"]) == 0
+    assert main(["ask", "--diagnostics", "x"]) == 0
     salida = capsys.readouterr().out
     assert "Tramo exacto: —" in salida and "encontrados: —; ausentes: —" in salida
 
@@ -88,6 +88,6 @@ def test_cli_motor_que_no_se_puede_construir_pide_rag_doctor(monkeypatch, capsys
         raise FileNotFoundError("el modelo intfloat/multilingual-e5-small no está en la caché")
 
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", roto)
-    assert main(["preguntar", "--diagnostico", "x"]) == 1
+    assert main(["ask", "--diagnostics", "x"]) == 1
     salida = capsys.readouterr().out
     assert "no está en la caché" in salida and "Acción: ipsis doctor" in salida and "Traceback" not in salida

@@ -103,18 +103,18 @@ def _construir_documentos(destino: Path) -> dict[str, Path]:
 
 
 def _init_cargar_indexar(proyecto: Path, docs: dict[str, Path]) -> None:
-    r = _rag(["init", "--nombre-asistente", "Asistente X100",
-              "--descripcion-dominio", "el manual del equipo ficticio X100"], cwd=proyecto)
+    r = _rag(["init", "--assistant-name", "Asistente X100",
+              "--domain-description", "el manual del equipo ficticio X100"], cwd=proyecto)
     assert r.returncode == 0, f"'ipsis init' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
     for clave in ("manual", "ficha", "notas"):
-        r = _rag(["cargar", str(docs[clave])], cwd=proyecto)
-        assert r.returncode == 0, f"'ipsis cargar {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+        r = _rag(["load", str(docs[clave])], cwd=proyecto)
+        assert r.returncode == 0, f"'ipsis load {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
         assert "Traceback" not in r.stderr
 
-    r = _rag(["indexar"], cwd=proyecto, timeout=300.0)
-    assert r.returncode == 0, f"'ipsis indexar' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    r = _rag(["index"], cwd=proyecto, timeout=300.0)
+    assert r.returncode == 0, f"'ipsis index' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
 
@@ -125,7 +125,7 @@ def test_portabilidad_pdf_escaneado_se_rechaza_sin_traceback(proyecto_externo: P
     docs = _construir_documentos(proyecto_externo)
     assert _rag(["init"], cwd=proyecto_externo).returncode == 0
 
-    r = _rag(["cargar", str(docs["escaneado"])], cwd=proyecto_externo)
+    r = _rag(["load", str(docs["escaneado"])], cwd=proyecto_externo)
     assert r.returncode != 0
     assert "Traceback" not in r.stderr
     assert "escane" in (r.stdout + r.stderr).lower()
@@ -158,7 +158,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
 
     puerto = _puerto_libre()
     proceso = subprocess.Popen(
-        [PYTHON, "-m", "ipsis.cli", "servir", "--port", str(puerto)],
+        [PYTHON, "-m", "ipsis.cli", "serve", "--port", str(puerto)],
         cwd=str(proyecto_externo), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
     )
     try:
@@ -233,7 +233,7 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
     """Criterio de cierre 2: los mismos comandos, forzando
     PYTHONIOENCODING=cp1252 (la codificación real de una consola de Windows
     en español, la que reprodujo el DEFECTO 2 -- un '⚠' en una advertencia
-    de 'ipsis cargar' mataba el comando con UnicodeEncodeError), terminan en
+    de 'ipsis load' mataba el comando con UnicodeEncodeError), terminan en
     código de salida 0. Ejercita explícitamente la ruta CON advertencia
     (el .txt sin estructura de secciones)."""
     entorno = dict(os.environ)
@@ -252,15 +252,15 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
 
     # 'notas' (.txt) SIEMPRE trae la advertencia "sin estructura de
     # secciones" -- es la ruta que crasheaba antes de la corrección.
-    r = _rag_cp1252(["cargar", str(docs["notas"])])
+    r = _rag_cp1252(["load", str(docs["notas"])])
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "UnicodeEncodeError" not in r.stderr
     assert "Traceback" not in r.stderr
 
-    r = _rag_cp1252(["cargar", str(docs["manual"])])
+    r = _rag_cp1252(["load", str(docs["manual"])])
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
 
-    r = _rag_cp1252(["indexar"], timeout=300.0)
+    r = _rag_cp1252(["index"], timeout=300.0)
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "UnicodeEncodeError" not in r.stderr
 

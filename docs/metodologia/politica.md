@@ -18,8 +18,8 @@ literal que responde la pregunta, y abstenerse cuando no lo es.
 - **Entrada:** `SenalesPolitica` (`s_ret`, `s_oov`, `s_foco`, `s_cov`, `s_rr`,
   `s_qa`; `None` si la etapa no corrió) y los umbrales efectivos.
 - **Salida:** `DecisionAbstencion` (resultado, motivo, regla y señal de
-  dominio usada). La regla viaja en el diagnóstico (`ipsis preguntar
-  --diagnostico`) y en el registro de consultas.
+  dominio usada). La regla viaja en el diagnóstico (`ipsis ask
+  --diagnostics`) y en el registro de consultas.
 
 ## 4. Algoritmo y desempates
 

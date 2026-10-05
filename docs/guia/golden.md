@@ -14,15 +14,15 @@ categorías (`exacta`, `parafrasis`, `sin_respuesta`, `premisa_falsa`,
 ## Paso a paso
 
 ```bash
-ipsis golden plantilla            # golden/golden.csv con preguntas sugeridas desde tus documentos
+ipsis golden template            # golden/golden.csv con preguntas sugeridas desde tus documentos
 # completa el CSV en Excel, LibreOffice o un editor
-ipsis golden importar golden/golden.csv
-ipsis golden validar              # ¿sigue coincidiendo con el corpus?
-ipsis evaluar                     # cobertura, falsos «ok» y latencia del perfil
-ipsis calibrar                    # ver «Calibrar»
+ipsis golden import golden/golden.csv
+ipsis golden validate              # ¿sigue coincidiendo con el corpus?
+ipsis evaluate                     # cobertura, falsos «ok» y latencia del perfil
+ipsis calibrate                    # ver «Calibrar»
 ```
 
-1. **Plantilla.** `ipsis golden plantilla [--n N]` elige secciones diversas de
+1. **Plantilla.** `ipsis golden template [--n N]` elige secciones diversas de
    tus documentos (TF-IDF y MMR, sin modelos) y escribe filas con
    `instrucciones`, `fragmento_sugerido` y `terminos_clave` para ayudarte. Un
    ~35% son trampas: preguntas del **mismo tema** cuyo dato no está. No pisa
@@ -40,12 +40,12 @@ ipsis calibrar                    # ver «Calibrar»
    | `id`, `notas` | Opcionales |
 
    Las columnas de ayuda se ignoran al importar.
-3. **Importar.** `ipsis golden importar` acepta el CSV (coma o punto y coma,
+3. **Importar.** `ipsis golden import` acepta el CSV (coma o punto y coma,
    con o sin BOM), un `.jsonl` o un SQuAD 2.0. Ubica cada respuesta literal en
    el documento y guarda sus offsets; clasifica las respondibles en `exacta` o
    `parafrasis`. Si hay errores, los lista todos con su fila y no escribe nada.
    Avisa si hay menos de 30 filas o menos de un 30% sin respuesta.
-4. **Exportar.** `ipsis golden exportar --formato squad2|csv` para usarlo en
+4. **Exportar.** `ipsis golden export --format squad2|csv` para usarlo en
    otras herramientas.
 
 ## Reglas de curación
@@ -67,14 +67,14 @@ ipsis calibrar                    # ver «Calibrar»
 ## Calibrar
 
 ```text
-ipsis calibrar [--alfa 0.05] [--aplicar]
+ipsis calibrate [--alpha 0.05] [--apply]
 ```
 
-Requiere el índice (`ipsis indexar`) y el golden importado
-(`ipsis golden importar`). Corre el perfil sobre el golden y **elige umbrales
+Requiere el índice (`ipsis index`) y el golden importado
+(`ipsis golden import`). Corre el perfil sobre el golden y **elige umbrales
 escalares** (`ok`, `oov_ok`, `foco`) usando solo `dev`. Busca la combinación
 que más responde directo cuya cota superior de riesgo (Clopper-Pearson al 95%)
-es ≤ `--alfa`; `test` solo verifica. No entrena ni modifica modelos.
+es ≤ `--alpha`; `test` solo verifica. No entrena ni modifica modelos.
 Entre combinaciones con la misma cobertura, prefiere:
 1. la de menos errores;
 2. la más cercana a los umbrales del perfil;
@@ -88,13 +88,13 @@ Si `dev` no distingue dos valores de un umbral, ese umbral no se mueve.
 | `MUESTRA_INSUFICIENTE` | Todavía no se puede certificar α: no hay suficientes respuestas directas sin error en `dev` (con 0 errores, 59 para α = 0,05). **No** significa que el perfil sea inseguro | 0 |
 | `SIN_UMBRAL_SEGURO` | Hay muestra, pero ninguna combinación cumple α | 1 |
 
-- Sin `--aplicar`, solo informa y no escribe nada.
-- Con `--aplicar`, escribe `config/calibration.yaml` en cualquier
+- Sin `--apply`, solo informa y no escribe nada.
+- Con `--apply`, escribe `config/calibration.yaml` en cualquier
   estado, para auditoría. El motor **solo** usa sus umbrales si el estado es
   `CALIBRADO` y su procedencia coincide con el proyecto: perfil, modelos y
   `hash_corpus` del índice. Si cambia el corpus o el perfil, la calibración se
   ignora y vuelven los umbrales del perfil.
 - Si el corpus cambió desde que se importó el golden, primero
-  `ipsis golden validar` y, si corresponde, vuelve a importar.
+  `ipsis golden validate` y, si corresponde, vuelve a importar.
 - El banco universal de las pruebas (`tests/datos/banco_universal/`) es de
   regresión y no se puede usar para calibrar.

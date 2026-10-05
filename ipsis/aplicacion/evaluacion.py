@@ -147,7 +147,7 @@ def ejecutar_benchmark(
             if main(["init"]) != 0:
                 raise RuntimeError("falló ipsis init durante el benchmark")
             for archivo in banco.manifiesto.corpus.archivos:
-                if main(["cargar", str(corpus / archivo.ruta)]) != 0:
+                if main(["load", str(corpus / archivo.ruta)]) != 0:
                     raise RuntimeError(f"falló la carga de {archivo.ruta}")
 
             ruta_cfg = proyecto / rutas.MOTOR
@@ -161,13 +161,13 @@ def ejecutar_benchmark(
                 cfg["componentes"]["retriever"] = retriever
                 cfg["recuperacion"]["modo"] = modo
                 escribir(ruta_cfg, cfg, "motor")
-                if reindexar and main(["indexar"]) != 0:
+                if reindexar and main(["index"]) != 0:
                     raise RuntimeError(f"falló la indexación de {retriever}/{modo}")
                 etiqueta = f"qdrant_{modo}"
                 ruta_artefacto = salida / f"{etiqueta}.json"
                 main([
-                    "evaluar", "--banco", str(manifiesto),
-                    "--salida", str(ruta_artefacto),
+                    "evaluate", "--bank", str(manifiesto),
+                    "--output", str(ruta_artefacto),
                 ])
                 if not ruta_artefacto.is_file():
                     raise RuntimeError(f"no se produjo el artefacto {etiqueta}")
@@ -206,11 +206,11 @@ def medir_latencia(
         with tempfile.TemporaryDirectory(prefix=f"rag_latencia_{perfil}_") as temporal:
             try:
                 os.chdir(temporal)
-                if main(["init", "--perfil", perfil]) != 0:
-                    raise RuntimeError(f"falló ipsis init --perfil {perfil}")
+                if main(["init", "--profile", perfil]) != 0:
+                    raise RuntimeError(f"falló ipsis init --profile {perfil}")
                 for archivo in banco.manifiesto.corpus.archivos:
-                    main(["cargar", str(corpus / archivo.ruta)])
-                if main(["indexar"]) != 0:
+                    main(["load", str(corpus / archivo.ruta)])
+                if main(["index"]) != 0:
                     raise RuntimeError(f"falló la indexación del perfil {perfil}")
                 motor = construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
                 motor.calentar()
@@ -239,7 +239,7 @@ def medir_latencia(
 
 
 # ---------------------------------------------------------------------------
-# ipsis calibrar
+# ipsis calibrate
 # ---------------------------------------------------------------------------
 class ErrorCalibracion(ValueError):
     """La calibración no puede correr; ``errores`` dice qué hacer."""
@@ -250,7 +250,7 @@ class ErrorCalibracion(ValueError):
 
 
 class CalibracionProyecto:
-    """Resultado de ``ipsis calibrar`` para el proyecto activo."""
+    """Resultado de ``ipsis calibrate`` para el proyecto activo."""
 
     def __init__(self, resultado, procedencia, ruta: Path | None) -> None:
         self.resultado = resultado  # ipsis.evaluacion.calibracion.ResultadoCalibracion
@@ -270,7 +270,7 @@ def hash_corpus_del_indice(cfg: dict) -> str:
     try:
         return cargar_manifiesto(nombre).hash_corpus
     except FileNotFoundError as e:
-        raise ErrorCalibracion([f"no hay un índice válido para el proyecto ({nombre}). Ejecuta 'ipsis indexar' "
+        raise ErrorCalibracion([f"no hay un índice válido para el proyecto ({nombre}). Ejecuta 'ipsis index' "
                                 "antes de calibrar"]) from e
 
 
@@ -297,7 +297,7 @@ def calibrar_proyecto(
     from ipsis.evaluacion.golden import ErrorGolden
 
     if not 0.0 < alfa < 1.0:
-        raise ErrorCalibracion([f"--alfa debe estar entre 0 y 1, sin incluirlos (se recibió {alfa})"])
+        raise ErrorCalibracion([f"--alpha debe estar entre 0 y 1, sin incluirlos (se recibió {alfa})"])
     cfg = cargar_proyecto()
     nombre_perfil = cargar_dominio().get("perfil", "light")
     # Umbrales del perfil sin calibración previa: son la base de la búsqueda.
@@ -308,7 +308,7 @@ def calibrar_proyecto(
     except ErrorGolden as e:
         errores = list(e.errores)
         if any("corpus cambió" in m for m in errores):
-            errores.append("Ejecuta 'ipsis golden validar' y vuelve a importar el golden si corresponde")
+            errores.append("Ejecuta 'ipsis golden validate' y vuelve a importar el golden si corresponde")
         raise ErrorCalibracion(errores) from e
     try:
         exigir_calibrable(banco)
@@ -326,7 +326,7 @@ def calibrar_proyecto(
 
 
 def comparar_reportes(rutas_artefactos: list[str], salida: str | Path):
-    """Compara artefactos de ``ipsis evaluar`` y escribe el informe en ``salida``."""
+    """Compara artefactos de ``ipsis evaluate`` y escribe el informe en ``salida``."""
     informe = comparar_artefactos([cargar_artefacto(ruta) for ruta in rutas_artefactos])
     destino = Path(salida)
     destino.parent.mkdir(parents=True, exist_ok=True)

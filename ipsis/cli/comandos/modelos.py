@@ -14,8 +14,11 @@ from ipsis.aplicacion.modelos import (
 )
 from ipsis.aplicacion.proyecto import PerfilInvalido
 from ipsis.cli.base import Comando, Grupo
+from ipsis.recursos.mensajes import t
 
-ACCION_DESCARGAR = "  Acción: ipsis modelos descargar"
+
+def _accion_descargar() -> str:
+    return t("cli.action", action=t("models.download_action"))
 
 
 def _mb(n: int) -> str:
@@ -23,125 +26,124 @@ def _mb(n: int) -> str:
 
 
 def _sin_proyecto(e: SinProyecto) -> int:
-    print(f"Error: {e}.")
-    print("  Acción: ipsis init (o indica --perfil en 'ipsis modelos descargar')")
+    print(t("cli.error_dot", error=e))
+    print(t("cli.action", action=t("models.no_project_action")))
     return 1
 
 
 def _licencia(licencia: str, atribucion: str | None) -> str:
-    return f"{licencia}; atribución: {atribucion}" if atribucion else licencia
+    return t("models.license_attribution", license=licencia, attribution=atribucion) if atribucion else licencia
 
 
 class ComandoModelosListar(Comando):
-    nombre = "listar"
-    ayuda = "Muestra los modelos del perfil activo: licencia, archivo ONNX y si están en la caché."
+    nombre = "list"
+    ayuda = "models.list_help"
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             r = listar_modelos()
         except SinProyecto as e:
             return _sin_proyecto(e)
-        print(f"Perfil: {r.perfil}")
+        print(t("models.profile", profile=r.perfil))
         for m in r.modelos:
-            print(f"\n{m.rol}: {m.id_hf}")
-            print(f"  Licencia:   {_licencia(m.licencia, m.atribucion)}")
-            print(f"  Parámetros: {m.parametros / 1e6:.0f}M")
-            print(f"  ONNX:       {m.archivo}")
-            print("  Caché:      " + (f"disponible ({_mb(m.bytes_en_disco)})" if m.en_cache else "falta"))
+            print(t("models.model", role=m.rol, model=m.id_hf))
+            print(t("models.license", license=_licencia(m.licencia, m.atribucion)))
+            print(t("models.parameters", millions=m.parametros / 1e6))
+            print(t("models.onnx", file=m.archivo))
+            print(t("models.cached", size=_mb(m.bytes_en_disco)) if m.en_cache else t("models.missing"))
         if any(not m.en_cache for m in r.modelos):
             print()
-            print(ACCION_DESCARGAR)
+            print(_accion_descargar())
         return 0
 
 
 class ComandoModelosDescargar(Comando):
-    nombre = "descargar"
-    ayuda = "Descarga a la caché global los modelos del perfil activo (o de --perfil) que falten."
+    nombre = "download"
+    ayuda = "models.download_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--perfil", default=None,
-                            help="Perfil cuyos modelos descargar (light, medium o heavy); no cambia el perfil "
-                                 "activo. Por defecto: el perfil activo del proyecto.")
+        parser.add_argument("--profile", dest="perfil", default=None, help=t("models.opt_profile"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
-            r = descargar_modelos(args.perfil, avisar=lambda rol, id_hf: print(f"Descargando {rol}: {id_hf} ..."))
+            r = descargar_modelos(args.perfil,
+                                  avisar=lambda rol, id_hf: print(t("models.downloading", role=rol, model=id_hf)))
         except PerfilInvalido as e:
-            print(f"Error: {e}")
+            print(t("cli.error", error=e))
             return 1
         except SinProyecto as e:
             return _sin_proyecto(e)
         for m in r.modelos:
-            estado = "descargado" if m.estado == "descargado" else "ya disponible"
-            print(f"{m.rol}: {m.id_hf} -- {estado}")
-            print(f"  Licencia: {_licencia(m.licencia, m.atribucion)}")
+            print(t("models.downloaded" if m.estado == "descargado" else "models.available", role=m.rol, model=m.id_hf))
+            print(t("models.license_short", license=_licencia(m.licencia, m.atribucion)))
         if r.error:
-            print(f"Error: {r.error}")
+            print(t("cli.error", error=r.error))
             return 1
-        print(f"Modelos del perfil {r.perfil} listos en la caché global ({r.cache}).")
+        print(t("models.ready", profile=r.perfil, path=r.cache))
         return 0
 
 
+# Estado de la verificación → clave de su etiqueta en el catálogo.
+_ETIQUETAS = {"ok": "models.state_ok", "falta": "models.state_missing", "no_carga": "models.state_not_loading",
+              "inferencia_fallida": "models.state_failed"}
+
+
 class ComandoModelosVerificar(Comando):
-    nombre = "verificar"
-    ayuda = "Comprueba que los modelos del perfil activo están completos y hacen una inferencia de prueba."
+    nombre = "verify"
+    ayuda = "models.verify_help"
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             r = verificar_modelos()
         except SinProyecto as e:
             return _sin_proyecto(e)
-        etiquetas = {"ok": "OK", "falta": "FALTA", "no_carga": "NO CARGA", "inferencia_fallida": "FALLA"}
-        print(f"Perfil: {r.perfil}")
+        print(t("models.profile", profile=r.perfil))
         for m in r.modelos:
-            print(f"  {m.rol:9} {m.id_hf:45} {etiquetas[m.estado]}")
+            print(t("models.verify_row", role=m.rol, model=m.id_hf, state=t(_ETIQUETAS[m.estado])))
             if m.mensaje:
-                print(f"            {m.mensaje}")
+                print(t("models.verify_message", message=m.mensaje))
         if r.ok:
-            print("Verificación completa: todos los modelos cargan e infieren.")
+            print(t("models.verified"))
             return 0
-        print("Verificación incompleta.")
+        print(t("models.incomplete"))
         if any(m.estado == "falta" for m in r.modelos):
-            print(ACCION_DESCARGAR)
-        if any(m.estado != "falta" and m.estado != "ok" for m in r.modelos):
-            print("  Acción: borra ese modelo de la caché y vuelve a ejecutar 'ipsis modelos descargar'")
+            print(_accion_descargar())
+        if any(m.estado not in ("falta", "ok") for m in r.modelos):
+            print(t("cli.action", action=t("models.redownload")))
         return 1
 
 
 class ComandoModelosExportar(Comando):
-    nombre = "exportar"
-    ayuda = "Desarrollo: convierte un modelo de Hugging Face a ONNX (requiere el extra [exportar])."
+    nombre = "export"
+    ayuda = "models.export_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("id_hf", help="Repositorio de Hugging Face, p.ej. organizacion/modelo.")
-        parser.add_argument("--int8", action="store_true",
-                            help="Además genera model_int8.onnx con cuantización dinámica de onnxruntime.")
+        parser.add_argument("id_hf", metavar="model", help=t("models.arg_model"))
+        parser.add_argument("--int8", action="store_true", help=t("models.opt_int8"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             r = exportar_modelo(args.id_hf, int8=args.int8)
         except ExportacionNoDisponible as e:
-            print("Error: la exportación requiere las dependencias de desarrollo "
-                  f"({', '.join(e.faltantes)} no están instaladas).")
-            print(f"  Acción: {e.instalar}")
+            print(t("models.export_missing", missing=", ".join(e.faltantes)))
+            print(t("cli.action", action=e.instalar))
             return 1
         except FileExistsError as e:
-            print(f"Error: {e}")
+            print(t("cli.error", error=e))
             return 1
         except ExportacionFallida as e:
-            print(f"Error: la exportación de {args.id_hf} falló: {e}")
-            print("  Revisa el id del repositorio y que las versiones de optimum y transformers sean compatibles.")
+            print(t("models.export_failed", model=args.id_hf, error=e))
+            print(t("models.export_hint"))
             return 1
-        print(f"ONNX exportado: {r.onnx}")
+        print(t("models.exported", path=r.onnx))
         if r.int8:
-            print(f"ONNX int8:      {r.int8}")
-        print("No se agregó al catálogo ni a los perfiles: adoptarlo es un paso aparte.")
+            print(t("models.exported_int8", path=r.int8))
+        print(t("models.not_adopted"))
         return 0
 
 
 def grupo_modelos() -> Grupo:
-    return Grupo("modelos", "Modelos ONNX del perfil: listar, descargar, verificar o exportar.",
-                 "Operación sobre los modelos.",
+    return Grupo("models", "models.help",
                  [ComandoModelosListar(), ComandoModelosDescargar(), ComandoModelosVerificar(),
                   ComandoModelosExportar()])
 

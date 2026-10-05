@@ -305,7 +305,7 @@ def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
     return tema
 
 
-# --- estilo clave por clave (ipsis widget estilo, panel /admin) ---------------------------------
+# --- estilo clave por clave (ipsis widget style, panel /admin) ---------------------------------
 # Con los nombres del archivo (inglés): es lo que el usuario escribe y ve.
 SECCIONES_EDITABLES = ("presentation", "placement", "colors", "dark_colors", "typography", "shape", "shadows",
                        "animations")
@@ -328,7 +328,7 @@ def estilo_plano(tema: dict | None = None) -> list[tuple[str, Any]]:
 
 
 def _convertir(texto: str, ejemplo: Any) -> Any:
-    """El valor de ``ipsis widget estilo cambiar`` con el tipo de la plantilla."""
+    """El valor de ``ipsis widget style set`` con el tipo de la plantilla."""
     if isinstance(ejemplo, bool):
         if texto.lower() in ("true", "si", "sí", "1"):
             return True

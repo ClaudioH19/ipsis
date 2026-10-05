@@ -56,7 +56,7 @@ abstenerse (lado seguro).
 ## 7. Parámetros y defaults
 
 Paquetes incluidos: `es`, `en` y `pt`. Idioma por defecto de `ipsis init`: el
-de `--idioma` (`es` si no se indica).
+de `--language` (`es` si no se indica).
 
 ## 8. Complejidad y recursos
 

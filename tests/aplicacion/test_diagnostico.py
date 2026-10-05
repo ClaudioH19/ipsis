@@ -45,7 +45,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.delenv(variable, raising=False)  # el modo lo fija el entorno de quien corre doctor
 
     def crear(perfil: str = "light") -> Path:
-        assert main(["init", "--perfil", perfil]) == 0
+        assert main(["init", "--profile", perfil]) == 0
         return tmp_path
 
     return crear
@@ -66,7 +66,7 @@ def instalar(*ids: str) -> None:
 
 def cargar_manual(texto: str = MANUAL) -> None:
     Path("manual.md").write_text(texto, encoding="utf-8")
-    assert main(["cargar", "manual.md"]) == 0
+    assert main(["load", "manual.md"]) == 0
 
 
 def modificar_documento() -> None:
@@ -77,7 +77,7 @@ def modificar_documento() -> None:
 
 def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus: str | None = None,
             coleccion_qdrant: bool = True, con_hash_archivos: bool = False) -> str:
-    """Lo que deja ``ipsis indexar``, sin modelos: colección vacía, estadísticas y manifiesto."""
+    """Lo que deja ``ipsis index``, sin modelos: colección vacía, estadísticas y manifiesto."""
     from qdrant_client.models import Distance, VectorParams
 
     from ipsis.configuracion.carga import cargar_proyecto, config_recuperacion
@@ -117,7 +117,7 @@ def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> Non
 def importar_golden() -> None:
     Path("golden").mkdir(exist_ok=True)
     Path("golden/golden.csv").write_text(GOLDEN, encoding="utf-8")
-    assert main(["golden", "importar", "golden/golden.csv"]) == 0
+    assert main(["golden", "import", "golden/golden.csv"]) == 0
 
 
 def editar(ruta: str, **cambios) -> None:
@@ -186,13 +186,13 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
                           "personalidad": "ok", "modo": "ok"}
     assert r.chequeo("modelos").datos["faltantes"] == [MMARCO, LECTOR]
-    assert r.chequeo("modelos").acciones == ("ipsis modelos descargar",)
-    assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis indexar",)
+    assert r.chequeo("modelos").acciones == ("ipsis models download",)
+    assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis index",)
     assert "obsoleta" in r.chequeo("calibracion").mensaje
-    assert r.chequeo("golden").acciones == ("ipsis golden validar", "ipsis golden importar <archivo>")
+    assert r.chequeo("golden").acciones == ("ipsis golden validate", "ipsis golden import <archivo>")
     assert all(c.acciones for c in r.errores)
     assert not r.listo
-    assert r.acciones[:3] == ["ipsis modelos descargar", "ipsis indexar", "ipsis configurar cors_origins=https://tu-sitio.cl"]
+    assert r.acciones[:3] == ["ipsis models download", "ipsis index", "ipsis configure cors_origins=https://tu-sitio.cl"]
     assert len(r.acciones) == len(set(r.acciones))
 
 
@@ -204,7 +204,7 @@ def test_fuera_de_un_proyecto(proyecto, capsys):
         reporte()
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
-    assert "No se encontró un proyecto RAG" in salida and "Acción: ipsis init" in salida
+    assert "No se encontró un proyecto ipsis" in salida and "Acción: ipsis init" in salida
     assert not Path("config").exists()
 
 
@@ -233,7 +233,7 @@ def test_perfil_bm25_editado_a_mano_es_error(proyecto):
     r = reporte()
     perfil = r.chequeo("perfil")
     assert perfil.estado.value == "error" and "diagnóstico" in perfil.mensaje
-    assert perfil.acciones == ("ipsis perfil cambiar light|medium|heavy",)
+    assert perfil.acciones == ("ipsis profile set light|medium|heavy",)
     assert r.chequeo("modelos").estado.value == "no_evaluado"
 
 
@@ -305,11 +305,11 @@ def test_light_solo_requiere_el_denso(proyecto):
 def test_sin_indice_es_aviso_sin_documentos_y_error_con_documentos(proyecto):
     proyecto("light")
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "aviso" and indice.acciones == ("ipsis cargar <archivo|carpeta>", "ipsis indexar")
+    assert indice.estado.value == "aviso" and indice.acciones == ("ipsis load <archivo|carpeta>", "ipsis index")
     cargar_manual()
     indice = reporte().chequeo("indice")
     assert indice.estado.value == "error" and "1 documento" in indice.mensaje
-    assert indice.acciones == ("ipsis indexar",)
+    assert indice.acciones == ("ipsis index",)
 
 
 def test_indice_de_otro_stemmer_es_incompatible(proyecto):
@@ -327,7 +327,7 @@ def test_corpus_cambiado_es_error(proyecto):
     assert reporte().chequeo("indice").estado.value == "ok"
     modificar_documento()
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and indice.acciones == ("ipsis indexar",)
+    assert indice.estado.value == "error" and "cambiaron" in indice.mensaje and indice.acciones == ("ipsis index",)
 
 
 def test_con_huella_de_archivos_no_parsea_el_corpus_si_no_cambio(proyecto, monkeypatch):
@@ -350,7 +350,7 @@ def test_manifiesto_sin_coleccion_qdrant_es_error(proyecto):
     cargar_manual()
     indexar(coleccion_qdrant=False)
     indice = reporte().chequeo("indice")
-    assert indice.estado.value == "error" and "no existe" in indice.mensaje and indice.acciones == ("ipsis indexar",)
+    assert indice.estado.value == "error" and "no existe" in indice.mensaje and indice.acciones == ("ipsis index",)
 
 
 # --- calibración ------------------------------------------------------------------------------
@@ -364,9 +364,9 @@ def test_calibracion_no_habilitada_y_obsoleta_son_avisos(proyecto):
     calibracion("medium", huella)
     c = reporte().chequeo("calibracion")
     assert c.estado.value == "aviso" and "obsoleta" in c.mensaje
-    assert c.acciones == ("ipsis golden importar <archivo>", "ipsis calibrar --aplicar")  # no hay golden
+    assert c.acciones == ("ipsis golden import <archivo>", "ipsis calibrate --apply")  # no hay golden
     importar_golden()
-    assert reporte().chequeo("calibracion").acciones == ("ipsis calibrar --aplicar",)
+    assert reporte().chequeo("calibracion").acciones == ("ipsis calibrate --apply",)
     assert Path("config/calibration.yaml").is_file()  # doctor no la toca
 
 
@@ -413,7 +413,7 @@ def test_cli_resume_y_no_repite_acciones(proyecto, capsys):
     assert "[ERROR]   Modelos" in salida and "[ERROR]   Índice" in salida and "[AVISO]   Golden" in salida
     assert "3 errores, 2 avisos. El proyecto no está listo." in salida
     resumen = salida.split("Acciones:\n")[1].splitlines()
-    assert resumen[:3] == ["  ipsis modelos descargar", "  ipsis indexar", "  ipsis configurar cors_origins=https://tu-sitio.cl"]
+    assert resumen[:3] == ["  ipsis models download", "  ipsis index", "  ipsis configure cors_origins=https://tu-sitio.cl"]
     assert resumen[3:] == []  # con Folio incluido, el avatar no pide acción
 
 
@@ -493,7 +493,7 @@ def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
     assert cuerpo["listo"] is False and cuerpo["proyecto"]["listo"] is False
     bloqueo = cuerpo["proyecto"]["bloqueante"][0]
     assert bloqueo["clave"] == "indice" and "incompatible" in bloqueo["mensaje"]
-    assert bloqueo["acciones"] == ["ipsis indexar"]
+    assert bloqueo["acciones"] == ["ipsis index"]
     assert "indice: incompatible" in cuerpo["detail"]
 
 
@@ -523,7 +523,7 @@ def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
     assert llamadas == [{"abrir_indice": False}]  # una vez cada 30 s y sin abrir Qdrant
 
 
-# --- ipsis desplegar preparar (P12.13): reúne el proyecto que diagnosticó el doctor ----------------
+# --- ipsis deploy prepare (P12.13): reúne el proyecto que diagnosticó el doctor ----------------
 def test_desplegar_preparar_genera_todo(proyecto, capsys):
     import json as _json
 
@@ -538,7 +538,7 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     Path("mi.whl").write_bytes(b"x")
     Path("mi.whl").rename("ipsis-0-py3-none-any.whl")
     capsys.readouterr()
-    assert main(["desplegar", "preparar", "--dominio", "asistente.ejemplo.cl",
+    assert main(["deploy", "prepare", "--domain", "asistente.ejemplo.cl",
                  "--wheel", "ipsis-0-py3-none-any.whl"]) == 0
     salida = capsys.readouterr().out
     assert "Despliegue preparado" in salida and "perfil light" in salida
@@ -565,23 +565,23 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     for generado in ("Dockerfile", "docker-compose.yml", "Caddyfile", ".env.ejemplo", "LEEME_despliegue.md"):
         assert b"\r" not in (dist / generado).read_bytes(), generado  # LF también en Windows
 
-    # Regenerar exige --forzar; una carpeta ajena nunca se borra.
-    assert main(["desplegar", "preparar"]) == 1
-    assert "--forzar" in capsys.readouterr().out
-    assert main(["desplegar", "preparar", "--forzar"]) == 0
-    assert "sin --dominio" in capsys.readouterr().out
+    # Regenerar exige --force; una carpeta ajena nunca se borra.
+    assert main(["deploy", "prepare"]) == 1
+    assert "--force" in capsys.readouterr().out
+    assert main(["deploy", "prepare", "--force"]) == 0
+    assert "sin --domain" in capsys.readouterr().out
     Path("ajena").mkdir()
     Path("ajena/importante.txt").write_text("no borrar", encoding="utf-8")
-    assert main(["desplegar", "preparar", "--destino", "ajena", "--forzar"]) == 1
+    assert main(["deploy", "prepare", "--target", "ajena", "--force"]) == 1
     assert Path("ajena/importante.txt").is_file()
-    assert main(["desplegar", "preparar", "--destino", ".", "--forzar"]) == 1
-    assert main(["desplegar", "preparar", "--destino", "otro", "--dominio", "https://x.cl"]) == 1
+    assert main(["deploy", "prepare", "--target", ".", "--force"]) == 1
+    assert main(["deploy", "prepare", "--target", "otro", "--domain", "https://x.cl"]) == 1
 
 
 def test_desplegar_leeme_en_el_idioma_del_proyecto(proyecto, capsys):
     proyecto("light")
     editar("config/assistant.yaml", idioma="pt-br")
-    assert main(["desplegar", "preparar"]) == 0
+    assert main(["deploy", "prepare"]) == 0
     assert Path("dist/LEEME_despliegue.md").read_text(encoding="utf-8").startswith("# Implantação de")
     assert "Copie este arquivo" in Path("dist/.env.ejemplo").read_text(encoding="utf-8")
 

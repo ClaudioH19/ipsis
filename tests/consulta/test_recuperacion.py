@@ -2,7 +2,7 @@
 
 Sin modelo real: Qdrant en memoria y un codificador falso determinista (bolsa
 de palabras con hash). Los payloads salen del mismo pipeline de ingesta que
-usa ``ipsis indexar``, sobre el corpus de caracterización.
+usa ``ipsis index``, sobre el corpus de caracterización.
 """
 from __future__ import annotations
 

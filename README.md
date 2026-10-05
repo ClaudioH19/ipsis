@@ -42,7 +42,7 @@ servidor y, una vez descargados los modelos, sin red.
 
 **🔎 Extractivo y verificable**<br>
 Cada respuesta es un tramo literal del documento, con la cita debajo y el
-dato marcado. `ipsis auditar` comprueba que siga siéndolo.
+dato marcado. `ipsis audit` comprueba que siga siéndolo.
 
 **🛑 Sabe cuándo no responder**<br>
 Estados `ok`, `relacionado` y `sin_respuesta`, decididos por señales
@@ -65,7 +65,7 @@ Una línea de HTML, responsive, aislado en Shadow DOM, con 7 tonos de
 respuesta y **Folio**, un avatar que reacciona a cada evento.
 
 **🏠 Self-hosted de verdad**<br>
-Imagen Docker por perfil, `ipsis desplegar preparar` con HTTPS (Caddy) y un
+Imagen Docker por perfil, `ipsis deploy prepare` con HTTPS (Caddy) y un
 panel `/admin` para ajustar la personalidad sin terminal.
 
 </td>
@@ -98,7 +98,7 @@ flowchart LR
 ```
 
 Cada decisión deja su regla y sus señales en el diagnóstico
-(`ipsis preguntar --diagnostico`). Detalle en [arquitectura](docs/arquitectura.md)
+(`ipsis ask --diagnostics`). Detalle en [arquitectura](docs/arquitectura.md)
 y en las [fichas metodológicas](docs/metodologia/README.md).
 
 ## 🚀 Inicio rápido
@@ -109,18 +109,18 @@ Requiere Python 3.11 o 3.12. No necesita GPU.
 pip install "ipsis @ git+https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git"
 
 mkdir mi-asistente && cd mi-asistente
-ipsis init --perfil medium --idioma es
-ipsis modelos descargar            # una sola vez por máquina
-ipsis cargar /ruta/a/documentos    # PDF con texto, DOCX, Markdown o TXT
-ipsis indexar
+ipsis init --profile medium --language es
+ipsis models download            # una sola vez por máquina
+ipsis load /ruta/a/documentos    # PDF con texto, DOCX, Markdown o TXT
+ipsis index
 ipsis doctor                       # ¿puede funcionar? Si no, qué comando ejecutar
-ipsis servir                       # http://127.0.0.1:8000
+ipsis serve                       # http://127.0.0.1:8000
 ```
 
 Pregunta desde otra terminal:
 
 ```bash
-ipsis preguntar "¿Cada cuánto se cambia el filtro?"
+ipsis ask "¿Cada cuánto se cambia el filtro?"
 ```
 
 <details>
@@ -132,7 +132,7 @@ ipsis preguntar "¿Cada cuánto se cambia el filtro?"
 | `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s | 815 ms |
 | `heavy` | e5-base + reranker bge-m3 + lector mDeBERTa | 2,8 GB | 5 s | 2.130 ms |
 
-Se cambia después con `ipsis perfil cambiar <perfil>`. Medido en CPU con el
+Se cambia después con `ipsis profile set <perfil>`. Medido en CPU con el
 banco universal de 90 preguntas; ver [ADR 0003](docs/decisiones/0003-onnx-y-perfiles.md).
 
 </details>
@@ -144,7 +144,7 @@ Todo el detalle está en la [guía de instalación](docs/guia/instalacion.md).
 Para un servidor con HTTPS:
 
 ```bash
-ipsis desplegar preparar --dominio asistente.tu-dominio.com
+ipsis deploy prepare --domain asistente.tu-dominio.com
 # copia dist/ al VPS y ejecuta:
 docker compose --profile https up -d --build
 ```
@@ -156,7 +156,7 @@ Ver la [guía de despliegue](docs/guia/despliegue.md).
 ## 🧩 En tu sitio
 
 ```bash
-ipsis configurar cors_origenes=https://www.tu-sitio.com
+ipsis configure cors_origenes=https://www.tu-sitio.com
 ipsis widget snippet --api https://asistente.tu-dominio.com
 ```
 
@@ -183,10 +183,10 @@ configuran sin tocar código ([guía web](docs/guia/web.md)).
 ## 📏 Medir y calibrar
 
 ```bash
-ipsis golden plantilla              # propone preguntas a partir de tus documentos
-ipsis golden importar golden/golden.csv
-ipsis evaluar                       # cobertura, falsos «ok» y latencia
-ipsis calibrar --aplicar            # umbrales con riesgo de falso «ok» ≤ 5 %, si la muestra alcanza
+ipsis golden template              # propone preguntas a partir de tus documentos
+ipsis golden import golden/golden.csv
+ipsis evaluate                       # cobertura, falsos «ok» y latencia
+ipsis calibrate --apply            # umbrales con riesgo de falso «ok» ≤ 5 %, si la muestra alcanza
 ```
 
 La calibración no entrena nada: elige umbrales entre valores observados y

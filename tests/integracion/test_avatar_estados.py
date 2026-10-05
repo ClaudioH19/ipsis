@@ -68,7 +68,7 @@ def test_doctor_y_config_usan_folio(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     publica = config_avatar_publica()
     assert publica["activo"] and publica["url_definicion"] == "/avatares/folio.avatar.json"
     assert publica["eventos"]["pensando_largo"] == "pensando-largo"

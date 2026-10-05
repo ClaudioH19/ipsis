@@ -10,18 +10,18 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
 COMANDOS_ACTUALES = {
-    ("init",), ("cargar",), ("configurar",), ("perfil", "mostrar"), ("perfil", "cambiar"), ("indexar",),
-    ("modelos", "listar"), ("modelos", "descargar"), ("modelos", "verificar"), ("modelos", "exportar"),
-    ("personalidad", "mostrar"), ("personalidad", "validar"), ("personalidad", "tono", "listar"),
-    ("personalidad", "tono", "aplicar"), ("personalidad", "tono", "probar"), ("personalidad", "avatar", "listar"),
-    ("personalidad", "avatar", "importar"), ("personalidad", "avatar", "aplicar"), ("personalidad", "avatar", "eventos"),
-    ("personalidad", "avatar", "asignar"), ("personalidad", "avatar", "colores"),
-    ("servir",), ("preguntar",), ("doctor",), ("auditar",),
-    ("snapshot-config",), ("evaluar",), ("calibrar",), ("comparar",), ("benchmark",),
-    ("golden", "plantilla"), ("golden", "importar"), ("golden", "validar"), ("golden", "exportar"),
-    ("widget", "tema", "listar"), ("widget", "tema", "aplicar"), ("widget", "tema", "vista-previa"),
-    ("widget", "estilo", "mostrar"), ("widget", "estilo", "cambiar"),
-    ("widget", "exportar"), ("widget", "snippet"), ("desplegar", "preparar"),
+    ("init",), ("load",), ("configure",), ("profile", "show"), ("profile", "set"), ("index",),
+    ("models", "list"), ("models", "download"), ("models", "verify"), ("models", "export"),
+    ("personality", "show"), ("personality", "validate"), ("personality", "tone", "list"),
+    ("personality", "tone", "apply"), ("personality", "tone", "try"), ("personality", "avatar", "list"),
+    ("personality", "avatar", "import"), ("personality", "avatar", "apply"), ("personality", "avatar", "events"),
+    ("personality", "avatar", "assign"), ("personality", "avatar", "colors"),
+    ("serve",), ("ask",), ("doctor",), ("audit",),
+    ("snapshot-config",), ("evaluate",), ("calibrate",), ("compare",), ("benchmark",),
+    ("golden", "template"), ("golden", "import"), ("golden", "validate"), ("golden", "export"),
+    ("widget", "theme", "list"), ("widget", "theme", "apply"), ("widget", "theme", "preview"),
+    ("widget", "style", "show"), ("widget", "style", "set"),
+    ("widget", "export"), ("widget", "snippet"), ("deploy", "prepare"),
 }
 
 
@@ -72,7 +72,7 @@ def test_el_command_recibe_su_namespace_y_llama_al_caso_de_uso(monkeypatch):
         return Path("golden/exportado.csv"), []
 
     monkeypatch.setattr("ipsis.cli.comandos.golden.exportar_golden", exportar_falso)
-    assert main(["golden", "exportar", "--formato", "csv", "--salida", "x.csv"]) == 0
+    assert main(["golden", "export", "--format", "csv", "--output", "x.csv"]) == 0
     assert llamadas == [("csv", "x.csv")]
 
 

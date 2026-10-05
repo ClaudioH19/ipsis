@@ -1,4 +1,4 @@
-"""Registro de consultas y su auditoría (``ipsis auditar``).
+"""Registro de consultas y su auditoría (``ipsis audit``).
 
 El registro es un JSONL en ``.ipsis/logs/queries.jsonl``, apagado por
 defecto (privacidad: ``assistant.yaml::query_log.enabled``). Cada línea guarda
@@ -97,7 +97,7 @@ class ReporteAuditoria:
     lineas_invalidas: list[int] = field(default_factory=list)
     desde: datetime | None = None
     hasta: datetime | None = None
-    fuera_de_rango: int = 0  # consultas excluidas por --desde/--hasta
+    fuera_de_rango: int = 0  # consultas excluidas por --from/--to
     sin_fecha: list[int] = field(default_factory=list)  # líneas sin fecha legible (excluidas si se filtra)
 
     @property
@@ -126,13 +126,13 @@ def _corto(texto: str | None, n: int = 60) -> str:
 
 
 class FechaInvalida(ValueError):
-    """``--desde``/``--hasta`` no es una fecha ISO."""
+    """``--from``/``--to`` no es una fecha ISO."""
 
 
 def interpretar_fecha(texto: str, *, fin_del_dia: bool = False) -> datetime:
     """``AAAA-MM-DD`` o fecha y hora ISO 8601; sin zona horaria se toma UTC.
 
-    Con ``fin_del_dia`` una fecha sola cubre el día completo (``--hasta`` inclusivo).
+    Con ``fin_del_dia`` una fecha sola cubre el día completo (``--to`` inclusivo).
     """
     from datetime import timedelta
 
@@ -168,7 +168,7 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: date
         raise SinRegistro(ruta)
     textos = {d.doc_id: d.texto_completo for d in parsear_corpus(rutas.DOCUMENTOS)}
     if desde is not None and hasta is not None and desde > hasta:
-        raise FechaInvalida("--desde es posterior a --hasta")
+        raise FechaInvalida("--from es posterior a --to")
     reporte = ReporteAuditoria(ruta, desde=desde, hasta=hasta)
     filtrar = desde is not None or hasta is not None
     for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), start=1):

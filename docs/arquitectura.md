@@ -23,7 +23,7 @@ flowchart LR
         W["Widget<br/>widget.js + avatar.js"]
     end
     subgraph Servidor["Tu servidor (VPS)"]
-        C["Caddy<br/>HTTPS"] --> API["Servicio FastAPI<br/>ipsis servir"]
+        C["Caddy<br/>HTTPS"] --> API["Servicio FastAPI<br/>ipsis serve"]
         API --> M["Motor<br/>cascada de etapas"]
         M --> Q[("Qdrant<br/>.ipsis/index")]
         M --> O["Modelos ONNX<br/>caché global"]
@@ -37,7 +37,7 @@ flowchart LR
     W -- "POST /consultar" --> C
     CLI["CLI ipsis"] --> CFG
     CLI --> DOC
-    CLI -- "ipsis indexar" --> Q
+    CLI -- "ipsis index" --> Q
     CFG --> API
 ```
 
@@ -112,7 +112,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 | `parsear.py` | PDF con texto, DOCX, Markdown y TXT a texto con estructura y offsets |
 | `chunking.py` | Fragmentos que no cruzan secciones (`CH-F256` por defecto) |
 | `metadata.py` | Entidades, palabras clave TF-IDF y categoría determinista |
-| `ingesta.py` | La secuencia completa de `ipsis indexar` |
+| `ingesta.py` | La secuencia completa de `ipsis index` |
 
 ### `modelos/` — ONNX en CPU
 
@@ -157,7 +157,7 @@ Reglas, verificadas por `tests/test_arquitectura.py`:
 
 Uno por área, compartidos por la CLI y la API: `proyecto`, `corpus`,
 `consulta`, `modelos`, `golden`, `evaluacion`, `benchmark`, `diagnostico`
-(`ipsis doctor` y `/ready`), `registro` (consultas y `ipsis auditar`),
+(`ipsis doctor` y `/ready`), `registro` (consultas y `ipsis audit`),
 `personalidad`, `avatar`, `widget`, `estilos`, `modo` (desarrollo o
 producción) y `despliegue`. `registro_base.py` registra las
 implementaciones por defecto.
@@ -176,7 +176,7 @@ implementaciones por defecto.
 
 `plantillas/` (lo que copia `ipsis init`), `idiomas/`, `tonos/<idioma>/`,
 `perfiles/`, `avatares/` (Folio) y `despliegue/` (plantillas de
-`ipsis desplegar preparar`).
+`ipsis deploy prepare`).
 
 ## 4. Flujo de una consulta
 
@@ -228,7 +228,7 @@ flowchart LR
     Q --> MA[manifiesto.json<br/>modelo, stemmer, hash]
 ```
 
-`ipsis indexar` reconstruye todo. `ipsis doctor` compara el manifiesto con el
+`ipsis index` reconstruye todo. `ipsis doctor` compara el manifiesto con el
 perfil y el idioma, y una huella de los documentos con la indexada, para
 decir cuándo hay que reindexar.
 
@@ -266,7 +266,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph Equipo["Tu equipo"]
-        R1["ipsis cargar · indexar · calibrar"] --> R2["ipsis desplegar preparar"]
+        R1["ipsis load · indexar · calibrar"] --> R2["ipsis deploy prepare"]
     end
     R2 -- "dist/" --> VPS
     subgraph VPS["VPS (docker compose)"]
@@ -285,8 +285,8 @@ Paso a paso en la [guía de despliegue](guia/despliegue.md).
 | ¿Con qué se construyó el índice? | `.ipsis/index/*.manifest.json`: modelo, stemmer, hash del corpus, versión del payload |
 | ¿Por qué pesa tanto este término? | `.ipsis/index/stats.json`: df, N, largo medio |
 | ¿De dónde salen los umbrales? | `config/calibration.yaml`: banco, hashes, α y resultado en `test` |
-| ¿Por qué esta consulta dio `relacionado`? | `ipsis preguntar --diagnostico` o el registro: etapas, señales y regla |
-| ¿La respuesta es literal? | `ipsis auditar`: comprueba cada evidencia del registro contra el corpus |
+| ¿Por qué esta consulta dio `relacionado`? | `ipsis ask --diagnostics` o el registro: etapas, señales y regla |
+| ¿La respuesta es literal? | `ipsis audit`: comprueba cada evidencia del registro contra el corpus |
 | ¿Quién cambió la personalidad? | `.ipsis/logs/admin.jsonl`: fecha, IP, acción y claves (nunca el token) |
 
 ## 9. Patrones de diseño

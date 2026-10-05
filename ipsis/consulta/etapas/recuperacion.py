@@ -36,7 +36,7 @@ class RetrieverQdrant:
     @classmethod
     def desde_configuracion(cls, recuperacion: dict[str, Any], qdrant: dict[str, Any] | None = None,
                             **opciones: Any) -> "RetrieverQdrant":
-        """Conecta con la colección que dejó ``ipsis indexar`` y carga sus
+        """Conecta con la colección que dejó ``ipsis index`` y carga sus
         artefactos. Falla si la colección no existe: nunca sirve un índice vacío."""
         from ipsis.indice.qdrant import (
             cargar_estadisticas,
@@ -57,7 +57,7 @@ class RetrieverQdrant:
 
         if not client.collection_exists(nombre):
             raise RuntimeError(
-                f"la colección Qdrant {nombre!r} no existe todavía. Ejecuta 'ipsis indexar' primero "
+                f"la colección Qdrant {nombre!r} no existe todavía. Ejecuta 'ipsis index' primero "
                 f"(lee la misma config/engine.yaml::recuperacion que este servicio)."
             )
 

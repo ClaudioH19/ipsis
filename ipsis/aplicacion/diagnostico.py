@@ -6,7 +6,7 @@ de modelos de P11.3, banco golden, paquete de idioma) sin reimplementarlas.
 
 Es de solo lectura y barato: no usa la red, no carga ONNX, no descarga, no
 indexa, no calibra ni escribe nada. Para probar la inferencia de los modelos
-está ``ipsis modelos verificar``.
+está ``ipsis models verify``.
 
 Cada chequeo da ``ok``, ``aviso`` (funciona, pero algo opcional falta o
 merece atención), ``error`` (bloquea o invalida el funcionamiento; siempre
@@ -92,8 +92,8 @@ NOMBRES = {
     "modelos": "Modelos", "indice": "Índice", "calibracion": "Calibración", "golden": "Golden", "cors": "CORS",
     "personalidad": "Personalidad", "modo": "Modo",
 }
-_PERFIL_CAMBIAR = "ipsis perfil cambiar light|medium|heavy"
-_GOLDEN_IMPORTAR = "ipsis golden importar <archivo>"
+_PERFIL_CAMBIAR = "ipsis profile set light|medium|heavy"
+_GOLDEN_IMPORTAR = "ipsis golden import <archivo>"
 
 
 def _chequeo(clave: str, nivel: Estado, mensaje: str, acciones=(), detalles=(), **datos) -> ChequeoDoctor:
@@ -303,9 +303,9 @@ def _modelos(ctx: _Contexto) -> ChequeoDoctor:
     faltan = [e.id_hf for e in estados if not e.en_cache]
     if faltan:
         return _chequeo("modelos", Estado.ERROR, f"faltan en la caché: {', '.join(faltan)}",
-                        ["ipsis modelos descargar"], detalles, faltantes=faltan)
+                        ["ipsis models download"], detalles, faltantes=faltan)
     return _chequeo("modelos", Estado.OK,
-                    "en la caché (no se cargaron; para probar la inferencia: ipsis modelos verificar)",
+                    "en la caché (no se cargaron; para probar la inferencia: ipsis models verify)",
                     detalles=detalles, faltantes=[])
 
 
@@ -329,9 +329,9 @@ def _indice(ctx: _Contexto) -> ChequeoDoctor:
         if n:
             return _chequeo("indice", Estado.ERROR,
                             f"todavía no existe y hay {n} documento(s) cargado(s) sin indexar",
-                            ["ipsis indexar"], estado="sin_indice")
+                            ["ipsis index"], estado="sin_indice")
         return _chequeo("indice", Estado.AVISO, "todavía no existe (no hay documentos cargados)",
-                        ["ipsis cargar <archivo|carpeta>", "ipsis indexar"], estado="sin_indice")
+                        ["ipsis load <archivo|carpeta>", "ipsis index"], estado="sin_indice")
     if indice.estado == "incompatible":
         if indice.modelo_indice != indice.modelo_requerido:
             motivo = f"se construyó con {indice.modelo_indice} y el perfil {perfil} necesita {indice.modelo_requerido}"
@@ -339,14 +339,14 @@ def _indice(ctx: _Contexto) -> ChequeoDoctor:
             motivo = f"se construyó con el stemmer {indice.stemmer!r} y el idioma usa {stemmer!r}"
         else:
             motivo = "su manifiesto (versión de payload o dimensión) no corresponde a esta versión"
-        return _chequeo("indice", Estado.ERROR, f"incompatible: {motivo}", ["ipsis indexar"], estado="incompatible")
+        return _chequeo("indice", Estado.ERROR, f"incompatible: {motivo}", ["ipsis index"], estado="incompatible")
 
     fisico = verificar_indice() if ctx.abrir_indice else None
     if fisico is not None and fisico.bloqueante:
         return _chequeo("indice", Estado.ERROR, fisico.mensaje, fisico.acciones, estado="incompatible")
     if _corpus_cambio(indice, config_recuperacion(ctx.motor, perfil=perfil)):
         return _chequeo("indice", Estado.ERROR, "los documentos cambiaron desde la última indexación",
-                        ["ipsis indexar"], estado="corpus_cambiado")
+                        ["ipsis index"], estado="corpus_cambiado")
     return _chequeo("indice", Estado.OK,
                     f"compatible ({indice.modelo_indice}, {indice.n_chunks} fragmentos, corpus sin cambios)",
                     estado="compatible")
@@ -374,7 +374,7 @@ def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
     except Exception as e:  # noqa: BLE001 -- el motor tampoco podría leerla
         return _chequeo("calibracion", Estado.ERROR,
                         f"{rutas.CALIBRACION} no es válido ({_breve(e)}); el motor no puede arrancar",
-                        ["ipsis calibrar --aplicar (la reescribe)", f"o borra {rutas.CALIBRACION}"], estado="ilegible")
+                        ["ipsis calibrate --apply (la reescribe)", f"o borra {rutas.CALIBRACION}"], estado="ilegible")
     estado = estado_calibracion(ctx.instalacion, ctx.indice)
     if estado.estado == "sin_calibracion":
         return _chequeo("calibracion", Estado.AVISO, "no hay (opcional); se usan los umbrales del perfil",
@@ -386,7 +386,7 @@ def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
                         f"guardada solo para auditoría ({estado.motivo})", estado="no_habilitada")
     golden, banco, _ = ctx.golden()
     calibrable = golden == "vigente" and banco.manifiesto.uso != "regresion"
-    acciones = ["ipsis calibrar --aplicar"] if calibrable else [_GOLDEN_IMPORTAR, "ipsis calibrar --aplicar"]
+    acciones = ["ipsis calibrate --apply"] if calibrable else [_GOLDEN_IMPORTAR, "ipsis calibrate --apply"]
     return _chequeo("calibracion", Estado.AVISO,
                     f"obsoleta ({estado.motivo}); rigen los umbrales del perfil y el archivo se conserva",
                     acciones, estado="obsoleta")
@@ -399,7 +399,7 @@ def _golden(ctx: _Contexto) -> ChequeoDoctor:
     if estado == "desactualizado":
         return _chequeo("golden", Estado.AVISO,
                         f"{motivo}: no lo uses para evaluar ni calibrar hasta actualizarlo",
-                        ["ipsis golden validar", _GOLDEN_IMPORTAR], estado=estado)
+                        ["ipsis golden validate", _GOLDEN_IMPORTAR], estado=estado)
     if estado == "ilegible":
         return _chequeo("golden", Estado.AVISO,
                         f"el banco importado no se puede leer ({motivo}); evaluar y calibrar quedan bloqueados",
@@ -425,7 +425,7 @@ def _cors(ctx: _Contexto) -> ChequeoDoctor:
         return _chequeo("cors", Estado.ERROR,
                         "cors_origins está vacío pero hay widget_keys configuradas: el navegador "
                         "bloqueará las peticiones del widget desde tu sitio",
-                        ["ipsis configurar cors_origins=https://tu-sitio.cl"])
+                        ["ipsis configure cors_origins=https://tu-sitio.cl"])
     if not origenes:
         return _chequeo("cors", Estado.OK, "sin orígenes (uso local); agrégalos antes de embeber el widget")
     return _chequeo("cors", Estado.OK, f"orígenes permitidos: {', '.join(origenes)}")
@@ -441,18 +441,18 @@ def _personalidad(ctx: _Contexto) -> ChequeoDoctor:
     errores, avisos = validar_personalidad()
     if errores:
         return _chequeo("personalidad", Estado.ERROR, "; ".join(errores),
-                        [f"corrige {rutas.PERSONALIDAD} (detalle: ipsis personalidad validar)"])
+                        [f"corrige {rutas.PERSONALIDAD} (detalle: ipsis personality validate)"])
     resumen = resumen_personalidad()
     mensaje = f"tono {resumen.tono}; avatar {resumen.avatar.nombre} ({resumen.avatar.estado})"
     if avisos:
         from ipsis.aplicacion.personalidad import PREFIJO_NEUTRALIDAD
 
         if resumen.avatar.estado in ("falta", "invalido"):
-            accion = "ipsis personalidad avatar importar <archivo.avatar.json>"
+            accion = "ipsis personality avatar import <archivo.avatar.json>"
         elif all(a.startswith(PREFIJO_NEUTRALIDAD) for a in avisos):
-            accion = f"revisa tono.plantillas en {rutas.PERSONALIDAD} (detalle: ipsis personalidad validar)"
+            accion = f"revisa tono.plantillas en {rutas.PERSONALIDAD} (detalle: ipsis personality validate)"
         else:
-            accion = "ipsis personalidad avatar eventos"
+            accion = "ipsis personality avatar events"
         return _chequeo("personalidad", Estado.AVISO, f"tono {resumen.tono}; {'; '.join(avisos[:2])}", [accion],
                         tono=resumen.tono, avatar=resumen.avatar.estado)
     return _chequeo("personalidad", Estado.OK, mensaje, tono=resumen.tono, avatar=resumen.avatar.estado)
@@ -471,7 +471,7 @@ def _modo(ctx: _Contexto) -> ChequeoDoctor:
                         ['genera uno: python -c "import secrets; print(secrets.token_urlsafe(32))"'], modo=modo.modo)
     if modo.desarrollo:
         return _chequeo("modo", Estado.AVISO, "desarrollo: /admin acepta HTTP desde cualquier IP; no lo uses en un "
-                        "servicio público", ["IPSIS_MODE=produccion (o quita --modo desarrollo)"], modo=modo.modo)
+                        "servicio público", ["IPSIS_MODE=produccion (o quita --mode desarrollo)"], modo=modo.modo)
     admin = "con /admin" if modo.admin_activo else "sin /admin"
     if modo.admin_activo and not modo.proxy_confiable:
         return _chequeo("modo", Estado.AVISO, f"producción {admin}: sin proxy declarado, /admin solo responde desde "
@@ -524,7 +524,7 @@ def resumen_para_servicio(reporte: ReporteDoctor) -> dict:
 def verificar_indice() -> ChequeoDoctor:
     """La colección Qdrant del perfil activo existe y trae sus estadísticas y manifiesto.
 
-    Abre Qdrant (lo usa también ``ipsis servir <carpeta>`` para decidir si reindexar).
+    Abre Qdrant (lo usa también ``ipsis serve <carpeta>`` para decidir si reindexar).
     """
     import os
 
@@ -558,7 +558,7 @@ def verificar_indice() -> ChequeoDoctor:
         elif "already accessed" in str(e):
             # En modo local Qdrant bloquea la carpeta del índice: el servicio
             # corriendo impide abrirla desde otro proceso.
-            sugerencia = ("detén el servicio ('ipsis servir') antes de diagnosticar: en modo local Qdrant "
+            sugerencia = ("detén el servicio ('ipsis serve') antes de diagnosticar: en modo local Qdrant "
                           "bloquea la carpeta del índice (o usa qdrant.modo: \"servidor\")")
         else:
             sugerencia = "revisa que la carpeta del índice local sea legible"
@@ -566,14 +566,14 @@ def verificar_indice() -> ChequeoDoctor:
 
     if not existe:
         return _chequeo("indice", Estado.ERROR, f"la colección {nombre_col!r} no existe (modo {modo!r})",
-                        ["ipsis indexar"])
+                        ["ipsis index"])
     from ipsis.indice.manifiesto import ruta_manifiesto
     from ipsis.indice.qdrant import ruta_estadisticas
 
     if not ruta_estadisticas(nombre_col).is_file() or not ruta_manifiesto(nombre_col).is_file():
         return _chequeo("indice", Estado.ERROR,
                         f"la colección {nombre_col!r} es de una versión anterior (sin estadísticas léxicas)",
-                        ["ipsis indexar"])
+                        ["ipsis index"])
     return _chequeo("indice", Estado.OK, f"colección {nombre_col!r} existe (modo {modo!r})")
 
 

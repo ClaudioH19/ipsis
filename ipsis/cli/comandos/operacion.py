@@ -7,49 +7,58 @@ from ipsis.aplicacion.diagnostico import Estado, ProyectoNoEncontrado, diagnosti
 from ipsis.aplicacion.proyecto import guardar_snapshot
 from ipsis.aplicacion.registro import FechaInvalida, SinRegistro, auditar_registro, interpretar_fecha
 from ipsis.cli.base import Comando
+from ipsis.recursos.mensajes import t
 
 
-# ASCII: la salida redirigida en Windows puede ser cp1252.
-MARCAS = {Estado.OK: "[OK]", Estado.AVISO: "[AVISO]", Estado.ERROR: "[ERROR]", Estado.NO_EVALUADO: "[--]"}
+# Estado del chequeo → clave de su marca (ASCII: la salida redirigida en Windows puede ser cp1252).
+MARCAS = {Estado.OK: "doctor.mark_ok", Estado.AVISO: "doctor.mark_warning", Estado.ERROR: "doctor.mark_error",
+          Estado.NO_EVALUADO: "doctor.mark_skipped"}
+
+
+def _cuenta(clave: str, n: int) -> str:
+    return t(f"{clave}_one") if n == 1 else t(f"{clave}_many", n=n)
 
 
 class ComandoDoctor(Comando):
     nombre = "doctor"
-    ayuda = "Diagnóstico de solo lectura: configuración, perfil, idioma, modelos, índice, calibración, golden y CORS."
+    ayuda = "doctor.help"
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             reporte = diagnosticar()
         except ProyectoNoEncontrado:
-            print("No se encontró un proyecto RAG en esta carpeta.")
-            print("  Acción: ipsis init")
+            print(t("doctor.no_project"))
+            print(t("cli.action", action="ipsis init"))
             return 1
-        print("Diagnóstico del proyecto\n")
+        print(t("doctor.title"))
         for c in reporte.chequeos:
-            print(f"{MARCAS[c.estado]:9} {c.nombre}: {c.mensaje}")
+            print(f"{t(MARCAS[c.estado]):9} {c.nombre}: {c.mensaje}")
             for detalle in c.detalles:
-                print(f"            {detalle}")
+                print(t("doctor.detail", detail=detalle))
             for accion in c.acciones:
-                print(f"            Acción: {accion}")
-        errores, avisos = len(reporte.errores), len(reporte.avisos)
+                print(t("doctor.check_action", action=accion))
         print()
-        print(f"{errores} error{'es' if errores != 1 else ''}, {avisos} aviso{'s' if avisos != 1 else ''}. "
-              + ("El proyecto puede funcionar." if reporte.listo else "El proyecto no está listo."))
+        print(t("doctor.summary", errors=_cuenta("doctor.errors", len(reporte.errores)),
+                warnings=_cuenta("doctor.warnings", len(reporte.avisos)),
+                verdict=t("doctor.ready" if reporte.listo else "doctor.not_ready")))
         if reporte.acciones:
-            print("Acciones:")
+            print(t("doctor.actions"))
             for accion in reporte.acciones:
-                print(f"  {accion}")
+                print(t("doctor.action_item", action=accion))
         return 0 if reporte.listo else 1
 
 
+def _conteo(contador) -> str:
+    return ", ".join(f"{k} {v}" for k, v in contador.most_common()) or t("cli.none")
+
+
 class ComandoAuditar(Comando):
-    nombre = "auditar"
-    ayuda = "Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal."
+    nombre = "audit"
+    ayuda = "audit.help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--desde", default=None,
-                            help="Solo consultas desde esta fecha (AAAA-MM-DD o ISO 8601; UTC si no trae zona).")
-        parser.add_argument("--hasta", default=None, help="Solo consultas hasta esta fecha, inclusive.")
+        parser.add_argument("--from", dest="desde", default=None, help=t("audit.opt_from"))
+        parser.add_argument("--to", dest="hasta", default=None, help=t("audit.opt_to"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
@@ -57,50 +66,50 @@ class ComandoAuditar(Comando):
             hasta = interpretar_fecha(args.hasta, fin_del_dia=True) if args.hasta else None
             r = auditar_registro(desde=desde, hasta=hasta)
         except FechaInvalida as e:
-            print(f"No se pudo auditar: {e}")
+            print(t("audit.failed", error=e))
             return 2
         except SinRegistro as e:
-            print(f"No hay registro de consultas ({e}). Está apagado por defecto, por privacidad.")
-            print("  Acción: ipsis configurar query_log.enabled=true (y reinicia 'ipsis servir')")
+            print(t("audit.no_log", path=e))
+            print(t("cli.action", action=t("audit.enable")))
             return 1
         rango = ""
         if r.desde or r.hasta:
-            rango = (f", rango {r.desde.isoformat() if r.desde else '…'} a {r.hasta.isoformat() if r.hasta else '…'}"
-                     f"; {r.fuera_de_rango} fuera del rango")
-        print(f"Registro: {r.ruta} ({r.consultas} consultas{rango})")
+            rango = t("audit.range", start=r.desde.isoformat() if r.desde else "…",
+                      end=r.hasta.isoformat() if r.hasta else "…", outside=r.fuera_de_rango)
+        print(t("audit.log", path=r.ruta, n=r.consultas, range=rango))
         if r.sin_fecha:
-            print(f"Líneas sin fecha legible (excluidas del rango): {', '.join(map(str, r.sin_fecha))}")
-        print("Estados: " + (", ".join(f"{k} {v}" for k, v in r.por_estado.most_common()) or "—"))
-        print("Reglas:  " + (", ".join(f"{k} {v}" for k, v in r.por_regla.most_common()) or "—"))
-        print("Tonos:   " + (", ".join(f"{k} {v}" for k, v in r.por_tono.most_common()) or "—"))
-        print(f"Evidencias verificadas contra el corpus vigente: {r.evidencias}, con problemas: {len(r.problemas)}")
+            print(t("audit.undated", lines=", ".join(map(str, r.sin_fecha))))
+        print(t("audit.statuses", values=_conteo(r.por_estado)))
+        print(t("audit.rules", values=_conteo(r.por_regla)))
+        print(t("audit.tones", values=_conteo(r.por_tono)))
+        print(t("audit.checked", n=r.evidencias, problems=len(r.problemas)))
         for p in r.problemas:
-            print(f"  línea {p.linea}: {p.doc_id} offsets {p.offset_inicio}-{p.offset_fin}: {p.motivo}: {p.detalle}")
+            print(t("audit.problem", line=p.linea, doc_id=p.doc_id, start=p.offset_inicio, end=p.offset_fin,
+                    reason=p.motivo, detail=p.detalle))
         if r.lineas_invalidas:
-            print(f"Líneas ilegibles: {', '.join(map(str, r.lineas_invalidas))}")
+            print(t("audit.unreadable", lines=", ".join(map(str, r.lineas_invalidas))))
         if r.ok:
-            print("Todas las evidencias registradas siguen siendo literales.")
+            print(t("audit.ok"))
             return 0
-        print("Hay evidencias que ya no coinciden con el corpus: el documento cambió desde la consulta o el "
-              "registro se editó.")
+        print(t("audit.mismatch"))
         return 1
 
 
 class ComandoSnapshotConfig(Comando):
     nombre = "snapshot-config"
-    ayuda = "Escribe la configuración efectiva con defaults resueltos."
+    ayuda = "snapshot.help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--salida", default=".ipsis/effective-config.yaml",
-                            help="Ruta del snapshot (por defecto: .ipsis/effective-config.yaml).")
+        parser.add_argument("--output", dest="salida", default=".ipsis/effective-config.yaml",
+                            help=t("snapshot.opt_output"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
             ruta = guardar_snapshot(args.salida)
         except Exception as e:  # noqa: BLE001 -- CLI debe dar un error accionable
-            print(f"Error generando snapshot de configuración: {e}")
+            print(t("snapshot.failed", error=e))
             return 1
-        print(f"Snapshot de configuración efectiva escrito en {ruta}")
+        print(t("snapshot.done", path=ruta))
         return 0
 
 

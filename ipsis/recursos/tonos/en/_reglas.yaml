@@ -12,7 +12,7 @@ prohibidas:
 - obviously
 - as i already told you
 # Regional idioms: the bundled tones must be neutral (a test enforces it).
-# In a project's own overrides they are a warning from 'ipsis personalidad validar'
+# In a project's own overrides they are a warning from 'ipsis personality validate'
 # and 'ipsis doctor', not an error.
 regionalismos:
 - fire away

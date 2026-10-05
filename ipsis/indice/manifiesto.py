@@ -68,7 +68,7 @@ def cargar_manifiesto(coleccion: str, directorio: str = rutas.INDICE) -> Manifie
     if not ruta.is_file():
         raise FileNotFoundError(
             f"el índice {coleccion!r} no tiene manifiesto ({ruta}); es de una versión anterior. "
-            f"Ejecuta 'ipsis indexar'."
+            f"Ejecuta 'ipsis index'."
         )
     return ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
 

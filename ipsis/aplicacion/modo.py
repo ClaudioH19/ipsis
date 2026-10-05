@@ -3,7 +3,7 @@
 Todo sale de variables de entorno, para que un VPS se configure sin tocar el
 proyecto:
 
-- ``IPSIS_MODE``: ``produccion`` (por defecto) o ``desarrollo``;
+- ``IPSIS_MODE``: ``production`` (por defecto) o ``development`` (también ``produccion``/``desarrollo``);
 - ``IPSIS_ADMIN_TOKEN``: activa ``/admin`` (al menos 32 caracteres);
 - ``IPSIS_TRUSTED_PROXY``: IPs del proxy (p. ej. Caddy) cuyos ``X-Forwarded-*`` se aceptan;
 - ``IPSIS_ADMIN_IPS``: IPs permitidas en ``/admin`` (opcional);
@@ -19,6 +19,8 @@ from dataclasses import dataclass, field
 from typing import Mapping
 
 MODOS = ("produccion", "desarrollo")
+# Valor de IPSIS_MODE / --mode → modo interno.
+_MODOS_EXTERNOS = {"production": "produccion", "development": "desarrollo"}
 LARGO_MINIMO_TOKEN = 32
 URL_FUENTE_POR_DEFECTO = "https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat"
 
@@ -73,9 +75,10 @@ class ModoServicio:
 
 def modo_servicio(modo: str | None = None, entorno: Mapping[str, str] | None = None) -> ModoServicio:
     entorno = os.environ if entorno is None else entorno
-    modo = (modo or entorno.get("IPSIS_MODE") or "produccion").strip().lower()
+    modo = (modo or entorno.get("IPSIS_MODE") or "production").strip().lower()
+    modo = _MODOS_EXTERNOS.get(modo, modo)
     if modo not in MODOS:
-        raise ValueError(f"modo desconocido {modo!r}: usa produccion o desarrollo")
+        raise ValueError(f"IPSIS_MODE {modo!r}: use production or development")
     return ModoServicio(
         modo=modo,
         token_admin=entorno.get("IPSIS_ADMIN_TOKEN") or None,

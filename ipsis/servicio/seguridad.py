@@ -40,7 +40,7 @@ def verificar_clave_widget(clave_recibida: str | None, claves_validas: list[str]
     clave -- cualquier petición pasa, con o sin cabecera. Es la opción que
     deja al widget funcionando de inmediato para quien recién adopta el
     plugin; un despliegue que quiera distinguir integradores agrega al menos
-    una clave (``ipsis configurar widget_keys=clave-sitio-a,clave-sitio-b``)
+    una clave (``ipsis configure widget_keys=clave-sitio-a,clave-sitio-b``)
     y desde ese momento toda petición sin una clave de esa lista se
     rechaza."""
     if not claves_validas:

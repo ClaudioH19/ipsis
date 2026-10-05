@@ -61,13 +61,13 @@ def test_el_proyecto_sobrescribe_solo_lo_que_declara(tmp_path: Path):
 
 def test_init_acepta_un_idioma_sin_paquete_y_avisa_el_respaldo(tmp_path: Path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--idioma", "ru"]) == 0
+    assert main(["init", "--language", "ru"]) == 0
     assert "no hay un paquete para 'ru'" in capsys.readouterr().out
-    assert main(["configurar", "language=es"]) == 0
+    assert main(["configure", "language=es"]) == 0
     assert "Nota" not in capsys.readouterr().out
 
 
 def test_init_rechaza_un_codigo_de_idioma_invalido(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--idioma", "ruso!"]) == 1
+    assert main(["init", "--language", "ruso!"]) == 1
     assert not (tmp_path / "config" / "assistant.yaml").exists()

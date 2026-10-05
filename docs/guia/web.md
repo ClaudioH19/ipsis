@@ -14,7 +14,7 @@ La forma más simple: pide el código ya armado y pégalo antes de `</body>`.
 
 ```bash
 ipsis widget snippet --api https://asistente.tu-dominio.cl
-ipsis widget snippet --api https://asistente.tu-dominio.cl --componente   # como Web Component
+ipsis widget snippet --api https://asistente.tu-dominio.cl --component   # como Web Component
 ```
 
 Con la etiqueta `<script>`:
@@ -34,7 +34,7 @@ O como Web Component:
 ```
 
 Agrega el origen exacto de tu sitio a CORS
-(`ipsis configurar cors_origenes=https://www.tu-sitio.cl`). Si usas claves de
+(`ipsis configure cors_origenes=https://www.tu-sitio.cl`). Si usas claves de
 widget (`data-widget-key`), recuerda que son públicas: identifican y limitan
 el tráfico, no son un secreto.
 
@@ -140,16 +140,16 @@ Los valores anteriores siguen funcionando: `abiertas` equivale a `lista`, y
 Todo el aspecto vive en `config/styles.yaml` y se aplica sin
 reiniciar el servicio:
 
-- **Presets:** `ipsis widget tema listar` y `ipsis widget tema aplicar editorial`
+- **Presets:** `ipsis widget theme list` y `ipsis widget theme apply editorial`
   (`clasico`, `minimal`, `editorial`, `contraste`).
-- **Cada valor:** `ipsis widget estilo mostrar` y, por ejemplo,
-  `ipsis widget estilo cambiar colores.acento=#0ea5e9 forma.radio_panel=10px
+- **Cada valor:** `ipsis widget style show` y, por ejemplo,
+  `ipsis widget style set colores.acento=#0ea5e9 forma.radio_panel=10px
   tipografia.familia="Inter, sans-serif"`. Secciones: `colores`,
   `colores_oscuro`, `tipografia`, `forma`, `sombras`, `animaciones`,
   `ubicacion` y `presentacion`.
 - **Sin terminal:** el panel `/admin/panel`, pestaña Widget, «Estilo
   completo» (ver [personalidad.md](personalidad.md#panel-gráfico-adminpanel)).
-- **Vista previa sin servicio:** `ipsis widget tema vista-previa`.
+- **Vista previa sin servicio:** `ipsis widget theme preview`.
 
 ## CSP de tu sitio
 
@@ -173,7 +173,7 @@ style-src   'self' https://asistente.tu-dominio.cl 'unsafe-inline';
 ## Exportar archivos estáticos
 
 ```bash
-ipsis widget exportar ./public/ipsis --api https://asistente.tu-dominio.cl --posicion abajo-izquierda
+ipsis widget export ./public/ipsis --api https://asistente.tu-dominio.cl --position abajo-izquierda
 ```
 
 Genera, para servirlos desde otro servidor:

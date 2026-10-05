@@ -21,7 +21,11 @@ def pytest_configure(config: pytest.Config) -> None:
     bloquea el borrado entre corridas. Se usa ``%LOCALAPPDATA%``, fuera de
     ambos. ``IPSIS_PYTEST_BASETEMP`` o ``--basetemp`` tienen prioridad; en otros
     sistemas se conserva el comportamiento por defecto de pytest.
+
+    Los mensajes de la interfaz se prueban en español (``IPSIS_LANG=es``, también
+    en los subprocesos); el inglés por defecto lo cubre ``tests/cli/test_mensajes.py``.
     """
+    os.environ["IPSIS_LANG"] = "es"
     if config.option.basetemp:
         return
     elegido = os.environ.get("IPSIS_PYTEST_BASETEMP")
@@ -54,7 +58,7 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
         faltantes = [id_hf for id_hf in marca.args if not _modelo_en_cache(id_hf)]
         if faltantes or not marca.args:
             item.add_marker(pytest.mark.skip(
-                reason=f"faltan modelos en caché: {faltantes or 'sin id'}; ejecuta 'ipsis modelos descargar'"
+                reason=f"faltan modelos en caché: {faltantes or 'sin id'}; ejecuta 'ipsis models download'"
             ))
 
 
@@ -72,7 +76,7 @@ def proyecto_suite(tmp_path_factory: pytest.TempPathFactory) -> Path:
     anterior = Path.cwd()
     os.chdir(carpeta)
     try:
-        assert main(["init", "--perfil", "light"]) == 0
+        assert main(["init", "--profile", "light"]) == 0
     finally:
         os.chdir(anterior)
     return carpeta

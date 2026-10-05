@@ -44,7 +44,7 @@ def entradas_vigentes(ruta: str = CATALOGO_PATH) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# `ipsis cargar`: copia un documento al corpus y lo registra en
+# `ipsis load`: copia un documento al corpus y lo registra en
 # `documents/catalog.yaml`. La lógica vive aquí, no en la CLI: los comandos
 # solo traducen argumentos y llaman a ipsis/.
 # ---------------------------------------------------------------------------
@@ -109,7 +109,7 @@ def plantilla_catalogo_vacio() -> str:
     """Contenido inicial de ``documents/catalog.yaml`` sin documentos -- la usa
     tanto ``ipsis init`` (para que el archivo exista desde el principio, con
     un mensaje claro en vez de un ``FileNotFoundError``) como
-    ``_append_entrada_catalogo`` (si `ipsis cargar` es lo primero que se
+    ``_append_entrada_catalogo`` (si `ipsis load` es lo primero que se
     corre). Nota: ``documentos:`` sin items parsea a ``None`` con
     ``yaml.safe_load``, no a una lista vacía -- ``cargar_catalogo`` ya lo
     normaliza."""
@@ -204,7 +204,7 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
         # Parsea desde el ORIGEN, antes de copiar nada: si el documento se
         # rechaza (p.ej. un PDF escaneado, DocumentoEscaneadoError), no debe
         # quedar un archivo huérfano en documents/ sin entrada en el
-        # catálogo -- defecto real encontrado reproduciendo 'ipsis cargar' con
+        # catálogo -- defecto real encontrado reproduciendo 'ipsis load' con
         # un PDF escaneado en un directorio externo al repo.
         doc_parseado = parsear_documento(str(ruta_origen), doc_id=doc_id, doc_titulo="(pendiente)", version="1")
         titulo = inferir_titulo(doc_parseado, ruta_origen.name)

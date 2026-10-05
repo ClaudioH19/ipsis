@@ -32,7 +32,7 @@ def configurar(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     desconocidas = set(pares) - CLAVES_DOMINIO_VALIDAS
     if desconocidas:
         raise ValueError(
-            f"clave(s) desconocida(s) para 'ipsis configurar': {sorted(desconocidas)}. "
+            f"clave(s) desconocida(s) para 'ipsis configure': {sorted(desconocidas)}. "
             f"Válidas: {sorted(CLAVES_DOMINIO_VALIDAS)}"
         )
     from ipsis.configuracion.glosario import a_externo
@@ -127,12 +127,16 @@ def inicializar_proyecto(
     if ruta_dominio.exists():
         ruta_dominio.unlink()  # --force: parte de los valores por defecto, no fusiona con lo viejo
 
-    idioma = validar_codigo_idioma(idioma or "es")
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.recursos.mensajes import idioma_interfaz
+
+    idioma = validar_codigo_idioma(idioma or idioma_interfaz())
+    interfaz = cargar_paquete(idioma).interfaz
 
     inicializar_asistente_si_falta()
     nuevo = actualizar_dominio({
-        "nombre_asistente": nombre_asistente or "Asistente documental",
-        "descripcion_dominio": descripcion_dominio or "los documentos cargados",
+        "nombre_asistente": nombre_asistente or interfaz["nombre_asistente_defecto"],
+        "descripcion_dominio": descripcion_dominio or interfaz["descripcion_dominio_defecto"],
         "idioma": idioma,
         "perfil": perfil or "medium",
     })
@@ -245,7 +249,7 @@ def interfaz_del_idioma(idioma: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# ipsis perfil mostrar | cambiar
+# ipsis profile show | cambiar
 # ---------------------------------------------------------------------------
 class PerfilInvalido(ValueError):
     """El perfil pedido no es instalable."""

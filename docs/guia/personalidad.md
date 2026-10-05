@@ -7,15 +7,15 @@ ninguna respuesta, ni pide reindexar ni recalibrar.
 
 ## Configuración: `config/personality.yaml`
 
-`ipsis init` lo crea con comentarios. Se edita a mano o con `ipsis personalidad …`
+`ipsis init` lo crea con comentarios. Se edita a mano o con `ipsis personality …`
 (referencia en [uso.md](uso.md)). Cada cambio por terminal se valida completo
 antes de escribirse; si no pasa, el archivo queda igual.
 
 ```bash
-ipsis personalidad tono listar                 # los 7 tonos, con un ejemplo
-ipsis personalidad tono aplicar formal
-ipsis personalidad tono probar --situacion sin_respuesta
-ipsis personalidad validar                     # sale con 1 si algo impide arrancar el motor
+ipsis personality tone list                 # los 7 tonos, con un ejemplo
+ipsis personality tone apply formal
+ipsis personality tone try --situation sin_respuesta
+ipsis personality validate                     # sale con 1 si algo impide arrancar el motor
 ```
 
 `tono.variedad: fija` usa siempre la primera variante de cada situación.
@@ -28,11 +28,11 @@ Se diseña en el Studio ([avatars.bible-strong.app](https://avatars.bible-strong
 y se exporta como `.avatar.json`.
 
 ```bash
-ipsis personalidad avatar importar ./mi-avatar.avatar.json --nombre mi-avatar
-ipsis personalidad avatar aplicar mi-avatar
-ipsis personalidad avatar eventos              # evento → animación (y respaldos)
-ipsis personalidad avatar asignar pensando mirando-arriba
-ipsis personalidad avatar colores --cuerpo "#f5f1e8" --ojos "#1e293b"
+ipsis personality avatar import ./mi-avatar.avatar.json --name mi-avatar
+ipsis personality avatar apply mi-avatar
+ipsis personality avatar events              # evento → animación (y respaldos)
+ipsis personality avatar assign pensando mirando-arriba
+ipsis personality avatar colors --body "#f5f1e8" --eyes "#1e293b"
 ```
 
 - **Al importar** se revisa: hasta 256 KiB, JSON sin claves duplicadas,
@@ -53,7 +53,7 @@ proyecto: lee, mira la cita antes de afirmar y no exagera.
 - `contento` es sobrio: primero mira hacia las citas y después se alegra.
 - En `dudoso` y `apenado` nunca hay gesto de éxito.
 - Colores: papel `#f5f1e8` y tinta `#1e293b`; se cambian con
-  `ipsis personalidad avatar colores`.
+  `ipsis personality avatar colors`.
 
 Para revisar todas sus animaciones, desde la raíz del repositorio:
 `python -m http.server 8765` y abre
@@ -120,8 +120,8 @@ idioma, 1.890 en total.
   no se repite en turnos seguidos.
 - La misma sesión y el mismo turno dan siempre el mismo texto.
 - Cada variante usada queda como `plantilla_id` (por ejemplo,
-  `formal.apertura.3`) en `ipsis preguntar --diagnostico` y en el registro de
-  consultas. `ipsis auditar` cuenta las consultas por tono.
+  `formal.apertura.3`) en `ipsis ask --diagnostics` y en el registro de
+  consultas. `ipsis audit` cuenta las consultas por tono.
 
 ## Textos propios del proyecto
 
@@ -218,7 +218,7 @@ prueba la hace cumplir.
 Tus textos propios (`tono.plantillas`) se revisan con la misma lista, pero
 como **aviso**, no como error: se guardan igual, porque un sitio local
 puede querer hablar como su público. El aviso aparece en
-`ipsis personalidad validar`, en `ipsis doctor` y en la pestaña Tono del panel.
+`ipsis personality validate`, en `ipsis doctor` y en la pestaña Tono del panel.
 Si el idioma del proyecto no tiene paquete propio (por ejemplo, `fr`), no se
 revisa.
 

@@ -9,8 +9,8 @@ regresiones, y el golden del cliente permite [calibrar](calibracion.md).
 ## 2. Alcance y no-alcance
 
 - **Alcance:** formato versionado de bancos, métricas de cobertura y riesgo,
-  `ipsis evaluar`, `ipsis benchmark` y `ipsis comparar`.
-- **No-alcance:** elegir umbrales (lo hace `ipsis calibrar`) o cambiar defaults
+  `ipsis evaluate`, `ipsis benchmark` y `ipsis compare`.
+- **No-alcance:** elegir umbrales (lo hace `ipsis calibrate`) o cambiar defaults
   automáticamente.
 
 ## 3. Entradas y salidas versionadas
@@ -46,16 +46,16 @@ Métricas (`ipsis/evaluacion/metricas.py`), globales, por grupo y por idioma:
 - latencia p50/p95, total y por etapa.
 
 Un falso `ok` tiene prioridad sobre el recall: recuperar más evidencia no
-compensa afirmar algo que el corpus no respalda. `ipsis evaluar` sale con ≠ 0
+compensa afirmar algo que el corpus no respalda. `ipsis evaluate` sale con ≠ 0
 si encuentra alguno.
 
-`ipsis benchmark --banco … --perfiles bm25,light,medium,heavy` crea un proyecto
+`ipsis benchmark --bank … --profiles bm25,light,medium,heavy` crea un proyecto
 temporal por perfil y banco, evalúa con el motor caliente y escribe
-`benchmark-perfiles.{json,md}` y un artefacto por perfil para `ipsis comparar`.
+`benchmark-perfiles.{json,md}` y un artefacto por perfil para `ipsis compare`.
 Sale con ≠ 0 si un perfil excede su presupuesto o, con un banco de
-evaluación, da falsos `ok`. `--solo-latencia` mide p50/p95 por etapa.
+evaluación, da falsos `ok`. `--latency-only` mide p50/p95 por etapa.
 
-`ipsis comparar` exige el mismo hash de banco, versión y `k`.
+`ipsis compare` exige el mismo hash de banco, versión y `k`.
 
 ## 5. Supuestos
 
@@ -80,7 +80,7 @@ Lineal en los casos; el costo es el de las consultas del perfil.
 ## 9. Fallos y fallback
 
 Corpus del banco cambiado: el hash no coincide y el comando lo dice
-(`ipsis golden validar` para el golden).
+(`ipsis golden validate` para el golden).
 
 ## 10. Seguridad y privacidad
 
@@ -99,8 +99,8 @@ proceso, no para certificar un perfil ni elegir defaults por sí solos.
 
 ## 13. Referencias y procedencia
 
-Formato de exportación compatible con SQuAD 2.0 (`ipsis golden exportar
---formato squad2`).
+Formato de exportación compatible con SQuAD 2.0 (`ipsis golden export
+--format squad2`).
 
 ## 14. Estado
 

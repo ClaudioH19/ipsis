@@ -48,7 +48,7 @@ def test_estadisticas_se_guardan_junto_a_la_coleccion(tmp_path):
     est = EstadisticasLexicas.construir(["hola mundo"])
     est.guardar(ruta_estadisticas("col_v1", str(tmp_path)))
     assert cargar_estadisticas("col_v1", str(tmp_path)) == est
-    with pytest.raises(FileNotFoundError, match="ipsis indexar"):
+    with pytest.raises(FileNotFoundError, match="ipsis index"):
         cargar_estadisticas("otra_v1", str(tmp_path))
 
 

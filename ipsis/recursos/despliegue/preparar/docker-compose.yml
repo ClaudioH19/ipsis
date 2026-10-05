@@ -1,4 +1,4 @@
-# Generado por `ipsis desplegar preparar`.
+# Generado por `ipsis deploy prepare`.
 #
 #   docker compose up -d --build                    # solo el asistente, en 127.0.0.1:8000
 #   docker compose --profile https up -d --build    # además Caddy con HTTPS para {{dominio}}
@@ -17,7 +17,7 @@ services:
       - path: .env
         required: false
     environment:
-      IPSIS_MODE: produccion
+      IPSIS_MODE: production
       # Caddy (abajo) tiene IP fija en la red interna: solo sus X-Forwarded-* se aceptan.
       IPSIS_TRUSTED_PROXY: "172.30.0.10"
     volumes:

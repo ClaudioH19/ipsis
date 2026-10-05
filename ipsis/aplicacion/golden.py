@@ -46,7 +46,7 @@ def _corpus() -> _Corpus:
 
     catalogo = entradas_vigentes(rutas.CATALOGO)
     if not catalogo:
-        raise ErrorGolden(["no hay documentos en el catálogo: agrégalos con 'ipsis cargar <archivo|carpeta>'"])
+        raise ErrorGolden(["no hay documentos en el catálogo: agrégalos con 'ipsis load <archivo|carpeta>'"])
     documentos = parsear_corpus(rutas.DOCUMENTOS)
     alias: dict[str, str] = {}
     for entrada in catalogo:
@@ -115,8 +115,8 @@ def _cargar_banco_vigente():
 
     manifiesto = Path(rutas.GOLDEN_MANIFIESTO)
     if not manifiesto.is_file():
-        raise ErrorGolden(["no hay un banco golden importado. Genera la plantilla con 'ipsis golden plantilla', "
-                           "complétala e impórtala con 'ipsis golden importar golden/golden.csv'"])
+        raise ErrorGolden(["no hay un banco golden importado. Genera la plantilla con 'ipsis golden template', "
+                           "complétala e impórtala con 'ipsis golden import golden/golden.csv'"])
     try:
         banco = cargar_banco(manifiesto)
     except FileNotFoundError as e:
@@ -125,7 +125,7 @@ def _cargar_banco_vigente():
     except ValueError as e:
         if "hash del corpus" in str(e):
             raise ErrorGolden(["el corpus cambió desde que se importó el golden: los offsets pueden no ser "
-                               "válidos. Vuelve a importarlo ('ipsis golden importar <archivo>') o revísalo"]) from e
+                               "válidos. Vuelve a importarlo ('ipsis golden import <archivo>') o revísalo"]) from e
         raise ErrorGolden([f"banco inválido: {e}"]) from e
     from ipsis.ingesta.parsear import parsear_documento
 

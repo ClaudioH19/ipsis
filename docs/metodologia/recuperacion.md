@@ -75,10 +75,10 @@ Codificar la pregunta y consultar Qdrant toma 20–60 ms con e5-small y
 ## 9. Fallos y fallback
 
 - Sin índice o con índice incompatible: el servicio no está listo y `/ready`
-  dice `ipsis indexar`.
+  dice `ipsis index`.
 - Sin candidatos: la política se abstiene.
 - Qdrant local bloqueado por otro proceso: error accionable (detén
-  `ipsis servir`).
+  `ipsis serve`).
 
 ## 10. Seguridad y privacidad
 

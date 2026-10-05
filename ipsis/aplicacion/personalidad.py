@@ -1,4 +1,4 @@
-"""Casos de uso de ``ipsis personalidad``: tono de las respuestas y avatar del widget.
+"""Casos de uso de ``ipsis personality``: tono de las respuestas y avatar del widget.
 
 Todo cambio se valida completo (esquema, linter de plantillas y avatar) antes
 de escribir ``config/personality.yaml``; si no pasa, no se escribe

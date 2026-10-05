@@ -61,5 +61,5 @@ def test_descarga_usa_la_cache_global(hub_falso, tmp_path):
 
 
 def test_sin_cache_el_error_dice_que_comando_ejecutar(hub_falso):
-    with pytest.raises(FileNotFoundError, match="ipsis modelos descargar"):
+    with pytest.raises(FileNotFoundError, match="ipsis models download"):
         descarga.ruta_local(obtener("dewdev/mdeberta-v3-base-squad2-onnx"))

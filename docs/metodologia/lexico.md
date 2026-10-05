@@ -71,7 +71,7 @@ Menos de 5 ms por consulta; las estadísticas ocupan unos KB por documento.
 ## 9. Fallos y fallback
 
 - Idioma sin stemmer: términos sin stem.
-- Estadísticas faltantes o de otro corpus: `ipsis doctor` pide `ipsis indexar`.
+- Estadísticas faltantes o de otro corpus: `ipsis doctor` pide `ipsis index`.
 
 ## 10. Seguridad y privacidad
 

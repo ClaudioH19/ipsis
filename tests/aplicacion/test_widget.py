@@ -64,10 +64,10 @@ def test_validacion_rechaza_inyeccion_en_valor_css():
 def test_cli_lista_y_aplica_preset(tmp_path, capsys):
     ruta = tmp_path / "styles.yaml"
 
-    assert main(["widget", "tema", "listar"]) == 0
+    assert main(["widget", "theme", "list"]) == 0
     assert "minimal:" in capsys.readouterr().out
     assert main([
-        "widget", "tema", "aplicar", "minimal", "--ruta", str(ruta)
+        "widget", "theme", "apply", "minimal", "--path", str(ruta)
     ]) == 0
 
     assert leer_proyecto(ruta)["preset"] == "minimal"
@@ -94,8 +94,8 @@ def test_cli_genera_vista_previa(tmp_path):
     aplicar_preset("minimal", str(estilos))
 
     assert main([
-        "widget", "tema", "vista-previa", "--ruta", str(estilos),
-        "--salida", str(salida),
+        "widget", "theme", "preview", "--path", str(estilos),
+        "--output", str(salida),
     ]) == 0
     assert salida.is_file()
 
@@ -144,7 +144,7 @@ def test_snippet_usa_la_ubicacion_y_escapa(tmp_path, monkeypatch, capsys):
     salida = capsys.readouterr().out.strip()
     assert salida.startswith('<script src="https://asistente.ejemplo.cl/widget.js" data-api="https://asistente.ejemplo.cl"')
     assert 'data-posicion="arriba-izquierda"' in salida and 'data-lanzador="pestana"' in salida
-    assert main(["widget", "snippet", "--componente", "--clave", 'a"b']) == 0
+    assert main(["widget", "snippet", "--component", "--key", 'a"b']) == 0
     componente = capsys.readouterr().out
     assert "<ipsis-chat" in componente and 'widget-key="a&quot;b"' in componente
 
@@ -153,8 +153,8 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
-    assert main(["personalidad", "tono", "aplicar", "serio"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
+    assert main(["personality", "tone", "apply", "serio"]) == 0
     from ipsis.servicio.api import crear_app
 
     cfg = TestClient(crear_app()).get("/config").json()
@@ -167,18 +167,18 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert cfg["interfaz"]["fuentes_varias"] == "{n} fuentes del documento"  # plantilla del widget
 
 
-# --- ipsis widget estilo: cada valor, por consola ----------------------------------------------
+# --- ipsis widget style: cada valor, por consola ----------------------------------------------
 def test_estilo_mostrar_y_cambiar_por_consola(tmp_path, monkeypatch, capsys):
     from pathlib import Path
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     capsys.readouterr()
-    assert main(["widget", "estilo", "mostrar", "--seccion", "colors"]) == 0
+    assert main(["widget", "style", "show", "--section", "colors"]) == 0
     salida = capsys.readouterr().out
     assert "colors.accent = #2563eb" in salida and "shape." not in salida
 
-    assert main(["widget", "estilo", "cambiar", "colors.accent=#0ea5e9", "shape.panel_radius=10px",
+    assert main(["widget", "style", "set", "colors.accent=#0ea5e9", "shape.panel_radius=10px",
                  "animations.enabled=false", "placement.offset_x=40"]) == 0
     tema = leer_proyecto(Path("config/styles.yaml"))
     assert tema["colores"]["acento"] == "#0ea5e9" and tema["forma"]["radio_panel"] == "10px"
@@ -189,13 +189,13 @@ def test_estilo_rechaza_erratas_tipos_y_css_peligroso(tmp_path, monkeypatch, cap
     from pathlib import Path
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     antes = Path("config/styles.yaml").read_text(encoding="utf-8")
     capsys.readouterr()
     for malo, mensaje in (("colors.acent=#fff", "clave desconocida"), ("colorss.accent=#fff", "sección desconocida"),
                           ("accent=#fff", "seccion.clave=valor"), ("colors.accent=red;x", "no permitidos"),
                           ("animations.enabled=quizas", "true o false"),
                           ("placement.offset_x=mucho", "entero")):
-        assert main(["widget", "estilo", "cambiar", malo]) == 1, malo
+        assert main(["widget", "style", "set", malo]) == 1, malo
         assert mensaje in capsys.readouterr().out, malo
     assert Path("config/styles.yaml").read_text(encoding="utf-8") == antes  # nada se escribió

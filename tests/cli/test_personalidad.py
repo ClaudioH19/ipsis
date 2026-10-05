@@ -1,4 +1,4 @@
-"""``ipsis personalidad``: tono y avatar desde la terminal (P12.4)."""
+"""``ipsis personality``: tono y avatar desde la terminal (P12.4)."""
 from __future__ import annotations
 
 import json
@@ -35,7 +35,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> Path:
     carpeta = tmp_path / "proyecto"
     carpeta.mkdir()
     monkeypatch.chdir(carpeta)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     capsys.readouterr()
     return carpeta
 
@@ -49,7 +49,7 @@ def _avatar(tmp_path: Path, nombre="prueba.avatar.json", texto: str | None = Non
 # --- archivo y mostrar ---------------------------------------------------------------------------
 def test_init_crea_personalidad_por_defecto_y_mostrar_la_resume(proyecto, capsys):
     assert PERSONALIDAD.is_file() and PERSONALIDAD.read_text(encoding="utf-8").startswith("# Assistant personality")
-    assert main(["personalidad", "mostrar"]) == 0
+    assert main(["personality", "show"]) == 0
     salida = capsys.readouterr().out
     assert "Tono: cordial (variedad rotativa" in salida
     assert "Avatar: folio -- ok" in salida  # Folio viene incluido
@@ -57,40 +57,40 @@ def test_init_crea_personalidad_por_defecto_y_mostrar_la_resume(proyecto, capsys
 
 def test_sin_proyecto_pide_rag_init(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    assert main(["personalidad", "mostrar"]) == 1
+    assert main(["personality", "show"]) == 1
     assert "Acción: ipsis init" in capsys.readouterr().out
 
 
 # --- tono ---------------------------------------------------------------------------------------
 def test_listar_aplicar_y_probar_tono(proyecto, capsys):
-    assert main(["personalidad", "tono", "listar"]) == 0
+    assert main(["personality", "tone", "list"]) == 0
     salida = capsys.readouterr().out
     assert "* cordial" in salida and "  directo" in salida and salida.count("«") == 7
 
-    assert main(["personalidad", "tono", "aplicar", "formal"]) == 0
+    assert main(["personality", "tone", "apply", "formal"]) == 0
     texto = PERSONALIDAD.read_text(encoding="utf-8")
     assert texto.startswith("# Assistant personality")  # conserva los comentarios
     assert leer_proyecto(PERSONALIDAD)["tono"]["activo"] == "formal"
 
     capsys.readouterr()
-    assert main(["personalidad", "tono", "probar", "--situacion", "sin_respuesta"]) == 0
+    assert main(["personality", "tone", "try", "--situation", "sin_respuesta"]) == 0
     lineas = capsys.readouterr().out.splitlines()
     assert lineas[0] == "sin_respuesta:" and len(lineas) == 6 and lineas[1].startswith("  1. Lamentablemente")
 
 
 def test_probar_reemplaza_las_variables_del_proyecto(proyecto, capsys):
-    assert main(["configurar", "assistant_name=Ana"]) == 0
+    assert main(["configure", "assistant_name=Ana"]) == 0
     capsys.readouterr()
-    assert main(["personalidad", "tono", "probar", "--tono", "serio", "--situacion", "saludo"]) == 0
+    assert main(["personality", "tone", "try", "--tone", "serio", "--situation", "saludo"]) == 0
     salida = capsys.readouterr().out
     assert "Ana" in salida and "{" not in salida
 
 
-@pytest.mark.parametrize("argumentos", [["tono", "aplicar", "turbo"], ["tono", "probar", "--situacion", "nada"],
-                                         ["tono", "probar", "--tono", "turbo"]])
+@pytest.mark.parametrize("argumentos", [["tone", "apply", "turbo"], ["tone", "try", "--situation", "nada"],
+                                         ["tone", "try", "--tone", "turbo"]])
 def test_tono_invalido_no_escribe_nada(proyecto, capsys, argumentos):
     antes = PERSONALIDAD.read_bytes()
-    assert main(["personalidad", *argumentos]) == 1
+    assert main(["personality", *argumentos]) == 1
     assert "Error" in capsys.readouterr().out and PERSONALIDAD.read_bytes() == antes
 
 
@@ -115,7 +115,7 @@ def test_plantilla_propia_invalida_es_error_en_validar_y_doctor(proyecto, capsys
     datos = leer_proyecto(PERSONALIDAD)
     datos["tono"]["plantillas"] = {"apertura": ["Sin dos puntos"]}
     escribir_proyecto(PERSONALIDAD, datos)
-    assert main(["personalidad", "validar"]) == 1
+    assert main(["personality", "validate"]) == 1
     assert "[ERROR]" in capsys.readouterr().out
     from ipsis.aplicacion.diagnostico import diagnosticar
 
@@ -127,37 +127,37 @@ def test_cambiar_el_tono_no_toca_indice_ni_calibracion(proyecto, capsys):
     from ipsis.aplicacion.diagnostico import diagnosticar
 
     antes = {c.clave: c.estado for c in diagnosticar().chequeos}
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     perfil_antes = capsys.readouterr().out
-    assert main(["personalidad", "tono", "aplicar", "animoso"]) == 0
+    assert main(["personality", "tone", "apply", "animoso"]) == 0
     capsys.readouterr()
-    assert main(["perfil", "mostrar"]) == 0
+    assert main(["profile", "show"]) == 0
     assert capsys.readouterr().out == perfil_antes
     assert {c.clave: c.estado for c in diagnosticar().chequeos} == antes
 
 
 def test_snapshot_incluye_la_personalidad(proyecto):
-    assert main(["snapshot-config", "--salida", "snapshot.yaml"]) == 0
+    assert main(["snapshot-config", "--output", "snapshot.yaml"]) == 0
     snapshot = yaml.safe_load(Path("snapshot.yaml").read_text(encoding="utf-8"))
     assert snapshot["personality"]["tone"]["active"] == "cordial"
 
 
 # --- avatar -------------------------------------------------------------------------------------
 def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
-    assert main(["personalidad", "avatar", "importar", str(_avatar(tmp_path)), "--nombre", "mi-avatar"]) == 0
+    assert main(["personality", "avatar", "import", str(_avatar(tmp_path)), "--name", "mi-avatar"]) == 0
     assert Path("config/avatars/mi-avatar.avatar.json").is_file()
-    assert main(["personalidad", "avatar", "aplicar", "mi-avatar"]) == 0
+    assert main(["personality", "avatar", "apply", "mi-avatar"]) == 0
     capsys.readouterr()
-    assert main(["personalidad", "avatar", "eventos"]) == 0
+    assert main(["personality", "avatar", "events"]) == 0
     salida = capsys.readouterr().out
     assert "respuesta_ok           → contento" in salida
     assert "pensando               → inactivo  (pedida: 'pensando'" in salida  # respaldo en cadena
-    assert main(["personalidad", "avatar", "asignar", "pensando", "contento"]) == 0
+    assert main(["personality", "avatar", "assign", "pensando", "contento"]) == 0
     assert leer_proyecto(PERSONALIDAD)["avatar"]["eventos"] == {"pensando": "contento"}
     capsys.readouterr()
-    assert main(["personalidad", "avatar", "asignar", "pensando", "volar"]) == 1
+    assert main(["personality", "avatar", "assign", "pensando", "volar"]) == 1
     assert "no tiene la clave 'volar'" in capsys.readouterr().out
-    assert main(["personalidad", "avatar", "asignar", "bailar", "contento"]) == 1
+    assert main(["personality", "avatar", "assign", "bailar", "contento"]) == 1
     from ipsis.aplicacion.diagnostico import diagnosticar
 
     assert diagnosticar().chequeo("personalidad").estado.value == "aviso"  # faltan claves del mapa
@@ -172,28 +172,28 @@ def test_importar_aplicar_eventos_y_asignar(proyecto, tmp_path, capsys):
     ("{no es json", "JSON"),
 ], ids=["grande", "duplicadas", "sin-neutral", "clave-invalida", "color-invalido", "no-json"])
 def test_importar_rechaza_definiciones_invalidas_sin_escribir(proyecto, tmp_path, capsys, texto, error):
-    assert main(["personalidad", "avatar", "importar", str(_avatar(tmp_path, texto=texto)), "--nombre", "x"]) == 1
+    assert main(["personality", "avatar", "import", str(_avatar(tmp_path, texto=texto)), "--name", "x"]) == 1
     assert error in capsys.readouterr().out
     assert not Path("config/avatars/x.avatar.json").exists()
 
 
 def test_aplicar_un_avatar_inexistente_falla(proyecto, capsys):
     antes = PERSONALIDAD.read_bytes()
-    assert main(["personalidad", "avatar", "aplicar", "nadie"]) == 1
+    assert main(["personality", "avatar", "apply", "nadie"]) == 1
     assert "no hay un avatar 'nadie'" in capsys.readouterr().out and PERSONALIDAD.read_bytes() == antes
 
 
 def test_colores_se_normalizan_y_validan(proyecto, capsys):
-    assert main(["personalidad", "avatar", "colores", "--cuerpo", "#F5F1E8", "--ojos", "#1e293b"]) == 0
+    assert main(["personality", "avatar", "colors", "--body", "#F5F1E8", "--eyes", "#1e293b"]) == 0
     colores = leer_proyecto(PERSONALIDAD)["avatar"]["colores"]
     assert colores == {"cuerpo": "#f5f1e8", "ojos": "#1e293b"}
-    assert main(["personalidad", "avatar", "colores", "--ojos", "azul"]) == 1
+    assert main(["personality", "avatar", "colors", "--eyes", "azul"]) == 1
 
 
 def test_los_colores_se_aplican_sin_modificar_el_archivo(proyecto, tmp_path):
     from ipsis.aplicacion.avatar import cargar_avatar, con_colores
 
-    main(["personalidad", "avatar", "importar", str(_avatar(tmp_path)), "--nombre", "mi-avatar"])
+    main(["personality", "avatar", "import", str(_avatar(tmp_path)), "--name", "mi-avatar"])
     _, datos = cargar_avatar("mi-avatar")
     pintado = con_colores(datos, "#123456", None)
     assert pintado["colors"] == {"body": "#123456", "eyes": "#000000"}
@@ -213,20 +213,20 @@ def test_texto_propio_no_neutro_es_aviso_en_validar_y_doctor(proyecto, capsys):
 
     _textos_propios({"despedida": ["Chao, nos vemos pronto."]})
     capsys.readouterr()
-    assert main(["personalidad", "validar"]) == 0  # no bloquea
+    assert main(["personality", "validate"]) == 0  # no bloquea
     salida = capsys.readouterr().out
     assert "[AVISO] texto propio no neutro: despedida[1]: 'chao'" in salida
     assert "Hay avisos (no bloquean)" in salida
     chequeo = diagnosticar(abrir_indice=False).chequeo("personalidad")
     assert chequeo.estado is Estado.AVISO and "chao" in chequeo.mensaje
     assert chequeo.acciones == ("revisa tono.plantillas en config/personality.yaml "
-                                "(detalle: ipsis personalidad validar)",)
+                                "(detalle: ipsis personality validate)",)
 
 
 def test_texto_propio_neutro_no_avisa(proyecto, capsys):
     _textos_propios({"despedida": ["Hasta pronto."]})
     capsys.readouterr()
-    assert main(["personalidad", "validar"]) == 0
+    assert main(["personality", "validate"]) == 0
     assert "[AVISO]" not in capsys.readouterr().out
 
 

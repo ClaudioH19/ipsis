@@ -1,6 +1,6 @@
 # Despliegue de {{nombre_asistente}}
 
-Generado por `ipsis desplegar preparar` (perfil `{{perfil}}`). Esta carpeta
+Generado por `ipsis deploy prepare` (perfil `{{perfil}}`). Esta carpeta
 trae todo lo que el servicio necesita: configuración, documentos, índice,
 calibración y avatares. Cópiala completa al servidor (VPS).
 
@@ -34,7 +34,7 @@ Pega antes de `</body>`:
 ```
 
 Y autoriza tu sitio en el servicio (en `config/assistant.yaml`,
-`cors_origins`), por ejemplo con `ipsis configurar cors_origins=https://www.tu-sitio.cl`
+`cors_origins`), por ejemplo con `ipsis configure cors_origins=https://www.tu-sitio.cl`
 antes de preparar el despliegue.
 
 ## 3. Panel `/admin`
@@ -48,8 +48,8 @@ En producción `/admin` exige HTTPS. Sin token, el panel no existe.
 
 ## Actualizar
 
-- **Documentos o configuración:** en tu equipo, `ipsis cargar`, `ipsis indexar`
-  y `ipsis desplegar preparar` de nuevo; copia la carpeta y ejecuta
+- **Documentos o configuración:** en tu equipo, `ipsis load`, `ipsis index`
+  y `ipsis deploy prepare` de nuevo; copia la carpeta y ejecuta
   `docker compose --profile https up -d --build`.
 - **Licencia:** AGPL-3.0. Si modificas el código, define `IPSIS_SOURCE_URL`
   en `.env` con la URL de tus cambios.

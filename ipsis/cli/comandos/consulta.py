@@ -11,31 +11,26 @@ from ipsis.aplicacion.proyecto import carpeta_de_proyecto, completar_proyecto_ex
 from ipsis.cli.base import Comando
 from ipsis.cli.comandos.corpus import ComandoCargar, ComandoIndexar
 from ipsis.cli.comandos.proyecto import ComandoInit
+from ipsis.recursos.mensajes import t
 
 
 class ComandoServir(Comando):
-    """Si recibe una carpeta, la prepara componiendo ``init``, ``cargar`` e
-    ``indexar`` (los mismos comandos, con su salida) antes de servir."""
+    """Si recibe una carpeta, la prepara componiendo ``init``, ``load`` e
+    ``index`` (los mismos comandos, con su salida) antes de servir."""
 
-    nombre = "servir"
-    ayuda = "Levanta la API del servicio."
+    nombre = "serve"
+    ayuda = "serve.help"
 
     def __init__(self, init: ComandoInit, cargar: ComandoCargar, indexar: ComandoIndexar) -> None:
         self.init, self.cargar, self.indexar = init, cargar, indexar
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("carpeta", nargs="?",
-                            help="Carpeta de documentos o proyecto existente; se prepara automáticamente.")
-        parser.add_argument("--host", default="127.0.0.1",
-                            help="Dirección donde escucha el servicio (por defecto: '127.0.0.1', solo local; "
-                                 "usa '0.0.0.0' para aceptar conexiones externas).")
-        parser.add_argument("--port", type=int, default=8000,
-                            help="Puerto donde escucha el servicio (por defecto: 8000).")
-        parser.add_argument("--reindexar", action="store_true",
-                            help="Reconstruye el índice aunque el catálogo no haya cambiado.")
-        parser.add_argument("--modo", choices=["produccion", "desarrollo"], default=None,
-                            help="produccion (por defecto, o IPSIS_MODE): /admin exige HTTPS desde fuera. "
-                                 "desarrollo: /admin por HTTP, /docs y sin caché de los archivos del widget.")
+        parser.add_argument("carpeta", metavar="folder", nargs="?", help=t("serve.arg_folder"))
+        parser.add_argument("--host", default="127.0.0.1", help=t("serve.opt_host"))
+        parser.add_argument("--port", type=int, default=8000, help=t("serve.opt_port"))
+        parser.add_argument("--reindex", dest="reindexar", action="store_true", help=t("serve.opt_reindex"))
+        parser.add_argument("--mode", dest="modo", choices=["production", "development"], default=None,
+                            help=t("serve.opt_mode"))
 
     def _preparar_modo(self, modo: str | None) -> dict:
         """Fija IPSIS_MODE para el proceso del servicio y devuelve las opciones de proxy de uvicorn."""
@@ -45,12 +40,12 @@ class ComandoServir(Comando):
             os.environ["IPSIS_MODE"] = modo
         efectivo = modo_servicio()
         if efectivo.desarrollo:
-            print("Modo desarrollo: /admin acepta HTTP desde cualquier IP. No lo uses en un servicio público.")
+            print(t("serve.development"))
             if not os.environ.get("IPSIS_ADMIN_TOKEN"):
                 os.environ["IPSIS_ADMIN_TOKEN"] = generar_token()
-                print(f"Token temporal de /admin (solo esta ejecución): {os.environ['IPSIS_ADMIN_TOKEN']}")
+                print(t("serve.temporary_token", token=os.environ["IPSIS_ADMIN_TOKEN"]))
         for problema in efectivo.problemas:
-            print(f"Aviso: {problema}")
+            print(t("cli.warning", warning=problema))
         # El esquema (https) y la IP real solo se aceptan de los X-Forwarded-* del proxy declarado.
         return {"proxy_headers": True,
                 "forwarded_allow_ips": ",".join(efectivo.proxy_confiable) or "127.0.0.1"}
@@ -59,22 +54,22 @@ class ComandoServir(Comando):
         """Completa un proyecto o crea uno privado junto a una carpeta documental."""
         fuente = Path(carpeta).resolve()
         if not fuente.is_dir():
-            raise ValueError(f"no existe la carpeta {fuente}")
+            raise ValueError(t("serve.no_folder", path=fuente))
 
         es_proyecto = carpeta_de_proyecto(fuente)
         if not es_proyecto and not archivos_de_ruta(fuente):
-            raise ValueError(f"no hay documentos compatibles en {fuente}")
+            raise ValueError(t("serve.no_documents", path=fuente))
         proyecto = fuente if es_proyecto else fuente / ".ipsis-project"
         proyecto.mkdir(parents=True, exist_ok=True)
         os.chdir(proyecto)
         for cambio in migrar_proyecto_activo():
-            print(f"[migración] {cambio}")
+            print(t("cli.migration", change=cambio))
 
         if not Path("config/assistant.yaml").is_file():
             inicio = argparse.Namespace(nombre_asistente=None, descripcion_dominio=None, idioma=None, perfil=None,
                                         force=False)
             if self.init.ejecutar(inicio) != 0:
-                raise RuntimeError("no se pudo inicializar el proyecto automático")
+                raise RuntimeError(t("serve.init_failed"))
         else:
             completar_proyecto_existente()
 
@@ -82,16 +77,16 @@ class ComandoServir(Comando):
         catalogo_antes = catalogo.read_bytes() if catalogo.is_file() else b""
         if not es_proyecto:
             if self.cargar.ejecutar(argparse.Namespace(ruta=str(fuente))) != 0:
-                raise RuntimeError("no se pudieron cargar los documentos")
+                raise RuntimeError(t("serve.load_failed"))
         catalogo_despues = catalogo.read_bytes() if catalogo.is_file() else b""
 
         indice = diagnostico.verificar_indice()
         if reindexar or catalogo_antes != catalogo_despues or not indice.ok:
-            print("Preparando el índice antes de iniciar el servicio...")
+            print(t("serve.preparing_index"))
             if self.indexar.ejecutar(argparse.Namespace(corpus="documents")) != 0:
-                raise RuntimeError("no se pudo construir el índice")
+                raise RuntimeError(t("serve.index_failed"))
         else:
-            print("El índice existente está vigente; se reutiliza.")
+            print(t("serve.index_reused"))
         return proyecto
 
     def ejecutar(self, args: argparse.Namespace) -> int:
@@ -101,42 +96,43 @@ class ComandoServir(Comando):
         try:
             if args.carpeta:
                 proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
-                print(f"Proyecto activo: {proyecto}")
+                print(t("serve.active_project", path=proyecto))
             proxy = self._preparar_modo(args.modo)
-            print(f"Sirviendo en http://{args.host}:{args.port} (Ctrl+C para detener)...")
+            print(t("serve.serving", host=args.host, port=args.port))
             uvicorn.run("ipsis.servicio.api:app", host=args.host, port=args.port, log_level="info", **proxy)
             return 0
         except (OSError, RuntimeError, ValueError) as exc:
-            print(f"No se pudo preparar el servicio: {exc}")
+            print(t("serve.failed", error=exc))
             return 1
         finally:
             os.chdir(anterior)
 
 
+# Estado de la respuesta → clave de su etiqueta en el catálogo.
 ETIQUETA_ESTADO = {
-    "ok": "[OK]",
-    "relacionado": "[RELACIONADO -- no es una respuesta directa]",
-    "sin_respuesta": "[SIN RESPUESTA]",
-    "conversacional": "[CONVERSACIONAL]",
-    "degradado": "[DEGRADADO]",
-    "saturado": "[SATURADO]",
+    "ok": "ask.status_ok",
+    "relacionado": "ask.status_related",
+    "sin_respuesta": "ask.status_no_answer",
+    "conversacional": "ask.status_conversational",
+    "degradado": "ask.status_degraded",
+    "saturado": "ask.status_saturated",
 }
 
 
+def etiqueta_estado(estado: str) -> str:
+    clave = ETIQUETA_ESTADO.get(estado)
+    return t(clave) if clave else f"[{estado.upper()}]"
+
+
 class ComandoPreguntar(Comando):
-    nombre = "preguntar"
-    ayuda = "Consulta el servicio desde la terminal."
+    nombre = "ask"
+    ayuda = "ask.help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("pregunta", help="La pregunta a enviar (entre comillas si tiene espacios).")
-        parser.add_argument("--url", default="http://127.0.0.1:8000",
-                            help="Base del servicio a consultar (por defecto: 'http://127.0.0.1:8000').")
-        parser.add_argument("--timeout", type=float, default=30.0,
-                            help="Segundos de espera máxima por una respuesta antes de fallar (por defecto: 30).")
-        parser.add_argument("--diagnostico", action="store_true",
-                            help="Ejecuta la pregunta con el motor del proyecto en este proceso (sin el servicio) y "
-                                 "muestra etapas con su latencia, señales, términos foco, la regla que decidió y el "
-                                 "tramo exacto. En modo Qdrant local, detén 'ipsis servir' antes.")
+        parser.add_argument("pregunta", metavar="question", help=t("ask.arg_question"))
+        parser.add_argument("--url", default="http://127.0.0.1:8000", help=t("ask.opt_url"))
+        parser.add_argument("--timeout", type=float, default=30.0, help=t("ask.opt_timeout"))
+        parser.add_argument("--diagnostics", dest="diagnostico", action="store_true", help=t("ask.opt_diagnostics"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         if args.diagnostico:
@@ -145,30 +141,28 @@ class ComandoPreguntar(Comando):
 
         url = f"{args.url.rstrip('/')}/consultar"
         try:
-            resp = httpx.post(url, json={"pregunta": args.pregunta, "id_sesion": "rag-cli"}, timeout=args.timeout)
+            resp = httpx.post(url, json={"pregunta": args.pregunta, "id_sesion": "ipsis-cli"}, timeout=args.timeout)
         except httpx.ConnectError:
-            print(f"No se pudo conectar a {url}. ¿Está el servicio arriba? Ejecuta 'ipsis servir' primero.")
+            print(t("ask.no_connection", url=url))
             return 1
         except httpx.TimeoutException:
-            print(f"El servicio no respondió en {args.timeout}s.")
+            print(t("ask.timeout", seconds=args.timeout))
             return 1
 
         if resp.status_code != 200:
-            print(f"El servicio respondió {resp.status_code}: {resp.text}")
+            print(t("ask.http_error", status=resp.status_code, body=resp.text))
             return 1
 
         datos = resp.json()
-        estado = datos.get("estado", "?")
-        print(ETIQUETA_ESTADO.get(estado, f"[{estado.upper()}]"))
+        print(etiqueta_estado(datos.get("estado", "?")))
         print(datos.get("respuesta", ""))
         fragmentos = datos.get("fragmentos") or []
         if fragmentos:
-            print("\nCitas:")
+            print(t("ask.citations"))
             for f in fragmentos:
-                print(f"  - {f['doc_titulo']} > {f['seccion']} "
-                      f"(offsets {f['offset_inicio']}-{f['offset_fin']}, score={f['score']:.3f})")
+                print(t("ask.citation", title=f["doc_titulo"], section=f["seccion"], start=f["offset_inicio"],
+                        end=f["offset_fin"], score=f["score"]))
         return 0
-
 
     @staticmethod
     def _diagnostico(pregunta: str) -> int:
@@ -177,40 +171,40 @@ class ComandoPreguntar(Comando):
         try:
             d = diagnosticar_pregunta(pregunta)
         except MotorNoListo as e:
-            print(f"El motor no está listo: {e}")
-            print("  Acción: ipsis doctor")
+            print(t("ask.not_ready", error=e))
+            print(t("cli.action", action="ipsis doctor"))
             return 1
         except Exception as e:  # noqa: BLE001 -- índice bloqueado, modelo faltante, configuración inválida...
-            print(f"No se pudo ejecutar el motor del proyecto: {e}")
-            print("  Acción: ipsis doctor")
+            print(t("ask.engine_failed", error=e))
+            print(t("cli.action", action="ipsis doctor"))
             return 1
-        print(ETIQUETA_ESTADO.get(d.estado, f"[{d.estado.upper()}]"))
+        nada = t("cli.none")
+        print(etiqueta_estado(d.estado))
         print(d.respuesta)
-        print(f"\nRegla: {d.regla or '—'} (motivo: {d.motivo}; perfil: {d.perfil or '—'})")
-        print("Etapas (ms):")
+        print(t("ask.rule", rule=d.regla or nada, reason=d.motivo, profile=d.perfil or nada))
+        print(t("ask.stages"))
         for nombre, ms in d.etapas:
             print(f"  {nombre:16} {ms:>6}")
-        print(f"  {'total':16} {d.total_ms:>6}" + ("   (salida temprana: sin modelos)" if d.salto_modelos else ""))
+        print(f"  {'total':16} {d.total_ms:>6}" + (t("ask.early_exit") if d.salto_modelos else ""))
         if d.senales:
-            print("Señales:")
+            print(t("ask.signals"))
             print("  " + "  ".join(f"{k}={_valor(v)}" for k, v in d.senales.items()))
-        print(f"Términos foco: encontrados: {', '.join(d.foco_encontrados) or '—'}; "
-              f"ausentes: {', '.join(d.foco_ausentes) or '—'}")
+        print(t("ask.focus", found=", ".join(d.foco_encontrados) or nada, missing=", ".join(d.foco_ausentes) or nada))
         if d.ausentes_del_corpus:
-            print(f"Términos que no están en el corpus: {', '.join(d.ausentes_del_corpus)}")
+            print(t("ask.absent", terms=", ".join(d.ausentes_del_corpus)))
         if d.oracion_foco:
-            print(f"Oración evaluada: «{d.oracion_foco}»")
+            print(t("ask.sentence", sentence=d.oracion_foco))
         if d.tramo:
-            print(f"Tramo exacto: «{d.tramo['texto']}» ({d.tramo['chunk_id']}, "
-                  f"offsets {d.tramo['offset_inicio']}-{d.tramo['offset_fin']})")
+            print(t("ask.span", text=d.tramo["texto"], chunk_id=d.tramo["chunk_id"], start=d.tramo["offset_inicio"],
+                    end=d.tramo["offset_fin"]))
         else:
-            print("Tramo exacto: —")
+            print(t("ask.no_span"))
         for e in d.evidencias:
-            print(f"Evidencia: {e['doc_id']} offsets {e['offset_inicio']}-{e['offset_fin']}")
+            print(t("ask.evidence", doc_id=e["doc_id"], start=e["offset_inicio"], end=e["offset_fin"]))
         if d.tono:
-            print(f"Tono: {d.tono}; plantillas: {', '.join(d.plantillas) or '—'}")
+            print(t("ask.tone", tone=d.tono, templates=", ".join(d.plantillas) or nada))
         for a in d.advertencias:
-            print(f"Advertencia: {a}")
+            print(t("ask.warning", warning=a))
         return 0
 
 
@@ -218,4 +212,4 @@ def _valor(v) -> str:
     return f"{v:.3f}" if isinstance(v, float) else str(v)
 
 
-__all__ = ["ComandoPreguntar", "ComandoServir", "ETIQUETA_ESTADO"]
+__all__ = ["ComandoPreguntar", "ComandoServir", "ETIQUETA_ESTADO", "etiqueta_estado"]

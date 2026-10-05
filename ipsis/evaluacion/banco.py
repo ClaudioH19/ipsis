@@ -116,7 +116,7 @@ class ManifiestoBanco(BaseModel):
     casos: str = Field(min_length=1)
     corpus: CorpusBanco
     categorias_requeridas: list[CategoriaPregunta]
-    # De dónde salió el banco (``ipsis golden importar``): formato y archivo de
+    # De dónde salió el banco (``ipsis golden import``): formato y archivo de
     # origen. Sin fecha, para que reimportar lo mismo dé el mismo banco.
     procedencia: dict[str, str] | None = None
     # «regresion»: banco universal del software (lo usan las pruebas), igual para

@@ -14,7 +14,7 @@ mi-asistente/
 │   ├── personality.yaml   # tono de las respuestas y avatar
 │   ├── domain.yaml        # opcional: reglas y categorías propias del dominio
 │   ├── language.yaml         # opcional: textos del paquete de idioma sobrescritos
-│   ├── calibration.yaml    # lo escribe `ipsis calibrar --aplicar`, con procedencia
+│   ├── calibration.yaml    # lo escribe `ipsis calibrate --apply`, con procedencia
 │   └── avatares/           # avatares importados (.avatar.json)
 ├── documents/             # archivos fuente + catalog.yaml
 ├── golden/                 # golden.csv, banco/ versionado y reportes/
@@ -23,11 +23,11 @@ mi-asistente/
 
 | Archivo | Se edita con | Detalle |
 |---|---|---|
-| `assistant.yaml` | `ipsis configurar clave=valor` | esta guía |
+| `assistant.yaml` | `ipsis configure clave=valor` | esta guía |
 | `engine.yaml` | a mano | esta guía; los umbrales viven en el perfil y en `calibration.yaml` |
-| `styles.yaml` | `ipsis widget tema`, panel `/admin` | [web.md](web.md) |
-| `personality.yaml` | `ipsis personalidad`, panel `/admin` | [personalidad.md](personalidad.md) |
-| `calibration.yaml` | `ipsis calibrar --aplicar` | [metodología](../metodologia/calibracion.md) |
+| `styles.yaml` | `ipsis widget theme`, panel `/admin` | [web.md](web.md) |
+| `personality.yaml` | `ipsis personality`, panel `/admin` | [personalidad.md](personalidad.md) |
+| `calibration.yaml` | `ipsis calibrate --apply` | [metodología](../metodologia/calibracion.md) |
 
 ## Versionado
 
@@ -74,7 +74,7 @@ componentes:
   abstention_policy: cascada_v1
 ```
 
-El reranker y el lector los define el perfil (`ipsis perfil mostrar`). Un valor `null` desactiva un componente opcional. Una implementación puede
+El reranker y el lector los define el perfil (`ipsis profile show`). Un valor `null` desactiva un componente opcional. Una implementación puede
 recibir opciones usando la forma extendida:
 
 ```yaml
@@ -112,18 +112,18 @@ El perfil activo está en `config/assistant.yaml::perfil` (`light`,
 `ipsis benchmark`, no se instala.
 
 ```
-ipsis perfil mostrar           # perfil, modelos, presupuesto p95, índice y calibración
-ipsis perfil cambiar medium    # cambia solo assistant.yaml::perfil
+ipsis profile show           # perfil, modelos, presupuesto p95, índice y calibración
+ipsis profile set medium    # cambia solo assistant.yaml::perfil
 ```
 
-`ipsis perfil cambiar` no descarga modelos, no indexa, no calibra y no borra
+`ipsis profile set` no descarga modelos, no indexa, no calibra y no borra
 nada. Se conservan `ajustes_perfil`, el índice y `calibration.yaml`. Antes de
 escribir, valida los `ajustes_perfil` del proyecto contra el perfil destino.
 Repetir el perfil activo no hace nada.
 
 - **light ↔ medium:** usan el mismo modelo denso (e5-small, 384), así que el
   índice sirve para ambos.
-- **heavy:** usa e5-base (768) y necesita su propio índice (`ipsis indexar`).
+- **heavy:** usa e5-base (768) y necesita su propio índice (`ipsis index`).
   Cada modelo denso vive en su colección: el índice anterior se conserva, y
   volver al perfil anterior lo hace compatible otra vez sin reindexar.
 - **Compatibilidad del índice:** se decide por el manifiesto
@@ -132,7 +132,7 @@ Repetir el perfil activo no hace nada.
 - **Calibración:** cualquier cambio de perfil la invalida, porque su
   procedencia registra perfil, modelos y corpus. El motor la ignora y rigen
   los umbrales del perfil. El archivo se conserva para auditoría. Para
-  recuperarla: `ipsis calibrar --aplicar`.
+  recuperarla: `ipsis calibrate --apply`.
 
 ## Modelos
 
@@ -142,11 +142,11 @@ con `IPSIS_MODELS_DIR`. Usa el formato de `huggingface_hub`. Nada se descarga
 dentro del proyecto. Con `HF_HUB_OFFLINE=1` nunca se usa la red.
 
 ```
-ipsis modelos listar                     # modelos del perfil activo
-ipsis modelos descargar                  # descarga los que falten del perfil activo
-ipsis modelos descargar --perfil heavy   # prepara otro perfil sin activarlo
-ipsis modelos verificar                  # archivos completos e inferencia de prueba
-ipsis modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
+ipsis models list                     # modelos del perfil activo
+ipsis models download                  # descarga los que falten del perfil activo
+ipsis models download --profile heavy   # prepara otro perfil sin activarlo
+ipsis models verify                  # archivos completos e inferencia de prueba
+ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
 ```
 
 - **`listar`** muestra, para cada modelo del perfil activo:
@@ -160,9 +160,9 @@ ipsis modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
 - **`descargar`** baja solo lo que falta. Un modelo compartido entre perfiles,
   como e5-small (light y medium) o el lector (medium y heavy), se descarga una
   sola vez.
-  - Con `--perfil` no cambia el perfil activo, y funciona fuera de un
+  - Con `--profile` no cambia el perfil activo, y funciona fuera de un
     proyecto.
-  - Sin `--perfil` necesita el proyecto (`ipsis init`).
+  - Sin `--profile` necesita el proyecto (`ipsis init`).
   - `bm25` no es instalable.
 - **`verificar`** solo revisa el perfil activo y nunca descarga. Por modelo:
   - los archivos requeridos (ONNX, `tokenizer.json`, `config.json`);
@@ -170,7 +170,7 @@ ipsis modelos exportar org/modelo --int8 # desarrollo: convierte a ONNX
   - una inferencia mínima: vector normalizado de la dimensión esperada,
     logit finito o lectura válida.
 
-  El estado de cada modelo es `OK`, `FALTA` (acción: `ipsis modelos
+  El estado de cada modelo es `OK`, `FALTA` (acción: `ipsis models
   descargar`), `NO CARGA` (archivo presente pero inválido) o `FALLA`
   (inferencia inválida). Termina con 0 solo si todos dan `OK`.
 - **`exportar`** es solo para desarrollo. Necesita el extra `[exportar]`
@@ -197,7 +197,7 @@ Otro código funciona con un respaldo:
   `config/language.yaml` (interfaz) y
   `config/personality.yaml` (tono).
 
-`ipsis init` y `ipsis configurar idioma=` lo avisan, y `ipsis doctor` lo marca
+`ipsis init` y `ipsis configure idioma=` lo avisan, y `ipsis doctor` lo marca
 como aviso.
 
 ## Tono de las respuestas
@@ -223,7 +223,7 @@ reindexar ni recalibrar.
   No repite la misma frase en turnos seguidos de una sesión.
 - La misma sesión y el mismo turno dan siempre el mismo texto.
 - Cada variante usada queda como `plantilla_id` (`cordial.sin_respuesta.3`)
-  en `ipsis preguntar --diagnostico` y en el registro de consultas.
+  en `ipsis ask --diagnostics` y en el registro de consultas.
 
 Para cambiar textos propios del proyecto, sin tocar el paquete, usa
 `config/personality.yaml`:
@@ -253,10 +253,10 @@ siguen funcionando: se toman como sobrescrituras del tono.
 ## Documentos vigentes
 
 `documents/catalog.yaml` lista lo cargado. Una entrada con `vigente: false`
-no se indexa ni entra en el golden (hay que ejecutar `ipsis indexar` después de
+no se indexa ni entra en el golden (hay que ejecutar `ipsis index` después de
 cambiarla).
 
-Si `ipsis cargar` recibe un archivo con el mismo nombre que uno ya cargado y
+Si `ipsis load` recibe un archivo con el mismo nombre que uno ya cargado y
 otro contenido:
 - lo agrega como documento nuevo (`<nombre>-<hash>.<ext>`) y lo avisa;
 - los dos se indexan hasta que el anterior se marque `vigente: false`.
@@ -286,7 +286,7 @@ proyecto, pide `ipsis init`.
 
 - **Modelos:** solo mira si están completos en la caché (ONNX,
   `tokenizer.json`, `config.json`). Para probar la inferencia, usa
-  `ipsis modelos verificar`.
+  `ipsis models verify`.
 - **Índice:** se compara su manifiesto con el perfil (modelo, dimensión,
   payload) y con el stemmer del idioma. Para saber si el corpus cambió, primero
   compara una huella de los bytes de los documentos vigentes, guardada en el
@@ -294,13 +294,13 @@ proyecto, pide `ipsis init`.
   anterior y no la tiene, recalcula el hash exacto parseando y fragmentando,
   sin modelos. Si no hay índice ni documentos, es
   un aviso; si hay documentos sin indexar, el corpus cambió o el índice es
-  incompatible, es un error y la acción es `ipsis indexar`.
+  incompatible, es un error y la acción es `ipsis index`.
 - **Calibración y golden son opcionales.**
   - Si faltan, es un aviso y rigen los umbrales del perfil.
   - Una calibración obsoleta o no habilitada es un aviso; la acción es
-    `ipsis calibrar --aplicar`.
+    `ipsis calibrate --apply`.
   - Un golden cuyo corpus cambió también es un aviso, y no debe usarse para
-    evaluar ni calibrar hasta actualizarlo (`ipsis golden validar`).
+    evaluar ni calibrar hasta actualizarlo (`ipsis golden validate`).
   - Un banco de regresión sirve para evaluar, no para calibrar.
 - **Idioma:**
   - Un idioma sin paquete propio es un aviso: rige el respaldo (ver
@@ -308,10 +308,10 @@ proyecto, pide `ipsis init`.
   - Un `stemmer` que snowballstemmer no conoce también es un error.
   - `stemmer: null` es válido: los términos quedan sin stem.
 
-## Diagnóstico de una consulta (`ipsis preguntar --diagnostico`)
+## Diagnóstico de una consulta (`ipsis ask --diagnostics`)
 
 ```
-ipsis preguntar --diagnostico "¿Cada cuánto se cambia el filtro?"
+ipsis ask --diagnostics "¿Cada cuánto se cambia el filtro?"
 ```
 
 Ejecuta la pregunta con el motor del proyecto en el mismo proceso, sin pasar
@@ -328,35 +328,35 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 - las evidencias;
 - el tono y los `plantilla_id` usados.
 
-En modo Qdrant local hay que detener `ipsis servir` antes, porque Qdrant
+En modo Qdrant local hay que detener `ipsis serve` antes, porque Qdrant
 bloquea la carpeta del índice.
 
-## Registro de consultas y auditoría (`ipsis auditar`)
+## Registro de consultas y auditoría (`ipsis audit`)
 
 El servicio puede guardar una línea JSON por consulta en
 `.ipsis/logs/queries.jsonl`. Está apagado por defecto, por privacidad:
 
 ```
-ipsis configurar registro.activo=true   # y reiniciar 'ipsis servir'
-ipsis auditar
-ipsis auditar --desde 2026-10-01 --hasta 2026-10-31
+ipsis configure registro.activo=true   # y reiniciar 'ipsis serve'
+ipsis audit
+ipsis audit --from 2026-10-01 --to 2026-10-31
 ```
 
 - **Qué guarda:** la pregunta, el estado, la regla, el motivo, el perfil, las
   señales de la política, el tono y los `plantilla_id` usados, las
   evidencias (documento, offsets y texto) y el tramo exacto. No guarda la
   sesión ni la IP.
-- **Quién escribe:** solo `/consultar` del servicio. `ipsis preguntar
-  --diagnostico`, `ipsis evaluar` y `ipsis benchmark` no escriben. Si escribir
+- **Quién escribe:** solo `/consultar` del servicio. `ipsis ask
+  --diagnostics`, `ipsis evaluate` y `ipsis benchmark` no escriben. Si escribir
   falla, la respuesta no se ve afectada; queda un aviso en el log del
   servicio.
-- **Qué revisa `ipsis auditar`:** cuenta las consultas por estado, por regla y
+- **Qué revisa `ipsis audit`:** cuenta las consultas por estado, por regla y
   por tono,
   y comprueba que el texto de cada evidencia y de cada tramo siga en esos
   offsets del corpus vigente.
   - Problemas posibles: `alterada`, `tramo_alterado`, `documento_ausente`
     (el documento se retiró) o `fuera_de_rango`.
-  - `--desde` y `--hasta` (fecha o ISO 8601, UTC por defecto, inclusivas)
+  - `--from` y `--to` (fecha o ISO 8601, UTC por defecto, inclusivas)
     limitan el rango; las líneas sin fecha se excluyen y se informan.
   - Sale con 0 si todo coincide y con 1 si hay problemas, líneas ilegibles o
     no hay registro.
@@ -375,9 +375,9 @@ presentacion:
   mostrar_etiqueta_estado: true
 ```
 
-Los presets se administran con `ipsis widget tema`, y cada valor con
-`ipsis widget estilo mostrar|cambiar` (por ejemplo
-`ipsis widget estilo cambiar colores.acento=#0ea5e9`), o desde el panel
+Los presets se administran con `ipsis widget theme`, y cada valor con
+`ipsis widget style show|cambiar` (por ejemplo
+`ipsis widget style set colores.acento=#0ea5e9`), o desde el panel
 `/admin/panel` (pestaña Widget, «Estilo completo»). `/config` expone estos valores para que el widget los aplique
 y no admite escritura; los cambios por HTTP pasan por `/admin`, con token (ver
 [personalidad.md](personalidad.md)). La clave pública del widget autoriza
@@ -389,7 +389,7 @@ Para obtener una copia de la configuración con defaults y valores resueltos:
 
 ```bash
 ipsis snapshot-config
-ipsis snapshot-config --salida .ipsis/config-produccion.yaml
+ipsis snapshot-config --output .ipsis/config-produccion.yaml
 ```
 
 También está disponible desde Python:

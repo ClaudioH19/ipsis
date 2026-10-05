@@ -1,6 +1,6 @@
 # Implantação de {{nombre_asistente}}
 
-Gerado por `ipsis desplegar preparar` (perfil `{{perfil}}`). Esta pasta traz
+Gerado por `ipsis deploy prepare` (perfil `{{perfil}}`). Esta pasta traz
 tudo o que o serviço precisa: configuração, documentos, índice, calibração
 e avatares. Copie a pasta inteira para o servidor (VPS).
 
@@ -36,7 +36,7 @@ Cole antes de `</body>`:
 
 E autorize o seu site no serviço (`cors_origins` em
 `config/assistant.yaml`), por exemplo com
-`ipsis configurar cors_origins=https://www.seu-site.com` antes de preparar a
+`ipsis configure cors_origins=https://www.seu-site.com` antes de preparar a
 implantação.
 
 ## 3. Painel `/admin`
@@ -50,8 +50,8 @@ Em produção o `/admin` exige HTTPS. Sem token, o painel não existe.
 
 ## Atualização
 
-- **Documentos ou configuração:** no seu computador, execute `ipsis cargar`,
-  `ipsis indexar` e `ipsis desplegar preparar` de novo; copie a pasta e execute
+- **Documentos ou configuração:** no seu computador, execute `ipsis load`,
+  `ipsis index` e `ipsis deploy prepare` de novo; copie a pasta e execute
   `docker compose --profile https up -d --build`.
 - **Licença:** AGPL-3.0. Se modificar o código, defina `IPSIS_SOURCE_URL` no
   `.env` com a URL das suas alterações.

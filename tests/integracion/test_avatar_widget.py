@@ -51,7 +51,7 @@ def test_exportar_incluye_la_definicion_activa(tmp_path: Path, monkeypatch: pyte
     from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     importar_avatar_desde(json.dumps(definicion_avatar()).encode(), "mi-avatar")
     actualizar_personalidad({"avatar": {"definicion": "mi-avatar", "colores": {"cuerpo": "#123456"}}})
     from ipsis.aplicacion.widget import exportar_widget

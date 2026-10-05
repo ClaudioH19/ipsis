@@ -139,7 +139,7 @@ def construir_motor(
 
 
 def construir_motor_del_proyecto() -> Motor:
-    """Motor del proyecto del directorio actual (lo que sirve ``ipsis servir``)."""
+    """Motor del proyecto del directorio actual (lo que sirve ``ipsis serve``)."""
     from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
 
     return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())

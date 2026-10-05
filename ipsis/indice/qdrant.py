@@ -152,7 +152,7 @@ def cargar_estadisticas(nombre_coleccion: str, directorio: str = rutas.INDICE) -
     if not ruta.is_file():
         raise FileNotFoundError(
             f"no existen las estadísticas léxicas del índice en {str(ruta)!r}. "
-            f"Ejecuta 'ipsis indexar' para reconstruir el índice."
+            f"Ejecuta 'ipsis index' para reconstruir el índice."
         )
     return EstadisticasLexicas.cargar(ruta)
 

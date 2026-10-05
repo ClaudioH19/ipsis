@@ -49,7 +49,7 @@ class Mensajes(_Estricto):
 
 
 class GoldenInstrucciones(_Estricto):
-    """Textos de ``ipsis golden plantilla`` (ver docs/guia/golden.md).
+    """Textos de ``ipsis golden template`` (ver docs/guia/golden.md).
 
     ``nota_*`` admiten ``{terminos}`` (términos clave de la sección),
     ``{documento}`` y ``{par}``. ``conversacionales`` son tres preguntas ya

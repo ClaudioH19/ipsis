@@ -51,7 +51,7 @@ P7.1, mmarco puntuó 20 pasajes en 124 ms.
 
 ## 9. Fallos y fallback
 
-- Modelo ausente: `ipsis doctor` y `/ready` piden `ipsis modelos descargar`.
+- Modelo ausente: `ipsis doctor` y `/ready` piden `ipsis models download`.
 - Salida temprana léxica (ningún candidato con término foco): la etapa no
   corre.
 

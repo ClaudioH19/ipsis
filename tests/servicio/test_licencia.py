@@ -28,7 +28,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     return tmp_path
 
 

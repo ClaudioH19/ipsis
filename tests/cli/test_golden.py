@@ -18,8 +18,8 @@ from ipsis.cli import main
 @pytest.fixture
 def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
-    assert main(["cargar", str(CORPUS)]) == 0
+    assert main(["init", "--profile", "light"]) == 0
+    assert main(["load", str(CORPUS)]) == 0
     return tmp_path
 
 
@@ -55,7 +55,7 @@ def _banco(proyecto: Path) -> dict[str, dict]:
 
 # --- plantilla -----------------------------------------------------------------
 def test_plantilla_crea_csv_y_leeme_y_no_pisa_lo_escrito(proyecto: Path, capsys):
-    assert main(["golden", "plantilla", "--n", "20"]) == 0
+    assert main(["golden", "template", "--n", "20"]) == 0
     ruta = proyecto / "golden" / "golden.csv"
     assert ruta.read_bytes().startswith(b"\xef\xbb\xbf")
     assert (proyecto / "golden" / "LEEME.txt").is_file()
@@ -63,30 +63,30 @@ def test_plantilla_crea_csv_y_leeme_y_no_pisa_lo_escrito(proyecto: Path, capsys)
 
     _completar_un_par(ruta)
     escrito = ruta.read_bytes()
-    assert main(["golden", "plantilla"]) == 1
+    assert main(["golden", "template"]) == 1
     assert "--force" in capsys.readouterr().out
     assert ruta.read_bytes() == escrito  # no se pisó
-    assert main(["golden", "plantilla", "--force"]) == 0
+    assert main(["golden", "template", "--force"]) == 0
     assert ruta.read_bytes() != escrito
 
 
 def test_plantilla_sin_documentos_falla_con_mensaje(tmp_path: Path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
-    assert main(["golden", "plantilla"]) == 1
-    assert "ipsis cargar" in capsys.readouterr().out
+    assert main(["init", "--profile", "light"]) == 0
+    assert main(["golden", "template"]) == 1
+    assert "ipsis load" in capsys.readouterr().out
 
 
 # --- ida y vuelta (criterio de P9.3) ----------------------------------------------
 def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
-    assert main(["golden", "plantilla", "--n", "20"]) == 0
+    assert main(["golden", "template", "--n", "20"]) == 0
     id_r, id_t = _completar_un_par(proyecto / "golden" / "golden.csv")
-    assert main(["golden", "importar", "golden/golden.csv"]) == 0
+    assert main(["golden", "import", "golden/golden.csv"]) == 0
     original = _banco(proyecto)
     manifiesto = json.loads((proyecto / "golden" / "bank" / "manifest.json").read_text(encoding="utf-8"))
     assert manifiesto["procedencia"] == {"formato": "csv", "archivo": "golden.csv"}
 
-    assert main(["golden", "exportar", "--formato", "squad2"]) == 0
+    assert main(["golden", "export", "--format", "squad2"]) == 0
     squad = json.loads((proyecto / "golden" / "exportado.squad2.json").read_text(encoding="utf-8"))
     qas = {qa["id"]: (parrafo, qa) for art in squad["data"] for parrafo in art["paragraphs"] for qa in parrafo["qas"]}
     parrafo, qa = qas[id_r]
@@ -105,7 +105,7 @@ def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
     assert (trampa["is_impossible"], trampa["answers"]) == (True, [])
     assert parrafo_t["context"] == parrafo["context"]  # la trampa va en el párrafo de su par
 
-    assert main(["golden", "importar", "golden/exportado.squad2.json"]) == 0
+    assert main(["golden", "import", "golden/exportado.squad2.json"]) == 0
     reimportado = _banco(proyecto)
     # Conservado: la semántica QA completa, el split y la metadata de la extensión «rag».
     preguntas_qa = {i for i, c in original.items() if c["categoria"] != "conversacional"}
@@ -120,24 +120,24 @@ def test_ida_y_vuelta_plantilla_importar_squad2_importar(proyecto: Path):
 
 
 def test_exportar_csv_e_importar_da_el_mismo_banco(proyecto: Path):
-    assert main(["golden", "plantilla", "--n", "20"]) == 0
+    assert main(["golden", "template", "--n", "20"]) == 0
     _completar_un_par(proyecto / "golden" / "golden.csv")
-    assert main(["golden", "importar", "golden/golden.csv"]) == 0
+    assert main(["golden", "import", "golden/golden.csv"]) == 0
     original = _banco(proyecto)
-    assert main(["golden", "exportar", "--formato", "csv"]) == 0
+    assert main(["golden", "export", "--format", "csv"]) == 0
     exportado = proyecto / "golden" / "exportado.csv"
     assert exportado.read_bytes().startswith(b"\xef\xbb\xbf")
     assert "offset" not in exportado.read_text(encoding="utf-8-sig").splitlines()[0]  # legible: sin internos
-    assert main(["golden", "importar", "golden/exportado.csv"]) == 0
+    assert main(["golden", "import", "golden/exportado.csv"]) == 0
     assert _banco(proyecto) == original
 
 
 def test_importar_csv_con_punto_y_coma(proyecto: Path):
-    assert main(["golden", "plantilla", "--n", "20"]) == 0
+    assert main(["golden", "template", "--n", "20"]) == 0
     ruta = proyecto / "golden" / "golden.csv"
     _completar_un_par(ruta)
     _escribir(ruta, _leer(ruta), separador=";")
-    assert main(["golden", "importar", "golden/golden.csv"]) == 0
+    assert main(["golden", "import", "golden/golden.csv"]) == 0
     assert any(c["respondible"] for c in _banco(proyecto).values())
 
 
@@ -160,7 +160,7 @@ def test_squad2_externo_sin_extension_y_ocurrencia_exacta_por_contexto(proyecto:
          "answers": [{"text": "días hábiles", "answer_start": texto.index("días hábiles")}]},
         {"id": "q2", "question": "¿Quién lo aprueba?", "is_impossible": True, "answers": []},
     ], texto, titulo="reglamento-servicio")
-    assert main(["golden", "importar", "externo.json"]) == 0
+    assert main(["golden", "import", "externo.json"]) == 0
     banco = _banco(proyecto)
     evidencia = banco["q1"]["evidencias"][0]
     assert documento.index(texto) <= evidencia["offset_inicio"] < documento.index(texto) + len(texto)
@@ -169,23 +169,23 @@ def test_squad2_externo_sin_extension_y_ocurrencia_exacta_por_contexto(proyecto:
 
 # --- validar y errores ---------------------------------------------------------------
 def test_validar_detecta_corpus_modificado_sin_tocar_nada(proyecto: Path, capsys):
-    assert main(["golden", "validar"]) == 1
-    assert "ipsis golden importar" in capsys.readouterr().out
+    assert main(["golden", "validate"]) == 1
+    assert "ipsis golden import" in capsys.readouterr().out
 
-    assert main(["golden", "plantilla", "--n", "20"]) == 0
+    assert main(["golden", "template", "--n", "20"]) == 0
     _completar_un_par(proyecto / "golden" / "golden.csv")
-    assert main(["golden", "importar", "golden/golden.csv"]) == 0
-    assert main(["golden", "validar"]) == 0
+    assert main(["golden", "import", "golden/golden.csv"]) == 0
+    assert main(["golden", "validate"]) == 0
 
     banco = proyecto / "golden" / "bank"
     antes = {p.name: p.read_bytes() for p in banco.iterdir()}
     documento = proyecto / "documents" / "manual_purificador.md"
     documento.write_text(documento.read_text(encoding="utf-8").replace("24 meses", "36 meses"), encoding="utf-8")
     capsys.readouterr()
-    assert main(["golden", "validar"]) == 1
+    assert main(["golden", "validate"]) == 1
     assert "corpus cambió" in capsys.readouterr().out
     assert {p.name: p.read_bytes() for p in banco.iterdir()} == antes  # solo lectura
-    assert main(["golden", "exportar", "--formato", "csv"]) == 1  # no exporta un banco obsoleto
+    assert main(["golden", "export", "--format", "csv"]) == 1  # no exporta un banco obsoleto
 
 
 def test_importar_con_errores_los_lista_y_no_escribe_el_banco(proyecto: Path, capsys):
@@ -195,9 +195,9 @@ def test_importar_con_errores_los_lista_y_no_escribe_el_banco(proyecto: Path, ca
         {"id": "a1", "pregunta": "¿Cuánto cuesta?", "tipo": "respondible", "respuesta_literal": "999 pesos"},
         {"id": "a2", "pregunta": "¿Otra?", "tipo": "inventado", "respuesta_literal": ""},
     ])
-    assert main(["golden", "importar", "golden/malo.csv"]) == 1
+    assert main(["golden", "import", "golden/malo.csv"]) == 1
     salida = capsys.readouterr().out
     assert "malo.csv:2" in salida and "999 pesos" in salida and "malo.csv:3" in salida
     assert "Traceback" not in salida
     assert not (proyecto / "golden" / "bank").exists()
-    assert main(["golden", "importar", "golden/no_existe.csv"]) == 1
+    assert main(["golden", "import", "golden/no_existe.csv"]) == 1

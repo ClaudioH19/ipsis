@@ -4,7 +4,7 @@ El cliente escribe preguntas y copia la respuesta tal cual del documento; aquí
 se ubica ese texto en el corpus, se calculan los offsets y se arma el banco
 versionado (``ipsis.evaluacion.banco``). Ver docs/guia/golden.md.
 
-Nada de esto entrena: el golden solo mide y, en ``ipsis calibrar``, elige umbrales.
+Nada de esto entrena: el golden solo mide y, en ``ipsis calibrate``, elige umbrales.
 """
 from __future__ import annotations
 
@@ -454,7 +454,7 @@ def a_banco(
 
 
 # ---------------------------------------------------------------------------
-# Plantilla para el cliente (``ipsis golden plantilla``)
+# Plantilla para el cliente (``ipsis golden template``)
 # ---------------------------------------------------------------------------
 PROPORCION_TRAMPAS = 0.35
 LARGO_MAXIMO_SECCION = 1200
@@ -605,7 +605,7 @@ def escribir_plantilla(plantilla: Plantilla, carpeta: str | Path) -> tuple[Path,
 
 
 # ---------------------------------------------------------------------------
-# Escritura y exportación (``ipsis golden importar`` / ``exportar``)
+# Escritura y exportación (``ipsis golden import`` / ``exportar``)
 # ---------------------------------------------------------------------------
 TIPO_PUBLICO = {
     CategoriaPregunta.EXACTA: "respondible",

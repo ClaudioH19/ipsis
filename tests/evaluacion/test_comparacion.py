@@ -71,5 +71,5 @@ def test_cli_comparar_escribe_informe(tmp_path):
         rutas.append(str(ruta))
     salida = tmp_path / "comparacion.json"
 
-    assert main(["comparar", *rutas, "--salida", str(salida)]) == 0
+    assert main(["compare", *rutas, "--output", str(salida)]) == 0
     assert '"decisiones": []' in salida.read_text(encoding="utf-8")
