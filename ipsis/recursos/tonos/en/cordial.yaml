@@ -1,0 +1,177 @@
+# Cordial tone (default): kind and clear. The first variant of each situation
+# is the text used before tones existed.
+tone: cordial
+description: Kind and clear; the default tone.
+situations:
+  greeting:
+  - Hi! I'm {assistant_name}. I answer questions about {domain_description} quoting the exact text of the document. What do you need to know?
+  - 'Hi! Ask me anything about {domain_description}: I look for the answer in the document and show you where I found it.'
+  - Hello! {assistant_name} here. Tell me what you are looking for in {domain_description} and I will show you what the text says.
+  - Hi, I'm {assistant_name}. What would you like to check in {domain_description}?
+  - Nice to see you! Ask me anything about {domain_description} and I will show you the exact quote.
+  - Hello, {assistant_name} here. Ask me about {domain_description} and I will show you the exact passage.
+  - Hello. I am here to help with {domain_description}; every answer comes with its quote.
+  - Hi, I'm {assistant_name}. Write your question about {domain_description} and I will look for it in the text.
+  thanks:
+  - You're welcome. If you have another question about {domain_description}, I'm here.
+  - Glad to help. Any other question about {domain_description}, just ask.
+  - My pleasure! If you want to check anything else in {domain_description}, ask me.
+  - No problem. I'm still here for anything you need about {domain_description}.
+  - Happy it helped. Anything else about {domain_description}?
+  - Thank you too. If you need anything else about {domain_description}, ask any time.
+  - Glad it helped. I am still available for {domain_description}.
+  - My pleasure. Can I help with something else about {domain_description}?
+  farewell:
+  - Goodbye.
+  - See you. Come back whenever you need to check the document.
+  - Take care! I'll be here when you need to review the documents.
+  - See you soon. We can keep checking whenever you like.
+  - Bye, and thanks for asking.
+  - Until next time.
+  - Have a good day ahead.
+  - Whenever you like, I will be here to keep looking things up.
+  capability:
+  - I'm {assistant_name}. I answer questions about {domain_description} quoting the exact text of the document. If the information is not there, I tell you instead of making up an answer.
+  - I search {domain_description} and give you literal text with its source.
+  - 'I''m {assistant_name}: I find the passage in {domain_description} that answers your question and show it as it is, with its quote.'
+  - I only answer with what {domain_description} says, quoted word for word. If something is missing, I tell you.
+  - 'Ask me about {domain_description}: I show you the exact text and where it appears, without making anything up.'
+  - 'I''m {assistant_name}. I don''t write my own answers: I show you the passage of {domain_description} that answers and its source.'
+  - I read {domain_description} for you and bring back the exact text, with where it appears.
+  - If something isn't in {domain_description}, I tell you; if it is, I show you the quote.
+  opening:
+  - 'This is what the document says:'
+  - 'I found this in the document:'
+  - 'The document puts it this way:'
+  - 'According to the loaded text:'
+  - 'Here is what I found:'
+  - 'Here is what the document indicates:'
+  - 'The text explains it like this:'
+  - 'This is what appears in the document:'
+  - 'Based on what I found in the text:'
+  - 'Here is how the document answers it:'
+  - 'Take a look at what the document says:'
+  - 'This is the part of the document that answers it:'
+  addition:
+  - 'It also adds:'
+  - 'In another section, the document adds:'
+  - 'It also says:'
+  - 'And it continues:'
+  - 'Besides, I found this:'
+  - 'The document also points out:'
+  - 'Further on, the text adds:'
+  - 'There is one more thing worth seeing:'
+  - 'Another part of the document says:'
+  - 'I am adding this as well:'
+  - 'To round it out, the text states:'
+  - 'Related to the above, it says:'
+  condition:
+  - 'This applies under a condition:'
+  - 'There is an associated condition:'
+  - 'The document makes it conditional:'
+  - 'Keep this condition in mind:'
+  - 'For it to apply, the document states:'
+  - 'The document sets this condition:'
+  - 'This depends on the following:'
+  - 'Check this condition:'
+  exception:
+  - 'With one exception:'
+  - 'There is a caveat:'
+  - 'The document includes an exception:'
+  - 'Watch out for this exception:'
+  - 'It does not apply in this case:'
+  - 'But there is a case where it does not apply:'
+  - 'The document leaves out this case:'
+  - 'Consider this caveat:'
+  related_intro:
+  - 'I couldn''t find a direct answer. This is what the documents say about the topic:'
+  - 'There is no direct answer in the documents, but this is the most related:'
+  - 'I didn''t find exactly what you are looking for. This is the closest in the documents:'
+  - 'I don''t see a direct answer; here is what the documents say about the topic:'
+  - 'What you ask does not appear directly. This is the related text I found:'
+  - 'I don''t have a direct answer, but this relates to your question:'
+  - 'The documents don''t answer it as such. This is what comes closest:'
+  - 'I couldn''t pin down a direct answer; this is the related text I found:'
+  - 'There is no exact answer, although the documents say this about the topic:'
+  - 'The direct answer isn''t there. Let me share what relates most:'
+  - 'I didn''t find exactly that, but the documents cover the topic like this:'
+  - 'Without a direct answer at hand, this is the most relevant text:'
+  missing_focus:
+  - 'I couldn''t find specific information about «{term}». This is the closest:'
+  - 'The documents do not specifically cover «{term}». This is the most similar:'
+  - 'There is nothing specific about «{term}», but this is related:'
+  - 'I didn''t find «{term}» in the documents. Here is the closest:'
+  - 'There is no direct answer about «{term}». This is the related text:'
+  - 'There is no specific information about «{term}». This is what comes closest:'
+  - 'I searched for «{term}» and it isn''t there. Here is the related text:'
+  - 'The documents say nothing direct about «{term}». Take a look at the closest:'
+  no_answer:
+  - I couldn't find that information in the available documents.
+  - That information does not appear in the available documents.
+  - I searched the documents and found nothing about that.
+  - 'I don''t have that information: it is not in the loaded documents.'
+  - Sorry, that is not in the available documents.
+  - I wasn't able to find that in the available documents.
+  - I went through the documents and that information isn't there.
+  - That isn't covered in the documents I have.
+  - For now there is nothing about that in the documents.
+  - That question falls outside what the documents say.
+  - There is no data about that in the loaded documents.
+  - Unfortunately, I found no answer in the documents.
+  premise_not_found:
+  - I couldn't find information about "{entity}" in the available documents. It may not exist or be outside what your documents cover.
+  - The documents do not mention "{entity}". It may be outside what they cover.
+  - I didn't find "{entity}" in the available documents.
+  - There is no information about "{entity}" in your documents; it may not be part of them.
+  - I searched for "{entity}" and it does not appear in the available documents.
+  - There is no trace of "{entity}" in the available documents.
+  - '"{entity}" is not in the documents. It may be outside their scope.'
+  - I went through the documents and didn't find "{entity}".
+  welcome:
+  - Hi, how can I help you?
+  - Hi! Ask me anything about the documents.
+  - Hello, I'm {assistant_name}. What would you like to check?
+  - What would you like to know? I answer quoting the document.
+  - Hi! Type your question and I will look for the answer in the text.
+  - Hello. Write your question and I will show you the exact quote.
+  - What can I help you with today?
+  waiting:
+  - Searching the document
+  - Reviewing the documents
+  - Looking for the exact quote
+  - One moment, I'm reading
+  - Looking for the answer in the text
+  - Reading the documents
+  - One moment, looking for the answer
+  citations_hint:
+  - You can check it in the quote below.
+  - The original text is below so you can verify it.
+  - See the quote below to know where it comes from.
+  - The exact source is right below.
+  - Check it yourself in the quote below.
+  - The original passage is right below.
+  - The quote below shows where it comes from.
+  network_error:
+  - Could not reach the assistant. Check your connection and try again.
+  - It seems there is no connection to the assistant. Try again in a moment.
+  - I couldn't connect. Check your connection and try again.
+  - The connection to the assistant was lost. Please try again.
+  - I couldn't reach the service. Try again in a few seconds.
+  - The connection failed. Check your internet and try again.
+  - The assistant is not responding right now. Try again in a few seconds.
+  rate_limit_error:
+  - Too many questions in a row. Wait a few seconds and try again.
+  - We are going a bit fast. Wait a few seconds before the next question.
+  - I got many questions at once. Give me a few seconds and try again.
+  - I need a short pause. Try again in a few seconds.
+  - Wait a moment before asking again.
+  - You asked several questions in a row. Please wait a moment.
+  - Give me a few seconds and we will continue with your questions.
+  service_error:
+  - The assistant is not available right now. Try again later.
+  - The service is getting ready. Try again in a moment.
+  - I can't answer right now. Try again in a while.
+  - The assistant is busy. Try again in a few seconds.
+  - There was a problem with the service. Please try again later.
+  - The service ran into a problem. Please try again in a while.
+  - I can't help right at this moment. Please try again later.

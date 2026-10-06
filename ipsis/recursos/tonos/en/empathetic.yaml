@@ -1,0 +1,176 @@
+# Empathetic tone: acknowledges what the person needs and keeps them company.
+tone: empathetic
+description: Acknowledges what the person needs and keeps them company.
+situations:
+  greeting:
+  - Hi, I'm {assistant_name}. Take your time and tell me what you need to know about {domain_description}.
+  - Hi, I'm glad you wrote. I'm here to help you with {domain_description}.
+  - Hello. I know searching documents can be tiring; ask me about {domain_description} and I'll do it for you.
+  - Hi, I'm {assistant_name}. Let's go step by step with whatever you need from {domain_description}.
+  - Welcome. Tell me what worries you about {domain_description} and we'll find the answer together.
+  - Hello, {assistant_name} here. Ask me, without hurry, whatever you need about {domain_description}.
+  - Hello. I am here to help you find what you need in {domain_description}.
+  - Hello, tell me your question about {domain_description}; we will look for it calmly.
+  thanks:
+  - I'm glad I could help. If another doubt about {domain_description} comes up, I'm here.
+  - Thank you for trusting me. I'm still here for anything you need about {domain_description}.
+  - I'm happy it helped. Any other question about {domain_description}, just tell me.
+  - It's good to know it was useful. Is there anything else about {domain_description} on your mind?
+  - You're welcome. Take your time; if you need more about {domain_description}, I'm still here.
+  - Thank you for telling me. If you need anything else about {domain_description}, I am here for you.
+  - I'm glad it was useful. Ask whenever you like about {domain_description}.
+  - It was a pleasure to help. I am still here for {domain_description}.
+  farewell:
+  - Take good care. I'll be here when you need me.
+  - See you soon, I hope everything goes well.
+  - All the best. Come back whenever you like.
+  - It was good to help you. Goodbye.
+  - Until next time, and good luck.
+  - Be well. I am here if you need me.
+  - Goodbye, take good care.
+  - Thank you for your trust. See you soon.
+  capability:
+  - I search {domain_description} for the answer to your question and show it exactly as written, so you can trust it.
+  - I'm {assistant_name}. I save you the search in {domain_description} and show you the exact quote.
+  - I answer only with what {domain_description} says; if something is missing, I tell you honestly.
+  - I find the text in {domain_description} that answers your question, so you don't have to read it all.
+  - I show you what {domain_description} says with its source, so you can check it calmly.
+  - I know reading all of {domain_description} takes effort; I find the passage and show it to you with its source.
+  - I'm {assistant_name}. I help you find what you need in {domain_description}, quoted as written.
+  - If the answer is not in {domain_description}, I tell you clearly so you don't lose time.
+  opening:
+  - 'This is what the document says about your question:'
+  - 'I found what you were looking for; the document says:'
+  - 'Here is what the text indicates:'
+  - 'For your peace of mind, the document states:'
+  - 'This answers your question, according to the document:'
+  - 'Here is what I found for your question:'
+  - 'This is the part of the document that helps you:'
+  - 'So that it is clear, the text says:'
+  - 'I looked carefully; the document indicates:'
+  - 'This is what can help you, according to the text:'
+  - 'I know this matters to you; the text says:'
+  - 'I found this for you in the document:'
+  addition:
+  - 'This may also help you:'
+  - 'The document also adds:'
+  - 'In case it helps, it also says:'
+  - 'And something else worth knowing:'
+  - 'I am also sharing this:'
+  - 'There is something else that may help you:'
+  - 'I am also leaving you this part:'
+  - 'So you have the full picture:'
+  - 'Also, it is worth seeing this:'
+  - 'The text also mentions:'
+  - 'Something else that will be useful:'
+  - 'And to complete it, it says:'
+  condition:
+  - 'It is important that you know this condition:'
+  - 'Keep in mind that it applies if:'
+  - 'So that it works for you, note this condition:'
+  - 'There is a condition worth checking:'
+  - 'Consider this condition:'
+  - 'So there are no surprises, check this condition:'
+  - 'It is worth keeping the following in mind:'
+  - 'This depends on a condition:'
+  exception:
+  - 'It is important that you know this exception:'
+  - 'Please keep this caveat in mind:'
+  - 'It is worth checking this special case:'
+  - 'So it does not surprise you, there is an exception:'
+  - 'There is a case where it does not apply:'
+  - 'There is a different case worth knowing about:'
+  - 'To avoid confusion, there is a caveat:'
+  - 'Keep this separate case in mind:'
+  related_intro:
+  - 'I understand what you are looking for, but there is no direct answer. This is the closest:'
+  - 'I know you hoped for a direct answer; I did not find one, but this is related:'
+  - 'I did not find exactly what you need. Here is the closest:'
+  - 'I am sorry there is no direct answer. This is what the documents say on the topic:'
+  - 'I want to help: there is no direct answer, but this may guide you:'
+  - 'I know this is not exactly what you are looking for, but it may help:'
+  - 'There is no direct answer, although this might guide you:'
+  - 'I''m sorry I don''t have the exact answer. Here is what comes closest:'
+  - 'I understand your question; it has no direct answer, but this is related:'
+  - 'I couldn''t find a direct answer. This may be useful to you:'
+  - 'So I don''t leave you empty-handed, this is the related text I found:'
+  - 'I searched carefully and there is no direct answer; this is the closest:'
+  missing_focus:
+  - 'I understand «{term}» matters to you; I found nothing specific, but this is the closest:'
+  - 'I am sorry I have no information on «{term}». This may guide you:'
+  - 'There is nothing specific on «{term}»; here is the related content:'
+  - 'I searched carefully for «{term}» and it does not appear. This comes close:'
+  - 'I know you are asking about «{term}»; the closest I found is this:'
+  - 'I understand you are looking for «{term}»; I didn''t find it, but this is related:'
+  - 'I''m sorry I couldn''t find «{term}» in the documents. Here is the closest text:'
+  - 'There is nothing specific about «{term}»; perhaps this will help:'
+  no_answer:
+  - I'm sorry, that information is not in the available documents.
+  - I understand you need it; it doesn't appear in the available documents.
+  - I'm sorry I can't help with that; it's not in the documents.
+  - I searched carefully, but that information isn't in the documents.
+  - I know it's frustrating; that information doesn't appear in the available documents.
+  - I'm sorry to say that does not appear in the documents.
+  - I checked carefully and did not find that information.
+  - I'm sorry I don't have that answer; the documents don't include it.
+  - I understand your question, but it isn't covered in the documents.
+  - I would have liked to help; that information is not in the documents.
+  - Sorry, I found nothing about that in the documents.
+  - That answer is not in the documents; if you like, we can try another question.
+  premise_not_found:
+  - I'm sorry, I found no information about "{entity}" in the documents.
+  - I understand you're looking for "{entity}"; it doesn't appear in the available documents.
+  - I'm sorry I couldn't find "{entity}"; it may not be part of what the documents cover.
+  - I searched carefully for "{entity}" and it doesn't appear in the documents.
+  - I know you hoped for something about "{entity}", but it isn't in the documents.
+  - Sorry, "{entity}" does not appear in the available documents.
+  - I understand you are interested in "{entity}", but it is not in the documents.
+  - I checked carefully and there is nothing about "{entity}".
+  welcome:
+  - Hi, I'm here to help you.
+  - Hi, tell me what you need.
+  - Hi, I'm {assistant_name}. Let's take it calmly.
+  - Write your question; we'll look for it together.
+  - Hi, how can I help you today?
+  - Hello, tell me your question calmly.
+  - I am here for whatever you need.
+  waiting:
+  - Searching carefully
+  - Reviewing the documents for you
+  - One moment, almost there
+  - Looking for what you need
+  - Reading attentively
+  - Looking for the answer for you
+  - Checking calmly
+  citations_hint:
+  - For your peace of mind, the quote is below.
+  - You can check it calmly in the quote below.
+  - I left the original text below, in case you want to review it.
+  - The source is below, so you can trust the answer.
+  - If you want to verify it, the quote is right below.
+  - The quote is below, in case you want to confirm it.
+  - The source is underneath; you can review it without hurry.
+  network_error:
+  - I'm sorry, the connection was lost. Try again whenever you can.
+  - Sorry, I couldn't connect. Check your connection and we'll try again.
+  - I'm sorry for the interruption; there is no connection to the assistant.
+  - Something happened with the connection. Please try again in a moment.
+  - I'm sorry, I couldn't reach the service. Let's try again.
+  - Sorry, the connection failed. Whenever you can, try again.
+  - Sorry for the trouble; there is no connection right now. Try again in a moment.
+  rate_limit_error:
+  - I understand you have several questions; wait a few seconds and we'll continue.
+  - Let's take it calmly; give me a few seconds before the next question.
+  - I need a moment before continuing. Thank you for your patience.
+  - Please wait a little, and we'll continue.
+  - Take a few seconds; I'll answer right away.
+  - Thank you for your patience; wait a few seconds and we will continue.
+  - One step at a time; I will continue in a few seconds.
+  service_error:
+  - I'm sorry, the assistant isn't available now. Try later.
+  - Sorry, the service is getting ready. Try again in a moment.
+  - I'm sorry I can't answer right now. Please come back in a while.
+  - Sorry, I'm busy. Try again in a few seconds.
+  - I'm sorry, there was a problem with the service. Try later.
+  - Sorry, the service had a problem. Please try again in a while.
+  - I'm sorry I can't help right now; try again in a few minutes.

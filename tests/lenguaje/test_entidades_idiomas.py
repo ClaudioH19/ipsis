@@ -6,10 +6,10 @@ from __future__ import annotations
 
 import pytest
 
-from rag.consulta.etapas.conversacional import detectar_conversacional
-from rag.consulta.etapas.redaccion import cargar_plantillas
-from rag.lenguaje.entidades import extraer_articulos, extraer_fechas, extraer_plazos
-from rag.lenguaje.paquete import cargar_paquete
+from ipsis.consulta.etapas.conversacional import detectar_conversacional
+from ipsis.consulta.etapas.redaccion import cargar_plantillas
+from ipsis.lenguaje.entidades import extraer_articulos, extraer_fechas, extraer_plazos
+from ipsis.lenguaje.paquete import cargar_paquete
 
 PLAZOS = {
     "es": [("dentro de cinco días hábiles", "5_dia_habiles"), ("dura 4 semanas", "4_semana"),
@@ -36,12 +36,12 @@ REFERENCIAS = {
            ("o anexo 2", "anexo_2"), ("os artigos 20 a 23", "articulo_20_a_23")],
 }
 CONVERSACION = {
-    "es": [("hola", "saludo"), ("muchas gracias", "agradecimiento"), ("chao", "despedida"),
-           ("¿qué puedes hacer?", "capacidad"), ("¿cuánto dura la garantía?", None)],
-    "en": [("hello there", "saludo"), ("thanks a lot", "agradecimiento"), ("bye", "despedida"),
-           ("what can you do?", "capacidad"), ("how long is the warranty?", None)],
-    "pt": [("olá", "saludo"), ("muito obrigado", "agradecimiento"), ("tchau", "despedida"),
-           ("o que você pode fazer?", "capacidad"), ("quanto dura a garantia?", None)],
+    "es": [("hola", "greeting"), ("muchas gracias", "thanks"), ("chao", "farewell"),
+           ("¿qué puedes hacer?", "capability"), ("¿cuánto dura la garantía?", None)],
+    "en": [("hello there", "greeting"), ("thanks a lot", "thanks"), ("bye", "farewell"),
+           ("what can you do?", "capability"), ("how long is the warranty?", None)],
+    "pt": [("olá", "greeting"), ("muito obrigado", "thanks"), ("tchau", "farewell"),
+           ("o que você pode fazer?", "capability"), ("quanto dura a garantia?", None)],
 }
 
 
@@ -88,7 +88,7 @@ def test_respuestas_conversacionales_sustituyen_variables(idioma):
 
 
 def test_sin_paquete_no_hay_reglas_de_idioma():
-    from rag.lenguaje.entidades import usar_idioma
+    from ipsis.lenguaje.entidades import usar_idioma
 
     with usar_idioma(None):
         assert extraer_plazos("dentro de cinco días hábiles") == []

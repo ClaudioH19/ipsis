@@ -18,13 +18,13 @@ import pytest
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 
-from rag.configuracion.personalidad import EVENTOS
+from ipsis.configuracion.personalidad import EVENTOS
 
 RAIZ = Path(__file__).resolve().parents[2]
-ESTATICOS = RAIZ / "rag/servicio/estaticos"
-FOLIO = RAIZ / "rag/recursos/avatares/folio.avatar.json"
-CONTRATO = ("inactivo", "saludo", "atento", "escuchando", "asentir", "pensando", "pensando-largo", "contento",
-            "dudoso", "apenado", "amable", "despedida", "preocupado", "somnoliento", "despertar")
+ESTATICOS = RAIZ / "ipsis/servicio/estaticos"
+FOLIO = RAIZ / "ipsis/recursos/avatares/folio.avatar.json"
+CONTRATO = ("idle", "wave", "attentive", "listening", "nod", "thinking", "thinking-long", "happy",
+            "unsure", "sorry", "kind", "goodbye", "worried", "sleepy", "wake-up")
 
 MOTOR_FALSO = """
 export function createAvatar(el, o) {
@@ -64,15 +64,15 @@ def test_folio_lo_acepta_la_libreria():
 
 
 def test_doctor_y_config_usan_folio(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    from rag.aplicacion.personalidad import config_avatar_publica
-    from rag.cli import main
+    from ipsis.aplicacion.personalidad import config_avatar_publica
+    from ipsis.cli import main
 
     monkeypatch.chdir(tmp_path)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     publica = config_avatar_publica()
-    assert publica["activo"] and publica["url_definicion"] == "/avatares/folio.avatar.json"
-    assert publica["eventos"]["pensando_largo"] == "pensando-largo"
-    assert publica["respaldos"]["pensando_largo"] == "pensando"
+    assert publica["enabled"] and publica["definition_url"] == "/avatars/folio.avatar.json"
+    assert publica["events"]["thinking_long"] == "thinking-long"
+    assert publica["fallbacks"]["thinking_long"] == "thinking"
 
 
 # --- navegador ---------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ def _app(estado: dict):
     @app.get("/", response_class=HTMLResponse)
     def pagina():
         return """<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body style="margin:0">
-<rag-extractivo-chat titulo="Ayuda"></rag-extractivo-chat><script src="/widget.js"></script></body></html>"""
+<ipsis-chat titulo="Ayuda"></ipsis-chat><script src="/widget.js"></script></body></html>"""
 
     @app.get("/widget.js")
     def widget():
@@ -97,7 +97,7 @@ def _app(estado: dict):
             return FileResponse(ESTATICOS / "avatar.js", media_type="text/javascript")
         return Response(MOTOR_FALSO, media_type="text/javascript")
 
-    @app.get("/avatares/folio.avatar.json")
+    @app.get("/avatars/folio.avatar.json")
     def definicion():
         return json.loads(FOLIO.read_text(encoding="utf-8"))
 
@@ -105,15 +105,15 @@ def _app(estado: dict):
     def config():
         eventos = {e: s for e, (s, _) in EVENTOS.items()}
         eventos.update(estado.get("eventos", {}))
-        return {"nombre_asistente": "Ayuda", "descripcion_dominio": "manual", "saludo": "Hola.", "interfaz": {},
-                "microcopia": {}, "ubicacion": {},
-                "avatar": {"activo": True, "nombre": "folio", "url_definicion": "/avatares/folio.avatar.json",
-                           "url_motor": "/avatar.js", "ubicacion": "cabecera", "tamano": 56, "en_lanzador": False,
-                           "mirada": {"activa": True, "amplitud_ojos": 6, "amplitud_cabeza": 8, "zona_muerta": 24},
-                           "inactividad_min": 2, "eventos": eventos,
-                           "respaldos": {e: r for e, (_, r) in EVENTOS.items() if r in EVENTOS}}}
+        return {"assistant_name": "Ayuda", "domain_description": "manual", "greeting": "Hola.", "interface": {},
+                "microcopy": {}, "placement": {},
+                "avatar": {"enabled": True, "name": "folio", "definition_url": "/avatars/folio.avatar.json",
+                           "engine_url": "/avatar.js", "placement": "header", "size": 56, "in_launcher": False,
+                           "gaze": {"enabled": True, "eye_range": 6, "head_range": 8, "dead_zone": 24},
+                           "idle_minutes": 2, "events": eventos,
+                           "fallbacks": {e: r for e, (_, r) in EVENTOS.items() if r in EVENTOS}}}
 
-    @app.post("/consultar")
+    @app.post("/ask")
     async def consultar(request: Request):
         import asyncio
 
@@ -121,9 +121,9 @@ def _app(estado: dict):
             await asyncio.sleep(0.02)
         if estado.get("fallar"):
             return Response(status_code=500)
-        return {"estado": estado.get("estado", "ok"), "nivel_servicio": "normal", "plan": "extractivo",
-                "latencia_ms": 1, "confianza": {"top1": 0.9, "margen": 0.1, "acuerdo_bm25": None},
-                "respuesta": "Respuesta de prueba.", "respuesta_exacta": None, "fragmentos": []}
+        return {"status": estado.get("estado", "ok"), "service_level": "normal", "plan": "extractive",
+                "latency_ms": 1, "confidence": {"top1": 0.9, "margin": 0.1, "bm25_agreement": None},
+                "answer": "Respuesta de prueba.", "exact_answer": None, "fragments": []}
 
     return app
 
@@ -176,8 +176,10 @@ def _abrir(navegador, base: str, reducido: bool = False):
                               reduced_motion="reduce" if reducido else "no-preference")
     page.clock.install()
     page.goto(base)
-    page.evaluate("window.RagChat.abrir()")
-    _esperar(page, "window.RagChat.avatar.estado().listo")
+    page.evaluate("window.Ipsis.open()")
+    _esperar(page, "window.Ipsis.avatar.state().ready")
+    # Con el reloj simulado las animaciones CSS no avanzan: el panel queda abierto del todo.
+    page.evaluate("document.querySelector('ipsis-chat').shadowRoot.getAnimations().forEach(a => a.finish())")
     return page
 
 
@@ -194,41 +196,41 @@ def test_secuencia_de_una_pregunta(navegador, servidor):
     base, estado = servidor
     page = _abrir(navegador, base)
     llamadas = _llamadas(page)
-    assert llamadas[0] == ["crear", "inactivo"] and ["play", "saludo"] in llamadas
+    assert llamadas[0] == ["crear", "idle"] and ["play", "wave"] in llamadas
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "atento"]  # el saludo terminó: vuelve al persistente
+    assert _ultima(page) == ["play", "attentive"]  # el saludo terminó: vuelve al persistente
 
-    page.locator("rag-extractivo-chat >> #rw-input").press_sequentially("hola")
-    assert _ultima(page) == ["play", "escuchando"]
+    page.locator("ipsis-chat >> #rw-input").press_sequentially("hola")
+    assert _ultima(page) == ["play", "listening"]
     page.clock.run_for(1300)  # 1,2 s sin teclear
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
 
     estado["retener"] = True
     _limpiar(page)
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
-    assert _llamadas(page)[0] == ["play", "asentir"]
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
+    assert _llamadas(page)[0] == ["play", "nod"]
     page.clock.run_for(1700)  # asentir de Folio: 1,58 s
-    assert _ultima(page) == ["play", "pensando"]
+    assert _ultima(page) == ["play", "thinking"]
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "pensando-largo"]
+    assert _ultima(page) == ["play", "thinking-long"]
     estado["retener"] = False
-    page.wait_for_selector("rag-extractivo-chat >> text=Respuesta de prueba.")
-    assert _ultima(page) == ["play", "contento"]
+    page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
+    assert _ultima(page) == ["play", "happy"]
     page.clock.run_for(3500)  # contento de Folio: 3,02 s
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
     page.close()
 
 
 @pytest.mark.browser
-@pytest.mark.parametrize(("estado_respuesta", "clave"), [("relacionado", "dudoso"), ("sin_respuesta", "apenado"),
-                                                         ("conversacional", "amable")])
+@pytest.mark.parametrize(("estado_respuesta", "clave"), [("related", "unsure"), ("no_answer", "sorry"),
+                                                         ("conversational", "kind")])
 def test_cada_estado_de_respuesta(navegador, servidor, estado_respuesta, clave):
     base, estado = servidor
     estado["estado"] = estado_respuesta
     page = _abrir(navegador, base)
-    page.locator("rag-extractivo-chat >> #rw-input").fill("pregunta")
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
-    page.wait_for_selector("rag-extractivo-chat >> text=Respuesta de prueba.")
+    page.locator("ipsis-chat >> #rw-input").fill("pregunta")
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
+    page.wait_for_selector("ipsis-chat >> text=Respuesta de prueba.")
     assert _ultima(page) == ["play", clave]
     page.close()
 
@@ -238,28 +240,28 @@ def test_un_error_durante_pensando_gana(navegador, servidor):
     base, estado = servidor
     estado["fallar"] = True
     page = _abrir(navegador, base)
-    page.locator("rag-extractivo-chat >> #rw-input").fill("pregunta")
-    page.locator("rag-extractivo-chat >> #rw-input").press("Enter")
-    _esperar(page, "(window.__llamadas || []).some(l => l[1] === 'preocupado')")
+    page.locator("ipsis-chat >> #rw-input").fill("pregunta")
+    page.locator("ipsis-chat >> #rw-input").press("Enter")
+    _esperar(page, "(window.__llamadas || []).some(l => l[1] === 'worried')")
     page.clock.run_for(3000)
-    assert _ultima(page) == ["play", "atento"]  # el transitorio vuelve al persistente
+    assert _ultima(page) == ["play", "attentive"]  # el transitorio vuelve al persistente
     page.close()
 
 
 @pytest.mark.browser
 def test_prioridades_y_respaldo(navegador, servidor):
     base, estado = servidor
-    estado["eventos"] = {"respuesta_ok": "no-existe"}
+    estado["eventos"] = {"answer_ok": "no-existe"}
     page = _abrir(navegador, base)
     page.clock.run_for(3000)
     _limpiar(page)
-    page.evaluate("window.RagChat.avatar.disparar('error')")
-    page.evaluate("window.RagChat.avatar.disparar('lanzador')")  # menor prioridad: se descarta
-    assert _llamadas(page) == [["play", "preocupado"]]
+    page.evaluate("window.Ipsis.avatar.trigger('error')")
+    page.evaluate("window.Ipsis.avatar.trigger('launcher')")  # menor prioridad: se descarta
+    assert _llamadas(page) == [["play", "worried"]]
     page.clock.run_for(2000)
     _limpiar(page)
-    page.evaluate("window.RagChat.avatar.disparar('respuesta_ok')")
-    assert _llamadas(page) == [["play", "inactivo"]]  # la clave falta: respaldo del evento
+    page.evaluate("window.Ipsis.avatar.trigger('answer_ok')")
+    assert _llamadas(page) == [["play", "idle"]]  # la clave falta: respaldo del evento
     page.close()
 
 
@@ -268,10 +270,10 @@ def test_inactividad_y_despertar(navegador, servidor):
     base, _ = servidor
     page = _abrir(navegador, base)
     page.clock.run_for(2 * 60_000 + 500)
-    assert _ultima(page) == ["play", "somnoliento"]
+    assert _ultima(page) == ["play", "sleepy"]
     _limpiar(page)
-    page.locator("rag-extractivo-chat >> #rw-input").press_sequentially("a")
-    assert _llamadas(page)[0] == ["play", "despertar"]
+    page.locator("ipsis-chat >> #rw-input").press_sequentially("a")
+    assert _llamadas(page)[0] == ["play", "wake-up"]
     page.close()
 
 
@@ -286,7 +288,7 @@ def test_pestana_oculta_pausa(navegador, servidor):
 
 
 def _centro_avatar(page) -> tuple[float, float]:
-    caja = page.evaluate("(() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot"
+    caja = page.evaluate("(() => { const r = document.querySelector('ipsis-chat').shadowRoot"
                          ".querySelector('.rw-avatar-lienzo').getBoundingClientRect(); "
                          "return [r.left + r.width / 2, r.top + r.height / 2]; })()")
     return caja[0], caja[1]
@@ -314,7 +316,7 @@ def test_grilla_de_mirada(navegador, servidor):
         assert _ultima(page) == ["expr", clave], (x, y)
 
     page.clock.run_for(1600)  # quieto 1,5 s: vuelve al centro y al persistente
-    assert _ultima(page) == ["play", "atento"]
+    assert _ultima(page) == ["play", "attentive"]
 
     _limpiar(page)
     _mover(page, cx + 10, cy - 8)  # zona muerta
@@ -347,14 +349,14 @@ def test_folio_real_con_la_grilla(navegador, servidor):
     page = navegador.new_page(viewport={"width": 1280, "height": 800})
     errores: list[str] = []
     page.on("pageerror", lambda e: errores.append(str(e)))
-    page.add_init_script("window.__avatar = []; document.addEventListener('rag:avatar', "
+    page.add_init_script("window.__avatar = []; document.addEventListener('ipsis:avatar', "
                          "e => window.__avatar.push(e.detail));")
     page.goto(base)
-    page.evaluate("window.RagChat.abrir()")
-    _esperar(page, "window.RagChat.avatar.estado().listo")
-    assert page.evaluate("window.__avatar[0]") == {"estado": "listo", "nombre": "folio"}
+    page.evaluate("window.Ipsis.open()")
+    _esperar(page, "window.Ipsis.avatar.state().ready")
+    assert page.evaluate("window.__avatar[0]") == {"state": "ready", "name": "folio"}
     for evento in EVENTOS:
-        assert page.evaluate(f"window.RagChat.avatar.disparar('{evento}')")
-    assert not [e for e in page.evaluate("window.__avatar") if e.get("estado") == "error"]
+        assert page.evaluate(f"window.Ipsis.avatar.trigger('{evento}')")
+    assert not [e for e in page.evaluate("window.__avatar") if e.get("state") == "error"]
     assert not errores, errores
     page.close()

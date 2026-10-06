@@ -7,14 +7,14 @@ import pytest
 from pydantic import ValidationError
 
 from apoyo import BANCO_SINTETICO, CORPUS, RAIZ_REPO
-from rag.evaluacion.banco import (
+from ipsis.evaluacion.banco import (
     CasoEvaluacion,
     CategoriaPregunta,
     cargar_banco,
     hash_banco,
     validar_evidencias_contra_corpus,
 )
-from rag.ingesta.parsear import parsear_markdown
+from ipsis.ingesta.parsear import parsear_markdown
 
 MANIFIESTO = BANCO_SINTETICO
 
@@ -106,6 +106,6 @@ def test_loader_rechaza_version_de_caso_distinta(tmp_path):
 
 
 def test_el_repositorio_documenta_el_golden_pero_no_incluye_uno():
-    assert (RAIZ_REPO / "docs" / "guia" / "golden.md").is_file()
+    assert (RAIZ_REPO / "docs" / "guide" / "golden.md").is_file()
     assert not (RAIZ_REPO / "golden").exists()
     assert not (RAIZ_REPO / "data").exists()

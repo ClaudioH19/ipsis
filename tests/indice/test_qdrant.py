@@ -7,8 +7,8 @@ integración real (indexar + consultar) la cubren las pruebas marcadas
 """
 import pytest
 
-from rag.indice.estadisticas import EstadisticasLexicas
-from rag.indice.qdrant import (
+from ipsis.indice.estadisticas import EstadisticasLexicas
+from ipsis.indice.qdrant import (
     cargar_estadisticas,
     crear_cliente_qdrant,
     nombre_coleccion_versionada,
@@ -16,9 +16,9 @@ from rag.indice.qdrant import (
     ruta_estadisticas,
     vector_disperso,
 )
-from rag.lenguaje.lexico import bm25_consulta, bm25_doc, id_termino
-from rag.lenguaje.paquete import cargar_paquete
-from rag.lenguaje.texto import terminos
+from ipsis.lenguaje.lexico import bm25_consulta, bm25_doc, id_termino
+from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.texto import terminos
 
 
 # ---------------------------------------------------------------------------
@@ -48,7 +48,7 @@ def test_estadisticas_se_guardan_junto_a_la_coleccion(tmp_path):
     est = EstadisticasLexicas.construir(["hola mundo"])
     est.guardar(ruta_estadisticas("col_v1", str(tmp_path)))
     assert cargar_estadisticas("col_v1", str(tmp_path)) == est
-    with pytest.raises(FileNotFoundError, match="rag indexar"):
+    with pytest.raises(FileNotFoundError, match="ipsis index"):
         cargar_estadisticas("otra_v1", str(tmp_path))
 
 

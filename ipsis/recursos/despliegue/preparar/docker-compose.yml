@@ -1,0 +1,59 @@
+# Generado por `ipsis deploy prepare`.
+#
+#   docker compose up -d --build                    # solo el asistente, en 127.0.0.1:8000
+#   docker compose --profile https up -d --build    # además Caddy con HTTPS para {{dominio}}
+#
+# Los secretos (IPSIS_ADMIN_TOKEN) van en .env (copia .env.example); nunca en este archivo.
+
+services:
+  asistente:
+    build:
+      context: .
+      args:
+        PERFIL: "{{perfil}}"
+    image: "ipsis-{{nombre}}:{{perfil}}"
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      IPSIS_MODE: production
+      # Caddy (abajo) tiene IP fija en la red interna: solo sus X-Forwarded-* se aceptan.
+      IPSIS_TRUSTED_PROXY: "172.30.0.10"
+    volumes:
+      - ./config:/app/config
+      - ./documents:/app/documents:ro
+      - ./.ipsis:/app/.ipsis
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      ipsis:
+        ipv4_address: 172.30.0.20
+
+  caddy:
+    image: caddy:2
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on:
+      - asistente
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_datos:/data
+      - caddy_config:/config
+    networks:
+      ipsis:
+        ipv4_address: 172.30.0.10
+
+networks:
+  ipsis:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  caddy_datos:
+  caddy_config:

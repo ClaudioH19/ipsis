@@ -1,0 +1,401 @@
+# Paquete de idioma: inglés. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en config/language.yaml.
+codigo: en
+nombre: English
+stemmer: english
+stopwords:
+- a
+- about
+- all
+- also
+- an
+- and
+- any
+- are
+- as
+- at
+- be
+- been
+- being
+- but
+- by
+- can
+- could
+- did
+- do
+- does
+- each
+- for
+- from
+- he
+- her
+- here
+- his
+- how
+- i
+- if
+- in
+- into
+- is
+- it
+- its
+- may
+- me
+- might
+- must
+- my
+- 'no'
+- not
+- of
+- 'on'
+- or
+- our
+- she
+- should
+- so
+- some
+- than
+- that
+- the
+- their
+- them
+- then
+- there
+- these
+- they
+- this
+- those
+- to
+- us
+- was
+- we
+- were
+- what
+- when
+- where
+- which
+- who
+- whom
+- why
+- will
+- with
+- would
+- you
+- your
+numeros:
+  a: 1
+  an: 1
+  one: 1
+  two: 2
+  three: 3
+  four: 4
+  five: 5
+  six: 6
+  seven: 7
+  eight: 8
+  nine: 9
+  ten: 10
+  eleven: 11
+  twelve: 12
+  fourteen: 14
+  fifteen: 15
+  twenty: 20
+  thirty: 30
+ordinales:
+  first: 1
+  second: 2
+  third: 3
+  fourth: 4
+  fifth: 5
+  last: 5
+meses:
+- january
+- february
+- march
+- april
+- may
+- june
+- july
+- august
+- september
+- october
+- november
+- december
+dias_semana:
+  '1':
+  - monday
+  '2':
+  - tuesday
+  '3':
+  - wednesday
+  '4':
+  - thursday
+  '5':
+  - friday
+  '6':
+  - saturday
+  '7':
+  - sunday
+unidades_tiempo:
+  dia:
+  - day
+  - days
+  semana:
+  - week
+  - weeks
+  hora:
+  - hour
+  - hours
+  minuto:
+  - minute
+  - minutes
+  mes:
+  - month
+  - months
+calificadores_plazo:
+  habiles:
+  - business
+  - working
+  corridos:
+  - calendar
+referencias_documento:
+  articulo:
+  - article
+  - articles
+  anexo:
+  - annex
+  - annexes
+  - appendix
+  - appendices
+  capitulo:
+  - chapter
+  - chapters
+conectores_rango:
+  y:
+  - and
+  a:
+  - to
+  - through
+conectores_fecha:
+- of
+conectores_fecha_relativa:
+- of
+- in
+marcadores:
+  excepcion:
+  - except
+  - unless
+  - other than
+  - excluding
+  condicion:
+  - provided that
+  - as long as
+  - in case of
+  - if
+  - when
+# Relations being asked (ipsis.lenguaje.consultas): the patterns recognize them
+# in the question and their words do not count as topic; the cues usually sit in
+# the sentence that answers and raise it in the selection. Lowercase, without
+# accents; the first intention that matches wins.
+intenciones:
+  umbral:
+    patrones:
+    - (from|above|over) what (amount|value|quantity|number|age)
+    - what (amount|value|threshold|limit|minimum|maximum)
+    - how much is the (minimum|maximum|limit)
+    pistas:
+    - above
+    - over
+    - more than
+    - less than
+    - below
+    - greater than
+    - higher than
+    - up to
+    - at least
+    - at most
+    - exceeding
+    - exceed
+  inicio:
+    patrones:
+    - when (does|do|did|will|can) (\w+ ){0,6}(start|starts|begin|begins|commence|commences|take place|happen)
+    - when (is|are) (\w+ ){0,6}(made|done|carried out|started|initiated|placed)
+    - since when
+    - from when
+    - at what (point|moment|time)
+    pistas:
+    - once
+    - after
+    - following
+    - upon
+    - as soon as
+    - from the moment
+    - prior to
+    - before
+    - when
+  fin:
+    patrones:
+    - when (does|do|will) (\w+ ){0,6}(end|ends|finish|finishes|expire|expires|terminate|terminates)
+    - until when
+    pistas:
+    - until
+    - no later than
+    - expires
+    - ends
+  consecuencia:
+    patrones:
+    - what (happens|occurs) (if|when)
+    - what if
+    - in case
+    pistas:
+    - if
+    - in case of
+    - in the event
+    - shall
+    - must
+  responsable:
+    patrones:
+    - who( is responsible| must| has to| should)?
+    - to whom
+    - which (person|role|unit|department|office)
+    pistas:
+    - responsible
+    - in charge
+    - corresponds to
+  requisito:
+    patrones:
+    - what (is|are) (needed|required)
+    - what (do i|must i|should i) (need|submit|provide|bring)
+    - what (documents|requirements)
+    pistas:
+    - requires
+    - required
+    - must
+    - need
+    - needs
+    - requirement
+  procedimiento:
+    patrones:
+    - how (do|can|should) (i|we|you)
+    - what (steps|is the procedure|is the process)
+    pistas:
+    - first
+    - then
+    - next
+    - step
+# How a follow-up question starts (ipsis.consulta.seguimiento), lowercase and without accents.
+seguimiento:
+- and
+- and if
+- and with
+- and for
+- and when
+- and who
+- and then
+- what about
+- how about
+- then
+- but
+- also
+# Synonyms (ipsis.lenguaje.consultas): they only replace a question word that is not in the corpus.
+sinonimos:
+- [need, needs, needed, require, requires, required]
+- [start, starts, begin, begins, commence, commences]
+- [end, ends, finish, finishes, conclude, concludes]
+- [pay, pays, paid, settle, settles]
+- [send, sends, sent, submit, submits, submitted]
+- [ask, asks, request, requests, requested]
+- [approve, approves, approved, authorize, authorizes, authorized]
+- [fix, fixes, repair, repairs, repaired]
+- [cost, costs, price]
+# Words that are never focus terms (ipsis.consulta.etapas.filtros): support verbs and units.
+genericas: [do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes]
+# Derived-noun suffixes the stemmer keeps: «signature» counts as «sign» for the focus terms.
+sufijos_derivados: [atur, ment]
+conversacional:
+  categorias:
+  - greeting
+  - thanks
+  - farewell
+  - capability
+  patrones:
+    greeting:
+    - ^\s*hi\b
+    - ^\s*hello\b
+    - ^\s*hey\b
+    - ^\s*good (morning|afternoon|evening)\b
+    thanks:
+    - \bthanks?\b
+    - \bthank you\b
+    farewell:
+    - ^\s*bye\b
+    - ^\s*goodbye\b
+    - ^\s*see you\b
+    capability:
+    - what can you do
+    - who are you
+    - what are you
+    - how do you work
+mensajes:
+  conectores:
+    secuencia:
+    - First
+    - Then
+    - Finally
+    contraste_version:
+    - In version {v1}…; in version {v2}…
+  sin_seccion: (no section)
+  cita_breve: '(Source: {documento})'
+  cita_completa: '(Source: {documento}, section: {seccion})'
+  cabecera_embebido: 'Document: {documento} | Section: {seccion}'
+interfaz:
+  default_assistant_name: Document assistant
+  default_domain_description: the loaded documents
+  sources_one: 1 source from the document
+  sources_many: '{n} sources from the document'
+  citation_position: 'characters {start}–{end}'
+  title: Assistant
+  subtitle: Answers quoting the document
+  open: Open chat with {title}
+  close: Close chat
+  question_label: Type your question
+  placeholder: Type your question...
+  send: Send question
+  not_direct: Not a direct answer
+  origin_error: This site is not authorized to use the assistant.
+  http_error: The service could not answer (HTTP {status}).
+  source_code: Source code
+contracciones: {}
+golden_instrucciones:
+  nota_respondible: 'Write a question whose answer is EXPLICITLY in this excerpt of «{documento}» (topic: {terminos}).
+    In literal_answer copy the minimal answer exactly as written.'
+  nota_trampa: Write a question about the SAME topic ({terminos}) and the same entity as row {par}, but asking for
+    information that is NOT in any document. Leave literal_answer empty.
+  conversacionales:
+  - hello
+  - thanks
+  - What can you do?
+  leeme: "GOLDEN SET: TEST QUESTIONS FOR THE ASSISTANT\n============================================\n\nThis file\
+    \ explains how to fill in golden.csv. It measures whether the\nassistant answers correctly, and whether it abstains\
+    \ when the documents do\nnot contain the answer. It is optional: the assistant works without a\ngolden set.\
+    \ No model is trained: results are only measured and thresholds\nadjusted.\n\nHOW TO FILL IT IN\n-----------------\n\
+    1. Open golden.csv with Excel, LibreOffice or a text editor.\n2. In each row write a question in the «question»\
+    \ column, the way a real\n   user would.\n3. Do not change the «id», «type», «pair» or «subtype» columns.\n\
+    4. Rows left without a question are ignored.\n5. You can add new rows (leave «id» empty; it is generated).\n\
+    6. Save as CSV UTF-8.\n\nROW TYPES\n---------\nanswerable\n  The answer EXISTS literally in the documents. In\
+    \ «literal_answer»\n  copy the minimal answer exactly as written.\n    Question:       How long is the warranty?\n\
+    \    Literal answer: 18 months\n\nno_answer («same_topic_trap» rows)\n  A question about the SAME topic and\
+    \ entity as its paired row («pair»\n  column) that asks for information NOT present in any document. Leave\n\
+    \  «literal_answer» empty.\n    GOOD: the document says how long the warranty lasts, but not who\n         \
+    \ approves it  ->  Who approves the warranty?\n    BAD:  What is the capital of Japan?  (unrelated to the documents:\
+    \ it\n          tests nothing useful)\n  These are the most important rows: they check that the assistant does\n\
+    \  not answer with a similar passage that lacks the information.\n\nfalse_premise (optional, add rows)\n  Assumes\
+    \ something that does not exist: «What does article 99 say?» when\n  there is no article 99.\n\nambiguous (optional,\
+    \ add rows)\n  Cannot be answered without clarification: «How long does it last?».\n\nconversational\n  Greetings\
+    \ and courtesy; already filled in.\n\nHELPERS\n-------\n«suggested_passage» and «key_terms» show which section\
+    \ each row\ncomes from. «document» names the file; use it if the same text appears in\nseveral documents.\n\n\
+    SIZE\n----\n30 to 60 questions are enough to tune and compare profiles. To CERTIFY\nstatistically a false-answer\
+    \ risk below 5%, at least 59 accepted answers\nwithout error are needed in the test split (over 120 answerable\
+    \ questions\nin total). The assistant warns on import if the size is not enough.\n\nNext: ipsis golden import\
+    \ golden/golden.csv\n"

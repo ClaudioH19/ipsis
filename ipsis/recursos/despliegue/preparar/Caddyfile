@@ -1,0 +1,6 @@
+# Generado por `ipsis desplegar preparar`. Caddy obtiene y renueva el certificado
+# de {{dominio}} solo; el DNS del dominio debe apuntar a este servidor.
+{{dominio}} {
+	encode zstd gzip
+	reverse_proxy asistente:8000
+}

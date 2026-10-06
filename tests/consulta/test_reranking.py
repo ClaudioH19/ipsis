@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from rag.consulta.contexto import ContextoConsulta
-from rag.consulta.etapas.reranking import EtapaReranking
-from rag.nucleo.esquemas import ChunkRecord, RetrievalCandidate, RetrievalSignals
+from ipsis.consulta.contexto import ContextoConsulta
+from ipsis.consulta.etapas.reranking import EtapaReranking
+from ipsis.nucleo.esquemas import ChunkRecord, RetrievalCandidate, RetrievalSignals
 
 
 def _candidato(chunk_id: str, texto: str) -> RetrievalCandidate:
@@ -55,8 +55,8 @@ def test_sin_reranker_no_cambia_nada():
 
 @pytest.mark.modelos("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1")
 def test_modelo_real_pone_primero_el_pasaje_que_responde():
-    from rag.modelos.catalogo import obtener
-    from rag.modelos.reranker import RerankerOnnx
+    from ipsis.modelos.catalogo import obtener
+    from ipsis.modelos.reranker import RerankerOnnx
 
     reranker = RerankerOnnx(obtener("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"))
     pasajes = ["La garantía cubre 24 meses desde la fecha de compra.",

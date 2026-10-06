@@ -1,0 +1,51 @@
+name: 🐞 Bug
+description: Something does not work the way the documentation says.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting it. If it is a vulnerability, do **not** use this form: see SECURITY.md.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ipsis init --profile light
+        2. ipsis load …
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `ipsis doctor`
+      render: text
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: If it is a wrong answer, output of `ipsis ask --diagnostics "…"`
+      description: It shows the deciding rule and the signals. Remove anything confidential.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version (`ipsis --version`)
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile
+      options: [light, medium, heavy]
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system, Python version and installation method (pip, Docker…)

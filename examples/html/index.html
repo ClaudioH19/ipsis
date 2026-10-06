@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML example · ipsis</title>
+</head>
+<body>
+  <main>
+    <h1>Knowledge base</h1>
+    <p>Open the assistant to ask about the published documents.</p>
+  </main>
+
+  <ipsis-chat title="Help center"></ipsis-chat>
+  <script src="config.js"></script>
+  <script>
+    const widget = document.querySelector("ipsis-chat");
+    widget.setAttribute("api", window.IPSIS_EXAMPLE.api);
+    if (window.IPSIS_EXAMPLE.widgetKey) {
+      widget.setAttribute("widget-key", window.IPSIS_EXAMPLE.widgetKey);
+    }
+    const script = document.createElement("script");
+    script.src = window.IPSIS_EXAMPLE.api.replace(/\/$/, "") + "/widget.js";
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

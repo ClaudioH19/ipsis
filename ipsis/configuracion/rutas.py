@@ -1,0 +1,31 @@
+"""Rutas del proyecto del cliente, relativas a su raíz.
+
+Es la única fuente de verdad sobre dónde vive cada archivo. Ver la estructura
+completa en ``docs/guide/configuration.md``.
+"""
+from __future__ import annotations
+
+CONFIGURACION = "config"
+ASISTENTE = "config/assistant.yaml"
+MOTOR = "config/engine.yaml"
+ESTILOS = "config/styles.yaml"
+DOMINIO = "config/domain.yaml"
+IDIOMA = "config/language.yaml"
+CALIBRACION = "config/calibration.yaml"
+PERSONALIDAD = "config/personality.yaml"
+AVATARES = "config/avatars"
+
+DOCUMENTOS = "documents"
+CATALOGO = "documents/catalog.yaml"
+
+GOLDEN = "golden"
+GOLDEN_BANCO = "golden/bank"
+GOLDEN_MANIFIESTO = "golden/bank/manifest.json"
+GOLDEN_REPORTES = "golden/reports"
+
+INTERNO = ".ipsis"  # generado; no se versiona
+INDICE = ".ipsis/index"
+QDRANT = ".ipsis/index/qdrant"
+SNAPSHOT = ".ipsis/effective-config.yaml"
+REGISTRO_CONSULTAS = ".ipsis/logs/queries.jsonl"
+VISTA_PREVIA = ".ipsis/widget-preview.html"

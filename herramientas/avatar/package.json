@@ -1,7 +1,7 @@
 {
-  "name": "rag-extractivo-avatar",
+  "name": "ipsis-avatar",
   "private": true,
-  "description": "Empaqueta el motor del avatar (@bible-strong/avatar-web) en rag/servicio/estaticos/avatar.js. Solo desarrollo: no entra en el wheel.",
+  "description": "Empaqueta el motor del avatar (@bible-strong/avatar-web) en ipsis/servicio/estaticos/avatar.js. Solo desarrollo: no entra en el wheel.",
   "license": "AGPL-3.0-only",
   "type": "module",
   "engines": {

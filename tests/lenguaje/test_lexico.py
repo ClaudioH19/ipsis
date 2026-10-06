@@ -5,8 +5,8 @@ import math
 
 import pytest
 
-from rag.indice.estadisticas import EstadisticasLexicas
-from rag.lenguaje.lexico import (
+from ipsis.indice.estadisticas import EstadisticasLexicas
+from ipsis.lenguaje.lexico import (
     bm25_consulta,
     bm25_doc,
     bm25_puntaje,
@@ -15,8 +15,8 @@ from rag.lenguaje.lexico import (
     mmr,
     tfidf_vector,
 )
-from rag.lenguaje.paquete import cargar_paquete
-from rag.lenguaje.texto import terminos
+from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.texto import terminos
 
 DOCS = ["El filtro se cambia", "El filtro de carbón", "La garantía dura un año"]
 
@@ -77,17 +77,17 @@ def test_mmr_elige_diversos(est):
 
 
 def test_guardar_y_cargar(tmp_path, est):
-    ruta = tmp_path / "estadisticas.json"
+    ruta = tmp_path / "stats.json"
     est.guardar(ruta)
     assert EstadisticasLexicas.cargar(ruta) == est
-    assert not (tmp_path / "estadisticas.json.tmp").exists()
+    assert not (tmp_path / "stats.json.tmp").exists()
 
 
 # ---------------------------------------------------------------------------
 # Señales léxicas sobre el corpus sintético
 # ---------------------------------------------------------------------------
 from apoyo import CORPUS
-from rag.lenguaje.lexico import acuerdo, s_cov, s_foco, s_lex, s_oov, terminos_contenido, terminos_foco
+from ipsis.lenguaje.lexico import acuerdo, s_cov, s_foco, s_lex, s_oov, terminos_contenido, terminos_foco
 
 
 @pytest.fixture(scope="module")

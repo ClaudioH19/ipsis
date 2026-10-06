@@ -1,4 +1,4 @@
-"""``rag benchmark --perfiles`` con perfiles falsos: mismo banco, latencia,
+"""``ipsis benchmark --profiles`` con perfiles falsos: mismo banco, latencia,
 presupuesto, reportes, experimentos y código de salida. Sin modelos."""
 from __future__ import annotations
 
@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from rag.cli import main
-from rag.evaluacion.banco import cargar_banco
-from rag.evaluacion.benchmark import ReporteBenchmark, codigo_salida, latencia_de, markdown, percentil
-from rag.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas, evaluar_observaciones
+from ipsis.cli import main
+from ipsis.evaluacion.banco import cargar_banco
+from ipsis.evaluacion.benchmark import ReporteBenchmark, codigo_salida, latencia_de, markdown, percentil
+from ipsis.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas, evaluar_observaciones
 
 UNIVERSAL_ES = Path(__file__).resolve().parents[1] / "datos" / "banco_universal" / "es" / "manifiesto.json"
 SINTETICO = Path(__file__).resolve().parents[1] / "datos" / "banco" / "manifiesto.json"
@@ -55,7 +55,7 @@ def _evaluar_falso(perfil, manifiesto, banco, experimentos):
 
 
 def _benchmark(tmp_path, perfiles, experimentos=False, bancos=(UNIVERSAL_ES,)):
-    from rag.aplicacion.benchmark import ejecutar_benchmark_perfiles
+    from ipsis.aplicacion.benchmark import ejecutar_benchmark_perfiles
 
     return ejecutar_benchmark_perfiles([str(b) for b in bancos], perfiles, main, tmp_path,
                                        experimentos=experimentos, evaluar_perfil=_evaluar_falso)
@@ -85,7 +85,7 @@ def test_mismos_casos_orden_estable_y_presupuesto(tmp_path):
 
 
 def test_un_perfil_que_omite_casos_falla(tmp_path):
-    from rag.aplicacion.benchmark import ejecutar_benchmark_perfiles
+    from ipsis.aplicacion.benchmark import ejecutar_benchmark_perfiles
 
     def incompleto(perfil, manifiesto, banco, experimentos):
         artefacto = _artefacto(banco, perfil)
@@ -101,8 +101,8 @@ def test_perfil_desconocido(tmp_path):
 
 
 def test_reportes_json_markdown_y_artefactos_para_comparar(tmp_path):
-    from rag.aplicacion.benchmark import escribir_reporte_benchmark
-    from rag.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
+    from ipsis.aplicacion.benchmark import escribir_reporte_benchmark
+    from ipsis.evaluacion.comparacion import cargar_artefacto, comparar_artefactos
 
     reporte = _benchmark(tmp_path, ["light", "medium"])
     ruta_json, ruta_md = escribir_reporte_benchmark(reporte, tmp_path)
@@ -121,7 +121,7 @@ def test_falsos_ok_solo_cortan_con_un_banco_de_evaluacion(tmp_path):
     assert codigo_salida(regresion) == 0  # banco universal: sin límite de falsos ok propio
     evaluacion = _benchmark(tmp_path, ["light"], bancos=(SINTETICO,))
     assert cargar_banco(SINTETICO).manifiesto.uso == "evaluacion"
-    assert codigo_salida(evaluacion) == 1  # misma guardia que rag evaluar: 0 falsos ok
+    assert codigo_salida(evaluacion) == 1  # misma guardia que ipsis evaluate: 0 falsos ok
 
 
 def test_experimentos_son_variantes_y_no_cortan(tmp_path):
@@ -140,8 +140,8 @@ def test_experimentos_son_variantes_y_no_cortan(tmp_path):
 
 # --- bm25 de diagnóstico ---------------------------------------------------------------
 def test_bm25_recupera_solo_con_bm25_y_no_se_instala(tmp_path, monkeypatch):
-    from rag.configuracion.carga import config_recuperacion
-    from rag.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.carga import config_recuperacion
+    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
 
     assert cargar_perfil_instalacion("bm25").recuperacion_modo == "dispersa"
     cfg = {"recuperacion": {"modelo": None, "modo": "hibrida", "coleccion_base": "x"}}
@@ -149,22 +149,22 @@ def test_bm25_recupera_solo_con_bm25_y_no_se_instala(tmp_path, monkeypatch):
     assert config_recuperacion(cfg, perfil="light")["modo"] == "hibrida"
     monkeypatch.chdir(tmp_path)
     with pytest.raises(SystemExit):
-        main(["init", "--perfil", "bm25"])
+        main(["init", "--profile", "bm25"])
 
 
 # --- CLI -------------------------------------------------------------------------------
 def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, capsys):
-    monkeypatch.setattr("rag.aplicacion.benchmark._evaluar_en_proyecto",
+    monkeypatch.setattr("ipsis.aplicacion.benchmark._evaluar_en_proyecto",
                         lambda p, m, b, main, e: _evaluar_falso(p, m, b, e))
     salida = tmp_path / "reportes"
-    assert main(["benchmark", "--banco", str(UNIVERSAL_ES), "--perfiles", "bm25,light,medium",
-                 "--salida", str(salida)]) == 0
+    assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
+                 "--output", str(salida)]) == 0
     texto = capsys.readouterr().out
     assert "no certifican" in texto and "[cumple]" in texto
-    assert (salida / "benchmark-perfiles.json").is_file() and (salida / "benchmark-perfiles.md").is_file()
-    datos = json.loads((salida / "benchmark-perfiles.json").read_text(encoding="utf-8"))
+    assert (salida / "benchmark-profiles.json").is_file() and (salida / "benchmark-profiles.md").is_file()
+    datos = json.loads((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     assert [p["nombre"] for p in datos["perfiles"]] == ["bm25", "light", "medium"]
-    assert main(["benchmark", "--banco", str(UNIVERSAL_ES), "--perfiles", "heavy", "--salida", str(salida)]) == 1
+    assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "heavy", "--output", str(salida)]) == 1
     assert "EXCEDE" in capsys.readouterr().out
 
 
@@ -174,9 +174,9 @@ def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, ca
                      "dewdev/mdeberta-v3-base-squad2-onnx")
 def test_benchmark_real_light_y_medium_sobre_el_mismo_banco(tmp_path, capsys):
     salida = tmp_path / "reportes"
-    codigo = main(["benchmark", "--banco", str(UNIVERSAL_ES), "--perfiles", "bm25,light,medium",
-                   "--salida", str(salida)])
-    reporte = ReporteBenchmark.model_validate_json((salida / "benchmark-perfiles.json").read_text(encoding="utf-8"))
+    codigo = main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
+                   "--output", str(salida)])
+    reporte = ReporteBenchmark.model_validate_json((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     bm25, light, medium = reporte.perfiles
     assert bm25.cascada["recuperacion"] == "dispersa" and light.cascada["recuperacion"] == "hibrida"
     assert codigo == codigo_salida(reporte)

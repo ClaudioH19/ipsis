@@ -1,14 +1,14 @@
-"""Pruebas de redacción, admisión, conversación y verificación de ``rag/consulta``.
+"""Pruebas de redacción, admisión, conversación y verificación de ``ipsis/consulta``.
 
 Funciones puras, sin Qdrant ni modelos reales.
 """
 from __future__ import annotations
 
-from rag.consulta.admision import ConfiguracionAdmision, ControlAdmision
-from rag.consulta.etapas.redaccion import redactar, redactar_zona_gris, construir_mensaje_abstencion
-from rag.consulta.etapas.verificacion import verificar_fidelidad
-from rag.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
-from rag.consulta.etapas.politica import (
+from ipsis.consulta.admision import ConfiguracionAdmision, ControlAdmision
+from ipsis.consulta.etapas.redaccion import redactar, redactar_zona_gris, construir_mensaje_abstencion
+from ipsis.consulta.etapas.verificacion import verificar_fidelidad
+from ipsis.consulta.etapas.conversacional import detectar_conversacional, respuesta_conversacional
+from ipsis.consulta.etapas.politica import (
     separar_entidades_ausentes,
     verificar_premisa_textos,
 )
@@ -103,14 +103,14 @@ def test_estilo_de_cita_en_el_texto(monkeypatch):
     prosa. La ruta de sección solo aparece en el estilo "completa"; en los
     tres estilos la cita exacta sigue viajando en el campo `fragmentos` de
     la respuesta HTTP, que este test no toca."""
-    import rag.consulta.etapas.redaccion as pipeline
+    import ipsis.consulta.etapas.redaccion as pipeline
 
     frag = _fragmento("El plazo es de quince días hábiles.")
 
     def con_estilo(estilo, apertura=False):
         monkeypatch.setattr(pipeline, "config_redaccion", None, raising=False)
         monkeypatch.setattr(
-            "rag.configuracion.carga.config_redaccion",
+            "ipsis.configuracion.carga.config_redaccion",
             lambda *a, **k: {"cita_en_texto": estilo, "incluir_apertura": apertura,
                              "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.6},
         )
@@ -131,7 +131,7 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
     """Dos fragmentos que se suman al primero no deben abrir los dos con el
     mismo conector: `_elegir_variante` desplaza al siguiente candidato."""
     monkeypatch.setattr(
-        "rag.configuracion.carga.config_redaccion",
+        "ipsis.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 3, "score_relativo_minimo": 0.0},
     )
@@ -139,8 +139,8 @@ def test_conector_entre_fragmentos_no_repite_la_misma_frase(monkeypatch):
              _fragmento("Segundo.", chunk_id="b"),
              _fragmento("Tercero.", chunk_id="c")]
     texto = redactar(frags)
-    from rag.consulta.etapas.redaccion import _cargar_plantillas
-    usados = [c for c in _cargar_plantillas()["conectores"]["complemento"] if c in texto]
+    from ipsis.consulta.etapas.redaccion import _cargar_plantillas
+    usados = [c for c in _cargar_plantillas()["conectores"]["addition"] if c in texto]
     assert len(usados) == 2, f"se esperaban dos conectores distintos, hubo {usados}"
 
 
@@ -149,9 +149,9 @@ def test_ningun_conector_es_subordinante(monkeypatch):
     ("Siempre que", "Salvo que") y producían frases rotas del tipo
     "Siempre que, El equipo X100 tiene..." al anteponerlos a una
     cita literal. Ahora todos cierran en dos puntos."""
-    from rag.consulta.etapas.redaccion import _cargar_plantillas
+    from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     conectores = _cargar_plantillas()["conectores"]
-    for categoria in ("apertura", "complemento", "condicion", "excepcion"):
+    for categoria in ("opening", "addition", "condition", "exception"):
         for frase in conectores[categoria]:
             assert frase.rstrip().endswith(":"), (categoria, frase)
 
@@ -160,7 +160,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     """Un fragmento posterior al primero entra solo si su score alcanza la
     fracción configurada, y con un tope duro de cuántos caben."""
     monkeypatch.setattr(
-        "rag.configuracion.carga.config_redaccion",
+        "ipsis.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 3, "score_relativo_minimo": 0.6},
     )
@@ -172,7 +172,7 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     assert "Ruido de otra seccion." not in texto
 
     monkeypatch.setattr(
-        "rag.configuracion.carga.config_redaccion",
+        "ipsis.configuracion.carga.config_redaccion",
         lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
                          "max_fragmentos_en_respuesta": 1, "score_relativo_minimo": 0.0},
     )
@@ -180,13 +180,65 @@ def test_max_fragmentos_y_score_relativo_acotan_la_prosa(monkeypatch):
     assert "Pertinente." in solo_uno and "Algo pertinente." not in solo_uno
 
 
+def test_apertura_y_cada_fragmento_van_en_su_propio_parrafo(monkeypatch):
+    """El widget pinta los saltos de línea: la respuesta no sale como un solo bloque."""
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": True,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    texto = redactar([_fragmento("Primero.", chunk_id="a"), _fragmento("Segundo.", chunk_id="b")])
+    apertura, primero, segundo = texto.split("\n\n")
+    assert apertura.endswith(":") and primero == "Primero." and segundo.endswith(": Segundo.")
+    intro, cuerpo = redactar_zona_gris([_fragmento("Tercero.")]).split("\n\n", 1)
+    assert intro.endswith(":") and cuerpo.startswith("Tercero.")
+
+
+def test_los_bloques_reproducen_el_texto_y_marcan_lo_literal(monkeypatch):
+    """`answer_blocks`: el pasaje es el texto literal; conector y cita van aparte."""
+    from ipsis.consulta.etapas.redaccion import redactar_bloques, redactar_zona_gris_bloques, texto_de_bloques
+
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "breve", "incluir_apertura": True,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    frags = [_fragmento("Primero.", chunk_id="a"), _fragmento("Segundo.", chunk_id="b", condicion=True)]
+    bloques = redactar_bloques(frags)
+    assert [b["tipo"] for b in bloques] == ["encabezado", "pasaje", "pasaje"]
+    assert [b["texto"] for b in bloques[1:]] == ["Primero.", "Segundo."]
+    assert bloques[1]["conector"] is None and bloques[2]["conector"].endswith(":")
+    assert all("Manual X100" in b["cita"] for b in bloques[1:]) and bloques[2]["chunk_id"] == "b"
+    assert texto_de_bloques(bloques) == redactar(frags)
+    gris = redactar_zona_gris_bloques(frags[:1], termino_ausente="X900")
+    assert gris[0]["tipo"] == "encabezado" and "X900" in gris[0]["texto"] and gris[1]["texto"] == "Primero."
+
+
+def test_condicion_y_excepcion_solo_dentro_del_mismo_documento(monkeypatch):
+    """Un pasaje de otro documento no se presenta como condición del primero."""
+    from ipsis.consulta.etapas.redaccion import redactar_bloques
+    from ipsis.lenguaje.tonos import cargar_tono
+
+    monkeypatch.setattr(
+        "ipsis.configuracion.carga.config_redaccion",
+        lambda *a, **k: {"cita_en_texto": "ninguna", "incluir_apertura": False,
+                         "max_fragmentos_en_respuesta": 2, "score_relativo_minimo": 0.0},
+    )
+    tono = cargar_tono("es")
+    primero = _fragmento("Para pedir un libro se necesita la credencial.", doc="Biblioteca", chunk_id="a")
+    ajeno = _fragmento("La garantía dura dos años.", doc="Cafetera", condicion=True, chunk_id="b")
+    propio = _fragmento("Solo si no hay multas.", doc="Biblioteca", condicion=True, chunk_id="c")
+    assert redactar_bloques([primero, ajeno])[1]["conector"] in tono.variantes("addition")
+    assert redactar_bloques([primero, propio])[1]["conector"] in tono.variantes("condition")
+
+
 def test_redactar_zona_gris_incluye_la_frase_de_encabezado_fija():
     frag = _fragmento("Texto de contexto general sobre el tema.")
     texto = redactar_zona_gris([frag])
     # El encabezado es una variante del tono (todas dicen que no es una respuesta directa).
-    from rag.lenguaje.tonos import cargar_tono
+    from ipsis.lenguaje.tonos import cargar_tono
 
-    assert any(texto.startswith(v) for v in cargar_tono("es").variantes("relacionado_intro"))
+    assert any(texto.startswith(v) for v in cargar_tono("es").variantes("related_intro"))
     assert "Texto de contexto general sobre el tema." in texto
 
 
@@ -231,20 +283,20 @@ def test_separar_entidades_ausentes_todas_en_corpus():
 # ---------------------------------------------------------------------------
 
 def test_detectar_conversacional_saludo():
-    assert detectar_conversacional("hola") == "saludo"
-    assert detectar_conversacional("Buenos días, ¿cómo estás?") == "saludo"
+    assert detectar_conversacional("hola") == "greeting"
+    assert detectar_conversacional("Buenos días, ¿cómo estás?") == "greeting"
 
 
 def test_detectar_conversacional_agradecimiento():
-    assert detectar_conversacional("muchas gracias por la ayuda") == "agradecimiento"
+    assert detectar_conversacional("muchas gracias por la ayuda") == "thanks"
 
 
 def test_detectar_conversacional_despedida():
-    assert detectar_conversacional("chao, nos vemos") == "despedida"
+    assert detectar_conversacional("chao, nos vemos") == "farewell"
 
 
 def test_detectar_conversacional_capacidad():
-    assert detectar_conversacional("¿qué puedes hacer?") == "capacidad"
+    assert detectar_conversacional("¿qué puedes hacer?") == "capability"
 
 
 def test_detectar_conversacional_pregunta_del_corpus_no_matchea():
@@ -255,7 +307,7 @@ def test_detectar_conversacional_pregunta_del_corpus_no_matchea():
 
 
 def test_respuesta_conversacional_no_esta_vacia_para_cada_categoria():
-    for categoria in ("saludo", "agradecimiento", "despedida", "capacidad"):
+    for categoria in ("greeting", "thanks", "farewell", "capability"):
         texto = respuesta_conversacional(categoria)
         assert isinstance(texto, str) and len(texto) > 0
 
@@ -265,8 +317,8 @@ def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():
     pregunta: la MISMA pregunta devuelve siempre el mismo texto (testeable),
     pero distintos saludos no contestan todos lo mismo (suena menos a
     máquina). Nada de esto lo redacta un modelo."""
-    assert respuesta_conversacional("saludo", "hola") == respuesta_conversacional("saludo", "hola")
-    variantes = {respuesta_conversacional("saludo", p)
+    assert respuesta_conversacional("greeting", "hola") == respuesta_conversacional("greeting", "hola")
+    variantes = {respuesta_conversacional("greeting", p)
                  for p in ("hola", "buenas", "qué tal", "buenos días", "hey", "buenas tardes")}
     assert len(variantes) > 1, "todos los saludos contestan exactamente lo mismo"
 
@@ -274,7 +326,7 @@ def test_respuesta_conversacional_varia_entre_preguntas_pero_es_determinista():
 def test_respuesta_conversacional_sin_pregunta_sigue_funcionando():
     """La firma acepta la pregunta como opcional: /config pide el saludo sin
     tener ninguna pregunta que pasarle."""
-    texto = respuesta_conversacional("saludo")
+    texto = respuesta_conversacional("greeting")
     assert texto and isinstance(texto, str)
 
 
@@ -284,19 +336,19 @@ def test_zona_gris_no_apila_dos_encabezados():
     frase de apertura no debe agregarse encima. Antes producía "No encontré
     una respuesta directa. Esto es lo que dicen los documentos sobre el
     tema: Encontré esto en el documento:"."""
-    from rag.consulta.etapas.redaccion import _cargar_plantillas
+    from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     frag = _fragmento("Texto pertinente sobre el tema.")
     texto = redactar_zona_gris([frag])
-    for apertura in _cargar_plantillas()["conectores"]["apertura"]:
+    for apertura in _cargar_plantillas()["conectores"]["opening"]:
         assert apertura not in texto, f"la apertura {apertura!r} se apiló sobre el encabezado"
 
 
 def test_contraccion_castellana_en_los_textos_conversacionales():
     """Regresión de un defecto real: `descripcion_dominio` la escribe el
     usuario y puede empezar con artículo ("el manual de..."), así que
-    una plantilla que diga "de {descripcion_dominio}" producía "de el
+    una plantilla que diga "de {domain_description}" producía "de el
     manual"."""
-    from rag.consulta.etapas.redaccion import _cargar_plantillas
+    from ipsis.consulta.etapas.redaccion import _cargar_plantillas
     respuestas = _cargar_plantillas()["conversacional"]["respuestas"]
     for categoria, valor in respuestas.items():
         textos = [valor] if isinstance(valor, str) else valor

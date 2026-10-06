@@ -1,34 +1,35 @@
-# Seguridad
+# Security
 
-## Versiones con soporte
+## Supported versions
 
-| Versión | Soporte |
+| Version | Supported |
 |---|---|
-| 0.8.x | ✅ |
-| < 0.8 | ❌ |
+| 0.9.x | ✅ |
+| < 0.9 | ❌ |
 
-## Reportar una vulnerabilidad
+## Reporting a vulnerability
 
-No abras un issue público. Usa el reporte privado de GitHub
-(**Security → Report a vulnerability**) en este repositorio, con:
+Do not open a public issue. Use GitHub's private reporting
+(**Security → Report a vulnerability**) in this repository, with:
 
-- la versión (`rag --version`) y el modo (`RAG_MODO`);
-- los pasos para reproducirla y su impacto;
-- si afecta al servicio, al widget, al panel `/admin` o a la imagen Docker.
+- the version (`ipsis --version`) and the mode (`IPSIS_MODE`);
+- the steps to reproduce it and its impact;
+- whether it affects the service, the widget, the `/admin` panel or the
+  Docker image.
 
-Recibirás una respuesta inicial en un plazo de 7 días.
+You will get an initial answer within 7 days.
 
-## Superficie y protecciones
+## Surface and protections
 
-| Componente | Protección |
+| Component | Protection |
 |---|---|
-| `/consultar` | CORS por origen, clave pública del widget, límite de peticiones y control de admisión (503) |
-| Widget | Shadow DOM; todo texto de la API se inserta con `textContent`, nunca `innerHTML` |
-| `/admin` y `/admin/panel` | Solo con `RAG_ADMIN_TOKEN` (≥ 32 caracteres), comparación en tiempo constante, HTTPS en producción, bloqueo tras 5 intentos fallidos, sin CORS, CSP estricta y auditoría en `.rag/registros/admin.jsonl` |
-| Proxy | `X-Forwarded-*` solo se acepta de `RAG_PROXY_CONFIABLE` |
-| Imagen Docker | Usuario no root, sin red en ejecución (`HF_HUB_OFFLINE=1`) |
-| Datos | Los documentos y las preguntas no salen del servidor; el registro de consultas está apagado por defecto |
+| `POST /ask` | CORS per origin, the widget's public key, rate limiting and admission control (503) |
+| Widget | Shadow DOM; every text from the API is inserted with `textContent`, never `innerHTML` |
+| `/admin` and `/admin/panel` | Only with `IPSIS_ADMIN_TOKEN` (≥ 32 characters), constant-time comparison, HTTPS in production, lockout after 5 failed attempts, no CORS, strict CSP and an audit trail in `.ipsis/logs/admin.jsonl` |
+| Proxy | `X-Forwarded-*` is only accepted from `IPSIS_TRUSTED_PROXY` |
+| Docker image | Non-root user, no network at run time (`HF_HUB_OFFLINE=1`) |
+| Data | Documents and questions never leave the server; the query log is off by default |
 
-La clave pública del widget identifica una integración, pero no es un
-secreto: la protección del servicio se completa en el proxy. Detalle en la
-[guía de despliegue](docs/guia/despliegue.md).
+The widget's public key identifies an integration, but it is not a secret:
+the service's protection is completed at the proxy. Details in the
+[deployment guide](docs/guide/deployment.md).

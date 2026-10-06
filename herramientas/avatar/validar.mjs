@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { parseAvatarDefinition } from "@bible-strong/avatar-core";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
-const incluidos = resolve(aqui, "../../rag/recursos/avatares");
+const incluidos = resolve(aqui, "../../ipsis/recursos/avatares");
 const argumentos = process.argv.slice(2);
 const archivos = argumentos.length ? argumentos
   : readdirSync(incluidos).filter((n) => n.endsWith(".avatar.json")).map((n) => join(incluidos, n));

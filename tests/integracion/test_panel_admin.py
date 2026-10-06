@@ -15,11 +15,13 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from rag.aplicacion.modo import ModoServicio
-from rag.cli import main
+from apoyo import leer_proyecto
+from ipsis.lenguaje.tonos import CUOTAS_PAQUETE
+from ipsis.aplicacion.modo import ModoServicio
+from ipsis.cli import main
 
 RAIZ = Path(__file__).resolve().parents[2]
-CARPETA_PANEL = RAIZ / "rag/servicio/estaticos/admin"
+CARPETA_PANEL = RAIZ / "ipsis/servicio/estaticos/admin"
 TOKEN = "p" * 40
 
 
@@ -28,16 +30,16 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     carpeta = tmp_path / "proyecto"
     carpeta.mkdir()
     monkeypatch.chdir(carpeta)
-    for variable in ("RAG_MODO", "RAG_ADMIN_TOKEN", "RAG_PROXY_CONFIABLE", "RAG_ADMIN_IPS"):
+    for variable in ("IPSIS_MODE", "IPSIS_ADMIN_TOKEN", "IPSIS_TRUSTED_PROXY", "IPSIS_ADMIN_IPS"):
         monkeypatch.delenv(variable, raising=False)
-    assert main(["init", "--perfil", "light"]) == 0
+    assert main(["init", "--profile", "light"]) == 0
     return carpeta
 
 
 def _app(modo: ModoServicio):
     from apoyo import motor_minimo as _motor
 
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     return crear_app(_motor(), modo=modo)
 
@@ -55,7 +57,7 @@ def test_panel_sin_html_crudo_ni_scripts_en_linea():
 
 
 def test_rutas_del_panel(proyecto):
-    from rag.servicio.admin import CSP_PANEL, CSP_VISTA_PREVIA
+    from ipsis.servicio.admin import CSP_PANEL, CSP_VISTA_PREVIA
 
     c = TestClient(_app(ModoServicio(token_admin=TOKEN)), base_url="https://testserver",
                    client=("203.0.113.5", 50000))
@@ -159,7 +161,7 @@ def test_sin_token_no_muestra_nada(servidor, pagina):
     assert page.is_hidden("#contenido") and page.is_visible("#acceso")
     _entrar(page, servidor, "x" * 40)
     _esperar(page, "document.getElementById('error-acceso').textContent.length > 0")
-    assert "inválido" in page.text_content("#error-acceso")
+    assert "invalid" in page.text_content("#error-acceso")
     assert page.is_hidden("#contenido")
     assert page.evaluate("sessionStorage.getItem('rag-admin-token')") is None
     assert not [e for e in errores if "401" not in e], errores  # solo el 401 esperado
@@ -172,14 +174,14 @@ def test_cambiar_el_tono_actualiza_la_vista_previa_y_guarda(servidor, pagina, pr
     page.wait_for_selector("#contenido:not([hidden])")
     page.wait_for_selector("#variantes li")
     antes = page.locator("#variantes li").all_text_contents()
-    assert len(antes) == 5
+    assert len(antes) == CUOTAS_PAQUETE["greeting"]  # la primera situación
     page.select_option("#tono-activo", "formal")
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
     assert page.locator("#variantes li").all_text_contents() != antes
-    assert "activo: formal" in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
+    assert leer_proyecto(proyecto / "config/personality.yaml")["tono"]["activo"] == "formal"
     # La vista previa carga el widget real con la CSP de la vista previa.
     marco = page.frame_locator("#vista-previa")
-    marco.locator("rag-extractivo-chat").wait_for(state="attached")
+    marco.locator("ipsis-chat").wait_for(state="attached")
     assert not errores, errores
 
 
@@ -192,7 +194,7 @@ def test_textos_propios_invalidos_muestran_el_error_del_linter(servidor, pagina,
     page.fill("#propias", "Visita https://ejemplo.cl")
     page.click("#guardar-propias")
     page.wait_for_selector("#errores li")
-    assert "plantillas: {}" in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
+    assert leer_proyecto(proyecto / "config/personality.yaml")["tono"]["plantillas"] == {}
 
     # Un regionalismo no bloquea: se guarda y queda como aviso visible.
     assert page.is_hidden("#tono-avisos")
@@ -200,7 +202,7 @@ def test_textos_propios_invalidos_muestran_el_error_del_linter(servidor, pagina,
     page.click("#guardar-propias")
     page.wait_for_selector("#tono-avisos li")
     assert "chao" in page.text_content("#tono-avisos")
-    assert "Chao, nos vemos." in (proyecto / "configuracion/personalidad.yaml").read_text(encoding="utf-8")
+    assert "Chao, nos vemos." in (proyecto / "config/personality.yaml").read_text(encoding="utf-8")
 
 
 @pytest.mark.browser
@@ -214,7 +216,7 @@ def test_json_invalido_muestra_el_error_sin_guardar(servidor, pagina, proyecto):
     assert page.input_value("#avatar-nombre") == "roto"
     page.click("#avatar-importar")
     page.wait_for_selector("#errores li")
-    assert not (proyecto / "configuracion/avatares/roto.avatar.json").exists()
+    assert not (proyecto / "config/avatars/roto.avatar.json").exists()
 
 
 @pytest.mark.browser
@@ -230,34 +232,34 @@ def test_importar_asignar_y_probar_un_evento(servidor, pagina, proyecto):
                                                      "buffer": contenido}])
     page.click("#avatar-importar")
     _esperar(page, "document.getElementById('estado').textContent.includes('mi-avatar')")
-    assert (proyecto / "configuracion/avatares/mi-avatar.avatar.json").is_file()
+    assert (proyecto / "config/avatars/mi-avatar.avatar.json").is_file()
 
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.select_option("#avatar-activo-sel", "mi-avatar")
     # Cada cambio guarda y recarga la vista previa: se espera el «Guardado» de este
     # antes del siguiente, o el siguiente podría confundirse con este.
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
-    page.wait_for_selector("tr[data-evento=respuesta_ok] option[value=contento]", state="attached")
+    page.wait_for_selector("tr[data-evento=answer_ok] option[value=happy]", state="attached")
     page.evaluate("document.getElementById('estado').textContent = ''")
-    page.select_option("tr[data-evento=respuesta_ok] select", "contento")
+    page.select_option("tr[data-evento=answer_ok] select", "happy")
     # «Guardado» se anuncia después de iniciar la recarga de la vista previa.
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
-    ruta = proyecto / "configuracion/personalidad.yaml"
+    ruta = proyecto / "config/personality.yaml"
     fin = time.monotonic() + 10
-    while "respuesta_ok: contento" not in ruta.read_text(encoding="utf-8") and time.monotonic() < fin:
+    while "answer_ok: happy" not in ruta.read_text(encoding="utf-8") and time.monotonic() < fin:
         time.sleep(0.05)
     guardado = ruta.read_text(encoding="utf-8")
-    assert "definicion: mi-avatar" in guardado and "respuesta_ok: contento" in guardado, guardado
+    assert "definition: mi-avatar" in guardado and "answer_ok: happy" in guardado, guardado
 
     # La vista previa monta el avatar real; el botón ▶ le dispara el evento con la clave asignada.
     page.wait_for_selector("#vista-previa[data-lista=true]", state="attached")
     _esperar(page, "(() => { const w = document.getElementById('vista-previa').contentWindow;"
-                   " return w.RagChat && w.RagChat.avatar.estado().listo; })()")
+                   " return w.Ipsis && w.Ipsis.avatar.state().ready; })()")
     page.evaluate("""(() => { const w = document.getElementById('vista-previa').contentWindow;
-        w.__eventos = []; w.document.addEventListener('rag:avatar', e => w.__eventos.push(e.detail)); })()""")
-    page.click("button[data-probar=respuesta_ok]")
+        w.__eventos = []; w.document.addEventListener('ipsis:avatar', e => w.__eventos.push(e.detail)); })()""")
+    page.click("button[data-probar=answer_ok]")
     eventos = page.evaluate("document.getElementById('vista-previa').contentWindow.__eventos")
-    assert {"estado": "evento", "evento": "respuesta_ok", "clave": "contento"} in eventos, eventos
+    assert {"state": "event", "event": "answer_ok", "key": "happy"} in eventos, eventos
     assert not errores, errores
 
 
@@ -272,11 +274,11 @@ def test_preset_y_ubicacion_del_widget(servidor, pagina, proyecto):
     page.select_option("#preset", otro)
     page.click("#aplicar-preset")
     _esperar(page, "document.getElementById('estado').textContent.length > 0")
-    page.select_option("#posicion", "abajo-izquierda")
+    page.select_option("#posicion", "bottom-left")
     page.click("#guardar-widget")
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
-    estilos = (proyecto / "configuracion/estilos.yaml").read_text(encoding="utf-8")
-    assert f"preset: {otro}" in estilos and "posicion: abajo-izquierda" in estilos
+    estilos = leer_proyecto(proyecto / "config/styles.yaml")
+    assert estilos["preset"] == otro and estilos["ubicacion"]["posicion"] == "abajo-izquierda"
     # Al recargar, el token sigue en la sesión de la pestaña.
     page.reload()
     page.wait_for_selector("#contenido:not([hidden])")
@@ -290,21 +292,22 @@ def test_estilo_completo_desde_el_panel(servidor, pagina, proyecto):
     page.wait_for_selector("#contenido:not([hidden])")
     page.click("#pestana-widget")
     page.click("#estilo-completo summary")
-    page.wait_for_selector("input[data-clave='colores.acento']")
-    assert page.get_attribute("input[data-clave='colores.acento']", "type") == "color"
-    assert page.get_attribute("input[data-clave='animaciones.activadas']", "type") == "checkbox"
-    page.fill("input[data-clave='colores.acento']", "#0ea5e9")
-    page.fill("input[data-clave='forma.radio_panel']", "10px")
-    page.uncheck("input[data-clave='animaciones.activadas']")
+    page.wait_for_selector("input[data-clave='colors.accent']")
+    assert page.get_attribute("input[data-clave='colors.accent']", "type") == "color"
+    assert page.get_attribute("input[data-clave='animations.enabled']", "type") == "checkbox"
+    page.fill("input[data-clave='colors.accent']", "#0ea5e9")
+    page.fill("input[data-clave='shape.panel_radius']", "10px")
+    page.uncheck("input[data-clave='animations.enabled']")
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.click("#guardar-estilo")
     _esperar(page, "document.getElementById('estado').textContent.includes('Guardado')")
-    estilos = (proyecto / "configuracion/estilos.yaml").read_text(encoding="utf-8")
-    assert "acento: '#0ea5e9'" in estilos and "radio_panel: 10px" in estilos and "activadas: false" in estilos
+    estilos = leer_proyecto(proyecto / "config/styles.yaml")
+    assert estilos["colores"]["acento"] == "#0ea5e9" and estilos["forma"]["radio_panel"] == "10px"
+    assert estilos["animaciones"]["activadas"] is False
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.click("#guardar-estilo")  # sin cambios: no escribe y lo dice
     _esperar(page, "document.getElementById('estado').textContent.includes('No hay cambios')")
-    page.fill("input[data-clave='forma.radio_panel']", "10px;color:red")
+    page.fill("input[data-clave='shape.panel_radius']", "10px;color:red")
     page.click("#guardar-estilo")
     _esperar(page, "document.getElementById('errores').textContent.includes('no permitidos')")
     assert not [e for e in errores if "422" not in e], errores  # solo el rechazo esperado

@@ -1,0 +1,176 @@
+# Serious tone: sober, neutral, short sentences.
+tone: serious
+description: Sober and neutral, with short sentences.
+situations:
+  greeting:
+  - I am {assistant_name}. I answer about {domain_description} with quotes from the document.
+  - Assistant for {domain_description}. Type your question.
+  - Hello. Ask about {domain_description}; every answer cites its source.
+  - I am {assistant_name}. What do you need to know about {domain_description}?
+  - Available for questions about {domain_description}.
+  - Assistant {assistant_name}. Inquiries about {domain_description}.
+  - Write your inquiry about {domain_description}.
+  - I am {assistant_name}. I quote {domain_description} verbatim.
+  thanks:
+  - You are welcome.
+  - Understood. You can keep asking about {domain_description}.
+  - Fine. I remain available.
+  - Noted. Another question about {domain_description}?
+  - Thank you.
+  - Noted. Still available.
+  - Understood.
+  - Thank you. You may continue with {domain_description}.
+  farewell:
+  - Goodbye.
+  - Until later.
+  - End of session.
+  - I remain available.
+  - Good day.
+  - Inquiry finished.
+  - Until next time.
+  - Closing.
+  capability:
+  - I search {domain_description} and show the literal text with its source.
+  - I am {assistant_name}. I do not write answers; I quote {domain_description}.
+  - I answer only with text from {domain_description}. If it is missing, I say so.
+  - 'Function: locate the passage in {domain_description} that answers and quote it.'
+  - I consult {domain_description} and deliver the exact quote.
+  - I quote {domain_description}. I do not generate my own text.
+  - I locate the relevant passage in {domain_description} and show it with its source.
+  - If {domain_description} does not contain it, I say so.
+  opening:
+  - 'The document says:'
+  - 'Document text:'
+  - 'Per the document:'
+  - 'Relevant passage:'
+  - 'Source:'
+  - 'Relevant text:'
+  - 'Document content:'
+  - 'Reference:'
+  - 'The text indicates:'
+  - 'Cited text:'
+  - 'Quoted passage:'
+  - 'Answer from the document:'
+  addition:
+  - 'Also:'
+  - 'In addition:'
+  - 'Another section states:'
+  - 'It adds:'
+  - 'Further:'
+  - 'Likewise:'
+  - 'Additionally:'
+  - 'Another passage:'
+  - 'Complement:'
+  - 'The document adds:'
+  - 'In another section:'
+  - 'Also indicated:'
+  condition:
+  - 'Condition:'
+  - 'Applies if:'
+  - 'With this condition:'
+  - 'Requirement:'
+  - 'Under this condition:'
+  - 'Subject to:'
+  - 'Applicable condition:'
+  - 'Required:'
+  exception:
+  - 'Exception:'
+  - 'Except:'
+  - 'With this proviso:'
+  - 'Does not apply here:'
+  - 'Excluded case:'
+  - 'Excepted:'
+  - 'Not applicable if:'
+  - 'Exclusion:'
+  related_intro:
+  - 'No direct answer. Related text:'
+  - 'No direct answer. Closest content:'
+  - 'A direct answer is not recorded. Related content:'
+  - 'Direct answer not found. Related:'
+  - 'Not a direct answer. The related text is this:'
+  - 'Direct answer not available. Nearby content:'
+  - 'No direct match. Linked text:'
+  - 'No exact answer. Related passages:'
+  - 'No direct answer recorded. Relevant text:'
+  - 'Without a direct answer. Nearest text:'
+  - 'A direct answer was not found. Related:'
+  - 'The direct answer is not recorded. Close content:'
+  missing_focus:
+  - 'No information on «{term}». Closest content:'
+  - 'No data on «{term}». Related:'
+  - '«{term}» does not appear. Nearby content:'
+  - 'Nothing specific on «{term}». Related content:'
+  - '«{term}» is not recorded. Closest text:'
+  - '«{term}» not recorded. Related:'
+  - 'No matches for «{term}». Nearest text:'
+  - 'No reference to «{term}». Close content:'
+  no_answer:
+  - That information is not in the documents.
+  - No information in the documents.
+  - Not recorded in the documents.
+  - The documents do not cover that.
+  - The documents do not answer this.
+  - That detail is not recorded.
+  - No answer available.
+  - The documents do not address that point.
+  - Information not available.
+  - Query outside the content of the documents.
+  - That information was not found.
+  - The documents hold no match for this.
+  premise_not_found:
+  - '"{entity}" does not appear in the documents.'
+  - No information on "{entity}".
+  - '"{entity}" is not recorded in the documents.'
+  - The documents do not mention "{entity}".
+  - No data on "{entity}".
+  - '"{entity}" is not listed.'
+  - No references to "{entity}".
+  - '"{entity}" was not found.'
+  welcome:
+  - Type your question.
+  - Questions about the document.
+  - I am {assistant_name}. Ask.
+  - Answers with document quotes.
+  - Ready to search.
+  - Ask when needed.
+  - Answers quoted from the document.
+  waiting:
+  - Searching
+  - Consulting the document
+  - Reviewing
+  - Locating the quote
+  - Processing
+  - Locating
+  - Verifying the source
+  citations_hint:
+  - Quote below.
+  - Verify in the quote.
+  - Source below.
+  - Original text below.
+  - Check the reference.
+  - Reference below.
+  - Text origin below.
+  network_error:
+  - No connection to the assistant. Retry.
+  - Connection error. Try again.
+  - The service did not respond. Check your connection.
+  - Connection interrupted. Retry.
+  - Service unreachable. Try later.
+  - Network failure. Retry.
+  - Connection unavailable. Try later.
+  rate_limit_error:
+  - Question limit reached. Wait a few seconds.
+  - Too many questions. Wait.
+  - A short pause is required.
+  - Wait before asking again.
+  - Temporary limit. Retry in seconds.
+  - Wait a few seconds.
+  - Too many requests. Retry shortly.
+  service_error:
+  - Service unavailable. Try later.
+  - Service starting. Retry.
+  - Not available for now.
+  - Service busy. Retry.
+  - Service failure. Try later.
+  - Service temporarily offline. Retry.
+  - Internal error. Try later.

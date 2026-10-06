@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 
 from apoyo import BANCO_SINTETICO, CORPUS
-from rag.evaluacion.banco import cargar_banco
-from rag.nucleo.esquemas import ChunkRecord, EvidenceSpan
-from rag.evaluacion.metricas import ObservacionEvaluacion, evaluar_observaciones
-from rag.ingesta.parsear import parsear_markdown
+from ipsis.evaluacion.banco import cargar_banco
+from ipsis.nucleo.esquemas import ChunkRecord, EvidenceSpan
+from ipsis.evaluacion.metricas import ObservacionEvaluacion, evaluar_observaciones
+from ipsis.ingesta.parsear import parsear_markdown
 
 MANIFIESTO = BANCO_SINTETICO
 

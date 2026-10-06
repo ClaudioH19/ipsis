@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" role="img" aria-label="ipsis: respuestas citadas, nunca inventadas">
+  <title>ipsis</title>
+  <rect width="1280" height="320" rx="24" fill="#ffffff"/>
+  <svg x="96" y="56" width="208" height="208" viewBox="0 0 128 128"><g transform="rotate(-5 64 64)">
+    <path d="M32 18h48l18 18v62a12 12 0 0 1-12 12H32a12 12 0 0 1-12-12V30a12 12 0 0 1 12-12z"
+          fill="#f5f1e8" stroke="#d6cdb8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M80 18v12a6 6 0 0 0 6 6h12z" fill="#e4dac4" stroke="#d6cdb8" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="44" y="44" width="9" height="20" rx="4.5" fill="#1e293b"/>
+    <rect x="65" y="44" width="9" height="20" rx="4.5" fill="#1e293b"/>
+    <rect x="34" y="78" width="52" height="5" rx="2.5" fill="#cbd5e1"/>
+    <rect x="34" y="89" width="34" height="9" rx="4.5" fill="#93c5fd"/>
+    <rect x="72" y="91" width="14" height="5" rx="2.5" fill="#cbd5e1"/>
+  </g>
+</svg>
+  <text x="352" y="150" font-family="Inter, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="76" font-weight="800" letter-spacing="-2" fill="#0f172a">ipsis</text>
+  <text x="356" y="206" font-family="Inter, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="30" fill="#475569">Respuestas citadas de tus documentos, <tspan fill="#2563eb" font-weight="700">nunca inventadas</tspan>.</text>
+  <text x="356" y="252" font-family="ui-monospace, 'SFMono-Regular', Consolas, monospace" font-size="20" fill="#475569">sin LLM · CPU · self-hosted · es · en · pt</text>
+</svg>

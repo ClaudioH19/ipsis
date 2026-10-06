@@ -6,12 +6,12 @@ los endpoints del widget (Tarea B: ``/config``, ``/widget.js``,
 A propósito, NINGUNO de estos tests requiere el corpus real ni el índice
 Qdrant: usan ``TestClient(app)`` SIN el context manager (``with``), que en
 FastAPI/Starlette es lo que dispara el evento ``startup`` -- así corren
-siempre, en cualquier máquina, sin depender de que ``rag indexar``
+siempre, en cualquier máquina, sin depender de que ``ipsis index``
 se haya corrido antes (a diferencia de ``tests/integracion/test_caracterizacion.py``, que sí lo
 necesita y se salta si falta). Esto es posible porque la seguridad de borde
 (clave de widget + límite de peticiones) se resuelve como una dependencia de
 FastAPI que corre ANTES que el cuerpo de la ruta -- ver
-``rag/servicio/api.py::_verificar_seguridad`` -- y ``/config``/``/widget.js``/
+``ipsis/servicio/api.py::_verificar_seguridad`` -- y ``/config``/``/widget.js``/
 ``/widget/demo.html`` tampoco tocan el índice.
 
 Los tests de autenticación y límite de peticiones reemplazan los atributos
@@ -23,8 +23,8 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from rag.servicio.api import app
-from rag.servicio.seguridad import NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones
+from ipsis.servicio.api import app
+from ipsis.servicio.seguridad import NOMBRE_CABECERA_CLAVE_WIDGET, LimitadorPeticiones
 
 client = TestClient(app)  # SIN 'with': no dispara startup (no requiere corpus/índice)
 estado = app.state.servicio
@@ -42,11 +42,11 @@ def _aislar_seguridad(monkeypatch: pytest.MonkeyPatch):
 
 
 def _consultar(pregunta: str = "hola", **kwargs):
-    return client.post("/consultar", json={"pregunta": pregunta, "id_sesion": "test-seguridad"}, **kwargs)
+    return client.post("/ask", json={"question": pregunta, "session_id": "test-seguridad"}, **kwargs)
 
 
 # ---------------------------------------------------------------------------
-# CORS: cors_origenes está VACÍO por defecto (configuracion/asistente.yaml, corregido
+# CORS: cors_origenes está VACÍO por defecto (config/assistant.yaml, corregido
 # en esta tanda) -- CUALQUIER origen cuenta como "no listado".
 # ---------------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ def test_sin_claves_configuradas_no_exige_autenticacion(monkeypatch: pytest.Monk
     monkeypatch.setattr(estado, "claves_widget", [])
     r = _consultar()  # "hola" -> conversacional, no necesita el índice
     assert r.status_code == 200
-    assert r.json()["estado"] == "conversacional"
+    assert r.json()["status"] == "conversational"
 
 
 def test_clave_invalida_no_pasa(monkeypatch: pytest.MonkeyPatch):
@@ -104,7 +104,7 @@ def test_clave_valida_si_pasa(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(estado, "claves_widget", ["clave-correcta", "clave-de-otro-sitio"])
     r = _consultar(headers={NOMBRE_CABECERA_CLAVE_WIDGET: "clave-correcta"})
     assert r.status_code == 200
-    assert r.json()["estado"] == "conversacional"
+    assert r.json()["status"] == "conversational"
 
 
 # ---------------------------------------------------------------------------
@@ -162,19 +162,20 @@ def test_config_devuelve_los_textos_del_dominio():
     r = client.get("/config")
     assert r.status_code == 200
     body = r.json()
-    assert body["nombre_asistente"]
-    assert body["descripcion_dominio"]
-    assert body["saludo"]
-    assert body["preset"] in {"clasico", "minimal", "editorial", "contraste"}
-    assert body["densidad"] in {"comoda", "compacta"}
-    assert body["citas"] in {"acordeon", "abiertas", "ocultas"}
-    assert isinstance(body["mostrar_etiqueta_estado"], bool)
+    assert body["assistant_name"]
+    assert body["domain_description"]
+    assert body["greeting"]
+    assert body["preset"] in {"classic", "minimal", "editorial", "contrast"}
+    assert body["density"] in {"comfortable", "compact"}
+    assert body["citations"] in {"accordion", "list"}
+    assert isinstance(body["show_status_label"], bool)
+    assert body["text_align"] in {"start", "justify"} and body["language"]
     # el saludo real del paquete de idioma, con las variables ya
-    # sustituidas (nunca la plantilla cruda con '{nombre_asistente}' sin
+    # sustituidas (nunca la plantilla cruda con '{assistant_name}' sin
     # rellenar) -- misma función que responde un "hola" real.
-    assert "{" not in body["saludo"]
-    assert body["interfaz"]["placeholder"]
-    assert body["interfaz"]["error_red"]
+    assert "{" not in body["greeting"]
+    assert body["interface"]["placeholder"]
+    assert body["interface"]["network_error"]
 
 
 def test_config_no_exige_clave_de_widget(monkeypatch: pytest.MonkeyPatch):
@@ -204,14 +205,14 @@ def test_widget_js_no_usa_innerhtml_en_ningun_punto():
     atrapa la regresión más peligrosa): el archivo entero no debe contener
     ``.innerHTML`` -- todo texto que venga de la API se asigna con
     ``textContent`` (ver ``agregarMensajeAsistente``/``agregarCitas`` en
-    ``rag/servicio/estaticos/widget.js``)."""
+    ``ipsis/servicio/estaticos/widget.js``)."""
     texto = client.get("/widget.js").text
     assert ".innerHTML" not in texto, "el widget no debe usar innerHTML en ningún punto (política de este proyecto)"
 
 
 def test_widget_demo_html_solo_en_desarrollo_o_con_rag_demo():
-    from rag.aplicacion.modo import ModoServicio
-    from rag.servicio.api import crear_app
+    from ipsis.aplicacion.modo import ModoServicio
+    from ipsis.servicio.api import crear_app
 
     assert client.get("/widget/demo.html").status_code == 404  # producción por defecto
     for modo in (ModoServicio(modo="desarrollo", demo=True), ModoServicio(demo=True)):
@@ -253,7 +254,7 @@ def test_widget_js_usa_svg_y_no_emoji_para_los_iconos():
 
 def test_widget_js_tiene_indicador_de_espera():
     """Entre que se envía la pregunta y llega la respuesta el widget no debe
-    quedarse mudo: hay un indicador de 'escribiendo' que se muestra y se
+    quedarse mudo: hay un indicador de 'typing' que se muestra y se
     retira en el `finally` de la petición."""
     texto = client.get("/widget.js").text
     assert "mostrarEscribiendo" in texto and "ocultarEscribiendo" in texto

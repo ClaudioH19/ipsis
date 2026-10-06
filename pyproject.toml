@@ -3,9 +3,9 @@ requires = ["setuptools>=77"]  # license como expresión SPDX (PEP 639)
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rag-extractivo"
-version = "0.8.0"
-description = "Asistente RAG extractivo, local y auditable para documentos propios."
+name = "ipsis"
+version = "0.9.0"
+description = "Answers in the exact words of your documents: an extractive, self-hosted, CPU-only assistant that never invents."
 requires-python = ">=3.11"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -28,21 +28,23 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
 browser = ["pytest>=8,<10", "playwright>=1.55,<2"]
-# Solo desarrollo: convertir un modelo a ONNX (rag modelos exportar).
+# Solo desarrollo: convertir un modelo a ONNX (ipsis models export).
 # optimum 2.x movió el exportador ONNX a optimum-onnx; este fija transformers < 4.58.
-exportar = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
+export = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
+# OCR de PDF escaneados (ipsis/ingesta/ocr.py); además requiere el programa Tesseract.
+ocr = ["pytesseract>=0.3.13,<0.4", "pypdfium2>=4.30,<6"]
 
 [project.scripts]
-rag = "rag.cli:main"
+ipsis = "ipsis.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["rag*"]
+include = ["ipsis*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-"rag.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "perfiles/*.yaml", "tonos/*/*.yaml", "avatares/*",
+"ipsis.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "mensajes/*.yaml", "perfiles/*.yaml", "tonos/*/*.yaml", "avatares/*",
                   "despliegue/preparar/*"]
-"rag.servicio" = ["estaticos/*.js", "estaticos/*.html", "estaticos/*.LICENSE.txt", "estaticos/*.sha256", "estaticos/admin/*"]
+"ipsis.servicio" = ["estaticos/*.js", "estaticos/*.html", "estaticos/*.LICENSE.txt", "estaticos/*.sha256", "estaticos/admin/*"]
 
 [tool.pytest.ini_options]
 # El directorio temporal se elige en tests/conftest.py::pytest_configure.
@@ -51,6 +53,6 @@ pythonpath = ["tests"]
 testpaths = ["tests"]
 markers = [
   "slow: prueba de integración de más de 5 s (procesos reales, índices o servidores)",
-  "modelos(id_hf, ...): necesita esos modelos ONNX en la caché local (rag modelos descargar)",
+  "modelos(id_hf, ...): necesita esos modelos ONNX en la caché local (ipsis models download)",
   "browser: prueba end-to-end que requiere Playwright y Chromium",
 ]

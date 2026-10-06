@@ -1,0 +1,83 @@
+# Banco de consultas naturales en inglés (fuente). Los mismos casos que es/,
+# escritos como los diría alguien en inglés, no traducidos palabra por
+# palabra. Mismas reglas que el banco universal (ver ../README.md). Los demás
+# documentos son los del banco universal en inglés, como distractores.
+
+# --- la consulta que reveló el problema y sus variantes ---------------------
+- id: en-parafrasis-001
+  documento: procurement_manual.md
+  capacidad: fecha
+  pregunta: when does the purchase start?
+  respuesta: Once the Requisition Form has been approved by the Head of the Purchasing Department
+- id: en-trampa-001
+  par: en-parafrasis-001
+  pregunta: When does the purchasing audit start?
+- id: en-parafrasis-002
+  documento: procurement_manual.md
+  capacidad: fecha
+  pregunta: when does buying begin
+  respuesta: Once the Requisition Form has been approved by the Head of the Purchasing Department
+- id: en-trampa-002
+  par: en-parafrasis-002
+  pregunta: When does the contract with the supplier end?
+- id: en-parafrasis-003
+  documento: procurement_manual.md
+  capacidad: fecha
+  pregunta: When is the purchase made?
+  respuesta: Once the Requisition Form has been approved by the Head of the Purchasing Department
+- id: en-parafrasis-004
+  documento: procurement_manual.md
+  capacidad: fecha
+  pregunta: At what point does the purchase take place?
+  respuesta: Once the Requisition Form has been approved by the Head of the Purchasing Department
+- id: en-parafrasis-005
+  documento: procurement_manual.md
+  capacidad: fecha
+  pregunta: When do we start buying?
+  respuesta: Once the Requisition Form has been approved by the Head of the Purchasing Department
+
+# --- otras relaciones sobre el mismo procedimiento ---------------------------
+- id: en-exacta-001
+  documento: procurement_manual.md
+  capacidad: persona
+  pregunta: Who sends the Purchase Order to the supplier?
+  respuesta: The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier
+- id: en-trampa-003
+  par: en-exacta-001
+  pregunta: Who approves the payment of the Purchase Order in Finance?
+- id: en-parafrasis-006
+  documento: procurement_manual.md
+  capacidad: condicion
+  pregunta: What happens if the supplier rejects the order?
+  respuesta: the Purchasing Supervisor cancels the order
+- id: en-trampa-004
+  par: en-parafrasis-006
+  pregunta: What happens if the requesting unit rejects the products received?
+- id: en-exacta-002
+  documento: procurement_manual.md
+  capacidad: duracion
+  pregunta: How many days does the supplier have to accept the Purchase Order?
+  respuesta: two business days to accept the Purchase Order
+- id: en-trampa-005
+  par: en-exacta-002
+  pregunta: How many days does the supplier have to deliver the products?
+- id: en-exacta-003
+  documento: procurement_manual.md
+  capacidad: persona
+  pregunta: Who signs the purchase Resolution?
+  respuesta: Director of Administration for signature
+- id: en-parafrasis-007
+  documento: procurement_manual.md
+  capacidad: cantidad
+  pregunta: Above what amount do you need a Resolution?
+  respuesta: Purchases above 100 UTM require a Resolution
+- id: en-trampa-006
+  par: en-parafrasis-007
+  pregunta: Above what amount do you need a public tender?
+- id: en-exacta-004
+  documento: procurement_manual.md
+  capacidad: duracion
+  pregunta: Within how many days does Finance pay invoices?
+  respuesta: within thirty calendar days from the receipt of goods
+- id: en-fuera-001
+  pregunta: What is the capital of Mongolia?

@@ -1,25 +1,30 @@
-# Documentación
+# Documentation
 
-| Carpeta | Contenido |
+| Folder | Contents |
 |---|---|
-| [arquitectura.md](arquitectura.md) | Módulos, flujos y diagramas |
-| [guia/](guia/) | Cómo instalar, usar, configurar, evaluar, personalizar y desplegar el asistente |
-| [metodologia/](metodologia/README.md) | Una ficha por técnica: qué hace, cómo, límites y pruebas |
-| [decisiones/](decisiones/) | Decisiones de arquitectura (ADR) numeradas |
+| [architecture.md](architecture.md) | Modules, flows and diagrams |
+| [guide/](guide/) | How to install, use, configure, evaluate, customize and deploy the assistant |
+| [methodology/](methodology/README.md) | One note per technique: what it does, how, limits and tests |
+| [decisions/](decisions/) | Numbered architecture decision records (ADR) |
+| [es/](es/README.md) | The guides in Spanish |
 
-## Arquitectura
+## Architecture
 
-[arquitectura.md](arquitectura.md): capas de `rag/`, qué hace cada módulo,
-el flujo de una consulta y de la ingesta, el servicio, el despliegue y dónde
-se audita cada decisión, con diagramas.
+[architecture.md](architecture.md): the layers of `ipsis/`, what each module
+does, the flow of a query and of ingestion, the service, deployment and where
+each decision is audited, with diagrams.
 
-## Mapa del repositorio
+## Repository map
 
-| Carpeta | Para qué existe |
+| Folder | Why it exists |
 |---|---|
-| `rag/` | El paquete: código por capas y recursos |
-| `tests/` | Pruebas espejo de `rag/`, más `datos/` (corpus y bancos sintéticos) e `integracion/` |
-| `ejemplos/` | Integraciones web probadas: HTML, React y WordPress |
-| `herramientas/avatar/` | Build reproducible del motor del avatar y Folio (solo desarrollo) |
-| `docs/` | Esta documentación |
-| `.github/` | Formularios de issues y plantilla de pull request |
+| `ipsis/` | The package: code by layers, plus resources |
+| `tests/` | Tests mirroring `ipsis/`, plus `datos/` (synthetic corpora and banks) and `integracion/` |
+| `examples/` | Tested web integrations: HTML, React and WordPress |
+| `herramientas/avatar/` | Reproducible build of the avatar engine and Folio (development only) |
+| `docs/` | This documentation |
+| `.github/` | Issue forms and the pull request template |
+
+The code's internal identifiers (modules, functions, variables) are in
+Spanish; everything a user sees (commands, files, keys, API, messages) is in
+English, with Spanish available through `IPSIS_LANG=es`.

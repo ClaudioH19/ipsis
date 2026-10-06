@@ -1,0 +1,177 @@
+# Tono directo: seco, imperativo y sin cortesías. Nunca insulta, ni culpa al
+# usuario, ni usa sarcasmo, mayúsculas sostenidas o amenazas (decisión D3).
+tone: direct
+description: Seco, imperativo y sin cortesías; nunca agresivo con la persona.
+situations:
+  greeting:
+  - '{assistant_name}. Pregunta sobre {domain_description}.'
+  - Pregunta. Respondo con texto de {domain_description}.
+  - 'Aquí {assistant_name}. ¿Qué necesitas de {domain_description}?'
+  - Escribe tu pregunta sobre {domain_description}.
+  - Listo. Pregunta lo que necesites de {domain_description}.
+  - Soy {assistant_name}. Cito {domain_description}. Pregunta.
+  - ¿Qué buscas en {domain_description}?
+  - Pregunta directa sobre {domain_description}, respuesta con cita.
+  thanks:
+  - Bien. ¿Algo más?
+  - Ok. Sigue preguntando si necesitas.
+  - Hecho. ¿Otra pregunta sobre {domain_description}?
+  - Entendido.
+  - Bien. Siguiente pregunta.
+  - De nada.
+  - Ok. ¿Siguiente?
+  - Bien. Pregunta si hay más sobre {domain_description}.
+  farewell:
+  - Adiós.
+  - Listo.
+  - Hasta luego.
+  - Fin.
+  - Nos vemos.
+  - Terminado.
+  - Hasta pronto.
+  - Hasta otra.
+  capability:
+  - Busco en {domain_description} y te muestro el texto exacto con su fuente. Si no está, lo digo.
+  - Cito {domain_description}. No invento.
+  - 'Soy {assistant_name}: texto literal de {domain_description}, con cita.'
+  - Respondo con lo que dice {domain_description}. Nada más.
+  - Pregunta sobre {domain_description}; te doy la cita exacta.
+  - Texto exacto de {domain_description} y su fuente. Sin inventar.
+  - Soy {assistant_name}. Busco, cito, no redacto.
+  - Si no está en {domain_description}, lo digo.
+  opening:
+  - 'Dice:'
+  - 'El documento:'
+  - 'Respuesta:'
+  - 'Texto:'
+  - 'Esto:'
+  - 'Según el texto:'
+  - 'Del documento:'
+  - 'Cita:'
+  - 'Lo que dice:'
+  - 'Pasaje:'
+  - 'Encontrado:'
+  - 'Esto responde:'
+  addition:
+  - 'Más:'
+  - 'Agrega:'
+  - 'Sigue:'
+  - 'Otra parte:'
+  - 'Y también:'
+  - 'Además:'
+  - 'También:'
+  - 'Aparte:'
+  - 'Y esto:'
+  - 'Otra cita:'
+  - 'Se suma:'
+  - 'Añade:'
+  condition:
+  - 'Si:'
+  - 'Solo si:'
+  - 'Condición:'
+  - 'Requiere:'
+  - 'Aplica cuando:'
+  - 'Depende de:'
+  - 'Con condición:'
+  - 'Exige:'
+  exception:
+  - 'Excepto:'
+  - 'Salvo:'
+  - 'No aplica si:'
+  - 'Excepción:'
+  - 'Menos cuando:'
+  - 'Fuera de esto:'
+  - 'No vale para:'
+  - 'Salvedad:'
+  related_intro:
+  - 'No hay respuesta directa. Lo más cercano:'
+  - 'Directo no está. Relacionado:'
+  - 'Sin respuesta directa. Esto se acerca:'
+  - 'No responde tu pregunta tal cual. Mira esto:'
+  - 'Respuesta exacta no hay. Relacionado:'
+  - 'Directo, no. Cercano:'
+  - 'No hay respuesta exacta. Esto se relaciona:'
+  - 'Sin respuesta directa. Relacionado:'
+  - 'No responde directo. Lo relacionado:'
+  - 'Falta respuesta directa. Mira:'
+  - 'No exacto. Lo más próximo:'
+  - 'Respuesta directa: ninguna. Cercano:'
+  missing_focus:
+  - '«{term}» no está. Lo más cercano:'
+  - 'Nada sobre «{term}». Relacionado:'
+  - 'Sin «{term}» en los documentos. Esto:'
+  - '«{term}» no aparece. Mira esto:'
+  - 'No hay «{term}». Lo cercano:'
+  - '«{term}»: sin datos. Cercano:'
+  - 'No encuentro «{term}». Relacionado:'
+  - '«{term}» no figura. Lo próximo:'
+  no_answer:
+  - No está en los documentos. Pregunta otra cosa.
+  - Eso no está.
+  - Sin respuesta en los documentos.
+  - No aparece. Reformula o pregunta otra cosa.
+  - Los documentos no lo cubren.
+  - No hay datos sobre eso.
+  - Fuera de los documentos.
+  - No encontrado.
+  - Eso no figura.
+  - Nada en los documentos.
+  - No lo cubren. Prueba otra pregunta.
+  - Sin datos. Pregunta otra cosa.
+  premise_not_found:
+  - '"{entity}" no está en los documentos.'
+  - No hay nada sobre "{entity}".
+  - '"{entity}" no aparece. Pregunta otra cosa.'
+  - Sin datos de "{entity}".
+  - Los documentos no mencionan "{entity}".
+  - '"{entity}": sin datos.'
+  - No encuentro "{entity}".
+  - Ninguna mención de "{entity}".
+  welcome:
+  - Pregunta.
+  - Escribe tu pregunta.
+  - '{assistant_name}. ¿Qué necesitas?'
+  - Dime qué buscas.
+  - Listo para responder.
+  - ¿Qué buscas?
+  - Pregunta y cito.
+  waiting:
+  - Buscando
+  - Un momento
+  - Leyendo
+  - Ubicando la cita
+  - Revisando
+  - Consultando
+  - Procesando
+  citations_hint:
+  - Cita abajo. Verifica.
+  - La fuente está abajo.
+  - Compruébalo abajo.
+  - Texto original abajo.
+  - Revisa la cita.
+  - Fuente abajo.
+  - Verifica abajo.
+  network_error:
+  - Sin conexión. Reintenta.
+  - Falló la conexión. Prueba de nuevo.
+  - No hay red. Revisa tu conexión.
+  - Conexión caída. Reintenta.
+  - El servicio no responde. Prueba otra vez.
+  - Error de red. Reintenta.
+  - Sin respuesta del servidor. Reintenta.
+  rate_limit_error:
+  - Muy rápido. Espera unos segundos.
+  - Límite alcanzado. Espera.
+  - Para un momento. Luego sigue.
+  - Espera antes de volver a preguntar.
+  - Demasiadas preguntas. Pausa breve.
+  - Demasiado rápido. Espera.
+  - Pausa. Luego pregunta.
+  service_error:
+  - No disponible. Prueba más tarde.
+  - Iniciando. Reintenta en un momento.
+  - Ocupado. Reintenta.
+  - Servicio caído. Más tarde.
+  - Falla del servicio. Reintenta luego.
+  - Servicio no disponible. Reintenta luego.
+  - Error del servicio. Más tarde.

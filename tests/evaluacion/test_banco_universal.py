@@ -15,8 +15,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.evaluacion.banco import cargar_banco, exigir_calibrable, validar_evidencias_contra_corpus
-from rag.ingesta.parsear import parsear_documento
+from ipsis.evaluacion.banco import cargar_banco, exigir_calibrable, validar_evidencias_contra_corpus
+from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parents[1] / "datos" / "banco_universal"
 IDIOMAS = ("es", "en", "pt")
@@ -108,7 +108,7 @@ def test_el_banco_universal_no_calibra(bancos):
     golden = cargar_banco(Path(__file__).resolve().parents[1] / "datos" / "banco" / "manifiesto.json")
     exigir_calibrable(golden)  # un banco de evaluación sí
     # Ningún código del producto apunta al banco universal: no se usa por defecto.
-    raiz_rag = Path(__file__).resolve().parents[2] / "rag"
+    raiz_rag = Path(__file__).resolve().parents[2] / "ipsis"
     assert not [p for p in raiz_rag.rglob("*.py") if re.search(r"banco_universal", p.read_text(encoding="utf-8"))]
 
 
@@ -145,8 +145,8 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
             assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
     # La calibración re-decide con la misma regla que producción: con los
     # umbrales del perfil reproduce exactamente cada estado observado.
-    from rag.configuracion.perfiles import perfil_efectivo
-    from rag.evaluacion.calibracion import redecidir
+    from ipsis.configuracion.perfiles import perfil_efectivo
+    from ipsis.evaluacion.calibracion import redecidir
 
     umbrales = perfil_efectivo(perfil).umbrales_por_defecto
     for obs in artefacto.observaciones:

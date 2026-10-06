@@ -1,0 +1,50 @@
+# Expressões que nenhum tom pode usar (inclusive «directo»): insultos,
+# culpar o usuário ou condescendência.
+forbidden:
+- idiota
+- estúpido
+- estúpida
+- imbecil
+- burro
+- burra
+- inútil
+- ridículo
+- ridícula
+- cale a boca
+- sua culpa
+- obviamente
+- como eu já disse
+# Regionalismos (do Brasil ou de Portugal), formas com género e gerúndios: os
+# tons incluídos devem ser neutros (um teste exige). Nas substituições de um
+# projeto são um aviso de 'ipsis personality validate' e 'ipsis doctor', não um erro.
+regionalisms:
+- oi
+- tchau
+- e aí
+- bora
+- foi mal
+- beleza
+- poxa
+- puxa
+- a gente
+- pra
+- o senhor
+- a senhora
+- bem-vindo
+- bem-vinda
+- bom dia
+- imagina
+- opa
+- ops
+- ajudá-lo
+- atendê-lo
+- convido-o
+- buscando
+- procurando
+- revisando
+- lendo
+- consultando
+- localizando
+- achando
+- processando
+- encontrando

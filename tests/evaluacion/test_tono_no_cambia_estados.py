@@ -1,5 +1,5 @@
 """El tono solo enmarca: con otras plantillas, los estados, las reglas y la
-literalidad de ``rag evaluar`` son idénticos (P12.2)."""
+literalidad de ``ipsis evaluate`` son idénticos (P12.2)."""
 from __future__ import annotations
 
 import contextlib
@@ -18,7 +18,7 @@ pytestmark = [pytest.mark.slow, pytest.mark.modelos("intfloat/multilingual-e5-sm
 
 def _otro_tono() -> dict[str, list[str]]:
     """Plantillas distintas a ``cordial`` para todas las situaciones del motor, válidas para el linter."""
-    from rag.lenguaje.tonos import SITUACIONES
+    from ipsis.lenguaje.tonos import SITUACIONES
 
     plantillas = {}
     for situacion, regla in SITUACIONES.items():
@@ -36,20 +36,20 @@ def _por_caso(artefacto) -> dict[str, tuple]:
 
 
 def test_otro_tono_no_cambia_estados_reglas_ni_literalidad(tmp_path: Path):
-    from rag.aplicacion.evaluacion import evaluar_backend_activo
-    from rag.cli import main
-    from rag.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
+    from ipsis.aplicacion.evaluacion import evaluar_backend_activo
+    from ipsis.cli import main
+    from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
 
     manifiesto = RAIZ / "es" / "manifiesto.json"
     anterior, idioma_previo, perfil_previo = Path.cwd(), idioma_activo(), perfil_activo()
     try:
         os.chdir(tmp_path)
         with contextlib.redirect_stdout(io.StringIO()):
-            assert main(["init", "--perfil", "light", "--idioma", "es"]) == 0
-            assert main(["cargar", str(RAIZ / "es" / "corpus")]) == 0
-            assert main(["indexar"]) == 0
+            assert main(["init", "--profile", "light", "--language", "es"]) == 0
+            assert main(["load", str(RAIZ / "es" / "corpus")]) == 0
+            assert main(["index"]) == 0
         cordial = evaluar_backend_activo(str(manifiesto))
-        Path("configuracion/personalidad.yaml").write_text(
+        Path("config/personality.yaml").write_text(
             yaml.safe_dump({"tono": {"plantillas": _otro_tono()}}, allow_unicode=True), encoding="utf-8")
         otro = evaluar_backend_activo(str(manifiesto))
     finally:

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from rag.nucleo.contratos import AnswerExtractor, EvidenceVerifier
-from rag.nucleo.esquemas import (
+from ipsis.nucleo.contratos import AnswerExtractor, EvidenceVerifier
+from ipsis.nucleo.esquemas import (
     ChunkRecord,
     EvidenceSpan,
     QueryAnalysis,
     RetrievalCandidate,
     RetrievalSignals,
 )
-from rag.indice.payload import payload_desde_evidencia
-from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
+from ipsis.indice.payload import payload_desde_evidencia
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
 
 
 def _candidato(

@@ -10,32 +10,32 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
 COMANDOS_ACTUALES = {
-    ("init",), ("cargar",), ("configurar",), ("perfil", "mostrar"), ("perfil", "cambiar"), ("indexar",),
-    ("modelos", "listar"), ("modelos", "descargar"), ("modelos", "verificar"), ("modelos", "exportar"),
-    ("personalidad", "mostrar"), ("personalidad", "validar"), ("personalidad", "tono", "listar"),
-    ("personalidad", "tono", "aplicar"), ("personalidad", "tono", "probar"), ("personalidad", "avatar", "listar"),
-    ("personalidad", "avatar", "importar"), ("personalidad", "avatar", "aplicar"), ("personalidad", "avatar", "eventos"),
-    ("personalidad", "avatar", "asignar"), ("personalidad", "avatar", "colores"),
-    ("servir",), ("preguntar",), ("doctor",), ("auditar",),
-    ("snapshot-config",), ("evaluar",), ("calibrar",), ("comparar",), ("benchmark",),
-    ("golden", "plantilla"), ("golden", "importar"), ("golden", "validar"), ("golden", "exportar"),
-    ("widget", "tema", "listar"), ("widget", "tema", "aplicar"), ("widget", "tema", "vista-previa"),
-    ("widget", "estilo", "mostrar"), ("widget", "estilo", "cambiar"),
-    ("widget", "exportar"), ("widget", "snippet"), ("desplegar", "preparar"),
+    ("init",), ("load",), ("configure",), ("profile", "show"), ("profile", "set"), ("index",),
+    ("models", "list"), ("models", "download"), ("models", "verify"), ("models", "export"),
+    ("personality", "show"), ("personality", "validate"), ("personality", "tone", "list"),
+    ("personality", "tone", "apply"), ("personality", "tone", "try"), ("personality", "avatar", "list"),
+    ("personality", "avatar", "import"), ("personality", "avatar", "apply"), ("personality", "avatar", "events"),
+    ("personality", "avatar", "assign"), ("personality", "avatar", "colors"),
+    ("serve",), ("ask",), ("doctor",), ("audit",),
+    ("snapshot-config",), ("evaluate",), ("calibrate",), ("compare",), ("benchmark",),
+    ("golden", "template"), ("golden", "import"), ("golden", "validate"), ("golden", "export"),
+    ("widget", "theme", "list"), ("widget", "theme", "apply"), ("widget", "theme", "preview"),
+    ("widget", "style", "show"), ("widget", "style", "set"),
+    ("widget", "export"), ("widget", "snippet"), ("deploy", "prepare"),
 }
 
 
 def test_el_script_rag_sigue_apuntando_a_rag_cli_main():
     datos = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))
-    assert datos["project"]["scripts"]["rag"] == "rag.cli:main"
-    from rag.cli import main
+    assert datos["project"]["scripts"]["ipsis"] == "ipsis.cli:main"
+    from ipsis.cli import main
 
     assert callable(main)
-    assert not (RAIZ / "rag" / "cli.py").exists()  # sin módulo puente
+    assert not (RAIZ / "ipsis" / "cli.py").exists()  # sin módulo puente
 
 
 def test_importar_la_cli_no_crea_ni_abre_nada(tmp_path):
-    codigo = "import rag.cli, os; print(sorted(os.listdir('.')))"
+    codigo = "import ipsis.cli, os; print(sorted(os.listdir('.')))"
     salida = subprocess.run([sys.executable, "-c", codigo], cwd=tmp_path, capture_output=True, text=True, check=True)
     assert salida.stdout.strip() == "[]"
 
@@ -53,8 +53,8 @@ def _hojas(parser, ruta=()):
 
 
 def test_todos_los_comandos_actuales_quedan_registrados_con_su_command():
-    from rag.cli import construir_parser
-    from rag.cli.base import Comando
+    from ipsis.cli import construir_parser
+    from ipsis.cli.base import Comando
 
     hojas = dict(_hojas(construir_parser()))
     assert set(hojas) == COMANDOS_ACTUALES
@@ -63,7 +63,7 @@ def test_todos_los_comandos_actuales_quedan_registrados_con_su_command():
 
 
 def test_el_command_recibe_su_namespace_y_llama_al_caso_de_uso(monkeypatch):
-    from rag.cli import main
+    from ipsis.cli import main
 
     llamadas = []
 
@@ -71,16 +71,16 @@ def test_el_command_recibe_su_namespace_y_llama_al_caso_de_uso(monkeypatch):
         llamadas.append((formato, salida))
         return Path("golden/exportado.csv"), []
 
-    monkeypatch.setattr("rag.cli.comandos.golden.exportar_golden", exportar_falso)
-    assert main(["golden", "exportar", "--formato", "csv", "--salida", "x.csv"]) == 0
+    monkeypatch.setattr("ipsis.cli.comandos.golden.exportar_golden", exportar_falso)
+    assert main(["golden", "export", "--format", "csv", "--output", "x.csv"]) == 0
     assert llamadas == [("csv", "x.csv")]
 
 
 @pytest.mark.parametrize("codigo", [0, 1, 7])
 def test_el_codigo_del_command_llega_a_main(monkeypatch, codigo):
-    from rag.cli import main
+    from ipsis.cli import main
 
-    monkeypatch.setattr("rag.cli.comandos.operacion.ComandoDoctor.ejecutar", lambda _self, _args: codigo)
+    monkeypatch.setattr("ipsis.cli.comandos.operacion.ComandoDoctor.ejecutar", lambda _self, _args: codigo)
     assert main(["doctor"]) == codigo
 
 
@@ -89,15 +89,15 @@ def test_python_m_rag_cli_funciona():
 
     # Con la salida redirigida, Windows escribiría en cp1252: se fija UTF-8 para leerla.
     entorno = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    salida = subprocess.run([sys.executable, "-m", "rag.cli", "--help"], capture_output=True, text=True,
+    salida = subprocess.run([sys.executable, "-m", "ipsis.cli", "--help"], capture_output=True, text=True,
                             encoding="utf-8", env=entorno)
     assert salida.returncode == 0 and "golden" in salida.stdout
 
 
 def test_version(capsys):
-    from rag import __version__
-    from rag.cli import main
+    from ipsis import __version__
+    from ipsis.cli import main
 
     with pytest.raises(SystemExit) as salida:
         main(["--version"])
-    assert salida.value.code == 0 and capsys.readouterr().out.strip() == f"rag-extractivo {__version__}"
+    assert salida.value.code == 0 and capsys.readouterr().out.strip() == f"ipsis {__version__}"

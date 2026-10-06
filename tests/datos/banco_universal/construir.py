@@ -2,12 +2,12 @@
 
 Fuentes (se editan a mano): ``<idioma>/corpus/*.md`` y ``<idioma>/casos.yaml``.
 Derivados (versionados): ``<idioma>/banco.jsonl`` y ``<idioma>/manifiesto.json``,
-en el formato del banco interno (``rag.evaluacion.banco``).
+en el formato del banco interno (``ipsis.evaluacion.banco``).
 
 La categoría la fija el autor por el id (``exacta``, ``parafrasis``, ``trampa``,
 ``premisa``, ``ambigua``, ``fuera``), no ``s_cov``: una paráfrasis real cuenta
 como paráfrasis aunque al sistema le cueste. Las evidencias y offsets salen de
-los mismos ayudantes que ``rag golden importar``.
+los mismos ayudantes que ``ipsis golden import``.
 
 Regenerar tras editar una fuente::
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-from rag.evaluacion.banco import (
+from ipsis.evaluacion.banco import (
     ArchivoCorpus,
     BancoEvaluacion,
     CasoEvaluacion,
@@ -32,8 +32,8 @@ from rag.evaluacion.banco import (
     ManifiestoBanco,
     hash_archivos_corpus,
 )
-from rag.evaluacion.golden import oracion_de, ubicar_respuesta
-from rag.ingesta.parsear import parsear_documento
+from ipsis.evaluacion.golden import oracion_de, ubicar_respuesta
+from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parent
 IDIOMAS = ("es", "en", "pt")
@@ -52,9 +52,11 @@ def doc_id(archivo: str) -> str:
     return Path(archivo).stem.replace("_", "-")
 
 
-def construir(idioma: str) -> tuple[str, str]:
-    """``(manifiesto.json, banco.jsonl)`` del idioma, como texto."""
-    carpeta = RAIZ / idioma
+def construir(idioma: str, raiz: Path = RAIZ, dataset: str = "universal") -> tuple[str, str]:
+    """``(manifiesto.json, banco.jsonl)`` del idioma, como texto. ``raiz`` y
+    ``dataset`` permiten construir otro banco con las mismas reglas
+    (``tests/datos/banco_consultas``)."""
+    carpeta = raiz / idioma
     archivos = [ArchivoCorpus(ruta=p.name, doc_id=doc_id(p.name)) for p in sorted((carpeta / "corpus").glob("*.md"))]
     textos = {a.doc_id: parsear_documento(str(carpeta / "corpus" / a.ruta), doc_id=a.doc_id, doc_titulo=a.doc_id,
                                           version="1").texto_completo for a in archivos}
@@ -87,7 +89,7 @@ def construir(idioma: str) -> tuple[str, str]:
                 **comunes, respondible=False, par=fuente.get("par"),
                 subtipo="trampa_mismo_tema" if clase == "trampa" else None))
     manifiesto = ManifiestoBanco(
-        dataset_id=f"universal_{idioma}", dataset_version=VERSION, tipo="sintetico", estado="estable",
+        dataset_id=f"{dataset}_{idioma}", dataset_version=VERSION, tipo="sintetico", estado="estable",
         casos="banco.jsonl",
         corpus=CorpusBanco(directorio="corpus", archivos=archivos,
                            sha256=hash_archivos_corpus(carpeta / "corpus", archivos)),

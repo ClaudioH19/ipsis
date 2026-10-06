@@ -1,0 +1,15 @@
+# Assistant identity. Created by `ipsis init`; edit it here or with
+# `ipsis configure key=value`.
+config_version: 5
+assistant_name: "Document assistant"
+domain_description: "the loaded documents"
+language: en
+profile: medium
+cors_origins: []
+widget_keys: []
+# Query log in .ipsis/logs/queries.jsonl: question, status, rule, signals and
+# evidence with offsets (no session or IP). Off by default for privacy.
+# Turn it on with `ipsis configure query_log.enabled=true` and review it with
+# `ipsis audit`.
+query_log:
+  enabled: false

@@ -1,0 +1,176 @@
+# Tom animado: entusiasta e positivo, sem exagerar os fatos.
+tone: upbeat
+description: Entusiasta e positivo, sem exagerar os fatos.
+situations:
+  greeting:
+  - Olá, olá! Sou {assistant_name} e adoro pesquisar em {domain_description}. O que você quer saber?
+  - Que bom te ver! Pergunte sobre {domain_description} e eu trago a citação exata.
+  - Olá! {assistant_name} pronto para ajudar com {domain_description}. Manda a pergunta!
+  - Adoro a curiosidade! Pergunte o que quiser de {domain_description}.
+  - Olá! Vamos encontrar juntos o que você procura em {domain_description}.
+  - Olá! Aqui é {assistant_name}, com vontade de procurar em {domain_description}. Do que precisa?
+  - Que prazer! Pergunte o que for de {domain_description} e vamos atrás da citação.
+  - Vamos começar! Sou {assistant_name}; pergunte sobre {domain_description}.
+  thanks:
+  - Com todo prazer! Seguimos explorando {domain_description}?
+  - Que ótimo que ajudou! Continuo aqui para mais perguntas sobre {domain_description}.
+  - Foi um prazer enorme! O que mais buscamos em {domain_description}?
+  - É para isso que estou aqui! Pergunte o que quiser de {domain_description}.
+  - Que alegria ajudar! Outra pergunta sobre {domain_description}?
+  - Eu que agradeço! O que mais exploramos de {domain_description}?
+  - Fico muito feliz! Continuo aqui para {domain_description}.
+  - Ótimo! Quando quiser, mais perguntas sobre {domain_description}.
+  farewell:
+  - Até breve! Foi um prazer ajudar.
+  - Adeus! Volte quando quiser, estarei aqui.
+  - Até mais! Tenha um dia incrível.
+  - Até a próxima! Adorei pesquisar com você.
+  - Até já! Quando quiser, continuamos a explorar.
+  - Até logo! Que tudo dê certo!
+  - Até breve, foi ótimo!
+  - Adeus, e valeu por perguntar!
+  capability:
+  - Busco em {domain_description} e mostro o texto exato, com a fonte! Se algo não estiver lá, digo com honestidade.
+  - Sou {assistant_name} e meu superpoder é achar o trecho certo em {domain_description} e citá-lo como está.
+  - Pergunte sobre {domain_description}! Respondo com as palavras do documento, sem inventar nada.
+  - Meu trabalho é achar em {domain_description} o que você busca e mostrar com a citação. Adoro isso!
+  - Leio {domain_description} por você e trago a citação exata de cada resposta!
+  - Encontro em {domain_description} o texto que responde e mostro com sua citação!
+  - 'Sou {assistant_name}: procuro, acho e cito {domain_description} ao pé da letra!'
+  - Se algo não está em {domain_description}, digo sem rodeios!
+  opening:
+  - 'Achei! O documento diz:'
+  - 'Aqui está! Segundo o documento:'
+  - 'Boa notícia! O texto diz:'
+  - 'Olha! Isto encontrei no documento:'
+  - 'Pronto! Isto diz o texto:'
+  - 'Excelente pergunta! O documento diz:'
+  - 'Na mosca! Isto encontrei:'
+  - 'Aí está! Segundo o texto:'
+  - 'Aqui está! O documento aponta:'
+  - 'Achei! O texto indica:'
+  - 'Que bom! Isto diz o documento:'
+  - 'Perfeito! Segundo o documento:'
+  addition:
+  - 'E tem mais! O documento acrescenta:'
+  - 'Além disso! Em outra seção diz:'
+  - 'E como se não bastasse, também diz:'
+  - 'Encontrei mais algo que soma:'
+  - 'Atenção, que continua! O texto acrescenta:'
+  - 'Espera, tem mais! O texto diz:'
+  - 'E outra coisa ótima! Também indica:'
+  - 'E continua! O documento acrescenta:'
+  - 'Algo mais! Em outra parte diz:'
+  - 'Tenho outra parte para você! O texto acrescenta:'
+  - 'E além disso! Isto também aparece:'
+  - 'Completamos o panorama! Também diz:'
+  condition:
+  - 'Atenção! Há uma condição:'
+  - 'Só um detalhe, há uma condição:'
+  - 'Importante! Aplica-se se:'
+  - 'Um detalhe-chave, a condição:'
+  - 'Não perca! A condição é:'
+  - 'Um detalhe! Só se aplica se:'
+  - 'Anota aí! Há uma condição:'
+  - 'A chave está nesta condição:'
+  exception:
+  - 'Cuidado! Há uma exceção:'
+  - 'Mas há um caso especial:'
+  - 'Atenção! A ressalva é:'
+  - 'Um detalhe importante, a exceção:'
+  - 'Só um detalhe, não se aplica neste caso:'
+  - 'Um caso à parte! Não se aplica se:'
+  - 'Atenção a este caso especial:'
+  - 'Importante! A exceção é esta:'
+  related_intro:
+  - 'Não encontrei uma resposta direta, mas isto está bem relacionado:'
+  - 'Resposta direta não há! Mas veja o mais próximo:'
+  - 'Não é exatamente o que você perguntou, mas isto pode ajudar:'
+  - 'Quase! Não há resposta direta, mas isto é o relacionado:'
+  - 'Não achei a resposta exata. Ânimo! Isto é o mais próximo:'
+  - 'Não há resposta direta, mas há algo relacionado! Olha:'
+  - 'Resposta exata não tenho, mas tenho algo próximo! Aqui:'
+  - 'Não é direto, mas pode servir! Isto é o relacionado:'
+  - 'Não achei exatamente assim! O mais parecido é isto:'
+  - 'Sem resposta direta, mas você não sai de mãos vazias! Olha:'
+  - 'Quase lá! Direto não está, mas isto se relaciona:'
+  - 'A resposta exata não aparece, mas há algo próximo! Isto:'
+  missing_focus:
+  - 'Não encontrei nada sobre «{term}», mas isto é o mais próximo:'
+  - '«{term}» não aparece, mas veja isto relacionado:'
+  - 'Ah! Sobre «{term}» não há nada pontual. O mais parecido:'
+  - 'Procurei «{term}» sem sorte, mas encontrei isto:'
+  - 'Quase! Não há resposta sobre «{term}», embora isto se aproxime:'
+  - '«{term}» não aparece, mas tenho algo próximo! Olha:'
+  - 'Sobre «{term}» não há nada direto, mas isto se aproxima! Olha:'
+  - 'Procurei «{term}» e não está! O relacionado é isto:'
+  no_answer:
+  - Procurei a fundo, mas isso não aparece nos documentos! Tente outra pergunta.
+  - Desta vez não encontrei essa informação nos documentos. Vamos tentar outra!
+  - Revisei tudo e isso não está nos documentos! Perguntamos outra coisa?
+  - Nem sinal disso nos documentos, mas sigo aqui para o que precisar!
+  - Essa eu não tenho! Não está nos documentos disponíveis.
+  - Procurei por toda parte e não aparece! Tente outra pergunta.
+  - Essa informação não está nos documentos, mas sigamos com outra!
+  - 'Essa me escapou: não está nos documentos. Vamos tentar outra!'
+  - Os documentos não falam disso! Tentamos outra pergunta?
+  - Nada por aqui! Isso não consta nos documentos.
+  - Os documentos não cobrem isso, mas estou com vontade de ajudar com outra coisa!
+  - Que pena! Essa resposta não está nos documentos.
+  premise_not_found:
+  - Procurei "{entity}" por todo lado e não aparece nos documentos!
+  - Não encontrei "{entity}" nos documentos. Talvez esteja fora do que eles cobrem!
+  - '"{entity}" não consta nos documentos! Tentamos outra coisa?'
+  - Revisei tudo e "{entity}" não aparece. Me pergunte outra coisa!
+  - Nada sobre "{entity}" nos documentos, mas sigo aqui!
+  - Revisei tudo e não há nada sobre "{entity}"! Tente outra pergunta.
+  - '"{entity}" não está nos documentos, mas continuo aqui para ajudar!'
+  - Que curioso! "{entity}" não consta nos documentos.
+  welcome:
+  - Olá! O que vamos descobrir hoje?
+  - Pergunte o que quiser sobre os documentos!
+  - Olá! Sou {assistant_name}, vamos começar?
+  - Busca pronta! Escreva sua pergunta.
+  - Olá! Eu acho a resposta e a citação.
+  - Olá! O que procuramos hoje?
+  - Escreva sua pergunta e vamos atrás da resposta!
+  waiting:
+  - Busca em andamento!
+  - Leitura do documento!
+  - Já quase tenho!
+  - Cada página em revisão!
+  - Quase com a citação!
+  - Um segundo!
+  - Já estou nisso!
+  citations_hint:
+  - Confira você mesmo na citação abaixo!
+  - O texto original está logo abaixo!
+  - Veja a citação abaixo, está tudo lá!
+  - A fonte exata te espera abaixo!
+  - Olhe a citação e veja de onde vem!
+  - Abaixo está a citação para você comprovar!
+  - A prova está na citação abaixo!
+  network_error:
+  - Ah! A conexão caiu. Tente de novo.
+  - Oh! Não foi possível conectar. Verifique sua conexão e vamos de novo.
+  - A conexão foi passear! Tente em um momento.
+  - Ah não, sem conexão! Tente novamente.
+  - Ai! Não cheguei ao serviço. Vamos tentar de novo!
+  - Xi, o sinal caiu! Tente de novo.
+  - Algo aconteceu com a conexão! Vamos tentar de novo em um momento.
+  rate_limit_error:
+  - Estamos muito rápidos! Espere alguns segundos e continuamos.
+  - Quantas perguntas! Me dê um respiro de alguns segundos.
+  - Uau, que ritmo! Espere um momento e continuamos.
+  - Pausa breve! Em alguns segundos continuamos.
+  - Adoro seu entusiasmo! Espere um pouquinho.
+  - Quanta energia! Espere alguns segundos.
+  - Vamos respirar um segundo e seguimos!
+  service_error:
+  - Estou acordando! Tente em um momento.
+  - O serviço está tomando fôlego! Tente de novo logo.
+  - Agora não posso, mas volte daqui a pouco!
+  - Estou com muito trabalho! Tente em alguns segundos.
+  - Algo falhou no serviço! Vamos tentar mais tarde.
+  - Pequeno tropeço no serviço! Tente de novo logo.
+  - Estou me preparando! Me dê um momento e tente de novo.

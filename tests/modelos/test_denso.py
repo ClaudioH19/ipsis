@@ -10,8 +10,8 @@ pytestmark = pytest.mark.modelos(E5)
 
 @pytest.fixture(scope="module")
 def codificador():
-    from rag.modelos.catalogo import obtener
-    from rag.modelos.denso import CodificadorDenso
+    from ipsis.modelos.catalogo import obtener
+    from ipsis.modelos.denso import CodificadorDenso
 
     return CodificadorDenso(obtener(E5))
 
@@ -32,7 +32,7 @@ def test_parafrasis_mas_cercana_que_texto_no_relacionado(codificador):
 
 
 def test_registro_construye_el_codificador_onnx():
-    from rag.aplicacion.registro_base import registrar_componentes_base
+    from ipsis.aplicacion.registro_base import registrar_componentes_base
 
     codificador = registrar_componentes_base().crear("dense_encoder", "onnx", modelo=E5)
     assert codificador.dimension == 384

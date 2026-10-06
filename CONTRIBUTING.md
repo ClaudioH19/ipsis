@@ -1,74 +1,81 @@
-# Cómo contribuir
+# Contributing
 
-¡Gracias por querer mejorar rag-extractivo! Esta guía resume cómo trabajar
-en el repositorio. Antes de proponer un cambio grande, abre un issue para
-conversarlo.
+Thanks for wanting to improve ipsis! This guide sums up how to work in the
+repository. Before proposing a large change, open an issue to discuss it.
+Issues and pull requests are welcome in English or Spanish.
 
-## Principios que no se negocian
+## Non-negotiable principles
 
-- **Nada generativo.** Toda afirmación es un tramo literal del documento; lo
-  único agregado son plantillas fijas y revisadas ([ADR 0001](docs/decisiones/0001-respuestas-no-generativas.md)).
-- **Sin entrenamiento.** Ni fine-tuning ni pesos aprendidos: la calibración
-  solo elige umbrales entre valores observados.
-- **Abstenerse es mejor que equivocarse.** Un cambio que sube la cobertura a
-  costa de falsos `ok` no se acepta.
-- **Nada de texto de un idioma en Python.** Palabras, patrones y mensajes van
-  en los paquetes de `rag/recursos/idiomas/` y `rag/recursos/tonos/`.
-- **Capas en una sola dirección.** `tests/test_arquitectura.py` lo verifica
-  (ver [arquitectura](docs/arquitectura.md)).
+- **Nothing generative.** Every statement is a literal span of the
+  document; the only additions are fixed, reviewed templates
+  ([ADR 0001](docs/decisions/0001-non-generative-answers.md)).
+- **No training.** No fine-tuning and no learned weights: calibration only
+  chooses thresholds among observed values.
+- **Abstaining beats being wrong.** A change that raises coverage at the
+  cost of false `ok` answers is not accepted.
+- **No language text in Python.** Words, patterns and messages go in the
+  packs of `ipsis/recursos/idiomas/` and `ipsis/recursos/tonos/`, and the
+  CLI messages in the catalog `ipsis/recursos/mensajes/{en,es}.yaml`.
+- **Layers in one direction only.** `tests/test_arquitectura.py` checks it
+  (see the [architecture](docs/architecture.md)).
 
-## Preparar el entorno
+## Set up the environment
 
 ```bash
-git clone https://github.com/ClaudioH19/Deterministic-Retrieval-Assistant-Chat.git rag-extractivo
-cd rag-extractivo
+git clone https://github.com/ClaudioH19/ipsis.git
+cd ipsis
 python -m venv .venv
-.venv/bin/python -m pip install -e ".[test,browser]"     # .venv\Scripts\python.exe en Windows
+.venv/bin/python -m pip install -e ".[test,browser]"     # .venv\Scripts\python.exe on Windows
 .venv/bin/python -m playwright install chromium
 ```
 
-## Pruebas
+## Tests
 
 ```bash
-python -m pytest -m "not slow and not browser"   # rápidas (segundos)
-python -m pytest -m browser                      # widget y panel en Chromium
-python -m pytest                                 # todo; las lentas descargan o usan modelos reales
+python -m pytest -m "not slow and not browser"   # fast (seconds)
+python -m pytest -m browser                      # widget and panel in Chromium
+python -m pytest                                 # everything; the slow ones download or use real models
 ```
 
-- Una prueba vive en la carpeta del módulo que prueba (`tests/<capa>/`).
-- Las etapas del motor se prueban con dobles en memoria, sin modelos.
-- Si un cambio altera respuestas a propósito, regenera la caracterización
-  y explica el porqué en el commit.
-- Corre las pruebas en Python 3.11 o 3.12 antes de abrir el pull request:
-  el repositorio no tiene integración continua.
+- A test lives in the folder of the module it tests (`tests/<layer>/`).
+- The engine stages are tested with in-memory doubles, without models.
+- If a change alters answers on purpose, regenerate the characterization
+  and explain why in the commit.
+- Run the tests on Python 3.11 or 3.12 before opening the pull request: the
+  repository has no continuous integration.
 
-## El motor del avatar
+## The avatar engine
 
-`rag/servicio/estaticos/avatar.js` se genera; no se edita a mano:
+`ipsis/servicio/estaticos/avatar.js` is generated; it is not edited by hand:
 
 ```bash
 cd herramientas/avatar
-npm ci && npm run construir    # o npm run verificar para comprobar el sha256
+npm ci && npm run construir    # or npm run verificar to check the sha256
 ```
 
-Ver [herramientas/avatar/LEEME.md](herramientas/avatar/LEEME.md).
+See [herramientas/avatar/LEEME.md](herramientas/avatar/LEEME.md).
 
-## Estilo
+## Style
 
-- Código y comentarios en español; los comentarios explican el porqué.
-- Mensajes de error accionables: dicen qué comando ejecutar.
-- Una técnica nueva necesita su [ficha metodológica](docs/metodologia/README.md),
-  y una decisión de arquitectura, su ADR en `docs/decisiones/`.
-- Actualiza la guía correspondiente en `docs/guia/` y el `CHANGELOG.md`.
-  `tests/test_documentacion.py` falla si un comando no está en
-  `docs/guia/uso.md` o si un enlace queda roto.
+- Internal identifiers and code comments are in Spanish; comments explain
+  the why. Everything user-facing (commands, files, keys, API, messages) is
+  in English, with a Spanish translation in the message catalog.
+- A new CLI message needs its key in both `en.yaml` and `es.yaml`;
+  `tests/cli/test_mensajes.py` checks they stay in sync.
+- Actionable error messages: they say which command to run.
+- A new technique needs its [methodology note](docs/methodology/README.md),
+  and an architecture decision its ADR in `docs/decisions/`.
+- Update the matching guide in `docs/guide/` (and its Spanish version in
+  `docs/es/guia/`) and the `CHANGELOG.md`. `tests/test_documentacion.py`
+  fails if a command is missing from `docs/guide/usage.md` or
+  `docs/es/guia/uso.md`, or if a link breaks.
 
 ## Pull requests
 
-1. Una rama por cambio, con commits pequeños y mensajes descriptivos.
-2. Las pruebas rápidas y las de navegador en verde.
-3. Completa la plantilla del PR: qué cambia, cómo se probó y si afecta
-   respuestas, índices o la configuración (`config_version`).
+1. One branch per change, with small commits and descriptive messages.
+2. The fast and browser tests green.
+3. Fill in the PR template: what changes, how it was tested and whether it
+   affects answers, indexes or the configuration (`config_version`).
 
-Al contribuir aceptas publicar tu aporte bajo la licencia
-[AGPL-3.0](LICENSE) y el [código de conducta](CODE_OF_CONDUCT.md).
+By contributing you agree to publish your contribution under the
+[AGPL-3.0](LICENSE) license and the [code of conduct](CODE_OF_CONDUCT.md).

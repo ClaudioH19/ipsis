@@ -26,7 +26,7 @@ GRUPOS = ("exacta", "parafrasis", "trampa_mismo_tema", "fuera_de_dominio", "prem
 
 def resumir(artefacto) -> dict:
     """Resumen compacto de ``reporte.cobertura`` (las métricas de
-    ``rag.evaluacion.metricas``): por grupo, casos, ok, relacionado,
+    ``ipsis.evaluacion.metricas``): por grupo, casos, ok, relacionado,
     abstenciones, falsos ok y ok con la respuesta literal."""
     cobertura = artefacto.reporte.cobertura
     grupos = {}
@@ -39,26 +39,26 @@ def resumir(artefacto) -> dict:
 
 
 def evaluar_artefacto(idioma: str, perfil: str):
-    """Proyecto temporal ``rag init --perfil --idioma`` con el corpus del idioma."""
-    from rag.aplicacion.evaluacion import evaluar_backend_activo
-    from rag.cli import main
-    from rag.evaluacion.banco import cargar_banco
+    """Proyecto temporal ``ipsis init --profile --language`` con el corpus del idioma."""
+    from ipsis.aplicacion.evaluacion import evaluar_backend_activo
+    from ipsis.cli import main
+    from ipsis.evaluacion.banco import cargar_banco
 
-    from rag.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
+    from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
 
     manifiesto = RAIZ / idioma / "manifiesto.json"
     cargar_banco(manifiesto)  # valida el banco antes de indexar
     anterior = Path.cwd()
-    # ``rag indexar`` fija el idioma y el perfil de dominio del proceso: se
+    # ``ipsis index`` fija el idioma y el perfil de dominio del proceso: se
     # restauran para no contaminar a quien llame después (p. ej. otras pruebas).
     idioma_previo, perfil_previo = idioma_activo(), perfil_activo()
     with tempfile.TemporaryDirectory(prefix=f"rag_universal_{idioma}_{perfil}_") as temporal:
         try:
             os.chdir(temporal)
             with contextlib.redirect_stdout(io.StringIO()):
-                assert main(["init", "--perfil", perfil, "--idioma", idioma]) == 0
-                assert main(["cargar", str(RAIZ / idioma / "corpus")]) == 0
-                assert main(["indexar"]) == 0
+                assert main(["init", "--profile", perfil, "--language", idioma]) == 0
+                assert main(["load", str(RAIZ / idioma / "corpus")]) == 0
+                assert main(["index"]) == 0
                 artefacto = evaluar_backend_activo(str(manifiesto))
         finally:
             os.chdir(anterior)

@@ -1,0 +1,176 @@
+# Tono serio: sobrio, neutral, frases cortas.
+tone: serious
+description: Sobrio y neutral, con frases cortas.
+situations:
+  greeting:
+  - Soy {assistant_name}. Respondo sobre {domain_description} con citas del documento.
+  - Asistente de {domain_description}. Escriba su pregunta.
+  - Hola. Consulte sobre {domain_description}; cada respuesta lleva su fuente.
+  - Soy {assistant_name}. ¿Qué necesita saber de {domain_description}?
+  - Disponible para consultas sobre {domain_description}.
+  - Asistente {assistant_name}. Consultas sobre {domain_description}.
+  - Escriba su consulta sobre {domain_description}.
+  - Soy {assistant_name}. Cito {domain_description} textualmente.
+  thanks:
+  - De nada.
+  - Entendido. Puede seguir consultando sobre {domain_description}.
+  - Bien. Quedo disponible.
+  - De acuerdo. ¿Otra consulta sobre {domain_description}?
+  - Gracias a usted.
+  - Correcto. Quedo a disposición.
+  - De acuerdo.
+  - Gracias. Puede continuar con {domain_description}.
+  farewell:
+  - Hasta luego.
+  - Hasta pronto.
+  - Fin de la consulta.
+  - Quedo disponible.
+  - Hasta otra consulta.
+  - Consulta finalizada.
+  - Hasta la próxima.
+  - Adiós.
+  capability:
+  - Busco en {domain_description} y muestro el texto literal con su fuente.
+  - Soy {assistant_name}. No redacto respuestas; cito {domain_description}.
+  - Respondo solo con texto de {domain_description}. Si no está, lo indico.
+  - 'Función: localizar el pasaje de {domain_description} que responde y citarlo.'
+  - Consulto {domain_description} y entrego la cita exacta.
+  - Cito {domain_description}. No genero texto propio.
+  - Localizo en {domain_description} el pasaje pertinente y lo muestro con su fuente.
+  - Si {domain_description} no lo contiene, lo indico.
+  opening:
+  - 'El documento dice:'
+  - 'Texto del documento:'
+  - 'Según el documento:'
+  - 'Pasaje pertinente:'
+  - 'Fuente:'
+  - 'Texto pertinente:'
+  - 'Contenido del documento:'
+  - 'Referencia:'
+  - 'El texto indica:'
+  - 'Conforme al documento:'
+  - 'Pasaje citado:'
+  - 'Respuesta del documento:'
+  addition:
+  - 'Además:'
+  - 'También:'
+  - 'Otra sección indica:'
+  - 'Se agrega:'
+  - 'Además, indica:'
+  - 'Asimismo:'
+  - 'Adicionalmente:'
+  - 'Otro pasaje:'
+  - 'Complemento:'
+  - 'El documento añade:'
+  - 'En otra sección:'
+  - 'Se indica también:'
+  condition:
+  - 'Condición:'
+  - 'Aplica si:'
+  - 'Con esta condición:'
+  - 'Requisito:'
+  - 'Bajo esta condición:'
+  - 'Sujeto a:'
+  - 'Condición aplicable:'
+  - 'Se requiere:'
+  exception:
+  - 'Excepción:'
+  - 'Salvo:'
+  - 'Con esta salvedad:'
+  - 'No aplica en este caso:'
+  - 'Caso exceptuado:'
+  - 'Se exceptúa:'
+  - 'No aplica si:'
+  - 'Exclusión:'
+  related_intro:
+  - 'No hay respuesta directa. Texto relacionado:'
+  - 'Sin respuesta directa. Lo más cercano:'
+  - 'No consta una respuesta directa. Contenido relacionado:'
+  - 'Respuesta directa no encontrada. Relacionado:'
+  - 'No responde directamente. Lo relacionado es esto:'
+  - 'Respuesta directa no disponible. Contenido próximo:'
+  - 'No hay coincidencia directa. Texto vinculado:'
+  - 'Sin respuesta exacta. Pasajes relacionados:'
+  - 'No consta respuesta directa. Lo pertinente:'
+  - 'Sin respuesta directa. Texto próximo:'
+  - 'No se halló respuesta directa. Relacionado:'
+  - 'La respuesta directa no consta. Contenido cercano:'
+  missing_focus:
+  - 'No hay información sobre «{term}». Lo más cercano:'
+  - 'Sin datos sobre «{term}». Relacionado:'
+  - '«{term}» no aparece. Contenido cercano:'
+  - 'Nada específico sobre «{term}». Lo relacionado:'
+  - 'No consta «{term}». Texto más próximo:'
+  - '«{term}» no consta. Relacionado:'
+  - 'Sin coincidencias para «{term}». Lo más próximo:'
+  - 'Ninguna referencia a «{term}». Contenido cercano:'
+  no_answer:
+  - Esa información no está en los documentos.
+  - Sin información en los documentos.
+  - No consta en los documentos.
+  - Los documentos no cubren eso.
+  - No hay respuesta en los documentos.
+  - Ese dato no figura.
+  - Sin respuesta disponible.
+  - Los documentos no tratan ese punto.
+  - Información no disponible.
+  - Consulta fuera del contenido de los documentos.
+  - No se encontró esa información.
+  - Dato no encontrado en los documentos.
+  premise_not_found:
+  - '"{entity}" no aparece en los documentos.'
+  - Sin información sobre "{entity}".
+  - Ninguna referencia a "{entity}" en los documentos.
+  - Los documentos no mencionan "{entity}".
+  - No hay datos sobre "{entity}".
+  - '"{entity}" no figura.'
+  - Sin referencias a "{entity}".
+  - No se encontró "{entity}".
+  welcome:
+  - Escriba su pregunta.
+  - Consultas sobre el documento.
+  - Soy {assistant_name}. Pregunte.
+  - Respuestas con cita del documento.
+  - Listo para consultar.
+  - Consulte cuando lo necesite.
+  - Respuestas citadas del documento.
+  waiting:
+  - Buscando
+  - Consultando el documento
+  - Revisando
+  - Localizando la cita
+  - Procesando
+  - Localizando
+  - Verificando la fuente
+  citations_hint:
+  - Cita abajo.
+  - Verifique en la cita.
+  - Fuente debajo.
+  - Texto original abajo.
+  - Compruebe la referencia.
+  - Referencia abajo.
+  - Origen del texto abajo.
+  network_error:
+  - Sin conexión con el asistente. Reintente.
+  - Error de conexión. Intente de nuevo.
+  - No hubo respuesta del servicio. Revise su conexión.
+  - Conexión interrumpida. Reintente.
+  - Servicio inalcanzable. Intente más tarde.
+  - Fallo de red. Reintente.
+  - Conexión no disponible. Intente más tarde.
+  rate_limit_error:
+  - Límite de consultas alcanzado. Espere unos segundos.
+  - Demasiadas consultas. Espere.
+  - Pausa breve requerida.
+  - Espere antes de consultar de nuevo.
+  - Límite temporal. Reintente en segundos.
+  - Espere unos segundos.
+  - Demasiadas solicitudes. Reintente en breve.
+  service_error:
+  - Servicio no disponible. Intente más tarde.
+  - Servicio iniciándose. Reintente.
+  - No disponible por ahora.
+  - Servicio ocupado. Reintente.
+  - Falla del servicio. Intente más tarde.
+  - Servicio temporalmente fuera de línea. Reintente.
+  - Error interno. Intente más tarde.

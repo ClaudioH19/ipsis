@@ -6,13 +6,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from rag.aplicacion.registro_base import registrar_componentes_base
-from rag.configuracion.perfiles import perfil_efectivo
-from rag.consulta.etapas.politica import CascadaV1, EtapaPolitica, forma_en_pregunta
-from rag.lenguaje.paquete import cargar_paquete
-from rag.lenguaje.texto import terminos
-from rag.nucleo.contratos import AbstentionPolicy
-from rag.nucleo.esquemas import (
+from ipsis.aplicacion.registro_base import registrar_componentes_base
+from ipsis.configuracion.perfiles import perfil_efectivo
+from ipsis.consulta.etapas.politica import CascadaV1, EtapaPolitica, forma_en_pregunta
+from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.texto import terminos
+from ipsis.nucleo.contratos import AbstentionPolicy
+from ipsis.nucleo.esquemas import (
     ChunkRecord,
     LecturaQA,
     QueryAnalysis,
@@ -20,7 +20,7 @@ from rag.nucleo.esquemas import (
     SenalesLexicas,
     SenalesRecuperacion,
 )
-from rag.nucleo.registro import RegistroComponentes
+from ipsis.nucleo.registro import RegistroComponentes
 
 UMBRALES = {"oov": 0.6, "dominio": 0.3, "relacionado": 0.5, "foco": 0.5, "ok": 0.8, "cov": 0.6}
 TEXTO = "La garantía del purificador dura 24 meses desde la compra."

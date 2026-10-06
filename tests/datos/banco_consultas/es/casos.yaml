@@ -1,0 +1,87 @@
+# Banco de consultas naturales (fuente). Mismas reglas que el banco universal
+# (ver ../README.md): la categoría sale del id y construir.py calcula
+# evidencias y offsets. El manual de adquisiciones es el caso que motivó la
+# capa de comprensión de consultas: «¿cuándo empieza la compra?» tiene
+# respuesta («Una vez aprobado el Formulario de Requerimiento…»), pero no
+# comparte palabras con la pregunta salvo «compra», que aparece en muchos
+# pasos posteriores. Los demás documentos son los del banco universal, como
+# distractores.
+
+# --- la consulta que reveló el problema y sus variantes ---------------------
+- id: es-parafrasis-001
+  documento: manual_adquisiciones.md
+  capacidad: fecha
+  pregunta: cuando empieza la compra?
+  respuesta: Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras
+- id: es-trampa-001
+  par: es-parafrasis-001
+  pregunta: ¿Cuándo empieza la auditoría de compras?
+- id: es-parafrasis-002
+  documento: manual_adquisiciones.md
+  capacidad: fecha
+  pregunta: cuando parte la compra?
+  respuesta: Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras
+- id: es-trampa-002
+  par: es-parafrasis-002
+  pregunta: ¿Cuándo termina el contrato con el proveedor?
+- id: es-parafrasis-003
+  documento: manual_adquisiciones.md
+  capacidad: fecha
+  pregunta: ¿Desde cuándo se hace la compra?
+  respuesta: Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras
+- id: es-parafrasis-004
+  documento: manual_adquisiciones.md
+  capacidad: fecha
+  pregunta: ¿En qué momento se realiza la compra?
+  respuesta: Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras
+- id: es-parafrasis-005
+  documento: manual_adquisiciones.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se empieza a comprar?
+  respuesta: Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras
+
+# --- otras relaciones sobre el mismo procedimiento ---------------------------
+- id: es-exacta-001
+  documento: manual_adquisiciones.md
+  capacidad: persona
+  pregunta: ¿Quién envía la Orden de Compra al proveedor?
+  respuesta: El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor
+- id: es-trampa-003
+  par: es-exacta-001
+  pregunta: ¿Quién aprueba el pago de la Orden de Compra en Finanzas?
+- id: es-parafrasis-006
+  documento: manual_adquisiciones.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si el proveedor rechaza la orden?
+  respuesta: el Supervisor de Compras anula la orden
+- id: es-trampa-004
+  par: es-parafrasis-006
+  pregunta: ¿Qué pasa si la unidad requirente rechaza los productos recibidos?
+- id: es-exacta-002
+  documento: manual_adquisiciones.md
+  capacidad: duracion
+  pregunta: ¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?
+  respuesta: dos días hábiles para aceptar la Orden de Compra
+- id: es-trampa-005
+  par: es-exacta-002
+  pregunta: ¿Cuántos días tiene el proveedor para entregar los productos?
+- id: es-exacta-003
+  documento: manual_adquisiciones.md
+  capacidad: persona
+  pregunta: ¿Quién firma la Resolución de compra?
+  respuesta: Director de Administración para su firma
+- id: es-parafrasis-007
+  documento: manual_adquisiciones.md
+  capacidad: cantidad
+  pregunta: ¿Desde qué monto se necesita una Resolución?
+  respuesta: Las compras superiores a 100 UTM requieren una Resolución
+- id: es-trampa-006
+  par: es-parafrasis-007
+  pregunta: ¿Desde qué monto se necesita una licitación pública?
+- id: es-exacta-004
+  documento: manual_adquisiciones.md
+  capacidad: duracion
+  pregunta: ¿En cuántos días paga Finanzas las facturas?
+  respuesta: dentro de treinta días corridos desde la recepción conforme
+- id: es-fuera-001
+  pregunta: ¿Cuál es la capital de Mongolia?

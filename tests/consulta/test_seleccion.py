@@ -1,9 +1,9 @@
-"""Tests de ``rag/consulta/etapas/seleccion.py`` (evita respuestas demasiado
+"""Tests de ``ipsis/consulta/etapas/seleccion.py`` (evita respuestas demasiado
 largas). Funciones puras, sin modelos ni red: la puntuación por ``s_lex``
 cubre todo el algoritmo de selección y expansión."""
 from __future__ import annotations
 
-from rag.consulta.etapas.seleccion import (
+from ipsis.consulta.etapas.seleccion import (
     dividir_en_unidades,
     seleccionar_texto_pertinente,
     recortar_payload_a_texto_pertinente,
@@ -138,7 +138,7 @@ def test_ordenar_por_pertinencia_global_no_pierde_fragmentos():
 def test_seleccionar_texto_pertinente_prioriza_oracion_con_entidad_literal():
     """Caso real: "3,9" tokeniza a fragmentos de 1
     carácter para el solapamiento léxico (ambos números son < 4 caracteres,
-    el mínimo de rag/lenguaje/texto.py::palabras_contenido), así que el score de
+    el mínimo de ipsis/lenguaje/texto.py::palabras_contenido), así que el score de
     similitud NUNCA prioriza de forma confiable la oración con "3,9" -- hace
     falta la entidad exacta."""
     texto = (
@@ -217,5 +217,59 @@ def test_ventana_centrada_para_el_lector_incluye_contexto_previo():
     pregunta = "¿Qué recargo se cobra?"
     mostrada = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200)
     lector = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200, centrada=True)
-    assert mostrada.texto.startswith("Se cobra un recargo")
+    assert mostrada.texto.startswith("Artículo 4. Se cobra un recargo")  # el rótulo va con su oración
     assert lector.texto == texto
+
+
+def test_lo_que_se_muestra_no_corta_la_salvedad_siguiente():
+    """Si la oración que sigue a la respuesta es una excepción y no cabe por
+    poco, entra igual: mostrar «se reembolsa en 30 días» sin «salvo que…» engaña."""
+    respuesta = "El cliente puede pedir el reembolso dentro de 30 días corridos desde la compra."
+    salvedad = "Salvo que el equipo ya haya sido instalado por el servicio técnico."
+    texto = f"{respuesta} {salvedad} El horario de atención es de lunes a viernes."
+    pregunta = "¿En cuántos días puedo pedir el reembolso?"
+    mostrado = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=len(respuesta) + 20)
+    assert mostrado.texto == f"{respuesta} {salvedad}"
+    assert mostrado.texto == texto[mostrado.offset_inicio:mostrado.offset_fin]  # sigue siendo literal
+    # Para el lector QA no cambia nada, y una oración común no se cuela.
+    qa = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=len(respuesta) + 20, centrada=True)
+    assert qa.texto == respuesta
+    comun = f"{respuesta} El equipo se entrega con su manual impreso y su garantía."
+    assert seleccionar_texto_pertinente(pregunta, comun, 0, limite_caracteres=len(respuesta) + 20).texto == respuesta
+
+
+def test_si_el_chunk_cruza_de_seccion_el_tramo_se_queda_en_la_del_ancla():
+    """Se busca por chunk, pero se muestra y se cita por sección."""
+    garantia = "La garantía dura dos años desde la compra."
+    titulo = "Mantenimiento"
+    mantenimiento = "Descalcifique la cafetera cada tres meses."
+    texto = f"{garantia}\n{titulo}\n{mantenimiento}"
+    secciones = [(0, len(garantia), ["Garantía"]),
+                 (len(garantia) + len(titulo) + 2, len(texto), ["Mantenimiento"])]
+    r = seleccionar_texto_pertinente("¿Cada cuánto se descalcifica la cafetera?", texto, 1000, 500,
+                                     secciones=secciones)
+    assert r.texto == mantenimiento and r.seccion_path == ["Mantenimiento"]
+    assert r.offset_inicio == 1000 + texto.index(mantenimiento)
+    r = seleccionar_texto_pertinente("¿Cuánto dura la garantía?", texto, 1000, 500, secciones=secciones)
+    assert r.texto == garantia and r.seccion_path == ["Garantía"]  # no arrastra el título ni la otra sección
+
+
+def test_un_titulo_no_ancla_la_respuesta_aunque_puntue_mas():
+    """«6.3 Procedimiento de Compra» calza mejor con la pregunta que la oración, pero no responde."""
+    previa = "El formulario se envía al Departamento de Compras."
+    titulo = "6.3 Procedimiento de Compra"
+    respuesta = "Una vez aprobado el formulario, se realizará la compra."
+    texto = f"{previa}\n{titulo}\n{respuesta}"
+    secciones = [(0, len(previa), ["6.2 Formulario"]),
+                 (len(previa) + len(titulo) + 2, len(texto), ["6.3 Procedimiento de Compra"])]
+    r = seleccionar_texto_pertinente("¿cuál es el procedimiento de compra?", texto, 0, 500, secciones=secciones)
+    assert titulo not in r.texto.split("\n")[0]
+
+
+def test_dos_chunks_solapados_no_repiten_el_mismo_tramo():
+    from ipsis.consulta.etapas.seleccion import quitar_tramos_repetidos
+
+    a = {"doc_id": "d", "offset_inicio": 10, "offset_fin": 50, "texto": "x" * 40}
+    b = {"doc_id": "d", "offset_inicio": 10, "offset_fin": 50, "texto": "x" * 40}  # el mismo, de otro chunk
+    c = {"doc_id": "d", "offset_inicio": 60, "offset_fin": 90, "texto": "y" * 30}
+    assert quitar_tramos_repetidos([a, b, c], [0.9, 0.8, 0.7]) == ([a, c], [0.9, 0.7])

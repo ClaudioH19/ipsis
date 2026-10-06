@@ -1,0 +1,177 @@
+# Tom cordial (padrão): gentil e claro. A primeira variante de cada situação
+# é o texto anterior aos tons.
+tone: cordial
+description: Gentil e claro; o tom padrão.
+situations:
+  greeting:
+  - Olá! Sou {assistant_name}. Respondo perguntas sobre {domain_description} citando o texto exato do documento. O que você precisa saber?
+  - 'Olá! Pergunte o que precisar sobre {domain_description}: busco a resposta no documento e mostro de onde a tirei.'
+  - Olá! Aqui é {assistant_name}. Conte o que você procura em {domain_description} e eu mostro o que diz o texto.
+  - Olá, sou {assistant_name}. O que você gostaria de consultar sobre {domain_description}?
+  - Que bom te ver! Pergunte o que quiser sobre {domain_description} e eu mostro a citação exata.
+  - Olá, quem fala é {assistant_name}. Pergunte sobre {domain_description} e mostro o trecho exato.
+  - Olá. Estou aqui para ajudar com {domain_description}; cada resposta vem com sua citação.
+  - Olá, sou {assistant_name}. Escreva sua dúvida sobre {domain_description} e procuro no texto.
+  thanks:
+  - De nada. Se tiver outra pergunta sobre {domain_description}, estou aqui.
+  - Com prazer. Qualquer outra dúvida sobre {domain_description}, é só dizer.
+  - Foi um prazer! Se quiser revisar mais alguma coisa de {domain_description}, pergunte.
+  - Não há de quê. Continuo aqui para o que precisar sobre {domain_description}.
+  - Que bom que ajudou. Mais alguma coisa sobre {domain_description}?
+  - Eu que agradeço. Se precisar de algo mais de {domain_description}, pergunte quando quiser.
+  - Que bom que ajudou. Continuo disponível para {domain_description}.
+  - É um prazer. Posso ajudar com outra coisa de {domain_description}?
+  farewell:
+  - Até logo.
+  - Até mais. Volte quando precisar consultar o documento.
+  - Tudo de bom! Estarei aqui quando precisar revisar os documentos.
+  - Até breve. Quando quiser, continuamos a consulta.
+  - Adeus, e obrigado por perguntar.
+  - Até a próxima.
+  - Até mais, e tudo de bom.
+  - Quando quiser, estarei aqui para continuar a consulta.
+  capability:
+  - Sou {assistant_name}. Respondo perguntas sobre {domain_description} citando o texto exato do documento. Se a informação não estiver lá, eu digo em vez de inventar uma resposta.
+  - Busco em {domain_description} e devolvo texto literal com a fonte.
+  - 'Sou {assistant_name}: encontro em {domain_description} o trecho que responde sua pergunta e mostro como está, com a citação.'
+  - Respondo só com o que diz {domain_description}, citado ao pé da letra. Se algo não estiver lá, eu digo.
+  - 'Pergunte sobre {domain_description}: mostro o texto exato e onde aparece, sem inventar nada.'
+  - 'Sou {assistant_name}. Não escrevo respostas próprias: mostro o trecho de {domain_description} que responde e sua fonte.'
+  - Leio {domain_description} por você e trago o texto exato, com sua localização.
+  - Se algo não está em {domain_description}, eu digo; se está, mostro a citação.
+  opening:
+  - 'Isto é o que diz o documento:'
+  - 'Encontrei isto no documento:'
+  - 'O documento coloca assim:'
+  - 'Segundo o texto carregado:'
+  - 'Aqui está o que encontrei:'
+  - 'Mostro o que o documento indica:'
+  - 'O texto explica desta forma:'
+  - 'Isto é o que aparece no documento:'
+  - 'Segundo o que encontrei no texto:'
+  - 'O documento responde assim:'
+  - 'Veja o que o documento aponta:'
+  - 'Esta é a parte do documento que responde:'
+  addition:
+  - 'Soma-se a isto o seguinte:'
+  - 'O documento acrescenta, em outra seção:'
+  - 'Também diz isto:'
+  - 'E complementa assim:'
+  - 'Além disso, encontrei isto:'
+  - 'O documento também aponta:'
+  - 'Mais adiante, o texto acrescenta:'
+  - 'Há algo mais que vale a pena ver:'
+  - 'Outra parte do documento diz:'
+  - 'Somo também isto:'
+  - 'Para completar, o texto indica:'
+  - 'Em relação ao anterior, diz:'
+  condition:
+  - 'Isto se aplica sob uma condição:'
+  - 'Há uma condição associada:'
+  - 'O documento condiciona assim:'
+  - 'Leve em conta esta condição:'
+  - 'Para que se aplique, o documento indica:'
+  - 'O documento põe esta condição:'
+  - 'Isto depende do seguinte:'
+  - 'Confira esta condição:'
+  exception:
+  - 'Com uma exceção:'
+  - 'Há uma ressalva:'
+  - 'O documento prevê uma exceção:'
+  - 'Atenção a esta exceção:'
+  - 'Não se aplica no seguinte caso:'
+  - 'Mas há um caso em que não se aplica:'
+  - 'O documento deixa de fora este caso:'
+  - 'Considere esta ressalva:'
+  related_intro:
+  - 'Não encontrei uma resposta direta. Isto é o que os documentos dizem sobre o tema:'
+  - 'Não há uma resposta direta nos documentos, mas isto é o mais relacionado:'
+  - 'Não encontrei exatamente o que você procura. Isto é o mais próximo nos documentos:'
+  - 'Não vejo uma resposta direta; mostro o que os documentos dizem sobre o tema:'
+  - 'O que você pergunta não aparece de forma direta. Isto é o relacionado que encontrei:'
+  - 'Não tenho uma resposta direta, mas isto se relaciona com sua pergunta:'
+  - 'Os documentos não respondem isso exatamente. Isto é o que mais se aproxima:'
+  - 'Não achei uma resposta direta; isto é o relacionado que encontrei:'
+  - 'Não há uma resposta exata, embora os documentos digam isto sobre o tema:'
+  - 'A resposta direta não aparece. Compartilho o que mais se relaciona:'
+  - 'Não encontrei exatamente isso, mas os documentos tratam o tema assim:'
+  - 'Sem uma resposta direta à mão, isto é o mais pertinente:'
+  missing_focus:
+  - 'Não encontrei informação específica sobre «{term}». Isto é o mais próximo:'
+  - 'Os documentos não falam especificamente de «{term}». Isto é o mais parecido:'
+  - 'Não há nada pontual sobre «{term}», mas isto está relacionado:'
+  - 'Não encontrei «{term}» nos documentos. Mostro o mais próximo:'
+  - 'Sobre «{term}» não há uma resposta direta. Isto é o relacionado:'
+  - 'Não há informação pontual sobre «{term}». Isto é o que mais se parece:'
+  - 'Procurei «{term}» e não aparece. Compartilho o relacionado:'
+  - 'Sobre «{term}» os documentos não dizem nada direto. Veja o mais próximo:'
+  no_answer:
+  - Não encontrei essa informação nos documentos disponíveis.
+  - Essa informação não aparece nos documentos disponíveis.
+  - Procurei nos documentos e não encontrei nada sobre isso.
+  - 'Não tenho essa informação: ela não está nos documentos carregados.'
+  - Desculpe, isso não consta nos documentos disponíveis.
+  - Não consegui encontrar isso nos documentos disponíveis.
+  - Revisei os documentos e essa informação não aparece.
+  - Isso não está coberto nos documentos que tenho.
+  - Por enquanto não há nada sobre isso nos documentos.
+  - Essa pergunta fica fora do que dizem os documentos.
+  - Não há dados sobre isso nos documentos carregados.
+  - Infelizmente, não encontrei resposta nos documentos.
+  premise_not_found:
+  - Não encontrei informação sobre "{entity}" nos documentos disponíveis. Talvez não exista ou esteja fora do que seus documentos cobrem.
+  - Os documentos não mencionam "{entity}". Talvez esteja fora do que eles cobrem.
+  - Não encontrei "{entity}" nos documentos disponíveis.
+  - Não há informação sobre "{entity}" nos seus documentos; talvez não faça parte deles.
+  - Procurei "{entity}" e não aparece nos documentos disponíveis.
+  - Não há rastro de "{entity}" nos documentos disponíveis.
+  - '"{entity}" não consta nos documentos. Talvez esteja fora do seu alcance.'
+  - Revisei os documentos e não encontrei "{entity}".
+  welcome:
+  - Olá, como posso ajudar?
+  - Olá! Pergunte o que precisar sobre os documentos.
+  - Olá, sou {assistant_name}. O que você quer consultar?
+  - O que você gostaria de saber? Respondo citando o documento.
+  - Olá! Escreva sua pergunta e eu busco a resposta no texto.
+  - Olá. Escreva sua pergunta e mostro a citação exata.
+  - Em que posso ajudar hoje?
+  waiting:
+  - Consulta do documento em curso
+  - Revisão dos documentos em curso
+  - Busca da citação exata
+  - Um momento, leitura em curso
+  - Procura da resposta no texto
+  - Um instante, leio os documentos
+  - Um momento, procuro a resposta
+  citations_hint:
+  - Você pode conferir na citação abaixo.
+  - O texto original está abaixo para você verificar.
+  - Veja a citação abaixo para saber de onde vem.
+  - A fonte exata está logo abaixo.
+  - Confira você mesmo na citação abaixo.
+  - Logo abaixo está o trecho original.
+  - A citação abaixo mostra de onde vem.
+  network_error:
+  - Não foi possível contatar o assistente. Verifique sua conexão e tente de novo.
+  - Parece que não há conexão com o assistente. Tente novamente em um momento.
+  - Não consegui me conectar. Verifique sua conexão e tente de novo.
+  - A conexão com o assistente caiu. Tente novamente.
+  - Não consegui falar com o serviço. Tente outra vez em alguns segundos.
+  - A conexão falhou. Verifique sua internet e tente novamente.
+  - O assistente não responde agora. Tente em alguns segundos.
+  rate_limit_error:
+  - Muitas perguntas seguidas. Espere alguns segundos e tente de novo.
+  - Estamos indo um pouco rápido. Espere alguns segundos antes da próxima pergunta.
+  - Recebi muitas perguntas juntas. Me dê alguns segundos e tente de novo.
+  - Preciso de uma pausa breve. Tente de novo em alguns segundos.
+  - Espere um momento antes de perguntar outra vez.
+  - Você fez várias perguntas seguidas. Espere um momento, por favor.
+  - Me dê alguns segundos e seguimos com suas perguntas.
+  service_error:
+  - O assistente não está disponível agora. Tente de novo mais tarde.
+  - O serviço está se preparando. Tente novamente em um momento.
+  - Agora não consigo responder. Tente outra vez daqui a pouco.
+  - O assistente está ocupado. Tente de novo em alguns segundos.
+  - Houve um problema no serviço. Tente novamente mais tarde.
+  - O serviço teve um problema. Tente novamente daqui a pouco.
+  - Não posso atender neste momento. Tente de novo mais tarde.

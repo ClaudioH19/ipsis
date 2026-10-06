@@ -1,0 +1,30 @@
+name: ✨ Feature
+description: Propose a feature or a change.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: true
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Project principles
+      description: See CONTRIBUTING.md.
+      options:
+        - label: It adds no model-generated text to the answers.
+          required: true
+        - label: It requires no training or fine-tuning of models.
+          required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

@@ -1,0 +1,176 @@
+# Formal tone: polite register, no exclamations.
+tone: formal
+description: Polite, careful register without exclamations.
+situations:
+  greeting:
+  - Good day. This is {assistant_name}. I answer enquiries about {domain_description} quoting the document verbatim. How may I assist you?
+  - Welcome. You may consult me about {domain_description}; every answer will indicate its exact source.
+  - Greetings. I am {assistant_name}, at your disposal for enquiries about {domain_description}.
+  - This is {assistant_name}. Please indicate what you wish to consult about {domain_description}.
+  - It is a pleasure to assist you. Please state your enquiry about {domain_description}.
+  - '{assistant_name} at your service. You may submit your inquiry about {domain_description} whenever you wish.'
+  - Kind regards. I am at your service for inquiries about {domain_description}.
+  - I will gladly assist with your inquiries about {domain_description}; each answer will include its source.
+  thanks:
+  - You are welcome. I remain at your disposal for further enquiries about {domain_description}.
+  - It has been a pleasure. You may consult me about {domain_description} at any time.
+  - Thank you. Should you need to review another aspect of {domain_description}, please let me know.
+  - With pleasure. I remain available for any enquiry about {domain_description}.
+  - I appreciate your enquiry. I am at your service regarding {domain_description}.
+  - It is a pleasure. You may continue with your inquiries about {domain_description}.
+  - Thank you as well. I remain available for anything regarding {domain_description}.
+  - There is no need to thank me. I remain at your disposal regarding {domain_description}.
+  farewell:
+  - Have a good day.
+  - Until next time. I remain at your disposal.
+  - It has been a pleasure assisting you. Goodbye.
+  - I wish you a pleasant day. You may return whenever necessary.
+  - Until your next enquiry.
+  - Goodbye. I wish you a pleasant day.
+  - I remain at your disposal for future inquiries.
+  - Thank you for your inquiry. Until next time.
+  capability:
+  - I am {assistant_name}. I answer enquiries about {domain_description} quoting the document verbatim; if the information is not included, I will say so.
+  - I locate the relevant passage in {domain_description} and present it literally, with its reference.
+  - 'My role is as follows: to search {domain_description} and show you the exact text that answers your enquiry.'
+  - I do not draft content of my own. I present what {domain_description} states, with the corresponding citation.
+  - You may consult me about {domain_description}; each answer includes the original text and its location.
+  - I handle inquiries about {domain_description} and answer exclusively with the text of the document, stating its origin.
+  - I am {assistant_name}. My task is to locate in {domain_description} the passage that answers and quote it in full.
+  - When the information is not in {domain_description}, I state so expressly rather than assume it.
+  opening:
+  - 'The document states the following:'
+  - 'In accordance with the document:'
+  - 'According to the available text:'
+  - 'The following appears in the document:'
+  - 'As recorded in the document:'
+  - 'The relevant text reads as follows:'
+  - 'Below is what the document states:'
+  - 'In response to your inquiry, the document provides:'
+  - 'The text records the following:'
+  - 'The document addresses it in these terms:'
+  - 'In this regard, the document states:'
+  - 'Please find the corresponding passage below:'
+  addition:
+  - 'Additionally, the document notes:'
+  - 'Likewise, it states the following:'
+  - 'Another section adds:'
+  - 'The document further adds:'
+  - 'It is worth adding the following:'
+  - 'Likewise, the document provides:'
+  - 'Furthermore, the text establishes:'
+  - 'The following passage complements the above:'
+  - 'Another section indicates:'
+  - 'To the above, the following is added:'
+  - 'The document further specifies:'
+  - 'The following should also be considered:'
+  condition:
+  - 'The above is subject to the following condition:'
+  - 'The following condition applies:'
+  - 'The document qualifies it as follows:'
+  - 'Please note the following condition:'
+  - 'For it to apply, the document establishes:'
+  - 'This is subject to the following:'
+  - 'For these purposes, the following is required:'
+  - 'The document sets this condition:'
+  exception:
+  - 'The following exception is provided:'
+  - 'With the following proviso:'
+  - 'The document excepts the following:'
+  - 'Please note this exception:'
+  - 'It does not apply in the following case:'
+  - 'The following case is excepted:'
+  - 'With the caveat indicated below:'
+  - 'It does not proceed in the following situation:'
+  related_intro:
+  - 'No direct answer was found. Here is what the documents state on the subject:'
+  - 'The documents do not contain a direct answer; this is the most closely related content:'
+  - 'There is no direct answer to your enquiry. The closest content is as follows:'
+  - 'A direct answer cannot be provided. The documents indicate the following on the subject:'
+  - 'Your enquiry has no direct answer in the documents. The related content is:'
+  - 'No direct answer is recorded. The related content follows:'
+  - 'It was not possible to find a direct answer; please find the most relevant text below:'
+  - 'The documents do not answer your inquiry directly. The related content is as follows:'
+  - 'Although there is no direct answer, the documents state the following on the matter:'
+  - 'A direct answer is not available. Please see the closest content:'
+  - 'No explicit answer is recorded. On this subject, the documents indicate:'
+  - 'In the absence of a direct answer, the nearest text is shown below:'
+  missing_focus:
+  - 'No specific information on «{term}» was found. The closest content is:'
+  - 'The documents do not specifically address «{term}». The closest content is:'
+  - 'There is no specific record of «{term}»; the related content follows:'
+  - '«{term}» was not found in the documents. The closest content is:'
+  - 'Regarding «{term}» there is no direct answer. The related content follows:'
+  - 'The documents do not refer to «{term}». The most closely related content follows:'
+  - 'No information on «{term}» is recorded. The related text is as follows:'
+  - 'No specific content on «{term}» was found; the nearest passage is shown below:'
+  no_answer:
+  - Unfortunately, that information is not included in the available documents.
+  - That information was not found in the available documents.
+  - The available documents contain no information on your enquiry.
+  - I regret to inform you that this information is not recorded in the documents.
+  - 'Having reviewed the documents, your enquiry cannot be answered: the information is not included.'
+  - The requested information is not found in the available documents.
+  - The documents contain no information that would answer your inquiry.
+  - 'I regret that I cannot answer: the documents do not address this matter.'
+  - Your inquiry goes beyond the content of the available documents.
+  - I have no information on that point in the documents.
+  - Having reviewed the documents, no answer to your inquiry was found.
+  - The loaded documents do not refer to that matter.
+  premise_not_found:
+  - No information about "{entity}" was found in the available documents. It may not exist or may fall outside their scope.
+  - The documents make no reference to "{entity}".
+  - There is no record of "{entity}" in the available documents.
+  - I regret to inform you that "{entity}" does not appear in the documents.
+  - Having reviewed the documents, no reference to "{entity}" was found.
+  - The available documents do not mention "{entity}".
+  - '"{entity}" was not found in the documents; it may fall outside their scope.'
+  - I have no information on "{entity}" in the documents.
+  welcome:
+  - Good day. How may I assist you?
+  - Welcome. Please state your enquiry.
+  - This is {assistant_name}. What would you like to consult?
+  - I am at your disposal. Every answer includes its source.
+  - Please indicate your enquiry and I will show you the relevant text.
+  - You may submit your inquiry whenever you wish.
+  - At your service. Please indicate what you need.
+  waiting:
+  - Consulting the document
+  - Reviewing the documentation
+  - Locating the exact reference
+  - One moment, please
+  - Searching for the relevant passage
+  - Examining the documents
+  - Preparing the corresponding quote
+  citations_hint:
+  - You may verify it in the citation below.
+  - The original text is shown below for your verification.
+  - Please refer to the citation below to confirm its origin.
+  - The exact source is indicated below.
+  - I invite you to verify it in the citation below.
+  - The source text is shown below.
+  - You may compare the answer with the quote below.
+  network_error:
+  - It was not possible to connect to the assistant. Please check your connection and try again.
+  - A connection problem occurred. Kindly try again in a few moments.
+  - The service could not be reached. Please check your connection.
+  - The connection to the assistant was interrupted. Please try again.
+  - Communication with the service failed. Kindly try again later.
+  - It was not possible to connect to the service. Please verify your connection.
+  - Communication with the assistant failed. Please try again shortly.
+  rate_limit_error:
+  - The limit of consecutive enquiries has been reached. Kindly wait a few seconds.
+  - Please wait a few seconds before your next enquiry.
+  - Several enquiries were made in a short time. Please try again shortly.
+  - Kindly wait a moment before continuing.
+  - A few seconds are required before your next enquiry can be handled.
+  - Please wait a few moments before submitting another inquiry.
+  - The inquiry limit has been temporarily exceeded. Please try again shortly.
+  service_error:
+  - The service is not available at the moment. Kindly try again later.
+  - The assistant is starting up. Please try again in a few moments.
+  - Your enquiry cannot be handled at this time. Please try again later.
+  - The service is busy. Kindly try again in a few seconds.
+  - A problem occurred in the service. Kindly try again later.
+  - The service is experiencing a temporary issue. Please try again later.
+  - Your inquiry cannot be processed at the moment. Please try again in a few minutes.

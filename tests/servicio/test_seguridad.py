@@ -1,4 +1,4 @@
-"""Tests unitarios de ``rag/servicio/seguridad.py``:
+"""Tests unitarios de ``ipsis/servicio/seguridad.py``:
 clave de widget y *token bucket* del límite de peticiones. Sin FastAPI, sin
 red, sin índice -- solo la lógica determinista, para que corran siempre
 (no dependen del corpus real ni de Qdrant)."""
@@ -9,7 +9,7 @@ import time
 import pytest
 from fastapi import HTTPException
 
-from rag.servicio.seguridad import LimitadorPeticiones, identificador_limitador, verificar_clave_widget
+from ipsis.servicio.seguridad import LimitadorPeticiones, identificador_limitador, verificar_clave_widget
 
 
 # ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ from rag.servicio.seguridad import LimitadorPeticiones, identificador_limitador,
 
 def test_sin_claves_configuradas_pasa_cualquier_cosa():
     """Comportamiento por defecto EXPLÍCITO (ver docstring del módulo): sin
-    claves en configuracion/asistente.yaml, no se exige autenticación."""
+    claves en config/assistant.yaml, no se exige autenticación."""
     verificar_clave_widget(None, [])
     verificar_clave_widget("cualquier-cosa", [])
 
@@ -115,7 +115,7 @@ def test_capacidad_o_tasa_no_positivas_lanzan_value_error():
 def test_clave_escrita_sin_valor_cae_a_lista_vacia(tmp_path):
     """``cors_origenes:`` a secas es ``None`` para YAML, no lista vacía.
 
-    Consume: un ``configuracion/asistente.yaml`` con las dos claves de seguridad
+    Consume: un ``config/assistant.yaml`` con las dos claves de seguridad
     escritas sin valor. Produce: la confirmación de que ``cargar_dominio``
     las entrega como listas vacías.
 
@@ -124,9 +124,9 @@ def test_clave_escrita_sin_valor_cae_a_lista_vacia(tmp_path):
     problema. El valor de repuesto es la lista vacía -- falla CERRADO: una
     configuración a medio escribir nunca debe terminar abriendo el servicio.
     """
-    from rag.configuracion.carga import cargar_dominio
+    from ipsis.configuracion.carga import cargar_dominio
 
-    ruta = tmp_path / "dominio.yaml"
+    ruta = tmp_path / "domain.yaml"
     ruta.write_text(
         "nombre_asistente: X\ndescripcion_dominio: y\nidioma: es\n"
         "perfil: _generico\ncors_origenes:\nclaves_widget:\n",

@@ -4,9 +4,9 @@ from __future__ import annotations
 import pytest
 import yaml
 
-from rag.configuracion.carga import config_recuperacion
-from rag.configuracion.esquemas import validar_asistente
-from rag.configuracion.perfiles import PERFILES_INSTALABLES, cargar_perfil_instalacion, perfil_efectivo
+from ipsis.configuracion.carga import config_recuperacion
+from ipsis.configuracion.esquemas import validar_asistente
+from ipsis.configuracion.perfiles import PERFILES_INSTALABLES, cargar_perfil_instalacion, perfil_efectivo
 
 
 def test_perfiles_cumplen_presupuestos_y_modelos():
@@ -33,7 +33,7 @@ HASH = "sha256:corpus"
 
 
 def _calibracion(tmp_path, perfil, modelos, estado="calibrado", hash_corpus=HASH):
-    ruta = tmp_path / "calibracion.yaml"
+    ruta = tmp_path / "calibration.yaml"
     ruta.write_text(yaml.safe_dump({
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": modelos, "hash_corpus": hash_corpus,

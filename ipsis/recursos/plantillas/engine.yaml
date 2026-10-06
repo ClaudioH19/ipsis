@@ -1,0 +1,55 @@
+# Engine settings. Most projects never edit this file: the installation
+# profile (assistant.yaml::profile) sets the models and thresholds, and
+# `ipsis calibrate` tunes the thresholds with your own questions.
+config_version: 5
+retrieval:
+  # model: set by the profile; uncomment to pin it.
+  chunking_strategy: "CH-F256"
+  with_header: false
+  mode: "hybrid"                # hybrid | dense | sparse
+  top_k: 3
+  collection_base: "{coleccion_base}"
+  qdrant_path: ".ipsis/index/qdrant"
+  collection_version: 1
+
+components:
+  parser: "builtin"
+  chunker: "builtin"
+  dense_encoder: "onnx"
+  sparse_encoder: "bm25"
+  retriever: "qdrant"
+  fusion: "rrf"
+  reranker: null
+  intent_classifier: "rules"
+  answer_extractor: "sentence_selector"
+  evidence_verifier: "literal_offsets"
+  response_renderer: "templates"
+  abstention_policy: "cascade_v1"
+
+qdrant:
+  mode: "local"                 # local | server
+  server_url: "http://localhost:6333"
+
+service:
+  max_concurrency: 4
+
+security:
+  rate_limit:
+    capacity: 100
+    rate_per_second: 1.0
+
+rendering:
+  max_fragment_chars: 500
+  max_fragments: 2
+  min_relative_score: 0.6
+  inline_citation: "short"      # full | short | none
+  include_opening: true
+
+# The policy thresholds live in the profile (`ipsis profile show`) and, after
+# calibrating, in config/calibration.yaml.
+abstention:
+  # If the question names an entity (e.g. "article 9") that exists in the
+  # corpus but not among the candidates, up to N fragments containing it are fetched.
+  max_extra_fragments: 2
+
+pipeline_version: "ingesta-0.1.0"

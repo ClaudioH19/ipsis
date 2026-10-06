@@ -1,17 +1,17 @@
 """Prueba de portabilidad desde una instalación y carpeta externas.
 
 Recorre ``init -> cargar -> indexar -> preguntar`` por
-SUBPROCESOS reales de la CLI (``python -m rag.cli ...``), sobre un dominio
+SUBPROCESOS reales de la CLI (``python -m ipsis.cli ...``), sobre un dominio
 SINTÉTICO ficticio ("Equipo X100", inventado para este test, sin nombres de
 organizaciones ni personas reales), en un directorio temporal **fuera del
 árbol de este repositorio** -- a propósito NO usa el fixture ``tmp_path`` de
 pytest, porque ``pytest.ini::addopts`` fija ``--basetemp=.cache/pytest_tmp``,
-que sigue viviendo DENTRO de ``rag-extractivo/``.
+que sigue viviendo DENTRO de ``ipsis/``.
 
 Por qué esto es necesario y ``tests/cli/test_cli.py`` no alcanza: ese archivo
 corre en el MISMO proceso de pytest (con el intérprete, las cachés de
 módulos y el `cwd` original ya cargados) y, antes de la corrección de esta
-tanda, copiaba a mano ``configuracion/dominios/_generico/`` y ``configuracion/dominios/idiomas/`` a la
+tanda, copiaba a mano ``config/dominios/_generico/`` y ``config/dominios/idiomas/`` a la
 fixture -- lo que enmascaraba exactamente el defecto que una revisión
 independiente encontró corriendo la CLI de verdad en un directorio limpio.
 Un subproceso nuevo, en un directorio nuevo, sin ningún archivo del repo
@@ -44,12 +44,12 @@ def _puerto_libre() -> int:
 
 
 def _rag(args: list[str], cwd: Path, timeout: float = 60.0) -> subprocess.CompletedProcess:
-    """Corre ``rag <args>`` como SUBPROCESO real (``python -m rag.cli``), en
+    """Corre ``ipsis <args>`` como SUBPROCESO real (``python -m ipsis.cli``), en
     ``cwd``, con su propio intérprete y estado global -- nunca comparte el
     perfil de dominio activo ni ninguna caché con otro paso, a diferencia de
-    llamar ``rag.cli.main()`` en el mismo proceso."""
+    llamar ``ipsis.cli.main()`` en el mismo proceso."""
     return subprocess.run(
-        [PYTHON, "-m", "rag.cli", *args], cwd=str(cwd), capture_output=True, text=True,
+        [PYTHON, "-m", "ipsis.cli", *args], cwd=str(cwd), capture_output=True, text=True,
         timeout=timeout, env=dict(os.environ),
     )
 
@@ -103,18 +103,18 @@ def _construir_documentos(destino: Path) -> dict[str, Path]:
 
 
 def _init_cargar_indexar(proyecto: Path, docs: dict[str, Path]) -> None:
-    r = _rag(["init", "--nombre-asistente", "Asistente X100",
-              "--descripcion-dominio", "el manual del equipo ficticio X100"], cwd=proyecto)
-    assert r.returncode == 0, f"'rag init' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    r = _rag(["init", "--assistant-name", "Asistente X100",
+              "--domain-description", "el manual del equipo ficticio X100"], cwd=proyecto)
+    assert r.returncode == 0, f"'ipsis init' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
     for clave in ("manual", "ficha", "notas"):
-        r = _rag(["cargar", str(docs[clave])], cwd=proyecto)
-        assert r.returncode == 0, f"'rag cargar {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+        r = _rag(["load", str(docs[clave])], cwd=proyecto)
+        assert r.returncode == 0, f"'ipsis load {clave}' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
         assert "Traceback" not in r.stderr
 
-    r = _rag(["indexar"], cwd=proyecto, timeout=300.0)
-    assert r.returncode == 0, f"'rag indexar' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
+    r = _rag(["index"], cwd=proyecto, timeout=300.0)
+    assert r.returncode == 0, f"'ipsis index' fallo:\nSTDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "Traceback" not in r.stderr
 
 
@@ -125,13 +125,13 @@ def test_portabilidad_pdf_escaneado_se_rechaza_sin_traceback(proyecto_externo: P
     docs = _construir_documentos(proyecto_externo)
     assert _rag(["init"], cwd=proyecto_externo).returncode == 0
 
-    r = _rag(["cargar", str(docs["escaneado"])], cwd=proyecto_externo)
+    r = _rag(["load", str(docs["escaneado"])], cwd=proyecto_externo)
     assert r.returncode != 0
     assert "Traceback" not in r.stderr
     assert "escane" in (r.stdout + r.stderr).lower()
 
     # No debe haber quedado catalogado ni indexado en silencio.
-    catalogo = (proyecto_externo / "documentos" / "catalogo.yaml").read_text(encoding="utf-8")
+    catalogo = (proyecto_externo / "documents" / "catalog.yaml").read_text(encoding="utf-8")
     assert "escaneado" not in catalogo
 
 
@@ -141,10 +141,10 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
     docs = _construir_documentos(proyecto_externo)
     _init_cargar_indexar(proyecto_externo, docs)
 
-    # El andamiaje que 'rag init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
-    assert (proyecto_externo / "configuracion" / "dominio.yaml").exists()
-    assert not (proyecto_externo / "configuracion" / "dominios").exists()
-    assert not (proyecto_externo / "configuracion" / "textos.yaml").exists()
+    # El andamiaje que 'ipsis init' debe ESCRIBIR (DEFECTO 1) quedó ahí.
+    assert (proyecto_externo / "config" / "domain.yaml").exists()
+    assert not (proyecto_externo / "config" / "dominios").exists()
+    assert not (proyecto_externo / "config" / "textos.yaml").exists()
 
 
 @pytest.mark.slow
@@ -158,7 +158,7 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
 
     puerto = _puerto_libre()
     proceso = subprocess.Popen(
-        [PYTHON, "-m", "rag.cli", "servir", "--port", str(puerto)],
+        [PYTHON, "-m", "ipsis.cli", "serve", "--port", str(puerto)],
         cwd=str(proyecto_externo), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
     )
     try:
@@ -177,49 +177,49 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
 
         # Caso literal: 'ok' + cita literal del manual (usa el vocabulario del documento).
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuántos meses cubre la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuántos meses cubre la garantía del equipo X100?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["estado"] == "ok", datos
-        assert "18 meses" in datos["respuesta"]
-        assert len(datos["fragmentos"]) >= 1
+        assert datos["status"] == "ok", datos
+        assert "18 meses" in datos["answer"]
+        assert len(datos["fragments"]) >= 1
         # "Literal" significa substring exacto de lo que el parser extrajo
         # del documento (`texto_completo`) -- NO de los bytes crudos del
         # .md, que traen sintaxis ('# ', líneas en blanco) que el parser ya
         # normaliza; es el mismo criterio que usan
         # tests/ingesta/test_parsear_docx.py y tests/ingesta/test_parsear.py.
-        from rag.ingesta.parsear import parsear_markdown
+        from ipsis.ingesta.parsear import parsear_markdown
         doc_manual = parsear_markdown(str(docs["manual"]), doc_id="x", doc_titulo="x", version="1")
-        frag_manual = next((f for f in datos["fragmentos"] if "18 meses" in f["texto"]), None)
-        assert frag_manual is not None, datos["fragmentos"]
-        assert frag_manual["texto"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
+        frag_manual = next((f for f in datos["fragments"] if "18 meses" in f["text"]), None)
+        assert frag_manual is not None, datos["fragments"]
+        assert frag_manual["text"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
 
         # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Con tres chunks
-        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/metodologia/lexico.md: sinónimos).
+        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/methodology/lexical.md: sinónimos).
         # Se conserva para que una regresión sea visible: puede mejorar a 'ok', pero
         # nunca perder el pasaje con «18 meses».
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuánto dura la garantía del equipo X100?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuánto dura la garantía del equipo X100?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["estado"] in {"ok", "relacionado"}, datos
-        assert any("18 meses" in f["texto"] for f in datos["fragmentos"]), datos["fragmentos"]
-        assert "18 meses" in datos["respuesta"]
+        assert datos["status"] in {"ok", "related"}, datos
+        assert any("18 meses" in f["text"] for f in datos["fragments"]), datos["fragments"]
+        assert "18 meses" in datos["answer"]
 
         # Pregunta ajena: nunca debe llegar a 'ok'.
         resp = httpx.post(
-            f"http://127.0.0.1:{puerto}/consultar",
-            json={"pregunta": "¿Cuál es la capital de Mongolia?", "id_sesion": "portabilidad"},
+            f"http://127.0.0.1:{puerto}/ask",
+            json={"question": "¿Cuál es la capital de Mongolia?", "session_id": "portabilidad"},
             timeout=30.0,
         )
         assert resp.status_code == 200
-        assert resp.json()["estado"] != "ok", resp.json()
+        assert resp.json()["status"] != "ok", resp.json()
     finally:
         proceso.terminate()
         try:
@@ -233,7 +233,7 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
     """Criterio de cierre 2: los mismos comandos, forzando
     PYTHONIOENCODING=cp1252 (la codificación real de una consola de Windows
     en español, la que reprodujo el DEFECTO 2 -- un '⚠' en una advertencia
-    de 'rag cargar' mataba el comando con UnicodeEncodeError), terminan en
+    de 'ipsis load' mataba el comando con UnicodeEncodeError), terminan en
     código de salida 0. Ejercita explícitamente la ruta CON advertencia
     (el .txt sin estructura de secciones)."""
     entorno = dict(os.environ)
@@ -241,7 +241,7 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
 
     def _rag_cp1252(args: list[str], timeout: float = 60.0) -> subprocess.CompletedProcess:
         return subprocess.run(
-            [PYTHON, "-m", "rag.cli", *args], cwd=str(proyecto_externo), capture_output=True, text=True,
+            [PYTHON, "-m", "ipsis.cli", *args], cwd=str(proyecto_externo), capture_output=True, text=True,
             timeout=timeout, env=entorno,
         )
 
@@ -252,15 +252,15 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
 
     # 'notas' (.txt) SIEMPRE trae la advertencia "sin estructura de
     # secciones" -- es la ruta que crasheaba antes de la corrección.
-    r = _rag_cp1252(["cargar", str(docs["notas"])])
+    r = _rag_cp1252(["load", str(docs["notas"])])
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "UnicodeEncodeError" not in r.stderr
     assert "Traceback" not in r.stderr
 
-    r = _rag_cp1252(["cargar", str(docs["manual"])])
+    r = _rag_cp1252(["load", str(docs["manual"])])
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
 
-    r = _rag_cp1252(["indexar"], timeout=300.0)
+    r = _rag_cp1252(["index"], timeout=300.0)
     assert r.returncode == 0, f"STDOUT:{r.stdout}\nSTDERR:{r.stderr}"
     assert "UnicodeEncodeError" not in r.stderr
 

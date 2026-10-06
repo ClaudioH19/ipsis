@@ -1,0 +1,177 @@
+# Direct tone: blunt, imperative, no courtesies. Never insults, blames the
+# user, uses sarcasm, sustained capitals or threats (decision D3).
+tone: direct
+description: Blunt, imperative, no courtesies; never aggressive towards the person.
+situations:
+  greeting:
+  - '{assistant_name}. Ask about {domain_description}.'
+  - Ask. I answer with text from {domain_description}.
+  - '{assistant_name} here. What do you need from {domain_description}?'
+  - Type your question about {domain_description}.
+  - Ready. Ask what you need from {domain_description}.
+  - I'm {assistant_name}. I quote {domain_description}. Ask.
+  - Questions on {domain_description}? Go.
+  - Direct question about {domain_description}, answer with a quote.
+  thanks:
+  - Fine. Anything else?
+  - Ok. Keep asking if needed.
+  - Done. Another question about {domain_description}?
+  - Understood.
+  - Fine. Next question.
+  - You're welcome.
+  - Ok. Next?
+  - Good. Ask if there is more on {domain_description}.
+  farewell:
+  - Bye.
+  - Done.
+  - Later.
+  - End.
+  - See you.
+  - Finished.
+  - Over.
+  - Until next time.
+  capability:
+  - I search {domain_description} and show the exact text with its source. If it's missing, I say so.
+  - I quote {domain_description}. I don't invent.
+  - 'I am {assistant_name}: literal text from {domain_description}, with quote.'
+  - I answer with what {domain_description} says. Nothing else.
+  - Ask about {domain_description}; you get the exact quote.
+  - Exact text from {domain_description} plus its source. Nothing invented.
+  - I'm {assistant_name}. I search, I quote, I don't write.
+  - If it is not in {domain_description}, I say so.
+  opening:
+  - 'It says:'
+  - 'The document:'
+  - 'Answer:'
+  - 'Text:'
+  - 'This:'
+  - 'Per the text:'
+  - 'From the document:'
+  - 'Quote:'
+  - 'Excerpt:'
+  - 'Passage:'
+  - 'Found:'
+  - 'This answers it:'
+  addition:
+  - 'More:'
+  - 'It adds:'
+  - 'Next:'
+  - 'Elsewhere:'
+  - 'Also:'
+  - 'Plus:'
+  - 'Additionally:'
+  - 'Separately:'
+  - 'And this:'
+  - 'Another quote:'
+  - 'On top of that:'
+  - 'Adds:'
+  condition:
+  - 'If:'
+  - 'Only if:'
+  - 'Condition:'
+  - 'Requires:'
+  - 'Applies when:'
+  - 'Depends on:'
+  - 'With condition:'
+  - 'Needs:'
+  exception:
+  - 'Except:'
+  - 'Unless:'
+  - 'Does not apply if:'
+  - 'Exception:'
+  - 'Not when:'
+  - 'Outside of this:'
+  - 'Not valid for:'
+  - 'Caveat:'
+  related_intro:
+  - 'No direct answer. Closest:'
+  - 'Not there directly. Related:'
+  - 'No direct answer. This comes close:'
+  - 'This does not answer you exactly. Look:'
+  - 'No exact answer. Related:'
+  - 'Direct, no. Close:'
+  - 'No exact answer. This relates:'
+  - 'No direct answer. Related:'
+  - 'Not a direct answer. Related text:'
+  - 'Direct answer missing. See:'
+  - 'Not exact. Nearest:'
+  - 'Direct answer: none. Close:'
+  missing_focus:
+  - '«{term}» is not there. Closest:'
+  - 'Nothing on «{term}». Related:'
+  - 'No «{term}» in the documents. This:'
+  - '«{term}» does not appear. Look:'
+  - 'No «{term}». Nearby:'
+  - '«{term}»: no data. Close:'
+  - 'Can''t find «{term}». Related:'
+  - '«{term}» is absent. Nearest:'
+  no_answer:
+  - Not in the documents. Ask something else.
+  - That's not there.
+  - No answer in the documents.
+  - It doesn't appear. Rephrase or ask something else.
+  - The documents don't cover it.
+  - No data on that.
+  - Outside the documents.
+  - Not found.
+  - That is not there.
+  - Nothing in the documents.
+  - Not covered. Try another question.
+  - No data. Ask something else.
+  premise_not_found:
+  - '"{entity}" is not in the documents.'
+  - Nothing on "{entity}".
+  - '"{entity}" does not appear. Ask something else.'
+  - No data on "{entity}".
+  - The documents don't mention "{entity}".
+  - '"{entity}": no data.'
+  - Can't find "{entity}".
+  - No mention of "{entity}".
+  welcome:
+  - Ask.
+  - Type your question.
+  - '{assistant_name}. What do you need?'
+  - Tell me what you are looking for.
+  - Ready to answer.
+  - Your question?
+  - Ask and I quote.
+  waiting:
+  - Searching
+  - One moment
+  - Reading
+  - Locating the quote
+  - Checking
+  - Looking
+  - Working
+  citations_hint:
+  - Quote below. Verify.
+  - The source is below.
+  - Check it below.
+  - Original text below.
+  - See the quote.
+  - Source below.
+  - Verify below.
+  network_error:
+  - No connection. Retry.
+  - Connection failed. Try again.
+  - No network. Check your connection.
+  - Connection down. Retry.
+  - The service is not responding. Try again.
+  - Network error. Retry.
+  - No reply from the server. Retry.
+  rate_limit_error:
+  - Too fast. Wait a few seconds.
+  - Limit reached. Wait.
+  - Stop for a moment. Then continue.
+  - Wait before asking again.
+  - Too many questions. Short pause.
+  - Too fast. Wait.
+  - Pause. Then ask.
+  service_error:
+  - Unavailable. Try later.
+  - Starting up. Retry in a moment.
+  - Busy. Retry.
+  - Service down. Later.
+  - Service failure. Retry later.
+  - Service unavailable. Retry later.
+  - Service error. Later.

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "dataset_id": "consultas_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafeteira.md",
+        "doc_id": "garantia-cafeteira"
+      },
+      {
+        "ruta": "irrigacao_estufa.md",
+        "doc_id": "irrigacao-estufa"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_aquisicoes.md",
+        "doc_id": "manual-aquisicoes"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      }
+    ],
+    "sha256": "d565084858a39edaeb140ecbdd0b0b0f14787e4af8780eb270172c545de9c55a"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}

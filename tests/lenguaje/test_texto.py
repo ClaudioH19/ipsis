@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from rag.lenguaje.paquete import cargar_paquete
-from rag.lenguaje.texto import dividir_oraciones, terminos, tokenizar
+from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.texto import dividir_oraciones, terminos, tokenizar
 
 TEXTOS = {
     "es": "¿Cada cuánto se cambia el filtro? Se cambia cada 6 meses. El precio es 1.5 UF.",
@@ -51,3 +51,13 @@ def test_terminos_con_stemmer_unifican_plurales_y_tildes():
 
 def test_terminos_sin_paquete_son_los_tokens():
     assert terminos("Los Documentos") == ["los", "documentos"]
+
+
+def test_un_rotulo_numerado_va_con_la_oracion_que_sigue():
+    """«Artículo 4.» no es una oración: sin él, «artículo» faltaba en la que responde."""
+    texto = "Hola. Artículo 4. Si el cliente no está, se cobra un recargo. 4.2. Otro paso."
+    assert [texto[i:f] for i, f in dividir_oraciones(texto)] == [
+        "Hola.", "Artículo 4. Si el cliente no está, se cobra un recargo.", "4.2. Otro paso."]
+    # Al final del texto queda como está.
+    fin = "Fin. Artículo 9."
+    assert [fin[i:f] for i, f in dividir_oraciones(fin)] == ["Fin.", "Artículo 9."]

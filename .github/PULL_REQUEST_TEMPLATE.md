@@ -1,21 +1,21 @@
-## Qué cambia
+## What changes
 
-<!-- Una o dos frases. Enlaza el issue si existe: «Cierra #123». -->
+<!-- One or two sentences. Link the issue if there is one: "Closes #123". -->
 
-## Cómo se probó
+## How it was tested
 
 - [ ] `python -m pytest -m "not slow and not browser"`
-- [ ] `python -m pytest -m browser` (si toca el widget o el panel)
-- [ ] Pruebas nuevas o actualizadas
+- [ ] `python -m pytest -m browser` (if it touches the widget or the panel)
+- [ ] New or updated tests
 
-## Impacto
+## Impact
 
-- [ ] Cambia respuestas (regeneré la caracterización y lo explico arriba)
-- [ ] Requiere reindexar
-- [ ] Cambia la configuración (`config_version` y su migración)
-- [ ] Actualicé `docs/guia/` y `CHANGELOG.md`
+- [ ] Changes answers (I regenerated the characterization and explain it above)
+- [ ] Requires reindexing
+- [ ] Changes the configuration (`config_version` and its migration)
+- [ ] Updated `docs/guide/` (and `docs/es/guia/`) and `CHANGELOG.md`
 
-## Principios
+## Principles
 
-- [ ] Sin texto generado por un modelo en las respuestas
-- [ ] Sin texto de un idioma en Python (va en los paquetes de idioma)
+- [ ] No model-generated text in the answers
+- [ ] No language text in Python (it goes in the language packs or the message catalog)

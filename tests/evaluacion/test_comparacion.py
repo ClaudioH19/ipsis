@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from rag.evaluacion.comparacion import comparar_artefactos
-from rag.evaluacion.metricas import ArtefactoEvaluacion, ReporteMetricas
+from ipsis.evaluacion.comparacion import comparar_artefactos
+from ipsis.evaluacion.metricas import ArtefactoEvaluacion, ReporteMetricas
 
 
 def _artefacto(backend: str, *, dataset_sha256: str = "a" * 64):
@@ -62,7 +62,7 @@ def test_rechaza_comparar_corpus_distintos():
 
 
 def test_cli_comparar_escribe_informe(tmp_path):
-    from rag.cli import main
+    from ipsis.cli import main
 
     rutas = []
     for backend in ("qdrant_vectorial", "qdrant_hibrida"):
@@ -71,5 +71,5 @@ def test_cli_comparar_escribe_informe(tmp_path):
         rutas.append(str(ruta))
     salida = tmp_path / "comparacion.json"
 
-    assert main(["comparar", *rutas, "--salida", str(salida)]) == 0
+    assert main(["compare", *rutas, "--output", str(salida)]) == 0
     assert '"decisiones": []' in salida.read_text(encoding="utf-8")

@@ -17,7 +17,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 
 RAIZ = Path(__file__).resolve().parents[2]
-WIDGET = RAIZ / "rag/servicio/estaticos/widget.js"
+WIDGET = RAIZ / "ipsis/servicio/estaticos/widget.js"
 TEXTO_CITA = "El filtro de sedimentos se cambia cada 6 meses."
 
 
@@ -36,7 +36,7 @@ def test_widget_sin_avatar_pesa_menos_de_40_kb_gzip():
 
 
 def test_no_hay_opcion_para_ocultar_las_citas():
-    from rag.aplicacion.widget import citas_presentacion
+    from ipsis.aplicacion.widget import citas_presentacion
 
     assert citas_presentacion("ocultas") == "acordeon" and citas_presentacion("abiertas") == "lista"
     assert '"ocultas"' not in WIDGET.read_text(encoding="utf-8")
@@ -52,9 +52,9 @@ def _app(base: str, estado: dict):
     @app.get("/", response_class=HTMLResponse)
     def pagina(request: Request):
         q = request.query_params
-        attrs = " ".join(f'{k}="{v}"' for k, v in q.items() if k in ("posicion", "tamano", "lanzador", "modo"))
-        contenedor = q.get("modo") == "incrustado"
-        widget = f'<rag-extractivo-chat api="{base}" titulo="Ayuda" {attrs}></rag-extractivo-chat>'
+        attrs = " ".join(f'{k}="{v}"' for k, v in q.items() if k in ("position", "size", "launcher", "mode"))
+        contenedor = q.get("mode") == "embedded"
+        widget = f'<ipsis-chat api="{base}" title="Ayuda" {attrs}></ipsis-chat>'
         cuerpo = f'<main style="padding:20px"><div style="height:520px">{widget}</div></main>' if contenedor else widget
         return f"""<!doctype html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head>
@@ -66,25 +66,26 @@ def _app(base: str, estado: dict):
 
     @app.get("/config")
     def config():
-        return {"nombre_asistente": "Ayuda", "descripcion_dominio": "manual", "saludo": "Hola.",
-                "preset": "clasico", "densidad": "comoda", "citas": estado.get("citas", "acordeon"),
-                "mostrar_etiqueta_estado": True, "interfaz": {},
-                "microcopia": {"bienvenida": ["Bienvenida de prueba."], "esperando": ["Buscando de prueba"],
-                               "invitacion_citas": ["Compruébalo abajo, prueba."], "error_red": ["Red caída."],
-                               "error_limite": ["Muy rápido."], "error_servicio": ["Servicio en pausa."]},
-                "ubicacion": estado.get("ubicacion", {})}
+        citas = {"acordeon": "accordion", "lista": "list"}.get(estado.get("citas"), "accordion")
+        return {"assistant_name": "Ayuda", "domain_description": "manual", "greeting": "Hola.",
+                "preset": "classic", "density": "comfortable", "citations": citas,
+                "show_status_label": True, "interface": {},
+                "microcopy": {"welcome": ["Bienvenida de prueba."], "waiting": ["Buscando de prueba"],
+                               "citations_hint": ["Compruébalo abajo, prueba."], "network_error": ["Red caída."],
+                               "rate_limit_error": ["Muy rápido."], "service_error": ["Servicio en pausa."]},
+                "placement": estado.get("ubicacion", {})}
 
-    @app.post("/consultar")
+    @app.post("/ask")
     def consultar():
         if estado.get("estado_http"):
             return Response(status_code=estado["estado_http"])
         return {
-            "estado": "ok", "nivel_servicio": "normal", "plan": "extractivo", "latencia_ms": 3,
-            "confianza": {"top1": 0.9, "margen": 0.1, "acuerdo_bm25": None},
-            "respuesta": f"Esto es lo que dice el documento: {TEXTO_CITA}",
-            "respuesta_exacta": {"chunk_id": "c1", "texto": "6 meses", "offset_inicio": 139, "offset_fin": 146},
-            "fragmentos": [{"chunk_id": "c1", "doc_titulo": "Manual", "seccion": "Filtro", "offset_inicio": 100,
-                            "offset_fin": 147, "texto": TEXTO_CITA, "score": 0.9, "version": "1", "pagina": None}],
+            "status": "ok", "service_level": "normal", "plan": "extractive", "latency_ms": 3,
+            "confidence": {"top1": 0.9, "margin": 0.1, "bm25_agreement": None},
+            "answer": f"Esto es lo que dice el documento: {TEXTO_CITA}",
+            "exact_answer": {"chunk_id": "c1", "text": "6 meses", "offset_start": 139, "offset_end": 146},
+            "fragments": [{"chunk_id": "c1", "doc_title": "Manual", "section": "Filtro", "offset_start": 100,
+                           "offset_end": 147, "text": TEXTO_CITA, "score": 0.9, "version": "1", "page": None}],
         }
 
     return app
@@ -121,26 +122,26 @@ def navegador():
 
 def _shadow(page, selector: str):
     return page.evaluate_handle(
-        f"document.querySelector('rag-extractivo-chat').shadowRoot.querySelector('{selector}')")
+        f"document.querySelector('ipsis-chat').shadowRoot.querySelector('{selector}')")
 
 
 def _caja(page, selector: str) -> dict:
     return page.evaluate(
-        f"(() => {{ const r = document.querySelector('rag-extractivo-chat').shadowRoot"
+        f"(() => {{ const r = document.querySelector('ipsis-chat').shadowRoot"
         f".querySelector('{selector}').getBoundingClientRect(); "
         f"return {{x: r.x, y: r.y, ancho: r.width, alto: r.height}}; }})()")
 
 
 def _abrir(page, incrustado: bool = False) -> None:
     if not incrustado:
-        page.evaluate("window.RagChat.abrir()")
+        page.evaluate("window.Ipsis.open()")
     # Sin depender de la animación de entrada: se esperan las animaciones del panel.
-    page.evaluate("Promise.all(document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.evaluate("Promise.all(document.querySelector('ipsis-chat').shadowRoot"
                   ".querySelector('.rw-panel').getAnimations().map(a => a.finished))")
 
 
 VIEWPORTS = [(360, 640), (768, 1024), (1280, 800)]
-POSICIONES = ["abajo-derecha", "abajo-izquierda", "arriba-derecha", "arriba-izquierda", "incrustado"]
+POSICIONES = ["bottom-right", "bottom-left", "top-right", "top-left", "embedded"]
 
 
 @pytest.mark.browser
@@ -150,8 +151,8 @@ def test_ubicaciones_y_viewports_sin_desbordar(navegador, servidor, viewport, po
     base, _ = servidor
     ancho, alto = viewport
     page = navegador.new_page(viewport={"width": ancho, "height": alto})
-    incrustado = posicion == "incrustado"
-    page.goto(f"{base}/?modo=incrustado" if incrustado else f"{base}/?posicion={posicion}")
+    incrustado = posicion == "embedded"
+    page.goto(f"{base}/?mode=embedded" if incrustado else f"{base}/?position={posicion}")
     _abrir(page, incrustado)
     assert page.evaluate("document.documentElement.scrollWidth") <= ancho  # sin scroll horizontal
     panel, campo = _caja(page, ".rw-panel"), _caja(page, "#rw-input")
@@ -161,7 +162,7 @@ def test_ubicaciones_y_viewports_sin_desbordar(navegador, servidor, viewport, po
     assert campo["alto"] > 0 and campo["x"] >= 0 and campo["x"] + campo["ancho"] <= ancho + 1
     if not incrustado:
         assert campo["y"] + campo["alto"] <= alto + 1, campo  # el campo se ve
-        lado = "derecha" if posicion.endswith("derecha") else "izquierda"
+        lado = "derecha" if posicion.endswith("right") else "izquierda"
         boton = _caja(page, ".rw-boton")
         assert (boton["x"] > ancho / 2) == (lado == "derecha")
     page.close()
@@ -200,11 +201,11 @@ def test_citas_debajo_con_el_tramo_exacto_marcado(navegador, servidor, citas):
     page = navegador.new_page()
     page.goto(base)
     _abrir(page)
-    page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         r.querySelector('#rw-input').value = '¿Cada cuánto?';
         r.querySelector('.rw-form').requestSubmit(); }""")
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot.querySelector('mark')")
-    datos = page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot.querySelector('mark')")
+    datos = page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         const citas = r.querySelector('.rw-citas'); const marca = r.querySelector('mark.rw-tramo');
         return {marca: marca.textContent, cita: r.querySelector('.rw-cita-texto').textContent,
                 invitacion: r.querySelector('.rw-citas-invitacion').textContent,
@@ -215,7 +216,7 @@ def test_citas_debajo_con_el_tramo_exacto_marcado(navegador, servidor, citas):
     assert datos["marca"] == "6 meses" and datos["cita"] == TEXTO_CITA  # literal y completa
     assert datos["visible"] and datos["despuesDelMensaje"]
     assert datos["invitacion"] == "Compruébalo abajo, prueba."
-    assert datos["posicion"] == " · caracteres 100–147"
+    assert datos["posicion"] == " · characters 100–147"
     assert datos["detalles"] == (0 if citas == "lista" else 1)  # «ocultas» ya no oculta nada
     page.close()
 
@@ -227,11 +228,11 @@ def test_microcopia_del_tono_y_region_viva(navegador, servidor):
     page = navegador.new_page()
     page.goto(base)
     _abrir(page)
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-msg').textContent.includes('Bienvenida de prueba')")
-    page.evaluate("""() => { const r = document.querySelector('rag-extractivo-chat').shadowRoot;
+    page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
         r.querySelector('#rw-input').value = 'hola'; r.querySelector('.rw-form').requestSubmit(); }""")
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('[role=status]').textContent === 'Servicio en pausa.'")
     estado.update(estado_http=None)
     page.close()
@@ -241,31 +242,31 @@ def test_microcopia_del_tono_y_region_viva(navegador, servidor):
 def test_lanzador_oculto_y_api_del_sitio(navegador, servidor):
     base, _ = servidor
     page = navegador.new_page()
-    page.goto(f"{base}/?lanzador=oculto&posicion=arriba-izquierda&tamano=compacto")
+    page.goto(f"{base}/?launcher=hidden&position=top-left&size=compact")
     assert _caja(page, ".rw-boton")["alto"] == 0  # no hay botón: abre el sitio
-    assert page.evaluate("window.RagChat.estado()")["abierto"] is False
+    assert page.evaluate("window.Ipsis.state()")["open"] is False
     _abrir(page)
-    estado = page.evaluate("window.RagChat.estado()")
-    assert estado["abierto"] is True and estado["posicion"] == "arriba-izquierda" and estado["tamano"] == "compacto"
+    estado = page.evaluate("window.Ipsis.state()")
+    assert estado["open"] is True and estado["position"] == "top-left" and estado["size"] == "compact"
     assert _caja(page, ".rw-panel")["ancho"] == pytest.approx(340, abs=1)
-    page.evaluate("window.RagChat.cerrar()")
-    assert page.evaluate("window.RagChat.estado()")["abierto"] is False
+    page.evaluate("window.Ipsis.close()")
+    assert page.evaluate("window.Ipsis.state()")["open"] is False
     page.close()
 
 
 @pytest.mark.browser
 def test_ubicacion_de_estilos_yaml_si_el_sitio_no_la_declara(navegador, servidor):
     base, estado = servidor
-    estado.update(ubicacion={"posicion": "abajo-izquierda", "lanzador": "pestana", "tamano": "amplio"})
+    estado.update(ubicacion={"position": "bottom-left", "launcher": "tab", "size": "wide"})
     page = navegador.new_page(viewport={"width": 1280, "height": 900})
     page.goto(base)
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-raiz').dataset.lanzador === 'pestana'")
     assert _caja(page, ".rw-boton")["x"] < 640  # izquierda
-    assert page.evaluate("document.querySelector('rag-extractivo-chat').shadowRoot"
+    assert page.evaluate("document.querySelector('ipsis-chat').shadowRoot"
                          ".querySelector('.rw-boton-texto').getBoundingClientRect().width") > 0
-    page.goto(f"{base}/?posicion=abajo-derecha")  # el sitio manda
-    page.wait_for_function("document.querySelector('rag-extractivo-chat').shadowRoot"
+    page.goto(f"{base}/?position=bottom-right")  # el sitio manda
+    page.wait_for_function("document.querySelector('ipsis-chat').shadowRoot"
                            ".querySelector('.rw-raiz').dataset.lanzador === 'pestana'")
     assert _caja(page, ".rw-boton")["x"] > 640
     estado.pop("ubicacion")

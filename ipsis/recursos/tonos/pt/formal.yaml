@@ -1,0 +1,176 @@
+# Tom formal: tratamento de senhor ou senhora, sem exclamações.
+tone: formal
+description: Tratamento cuidadoso, sem exclamações.
+situations:
+  greeting:
+  - Saudações. Aqui fala {assistant_name}. Respondo consultas sobre {domain_description} citando textualmente o documento. Em que posso ajudar?
+  - Boas-vindas. Pode consultar-me sobre {domain_description}; cada resposta indicará a sua fonte exata.
+  - O meu nome é {assistant_name} e estou à sua disposição para consultas sobre {domain_description}.
+  - Aqui fala {assistant_name}. Indique, por favor, o que deseja consultar sobre {domain_description}.
+  - É um prazer ajudar. Formule a sua consulta sobre {domain_description} e apresentarei o texto correspondente.
+  - Aqui fala {assistant_name}. Pode formular sua consulta sobre {domain_description} quando desejar.
+  - Cordiais saudações. Estou ao seu dispor para consultas sobre {domain_description}.
+  - Com prazer auxilio em suas consultas sobre {domain_description}; cada resposta incluirá a fonte.
+  thanks:
+  - Não há de quê. Permaneço à disposição para outras consultas sobre {domain_description}.
+  - Foi um prazer ajudar. Pode voltar a consultar sobre {domain_description} quando desejar.
+  - Eu que agradeço. Se precisar revisar outro aspecto de {domain_description}, basta indicar.
+  - Com muito gosto. Sigo disponível para qualquer consulta sobre {domain_description}.
+  - Agradeço sua consulta. Estou a seu serviço no que se refere a {domain_description}.
+  - É um prazer. Pode continuar com suas consultas sobre {domain_description}.
+  - Eu que agradeço. Permaneço disponível para o que precisar sobre {domain_description}.
+  - Não há o que agradecer. Sigo à disposição a respeito de {domain_description}.
+  farewell:
+  - Tudo de bom.
+  - Até breve. Permaneço à disposição.
+  - Foi um prazer prestar este apoio. Até logo.
+  - Desejo-lhe um ótimo dia. Pode voltar quando precisar.
+  - Até a próxima consulta.
+  - Até logo. Desejo-lhe tudo de bom.
+  - Permaneço à disposição para futuras consultas.
+  - Agradeço a sua consulta. Até breve.
+  capability:
+  - Sou {assistant_name}. Respondo consultas sobre {domain_description} citando textualmente o documento; se a informação não constar, eu o informo.
+  - Localizo em {domain_description} o trecho pertinente e o apresento de forma literal, com sua referência.
+  - 'Minha função é a seguinte: buscar em {domain_description} e mostrar o texto exato que responde sua consulta.'
+  - Não redijo conteúdo próprio. Apresento o que diz {domain_description}, com a citação correspondente.
+  - Pode consultar-me sobre {domain_description}; cada resposta inclui o texto original e sua localização.
+  - Atendo consultas sobre {domain_description} e respondo exclusivamente com o texto do documento, indicando sua origem.
+  - Sou {assistant_name}. Minha função é localizar em {domain_description} o trecho que responde e citá-lo integralmente.
+  - Quando a informação não consta em {domain_description}, indico-o expressamente em vez de supô-la.
+  opening:
+  - 'O documento estabelece o seguinte:'
+  - 'Conforme o documento:'
+  - 'De acordo com o texto disponível:'
+  - 'Consta no documento o seguinte:'
+  - 'Segundo consta no documento:'
+  - 'O texto pertinente é o seguinte:'
+  - 'Transcreve-se a seguir o que o documento aponta:'
+  - 'Em resposta à sua consulta, o documento dispõe:'
+  - 'O texto registra o seguinte:'
+  - 'O documento pronuncia-se nestes termos:'
+  - 'A este respeito, o documento aponta:'
+  - 'Apresento o trecho correspondente:'
+  addition:
+  - 'Adicionalmente, o documento assinala:'
+  - 'Da mesma forma, indica-se o seguinte:'
+  - 'Em outra seção acrescenta-se:'
+  - 'O documento acrescenta o seguinte:'
+  - 'Cabe acrescentar o seguinte:'
+  - 'Igualmente, o documento dispõe:'
+  - 'Por outro lado, o texto estabelece:'
+  - 'Complementa o anterior o seguinte trecho:'
+  - 'Noutro ponto, o texto prevê:'
+  - 'Ao anterior soma-se o seguinte:'
+  - 'O documento especifica, ainda:'
+  - 'Cabe considerar também o seguinte:'
+  condition:
+  - 'O exposto está sujeito à seguinte condição:'
+  - 'Vigora a seguinte condição:'
+  - 'O documento o condiciona desta forma:'
+  - 'Observe a seguinte condição:'
+  - 'Para sua aplicação, o documento estabelece:'
+  - 'Isso fica sujeito ao seguinte:'
+  - 'Requer-se, para esse efeito, o seguinte:'
+  - 'O documento fixa esta condição:'
+  exception:
+  - 'Prevê-se a seguinte exceção:'
+  - 'Com a seguinte ressalva:'
+  - 'O documento excetua o seguinte:'
+  - 'Observe esta exceção:'
+  - 'Não se aplica no caso seguinte:'
+  - 'Excetua-se o caso seguinte:'
+  - 'Com a ressalva que se indica:'
+  - 'Não procede na situação que segue:'
+  related_intro:
+  - 'Não foi encontrada uma resposta direta. Apresento o que os documentos indicam sobre o tema:'
+  - 'Os documentos não contêm uma resposta direta; isto é o mais relacionado:'
+  - 'Não consta uma resposta direta à sua consulta. Apresento o conteúdo mais próximo:'
+  - 'Não é possível oferecer uma resposta direta. Os documentos indicam o seguinte sobre o tema:'
+  - 'Sua consulta não tem resposta direta nos documentos. Isto é o relacionado:'
+  - 'Não consta uma resposta direta. A seguir, o conteúdo relacionado:'
+  - 'Não foi possível achar uma resposta direta; apresento o mais pertinente:'
+  - 'Os documentos não respondem diretamente à sua consulta. Mostro o conteúdo vinculado:'
+  - 'Embora não haja resposta direta, os documentos apontam o seguinte sobre a matéria:'
+  - 'Não disponho de uma resposta direta. Apresento o conteúdo mais afim:'
+  - 'Não consta uma resposta expressa. Sobre o tema, os documentos indicam:'
+  - 'Na falta de uma resposta direta, compartilho o texto mais próximo:'
+  missing_focus:
+  - 'Não foi encontrada informação específica sobre «{term}». Apresento o mais próximo:'
+  - 'Os documentos não tratam especificamente de «{term}». Isto é o mais próximo:'
+  - 'Não consta informação pontual sobre «{term}»; apresento o relacionado:'
+  - 'Não foi encontrado «{term}» nos documentos. Isto é o mais próximo:'
+  - 'Quanto a «{term}», não há resposta direta. Apresento o relacionado:'
+  - 'Os documentos não se referem a «{term}». Apresento o conteúdo mais afim:'
+  - 'Não consta informação sobre «{term}». Isto é o vinculado:'
+  - 'A respeito de «{term}» não se achou conteúdo específico; mostro o mais próximo:'
+  no_answer:
+  - Lamentavelmente, essa informação não consta nos documentos disponíveis.
+  - Essa informação não foi encontrada nos documentos disponíveis.
+  - Os documentos disponíveis não contêm informação sobre sua consulta.
+  - Lamento informar que essa informação não consta nos documentos.
+  - 'Após revisar os documentos, não é possível responder sua consulta: a informação não consta.'
+  - A informação solicitada não se encontra nos documentos disponíveis.
+  - Não consta nos documentos informação que permita responder à sua consulta.
+  - 'Lamento não poder responder: os documentos não abordam essa matéria.'
+  - Sua consulta excede o conteúdo dos documentos disponíveis.
+  - Não disponho de informação sobre esse ponto nos documentos.
+  - Revistos os documentos, não se achou resposta à sua consulta.
+  - Os documentos carregados não se referem a essa matéria.
+  premise_not_found:
+  - Não foi encontrada informação sobre "{entity}" nos documentos disponíveis. É possível que não exista ou que esteja fora do seu alcance.
+  - Os documentos não fazem referência a "{entity}".
+  - Não consta informação sobre "{entity}" nos documentos disponíveis.
+  - Lamento informar que "{entity}" não consta nos documentos.
+  - Após revisar os documentos, não foi encontrada referência a "{entity}".
+  - Os documentos disponíveis não mencionam "{entity}".
+  - Não se achou "{entity}" nos documentos; é possível que exceda seu alcance.
+  - Não disponho de informação sobre "{entity}" nos documentos.
+  welcome:
+  - Saudações. Em que posso ajudar?
+  - Boas-vindas. Formule a sua consulta, por favor.
+  - Aqui fala {assistant_name}. O que deseja consultar?
+  - Estou à sua disposição. Cada resposta inclui sua fonte.
+  - Indique sua consulta e apresentarei o texto correspondente.
+  - Pode formular sua consulta quando desejar.
+  - Estou ao seu dispor. Indique o que precisa.
+  waiting:
+  - Consulta do documento em curso
+  - Revisão da documentação em curso
+  - Localização da referência exata
+  - Um momento, por favor
+  - Procura do trecho pertinente
+  - Exame dos documentos em curso
+  - Preparação da citação correspondente
+  citations_hint:
+  - Pode verificá-lo na citação apresentada a seguir.
+  - O texto original consta abaixo para sua verificação.
+  - Consulte a referência abaixo para comprovar sua origem.
+  - A fonte exata é indicada a seguir.
+  - Convido a verificar na citação abaixo.
+  - A seguir mostra-se o texto de origem.
+  - Pode contrastar a resposta com a citação abaixo.
+  network_error:
+  - Não foi possível estabelecer conexão com o assistente. Verifique sua conexão e tente novamente.
+  - Ocorreu um problema de conexão. Solicito que tente novamente em instantes.
+  - Não foi possível contatar o serviço. Verifique sua conexão, por favor.
+  - A conexão com o assistente foi interrompida. Tente novamente.
+  - Não foi possível comunicar-se com o serviço. Solicito que tente mais tarde.
+  - Não foi possível conectar ao serviço. Verifique sua conexão, por favor.
+  - A comunicação com o assistente falhou. Tente novamente em breve.
+  rate_limit_error:
+  - Foi atingido o limite de consultas seguidas. Solicito que aguarde alguns segundos.
+  - Por favor, aguarde alguns segundos antes da próxima consulta.
+  - Foram feitas várias consultas em pouco tempo. Tente novamente em breve.
+  - Solicito que aguarde um momento antes de continuar.
+  - É necessário aguardar alguns segundos para atender sua próxima consulta.
+  - Aguarde alguns instantes antes de formular outra consulta, por favor.
+  - O limite de consultas foi temporariamente excedido. Tente em breve.
+  service_error:
+  - O serviço não está disponível no momento. Solicito que tente mais tarde.
+  - O assistente está sendo iniciado. Tente novamente em instantes.
+  - No momento não é possível atender sua consulta. Tente mais tarde.
+  - O serviço está ocupado. Solicito que tente em alguns segundos.
+  - Ocorreu um problema no serviço. Solicito que tente novamente mais tarde.
+  - O serviço apresenta um problema temporário. Tente novamente mais tarde, por favor.
+  - No momento não é possível processar sua consulta. Tente novamente em alguns minutos.

@@ -1,12 +1,12 @@
-# Código de conducta
+# Code of conduct
 
-Este proyecto adopta el
-[Contributor Covenant, versión 2.1](https://www.contributor-covenant.org/es/version/2/1/code_of_conduct/).
+This project adopts the
+[Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
 
-En resumen: trata a todas las personas con respeto, acepta la crítica
-constructiva, enfócate en lo que es mejor para la comunidad y no toleres
-acoso, insultos ni ataques personales, en ningún espacio del proyecto.
+In short: treat everyone with respect, accept constructive criticism, focus
+on what is best for the community and do not tolerate harassment, insults or
+personal attacks, in any space of the project.
 
-Para reportar una conducta inaceptable, usa el reporte privado del
-repositorio (**Security → Report a vulnerability**) indicando que es un
-asunto de conducta. Toda denuncia se revisa con confidencialidad.
+To report unacceptable behavior, use the repository's private reporting
+(**Security → Report a vulnerability**) and say it is a conduct matter.
+Every report is reviewed confidentially.

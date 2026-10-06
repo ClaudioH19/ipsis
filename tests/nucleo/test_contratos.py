@@ -3,11 +3,11 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from rag import __version__
-from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion.carga import configuracion_efectiva, guardar_snapshot_configuracion
-from rag.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
-from rag.configuracion.esquemas import validar_asistente, validar_motor
+from ipsis import __version__
+from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.configuracion.carga import configuracion_efectiva, guardar_snapshot_configuracion
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState, EvidenceSpan
+from ipsis.configuracion.esquemas import validar_asistente, validar_motor
 
 
 def test_registro_crea_y_enumera_componentes():
@@ -52,8 +52,8 @@ def test_configuracion_agrega_version_y_prefijo_documento_compatibles():
             "coleccion_base": "demo",
         }
     })
-    assert asistente["config_version"] == 4
-    assert motor["config_version"] == 4
+    assert asistente["config_version"] == 5
+    assert motor["config_version"] == 5
     assert "prefijo_documento" not in motor["recuperacion"]  # lo define el catálogo de modelos
 
 
@@ -73,7 +73,7 @@ def test_configuracion_migra_version_cero_de_forma_idempotente():
     primero = validar_motor(datos)
     segundo = validar_motor(primero)
     assert primero == segundo
-    assert primero["config_version"] == 4
+    assert primero["config_version"] == 5
 
 
 def test_configuracion_v1_unifica_reranker_en_componentes():
@@ -89,7 +89,7 @@ def test_configuracion_v1_unifica_reranker_en_componentes():
 
     migrado = validar_motor(datos)
 
-    assert migrado["config_version"] == 4
+    assert migrado["config_version"] == 5
     assert "reranker" not in migrado["recuperacion"]
     assert migrado["componentes"]["reranker"] == "cross_encoder"
 
@@ -107,15 +107,15 @@ def test_registry_resuelve_nombre_y_opciones():
 
 
 def test_snapshot_incluye_defaults_y_se_puede_persistir(tmp_path):
-    motor = tmp_path / "motor.yaml"
-    dominio = tmp_path / "asistente.yaml"
+    motor = tmp_path / "engine.yaml"
+    dominio = tmp_path / "assistant.yaml"
     motor.write_text(
         "recuperacion:\n  modelo: modelo\n  estrategia_chunking: chunks\n  coleccion_base: demo\n",
         encoding="utf-8",
     )
     dominio.write_text("nombre_asistente: Demo\n", encoding="utf-8")
     snapshot = configuracion_efectiva(ruta_motor=str(motor), ruta_dominio=str(dominio))
-    assert snapshot["motor"]["componentes"]["fusion"] == "rrf"
+    assert snapshot["engine"]["components"]["fusion"] == "rrf"
     salida = guardar_snapshot_configuracion(
         str(tmp_path / "out.yaml"), ruta_motor=str(motor), ruta_dominio=str(dominio)
     )
@@ -124,13 +124,13 @@ def test_snapshot_incluye_defaults_y_se_puede_persistir(tmp_path):
 
 
 def test_version_del_api_proviene_del_paquete():
-    from rag.servicio.api import app
+    from ipsis.servicio.api import app
 
     assert app.version == __version__
 
 
 def test_componentes_base_registra_adaptadores_sin_cargar_modelos():
-    from rag.aplicacion.registro_base import registrar_componentes_base
+    from ipsis.aplicacion.registro_base import registrar_componentes_base
 
     registro = registrar_componentes_base(RegistroComponentes())
     assert registro.disponibles("parser") == ["builtin"]
@@ -139,8 +139,8 @@ def test_componentes_base_registra_adaptadores_sin_cargar_modelos():
 
 
 def test_fusion_rrf_es_determinista_y_conserva_el_candidato():
-    from rag.nucleo.esquemas import ChunkRecord, RetrievalCandidate
-    from rag.aplicacion.registro_base import FusionRRF
+    from ipsis.nucleo.esquemas import ChunkRecord, RetrievalCandidate
+    from ipsis.aplicacion.registro_base import FusionRRF
 
     def candidato(chunk_id: str) -> RetrievalCandidate:
         return RetrievalCandidate(chunk=ChunkRecord(
@@ -161,7 +161,7 @@ def test_el_nucleo_no_importa_dependencias_pesadas():
     import sys
 
     codigo = (
-        "import sys, rag.nucleo.contratos, rag.nucleo.esquemas, rag.nucleo.registro; "
+        "import sys, ipsis.nucleo.contratos, ipsis.nucleo.esquemas, ipsis.nucleo.registro; "
         "pesados = ('qdrant_client', 'onnxruntime', 'torch', 'sentence_transformers', 'fastapi'); "
         "print(','.join(m for m in pesados if m in sys.modules))"
     )
@@ -184,7 +184,7 @@ def test_configuracion_v3_pasa_a_cascada_y_poda_la_abstencion_por_capas():
 
     migrado = validar_motor(datos)
 
-    assert migrado["config_version"] == 4
+    assert migrado["config_version"] == 5
     assert migrado["componentes"]["abstention_policy"] == "cascada_v1"
     assert migrado["abstencion"] == {"max_fragmentos_adicionales": 3}
     assert validar_motor(migrado) == migrado

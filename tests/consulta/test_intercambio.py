@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from rag.consulta.etapas.politica import CascadaV1, DecisionAbstencion
-from rag.nucleo.esquemas import (
+from ipsis.consulta.etapas.politica import CascadaV1, DecisionAbstencion
+from ipsis.nucleo.esquemas import (
     AssistantState,
     ChunkRecord,
     EvidenceSpan,
@@ -19,8 +19,8 @@ from rag.nucleo.esquemas import (
     RetrievalSignals,
     SenalesRecuperacion,
 )
-from rag.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
-from rag.consulta.motor import Motor
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
+from ipsis.consulta.motor import Motor
 
 
 def _candidato(
@@ -69,7 +69,7 @@ class RetrieverMemoria:
         return {"articulo:9"}
 
     def estadisticas_lexico(self):
-        from rag.indice.estadisticas import EstadisticasLexicas
+        from ipsis.indice.estadisticas import EstadisticasLexicas
 
         return EstadisticasLexicas.construir(["El equipo incluye un filtro."])
 
@@ -138,19 +138,19 @@ class PoliticaForzada:
 
 _PLANTILLAS = {
     "conversacional": {
-        "categorias": ["saludo"],
-        "patrones": {"saludo": [r"^hola$"]},
-        "respuestas": {"saludo": "Hola desde memoria."},
+        "categorias": ["greeting"],
+        "patrones": {"greeting": [r"^hola$"]},
+        "respuestas": {"greeting": "Hola desde memoria."},
     },
     "conectores": {
-        "apertura": [],
-        "complemento": ["Además:"],
-        "condicion": ["Como condición:"],
-        "excepcion": ["Como excepción:"],
+        "opening": [],
+        "addition": ["Además:"],
+        "condition": ["Como condición:"],
+        "exception": ["Como excepción:"],
     },
     "abstencion": {
         "generico": "No encontré información suficiente.",
-        "premisa_no_encontrada": "No encontré {entidad}.",
+        "premisa_no_encontrada": "No encontré {entity}.",
         "zona_gris_intro": "Encontré información relacionada:",
     },
 }
@@ -323,9 +323,9 @@ class _EtapaConModelo:
 
 
 def _motor_con_etapa_de_modelo():
-    from rag.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.paquete import cargar_paquete
 
-    from rag.indice.estadisticas import EstadisticasLexicas
+    from ipsis.indice.estadisticas import EstadisticasLexicas
 
     es = cargar_paquete("es")
     motor = _crear_motor()
@@ -352,8 +352,8 @@ def test_salida_temprana_salta_las_etapas_con_modelos_sin_terminos_foco():
 def test_perfil_con_etapa_desconocida_falla_al_construir(monkeypatch):
     from copy import deepcopy
 
-    from rag.aplicacion.consulta import construir_motor
-    from rag.configuracion.carga import cargar_dominio, cargar_proyecto
+    from ipsis.aplicacion.consulta import construir_motor
+    from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
 
     cfg = deepcopy(cargar_proyecto())
     cfg["ajustes_perfil"] = {"etapas": ["conversacional", "no_existe"]}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demostración del widget -- ipsis</title>
+<style>
+  /* Estilos DELIBERADAMENTE ruidosos y con nombres de clase genéricos
+     (.btn, .card, .container) -- el punto de esta página es demostrar que
+     el CSS de un sitio anfitrión cualquiera no deforma el widget (y que el
+     widget, con su Shadow DOM, no deforma este sitio), no que el sitio se
+     vea bonito. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: Georgia, 'Times New Roman', serif;
+    background: #fdf6e3; color: #222; line-height: 1.6;
+  }
+  header {
+    background: #073642; color: #fdf6e3; padding: 24px 32px;
+  }
+  header h1 { margin: 0 0 6px; font-size: 22px; }
+  header p { margin: 0; opacity: .8; font-size: 14px; }
+  .container { max-width: 760px; margin: 0 auto; padding: 32px; }
+  .card {
+    background: #fff; border: 3px double #cb4b16; border-radius: 2px;
+    padding: 20px 24px; margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-block; background: #dc322f; color: #fff; padding: 10px 18px;
+    border-radius: 999px; text-decoration: none; font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: bold;
+  }
+  button, input { font-family: Georgia, 'Times New Roman', serif; }
+  code {
+    background: #eee8d5; padding: 2px 6px; border-radius: 3px; font-size: 13px;
+  }
+  .nota {
+    font-family: Arial, sans-serif; font-size: 13px; color: #555;
+    border-left: 4px solid #268bd2; padding-left: 12px; margin-top: 28px;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Cooperativa Ficticia de Documentación Técnica</h1>
+    <p>Sitio de demostración -- simula un anfitrión CUALQUIERA, ajeno a ipsis.</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Bienvenido</h2>
+      <p>Esta página no tiene relación real con ningún negocio: existe
+      solo para comprobar que el widget de chat (<code>/widget.js</code>)
+      se integra con una sola línea y que su CSS no se filtra hacia esta
+      página, ni al revés (el widget vive dentro de un
+      <em>Shadow DOM</em>).</p>
+      <a class="btn" href="#">Botón de ejemplo del sitio anfitrión</a>
+    </div>
+
+    <div class="card">
+      <h2>Prueba los cuatro estados</h2>
+      <p>Después de cargar e indexar tus documentos, prueba preguntas como
+      estas para comprobar los cuatro estados:</p>
+      <ul>
+        <li><strong>ok</strong>: una pregunta respondida literalmente por tus documentos.</li>
+        <li><strong>relacionado</strong>: una pregunta cercana al contenido pero sin respuesta directa.</li>
+        <li><strong>sin_respuesta</strong>: "¿Cuál es la capital de Mongolia?"</li>
+        <li><strong>conversacional</strong>: "hola"</li>
+      </ul>
+    </div>
+
+    <p class="nota">
+      El botón flotante de chat está en la esquina inferior de la pantalla.
+      Si esta página se sirve desde el propio servicio (<code>/widget/demo.html</code>),
+      <code>data-api</code> se deja vacío a propósito: el widget usa
+      <code>window.location.origin</code> como base por defecto.
+    </p>
+  </div>
+
+  <script
+    src="/widget.js"
+    data-title="Demo assistant"
+    data-color="#2563eb"
+    data-position="bottom-right"
+    data-greeting="Hi, I am the demo assistant. Ask me something about the loaded document."
+  ></script>
+</body>
+</html>

@@ -5,24 +5,24 @@ from typing import Any
 
 import pytest
 
-from rag.nucleo.registro import RegistroComponentes
-from rag.configuracion.carga import cargar_dominio, cargar_proyecto
-from rag.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
-from rag.consulta.etapas.politica import DecisionAbstencion
-from rag.nucleo.esquemas import (
+from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
+from ipsis.nucleo.esquemas import AssistantResult, AssistantState, QueryAnalysis, QueryDiagnostic
+from ipsis.consulta.etapas.politica import DecisionAbstencion
+from ipsis.nucleo.esquemas import (
     ChunkRecord,
     RetrievalCandidate,
     RetrievalSignals,
     SenalesRecuperacion,
 )
-from rag.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
-from rag.lenguaje.entidades import extraer_entidades
-from rag.consulta.motor import Motor
-from rag.aplicacion.consulta import construir_motor
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier, RulesIntentClassifier, SentenceSelectorExtractor
+from ipsis.lenguaje.entidades import extraer_entidades
+from ipsis.consulta.motor import Motor
+from ipsis.aplicacion.consulta import construir_motor
 
 
 def test_endpoint_consultar_delega_en_motor():
-    from rag.servicio import api
+    from ipsis.servicio import api
     from fastapi.testclient import TestClient
 
     contrato = {
@@ -48,18 +48,21 @@ def test_endpoint_consultar_delega_en_motor():
 
     cliente = TestClient(api.crear_app(_MotorFalso()))
     respuesta = cliente.post(
-        "/consultar",
-        json={"pregunta": "¿dato?", "id_sesion": "sesión"},
+        "/ask",
+        json={"question": "¿dato?", "session_id": "sesión"},
     )
 
     assert llamadas == [("¿dato?", "sesión")]
     assert respuesta.status_code == 200
-    assert respuesta.json() == contrato
+    from ipsis.servicio.api import respuesta_publica
+
+    assert respuesta.json() == respuesta_publica(contrato)
+    assert respuesta.json()["status"] == "no_answer" and respuesta.json()["plan"] == "no_answer"
 
 
 def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
     from fastapi.testclient import TestClient
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     eventos: list[str] = []
 
@@ -93,18 +96,18 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
         respuesta = cliente.get("/ready")
         assert respuesta.status_code == 200
         cuerpo = respuesta.json()
-        proyecto = cuerpo.pop("proyecto")
-        assert proyecto is None or proyecto["listo"]  # el diagnóstico del proyecto (P12.11)
+        proyecto = cuerpo.pop("project")
+        assert proyecto is None or proyecto["ready"]  # el diagnóstico del proyecto (P12.11)
         assert cuerpo == {
-            "estado": "listo",
-            "listo": True,
-            "modo": "produccion",
+            "status": "ready",
+            "ready": True,
+            "mode": "production",
             "backend": "memoria",
-            "coleccion": "memoria",
+            "collection": "memoria",
             "n_chunks": 4,
-            "n_entidades_inventario": 1,
-            "abstencion_calibrada": True,
-            "concurrencia_maxima": 2,
+            "n_inventory_entities": 1,
+            "calibrated_abstention": True,
+            "max_concurrency": 2,
         }
 
     assert eventos == ["calentar", "cerrar"]
@@ -112,7 +115,7 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
 
 def test_health_sigue_vivo_y_ready_diagnostica_un_arranque_fallido():
     from fastapi.testclient import TestClient
-    from rag.servicio.api import crear_app
+    from ipsis.servicio.api import crear_app
 
     class _MotorQueFalla:
         politica_abstencion = None
@@ -130,7 +133,7 @@ def test_health_sigue_vivo_y_ready_diagnostica_un_arranque_fallido():
         ready = cliente.get("/ready")
 
     assert health.status_code == 200
-    assert health.json() == {"estado": "vivo", "modo": "produccion"}
+    assert health.json() == {"status": "alive", "mode": "production"}
     assert ready.status_code == 503
     assert "RuntimeError: índice ausente para la prueba" in ready.json()["detail"]
 
@@ -255,7 +258,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
             return {"articulo:9"}
 
         def estadisticas_lexico(self):
-            from rag.indice.estadisticas import EstadisticasLexicas
+            from ipsis.indice.estadisticas import EstadisticasLexicas
 
             return EstadisticasLexicas.construir(["El documento describe el equipo."])
 
@@ -313,3 +316,19 @@ def test_motor_desde_configuracion_rechaza_nombre_desconocido_antes_de_construir
 
     with pytest.raises(KeyError, match="response_renderer/inexistente"):
         construir_motor(cfg, cfg_dominio=cargar_dominio())
+
+
+def test_answer_blocks_traduce_los_bloques_y_cubre_contratos_sin_ellos():
+    from ipsis.servicio.api import respuesta_publica
+
+    base = {"estado": "ok", "nivel_servicio": "normal", "plan": "extractivo", "fragmentos": [],
+            "confianza": {}, "latencia_ms": 1, "respuesta": "Dice:\n\nEl plazo. (Fuente: M)."}
+    con = respuesta_publica({**base, "bloques": [
+        {"tipo": "encabezado", "texto": "Dice:"},
+        {"tipo": "pasaje", "texto": "El plazo.", "conector": None, "cita": "(Fuente: M)", "chunk_id": "c1"}]})
+    assert con["answer_blocks"] == [
+        {"type": "lead", "text": "Dice:", "connector": None, "citation": None, "chunk_id": None},
+        {"type": "passage", "text": "El plazo.", "connector": None, "citation": "(Fuente: M)", "chunk_id": "c1"}]
+    # Un contrato anterior (o un estado sin redacción) trae el texto como un solo mensaje.
+    assert respuesta_publica(base)["answer_blocks"] == [
+        {"type": "message", "text": base["respuesta"], "connector": None, "citation": None, "chunk_id": None}]

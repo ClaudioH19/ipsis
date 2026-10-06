@@ -1,0 +1,24 @@
+# Rules of your own domain. Optional: without them the assistant uses only the
+# core rules (decimals, percentages, deadlines, dates and articles).
+#
+# Example of your own entity: a grading scale from 1.0 to 7.0.
+#
+# regex_extractors:
+#   - type: grade
+#     pattern: '\bgrade\s+(?P<whole>[1-7])\.(?P<decimal>\d)\b'
+#     normalized_value: 'grade_{whole}.{decimal}'
+#     gloss: grade on a 1.0 to 7.0 scale
+organizations: []
+regex_extractors: []
+
+# Taxonomy of the fragments. Add your own categories and trigger words;
+# `otro` is the mandatory fallback category.
+taxonomy:
+  domain: "{descripcion_dominio}"
+  categories:
+    - id: contenido
+      description: "General content of the loaded documents."
+      trigger_words: []
+    - id: otro
+      description: "Does not fit any previous category."
+  hard_filter_threshold: 0.95

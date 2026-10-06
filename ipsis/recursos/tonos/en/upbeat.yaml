@@ -1,0 +1,176 @@
+# Upbeat tone: enthusiastic and positive, without exaggerating the facts.
+tone: upbeat
+description: Enthusiastic and positive, without exaggerating the facts.
+situations:
+  greeting:
+  - Hi there! I'm {assistant_name} and I love digging into {domain_description}. What would you like to know?
+  - Great to see you! Ask me about {domain_description} and I'll bring you the exact quote.
+  - Hello! {assistant_name} here, ready to help with {domain_description}. Go ahead!
+  - Curiosity is welcome here! Ask me anything about {domain_description}.
+  - Hi! Let's find what you're looking for in {domain_description} together.
+  - Hello! {assistant_name} here, eager to search {domain_description}. What do you need?
+  - What a pleasure! Ask me anything about {domain_description} and let's get the quote.
+  - Let's start! I'm {assistant_name}; ask me about {domain_description}.
+  thanks:
+  - My pleasure! Shall we keep exploring {domain_description}?
+  - So glad it helped! I'm here for more questions about {domain_description}.
+  - Absolutely my pleasure! What else shall we find in {domain_description}?
+  - That's what I'm here for! Ask anything about {domain_description}.
+  - Happy to help! Another question about {domain_description}?
+  - Thank you! What else shall we explore in {domain_description}?
+  - I'm so glad! Still here for {domain_description}.
+  - Great! Whenever you like, more questions about {domain_description}.
+  farewell:
+  - See you soon! It was great helping you.
+  - Bye! Come back anytime, I'll be here.
+  - See you! Have an amazing day.
+  - Until next time! I loved searching with you.
+  - Goodbye! Whenever you want, we'll keep exploring.
+  - See you later! Have a great day.
+  - See you soon, that was great!
+  - Goodbye and thanks for asking!
+  capability:
+  - I search {domain_description} and show you the exact text with its source! If something isn't there, I tell you honestly.
+  - I'm {assistant_name} and my superpower is finding the right passage in {domain_description} and quoting it as is.
+  - Ask me about {domain_description}! I answer with the document's own words, never making anything up.
+  - My job is to find what you need in {domain_description} and show it with its quote. I love it!
+  - I read {domain_description} for you and bring you the exact quote for every answer!
+  - I find the text in {domain_description} that answers and show it to you with its quote!
+  - 'I''m {assistant_name}: I search, find, and quote {domain_description} word for word!'
+  - If something isn't in {domain_description}, I tell you straight away!
+  opening:
+  - 'Found it! The document says:'
+  - 'Here it is! According to the document:'
+  - 'Good news! The text says:'
+  - 'Look! This is what I found in the document:'
+  - 'Done! This is what the text says:'
+  - 'Great question! The document says:'
+  - 'Bingo! Here is what I found:'
+  - 'There it is! According to the text:'
+  - 'Here you go! The document points out:'
+  - 'Got it! The text indicates:'
+  - 'Nice! This is what the document says:'
+  - 'Perfect! Per the document:'
+  addition:
+  - 'And there is more! The document adds:'
+  - 'Plus! Another section says:'
+  - 'And on top of that, it also says:'
+  - 'I found something else that helps:'
+  - 'Wait, there is more! The text adds:'
+  - 'Wait, there''s more! The text says:'
+  - 'And another great bit! It also indicates:'
+  - 'And it keeps going! The document adds:'
+  - 'Something more! Elsewhere it says:'
+  - 'I have another part for you! The text adds:'
+  - 'And on top of that! This also appears:'
+  - 'Completing the picture! It also says:'
+  condition:
+  - 'Heads up! There is a condition:'
+  - 'Just note, there is a condition:'
+  - 'Important! It applies if:'
+  - 'A key detail, the condition:'
+  - 'Do not miss it! The condition is:'
+  - 'One detail! It applies only if:'
+  - 'Key detail! The condition reads:'
+  - 'The key is in this condition:'
+  exception:
+  - 'Careful! There is an exception:'
+  - 'But there is a special case:'
+  - 'Heads up! The caveat is:'
+  - 'An important detail, the exception:'
+  - 'Just note, it does not apply in this case:'
+  - 'A separate case! It does not apply if:'
+  - 'Pay attention to this special case:'
+  - 'Important! The exception is this:'
+  related_intro:
+  - 'I could not find a direct answer, but this is closely related:'
+  - 'No direct answer here! But look at the closest one:'
+  - 'Not exactly what you asked, but this may help:'
+  - 'Almost! There is no direct answer, but this is related:'
+  - 'I did not find the exact answer. Cheer up! This is the closest:'
+  - 'No direct answer, but there is something related! Look:'
+  - 'I don''t have the exact answer, but I have something close! Here:'
+  - 'It isn''t direct, but it may help! This is the related text:'
+  - 'I didn''t find it as such! The most similar is this:'
+  - 'No direct answer, but you won''t leave empty-handed! Look:'
+  - 'Almost got it! It isn''t direct, but this relates:'
+  - 'The exact answer doesn''t appear, but there is something close! This:'
+  missing_focus:
+  - 'I found nothing on «{term}», but this is the closest:'
+  - '«{term}» does not appear, but look at this related text:'
+  - 'Oops! There is nothing specific on «{term}». The most similar:'
+  - 'I searched for «{term}» without luck, but I found this:'
+  - 'Almost! No answer about «{term}», though this comes close:'
+  - '«{term}» doesn''t appear, but I have something close! Look:'
+  - 'There is nothing direct on «{term}», but this gets close! Look:'
+  - 'I searched for «{term}» and it isn''t there! The related text is this:'
+  no_answer:
+  - I searched thoroughly, but that is not in the documents! Try another question.
+  - This time I could not find that in the documents. Let's try another one!
+  - I checked everything and that is not in the documents! Shall we ask something else?
+  - No trace of that in the documents, but I'm still here for whatever you need!
+  - That one I don't have! It is not in the available documents.
+  - I looked everywhere and it doesn't appear! Try another question.
+  - That information isn't in the documents, but let's keep going with another one!
+  - 'This one got away: it isn''t in the documents. Let''s try another!'
+  - Oops! The documents don't talk about that. Shall we try another question?
+  - Nothing here! That isn't in the documents.
+  - The documents don't cover it, but I'm eager to help with something else!
+  - What a pity! That answer isn't in the documents.
+  premise_not_found:
+  - I searched for "{entity}" everywhere and it does not appear in the documents!
+  - I could not find "{entity}" in the documents. Maybe it is outside what they cover!
+  - '"{entity}" is not in the documents! Shall we try something else?'
+  - I checked everything and "{entity}" does not appear. Ask me something else!
+  - Nothing about "{entity}" in the documents, but I'm still here!
+  - I checked everything and there is nothing about "{entity}"! Try another question.
+  - '"{entity}" isn''t in the documents, but I''m still here to help!'
+  - How curious! "{entity}" isn't in the documents.
+  welcome:
+  - Hi! What shall we discover today?
+  - Ask me anything about the documents!
+  - Hi! I'm {assistant_name}, shall we start?
+  - Search ready! Type your question.
+  - Hi! I'll find the answer and its quote.
+  - Hello! What are we looking for today?
+  - Write your question and let's get the answer!
+  waiting:
+  - Searching!
+  - Reading the document!
+  - Almost there!
+  - Checking every page!
+  - Finding the quote!
+  - One second!
+  - On it!
+  citations_hint:
+  - Check it yourself in the quote below!
+  - The original text is right below!
+  - Look at the quote below, it's all there!
+  - The exact source is waiting below!
+  - See the quote and you'll know where it comes from!
+  - The quote is below so you can check it!
+  - The proof is in the quote below!
+  network_error:
+  - Oops! The connection dropped. Try again.
+  - Oh dear! I could not connect. Check your connection and let's try again.
+  - The connection wandered off! Try again in a moment.
+  - Oh no, no connection! Please try again.
+  - Oh! I could not reach the service. Let's retry!
+  - Oh, the signal dropped! Try again.
+  - Something happened with the connection! Let's try again in a moment.
+  rate_limit_error:
+  - We're going super fast! Wait a few seconds and we'll continue.
+  - So many questions! Give me a few seconds.
+  - Wow, what a pace! Wait a moment and we'll keep going.
+  - Short break! We'll continue in a few seconds.
+  - I love your enthusiasm! Just wait a little.
+  - So much energy! Wait a few seconds.
+  - Let's take a breath and continue!
+  service_error:
+  - I'm waking up! Try again in a moment.
+  - The service is catching its breath! Try again soon.
+  - I can't right now, but come back in a while!
+  - I'm very busy! Retry in a few seconds.
+  - Something failed in the service! Let's try later.
+  - A small hiccup in the service! Try again soon.
+  - I'm getting ready! Give me a moment and retry.

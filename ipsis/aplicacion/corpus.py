@@ -1,0 +1,66 @@
+"""Casos de uso del corpus: cargar documentos e indexarlos."""
+from __future__ import annotations
+
+from pathlib import Path
+
+from ipsis.recursos.mensajes import t
+
+
+class ErrorConfiguracion(Exception):
+    """La configuración del proyecto no permite indexar (ver ``ipsis doctor``)."""
+
+
+def archivos_de_ruta(ruta: Path) -> list[Path]:
+    """Archivos soportados de ``ruta`` (un archivo o una carpeta recorrida)."""
+    from ipsis.ingesta.parsear import EXTENSIONES_SOPORTADAS
+
+    if ruta.is_file():
+        return [ruta]
+    if ruta.is_dir():
+        return sorted(
+            p for p in ruta.rglob("*")
+            if p.is_file()
+            and p.suffix.lower() in EXTENSIONES_SOPORTADAS
+            and ".ipsis-project" not in p.relative_to(ruta).parts
+        )
+    raise FileNotFoundError(t("app.path_missing", path=ruta))
+
+
+def avisos_de_ocr(avisar):
+    """Mientras dure, el OCR de PDF escaneados cuenta con ``avisar`` qué página lee y
+    con qué confianza (``ipsis load`` e ``ipsis index`` le pasan ``print``)."""
+    from ipsis.ingesta.ocr import con_progreso
+
+    return con_progreso(avisar)
+
+
+def cargar_documentos(archivos: list[Path]):
+    """Copia los archivos al corpus y los registra en el catálogo."""
+    from ipsis.ingesta.catalogo import agregar_documentos_al_catalogo
+
+    return agregar_documentos_al_catalogo([str(a) for a in archivos])
+
+
+def indexar_proyecto(carpeta_corpus: str):
+    """Configura idioma y perfil de dominio del proyecto y construye el índice.
+
+    Un problema de configuración se informa como ``ErrorConfiguracion``; un
+    fallo de la ingesta se propaga tal cual.
+    """
+    from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto, config_recuperacion
+    from ipsis.ingesta.ingesta import ejecutar_ingesta
+    from ipsis.lenguaje.dominio import cargar_perfil
+    from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil
+    from ipsis.lenguaje.paquete import cargar_paquete
+
+    try:
+        dominio = cargar_dominio()
+        configurar_perfil(cargar_perfil())
+        configurar_idioma(cargar_paquete(dominio.get("idioma", "es"), proyecto=Path.cwd()))
+        cfg_rec = config_recuperacion(cargar_proyecto())
+    except Exception as e:  # noqa: BLE001 -- se informa como error de configuración
+        raise ErrorConfiguracion(str(e)) from e
+    return ejecutar_ingesta(carpeta_corpus=carpeta_corpus, cfg_rec=cfg_rec)
+
+
+__all__ = ["ErrorConfiguracion", "archivos_de_ruta", "avisos_de_ocr", "cargar_documentos", "indexar_proyecto"]

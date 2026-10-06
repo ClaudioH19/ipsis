@@ -1,0 +1,395 @@
+# Paquete de idioma: portugués. Todo texto y patrón que depende del idioma
+# vive aquí, no en el código. Un proyecto puede sobrescribir cualquier clave
+# en config/language.yaml.
+codigo: pt
+nombre: Português
+stemmer: portuguese
+stopwords:
+- a
+- ao
+- aos
+- aquela
+- aquele
+- as
+- cada
+- com
+- como
+- da
+- das
+- de
+- deve
+- do
+- dos
+- e
+- em
+- essa
+- esse
+- esta
+- este
+- foi
+- há
+- isso
+- isto
+- já
+- mais
+- mas
+- muito
+- na
+- nas
+- 'no'
+- nos
+- não
+- o
+- onde
+- os
+- ou
+- para
+- pela
+- pelo
+- pode
+- por
+- quais
+- qual
+- quando
+- que
+- quem
+- se
+- sem
+- ser
+- seu
+- seus
+- sim
+- sua
+- suas
+- são
+- tem
+- toda
+- todas
+- todo
+- todos
+- têm
+- um
+- uma
+- umas
+- uns
+- é
+numeros:
+  um: 1
+  uma: 1
+  dois: 2
+  duas: 2
+  três: 3
+  tres: 3
+  quatro: 4
+  cinco: 5
+  seis: 6
+  sete: 7
+  oito: 8
+  nove: 9
+  dez: 10
+  onze: 11
+  doze: 12
+  quinze: 15
+  vinte: 20
+  trinta: 30
+ordinales:
+  primeiro: 1
+  primeira: 1
+  segundo: 2
+  segunda: 2
+  terceiro: 3
+  terceira: 3
+  quarto: 4
+  quarta: 4
+  quinto: 5
+  quinta: 5
+meses:
+- janeiro
+- fevereiro
+- março
+- abril
+- maio
+- junho
+- julho
+- agosto
+- setembro
+- outubro
+- novembro
+- dezembro
+dias_semana:
+  '1':
+  - segunda-feira
+  '2':
+  - terça-feira
+  - terca-feira
+  '3':
+  - quarta-feira
+  '4':
+  - quinta-feira
+  '5':
+  - sexta-feira
+  '6':
+  - sábado
+  - sabado
+  '7':
+  - domingo
+unidades_tiempo:
+  dia:
+  - dia
+  - dias
+  semana:
+  - semana
+  - semanas
+  hora:
+  - hora
+  - horas
+  minuto:
+  - minuto
+  - minutos
+  mes:
+  - mês
+  - mes
+  - meses
+calificadores_plazo:
+  habiles:
+  - úteis
+  - uteis
+  corridos:
+  - corridos
+referencias_documento:
+  articulo:
+  - artigo
+  - artigos
+  anexo:
+  - anexo
+  - anexos
+  capitulo:
+  - capítulo
+  - capitulo
+  - capítulos
+conectores_rango:
+  y:
+  - e
+  a:
+  - a
+conectores_fecha:
+- de
+conectores_fecha_relativa:
+- de
+marcadores:
+  excepcion:
+  - exceto
+  - salvo
+  - a menos que
+  - com exceção de
+  condicion:
+  - desde que
+  - caso
+  - quando
+  - se
+# Relações que se perguntam (ipsis.lenguaje.consultas): os padrões as reconhecem
+# na pergunta e suas palavras não contam como tema; as pistas costumam estar na
+# frase que responde e a sobem na seleção. Em minúsculas e sem acentos; vence a
+# primeira intenção que casa.
+intenciones:
+  umbral:
+    patrones:
+    - (desde|a partir de) que (valor|montante|quantia|quantidade|idade|numero)
+    - que (valor|montante|limite|teto)( minimo| maximo)?
+    - qual e o (valor|limite|teto|minimo|maximo)
+    pistas:
+    - superior a
+    - superiores a
+    - acima de
+    - mais de
+    - menos de
+    - inferior a
+    - inferiores a
+    - ate
+    - no minimo
+    - no maximo
+    - a partir de
+  inicio:
+    patrones:
+    - quando (comeca|comecam|inicia|iniciam|parte|se inicia|se comeca)
+    - desde quando
+    - a partir de quando
+    - em que momento
+    - quando se (realiza|realizam|faz|fazem|efetua|efetuam|executa)
+    pistas:
+    - uma vez
+    - depois de
+    - apos
+    - a partir de
+    - desde que
+    - assim que
+    - antes de
+    - quando
+  fin:
+    patrones:
+    - quando (termina|terminam|acaba|vence|vencem|expira|finaliza)
+    - ate quando
+    pistas:
+    - ate
+    - no maximo
+    - vence
+    - expira
+    - termina
+  consecuencia:
+    patrones:
+    - o que (acontece|ocorre|faco) (se|quando)
+    - e se
+    - em caso de
+    pistas:
+    - se
+    - em caso de
+    - devera
+  responsable:
+    patrones:
+    - quem( e responsavel| deve| tem que)?
+    - a quem
+    - que (pessoa|cargo|setor|departamento)
+    pistas:
+    - responsavel
+    - encarregado
+    - a cargo
+    - cabe a
+  requisito:
+    patrones:
+    - o que (e preciso|preciso|se exige|e necessario)
+    - que (documentos|requisitos)
+    pistas:
+    - exige
+    - requer
+    - precisa
+    - deve
+    - devem
+    - requisito
+  procedimiento:
+    patrones:
+    - como (se|posso|faco|devo)
+    - quais (os )?passos
+    - qual e o (procedimento|processo)
+    pistas:
+    - primeiro
+    - depois
+    - em seguida
+    - passo
+# Como começa uma pergunta de seguimento (ipsis.consulta.seguimiento), em minúsculas e sem acentos.
+seguimiento:
+- e
+- e se
+- e com
+- e para
+- e quando
+- e quem
+- e depois
+- entao
+- mas
+- tambem
+# Sinônimos (ipsis.lenguaje.consultas): só substituem uma palavra da pergunta que não está no corpus.
+sinonimos:
+- [precisa, precisam, precisar, requer, requerem, requerer, exige, exigem, exigir]
+- [comeca, comecam, comecar, inicia, iniciam, iniciar]
+- [termina, terminam, terminar, finaliza, finalizam, finalizar]
+- [paga, pagam, pagar]
+- [envia, enviam, enviar, remete, remetem, remeter, manda, mandam, mandar]
+- [pede, pedem, pedir, solicita, solicitam, solicitar]
+- [aprova, aprovam, aprovar, autoriza, autorizam, autorizar]
+- [conserta, consertam, consertar, repara, reparam, reparar]
+- [custa, custam, custar, preco]
+# Palavras que nunca são termo foco (ipsis.consulta.etapas.filtros): verbos de apoio e unidades.
+genericas: [fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos]
+# Sufixos de substantivos derivados que o stemmer mantém: «assinatura» conta como «assina».
+sufijos_derivados: [atur, ament, ment, aca, ica]
+conversacional:
+  categorias:
+  - greeting
+  - thanks
+  - farewell
+  - capability
+  patrones:
+    greeting:
+    - ^\s*ol[aá]\b
+    - ^\s*oi\b
+    - ^\s*bom dia\b
+    - ^\s*boa (tarde|noite)\b
+    thanks:
+    - \bobrigad[oa]\b
+    - \bvaleu\b
+    farewell:
+    - ^\s*tchau\b
+    - ^\s*at[eé] logo\b
+    - ^\s*adeus\b
+    capability:
+    - o que voc[eê] pode fazer
+    - quem [eé] voc[eê]
+    - como voc[eê] funciona
+mensajes:
+  conectores:
+    secuencia:
+    - Primeiro
+    - Depois
+    - Por último
+    contraste_version:
+    - Na versão {v1}…; na {v2}…
+  sin_seccion: (sem seção)
+  cita_breve: '(Fonte: {documento})'
+  cita_completa: '(Fonte: {documento}, seção: {seccion})'
+  cabecera_embebido: 'Documento: {documento} | Seção: {seccion}'
+interfaz:
+  default_assistant_name: Assistente documental
+  default_domain_description: os documentos carregados
+  sources_one: 1 fonte do documento
+  sources_many: '{n} fontes do documento'
+  citation_position: 'caracteres {start}–{end}'
+  title: Assistente
+  subtitle: Responde citando o documento
+  open: Abrir chat de {title}
+  close: Fechar chat
+  question_label: Escreva sua pergunta
+  placeholder: Escreva sua pergunta...
+  send: Enviar pergunta
+  not_direct: Não é uma resposta direta
+  origin_error: Este site não está autorizado a usar o assistente.
+  http_error: O serviço não conseguiu responder (HTTP {status}).
+  source_code: Código-fonte
+contracciones:
+  ' de o ': ' do '
+  ' de a ': ' da '
+  ' de os ': ' dos '
+  ' de as ': ' das '
+  ' em o ': ' no '
+  ' em a ': ' na '
+golden_instrucciones:
+  nota_respondible: 'Escreva uma pergunta cuja resposta esteja EXPLÍCITA neste trecho de «{documento}» (tema: {terminos}).
+    Em literal_answer copie o dado mínimo exatamente como aparece.'
+  nota_trampa: Escreva uma pergunta sobre o MESMO tema ({terminos}) e a mesma entidade da linha {par}, mas que peça
+    um dado que NÃO está em nenhum documento. Deixe literal_answer vazia.
+  conversacionales:
+  - olá
+  - obrigado
+  - O que você pode fazer?
+  leeme: "GOLDEN SET: PERGUNTAS DE TESTE PARA O ASSISTENTE\n================================================\n\n\
+    Este arquivo explica como preencher golden.csv. Com ele se mede se o\nassistente responde bem, e se ele se abstém\
+    \ quando os documentos não têm a\nresposta. É opcional: o assistente funciona sem golden set. Nenhum modelo\
+    \ é\ntreinado: apenas se medem resultados e se ajustam limiares.\n\nCOMO PREENCHER\n--------------\n1. Abra\
+    \ golden.csv no Excel, LibreOffice ou um editor de texto.\n2. Em cada linha escreva uma pergunta na coluna «question»,\
+    \ como um\n   usuário real escreveria.\n3. Não altere as colunas «id», «type», «pair» nem «subtype».\n4. Linhas\
+    \ sem pergunta são ignoradas.\n5. Você pode adicionar linhas (deixe «id» vazio; ele é gerado).\n6. Salve como\
+    \ CSV UTF-8.\n\nTIPOS DE LINHA\n--------------\nanswerable\n  A resposta EXISTE literalmente nos documentos.\
+    \ Em «literal_answer»\n  copie o dado mínimo exatamente como aparece.\n    Pergunta:         Quanto tempo dura\
+    \ a garantia?\n    Resposta literal: 18 meses\n\nno_answer (linhas «same_topic_trap»)\n  Pergunta sobre o MESMO\
+    \ tema e a mesma entidade da sua linha par (coluna\n  «pair»), mas que pede um dado que NÃO está em nenhum documento.\
+    \ Deixe\n  «literal_answer» vazia.\n    BOM:  o documento diz quanto dura a garantia, mas não quem a aprova\n\
+    \          ->  Quem aprova a garantia?\n    RUIM: Qual é a capital do Japão?  (não tem relação com os documentos:\n\
+    \          não testa nada útil)\n  Estas são as linhas mais importantes: verificam que o assistente não\n  responda\
+    \ com um trecho parecido que não contém o dado.\n\nfalse_premise (opcional, adicione linhas)\n  Supõe algo que\
+    \ não existe: «O que diz o artigo 99?» se não há artigo 99.\n\nambiguous (opcional, adicione linhas)\n  Não\
+    \ pode ser respondida sem esclarecimento: «Quanto tempo dura?».\n\nconversational\n  Saudações e cortesia; já\
+    \ vêm preenchidas.\n\nAJUDAS\n------\n«suggested_passage» e «key_terms» mostram de qual seção vem cada\nlinha.\
+    \ «document» indica o arquivo; use-o se o mesmo texto aparece em\nvários documentos.\n\nTAMANHO\n-------\nCom\
+    \ 30 a 60 perguntas o golden serve para ajustar e comparar perfis. Para\nCERTIFICAR estatisticamente um risco\
+    \ de respostas falsas menor que 5% são\nnecessárias pelo menos 59 respostas aceitas sem erro na parte de teste\n\
+    (mais de 120 perguntas respondíveis no total). O assistente avisa ao\nimportar se o tamanho não for suficiente.\n\
+    \nDepois: ipsis golden import golden/golden.csv\n"
