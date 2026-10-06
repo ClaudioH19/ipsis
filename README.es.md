@@ -90,7 +90,8 @@ panel `/admin` para ajustar la personalidad sin terminal.
 
 ```mermaid
 flowchart LR
-    P([Pregunta]) --> R["Recuperación híbrida<br/>e5 + BM25 en Qdrant"]
+    P([Pregunta]) --> U["Entender la pregunta<br/>intención · seguimiento · sinónimos"]
+    U --> R["Recuperación híbrida<br/>e5 + BM25 en Qdrant"]
     R --> F{"¿Algún candidato<br/>trata el tema?"}
     F -- sí --> L["Reranker + lector QA<br/>(medium, heavy)"]
     F -- no --> D

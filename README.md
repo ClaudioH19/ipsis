@@ -90,7 +90,8 @@ A Docker image per profile, `ipsis deploy prepare` with HTTPS (Caddy) and an
 
 ```mermaid
 flowchart LR
-    Q([Question]) --> R["Hybrid retrieval<br/>e5 + BM25 in Qdrant"]
+    Q([Question]) --> U["Understand the question<br/>intention · follow-up · synonyms"]
+    U --> R["Hybrid retrieval<br/>e5 + BM25 in Qdrant"]
     R --> F{"Does any candidate<br/>cover the topic?"}
     F -- yes --> L["Reranker + QA reader<br/>(medium, heavy)"]
     F -- no --> D

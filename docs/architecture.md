@@ -109,6 +109,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `paquete.py` | Language packs (`es`, `en`, `pt`) and the universal fallback |
 | `texto.py` | `terminos()` (the only path from text to terms) and `dividir_oraciones()` |
 | `lexico.py` | BM25, TF-IDF, MMR and the signals `s_oov`, focus, `s_foco`, `s_cov`, `s_lex` |
+| `consultas.py` | Query understanding: intention and relation words, cues, synonyms, generic words, derived nouns |
 | `entidades.py` | Universal and pack entities (dates, amounts, deadlines, references) |
 | `dominio.py` | Your own domain rules (`domain.yaml`) |
 | `tonos.py` | Answer tones, their linter and neutrality |
@@ -118,7 +119,8 @@ Rules, checked by `tests/test_arquitectura.py`:
 | Module | What it does |
 |---|---|
 | `catalogo.py` | `documents/catalog.yaml`: what is loaded and active |
-| `parsear.py` | PDF with text, DOCX, Markdown and TXT to text with structure and offsets |
+| `parsear.py` | PDF, DOCX, Markdown and TXT to text with structure and offsets |
+| `ocr.py` | Optional OCR of PDF pages without text (Tesseract), with cache and confidence per page |
 | `chunking.py` | Fragments that never cross sections (`CH-F256` by default) |
 | `metadata.py` | Entities, TF-IDF keywords and a deterministic category |
 | `ingesta.py` | The full `ipsis index` sequence |
@@ -148,6 +150,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 |---|---|
 | `motor.py` | Runs the profile's stages, times each one and builds the result |
 | `contexto.py` | `ContextoConsulta`: what each stage reads and fills in |
+| `seguimiento.py` | Follow-up questions: session memory and the topic a question inherits |
 | `admision.py` | Limit of concurrent queries (503 when saturated) |
 | `variantes.py` | Picks the tone variant by session and turn |
 | `etapas/` | One file per stage (see §4) |
@@ -193,15 +196,17 @@ and `despliegue/` (templates of `ipsis deploy prepare`).
 flowchart TD
     P([Question]) --> C{conversational}
     C -- "hello, thanks…" --> RF([Fixed answer from the tone])
-    C -- no --> A[analysis<br/>terms, entities]
+    C -- no --> A["analysis<br/>follow-up? → inherit the topic<br/>intention and relation words<br/>synonyms of missing words"]
+    MEM[("session memory<br/>previous topic")] -.->|"“and with 90?”"| A
     A --> CF[confidence<br/>dense cosine → s_ret]
-    CF --> F[filters<br/>focus terms, s_oov]
+    CF --> F["filters<br/>focus terms (not relation<br/>nor generic words), s_oov"]
     F --> R[retrieval<br/>e5 + BM25 with RRF<br/>+ entity-directed]
     R --> T{any candidate<br/>with a focus term?}
     T -- no --> E
     T -- yes --> RR[reranking<br/>cross-encoder → s_rr]
-    RR --> L[reading<br/>QA reader → span, s_qa]
-    L --> E[evidence<br/>anchor sentence → s_foco, s_cov]
+    RR --> L["reading<br/>QA reader → span, s_qa<br/>+ the candidate with a cue"]
+    L --> E["evidence<br/>anchor sentence, cue bonus<br/>→ s_foco, s_cov"]
+    E -.->|"topic of the answer"| MEM
     E --> PO{policy<br/>cascade_v1}
     PO -- ok --> RD[rendering<br/>tone + citation]
     PO -- related --> RD
@@ -222,11 +227,33 @@ Each stage receives the `ContextoConsulta`, fills it in and may close the
 query. If no candidate contains a focus term, the reranker and the reader
 are skipped (early exit). The rules in detail: [policy](methodology/policy.md).
 
+### Understanding the question
+
+The analysis stage reads the question with the language pack's rules
+(`ipsis/recursos/idiomas/<language>.yaml`), without any model: patterns,
+word lists and the corpus statistics. Nothing is generated and the question
+the user wrote is the one that is answered. Three things come out of it:
+
+| | What it looks for | Example | What changes afterwards |
+|---|---|---|---|
+| **Follow-up** | A short question with a follow-up marker ("and", "y", "e") or without a topic of its own, in a session with a previous turn | "¿y con 90?" after "¿Qué pasa si el proveedor rechaza la orden?" | Retrieval uses "¿y con 90? proveedor rechaza orden"; the selection weighs the user's own words fully and the inherited ones half |
+| **Intention** | Which relation is asked for: start, end, threshold, consequence, person in charge, requirement, procedure | "cuando empieza la compra?" → start; relation words "cuando", "empieza" | Relation words are not topic (not focus, not scored in the selection); a sentence with one of the intention's cues ("Una vez…", "después de…") weighs ×2, and the reader also reads the candidate with the best cued sentence |
+| **Synonyms** | A question word missing from the corpus whose synonym is in it | "necesita" → "requieren" | The synonym is searched and measured instead of the missing word |
+
+The session memory keeps, per `session_id`, the previous question and the
+vocabulary of the passage that answered it (at most 1,024 sessions, in
+memory; it is lost on restart). A question with a topic of its own never
+inherits. The rationale and the measurements are in
+[ADR 0005](decisions/0005-deterministic-query-understanding.md); the signals
+in [lexical](methodology/lexical.md).
+
 ## 5. Ingestion
 
 ```mermaid
 flowchart LR
     D["documents/<br/>PDF · DOCX · MD · TXT"] --> PA[parse<br/>text + sections + offsets]
+    D -.->|"PDF page without text"| OCR["OCR (optional)<br/>Tesseract, confidence per page"]
+    OCR -.-> PA
     PA --> CH[chunking<br/>never across sections]
     CH --> ME[metadata<br/>entities, keywords]
     ME --> EM[e5 encoder<br/>passage: …]
