@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections import OrderedDict
 from dataclasses import dataclass, field
 
 # Una oración que comparte tema con la pregunta y empieza con una pista de la
@@ -89,11 +90,85 @@ def terminos_de_contenido(pregunta: str, paquete, estadisticas=None) -> list[str
     from ipsis.lenguaje.lexico import terminos_pregunta
 
     tq = terminos_pregunta(pregunta, paquete)
+    sinonimos = sinonimos_presentes(pregunta, paquete, estadisticas) if estadisticas is not None else {}
+    if sinonimos:
+        # «necesita» no está y «requieren» sí: cuenta el sinónimo, no la ausencia.
+        from ipsis.lenguaje.texto import terminos
+
+        reemplazos = {terminos(p, paquete)[0]: [r for f in formas for r in terminos(f, paquete)]
+                      for p, formas in sinonimos.items()}
+        tq = list(dict.fromkeys(r for t in tq for r in reemplazos.get(t, [t])))
     relacion = comprender(pregunta, paquete).terminos_relacion
     df = getattr(estadisticas, "df", None)
     quitar = {t for t in relacion if df is None or df.get(t, 0) == 0}
     sin_relacion = [t for t in tq if t not in quitar]
     return sin_relacion or tq
+
+
+def sinonimos_presentes(pregunta: str, paquete, estadisticas) -> dict[str, list[str]]:
+    """Para cada palabra de la pregunta que no está en el corpus («necesita»), las
+    formas de sus sinónimos que sí están («requieren»), según los grupos del
+    paquete (``sinonimos``). Una palabra que ya está en el corpus nunca se toca, y
+    tampoco las de la relación («empieza» en «¿cuándo empieza la compra?»): de
+    esas se encargan las pistas, y «inicia» traería oraciones de otro tema."""
+    grupos = _grupos_por_raiz(paquete)
+    df = getattr(estadisticas, "df", None)
+    if not grupos or df is None:
+        return {}
+    # La misma pregunta se mide en cada oración que se puntúa: se calcula una vez.
+    clave = (pregunta, id(paquete), id(df), len(df))
+    if clave in _PRESENTES:
+        _PRESENTES.move_to_end(clave)
+        return {k: list(v) for k, v in _PRESENTES[clave][1].items()}
+    salida = _sinonimos_presentes(pregunta, paquete, grupos, df)
+    _PRESENTES[clave] = ((paquete, df), salida)
+    if len(_PRESENTES) > 64:
+        _PRESENTES.popitem(last=False)
+    return {k: list(v) for k, v in salida.items()}
+
+
+# Guarda el paquete y el df junto al resultado para que sus id no se reutilicen.
+_PRESENTES: OrderedDict = OrderedDict()
+
+
+def _sinonimos_presentes(pregunta, paquete, grupos, df) -> dict[str, list[str]]:
+    from ipsis.lenguaje.lexico import terminos_pregunta
+    from ipsis.lenguaje.texto import terminos
+
+    contenido = set(terminos_pregunta(pregunta, paquete)) - comprender(pregunta, paquete).terminos_relacion
+    salida: dict[str, list[str]] = {}
+    for palabra in plano(pregunta).split():
+        raices = terminos(palabra, paquete)
+        if len(raices) != 1 or raices[0] not in contenido or df.get(raices[0], 0) > 0:
+            continue
+        presentes = [f for grupo in grupos.get(raices[0], ()) for f, rs in grupo
+                     if any(df.get(r, 0) > 0 for r in rs)]
+        if presentes:
+            salida[palabra] = list(dict.fromkeys(presentes))
+    return salida
+
+
+# id(paquete) → (paquete, raíz → grupos de (forma, raíces)): se calcula una vez por paquete,
+# no en cada oración que se puntúa. Guarda el paquete para que su id no se reutilice.
+_GRUPOS: dict[int, tuple[object, dict[str, list[list[tuple[str, tuple[str, ...]]]]]]] = {}
+
+
+def _grupos_por_raiz(paquete) -> dict[str, list[list[tuple[str, tuple[str, ...]]]]]:
+    grupos = getattr(paquete, "sinonimos", None) or []
+    if not grupos:
+        return {}
+    guardado = _GRUPOS.get(id(paquete))
+    if guardado is not None and guardado[0] is paquete:
+        return guardado[1]
+    from ipsis.lenguaje.texto import terminos
+
+    por_raiz: dict[str, list[list[tuple[str, tuple[str, ...]]]]] = {}
+    for grupo in grupos:
+        formas = [(plano(f), tuple(terminos(plano(f), paquete))) for f in grupo]
+        for raiz in {r for _, rs in formas for r in rs}:
+            por_raiz.setdefault(raiz, []).append(formas)
+    _GRUPOS[id(paquete)] = (paquete, por_raiz)
+    return por_raiz
 
 
 def peso_pista(texto: str, comprension: Comprension) -> float:
@@ -113,4 +188,5 @@ def tiene_pista(texto: str, comprension: Comprension) -> bool:
     return peso_pista(texto, comprension) > 0
 
 
-__all__ = ["BONO_PISTA", "Comprension", "comprender", "peso_pista", "plano", "terminos_de_contenido", "tiene_pista"]
+__all__ = ["BONO_PISTA", "Comprension", "comprender", "peso_pista", "plano", "sinonimos_presentes",
+           "terminos_de_contenido", "tiene_pista"]

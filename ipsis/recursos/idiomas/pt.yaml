@@ -287,6 +287,17 @@ seguimiento:
 - entao
 - mas
 - tambem
+# Sinônimos (ipsis.lenguaje.consultas): só substituem uma palavra da pergunta que não está no corpus.
+sinonimos:
+- [precisa, precisam, precisar, requer, requerem, requerer, exige, exigem, exigir]
+- [comeca, comecam, comecar, inicia, iniciam, iniciar]
+- [termina, terminam, terminar, finaliza, finalizam, finalizar]
+- [paga, pagam, pagar]
+- [envia, enviam, enviar, remete, remetem, remeter, manda, mandam, mandar]
+- [pede, pedem, pedir, solicita, solicitam, solicitar]
+- [aprova, aprovam, aprovar, autoriza, autorizam, autorizar]
+- [conserta, consertam, consertar, repara, reparam, reparar]
+- [custa, custam, custar, preco]
 conversacional:
   categorias:
   - greeting

@@ -25,6 +25,11 @@ a minor change may break compatibility and is marked as such.
   session (in memory, per session), so they can be retrieved and answered. A
   question with a topic of its own never inherits, and the answer must still
   contain what the user asked now. See ADR 0005.
+- **Synonyms for words missing from the corpus:** each language pack has
+  groups of synonyms; a question word that is not in the corpus
+  ("necesita") is searched and measured as its synonyms that are
+  ("requieren"). Words of the asked relation are left to the cues. See ADR
+  0005.
 - **`ipsis ask --diagnostics` shows where each candidate is won or lost:**
   its place in the dense, BM25, fusion and reranker rankings, the QA
   reader's probability and the best scored sentences.

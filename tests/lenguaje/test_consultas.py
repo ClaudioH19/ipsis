@@ -107,3 +107,25 @@ def test_una_palabra_de_la_relacion_que_esta_en_el_corpus_se_queda():
     con_ate = SimpleNamespace(df={"ate": 3, "reembols": 2, "ped": 2})
     assert "ate" in terminos_de_contenido("Até quando posso pedir o reembolso?", pt, con_ate)
     assert "ate" not in terminos_de_contenido("Até quando posso pedir o reembolso?", pt, SimpleNamespace(df={}))
+
+
+def test_un_sinonimo_reemplaza_solo_la_palabra_que_falta_en_el_corpus(es):
+    """«necesita» no está y «requieren» sí: se busca y se mide con «requieren»."""
+    from types import SimpleNamespace
+
+    from ipsis.lenguaje.consultas import sinonimos_presentes
+    from ipsis.lenguaje.texto import terminos
+
+    df = {t: 1 for t in terminos("Las compras superiores a 100 UTM requieren una Resolución.", es)}
+    est = SimpleNamespace(df=df)
+    pregunta = "¿Desde qué monto se necesita una Resolución?"
+    assert list(sinonimos_presentes(pregunta, es, est)) == ["necesita"]
+    assert "requieren" in sinonimos_presentes(pregunta, es, est)["necesita"]
+    # La relación no se expande: «empieza» no trae «inicia».
+    df.update({t: 1 for t in terminos("se inicia una nueva compra", es)})
+    assert sinonimos_presentes("cuando empieza la compra?", es, est) == {}
+    tq = terminos_de_contenido(pregunta, es, est)
+    assert set(terminos("requieren", es)) <= set(tq) and not set(terminos("necesita", es)) & set(tq)
+    # Si la palabra ya está en el corpus, no se toca.
+    df.update({t: 1 for t in terminos("necesita", es)})
+    assert sinonimos_presentes(pregunta, es, est) == {}

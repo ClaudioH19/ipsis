@@ -48,8 +48,8 @@
     "plan": "gray_zone",
     "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nEl cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
-      "top1": 0.86935,
-      "margin": 0.08268
+      "top1": 0.8699,
+      "margin": 0.08424
     },
     "fragments": [
       {
@@ -59,7 +59,7 @@
         "offset_start": 407,
         "offset_end": 536,
         "text": "El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.",
-        "score": 0.75926
+        "score": 0.59168
       }
     ]
   },

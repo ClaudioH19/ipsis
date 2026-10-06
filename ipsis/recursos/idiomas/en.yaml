@@ -298,6 +298,17 @@ seguimiento:
 - then
 - but
 - also
+# Synonyms (ipsis.lenguaje.consultas): they only replace a question word that is not in the corpus.
+sinonimos:
+- [need, needs, needed, require, requires, required]
+- [start, starts, begin, begins, commence, commences]
+- [end, ends, finish, finishes, conclude, concludes]
+- [pay, pays, paid, settle, settles]
+- [send, sends, sent, submit, submits, submitted]
+- [ask, asks, request, requests, requested]
+- [approve, approves, approved, authorize, authorizes, authorized]
+- [fix, fixes, repair, repairs, repaired]
+- [cost, costs, price]
 conversacional:
   categorias:
   - greeting

@@ -348,6 +348,20 @@ seguimiento:
 - pero
 - tambien
 - e
+# Sinónimos (ipsis.lenguaje.consultas): solo reemplazan una palabra de la pregunta que no está en
+# el corpus. Con sus formas comunes: el stemmer no lleva «requieren» a la raíz de «requerir».
+sinonimos:
+- [necesita, necesitan, necesitar, requiere, requieren, requerir, exige, exigen, exigir]
+- [empieza, empiezan, empezar, comienza, comienzan, comenzar, inicia, inician, iniciar]
+- [termina, terminan, terminar, finaliza, finalizan, finalizar, concluye, concluir]
+- [paga, pagan, pagar, abona, abonan, abonar]
+- [envia, envian, enviar, remite, remiten, remitir, manda, mandan, mandar]
+- [pide, piden, pedir, solicita, solicitan, solicitar]
+- [aprueba, aprueban, aprobar, autoriza, autorizan, autorizar]
+- [devolver, devuelve, devuelven, reembolsar, reembolsa]
+- [arregla, arreglan, arreglar, repara, reparan, reparar]
+- [cuesta, cuestan, costar, vale, valen, precio]
+- [dura, duran, durar, vigencia]
 conversacional:
   categorias:
   - greeting

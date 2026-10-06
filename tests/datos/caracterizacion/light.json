@@ -57,8 +57,8 @@
     "plan": "gray_zone",
     "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nEl cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEl documento agrega, en otra sección: Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
-      "top1": 0.86935,
-      "margin": 0.08268
+      "top1": 0.8699,
+      "margin": 0.08424
     },
     "fragments": [
       {

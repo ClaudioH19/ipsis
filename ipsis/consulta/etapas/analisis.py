@@ -18,6 +18,15 @@ class EtapaAnalisis(_Etapa):
                 ctx.diagnostico["pregunta_interpretada"] = resolucion.pregunta
                 ctx.pregunta_usuario = ctx.pregunta
                 ctx.pregunta = resolucion.pregunta
+        if callable(obtener):
+            # Expansión controlada: una palabra que no está en el corpus suma sus
+            # sinónimos que sí están, para buscar y seleccionar («necesita» → «requieren»).
+            from ipsis.lenguaje.consultas import sinonimos_presentes
+
+            sinonimos = sinonimos_presentes(ctx.pregunta, getattr(m, "idioma", None), obtener())
+            if sinonimos:
+                ctx.diagnostico["sinonimos"] = sinonimos
+                ctx.pregunta = f"{ctx.pregunta.rstrip()} {' '.join(f for formas in sinonimos.values() for f in formas)}"
         ctx.consulta = m._analizar(ctx.pregunta, ctx.id_sesion)
         if ctx.pregunta_usuario:
             ctx.consulta = ctx.consulta.model_copy(

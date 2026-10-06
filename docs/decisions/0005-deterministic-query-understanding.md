@@ -91,9 +91,32 @@ Three guards keep it safe:
   question half: inside a passage the user's words rule, and between similar
   passages of different documents the context decides.
 
+## Synonyms
+
+"¿Desde qué monto se **necesita** una Resolución?" when the manual says
+"…**requieren** una Resolución": "necesita" is not in the corpus, so it
+counted as a missing term and lowered the coverage. Each pack declares
+`sinonimos`: groups of words with their common forms (the stemmer does not
+take "requieren" to the stem of "requerir"). A question word is replaced by
+the forms of its group that are in the corpus, only when:
+
+- the word itself is not in the corpus (a word that is never changes);
+- it is a content word, not part of the recognised relation ("empieza" in
+  "¿cuándo empieza la compra?" is left to the cues: "inicia" would bring
+  sentences of another topic).
+
+The forms are appended to the searched query and replace the word in the
+lexical signals and the selection; the diagnostic shows them
+(`sinonimos`). The result is memoized per question, pack and corpus
+statistics: without it, light latency doubled.
+
+Measured: the target case goes from "related" to a direct answer in
+`medium` (in `light` the retrieval signal stays under its calibrated
+threshold, which this does not touch); no other case of the query bank or
+the universal bank changes, and there are no new false `ok`.
+
 ## Not done yet
 
-From the proposal that motivated this: multi-query retrieval expansion
-(retrieval was not where these cases failed), parent/neighbor expansion and
-an explicit answerability signal in the policy. Each one should come with a
+From the proposal that motivated this: parent/neighbor expansion and an
+explicit answerability signal in the policy. Each one should come with a
 failing case and a measurement, like these.
