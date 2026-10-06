@@ -309,6 +309,8 @@ sinonimos:
 - [approve, approves, approved, authorize, authorizes, authorized]
 - [fix, fixes, repair, repairs, repaired]
 - [cost, costs, price]
+# Words that are never focus terms (ipsis.consulta.etapas.filtros): support verbs and units.
+genericas: [do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes]
 conversacional:
   categorias:
   - greeting

@@ -57,6 +57,19 @@ a minor change may break compatibility and is marked as such.
 
 ### Changed
 
+- **A direct answer needs every focus term in its sentence** (`focus`
+  threshold 0.5 → 1.0 in every profile). "¿Quién aprueba el pago… en
+  Finanzas?" was answered with a sentence about the payment that does not
+  say who approves it; it is now `related`. Support verbs and units
+  ("hacer", "días"; the pack's `genericas`) are no longer focus terms nor
+  count in the sentence selection. Query bank: direct but wrong answers 4 → 2
+  in `light` and 1 → 0 in `medium`, no correct answer lost; the universal
+  bank does not change. See ADR 0005. Projects with a `calibration.yaml` keep
+  their calibrated value.
+- **Numbered labels stay with their sentence:** "Artículo 4." or "4.2." is
+  no longer split off as a sentence of its own, so answers and citations
+  show "Artículo 4. Si el cliente no está…" and the label counts for the
+  focus. The title of the evidence's section also counts for the focus.
 - **Folio, the default avatar, now matches the logo:** the paper's
   proportions and outline, the folded corner as a triangle, two lines of
   text and larger pill-shaped eyes. Expressions are much more marked (eyes in

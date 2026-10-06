@@ -60,10 +60,16 @@ live in the language packs (es, en, pt, with parity), not in the code.
 Query bank (`tests/datos/banco_consultas`, the manual plus the universal
 documents as distractors, 11 answerable cases and 6 traps):
 
-| | correct answers | false `ok` |
+| | direct answers (`ok`) | false `ok` |
 |---|---|---|
 | `light`, before → after | 5 → 9 | 1 → 1 (the same, pre-existing) |
 | `medium`, before → after | 7 → 11 | 1 → 1 (the same, pre-existing) |
+
+Correction: these counts are direct answers, not correct ones. Checking that
+the answer shows the case's literal answer, `light` had 6 correct after this
+step: three of its direct answers showed another sentence ("¿Desde cuándo se
+hace la compra?" answered with "Para hacer un reclamo…"). See
+"Answerability" below.
 
 Universal bank (light and medium, es/en/pt): no new false `ok` and nothing
 lost; one more exact answer in `light`/en; latency within noise.
@@ -115,8 +121,39 @@ Measured: the target case goes from "related" to a direct answer in
 threshold, which this does not touch); no other case of the query bank or
 the universal bank changes, and there are no new false `ok`.
 
+## Answerability
+
+The two false `ok` of the query bank had the same shape: one of the two
+focus terms was missing from the answering sentence ("aprueba" in "¿Quién
+aprueba el pago… en Finanzas?", "entregar" in "¿Cuántos días tiene el
+proveedor para entregar…?"), and `τ_focus = 0.5` allowed it. Focus terms are
+chosen among words that exist in the corpus, so a missing one is used
+elsewhere, not in this sentence: same topic, another question.
+
+Decision: `τ_focus = 1.0` in every profile (the answering sentence contains
+every focus term), with the pack's `genericas` (support verbs and units)
+left out of the focus and the selection. Without them, requiring every
+focus term cost "¿Desde cuándo se **hace** la compra?" and "¿…una tercera vez
+en los **meses** de calor?". They still count for `s_oov` and `s_cov`.
+
+Measured (correct = direct and showing the literal answer):
+
+| | correct | direct but wrong (false `ok` or another sentence) |
+|---|---|---|
+| query bank `light` | 6 → 6 | 4 → 2 |
+| query bank `medium` | 11 → 11 | 1 → 0 |
+| universal bank, light and medium × es/en/pt | unchanged | unchanged |
+
+Latency within noise. `τ_focus` is still calibrated per project with the
+golden set.
+
+Not solved: in `light`, "cuando parte la compra?" and "¿Quién firma la
+Resolución de compra?" are direct answers with another sentence of the same
+topic (every focus term is in it). The universal bank keeps its pre-existing
+false `ok` ("¿Cuántas muestras se rechazan cada mes?": both focus terms are
+in the sentence that answers another question).
+
 ## Not done yet
 
-From the proposal that motivated this: parent/neighbor expansion and an
-explicit answerability signal in the policy. Each one should come with a
-failing case and a measurement, like these.
+From the proposal that motivated this: parent/neighbor expansion. It should
+come with a failing case and a measurement, like these.

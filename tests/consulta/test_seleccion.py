@@ -217,7 +217,7 @@ def test_ventana_centrada_para_el_lector_incluye_contexto_previo():
     pregunta = "¿Qué recargo se cobra?"
     mostrada = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200)
     lector = seleccionar_texto_pertinente(pregunta, texto, 0, limite_caracteres=200, centrada=True)
-    assert mostrada.texto.startswith("Se cobra un recargo")
+    assert mostrada.texto.startswith("Artículo 4. Se cobra un recargo")  # el rótulo va con su oración
     assert lector.texto == texto
 
 

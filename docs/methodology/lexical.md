@@ -35,8 +35,8 @@ one.
 | Signal | Definition | What it detects |
 |---|---|---|
 | `s_oov` | IDF mass of the question terms absent from the corpus / total mass (an unknown term gets the maximum IDF) | an out-of-domain question |
-| focus | the 2 question terms with the highest IDF that exist in the corpus | "what it is about" |
-| `s_foco` | fraction of focus terms present in the answer sentence (1 when there is no focus) | the right span in the wrong place: the filter's "6 months" for a question about the warranty gives `s_foco = 0` |
+| focus | the 2 question terms with the highest IDF that exist in the corpus, leaving out the relation's words and the pack's generic words | "what it is about" |
+| `s_foco` | fraction of focus terms present in the answer sentence or in the title of its section (1 when there is no focus) | the right span in the wrong place: the filter's "6 months" for a question about the warranty gives `s_foco = 0` |
 | `s_cov` | IDF mass of the question present in the sentence / total mass | overall coverage |
 | `s_lex` | BM25(question, sentence) / the question's ideal BM25 | picks the anchor sentence in light |
 
@@ -88,9 +88,9 @@ evaluation banks ("same topic, missing fact" traps).
 ## 12. Limitations
 
 - **Synonyms:** if the user says "cartridge" and the document "filter",
-  `s_foco` drops and the system abstains more than needed. It is the safe
-  side of the error; `τ_foco` is calibrated with the golden set's paraphrase
-  category.
+  and the pair is not in the language pack's `sinonimos`, `s_foco` drops and
+  the answer is `related` instead of direct. It is the safe side of the
+  error; `τ_foco` is calibrated with the golden set's paraphrase category.
 - `acuerdo` (agreement: dense top-1 in BM25's top-3 and vice versa) was
   measured and discarded as a policy signal: no effect on the universal bank
   and +4.6 ms of p95. The function is kept for the benchmark experiment.
@@ -120,4 +120,28 @@ question and contains one of the intention's cues ("once", "after") weighs
 ×2 if the cue is in its first words and ×1.5 if it is further in.
 `ipsis ask --diagnostics` shows the recognized intention's effect on the
 best scored sentences.
+
+## Generic words and synonyms
+
+Each language pack also declares:
+
+- **`genericas`:** support verbs and units ("hacer", "tener", "días",
+  "veces"). They are never focus terms and do not count in the selection: in
+  "¿Desde cuándo se hace la compra?", "hace" has a higher IDF than "compra"
+  (which is everywhere) and brought "Para hacer un reclamo…" first. They do
+  count for `s_oov` and `s_cov`: without "meses", the absent part of "¿…en
+  los meses de calor?" would weigh more than it does in the question.
+- **`sinonimos`:** groups of words with their common forms. A question word
+  that is not in the corpus and is not part of the relation is searched and
+  measured as the forms of its group that are ("necesita" → "requieren").
+  The diagnostic shows them (`sinonimos`).
+
+## Numbered labels
+
+A label such as "Artículo 4." or "4.2." is not a sentence: the sentence
+splitter keeps it with the sentence that follows ("Artículo 4. Si el cliente
+no está…"). Without it, "¿Qué recargo se cobra según el artículo 4?" lost
+"artículo" from the answering sentence, and the citation lost the article.
+The title of the evidence's section also counts for `s_foco` (not for
+`s_cov`): it frames every sentence under it.
 

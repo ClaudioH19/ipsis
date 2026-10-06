@@ -87,4 +87,24 @@ def dividir_oraciones(texto: str) -> list[tuple[int, int]]:
         while fin > inicio and texto[fin - 1].isspace():
             fin -= 1
         rangos.append((inicio, fin))
-    return rangos
+    return _unir_rotulos(texto, rangos)
+
+
+# «Artículo 4.», «Paso 3.», «4.2.»: un rótulo numerado no es una oración; va con la
+# que sigue («Artículo 4. Si el cliente no está…»), que es la que enmarca.
+_ROTULO = re.compile(r"(?:[^\W\d_][\w]*\s+)?\d+(?:\.\d+)*\.")
+
+
+def _unir_rotulos(texto: str, rangos: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    salida: list[tuple[int, int]] = []
+    pendiente: int | None = None
+    for ini, fin in rangos:
+        if pendiente is not None:
+            ini, pendiente = pendiente, None
+        if _ROTULO.fullmatch(texto[ini:fin]) and (texto[ini].isupper() or texto[ini].isdigit()):
+            pendiente = ini
+            continue
+        salida.append((ini, fin))
+    if pendiente is not None:
+        salida.append((pendiente, rangos[-1][1]))
+    return salida

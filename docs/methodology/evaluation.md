@@ -47,7 +47,9 @@ language:
 - direct and related coverage over the answerable cases;
 - abstention recall over the unanswerable ones;
 - **false `ok`:** an unanswerable case that ends in a direct answer;
-- direct answers without the literal answer;
+- direct answers without the literal answer (a direct answer counts as
+  correct only when its text and evidence contain the case's literal
+  answer);
 - risk of the accepted answers `x/n` with its Clopper-Pearson bound;
 - Recall@k and MRR over the evidence, offset accuracy;
 - p50/p95 latency, total and per stage.

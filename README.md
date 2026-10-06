@@ -232,11 +232,13 @@ Spanish; everything user-facing is in English. Read
 <details>
 <summary><b>Known limitations</b></summary>
 
-- Scanned PDFs need external OCR; they are rejected so as not to index empty
-  content.
-- A synonym that does not appear in the document may lead to abstaining: it
-  is the safe side of the error.
-- It does not use the conversation history for follow-up questions.
+- Scanned PDFs are read only with the optional OCR extra (`ipsis[ocr]` and
+  Tesseract); without it, their pages without text are reported and skipped.
+- A synonym outside the language pack's groups that does not appear in the
+  document may lead to a related answer instead of a direct one: it is the
+  safe side of the error.
+- Follow-up questions ("and with 90?") only inherit the topic of the previous
+  turn of the same session, kept in memory.
 - One language per project; it does not detect the language of each
   question.
 - In local mode, Qdrant locks its folder while another process uses it.

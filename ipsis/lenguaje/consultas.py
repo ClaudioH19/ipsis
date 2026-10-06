@@ -80,13 +80,33 @@ def comprender(pregunta: str, paquete) -> Comprension:
     return Comprension()
 
 
-def terminos_de_contenido(pregunta: str, paquete, estadisticas=None) -> list[str]:
+def terminos_de_contenido(pregunta: str, paquete, estadisticas=None, *, sin_genericas: bool = True) -> list[str]:
     """Los términos de contenido de la pregunta sin las palabras de su relación
     que no están en el corpus («empieza» en «¿cuándo empieza la compra?»: la
     respuesta dice «Una vez aprobado…»). Una palabra de la relación que sí está
     («até» en «Até quando posso pedir o reembolso?» y en su respuesta) se queda:
     ayuda a la cobertura. Sin ``estadisticas`` se quitan todas. Si la relación
-    fuera todo lo que hay, se dejan los términos completos."""
+    fuera todo lo que hay, se dejan los términos completos.
+
+    Memoizado: la selección lo pide para cada oración que puntúa, con la misma
+    pregunta, paquete y estadísticas."""
+    df = getattr(estadisticas, "df", None)
+    clave = (pregunta, id(paquete), id(estadisticas), id(df), len(df) if df is not None else -1, sin_genericas)
+    if clave in _CONTENIDO:
+        _CONTENIDO.move_to_end(clave)
+        return list(_CONTENIDO[clave][1])
+    salida = _terminos_de_contenido(pregunta, paquete, estadisticas, sin_genericas)
+    # Guarda paquete y estadísticas junto al resultado para que sus id no se reutilicen.
+    _CONTENIDO[clave] = ((paquete, estadisticas), tuple(salida))
+    if len(_CONTENIDO) > 64:
+        _CONTENIDO.popitem(last=False)
+    return salida
+
+
+_CONTENIDO: OrderedDict = OrderedDict()
+
+
+def _terminos_de_contenido(pregunta: str, paquete, estadisticas, sin_genericas: bool) -> list[str]:
     from ipsis.lenguaje.lexico import terminos_pregunta
 
     tq = terminos_pregunta(pregunta, paquete)
@@ -102,7 +122,14 @@ def terminos_de_contenido(pregunta: str, paquete, estadisticas=None) -> list[str
     df = getattr(estadisticas, "df", None)
     quitar = {t for t in relacion if df is None or df.get(t, 0) == 0}
     sin_relacion = [t for t in tq if t not in quitar]
-    return sin_relacion or tq
+    if not sin_genericas:
+        return sin_relacion or tq
+    # «hace» en «¿desde cuándo se hace la compra?» no es contenido: con IDF alto
+    # llevaba a «Para hacer un reclamo…» por encima de las oraciones de la compra.
+    # Para ``s_oov`` y ``s_cov`` se dejan (``sin_genericas=False``): sin «meses», lo
+    # ausente del corpus pesaría más de lo que pesa en la pregunta.
+    genericos = terminos_genericos(paquete)
+    return [t for t in sin_relacion if t not in genericos] or sin_relacion or tq
 
 
 def sinonimos_presentes(pregunta: str, paquete, estadisticas) -> dict[str, list[str]]:
@@ -148,6 +175,24 @@ def _sinonimos_presentes(pregunta, paquete, grupos, df) -> dict[str, list[str]]:
     return salida
 
 
+def terminos_genericos(paquete) -> frozenset[str]:
+    """Los términos (stems) de ``genericas`` del paquete: nunca son foco."""
+    palabras = getattr(paquete, "genericas", None) or []
+    if not palabras:
+        return frozenset()
+    guardado = _GENERICOS.get(id(paquete))
+    if guardado is not None and guardado[0] is paquete:
+        return guardado[1]
+    from ipsis.lenguaje.texto import terminos
+
+    salida = frozenset(r for p in palabras for r in terminos(plano(p), paquete))
+    _GENERICOS[id(paquete)] = (paquete, salida)
+    return salida
+
+
+_GENERICOS: dict[int, tuple[object, frozenset[str]]] = {}
+
+
 # id(paquete) → (paquete, raíz → grupos de (forma, raíces)): se calcula una vez por paquete,
 # no en cada oración que se puntúa. Guarda el paquete para que su id no se reutilice.
 _GRUPOS: dict[int, tuple[object, dict[str, list[list[tuple[str, tuple[str, ...]]]]]]] = {}
@@ -189,4 +234,4 @@ def tiene_pista(texto: str, comprension: Comprension) -> bool:
 
 
 __all__ = ["BONO_PISTA", "Comprension", "comprender", "peso_pista", "plano", "sinonimos_presentes",
-           "terminos_de_contenido", "tiene_pista"]
+           "terminos_de_contenido", "terminos_genericos", "tiene_pista"]

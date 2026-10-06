@@ -362,6 +362,9 @@ sinonimos:
 - [arregla, arreglan, arreglar, repara, reparan, reparar]
 - [cuesta, cuestan, costar, vale, valen, precio]
 - [dura, duran, durar, vigencia]
+# Palabras que nunca son término foco (ipsis.consulta.etapas.filtros): verbos de apoyo y
+# unidades. «¿Desde cuándo se hace la compra?» habla de la compra, no de hacer.
+genericas: [hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos]
 conversacional:
   categorias:
   - greeting

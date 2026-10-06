@@ -298,6 +298,8 @@ sinonimos:
 - [aprova, aprovam, aprovar, autoriza, autorizam, autorizar]
 - [conserta, consertam, consertar, repara, reparam, reparar]
 - [custa, custam, custar, preco]
+# Palavras que nunca são termo foco (ipsis.consulta.etapas.filtros): verbos de apoio e unidades.
+genericas: [fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos]
 conversacional:
   categorias:
   - greeting

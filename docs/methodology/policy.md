@@ -33,7 +33,7 @@ function). Rule names are the internal ones shown in the diagnostics:
    domain < `τ_domain` → `no_answer`. Domain = `max(s_ret, s_rr)` (see
    [reranker](reranker.md)).
 3. **`ok_lector` / `ok_lexico`:** `s_foco ≥ τ_focus` and
-   `s_oov < τ_oov_ok` and:
+   `s_oov < τ_oov_ok` and (see "Answerability" below):
    - with a reader: `s_qa ≥ τ_ok`;
    - without a reader (light): `s_ret ≥ τ_ok` and `s_cov ≥ τ_cov`.
 4. **`relacionado` (related):** domain ≥ `τ_related`. If the focus failed,
@@ -72,12 +72,26 @@ The profile's default thresholds (conservative, uncalibrated):
 |---|---|---|
 | `oov_domain`, `oov_ok` | 0.6 | 0.6 |
 | `domain`, `related` | 0.33 | 0.33 |
-| `focus` | 0.5 | 0.5 |
+| `focus` | 1.0 | 1.0 |
 | `ok` | 0.5 (on `s_ret`) | 0.8 (on `s_qa`) |
 | `cov` | 0.6 | 0.6 (not used with a reader) |
 
 Order of application: profile ← `engine.yaml::profile_overrides` ←
 `calibration.yaml` (only when its provenance matches).
+
+**Answerability (`focus` = 1.0).** An `ok` needs the answering sentence to
+contain every focus term. Focus terms are chosen only among words that exist
+in the corpus, and never among the relation's words ("when… start") or the
+pack's generic words (support verbs and units: "do", "have", "days"). So a
+missing focus term means the corpus uses that word, but not in this
+sentence: "Who approves the payment… in Finance?" answered with "Purchasing
+sends the record to Finance for the payment" ("approves" is in another
+sentence), or "How many days does the supplier have to deliver?" answered
+with "…two working days to accept the order". With `0.5` (the previous
+default) one of the two focus terms could be missing. Measured in
+[ADR 0005](../decisions/0005-deterministic-query-understanding.md): both
+false `ok` of the query bank become `related` and no correct answer is lost
+in either bank.
 
 ## 8. Complexity and resources
 

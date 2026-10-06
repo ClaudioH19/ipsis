@@ -103,6 +103,9 @@ class PaqueteIdioma(_Estricto):
     # Grupos de sinónimos con sus formas comunes (ipsis.lenguaje.consultas.sinonimos_presentes):
     # solo reemplazan una palabra de la pregunta que no está en el corpus.
     sinonimos: list[list[str]] = Field(default_factory=list)
+    # Palabras que nunca son término foco: verbos de apoyo («hacer», «tener») y
+    # unidades («días», «veces»). Dicen cómo se pregunta, no de qué se habla.
+    genericas: list[str] = Field(default_factory=list)
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes
     interfaz: dict[str, str] = Field(default_factory=dict)

@@ -17,7 +17,7 @@ class EtapaFiltros(_Etapa):
 
 def _senales_lexicas(motor, ctx) -> None:
     """Términos foco y ``s_oov`` de la pregunta, con las estadísticas del índice."""
-    from ipsis.lenguaje.consultas import comprender, terminos_de_contenido
+    from ipsis.lenguaje.consultas import comprender, terminos_de_contenido, terminos_genericos
     from ipsis.lenguaje.lexico import s_oov, terminos_foco
     from ipsis.nucleo.esquemas import SenalesLexicas
 
@@ -28,19 +28,22 @@ def _senales_lexicas(motor, ctx) -> None:
     perfil = getattr(motor, "perfil_instalacion", None)
     k = perfil.lexico.max_terminos_foco if perfil is not None else 2
     # Sin las palabras de la relación («empieza» en «¿cuándo empieza la compra?»).
-    tq = terminos_de_contenido(ctx.pregunta, motor.idioma, est)
+    tq = terminos_de_contenido(ctx.pregunta, motor.idioma, est, sin_genericas=False)
     if ctx.pregunta_usuario:
         # Seguimiento: lo heredado ayuda a buscar, pero si el usuario trajo tema
         # propio, las señales léxicas se miden sobre eso: la oración que se acepte
         # debe tener lo que preguntó ahora («acepta» en «¿y si la acepta?»).
-        propios = terminos_de_contenido(ctx.pregunta_usuario, motor.idioma, est)
+        propios = terminos_de_contenido(ctx.pregunta_usuario, motor.idioma, est, sin_genericas=False)
         if any(est.df.get(t, 0) > 0 for t in propios):
             tq = propios
     ctx.terminos_pregunta = tq
     # El foco es el tema: una palabra de la relación («monto» en «¿desde qué monto…?»)
-    # nunca lo es, aunque esté en el corpus y cuente para la cobertura.
+    # o una genérica («hace» en «¿desde cuándo se hace la compra?», «meses») nunca
+    # lo es, aunque esté en el corpus y cuente para la cobertura.
     relacion = comprender(ctx.pregunta_usuario or ctx.pregunta, motor.idioma).terminos_relacion
-    ctx.terminos_foco = terminos_foco([t for t in tq if t not in relacion] or tq, est, k)
+    genericos = terminos_genericos(motor.idioma)
+    tema = [t for t in tq if t not in relacion]
+    ctx.terminos_foco = terminos_foco([t for t in tema if t not in genericos] or tema or tq, est, k)
     ctx.lexicas = SenalesLexicas(
         terminos_foco=[est.superficie.get(t, t) for t in ctx.terminos_foco],
         s_oov=s_oov(tq, est),

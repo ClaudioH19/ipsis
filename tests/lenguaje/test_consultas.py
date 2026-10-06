@@ -129,3 +129,16 @@ def test_un_sinonimo_reemplaza_solo_la_palabra_que_falta_en_el_corpus(es):
     # Si la palabra ya está en el corpus, no se toca.
     df.update({t: 1 for t in terminos("necesita", es)})
     assert sinonimos_presentes(pregunta, es, est) == {}
+
+
+def test_las_palabras_genericas_no_son_tema_pero_cuentan_para_la_cobertura(es):
+    """«hace» no es de qué se habla en «¿Desde cuándo se hace la compra?»."""
+    from ipsis.lenguaje.consultas import terminos_genericos
+    from ipsis.lenguaje.texto import terminos
+
+    hac = terminos("hace", es)[0]
+    assert hac in terminos_genericos(es)
+    assert hac not in terminos_de_contenido("¿Desde cuándo se hace la compra?", es)
+    assert hac in terminos_de_contenido("¿Desde cuándo se hace la compra?", es, sin_genericas=False)
+    # Si no hubiera otra cosa, se dejan.
+    assert terminos_de_contenido("¿Qué hace?", es)

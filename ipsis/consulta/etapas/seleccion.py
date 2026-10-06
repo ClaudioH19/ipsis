@@ -384,12 +384,17 @@ def _proximidad_del_foco(motor, ctx) -> None:
         oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None)
     ctx.diagnostico["oracion_foco"] = oracion
     terminos_oracion = terminos(oracion, motor.idioma)
+    # El título de la sección enmarca la oración: en «¿Qué recargo se cobra según el
+    # artículo 4?», «artículo» está en el título «Artículo 4», no en «…se cobra un
+    # recargo del 15%». Cuenta para el foco, no para la cobertura.
+    seccion = " ".join(ctx.evidencias[0].seccion_path or [])
+    terminos_foco_oracion = terminos_oracion + (terminos(seccion, motor.idioma) if seccion else [])
     ctx.lexicas = ctx.lexicas.model_copy(update={
-        "s_foco": s_foco(ctx.terminos_foco, terminos_oracion),
+        "s_foco": s_foco(ctx.terminos_foco, terminos_foco_oracion),
         "s_cov": s_cov(ctx.terminos_pregunta, terminos_oracion, est),
     })
     if isinstance(ctx.diagnostico.get("senales_lexicas"), dict):
-        presentes = set(terminos_oracion)
+        presentes = set(terminos_foco_oracion)
         superficie = getattr(est, "superficie", {})
         ctx.diagnostico["senales_lexicas"].update(
             s_foco=ctx.lexicas.s_foco, s_cov=ctx.lexicas.s_cov,

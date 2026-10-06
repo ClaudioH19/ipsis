@@ -46,7 +46,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nEl cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nArtículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.8699,
       "margin": 0.08424
@@ -56,10 +56,10 @@
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 407,
+        "offset_start": 395,
         "offset_end": 536,
-        "text": "El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.",
-        "score": 0.59168
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.",
+        "score": 0.74883
       }
     ]
   },
@@ -67,7 +67,7 @@
     "status": "ok",
     "service_level": "normal",
     "plan": "extractive",
-    "answer": "El documento lo plantea así:\n\nEl reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "El documento lo plantea así:\n\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.87552,
       "margin": 0.09017
@@ -77,9 +77,9 @@
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 549,
+        "offset_start": 537,
         "offset_end": 662,
-        "text": "El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "text": "Artículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
         "score": 0.99999
       }
     ]
@@ -118,7 +118,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "La respuesta directa no aparece. Te comparto lo que más se relaciona:\n\nSi el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "La respuesta directa no aparece. Te comparto lo que más se relaciona:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.82167,
       "margin": 0.05341
@@ -128,10 +128,10 @@
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 272,
+        "offset_start": 260,
         "offset_end": 383,
-        "text": "Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.99807
+        "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.9979
       }
     ]
   },
@@ -139,7 +139,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No tengo una respuesta directa, pero esto se relaciona con tu pregunta:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\nEn relación con lo anterior, dice: El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "No tengo una respuesta directa, pero esto se relaciona con tu pregunta:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\nEn relación con lo anterior, dice: Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.84284,
       "margin": 0.01171
@@ -158,9 +158,9 @@
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
-        "offset_start": 407,
+        "offset_start": 395,
         "offset_end": 662,
-        "text": "El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
         "score": 0.66667
       }
     ]
@@ -180,7 +180,7 @@
     "status": "ok",
     "service_level": "normal",
     "plan": "extractive",
-    "answer": "Te muestro lo que indica el documento:\n\nSi el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "Te muestro lo que indica el documento:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.82972,
       "margin": 0.07259
@@ -190,10 +190,10 @@
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 272,
+        "offset_start": 260,
         "offset_end": 383,
-        "text": "Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.99911
+        "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.99929
       }
     ]
   },

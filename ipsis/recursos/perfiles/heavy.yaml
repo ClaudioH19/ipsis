@@ -39,6 +39,6 @@ default_thresholds:
   oov_ok: 0.6
   domain: 0.33
   related: 0.33
-  focus: 0.5
+  focus: 1.0  # la oración que responde tiene todos los términos foco (ADR 0005)
   ok: 0.8
   cov: 0.6
