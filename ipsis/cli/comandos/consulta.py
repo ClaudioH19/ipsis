@@ -116,6 +116,12 @@ ETIQUETA_ESTADO = {
     "conversacional": "ask.status_conversational",
     "degradado": "ask.status_degraded",
     "saturado": "ask.status_saturated",
+    # Los mismos estados con los nombres del contrato público de POST /ask.
+    "related": "ask.status_related",
+    "no_answer": "ask.status_no_answer",
+    "conversational": "ask.status_conversational",
+    "degraded": "ask.status_degraded",
+    "saturated": "ask.status_saturated",
 }
 
 
@@ -139,9 +145,9 @@ class ComandoPreguntar(Comando):
             return self._diagnostico(args.pregunta)
         import httpx
 
-        url = f"{args.url.rstrip('/')}/consultar"
+        url = f"{args.url.rstrip('/')}/ask"
         try:
-            resp = httpx.post(url, json={"pregunta": args.pregunta, "id_sesion": "ipsis-cli"}, timeout=args.timeout)
+            resp = httpx.post(url, json={"question": args.pregunta, "session_id": "ipsis-cli"}, timeout=args.timeout)
         except httpx.ConnectError:
             print(t("ask.no_connection", url=url))
             return 1
@@ -154,14 +160,14 @@ class ComandoPreguntar(Comando):
             return 1
 
         datos = resp.json()
-        print(etiqueta_estado(datos.get("estado", "?")))
-        print(datos.get("respuesta", ""))
-        fragmentos = datos.get("fragmentos") or []
+        print(etiqueta_estado(datos.get("status", "?")))
+        print(datos.get("answer") or "")
+        fragmentos = datos.get("fragments") or []
         if fragmentos:
             print(t("ask.citations"))
             for f in fragmentos:
-                print(t("ask.citation", title=f["doc_titulo"], section=f["seccion"], start=f["offset_inicio"],
-                        end=f["offset_fin"], score=f["score"]))
+                print(t("ask.citation", title=f["doc_title"], section=f["section"], start=f["offset_start"],
+                        end=f["offset_end"], score=f["score"]))
         return 0
 
     @staticmethod

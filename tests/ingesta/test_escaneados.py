@@ -43,3 +43,86 @@ def test_pdf_mixto_avisa_las_paginas_sin_texto(tmp_path: Path):
 
     assert any("1" in a and "3" in a and ": 2." in a for a in doc.advertencias), doc.advertencias
     assert any("Encienda" in b.texto for b in doc.bloques)  # lo que sí tiene texto se indexa
+
+
+# --- OCR -------------------------------------------------------------------------------------
+def test_con_ocr_un_pdf_escaneado_se_lee_y_se_avisa(tmp_path: Path, monkeypatch):
+    import ipsis.ingesta.ocr as ocr
+
+    leido = "Garantia\n\nLa garantia dura dos anos desde la compra del equipo."
+    monkeypatch.setattr(ocr, "motor_ocr", lambda idioma: (ocr.MotorOCR("spa+eng"), ""))
+    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: leido for i in indices})
+    ruta = tmp_path / "escaneado.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+
+    doc = parsear_pdf(str(ruta), doc_id="e", doc_titulo="E", version="1")
+
+    assert [b.texto for b in doc.bloques if b.tipo_contenido != "titulo"] == [
+        "La garantia dura dos anos desde la compra del equipo."]
+    assert any("OCR" in a and "spa+eng" in a for a in doc.advertencias)
+    assert doc.texto_completo[doc.bloques[-1].offset_inicio:doc.bloques[-1].offset_fin] == doc.bloques[-1].texto
+
+
+def test_las_lineas_en_blanco_del_ocr_no_parten_los_parrafos(tmp_path: Path, monkeypatch):
+    """Salida real de Tesseract con renglones separados: una línea en blanco entre cada uno."""
+    import ipsis.ingesta.ocr as ocr
+
+    leido = ("Garantía\n\nLa cafetera Brio tiene una garantía de veinticuatro\n\nmeses desde la fecha de compra."
+             "\n\nLa garantía cubre:\n- el motor y la bomba de presión;\n\n- el depósito de agua.\n")
+    monkeypatch.setattr(ocr, "motor_ocr", lambda idioma: (ocr.MotorOCR("spa+eng"), ""))
+    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: leido for i in indices})
+    ruta = tmp_path / "escaneado.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+
+    doc = parsear_pdf(str(ruta), doc_id="e", doc_titulo="E", version="1")
+
+    assert [(b.tipo_contenido, b.texto) for b in doc.bloques] == [
+        ("titulo", "Garantía"),
+        ("narrativo", "La cafetera Brio tiene una garantía de veinticuatro meses desde la fecha de compra."),
+        ("narrativo", "La garantía cubre:"),
+        ("lista", "- el motor y la bomba de presión;"),
+        ("lista", "- el depósito de agua."),
+    ]
+
+
+def test_sin_ocr_el_rechazo_explica_como_activarlo(tmp_path: Path, monkeypatch):
+    import pytest
+
+    from ipsis.ingesta.parsear import DocumentoEscaneadoError
+
+    ruta = tmp_path / "escaneado.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+    monkeypatch.setenv("IPSIS_OCR", "off")
+    with pytest.raises(DocumentoEscaneadoError, match="IPSIS_OCR=off"):
+        parsear_pdf(str(ruta), doc_id="e", doc_titulo="E", version="1")
+    monkeypatch.delenv("IPSIS_OCR")
+    import ipsis.ingesta.ocr as ocr
+
+    motor, motivo = ocr.motor_ocr("es")
+    if motor is None:  # sin el extra o sin Tesseract: el motivo dice qué instalar
+        assert "Tesseract" in motivo
+
+
+def test_ocr_real_si_tesseract_esta_instalado(tmp_path: Path):
+    import pytest
+
+    from PIL import Image, ImageDraw, ImageFont
+
+    import ipsis.ingesta.ocr as ocr
+
+    motor, motivo = ocr.motor_ocr("es")
+    if motor is None:
+        pytest.skip(motivo)
+    imagen = Image.new("RGB", (1700, 600), "white")
+    dibujo = ImageDraw.Draw(imagen)
+    dibujo.text((80, 120), "La garantía dura veinticuatro meses.", fill="black",
+                font=ImageFont.load_default(size=64))
+    dibujo.text((80, 300), "Cambie el filtro cada seis meses.", fill="black",
+                font=ImageFont.load_default(size=64))
+    ruta = tmp_path / "foto.pdf"
+    imagen.save(ruta, "PDF", resolution=200)
+
+    doc = parsear_pdf(str(ruta), doc_id="f", doc_titulo="F", version="1")
+    texto = doc.texto_completo.lower()
+    assert "veinticuatro" in texto and "filtro" in texto
+    assert any("OCR" in a for a in doc.advertencias)

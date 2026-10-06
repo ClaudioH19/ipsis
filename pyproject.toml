@@ -31,6 +31,8 @@ browser = ["pytest>=8,<10", "playwright>=1.55,<2"]
 # Solo desarrollo: convertir un modelo a ONNX (ipsis models export).
 # optimum 2.x movió el exportador ONNX a optimum-onnx; este fija transformers < 4.58.
 export = ["optimum-onnx[onnxruntime]>=0.1,<0.2", "torch>=2.2"]
+# OCR de PDF escaneados (ipsis/ingesta/ocr.py); además requiere el programa Tesseract.
+ocr = ["pytesseract>=0.3.13,<0.4", "pypdfium2>=4.30,<6"]
 
 [project.scripts]
 ipsis = "ipsis.cli:main"

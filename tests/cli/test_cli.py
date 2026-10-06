@@ -435,12 +435,25 @@ def test_preguntar_codigo_no_cero_si_http_no_200(monkeypatch: pytest.MonkeyPatch
     assert main(["ask", "¿algo?"]) != 0
 
 
-def test_preguntar_codigo_cero_si_responde_200(monkeypatch: pytest.MonkeyPatch):
+def test_preguntar_usa_el_contrato_publico_de_ask(monkeypatch: pytest.MonkeyPatch, capsys):
+    """Regresión: tras el renombre la CLI seguía llamando a /consultar con el
+    cuerpo anterior; contra un servidor actual eso es un 404."""
     import httpx
 
-    cuerpo = {"estado": "ok", "respuesta": "texto de prueba", "fragmentos": []}
-    monkeypatch.setattr(httpx, "post", lambda *a, **k: _RespuestaFalsa(200, cuerpo))
-    assert main(["ask", "¿algo?"]) == 0
+    llamadas = []
+    cuerpo = {"status": "ok", "answer": "texto de prueba", "fragments": [
+        {"chunk_id": "c1", "doc_title": "Manual", "section": "Garantía", "version": "1", "page": None,
+         "offset_start": 10, "offset_end": 40, "text": "texto de prueba", "score": 0.9}]}
+
+    def _post(url, json, timeout):
+        llamadas.append((url, json))
+        return _RespuestaFalsa(200, cuerpo)
+
+    monkeypatch.setattr(httpx, "post", _post)
+    assert main(["ask", "¿algo?", "--url", "http://127.0.0.1:9000/"]) == 0
+    assert llamadas == [("http://127.0.0.1:9000/ask", {"question": "¿algo?", "session_id": "ipsis-cli"})]
+    salida = capsys.readouterr().out
+    assert "texto de prueba" in salida and "Manual" in salida and "Garantía" in salida
 
 
 # ---------------------------------------------------------------------------

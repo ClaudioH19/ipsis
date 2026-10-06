@@ -6,41 +6,13 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
-### Fixed
-
-- **Answers and citations by section:** a chunk can still span several
-  sections (retrieval is unchanged), but it now records where each section
-  starts. The passage shown stays within the section of the sentence that
-  answers, without dragging in the next heading and its text, and the
-  citation names that section (it used to name the chunk's first one).
-  Re-run `ipsis index`. Measured on the universal bank: identical results
-  and latency within noise. Splitting chunks by section was measured too and
-  discarded: more exact answers in `light`, but a new false `ok` on a
-  same-topic trap.
-- **Condition and exception markers** count only as whole words: «si» no
-  longer matches inside «sistema» or «visita», which marked almost every
-  chunk as a condition and introduced passages with "This applies under a
-  condition:" for no reason. Re-run `ipsis index`.
-- **A caveat right after the answer is kept:** when the sentence that
-  follows the answer is an exception («Salvo que…») or starts with a
-  condition («Si…», «Siempre que…») and only missed the length limit, it is
-  shown too (up to 50 % over the limit), still literal and contiguous.
-- **Loading a folder with a scanned PDF** no longer aborts the whole load:
-  the scanned or unreadable file is reported and skipped, the rest is
-  loaded, and the command exits with 1.
-- **PDFs with some scanned pages** warn which pages have no text (their
-  content is not indexed) instead of losing them silently.
-- **Connectors across documents:** a passage from another document is no
-  longer introduced as a condition or an exception of the first one ("This
-  applies under a condition:"); it is added with an `addition` connector.
-- **PDF paragraphs:** a word hyphenated at the end of a paragraph's last
-  line no longer glues the next paragraph to it, and a line ending in a
-  hyphen is never taken for a title.
-- **Tone wording:** Portuguese and English variants that were calques
-  ("Tenha uma boa jornada", "O documento precisa, ainda:", "Demands:"…).
-
 ### Added
 
+- **OCR for scanned PDFs (optional):** `pip install "ipsis[ocr]"` plus the
+  Tesseract program. Pages without text are rendered and read with
+  Tesseract in the project language (plus English); `ipsis load` lists
+  which pages were read that way. Without it, the scanned PDF is rejected as
+  before and the message says what to install. `IPSIS_OCR=off` turns it off.
 - **`answer_blocks` in `POST /ask`:** the answer by paragraph, so a site can
   render it with structure. Each block has a `type` (`lead` for the tone's
   opening or intro, `passage` for literal document text, `message` for
@@ -103,6 +75,43 @@ a minor change may break compatibility and is marked as such.
   situation and checks the count per situation (project overrides keep the
   previous rules); a test keeps es, en and pt in
   parity.
+
+### Fixed
+
+- **`ipsis ask` (without `--diagnostics`) called the old endpoint:** it
+  still posted `{"pregunta", "id_sesion"}` to `/consultar`, which a current
+  server answers with 404. It now uses `POST /ask` with `question` and
+  `session_id`, and reads `status`, `answer` and `fragments`.
+- **Answers and citations by section:** a chunk can still span several
+  sections (retrieval is unchanged), but it now records where each section
+  starts. The passage shown stays within the section of the sentence that
+  answers, without dragging in the next heading and its text, and the
+  citation names that section (it used to name the chunk's first one).
+  Re-run `ipsis index`. Measured on the universal bank: identical results
+  and latency within noise. Splitting chunks by section was measured too and
+  discarded: more exact answers in `light`, but a new false `ok` on a
+  same-topic trap.
+- **Condition and exception markers** count only as whole words: «si» no
+  longer matches inside «sistema» or «visita», which marked almost every
+  chunk as a condition and introduced passages with "This applies under a
+  condition:" for no reason. Re-run `ipsis index`.
+- **A caveat right after the answer is kept:** when the sentence that
+  follows the answer is an exception («Salvo que…») or starts with a
+  condition («Si…», «Siempre que…») and only missed the length limit, it is
+  shown too (up to 50 % over the limit), still literal and contiguous.
+- **Loading a folder with a scanned PDF** no longer aborts the whole load:
+  the scanned or unreadable file is reported and skipped, the rest is
+  loaded, and the command exits with 1.
+- **PDFs with some scanned pages** warn which pages have no text (their
+  content is not indexed) instead of losing them silently.
+- **Connectors across documents:** a passage from another document is no
+  longer introduced as a condition or an exception of the first one ("This
+  applies under a condition:"); it is added with an `addition` connector.
+- **PDF paragraphs:** a word hyphenated at the end of a paragraph's last
+  line no longer glues the next paragraph to it, and a line ending in a
+  hyphen is never taken for a title.
+- **Tone wording:** Portuguese and English variants that were calques
+  ("Tenha uma boa jornada", "O documento precisa, ainda:", "Demands:"…).
 
 ## [0.9.0] - 2026-10-05
 

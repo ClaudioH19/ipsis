@@ -100,6 +100,32 @@ ipsis ask "¿Cada cuánto se cambia el filtro?"
 - **Atajo:** `ipsis serve ./mis-documentos` crea un proyecto privado en
   `.ipsis-project/`, carga los archivos, indexa si hace falta y sirve.
 
+## PDF escaneados (OCR, opcional)
+
+Un PDF hecho de imágenes (un escaneo, fotos de páginas) no tiene texto que
+extraer. Con OCR, `ipsis load` lee esas páginas con
+[Tesseract](https://github.com/tesseract-ocr/tesseract); sin él, el PDF se
+rechaza y el resto de la carpeta se carga igual.
+
+```bash
+pip install "ipsis[ocr]"
+```
+
+Después instala el programa Tesseract con el idioma de tus documentos:
+
+| Sistema | Comando |
+|---|---|
+| Debian/Ubuntu | `sudo apt install tesseract-ocr tesseract-ocr-spa tesseract-ocr-por` |
+| macOS | `brew install tesseract tesseract-lang` |
+| Windows | `winget install UB-Mannheim.TesseractOCR` (elige los idiomas en el instalador) |
+
+- Solo pasan por OCR las páginas sin texto; las digitales se leen como siempre.
+- El idioma del proyecto elige el del OCR (`es` → `spa`, `pt` → `por`,
+  `en` → `eng`), más inglés para siglas.
+- `ipsis load` lista las páginas leídas con OCR: revisa sus citas, porque el
+  OCR puede confundir letras.
+- `IPSIS_OCR=off` lo desactiva aunque esté instalado.
+
 ## Caché de modelos y uso sin red
 
 | Variable | Efecto |

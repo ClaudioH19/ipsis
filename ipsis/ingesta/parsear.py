@@ -566,9 +566,10 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     se reconstruyen con :func:`_parrafos_pdf` (palabras cortadas con guion
     unidas, ítems de lista por separado).
 
-    Rechaza con :class:`DocumentoEscaneadoError` si la extracción de texto
-    devuelve casi nada (PDF escaneado, sin capa de texto) -- nunca indexa un
-    documento vacío en silencio."""
+    Las páginas sin texto (escaneos, fotos) se leen con OCR si está
+    disponible (``ipsis.ingesta.ocr``) y se avisa cuáles fueron. Rechaza con
+    :class:`DocumentoEscaneadoError` si aun así el documento queda casi sin
+    texto -- nunca indexa un documento vacío en silencio."""
     import pypdf
 
     reader = pypdf.PdfReader(ruta)
@@ -577,31 +578,50 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
         raise DocumentoEscaneadoError(t("core.pdf_no_pages", path=ruta))
 
     paginas = [_titulos_por_tamano(pagina) for pagina in reader.pages]
+    sin_texto = [i for i, (texto, _) in enumerate(paginas)
+                 if len(texto.strip()) < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA]
+    leidas_ocr: list[int] = []
+    motivo_sin_ocr, motor = "", None
+    if sin_texto:
+        from ipsis.ingesta.ocr import idioma_del_proyecto, leer_paginas, motor_ocr
+
+        motor, motivo_sin_ocr = motor_ocr(idioma_del_proyecto())
+        if motor is not None:
+            for i, texto in leer_paginas(ruta, sin_texto, motor).items():
+                if len(texto.strip()) >= UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
+                    paginas[i] = (texto, {})  # sin tamaños de letra: los títulos salen del texto
+                    leidas_ocr.append(i)
+            if len(leidas_ocr) < len(sin_texto):
+                motivo_sin_ocr = t("core.ocr_no_text")
     textos_paginas = [texto for texto, _ in paginas]
     total_chars = sum(len(t.strip()) for t in textos_paginas)
     promedio = total_chars / n_paginas
     if promedio < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
         raise DocumentoEscaneadoError(t("core.pdf_scanned", path=ruta, average=promedio,
-                                        threshold=UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA, pages=n_paginas))
+                                        threshold=UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA, pages=n_paginas,
+                                        ocr=motivo_sin_ocr))
 
     encabezados_por_pagina = _mapear_outline_a_paginas(reader)
     # Sin marcadores, los títulos salen del tamaño de letra: el mayor es el nivel 1.
     tamanos = sorted({tam for _, grandes in paginas for tam in grandes.values()}, reverse=True)
     nivel_por_tamano = {tam: min(i + 1, 3) for i, tam in enumerate(tamanos)}
-    hay_estructura = bool(encabezados_por_pagina) or bool(tamanos)
-    advertencias = [] if hay_estructura else [t("core.pdf_no_outline")]
-    # Un PDF con algunas páginas escaneadas pasa el umbral promedio: esas páginas
-    # no aportan texto y se avisa cuáles son, en vez de perderlas en silencio.
-    sin_texto = [i + 1 for i, texto in enumerate(textos_paginas)
-                 if len(texto.strip()) < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA]
-    if sin_texto:
-        advertencias.append(t("core.pdf_pages_without_text", pages=", ".join(map(str, sin_texto)),
-                              n=len(sin_texto), total=n_paginas))
+    hay_titulos_ocr = False
 
     eventos: list[Evento] = []
     for i, (texto_pagina, grandes) in enumerate(paginas):
         for nivel, titulo in encabezados_por_pagina.get(i, []):
             eventos.append((titulo, nivel))
+        if i in leidas_ocr and not encabezados_por_pagina:
+            # Una página leída con OCR no trae tamaños de letra: los títulos se
+            # reconocen como en texto plano (una línea suelta seguida de contenido).
+            # Tesseract suele dejar una línea en blanco entre renglones algo
+            # separados: no marcan párrafos, así que se cortan como en un PDF
+            # sin líneas en blanco (fin de frase en línea corta, ítems, títulos).
+            renglones = re.sub(r"\n\s*\n", "\n", texto_pagina)
+            de_ocr, titulos = _eventos_de_parrafos(_parrafos_pdf(renglones))
+            hay_titulos_ocr = hay_titulos_ocr or titulos
+            eventos.extend((" ".join(texto.split()), nivel, *resto) for texto, nivel, *resto in de_ocr)
+            continue
         for parrafo in _parrafos_pdf(texto_pagina):
             lineas = parrafo.split("\n")
             normal = " ".join(lineas[0].split())
@@ -611,6 +631,18 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
             # dentro de un párrafo, los espacios repetidos de la extracción se colapsan
             eventos.extend((" ".join(texto.split()), nivel, *resto)
                            for texto, nivel, *resto in _eventos_de_lineas(lineas))
+
+    hay_estructura = bool(encabezados_por_pagina) or bool(tamanos) or hay_titulos_ocr
+    advertencias = [] if hay_estructura else [t("core.pdf_no_outline")]
+    # Las páginas leídas con OCR se avisan (conviene revisar sus citas), y las que
+    # siguen sin texto también, en vez de perderlas en silencio.
+    if leidas_ocr:
+        advertencias.append(t("core.pdf_ocr_pages", pages=", ".join(str(i + 1) for i in leidas_ocr),
+                              n=len(leidas_ocr), total=n_paginas, languages=motor.idiomas))
+    vacias = [i + 1 for i in sin_texto if i not in leidas_ocr]
+    if vacias:
+        advertencias.append(t("core.pdf_pages_without_text", pages=", ".join(map(str, vacias)),
+                              n=len(vacias), total=n_paginas, ocr=motivo_sin_ocr))
 
     texto_completo, bloques = _ensamblar_bloques(eventos)
     return DocumentoParseado(
