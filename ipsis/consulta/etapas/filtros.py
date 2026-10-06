@@ -29,6 +29,13 @@ def _senales_lexicas(motor, ctx) -> None:
     k = perfil.lexico.max_terminos_foco if perfil is not None else 2
     # Sin las palabras de la relación («empieza» en «¿cuándo empieza la compra?»).
     tq = terminos_de_contenido(ctx.pregunta, motor.idioma, est)
+    if ctx.pregunta_usuario:
+        # Seguimiento: lo heredado ayuda a buscar, pero si el usuario trajo tema
+        # propio, las señales léxicas se miden sobre eso: la oración que se acepte
+        # debe tener lo que preguntó ahora («acepta» en «¿y si la acepta?»).
+        propios = terminos_de_contenido(ctx.pregunta_usuario, motor.idioma, est)
+        if any(est.df.get(t, 0) > 0 for t in propios):
+            tq = propios
     ctx.terminos_pregunta = tq
     ctx.terminos_foco = terminos_foco(tq, est, k)
     ctx.lexicas = SenalesLexicas(

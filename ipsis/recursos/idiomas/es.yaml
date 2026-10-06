@@ -313,6 +313,20 @@ intenciones:
     - despues
     - paso
     - se debe
+# Cómo empieza una pregunta de seguimiento (ipsis.consulta.seguimiento), en minúsculas y sin tildes.
+seguimiento:
+- y
+- y si
+- y con
+- y para
+- y cuando
+- y quien
+- y despues
+- y que
+- entonces
+- pero
+- tambien
+- e
 conversacional:
   categorias:
   - greeting

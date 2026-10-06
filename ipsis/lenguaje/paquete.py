@@ -98,6 +98,8 @@ class PaqueteIdioma(_Estricto):
     marcadores: Marcadores = Field(default_factory=Marcadores)
     # En orden: gana la primera cuyo patrón aparece en la pregunta.
     intenciones: dict[str, Intencion] = Field(default_factory=dict)
+    # Cómo empieza una pregunta de seguimiento («y», «entonces»; ipsis.consulta.seguimiento).
+    seguimiento: list[str] = Field(default_factory=list)
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes
     interfaz: dict[str, str] = Field(default_factory=dict)

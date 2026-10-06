@@ -266,6 +266,20 @@ intenciones:
     - then
     - next
     - step
+# How a follow-up question starts (ipsis.consulta.seguimiento), lowercase and without accents.
+seguimiento:
+- and
+- and if
+- and with
+- and for
+- and when
+- and who
+- and then
+- what about
+- how about
+- then
+- but
+- also
 conversacional:
   categorias:
   - greeting

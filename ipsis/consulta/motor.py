@@ -91,6 +91,9 @@ class Motor:
         self.lector = lector
         from ipsis.consulta.variantes import SelectorVariantes
 
+        from ipsis.consulta.seguimiento import ResolutorSeguimiento
+
+        self.seguimiento = ResolutorSeguimiento()
         self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial",
                                                     fija=(plantillas or {}).get("variedad") == "fija")
 

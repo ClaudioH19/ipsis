@@ -117,6 +117,25 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[f
     return scores
 
 
+PESO_HEREDADO = 0.5
+
+
+def _puntuar_turno(pregunta: str, unidades: list[Unidad], estadisticas=None,
+                   pregunta_usuario: str | None = None) -> list[float]:
+    """``_puntuar`` para un turno de seguimiento: si lo que el usuario escribió
+    ahora («¿y qué cubre?») aparece en alguna unidad, eso pesa entero y la
+    pregunta interpretada (con lo heredado, «garantía cafetera») la mitad:
+    dentro de un pasaje manda lo propio, y entre pasajes parecidos de documentos
+    distintos decide el contexto («pagan» en el reembolso, no en las facturas).
+    Si lo propio no aparece («¿y con 90?»), se usa la interpretada."""
+    if pregunta_usuario:
+        propios = _puntuar(pregunta_usuario, unidades, estadisticas)
+        if any(propios):
+            interpretada = _puntuar(pregunta, unidades, estadisticas)
+            return [p + PESO_HEREDADO * i for p, i in zip(propios, interpretada)]
+    return _puntuar(pregunta, unidades, estadisticas)
+
+
 def _es_salvedad(texto: str) -> bool:
     """Una unidad que matiza a la anterior: con un marcador de excepción, o que
     empieza con uno de condición («Si…», «Siempre que…»). Una condición de una
@@ -148,7 +167,8 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
                                    limite_caracteres: int, estadisticas=None,
                                    entidades_pregunta: list[dict] | None = None,
                                    centrada: bool = False,
-                                   secciones: list[tuple[int, int, list[str]]] | None = None) -> ResultadoSeleccion:
+                                   secciones: list[tuple[int, int, list[str]]] | None = None,
+                                   pregunta_usuario: str | None = None) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
     hasta ``limite_caracteres``. ``score_ancla`` (máximo de sus unidades)
@@ -175,7 +195,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     sección, el tramo no sale de la sección de la oración ancla y
     ``seccion_path`` la nombra, para que la cita sea la correcta."""
     unidades_completas = dividir_en_unidades(texto_chunk)
-    scores_completos = _puntuar(pregunta, unidades_completas, estadisticas)
+    scores_completos = _puntuar_turno(pregunta, unidades_completas, estadisticas, pregunta_usuario)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
 
     valores_norm_entidad = {e["valor_norm"] for e in entidades_pregunta} if entidades_pregunta else set()
@@ -246,7 +266,8 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
 
 def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_caracteres: int,
                                           estadisticas=None,
-                                          entidades_pregunta: list[dict] | None = None) -> dict:
+                                          entidades_pregunta: list[dict] | None = None,
+                                          pregunta_usuario: str | None = None) -> dict:
     """Devuelve una COPIA del payload de un chunk con ``texto``,
     ``offset_inicio`` y ``offset_fin`` reemplazados por el tramo pertinente
     seleccionado -- el resto de los campos (``doc_titulo``, ``seccion_path``,
@@ -262,6 +283,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     resultado = seleccionar_texto_pertinente(
         pregunta, payload["texto"], base, limite_caracteres,
         estadisticas=estadisticas, entidades_pregunta=entidades_pregunta, secciones=secciones or None,
+        pregunta_usuario=pregunta_usuario,
     )
     nuevo = dict(payload)
     if resultado.seccion_path is not None:
@@ -331,12 +353,12 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     return payloads_ordenados, scores_ordenados
 
 
-def oracion_ancla(pregunta: str, texto: str, estadisticas=None) -> str:
+def oracion_ancla(pregunta: str, texto: str, estadisticas=None, pregunta_usuario: str | None = None) -> str:
     """Oración (o fila) de ``texto`` con mayor ``s_lex`` frente a la pregunta."""
     unidades = dividir_en_unidades(texto)
     if not unidades:
         return texto
-    scores = _puntuar(pregunta, unidades, estadisticas)
+    scores = _puntuar_turno(pregunta, unidades, estadisticas, pregunta_usuario)
     return unidades[max(range(len(unidades)), key=lambda i: scores[i])].texto
 
 
@@ -359,7 +381,7 @@ def _proximidad_del_foco(motor, ctx) -> None:
         return
     oracion = ctx.evidencias[0].texto
     if ctx.evidencia_lector is None:
-        oracion = oracion_ancla(ctx.pregunta, oracion, est)
+        oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None)
     ctx.diagnostico["oracion_foco"] = oracion
     terminos_oracion = terminos(oracion, motor.idioma)
     ctx.lexicas = ctx.lexicas.model_copy(update={
@@ -401,3 +423,10 @@ class EtapaEvidencia(_Etapa):
         _proximidad_del_foco(m, ctx)
         por_chunk = {c.chunk.chunk_id: c for c in ctx.candidatos}
         ctx.payloads = [payload_desde_evidencia(e, por_chunk[e.chunk_id].chunk) for e in evidencias]
+        resolutor = getattr(m, "seguimiento", None)
+        if resolutor is not None:
+            # El turno siguiente puede seguir hablando de lo que mostraron estos fragmentos.
+            raices = set()
+            for e in evidencias[:1]:  # el que respondió, no los relacionados de otros temas
+                raices.update(terminos(por_chunk[e.chunk_id].chunk.texto_fuente, m.idioma))
+            resolutor.recordar_evidencia(ctx.id_sesion, raices)

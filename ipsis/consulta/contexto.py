@@ -21,6 +21,7 @@ from ipsis.nucleo.esquemas import (
 class ContextoConsulta:
     pregunta: str
     id_sesion: str
+    pregunta_usuario: str = ""  # la que escribió, si ``pregunta`` es la interpretada (seguimiento)
     inicio: float = field(default_factory=time.perf_counter)
     diagnostico: dict[str, Any] = field(default_factory=dict)
     consulta: QueryAnalysis | None = None

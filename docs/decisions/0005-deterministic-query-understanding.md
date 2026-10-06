@@ -65,10 +65,32 @@ documents as distractors, 11 answerable cases and 6 traps):
 Universal bank (light and medium, es/en/pt): no new false `ok` and nothing
 lost; one more exact answer in `light`/en; latency within noise.
 
+## Follow-up questions
+
+"and with 90?" after "what happens above 100 UTM?" carries almost no topic.
+`ipsis/consulta/seguimiento.py` remembers, per session and in memory, the
+last effective question and the words of the passage that answered it. A
+question is a follow-up when it brings no topic term present in the corpus
+(and is short), or brings one or two that all appear in that passage and is
+short or starts with a follow-up marker of the language (`seguimiento` in
+the pack: "y", "and", "e se"…). Then the previous topic words are added to
+it ("¿y si la acepta? proveedor rechaza orden"): the *interpreted question*
+is what is retrieved and selected.
+
+Three guards keep it safe:
+
+- a question with its own topic outside the previous passage ("What are the
+  library hours?" after the warranty) never inherits;
+- when the user brought topic of their own, the lexical signals (focus,
+  `s_oov`, `s_cov`) are measured on it, so "and if they accept it?" is not
+  answered with the sentence about rejecting;
+- in the selection, the user's own words weigh fully and the interpreted
+  question half: inside a passage the user's words rule, and between similar
+  passages of different documents the context decides.
+
 ## Not done yet
 
 From the proposal that motivated this: multi-query retrieval expansion
-(retrieval was not where this case failed), parent/neighbor expansion, an
-explicit answerability signal in the policy, and a conversational context
-resolver ("and with 90?"). Each one should come with a failing case and a
-measurement, like this one.
+(retrieval was not where these cases failed), parent/neighbor expansion and
+an explicit answerability signal in the policy. Each one should come with a
+failing case and a measurement, like these.

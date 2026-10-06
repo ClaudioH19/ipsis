@@ -212,7 +212,8 @@ class QueryDiagnostic(EsquemaEstricto):
     senales_lexicas: dict[str, Any] | None = None
     puntajes_rerank: list[float] | None = None
     rerank: list[dict[str, Any]] | None = None  # chunk_id y puntaje, en el orden del reranker
-    lectura_por_pista: str | None = None  # chunk que el lector leyó por la pista de la intención
+    lectura_por_pista: str | None = None
+    pregunta_interpretada: str | None = None  # la de seguimiento, con el tema heredado  # chunk que el lector leyó por la pista de la intención
     lecturas: list[dict[str, Any]] | None = None
     regla: str | None = None
     senales_politica: dict[str, Any] | None = None

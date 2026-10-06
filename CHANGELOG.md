@@ -19,6 +19,11 @@ a minor change may break compatibility and is marked as such.
   answer. Query bank: `light` 5 → 9 and `medium` 7 → 10 correct answers,
   with no new false `ok`; the universal bank loses nothing, gains one exact
   answer in `light`/en and has no new false `ok`.
+- **Follow-up questions:** "and with 90?", "and if they accept it?" or "and
+  what does it cover?" inherit the topic of the previous turn in the same
+  session (in memory, per session), so they can be retrieved and answered. A
+  question with a topic of its own never inherits, and the answer must still
+  contain what the user asked now. See ADR 0005.
 - **`ipsis ask --diagnostics` shows where each candidate is won or lost:**
   its place in the dense, BM25, fusion and reranker rankings, the QA
   reader's probability and the best scored sentences.

@@ -50,7 +50,8 @@ def hay_discordancia(lecturas, umbral: float = 0.5) -> bool:
     return any({v for t, v in a if t == tipo} != {v for t, v in b if t == tipo} for tipo in tipos_comunes)
 
 
-def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int) -> tuple[int, int]:
+def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
+                        pregunta_usuario: str | None = None) -> tuple[int, int]:
     """Rango ``[a, b)`` de ``texto`` (a lo más ``limite`` caracteres) más pertinente."""
     if len(texto) <= limite:
         return 0, len(texto)
@@ -58,7 +59,8 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int) -> tuple[
 
     obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
-    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est, centrada=True)
+    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est, centrada=True,
+                                             pregunta_usuario=pregunta_usuario)
     return resultado.offset_inicio, resultado.offset_fin
 
 
@@ -110,7 +112,8 @@ class EtapaLectura(_Etapa):
             candidatos = [*candidatos, extra]
             ctx.diagnostico["lectura_por_pista"] = extra.chunk.chunk_id
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
-        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite) for c in candidatos]
+        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None)
+                    for c in candidatos]
         lecturas = m.lector.leer(ctx.pregunta, [texto[a:b] for texto, (a, b) in zip(
             (c.chunk.texto_fuente for c in candidatos), ventanas)])
         # offsets de la ventana -> offsets del pasaje completo

@@ -116,6 +116,7 @@ class SentenceSelectorExtractor:
                 self.limite_caracteres,
                 estadisticas=self.estadisticas,
                 entidades_pregunta=entidades,
+                pregunta_usuario=consulta.contexto.get("pregunta_usuario"),
             )
             for candidato in candidatos
         ]

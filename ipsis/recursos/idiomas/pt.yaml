@@ -258,6 +258,18 @@ intenciones:
     - depois
     - em seguida
     - passo
+# Como começa uma pergunta de seguimento (ipsis.consulta.seguimiento), em minúsculas e sem acentos.
+seguimiento:
+- e
+- e se
+- e com
+- e para
+- e quando
+- e quem
+- e depois
+- entao
+- mas
+- tambem
 conversacional:
   categorias:
   - greeting
