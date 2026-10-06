@@ -104,6 +104,7 @@ class SentenceSelectorExtractor:
         from ipsis.lenguaje.entidades import extraer_entidades
         from ipsis.consulta.etapas.seleccion import (
             ordenar_por_pertinencia_global,
+            quitar_tramos_repetidos,
             recortar_payload_a_texto_pertinente,
         )
 
@@ -120,6 +121,7 @@ class SentenceSelectorExtractor:
         ]
         scores = [candidato.score for candidato in candidatos]
         payloads, scores = ordenar_por_pertinencia_global(payloads, scores)
+        payloads, scores = quitar_tramos_repetidos(payloads, scores)
         return [
             EvidenceSpan(
                 doc_id=payload["doc_id"],
@@ -161,11 +163,19 @@ class RulesIntentClassifier:
     def analizar(self, pregunta: str, contexto: dict[str, Any] | None = None):
         from ipsis.nucleo.esquemas import QueryAnalysis
 
+        from ipsis.lenguaje.consultas import comprender
+        from ipsis.lenguaje.entidades import idioma_activo
+
         normalizada = re.sub(r"\s+", " ", pregunta.strip())
+        comprension = comprender(pregunta, idioma_activo())
+        contexto = dict(contexto or {})
+        if comprension.intencion:
+            contexto["relacion"] = comprension.relacion
         return QueryAnalysis(
             pregunta_original=pregunta,
             pregunta_normalizada=normalizada,
-            contexto=contexto or {},
+            intencion=comprension.intencion or "desconocida",
+            contexto=contexto,
         )
 
 

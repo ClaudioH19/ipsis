@@ -252,3 +252,24 @@ def test_si_el_chunk_cruza_de_seccion_el_tramo_se_queda_en_la_del_ancla():
     assert r.offset_inicio == 1000 + texto.index(mantenimiento)
     r = seleccionar_texto_pertinente("¿Cuánto dura la garantía?", texto, 1000, 500, secciones=secciones)
     assert r.texto == garantia and r.seccion_path == ["Garantía"]  # no arrastra el título ni la otra sección
+
+
+def test_un_titulo_no_ancla_la_respuesta_aunque_puntue_mas():
+    """«6.3 Procedimiento de Compra» calza mejor con la pregunta que la oración, pero no responde."""
+    previa = "El formulario se envía al Departamento de Compras."
+    titulo = "6.3 Procedimiento de Compra"
+    respuesta = "Una vez aprobado el formulario, se realizará la compra."
+    texto = f"{previa}\n{titulo}\n{respuesta}"
+    secciones = [(0, len(previa), ["6.2 Formulario"]),
+                 (len(previa) + len(titulo) + 2, len(texto), ["6.3 Procedimiento de Compra"])]
+    r = seleccionar_texto_pertinente("¿cuál es el procedimiento de compra?", texto, 0, 500, secciones=secciones)
+    assert titulo not in r.texto.split("\n")[0]
+
+
+def test_dos_chunks_solapados_no_repiten_el_mismo_tramo():
+    from ipsis.consulta.etapas.seleccion import quitar_tramos_repetidos
+
+    a = {"doc_id": "d", "offset_inicio": 10, "offset_fin": 50, "texto": "x" * 40}
+    b = {"doc_id": "d", "offset_inicio": 10, "offset_fin": 50, "texto": "x" * 40}  # el mismo, de otro chunk
+    c = {"doc_id": "d", "offset_inicio": 60, "offset_fin": 90, "texto": "y" * 30}
+    assert quitar_tramos_repetidos([a, b, c], [0.9, 0.8, 0.7]) == ([a, c], [0.9, 0.7])

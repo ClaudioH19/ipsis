@@ -167,6 +167,11 @@ class DiagnosticoConsulta:
     salto_modelos: bool = False
     tono: str | None = None
     plantillas: list[str] = field(default_factory=list)  # <tono>.<situación>.<n>
+    # Dónde se gana o se pierde cada fragmento: su lugar en el ranking denso, en
+    # BM25, en la fusión y en el reranker, y lo que leyó el lector QA.
+    candidatos: list[dict[str, Any]] = field(default_factory=list)
+    # Las oraciones mejor puntuadas de los candidatos, con el puntaje que usa la selección.
+    oraciones: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def total_ms(self) -> int:
@@ -183,10 +188,11 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         if propio:
             motor.calentar()  # que las latencias sean las de operación, sin la carga de modelos
         resultado = motor.consultar(pregunta, "rag-diagnostico")
+        d = resultado.diagnostico or {}
+        candidatos, oraciones = _ranking_diagnostico(motor, pregunta, d)
     finally:
         if propio:
             motor.cerrar()
-    d = resultado.diagnostico or {}
     contrato = d.get("contrato_http") or {}
     lexicas = d.get("senales_lexicas") or {}
     return DiagnosticoConsulta(
@@ -210,7 +216,62 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         salto_modelos=bool(d.get("salto_modelos")),
         tono=d.get("tono"),
         plantillas=list(d.get("plantillas") or []),
+        candidatos=candidatos,
+        oraciones=oraciones,
     )
+
+
+def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], list[dict]]:
+    """Ranking por etapa de cada candidato y las oraciones mejor puntuadas.
+
+    Las búsquedas densa y BM25 por separado se hacen solo aquí (el camino normal
+    usa la fusión); un retriever sin esos métodos (otro backend, un motor falso)
+    deja la tabla con lo que haya."""
+    retriever = getattr(motor, "retriever", None)
+    rankings = {}
+    if retriever is not None and hasattr(retriever, "rankings_diagnostico"):
+        try:
+            rankings = retriever.rankings_diagnostico(pregunta)
+        except Exception:  # noqa: BLE001 -- el diagnóstico nunca rompe la consulta
+            rankings = {}
+    rerank = {r["chunk_id"]: (i, r["score"]) for i, r in enumerate(d.get("rerank") or [], start=1)}
+    lecturas = {lec["chunk_id"]: lec for lec in d.get("lecturas") or []}
+    candidatos = []
+    for c in d.get("candidatos") or []:
+        cid = c["chunk_id"]
+        posicion = lambda lista: lista.index(cid) + 1 if cid in lista else None  # noqa: E731
+        lectura = lecturas.get(cid) or {}
+        candidatos.append({
+            "chunk_id": cid, "inicio": c.get("inicio", ""),
+            "denso": posicion(rankings.get("denso", [])), "bm25": posicion(rankings.get("bm25", [])),
+            "fusion": (c.get("signals") or {}).get("fusion_rank"),
+            "rerank": rerank.get(cid, (None, None))[0], "rerank_score": rerank.get(cid, (None, None))[1],
+            "qa": lectura.get("prob_respuesta"), "qa_texto": lectura.get("texto"),
+        })
+    oraciones: list[dict] = []
+    if retriever is not None and hasattr(retriever, "textos_diagnostico") and candidatos:
+        from contextlib import nullcontext
+
+        from ipsis.consulta.etapas.seleccion import _puntuar, dividir_en_unidades
+        from ipsis.lenguaje.entidades import usar_idioma
+
+        try:
+            textos = retriever.textos_diagnostico([c["chunk_id"] for c in candidatos[:3]])
+        except Exception:  # noqa: BLE001
+            textos = {}
+        vistas = set()
+        idioma = getattr(motor, "idioma", None)
+        for cid, texto in textos.items():
+            unidades = dividir_en_unidades(texto)
+            with usar_idioma(idioma) if idioma is not None else nullcontext():  # como en la consulta
+                scores = _puntuar(pregunta, unidades, getattr(retriever, "estadisticas_lexico", lambda: None)())
+            for unidad, score in zip(unidades, scores, strict=True):
+                if unidad.texto not in vistas:
+                    vistas.add(unidad.texto)
+                    oraciones.append({"chunk_id": cid, "texto": unidad.texto, "score": round(score, 3)})
+        oraciones.sort(key=lambda o: -o["score"])
+        oraciones = oraciones[:5]
+    return candidatos, oraciones
 
 
 __all__ = ["DiagnosticoConsulta", "Motor", "MotorNoListo", "MotorSaturado", "construir_motor",

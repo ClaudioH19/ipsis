@@ -194,6 +194,7 @@ class DiagnosticCandidate(EsquemaEstricto):
     chunk_id: str = Field(min_length=1)
     score: float
     signals: dict[str, Any] = Field(default_factory=dict)
+    inicio: str = ""  # comienzo del texto, para reconocerlo en el diagnóstico
 
 
 class QueryDiagnostic(EsquemaEstricto):
@@ -210,6 +211,8 @@ class QueryDiagnostic(EsquemaEstricto):
     advertencias: list[str] = Field(default_factory=list)
     senales_lexicas: dict[str, Any] | None = None
     puntajes_rerank: list[float] | None = None
+    rerank: list[dict[str, Any]] | None = None  # chunk_id y puntaje, en el orden del reranker
+    lectura_por_pista: str | None = None  # chunk que el lector leyó por la pista de la intención
     lecturas: list[dict[str, Any]] | None = None
     regla: str | None = None
     senales_politica: dict[str, Any] | None = None

@@ -32,6 +32,8 @@ class EtapaReranking(_Etapa):
         ctx.candidatos = [ctx.candidatos[i] for i in orden]
         ctx.puntajes_rerank = [puntajes[i] for i in orden]
         ctx.diagnostico["puntajes_rerank"] = [round(p, 4) for p in ctx.puntajes_rerank]
+        ctx.diagnostico["rerank"] = [{"chunk_id": c.chunk.chunk_id, "score": round(p, 4)}
+                                     for c, p in zip(ctx.candidatos, ctx.puntajes_rerank)]
 
 
 __all__ = ["EtapaReranking", "sigmoide"]

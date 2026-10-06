@@ -108,3 +108,16 @@ evaluation banks ("same topic, missing fact" traps).
 ## 14. Status
 
 Stable. `τ_foco` and `τ_oov_ok` are calibrated per project.
+
+## Relation words and cues
+
+The language pack's `intenciones` ([ADR 0005](../decisions/0005-deterministic-query-understanding.md))
+separate the relation a question asks for from its topic. In "when does the
+purchase start?", "when" and "start" are the relation: they leave the focus
+terms, `s_oov` and `s_cov`, so a missing "start" no longer looks like an
+absent topic. In the selection, a sentence that shares topic with the
+question and contains one of the intention's cues ("once", "after") weighs
+×2 if the cue is in its first words and ×1.5 if it is further in.
+`ipsis ask --diagnostics` shows the recognized intention's effect on the
+best scored sentences.
+

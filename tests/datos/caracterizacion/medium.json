@@ -222,7 +222,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No hay una respuesta directa en los documentos, pero esto es lo más relacionado:\n\nConsumo\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "answer": "No hay una respuesta directa en los documentos, pero esto es lo más relacionado:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
       "top1": 0.82504,
       "margin": 0.03083
@@ -232,9 +232,9 @@
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 894,
+        "offset_start": 902,
         "offset_end": 988,
-        "text": "Consumo\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal.",
+        "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal.",
         "score": 0.49809
       }
     ]

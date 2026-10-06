@@ -146,6 +146,10 @@ ask:
   span: 'Tramo exacto: «{text}» ({chunk_id}, offsets {start}-{end})'
   no_span: 'Tramo exacto: -'
   evidence: 'Evidencia: {doc_id} offsets {start}-{end}'
+  candidates: 'Candidatos (lugar en denso / BM25 / fusión / reranker; probabilidad del lector QA):'
+  candidate: '  {chunk_id}: denso {dense}, bm25 {bm25}, fusión {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
+  sentences: 'Oraciones mejor puntuadas (s_lex, lo que usa la selección):'
+  scored_sentence: '  {score:.3f} «{text}»'
   tone: 'Tono: {tone}; plantillas: {templates}'
   warning: 'Advertencia: {warning}'
 doctor:

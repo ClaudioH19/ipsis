@@ -7,9 +7,30 @@ from ipsis.nucleo.esquemas import EvidenceSpan
 from ipsis.recursos.mensajes import t
 
 
+def _es_titulo(linea: str) -> bool:
+    """Una línea corta y sin puntuación final («6.3 Procedimiento de Compra», «Verano»)."""
+    linea = linea.strip()
+    return bool(linea) and len(linea.split()) <= 10 and not linea.endswith((".", ":", ";", "?", "!", ")", "»", '"'))
+
+
 def oracion_que_contiene(texto: str, inicio: int, fin: int) -> tuple[int, int]:
-    """Rango de las oraciones de ``texto`` que cubren ``[inicio, fin)``."""
-    rangos = [(a, b) for a, b in dividir_oraciones(texto) if a < fin and b > inicio]
+    """Rango de las oraciones de ``texto`` que cubren ``[inicio, fin)``. Se corta
+    primero por línea: un título («6.3 Procedimiento de Compra») no es parte de la
+    oración que lo sigue."""
+    linea_ini = texto.rfind("\n", 0, inicio) + 1
+    linea_fin = texto.find("\n", fin)
+    linea_fin = len(texto) if linea_fin == -1 else linea_fin
+    linea = texto[linea_ini:linea_fin]
+    if _es_titulo(linea) and linea_fin < len(texto):
+        # Un tramo dentro de un título («Verano») no basta como evidencia: va con
+        # la primera oración de lo que titula, que es donde está el contenido.
+        siguiente_fin = texto.find("\n", linea_fin + 1)
+        siguiente_fin = len(texto) if siguiente_fin == -1 else siguiente_fin
+        oraciones = dividir_oraciones(texto[linea_fin + 1:siguiente_fin])
+        if oraciones:
+            return linea_ini, linea_fin + 1 + oraciones[0][1]
+    rangos = [(a + linea_ini, b + linea_ini) for a, b in dividir_oraciones(linea)
+              if a + linea_ini < fin and b + linea_ini > inicio]
     if not rangos:
         return inicio, fin
     return rangos[0][0], rangos[-1][1]
@@ -41,6 +62,34 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int) -> tuple[
     return resultado.offset_inicio, resultado.offset_fin
 
 
+def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list):
+    """Si la pregunta tiene una intención (``ipsis.lenguaje.consultas``) y la mejor
+    oración con una pista suya está en un candidato que el reranker dejó fuera
+    de la lectura, ese candidato también se lee. El reranker mide «se parece»;
+    la pista dice «puede responder esta relación»: con «¿cuándo empieza la
+    compra?», un pasaje sobre horarios puede quedar arriba y «Una vez aprobado
+    el formulario, se realizará la compra», abajo. El lector sigue decidiendo."""
+    if not resto:
+        return None
+    from ipsis.consulta.etapas.seleccion import _puntuar, dividir_en_unidades
+    from ipsis.lenguaje.consultas import comprender, peso_pista
+
+    comprension = comprender(pregunta, motor.idioma)
+    if not comprension.pistas:
+        return None
+    obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
+    est = obtener() if callable(obtener) else None
+
+    def mejor_con_pista(candidato) -> float:
+        unidades = dividir_en_unidades(candidato.chunk.texto_fuente)
+        scores = _puntuar(pregunta, unidades, est)
+        return max((s for u, s in zip(unidades, scores) if peso_pista(u.texto, comprension) > 0), default=0.0)
+
+    techo = max((mejor_con_pista(c) for c in leidos), default=0.0)
+    mejor = max(resto, key=mejor_con_pista)
+    return mejor if mejor_con_pista(mejor) > techo else None
+
+
 class EtapaLectura(_Etapa):
     """Lee los ``leer_m`` primeros candidatos. Si hay un tramo con respuesta,
     la evidencia es la oración que lo contiene (texto literal, offsets exactos)
@@ -56,6 +105,10 @@ class EtapaLectura(_Etapa):
         perfil = getattr(m, "perfil_instalacion", None)
         leer_m = perfil.cascada.leer_m if perfil is not None and perfil.cascada.leer_m else 2
         candidatos = ctx.candidatos[:leer_m]
+        extra = _candidato_por_pista(m, ctx.pregunta, candidatos, ctx.candidatos[leer_m:])
+        if extra is not None:
+            candidatos = [*candidatos, extra]
+            ctx.diagnostico["lectura_por_pista"] = extra.chunk.chunk_id
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
         ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite) for c in candidatos]
         lecturas = m.lector.leer(ctx.pregunta, [texto[a:b] for texto, (a, b) in zip(

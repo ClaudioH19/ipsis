@@ -233,6 +233,86 @@ marcadores:
   - en caso de
   - cuando
   - si
+# Relaciones que se preguntan (ipsis.lenguaje.consultas): los patrones las
+# reconocen en la pregunta y sus palabras no cuentan como tema; las pistas
+# suelen estar en la oración que responde y la suben en la selección. En
+# minúsculas y sin tildes; gana la primera intención que calza.
+intenciones:
+  inicio:
+    patrones:
+    - cuando (empieza|empiezan|comienza|comienzan|parte|parten|inicia|inician|arranca|se inicia|se empieza|se comienza)
+    - desde cuando
+    - a partir de cuando
+    - en que momento
+    - cuando se (realiza|realizan|hace|hacen|efectua|efectuan|lleva a cabo|produce|ejecuta)
+    pistas:
+    - una vez
+    - una vez que
+    - despues de
+    - luego de
+    - tras
+    - a partir de
+    - desde que
+    - previo a
+    - antes de
+    - al momento de
+    - cuando
+  fin:
+    patrones:
+    - cuando (termina|terminan|finaliza|finalizan|vence|vencen|acaba|concluye|expira)
+    - hasta cuando
+    pistas:
+    - hasta
+    - a mas tardar
+    - vence
+    - expira
+    - termina
+    - finaliza
+  consecuencia:
+    patrones:
+    - que (pasa|ocurre|sucede|hago|se hace) (si|cuando)
+    - en caso de que
+    - y si
+    pistas:
+    - si
+    - en caso de
+    - se procede
+    - debera
+  responsable:
+    patrones:
+    - quien(es)?( se encarga| es responsable| debe| tiene que)?
+    - a quien
+    - que (persona|cargo|unidad|area|departamento|oficina)
+    pistas:
+    - responsable
+    - encargado
+    - a cargo
+    - corresponde a
+    - le corresponde
+  requisito:
+    patrones:
+    - que (se necesita|necesito|se requiere|requisitos|documentos)
+    - que (debo|hay que) (presentar|tener|cumplir|entregar)
+    pistas:
+    - requiere
+    - requieren
+    - se necesita
+    - debe
+    - deben
+    - debera
+    - requisito
+    - requisitos
+  procedimiento:
+    patrones:
+    - como (se|puedo|hago|debo|hay que)
+    - que pasos
+    - cual es el (procedimiento|proceso|tramite)
+    pistas:
+    - primero
+    - luego
+    - despues
+    - paso
+    - se debe
 conversacional:
   categorias:
   - greeting

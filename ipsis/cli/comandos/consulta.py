@@ -207,6 +207,17 @@ class ComandoPreguntar(Comando):
             print(t("ask.no_span"))
         for e in d.evidencias:
             print(t("ask.evidence", doc_id=e["doc_id"], start=e["offset_inicio"], end=e["offset_fin"]))
+        if d.candidatos:
+            print(t("ask.candidates"))
+            for c in d.candidatos:
+                qa = f"{c['qa']:.2f}" if c["qa"] is not None else "-"
+                rr = f"{c['rerank']} ({c['rerank_score']:+.2f})" if c["rerank"] is not None else "-"
+                print(t("ask.candidate", chunk_id=c["chunk_id"], dense=c["denso"] or "-", bm25=c["bm25"] or "-",
+                        fusion=c["fusion"] or "-", rerank=rr, qa=qa, start=c["inicio"][:70]))
+        if d.oraciones:
+            print(t("ask.sentences"))
+            for o in d.oraciones:
+                print(t("ask.scored_sentence", score=o["score"], text=o["texto"][:110]))
         if d.tono:
             print(t("ask.tone", tone=d.tono, templates=", ".join(d.plantillas) or nada))
         for a in d.advertencias:

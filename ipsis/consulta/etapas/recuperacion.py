@@ -114,6 +114,26 @@ class RetrieverQdrant:
             candidatos.append(RetrievalCandidate(chunk=chunk_desde_payload(payload), signals=senales))
         return candidatos
 
+    def rankings_diagnostico(self, pregunta: str, limite: int = 10) -> dict[str, list[str]]:
+        """Solo para ``ipsis ask --diagnostics``: los chunk_id del ranking denso y del
+        BM25 por separado (la búsqueda híbrida devuelve solo la fusión)."""
+        salida = {}
+        for nombre, modo in (("denso", "vectorial"), ("bm25", "dispersa")):
+            res = buscar(self.coleccion, pregunta, modo=modo, limit=limite,
+                         vector_precomputado=self._vector_consulta(pregunta) if modo == "vectorial" else None)
+            salida[nombre] = [p["chunk_id"] for p in res.payloads]
+        return salida
+
+    def textos_diagnostico(self, chunk_ids: list[str]) -> dict[str, str]:
+        """Solo para el diagnóstico: el texto de los chunks pedidos."""
+        from qdrant_client import models
+
+        puntos, _ = self.coleccion.client.scroll(
+            collection_name=self.coleccion.nombre, limit=len(chunk_ids) or 1, with_payload=True,
+            scroll_filter=models.Filter(must=[models.FieldCondition(key="chunk_id",
+                                                                    match=models.MatchAny(any=list(chunk_ids)))]))
+        return {p.payload["chunk_id"]: p.payload["texto"] for p in puntos}
+
     def n_chunks(self) -> int:
         return self.coleccion.client.count(collection_name=self.coleccion.nombre, exact=True).count
 
@@ -160,6 +180,7 @@ class EtapaRecuperacion(_Etapa):
                 "chunk_id": candidato.chunk.chunk_id,
                 "score": candidato.score,
                 "signals": candidato.signals.model_dump(mode="python"),
+                "inicio": " ".join(candidato.chunk.texto_fuente.split())[:90],
             }
             for candidato in ctx.candidatos
         ]

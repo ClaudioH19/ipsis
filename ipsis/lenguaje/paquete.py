@@ -67,6 +67,15 @@ class GoldenInstrucciones(_Estricto):
     conversacionales: list[str] = Field(min_length=3, max_length=3)
 
 
+class Intencion(_Estricto):
+    """Una relación que se pregunta (``ipsis.lenguaje.consultas``): patrones que la
+    reconocen en la pregunta y pistas que suelen estar en la oración que responde.
+    En minúsculas y sin tildes; los patrones son expresiones regulares."""
+
+    patrones: list[str] = Field(min_length=1)
+    pistas: list[str] = Field(default_factory=list)
+
+
 IDIOMA_RESPALDO = "en"
 _CODIGO = r"^[a-z]{2,3}(-[a-z0-9]{2,8})*$"  # ISO 639 con subetiquetas opcionales (pt-br, zh-hant)
 
@@ -87,6 +96,8 @@ class PaqueteIdioma(_Estricto):
     conectores_fecha: list[str] = Field(default_factory=list)
     conectores_fecha_relativa: list[str] = Field(default_factory=list)
     marcadores: Marcadores = Field(default_factory=Marcadores)
+    # En orden: gana la primera cuyo patrón aparece en la pregunta.
+    intenciones: dict[str, Intencion] = Field(default_factory=dict)
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes
     interfaz: dict[str, str] = Field(default_factory=dict)

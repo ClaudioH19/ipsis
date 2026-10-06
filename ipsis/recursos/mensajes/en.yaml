@@ -146,6 +146,10 @@ ask:
   span: 'Exact span: «{text}» ({chunk_id}, offsets {start}-{end})'
   no_span: 'Exact span: -'
   evidence: 'Evidence: {doc_id} offsets {start}-{end}'
+  candidates: 'Candidates (place in dense / BM25 / fusion / reranker; QA reader probability):'
+  candidate: '  {chunk_id}: dense {dense}, bm25 {bm25}, fusion {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
+  sentences: 'Best scored sentences (s_lex, what the selection uses):'
+  scored_sentence: '  {score:.3f} «{text}»'
   tone: 'Tone: {tone}; templates: {templates}'
   warning: 'Warning: {warning}'
 doctor:

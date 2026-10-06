@@ -94,17 +94,27 @@ def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]
 
 
 def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[float]:
-    """``s_lex`` de cada unidad frente a la pregunta, en [0, 1]."""
+    """``s_lex`` de cada unidad frente a la pregunta, en [0, 1]; si la pregunta
+    tiene una intención (``ipsis.lenguaje.consultas``), la unidad que ya comparte
+    tema con ella y contiene una de sus pistas sube (``peso_pista``)."""
     from ipsis.indice.estadisticas import EstadisticasLexicas
+    from ipsis.lenguaje.consultas import BONO_PISTA, comprender, peso_pista, terminos_de_contenido
     from ipsis.lenguaje.entidades import idioma_activo
-    from ipsis.lenguaje.lexico import s_lex, terminos_pregunta
+    from ipsis.lenguaje.lexico import s_lex
 
     if not unidades:
         return []
     paquete = idioma_activo()
     est = estadisticas or EstadisticasLexicas.construir([u.texto for u in unidades], paquete)
-    tq = terminos_pregunta(pregunta, paquete)
-    return [s_lex(tq, terminos(u.texto, paquete), est) for u in unidades]
+    tq = terminos_de_contenido(pregunta, paquete, est)
+    comprension = comprender(pregunta, paquete)
+    scores = []
+    for u in unidades:
+        score = s_lex(tq, terminos(u.texto, paquete), est)
+        if score > 0:
+            score *= 1 + BONO_PISTA * peso_pista(u.texto, comprension)
+        scores.append(score)
+    return scores
 
 
 def _es_salvedad(texto: str) -> bool:
@@ -179,13 +189,19 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
                                    recortado=len(recorte) < len(texto_chunk), score_ancla=0.0)
 
     scores = scores_completos
+    # En un chunk que cruza de sección, una línea que no está en ninguna es un
+    # título: puede quedar en el tramo, pero nunca es la respuesta.
+    elegibles = [i for i in range(len(unidades))
+                 if not secciones or any(ini <= unidades[i].offset_inicio and unidades[i].offset_fin <= fin
+                                         for ini, fin, _ in secciones)] or list(range(len(unidades)))
+    indices_con_entidad_global = [i for i in indices_con_entidad_global if i in elegibles]
     tiene_entidad = bool(indices_con_entidad_global)
     if tiene_entidad:
         # entre las unidades con coincidencia exacta, ancla en la de mejor
         # score (desempate determinista, no arbitrario).
         idx_ancla = max(indices_con_entidad_global, key=lambda i: scores[i])
     else:
-        idx_ancla = max(range(len(unidades)), key=lambda i: scores[i])
+        idx_ancla = max(elegibles, key=lambda i: scores[i])
     # Si el chunk cruza de sección, el tramo se queda en la del ancla.
     seccion_ancla, rango = None, None
     for ini_sec, fin_sec, ruta in secciones or []:
@@ -262,6 +278,22 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
     nuevo["_score_ancla"] = resultado.score_ancla
     nuevo["_tiene_entidad_pregunta"] = resultado.tiene_entidad_pregunta
     return nuevo
+
+
+def quitar_tramos_repetidos(payloads: list[dict], scores: list[float]) -> tuple[list[dict], list[float]]:
+    """Dos chunks que se solapan pueden dar el mismo tramo (o uno dentro del otro):
+    se deja el primero, para no mostrar ni citar dos veces el mismo texto."""
+    vistos: list[tuple[str, int, int, str]] = []
+    salida_p, salida_s = [], []
+    for payload, score in zip(payloads, scores, strict=True):
+        doc, ini, fin, texto = payload.get("doc_id"), payload["offset_inicio"], payload["offset_fin"], payload["texto"]
+        if any(d == doc and ((i <= ini and fin <= f and texto in tx) or (ini <= i and f <= fin and tx in texto))
+               for d, i, f, tx in vistos):
+            continue
+        vistos.append((doc, ini, fin, texto))
+        salida_p.append(payload)
+        salida_s.append(score)
+    return salida_p, salida_s
 
 
 def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recuperacion: list[float]) -> tuple[list[dict], list[float]]:

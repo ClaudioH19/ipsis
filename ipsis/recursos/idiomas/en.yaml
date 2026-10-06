@@ -194,6 +194,78 @@ marcadores:
   - in case of
   - if
   - when
+# Relations being asked (ipsis.lenguaje.consultas): the patterns recognize them
+# in the question and their words do not count as topic; the cues usually sit in
+# the sentence that answers and raise it in the selection. Lowercase, without
+# accents; the first intention that matches wins.
+intenciones:
+  inicio:
+    patrones:
+    - when (does|do|did|will|can) (\w+ ){0,6}(start|starts|begin|begins|commence|commences|take place|happen)
+    - when (is|are) (\w+ ){0,6}(made|done|carried out|started|initiated|placed)
+    - since when
+    - from when
+    - at what (point|moment|time)
+    pistas:
+    - once
+    - after
+    - following
+    - upon
+    - as soon as
+    - from the moment
+    - prior to
+    - before
+    - when
+  fin:
+    patrones:
+    - when (does|do|will) (\w+ ){0,6}(end|ends|finish|finishes|expire|expires|terminate|terminates)
+    - until when
+    pistas:
+    - until
+    - no later than
+    - expires
+    - ends
+  consecuencia:
+    patrones:
+    - what (happens|occurs) (if|when)
+    - what if
+    - in case
+    pistas:
+    - if
+    - in case of
+    - in the event
+    - shall
+    - must
+  responsable:
+    patrones:
+    - who( is responsible| must| has to| should)?
+    - to whom
+    - which (person|role|unit|department|office)
+    pistas:
+    - responsible
+    - in charge
+    - corresponds to
+  requisito:
+    patrones:
+    - what (is|are) (needed|required)
+    - what (do i|must i|should i) (need|submit|provide|bring)
+    - what (documents|requirements)
+    pistas:
+    - requires
+    - required
+    - must
+    - need
+    - needs
+    - requirement
+  procedimiento:
+    patrones:
+    - how (do|can|should) (i|we|you)
+    - what (steps|is the procedure|is the process)
+    pistas:
+    - first
+    - then
+    - next
+    - step
 conversacional:
   categorias:
   - greeting

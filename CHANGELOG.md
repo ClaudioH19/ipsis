@@ -8,6 +8,22 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Deterministic query understanding** ([ADR 0005](docs/decisions/0005-deterministic-query-understanding.md)):
+  the language packs (es, en, pt) declare intentions (start, end,
+  consequence, person in charge, requirement, procedure) with patterns and
+  answer cues. The relation's words ("when… start") no longer count as
+  missing topic; among sentences on the topic, one with a cue ("Once the
+  form is approved…") is preferred by the selection and the reader window;
+  and the reader also reads the candidate with the best cued sentence when
+  the reranker left it out. "cuando empieza la compra?" now gets its literal
+  answer. Query bank: `light` 5 → 9 and `medium` 7 → 10 correct answers,
+  with no new false `ok`; the universal bank loses nothing, gains one exact
+  answer in `light`/en and has no new false `ok`.
+- **`ipsis ask --diagnostics` shows where each candidate is won or lost:**
+  its place in the dense, BM25, fusion and reranker rankings, the QA
+  reader's probability and the best scored sentences.
+- **Natural queries bank** (`tests/datos/banco_consultas`).
+
 - **OCR for scanned PDFs (optional):** `pip install "ipsis[ocr]"` plus the
   Tesseract program. Pages without text are rendered and read with
   Tesseract in the project language (plus English). `ipsis load` and
@@ -81,6 +97,11 @@ a minor change may break compatibility and is marked as such.
 
 ### Fixed
 
+- **The same passage no longer shows twice** when two overlapping chunks
+  yield the same span.
+- **A heading is never the answer sentence:** the selection does not anchor
+  on it, the reader's evidence does not drag the heading above it, and a
+  span the reader marks inside a heading comes with the sentence it titles.
 - **`ipsis ask` (without `--diagnostics`) called the old endpoint:** it
   still posted `{"pregunta", "id_sesion"}` to `/consultar`, which a current
   server answers with 404. It now uses `POST /ask` with `question` and

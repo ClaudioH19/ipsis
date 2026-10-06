@@ -17,7 +17,8 @@ class EtapaFiltros(_Etapa):
 
 def _senales_lexicas(motor, ctx) -> None:
     """Términos foco y ``s_oov`` de la pregunta, con las estadísticas del índice."""
-    from ipsis.lenguaje.lexico import s_oov, terminos_foco, terminos_pregunta
+    from ipsis.lenguaje.consultas import terminos_de_contenido
+    from ipsis.lenguaje.lexico import s_oov, terminos_foco
     from ipsis.nucleo.esquemas import SenalesLexicas
 
     obtener = getattr(motor.retriever, "estadisticas_lexico", None)
@@ -26,7 +27,8 @@ def _senales_lexicas(motor, ctx) -> None:
         return
     perfil = getattr(motor, "perfil_instalacion", None)
     k = perfil.lexico.max_terminos_foco if perfil is not None else 2
-    tq = terminos_pregunta(ctx.pregunta, motor.idioma)
+    # Sin las palabras de la relación («empieza» en «¿cuándo empieza la compra?»).
+    tq = terminos_de_contenido(ctx.pregunta, motor.idioma, est)
     ctx.terminos_pregunta = tq
     ctx.terminos_foco = terminos_foco(tq, est, k)
     ctx.lexicas = SenalesLexicas(

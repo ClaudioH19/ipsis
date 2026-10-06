@@ -187,6 +187,77 @@ marcadores:
   - caso
   - quando
   - se
+# Relações que se perguntam (ipsis.lenguaje.consultas): os padrões as reconhecem
+# na pergunta e suas palavras não contam como tema; as pistas costumam estar na
+# frase que responde e a sobem na seleção. Em minúsculas e sem acentos; vence a
+# primeira intenção que casa.
+intenciones:
+  inicio:
+    patrones:
+    - quando (comeca|comecam|inicia|iniciam|parte|se inicia|se comeca)
+    - desde quando
+    - a partir de quando
+    - em que momento
+    - quando se (realiza|realizam|faz|fazem|efetua|efetuam|executa)
+    pistas:
+    - uma vez
+    - depois de
+    - apos
+    - a partir de
+    - desde que
+    - assim que
+    - antes de
+    - quando
+  fin:
+    patrones:
+    - quando (termina|terminam|acaba|vence|vencem|expira|finaliza)
+    - ate quando
+    pistas:
+    - ate
+    - no maximo
+    - vence
+    - expira
+    - termina
+  consecuencia:
+    patrones:
+    - o que (acontece|ocorre|faco) (se|quando)
+    - e se
+    - em caso de
+    pistas:
+    - se
+    - em caso de
+    - devera
+  responsable:
+    patrones:
+    - quem( e responsavel| deve| tem que)?
+    - a quem
+    - que (pessoa|cargo|setor|departamento)
+    pistas:
+    - responsavel
+    - encarregado
+    - a cargo
+    - cabe a
+  requisito:
+    patrones:
+    - o que (e preciso|preciso|se exige|e necessario)
+    - que (documentos|requisitos)
+    pistas:
+    - exige
+    - requer
+    - precisa
+    - deve
+    - devem
+    - requisito
+  procedimiento:
+    patrones:
+    - como (se|posso|faco|devo)
+    - quais (os )?passos
+    - qual e o (procedimento|processo)
+    pistas:
+    - primeiro
+    - depois
+    - em seguida
+    - passo
 conversacional:
   categorias:
   - greeting
