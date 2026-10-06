@@ -24,7 +24,7 @@ purchase), and the system treated both the same.
 ## Decision
 
 Each language pack declares `intenciones` (`ipsis/recursos/idiomas/*.yaml`):
-general relations (`inicio`, `fin`, `consecuencia`, `responsable`,
+general relations (`umbral`, `inicio`, `fin`, `consecuencia`, `responsable`,
 `requisito`, `procedimiento`), each with **patterns** that recognize it in
 the question and **cues** that usually appear in the sentence that answers
 ("once", "after", "until"…). `ipsis/lenguaje/consultas.py` uses them in
@@ -33,14 +33,17 @@ three places, and only there:
 1. **A relation word absent from the corpus is not missing topic:** it
    leaves the focus terms, `s_oov` and `s_cov` ("start" when the answer says
    "Once…"). One that is in the corpus stays and helps coverage (Portuguese
-   "até" in "Até quando…?" and in its answer). Only the words written in the
-   patterns count as relation; the topic inside a pattern's gap stays.
+   "até" in "Até quando…?" and in its answer). A relation word is never a
+   focus term ("amount" in "from what amount…?": the answer has "100 UTM").
+   Only the words written in the patterns count as relation; the topic
+   inside a pattern's gap stays.
 2. **Selection and reader window:** among sentences that already share
    topic with the question, one with a cue weighs more (×2 when the cue is
    in its first words, ×1.5 further in).
 3. **Reading by cue:** if the best sentence with a cue is in a candidate the
-   reranker left out of the reading, the reader also reads it (one extra
-   passage, only when an intention was recognized).
+   reranker left out of the reading (below `leer_m` or outside `rerank_k`),
+   the reader also reads it (one extra passage, only when an intention was
+   recognized).
 
 `QueryAnalysis.intencion` carries the intention; the original question is
 always the one retrieved and answered.
@@ -60,7 +63,7 @@ documents as distractors, 11 answerable cases and 6 traps):
 | | correct answers | false `ok` |
 |---|---|---|
 | `light`, before → after | 5 → 9 | 1 → 1 (the same, pre-existing) |
-| `medium`, before → after | 7 → 10 | 1 → 1 (the same, pre-existing) |
+| `medium`, before → after | 7 → 11 | 1 → 1 (the same, pre-existing) |
 
 Universal bank (light and medium, es/en/pt): no new false `ok` and nothing
 lost; one more exact answer in `light`/en; latency within noise.

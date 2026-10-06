@@ -17,7 +17,7 @@ class EtapaFiltros(_Etapa):
 
 def _senales_lexicas(motor, ctx) -> None:
     """Términos foco y ``s_oov`` de la pregunta, con las estadísticas del índice."""
-    from ipsis.lenguaje.consultas import terminos_de_contenido
+    from ipsis.lenguaje.consultas import comprender, terminos_de_contenido
     from ipsis.lenguaje.lexico import s_oov, terminos_foco
     from ipsis.nucleo.esquemas import SenalesLexicas
 
@@ -37,7 +37,10 @@ def _senales_lexicas(motor, ctx) -> None:
         if any(est.df.get(t, 0) > 0 for t in propios):
             tq = propios
     ctx.terminos_pregunta = tq
-    ctx.terminos_foco = terminos_foco(tq, est, k)
+    # El foco es el tema: una palabra de la relación («monto» en «¿desde qué monto…?»)
+    # nunca lo es, aunque esté en el corpus y cuente para la cobertura.
+    relacion = comprender(ctx.pregunta_usuario or ctx.pregunta, motor.idioma).terminos_relacion
+    ctx.terminos_foco = terminos_foco([t for t in tq if t not in relacion] or tq, est, k)
     ctx.lexicas = SenalesLexicas(
         terminos_foco=[est.superficie.get(t, t) for t in ctx.terminos_foco],
         s_oov=s_oov(tq, est),

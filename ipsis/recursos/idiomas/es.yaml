@@ -238,6 +238,27 @@ marcadores:
 # suelen estar en la oración que responde y la suben en la selección. En
 # minúsculas y sin tildes; gana la primera intención que calza.
 intenciones:
+  umbral:
+    patrones:
+    - (desde|a partir de) que (monto|cantidad|valor|cifra|importe|edad|numero)
+    - que (monto|cantidad|valor|importe|limite|tope)( minimo| maximo)?
+    - cual es el (monto|limite|tope|minimo|maximo)
+    pistas:
+    - superior a
+    - superiores a
+    - mayor a
+    - mayores a
+    - mayor que
+    - mas de
+    - menos de
+    - inferior a
+    - inferiores a
+    - sobre
+    - hasta
+    - como minimo
+    - como maximo
+    - igual o superior
+    - a partir de
   inicio:
     patrones:
     - cuando (empieza|empiezan|comienza|comienzan|parte|parten|inicia|inician|arranca|se inicia|se empieza|se comienza)

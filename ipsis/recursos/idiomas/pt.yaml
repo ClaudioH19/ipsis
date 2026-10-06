@@ -192,6 +192,23 @@ marcadores:
 # frase que responde e a sobem na seleção. Em minúsculas e sem acentos; vence a
 # primeira intenção que casa.
 intenciones:
+  umbral:
+    patrones:
+    - (desde|a partir de) que (valor|montante|quantia|quantidade|idade|numero)
+    - que (valor|montante|limite|teto)( minimo| maximo)?
+    - qual e o (valor|limite|teto|minimo|maximo)
+    pistas:
+    - superior a
+    - superiores a
+    - acima de
+    - mais de
+    - menos de
+    - inferior a
+    - inferiores a
+    - ate
+    - no minimo
+    - no maximo
+    - a partir de
   inicio:
     patrones:
     - quando (comeca|comecam|inicia|iniciam|parte|se inicia|se comeca)

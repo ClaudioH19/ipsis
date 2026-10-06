@@ -32,6 +32,7 @@ class ContextoConsulta:
     terminos_pregunta: list[str] = field(default_factory=list)  # stems, sin stopwords
     candidatos: list[RetrievalCandidate] = field(default_factory=list)
     puntajes_rerank: list[float] | None = None
+    descartados_rerank: list[RetrievalCandidate] = field(default_factory=list)  # fuera de rerank_k
     lecturas: list[Any] | None = None
     evidencia_lector: EvidenceSpan | None = None
     respuesta_exacta: dict[str, Any] | None = None

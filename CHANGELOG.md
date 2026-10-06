@@ -9,14 +9,15 @@ a minor change may break compatibility and is marked as such.
 ### Added
 
 - **Deterministic query understanding** ([ADR 0005](docs/decisions/0005-deterministic-query-understanding.md)):
-  the language packs (es, en, pt) declare intentions (start, end,
+  the language packs (es, en, pt) declare intentions (threshold, start, end,
   consequence, person in charge, requirement, procedure) with patterns and
   answer cues. The relation's words ("when… start") no longer count as
   missing topic; among sentences on the topic, one with a cue ("Once the
   form is approved…") is preferred by the selection and the reader window;
   and the reader also reads the candidate with the best cued sentence when
-  the reranker left it out. "cuando empieza la compra?" now gets its literal
-  answer. Query bank: `light` 5 → 9 and `medium` 7 → 10 correct answers,
+  the reranker left it out (even outside `rerank_k`). "cuando empieza la
+  compra?" now gets its literal answer. Query bank: `light` 5 → 9 and
+  `medium` 7 → 11 correct answers,
   with no new false `ok`; the universal bank loses nothing, gains one exact
   answer in `light`/en and has no new false `ok`.
 - **Follow-up questions:** "and with 90?", "and if they accept it?" or "and

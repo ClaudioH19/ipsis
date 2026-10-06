@@ -67,7 +67,8 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
 def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list):
     """Si la pregunta tiene una intención (``ipsis.lenguaje.consultas``) y la mejor
     oración con una pista suya está en un candidato que el reranker dejó fuera
-    de la lectura, ese candidato también se lee. El reranker mide «se parece»;
+    de la lectura (más abajo que ``leer_m`` o fuera de ``rerank_k``), ese
+    candidato también se lee. El reranker mide «se parece»;
     la pista dice «puede responder esta relación»: con «¿cuándo empieza la
     compra?», un pasaje sobre horarios puede quedar arriba y «Una vez aprobado
     el formulario, se realizará la compra», abajo. El lector sigue decidiendo."""
@@ -107,10 +108,13 @@ class EtapaLectura(_Etapa):
         perfil = getattr(m, "perfil_instalacion", None)
         leer_m = perfil.cascada.leer_m if perfil is not None and perfil.cascada.leer_m else 2
         candidatos = ctx.candidatos[:leer_m]
-        extra = _candidato_por_pista(m, ctx.pregunta, candidatos, ctx.candidatos[leer_m:])
+        extra = _candidato_por_pista(m, ctx.pregunta, candidatos,
+                                     [*ctx.candidatos[leer_m:], *ctx.descartados_rerank])
         if extra is not None:
             candidatos = [*candidatos, extra]
             ctx.diagnostico["lectura_por_pista"] = extra.chunk.chunk_id
+            if extra not in ctx.candidatos:  # lo había dejado fuera el reranker: vuelve, para verificar su evidencia
+                ctx.candidatos = [*ctx.candidatos, extra]
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
         ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None)
                     for c in candidatos]

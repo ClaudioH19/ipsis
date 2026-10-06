@@ -22,6 +22,7 @@ def es():
     ("¿Quién firma la Resolución?", "responsable"),
     ("¿Qué documentos se necesitan?", "requisito"),
     ("¿Cómo se pide un reembolso?", "procedimiento"),
+    ("¿Desde qué monto se necesita una Resolución?", "umbral"),
     ("¿Cuánto dura la garantía?", None),  # sin intención: todo sigue como antes
 ])
 def test_reconoce_la_relacion_que_se_pregunta(es, pregunta, intencion):

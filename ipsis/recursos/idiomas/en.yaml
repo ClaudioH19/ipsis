@@ -199,6 +199,24 @@ marcadores:
 # the sentence that answers and raise it in the selection. Lowercase, without
 # accents; the first intention that matches wins.
 intenciones:
+  umbral:
+    patrones:
+    - (from|above|over) what (amount|value|quantity|number|age)
+    - what (amount|value|threshold|limit|minimum|maximum)
+    - how much is the (minimum|maximum|limit)
+    pistas:
+    - above
+    - over
+    - more than
+    - less than
+    - below
+    - greater than
+    - higher than
+    - up to
+    - at least
+    - at most
+    - exceeding
+    - exceed
   inicio:
     patrones:
     - when (does|do|did|will|can) (\w+ ){0,6}(start|starts|begin|begins|commence|commences|take place|happen)

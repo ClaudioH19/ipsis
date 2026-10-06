@@ -28,6 +28,7 @@ class EtapaReranking(_Etapa):
         )
         perfil = getattr(m, "perfil_instalacion", None)
         k = perfil.cascada.rerank_k if perfil is not None and perfil.cascada.rerank_k else len(orden)
+        ctx.descartados_rerank = [ctx.candidatos[i] for i in orden[k:]]
         orden = orden[:k]
         ctx.candidatos = [ctx.candidatos[i] for i in orden]
         ctx.puntajes_rerank = [puntajes[i] for i in orden]
