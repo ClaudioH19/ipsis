@@ -106,6 +106,9 @@ class PaqueteIdioma(_Estricto):
     # Palabras que nunca son término foco: verbos de apoyo («hacer», «tener») y
     # unidades («días», «veces»). Dicen cómo se pregunta, no de qué se habla.
     genericas: list[str] = Field(default_factory=list)
+    # Sufijos de sustantivos derivados que el stemmer deja («signatur», «assinatur»;
+    # ipsis.lenguaje.consultas.equivalentes): para el foco, «signature» cuenta como «sign».
+    sufijos_derivados: list[str] = Field(default_factory=list)
     conversacional: Conversacional = Field(default_factory=Conversacional)
     mensajes: Mensajes
     interfaz: dict[str, str] = Field(default_factory=dict)

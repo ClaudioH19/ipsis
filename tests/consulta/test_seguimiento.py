@@ -81,3 +81,45 @@ def test_una_pregunta_fuera_de_dominio_no_hereda(es):
     _, r = _conversar(es, ("¿Qué pasa si el proveedor rechaza la orden?", CORPUS[0]),
                       ("¿Cuál es la capital de Mongolia?", ""))
     assert not r.seguimiento
+
+
+# Los mismos turnos en inglés y portugués: cada paquete trae sus marcadores («and», «e»).
+OTROS = {
+    "en": (("The supplier has two business days to accept the Purchase Order. If the supplier rejects the "
+            "Purchase Order, the Supervisor cancels the order.",
+            "The library opens Monday to Friday.",
+            "The coffee maker warranty lasts 24 months."),
+           ("What happens if the supplier rejects the order?", "and with 90?", "and if they accept it?",
+            "How long does the coffee maker warranty last?", "What are the library opening hours?")),
+    "pt": (("O fornecedor tem dois dias úteis para aceitar a Ordem de Compra. Se o fornecedor recusar a "
+            "Ordem de Compra, o Supervisor cancela a ordem.",
+            "A biblioteca abre de segunda a sexta.",
+            "A garantia da cafeteira dura 24 meses."),
+           ("O que acontece se o fornecedor recusar a ordem?", "e com 90?", "e se ele aceitar?",
+            "Quanto dura a garantia da cafeteira?", "Qual é o horário da biblioteca?")),
+}
+
+
+@pytest.mark.parametrize("idioma", ["en", "pt"])
+def test_seguimiento_en_otros_idiomas(idioma):
+    paquete = cargar_paquete(idioma)
+    corpus, (pregunta, con_90, acepta, garantia, biblioteca) = OTROS[idioma]
+    est = _estadisticas(paquete, *corpus)
+
+    def turno(resolutor, texto, evidencia):
+        r = resolutor.resolver(texto, "s", paquete, est)
+        resolutor.recordar_evidencia("s", set(terminos(evidencia, paquete)))
+        return r
+
+    resolutor = ResolutorSeguimiento()
+    turno(resolutor, pregunta, corpus[0])
+    r = turno(resolutor, con_90, "")
+    assert r.seguimiento and r.pregunta.startswith(con_90)
+
+    resolutor = ResolutorSeguimiento()
+    turno(resolutor, pregunta, corpus[0])
+    assert turno(resolutor, acepta, "").seguimiento
+
+    resolutor = ResolutorSeguimiento()
+    turno(resolutor, garantia, corpus[2])
+    assert not turno(resolutor, biblioteca, "").seguimiento

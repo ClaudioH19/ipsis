@@ -113,11 +113,19 @@ Stable. `τ_foco` and `τ_oov_ok` are calibrated per project.
 
 The language pack's `intenciones` ([ADR 0005](../decisions/0005-deterministic-query-understanding.md))
 separate the relation a question asks for from its topic. In "when does the
-purchase start?", "when" and "start" are the relation: they leave the focus
-terms, `s_oov` and `s_cov`, so a missing "start" no longer looks like an
-absent topic. In the selection, a sentence that shares topic with the
-question and contains one of the intention's cues ("once", "after") weighs
-×2 if the cue is in its first words and ×1.5 if it is further in.
+purchase start?", "when" and "start" are the relation:
+
+- they are never focus terms, and they do not score in the selection: "…the
+  Purchasing Officer **starts** a new purchase" does not say when the
+  purchase starts, although it has "starts";
+- in `s_oov` and `s_cov` they count only when they help: a relation word
+  absent from the corpus is left out, and one in the corpus adds to the
+  coverage if the sentence has it ("até" in "…reembolso até 30 dias") but
+  does not subtract if it does not ("Once the form is approved…").
+
+In the selection, a sentence that shares topic with the question and
+contains one of the intention's cues ("once", "after") weighs ×2 if the cue
+is in its first words and ×1.5 if it is further in.
 `ipsis ask --diagnostics` shows the recognized intention's effect on the
 best scored sentences.
 
@@ -134,7 +142,14 @@ Each language pack also declares:
 - **`sinonimos`:** groups of words with their common forms. A question word
   that is not in the corpus and is not part of the relation is searched and
   measured as the forms of its group that are ("necesita" → "requieren").
-  The diagnostic shows them (`sinonimos`).
+  The diagnostic shows them (`sinonimos`). The groups also count when
+  checking the focus terms: "Above what amount do you **need** a
+  Resolution?" is answered by "…**require** a Resolution" ("need" is in the
+  corpus with another meaning, so the question is not expanded).
+- **`sufijos_derivados`:** derived-noun suffixes the stemmer keeps ("signatur",
+  "assinatur"). When checking the focus terms, "signature" counts as "signs"
+  and "assinatura" as "assina". Spanish needs none: its stemmer already takes
+  "aprobación" and "firma" to the verb's stem.
 
 ## Numbered labels
 

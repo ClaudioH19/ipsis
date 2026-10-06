@@ -1,0 +1,83 @@
+# Banco de consultas naturales en portugués (fuente). Los mismos casos que
+# es/, escritos como los diría alguien en portugués, no traducidos palabra
+# por palabra. Mismas reglas que el banco universal (ver ../README.md). Los
+# demás documentos son los del banco universal en portugués, como distractores.
+
+# --- la consulta que reveló el problema y sus variantes ---------------------
+- id: pt-parafrasis-001
+  documento: manual_aquisicoes.md
+  capacidad: fecha
+  pregunta: quando começa a compra?
+  respuesta: Uma vez aprovado o Formulário de Requisição pelo Chefe do Departamento de Compras
+- id: pt-trampa-001
+  par: pt-parafrasis-001
+  pregunta: Quando começa a auditoria de compras?
+- id: pt-parafrasis-002
+  documento: manual_aquisicoes.md
+  capacidad: fecha
+  pregunta: quando inicia a compra
+  respuesta: Uma vez aprovado o Formulário de Requisição pelo Chefe do Departamento de Compras
+- id: pt-trampa-002
+  par: pt-parafrasis-002
+  pregunta: Quando termina o contrato com o fornecedor?
+- id: pt-parafrasis-003
+  documento: manual_aquisicoes.md
+  capacidad: fecha
+  pregunta: A partir de quando se faz a compra?
+  respuesta: Uma vez aprovado o Formulário de Requisição pelo Chefe do Departamento de Compras
+- id: pt-parafrasis-004
+  documento: manual_aquisicoes.md
+  capacidad: fecha
+  pregunta: Em que momento a compra é realizada?
+  respuesta: Uma vez aprovado o Formulário de Requisição pelo Chefe do Departamento de Compras
+- id: pt-parafrasis-005
+  documento: manual_aquisicoes.md
+  capacidad: fecha
+  pregunta: Quando se começa a comprar?
+  respuesta: Uma vez aprovado o Formulário de Requisição pelo Chefe do Departamento de Compras
+
+# --- otras relaciones sobre el mismo procedimiento ---------------------------
+- id: pt-exacta-001
+  documento: manual_aquisicoes.md
+  capacidad: persona
+  pregunta: Quem envia a Ordem de Compra ao fornecedor?
+  respuesta: O Supervisor de Compras revisa a Ordem de Compra e a envia ao fornecedor
+- id: pt-trampa-003
+  par: pt-exacta-001
+  pregunta: Quem aprova o pagamento da Ordem de Compra no Financeiro?
+- id: pt-parafrasis-006
+  documento: manual_aquisicoes.md
+  capacidad: condicion
+  pregunta: O que acontece se o fornecedor recusar a ordem?
+  respuesta: o Supervisor de Compras cancela a ordem
+- id: pt-trampa-004
+  par: pt-parafrasis-006
+  pregunta: O que acontece se a unidade requisitante recusar os produtos recebidos?
+- id: pt-exacta-002
+  documento: manual_aquisicoes.md
+  capacidad: duracion
+  pregunta: Quantos dias o fornecedor tem para aceitar a Ordem de Compra?
+  respuesta: dois dias úteis para aceitar a Ordem de Compra
+- id: pt-trampa-005
+  par: pt-exacta-002
+  pregunta: Quantos dias o fornecedor tem para entregar os produtos?
+- id: pt-exacta-003
+  documento: manual_aquisicoes.md
+  capacidad: persona
+  pregunta: Quem assina a Resolução de compra?
+  respuesta: Diretor de Administração para assinatura
+- id: pt-parafrasis-007
+  documento: manual_aquisicoes.md
+  capacidad: cantidad
+  pregunta: A partir de que valor se precisa de uma Resolução?
+  respuesta: As compras superiores a 100 UTM exigem uma Resolução
+- id: pt-trampa-006
+  par: pt-parafrasis-007
+  pregunta: A partir de que valor se precisa de uma licitação pública?
+- id: pt-exacta-004
+  documento: manual_aquisicoes.md
+  capacidad: duracion
+  pregunta: Em quantos dias o Financeiro paga as faturas?
+  respuesta: em até trinta dias corridos a partir do recebimento
+- id: pt-fuera-001
+  pregunta: Qual é a capital da Mongólia?

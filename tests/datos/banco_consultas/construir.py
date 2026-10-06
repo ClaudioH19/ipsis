@@ -11,7 +11,7 @@ import importlib.util
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
-IDIOMAS = ("es",)
+IDIOMAS = ("es", "en", "pt")
 
 
 def _universal():

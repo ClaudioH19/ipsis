@@ -193,6 +193,23 @@ def terminos_genericos(paquete) -> frozenset[str]:
 _GENERICOS: dict[int, tuple[object, frozenset[str]]] = {}
 
 
+def equivalentes(terminos_oracion: list[str], paquete) -> list[str]:
+    """Los términos de la oración más lo que equivale a ellos, para ver si un término
+    foco está:
+
+    - su raíz sin sufijo derivado: «Who signs the Resolution?» se responde con
+      «…for signature» («signatur» → «sign»; la raíz que queda tiene 3 letras o más);
+    - las raíces de su grupo de sinónimos: «Above what amount do you need a
+      Resolution?» se responde con «…require a Resolution» («need» sí está en el
+      corpus, en otra acepción, así que la pregunta no se expande)."""
+    sufijos = getattr(paquete, "sufijos_derivados", None) or []
+    extra = [t[: -len(s)] for t in terminos_oracion for s in sufijos
+             if t.endswith(s) and len(t) - len(s) >= 3]
+    grupos = _grupos_por_raiz(paquete)
+    extra += [r for t in terminos_oracion for grupo in grupos.get(t, ()) for _, rs in grupo for r in rs]
+    return terminos_oracion + extra
+
+
 # id(paquete) → (paquete, raíz → grupos de (forma, raíces)): se calcula una vez por paquete,
 # no en cada oración que se puntúa. Guarda el paquete para que su id no se reutilice.
 _GRUPOS: dict[int, tuple[object, dict[str, list[list[tuple[str, tuple[str, ...]]]]]]] = {}
@@ -234,4 +251,4 @@ def tiene_pista(texto: str, comprension: Comprension) -> bool:
 
 
 __all__ = ["BONO_PISTA", "Comprension", "comprender", "peso_pista", "plano", "sinonimos_presentes",
-           "terminos_de_contenido", "terminos_genericos", "tiene_pista"]
+           "equivalentes", "terminos_de_contenido", "terminos_genericos", "tiene_pista"]

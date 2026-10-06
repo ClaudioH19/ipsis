@@ -106,8 +106,12 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[f
         return []
     paquete = idioma_activo()
     est = estadisticas or EstadisticasLexicas.construir([u.texto for u in unidades], paquete)
-    tq = terminos_de_contenido(pregunta, paquete, est)
     comprension = comprender(pregunta, paquete)
+    # La relación la representan las pistas, no sus palabras: «…the Purchasing Officer
+    # starts a new purchase» no dice cuándo empieza la compra aunque tenga «starts».
+    # (En la cobertura se quedan si están en el corpus: ver terminos_de_contenido.)
+    contenido = terminos_de_contenido(pregunta, paquete, est)
+    tq = [t for t in contenido if t not in comprension.terminos_relacion] or contenido
     scores = []
     for u in unidades:
         score = s_lex(tq, terminos(u.texto, paquete), est)
@@ -388,10 +392,21 @@ def _proximidad_del_foco(motor, ctx) -> None:
     # artículo 4?», «artículo» está en el título «Artículo 4», no en «…se cobra un
     # recargo del 15%». Cuenta para el foco, no para la cobertura.
     seccion = " ".join(ctx.evidencias[0].seccion_path or [])
-    terminos_foco_oracion = terminos_oracion + (terminos(seccion, motor.idioma) if seccion else [])
+    from ipsis.lenguaje.consultas import equivalentes
+
+    terminos_foco_oracion = equivalentes(
+        terminos_oracion + (terminos(seccion, motor.idioma) if seccion else []), motor.idioma)
+    # Una palabra de la relación suma a la cobertura si está en la oración («até» en
+    # «…reembolso até 30 dias»), pero no resta si falta: «when does the purchase start?»
+    # se responde con «Once the form is approved…», sin «start».
+    from ipsis.lenguaje.consultas import comprender
+
+    relacion = comprender(ctx.pregunta_usuario or ctx.pregunta, motor.idioma).terminos_relacion
+    presentes_oracion = set(terminos_oracion)
+    tq_cov = [t for t in ctx.terminos_pregunta if t not in relacion or t in presentes_oracion] or ctx.terminos_pregunta
     ctx.lexicas = ctx.lexicas.model_copy(update={
         "s_foco": s_foco(ctx.terminos_foco, terminos_foco_oracion),
-        "s_cov": s_cov(ctx.terminos_pregunta, terminos_oracion, est),
+        "s_cov": s_cov(tq_cov, terminos_oracion, est),
     })
     if isinstance(ctx.diagnostico.get("senales_lexicas"), dict):
         presentes = set(terminos_foco_oracion)

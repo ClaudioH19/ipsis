@@ -33,7 +33,9 @@ a minor change may break compatibility and is marked as such.
 - **`ipsis ask --diagnostics` shows where each candidate is won or lost:**
   its place in the dense, BM25, fusion and reranker rankings, the QA
   reader's probability and the best scored sentences.
-- **Natural queries bank** (`tests/datos/banco_consultas`).
+- **Natural queries bank** (`tests/datos/banco_consultas`) in Spanish,
+  English and Portuguese: the same 18 cases per language, written as each
+  language would ask them.
 
 - **OCR for scanned PDFs (optional):** `pip install "ipsis[ocr]"` plus the
   Tesseract program. Pages without text are rendered and read with
@@ -66,6 +68,12 @@ a minor change may break compatibility and is marked as such.
   in `light` and 1 → 0 in `medium`, no correct answer lost; the universal
   bank does not change. See ADR 0005. Projects with a `calibration.yaml` keep
   their calibrated value.
+- **Query understanding measured and adjusted in English and Portuguese:**
+  derived nouns count for the focus ("signature" for "signs", "assinatura"
+  for "assina"), the pack's synonyms count when checking the focus ("need" /
+  "require"), and the relation's words no longer pull the selection to a
+  sentence that merely contains them ("…starts a new purchase" for "when
+  does the purchase start?"). See ADR 0005.
 - **Numbered labels stay with their sentence:** "Artículo 4." or "4.2." is
   no longer split off as a sentence of its own, so answers and citations
   show "Artículo 4. Si el cliente no está…" and the label counts for the

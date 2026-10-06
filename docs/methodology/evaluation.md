@@ -30,7 +30,7 @@ internal field names; the golden set's CSV uses English columns (see the
 |---|---|---|
 | Synthetic `aqualis_sintetico@1.1.0` | `tests/datos/banco/` | 27 cases (56% unanswerable), regression and characterization |
 | Universal | `tests/datos/banco_universal/{es,en,pt}` | 90 cases (30 per language), `uso: regresion`: it cannot be used to calibrate |
-| Natural queries | `tests/datos/banco_consultas/es` | 18 cases: short, natural questions ("cuando empieza la compra?") on an administrative manual, with the universal documents as distractors and same-topic traps; see [ADR 0005](../decisions/0005-deterministic-query-understanding.md) |
+| Natural queries | `tests/datos/banco_consultas/{es,en,pt}` | 54 cases (18 per language): short, natural questions ("cuando empieza la compra?", "when does buying begin") on an administrative manual, with the universal documents of the language as distractors and same-topic traps; see [ADR 0005](../decisions/0005-deterministic-query-understanding.md) |
 | Client golden set | the project's `golden/bank/` | the only one that calibrates (see the [guide](../guide/golden.md)) |
 
 ## 4. Algorithm and tie-breaking

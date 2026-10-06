@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "dataset_id": "consultas_en",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "coffee_maker_warranty.md",
+        "doc_id": "coffee-maker-warranty"
+      },
+      {
+        "ruta": "greenhouse_irrigation.md",
+        "doc_id": "greenhouse-irrigation"
+      },
+      {
+        "ruta": "lab_protocol.md",
+        "doc_id": "lab-protocol"
+      },
+      {
+        "ruta": "library_hours.md",
+        "doc_id": "library-hours"
+      },
+      {
+        "ruta": "procurement_manual.md",
+        "doc_id": "procurement-manual"
+      },
+      {
+        "ruta": "refunds.md",
+        "doc_id": "refunds"
+      }
+    ],
+    "sha256": "d0c7f5e9e57087d1b044d24266230ac5a791c42b05ef7f9d56ccc3d22bcb3466"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "en"
+}

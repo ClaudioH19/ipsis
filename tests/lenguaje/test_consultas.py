@@ -142,3 +142,32 @@ def test_las_palabras_genericas_no_son_tema_pero_cuentan_para_la_cobertura(es):
     assert hac in terminos_de_contenido("¿Desde cuándo se hace la compra?", es, sin_genericas=False)
     # Si no hubiera otra cosa, se dejan.
     assert terminos_de_contenido("¿Qué hace?", es)
+
+
+def test_un_sustantivo_derivado_o_un_sinonimo_cuentan_para_el_foco():
+    """«Who signs…?» se responde con «…for signature»; «need» con «require»."""
+    from ipsis.lenguaje.consultas import equivalentes
+    from ipsis.lenguaje.texto import terminos
+
+    en = cargar_paquete("en")
+    oracion = terminos("Purchases above 100 UTM require a Resolution sent for signature.", en)
+    assert {terminos("signs", en)[0], terminos("need", en)[0]} <= set(equivalentes(oracion, en))
+    pt = cargar_paquete("pt")
+    assert terminos("assina", pt)[0] in equivalentes(terminos("para assinatura", pt), pt)
+
+
+def test_la_oracion_con_el_verbo_de_la_pregunta_no_gana_a_la_que_dice_cuando():
+    """«…starts a new purchase» tiene «start», pero la que responde es «Once…»."""
+    from ipsis.consulta.etapas.seleccion import seleccionar_texto_pertinente
+    from ipsis.indice.estadisticas import EstadisticasLexicas
+    from ipsis.lenguaje.entidades import usar_idioma
+
+    en = cargar_paquete("en")
+    once = "Once the form has been approved by the Head of Purchasing, the product will be purchased."
+    rechazo = ("If the supplier rejects the Purchase Order, the Purchasing Officer starts a new purchase "
+               "with another supplier.")
+    texto = f"{once} {rechazo}"
+    with usar_idioma(en):
+        est = EstadisticasLexicas.construir([once, rechazo], en)
+        r = seleccionar_texto_pertinente("when does the purchase start?", texto, 0, 100, estadisticas=est)
+    assert r.texto.startswith("Once the form")

@@ -153,6 +153,45 @@ topic (every focus term is in it). The universal bank keeps its pre-existing
 false `ok` ("¿Cuántas muestras se rechazan cada mes?": both focus terms are
 in the sentence that answers another question).
 
+## Other languages
+
+The query bank now has the same 18 cases in English and Portuguese, written
+as each language would ask them, with that language's universal documents as
+distractors. Measuring them showed three gaps that Spanish hid:
+
+- **Derived nouns.** "Who signs the purchase Resolution?" is answered by
+  "…for **signature**", and the English stemmer keeps "signatur" apart from
+  "sign" (the same with "assinatura" / "assina"). Spanish's "firma" is both
+  verb and noun. Each pack now declares `sufijos_derivados`, used only to
+  check the focus terms.
+- **Synonyms in another sense.** "Above what amount do you **need** a
+  Resolution?": "need" is in the corpus ("the justification of the need"),
+  so it is not expanded, and the answer says "require". The pack's synonym
+  groups now also count when checking the focus terms.
+- **The relation's verb in another sentence.** "…the Purchasing Officer
+  **starts** a new purchase with another supplier" contains "start"; since
+  "start" is in the corpus it counted as content and that sentence beat
+  "Once the Requisition Form has been approved…". The relation's words no
+  longer score in the selection (the cues represent the relation), and in
+  the coverage they add when the sentence has them but do not subtract.
+
+Correct answers (direct and showing the literal answer) / direct but wrong,
+before the layer (`6b25921`) and now:
+
+| | es | en | pt |
+|---|---|---|---|
+| `light`, before → now | 3 / 3 → 7 / 2 | 1 / 1 → 3 / 0 | 3 / 2 → 8 / 2 |
+| `medium`, before → now | 7 / 1 → 11 / 0 | 6 / 0 → 8 / 0 | 7 / 0 → 10 / 0 |
+
+The universal bank (light and medium × es/en/pt) does not change; latency
+within noise. Follow-up questions are covered by unit tests in the three
+languages.
+
+Still wrong in `light`: "cuando parte la compra?", "¿Quién firma la
+Resolución de compra?" and "Quem assina a Resolução de compra?" (another
+sentence on the same topic, with every focus term), and "Quando se começa a
+comprar?", whose answering chunk does not reach `light`'s three candidates.
+
 ## Not done yet
 
 From the proposal that motivated this: parent/neighbor expansion. It should
