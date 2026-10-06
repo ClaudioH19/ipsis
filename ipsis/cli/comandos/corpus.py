@@ -4,7 +4,13 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from ipsis.aplicacion.corpus import ErrorConfiguracion, archivos_de_ruta, cargar_documentos, indexar_proyecto
+from ipsis.aplicacion.corpus import (
+    ErrorConfiguracion,
+    archivos_de_ruta,
+    avisos_de_ocr,
+    cargar_documentos,
+    indexar_proyecto,
+)
 from ipsis.cli.base import Comando
 from ipsis.recursos.mensajes import t
 
@@ -27,7 +33,8 @@ class ComandoCargar(Comando):
             return 1
 
         try:
-            resultado = cargar_documentos(archivos)
+            with avisos_de_ocr(print):  # el OCR cuenta qué página lee y con qué confianza
+                resultado = cargar_documentos(archivos)
         except (FileNotFoundError, ValueError) as e:
             print(t("cli.error", error=e))
             return 1
@@ -63,7 +70,8 @@ class ComandoIndexar(Comando):
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
-            resumen = indexar_proyecto(args.corpus)
+            with avisos_de_ocr(print):
+                resumen = indexar_proyecto(args.corpus)
         except ErrorConfiguracion as e:
             print(t("index.config_error", error=e))
             print(t("index.run_doctor"))

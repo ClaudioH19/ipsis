@@ -581,16 +581,18 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     sin_texto = [i for i, (texto, _) in enumerate(paginas)
                  if len(texto.strip()) < UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA]
     leidas_ocr: list[int] = []
+    confianza_ocr: dict[int, float] = {}
     motivo_sin_ocr, motor = "", None
     if sin_texto:
         from ipsis.ingesta.ocr import idioma_del_proyecto, leer_paginas, motor_ocr
 
         motor, motivo_sin_ocr = motor_ocr(idioma_del_proyecto())
         if motor is not None:
-            for i, texto in leer_paginas(ruta, sin_texto, motor).items():
-                if len(texto.strip()) >= UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
-                    paginas[i] = (texto, {})  # sin tamaños de letra: los títulos salen del texto
+            for i, leida in leer_paginas(ruta, sin_texto, motor).items():
+                if len(leida.texto.strip()) >= UMBRAL_PDF_ESCANEADO_CHARS_POR_PAGINA:
+                    paginas[i] = (leida.texto, {})  # sin tamaños de letra: los títulos salen del texto
                     leidas_ocr.append(i)
+                    confianza_ocr[i] = leida.confianza
             if len(leidas_ocr) < len(sin_texto):
                 motivo_sin_ocr = t("core.ocr_no_text")
     textos_paginas = [texto for texto, _ in paginas]
@@ -637,8 +639,16 @@ def parsear_pdf(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docume
     # Las páginas leídas con OCR se avisan (conviene revisar sus citas), y las que
     # siguen sin texto también, en vez de perderlas en silencio.
     if leidas_ocr:
+        from ipsis.ingesta.ocr import CONFIANZA_BAJA
+
+        media = sum(confianza_ocr.values()) / len(confianza_ocr)
         advertencias.append(t("core.pdf_ocr_pages", pages=", ".join(str(i + 1) for i in leidas_ocr),
-                              n=len(leidas_ocr), total=n_paginas, languages=motor.idiomas))
+                              n=len(leidas_ocr), total=n_paginas, languages=motor.idiomas,
+                              confidence=f"{media:.0f}"))
+        bajas = [i for i in leidas_ocr if confianza_ocr[i] < CONFIANZA_BAJA]
+        if bajas:
+            advertencias.append(t("core.pdf_ocr_low_confidence", threshold=f"{CONFIANZA_BAJA:.0f}",
+                                  pages=", ".join(f"{i + 1} ({confianza_ocr[i]:.0f} %)" for i in bajas)))
     vacias = [i + 1 for i in sin_texto if i not in leidas_ocr]
     if vacias:
         advertencias.append(t("core.pdf_pages_without_text", pages=", ".join(map(str, vacias)),

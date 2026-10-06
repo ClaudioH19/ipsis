@@ -10,9 +10,12 @@ a minor change may break compatibility and is marked as such.
 
 - **OCR for scanned PDFs (optional):** `pip install "ipsis[ocr]"` plus the
   Tesseract program. Pages without text are rendered and read with
-  Tesseract in the project language (plus English); `ipsis load` lists
-  which pages were read that way. Without it, the scanned PDF is rejected as
-  before and the message says what to install. `IPSIS_OCR=off` turns it off.
+  Tesseract in the project language (plus English). `ipsis load` and
+  `ipsis index` show each page as it is read with its confidence (average
+  over its words), list the files read with OCR and flag pages under 85 %.
+  What `load` reads is cached in `.ipsis/ocr`, so `index` reuses the same
+  text. Without OCR, the scanned PDF is rejected as before and the message
+  says what to install. `IPSIS_OCR=off` turns it off.
 - **`answer_blocks` in `POST /ask`:** the answer by paragraph, so a site can
   render it with structure. Each block has a `type` (`lead` for the tone's
   opening or intro, `passage` for literal document text, `message` for

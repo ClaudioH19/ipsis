@@ -51,7 +51,7 @@ def test_con_ocr_un_pdf_escaneado_se_lee_y_se_avisa(tmp_path: Path, monkeypatch)
 
     leido = "Garantia\n\nLa garantia dura dos anos desde la compra del equipo."
     monkeypatch.setattr(ocr, "motor_ocr", lambda idioma: (ocr.MotorOCR("spa+eng"), ""))
-    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: leido for i in indices})
+    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: ocr.PaginaOCR(leido, 92.0) for i in indices})
     ruta = tmp_path / "escaneado.pdf"
     ruta.write_bytes(_pdf_pagina_vacia())
 
@@ -70,7 +70,7 @@ def test_las_lineas_en_blanco_del_ocr_no_parten_los_parrafos(tmp_path: Path, mon
     leido = ("Garantía\n\nLa cafetera Brio tiene una garantía de veinticuatro\n\nmeses desde la fecha de compra."
              "\n\nLa garantía cubre:\n- el motor y la bomba de presión;\n\n- el depósito de agua.\n")
     monkeypatch.setattr(ocr, "motor_ocr", lambda idioma: (ocr.MotorOCR("spa+eng"), ""))
-    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: leido for i in indices})
+    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: ocr.PaginaOCR(leido, 92.0) for i in indices})
     ruta = tmp_path / "escaneado.pdf"
     ruta.write_bytes(_pdf_pagina_vacia())
 
@@ -126,3 +126,45 @@ def test_ocr_real_si_tesseract_esta_instalado(tmp_path: Path):
     texto = doc.texto_completo.lower()
     assert "veinticuatro" in texto and "filtro" in texto
     assert any("OCR" in a for a in doc.advertencias)
+
+
+def test_la_confianza_baja_se_avisa_por_pagina(tmp_path: Path, monkeypatch):
+    import ipsis.ingesta.ocr as ocr
+
+    leido = "La garantia dura dos anos desde la compra del equipo."
+    monkeypatch.setattr(ocr, "motor_ocr", lambda idioma: (ocr.MotorOCR("spa+eng"), ""))
+    monkeypatch.setattr(ocr, "leer_paginas", lambda ruta, indices, motor: {i: ocr.PaginaOCR(leido, 54.4) for i in indices})
+    ruta = tmp_path / "borroso.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+
+    doc = parsear_pdf(str(ruta), doc_id="b", doc_titulo="B", version="1")
+
+    assert any("54 %" in a and "OCR" in a for a in doc.advertencias)  # la media
+    assert any("1 (54 %)" in a for a in doc.advertencias)  # y la página dudosa
+
+
+def test_leer_paginas_cuenta_el_avance_y_reusa_lo_leido(tmp_path: Path, monkeypatch):
+    """ipsis load lee y guarda; ipsis index reutiliza el mismo texto sin volver a leer."""
+    import ipsis.ingesta.ocr as ocr
+
+    (tmp_path / "config").mkdir()
+    monkeypatch.chdir(tmp_path)
+    ruta = tmp_path / "escaneado.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+    lecturas = []
+
+    def leer(imagen, idiomas):
+        lecturas.append(idiomas)
+        return ocr.PaginaOCR("Texto leído de la página escaneada.", 88.0)
+
+    monkeypatch.setattr(ocr, "_leer_imagen", leer)
+    motor = ocr.MotorOCR("spa+eng", "5.4.0")
+    avisos: list[str] = []
+    with ocr.con_progreso(avisos.append):
+        primera = ocr.leer_paginas(str(ruta), [0], motor)
+        segunda = ocr.leer_paginas(str(ruta), [0], motor)
+
+    assert primera == segunda == {0: ocr.PaginaOCR("Texto leído de la página escaneada.", 88.0)}
+    assert lecturas == ["spa+eng"]  # la segunda vez salió de .ipsis/ocr
+    assert any("escaneado.pdf" in a for a in avisos)
+    assert sum("88 %" in a for a in avisos) == 2 and any("ya leída" in a or "already read" in a for a in avisos)

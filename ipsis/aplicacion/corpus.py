@@ -26,6 +26,14 @@ def archivos_de_ruta(ruta: Path) -> list[Path]:
     raise FileNotFoundError(t("app.path_missing", path=ruta))
 
 
+def avisos_de_ocr(avisar):
+    """Mientras dure, el OCR de PDF escaneados cuenta con ``avisar`` qué página lee y
+    con qué confianza (``ipsis load`` e ``ipsis index`` le pasan ``print``)."""
+    from ipsis.ingesta.ocr import con_progreso
+
+    return con_progreso(avisar)
+
+
 def cargar_documentos(archivos: list[Path]):
     """Copia los archivos al corpus y los registra en el catálogo."""
     from ipsis.ingesta.catalogo import agregar_documentos_al_catalogo
@@ -55,4 +63,4 @@ def indexar_proyecto(carpeta_corpus: str):
     return ejecutar_ingesta(carpeta_corpus=carpeta_corpus, cfg_rec=cfg_rec)
 
 
-__all__ = ["ErrorConfiguracion", "archivos_de_ruta", "cargar_documentos", "indexar_proyecto"]
+__all__ = ["ErrorConfiguracion", "archivos_de_ruta", "avisos_de_ocr", "cargar_documentos", "indexar_proyecto"]

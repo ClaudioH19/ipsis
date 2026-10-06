@@ -122,8 +122,14 @@ Then install the Tesseract program with the language of your documents:
 - Only pages without text go through OCR; digital pages are read as usual.
 - The project language picks the OCR language (`es` → `spa`, `pt` → `por`,
   `en` → `eng`), plus English for acronyms.
-- `ipsis load` lists the pages read with OCR: check their citations, since
-  OCR can mistake letters.
+- `ipsis load` and `ipsis index` show each page as it is read, with its
+  **confidence** (Tesseract's average over its words, 0–100 %), and list the
+  files read with OCR. Under 85 % a page is flagged as low confidence: OCR
+  starts to mistake letters there ("Horanos" for "Horarios"), so check its
+  citations or scan it again.
+- What `ipsis load` reads is kept in `.ipsis/ocr`: `ipsis index` reuses the
+  same text instead of reading again, as long as the file, the languages and
+  the Tesseract version do not change.
 - `IPSIS_OCR=off` turns it off even when it is installed.
 
 ## Model cache and offline use
