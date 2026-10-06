@@ -233,11 +233,13 @@ en español; todo lo que ve el usuario está en inglés. Lee
 <details>
 <summary><b>Límites conocidos</b></summary>
 
-- Los PDF escaneados necesitan OCR externo; se rechazan para no indexar
-  contenido vacío.
-- Un sinónimo que no aparece en el documento puede llevar a abstenerse: es el
+- Los PDF escaneados solo se leen con el extra de OCR opcional (`ipsis[ocr]` y
+  Tesseract); sin él, sus páginas sin texto se avisan y se saltan.
+- Un sinónimo que no está en los grupos del paquete de idioma ni en el
+  documento puede llevar a una respuesta relacionada en vez de directa: es el
   lado seguro del error.
-- No usa el historial de la conversación para preguntas de seguimiento.
+- Las preguntas de seguimiento («¿y con 90?») solo heredan el tema del turno
+  anterior de la misma sesión, guardado en memoria.
 - Un idioma por proyecto; no detecta el idioma de cada pregunta.
 - En modo local, Qdrant bloquea su carpeta mientras otro proceso la usa.
 
