@@ -34,8 +34,12 @@ a minor change may break compatibility and is marked as such.
   its place in the dense, BM25, fusion and reranker rankings, the QA
   reader's probability and the best scored sentences.
 - **Natural queries bank** (`tests/datos/banco_consultas`) in Spanish,
-  English and Portuguese: the same 18 cases per language, written as each
-  language would ask them.
+  English and Portuguese: 60 cases per language on four institutional
+  documents (manual, regulation, FAQ, policy), written as each language
+  would ask them, with every category of the universal bank.
+- **Conversations bank** (`tests/datos/banco_conversaciones`): 20
+  conversations per language that measure topic inheritance turn by turn,
+  deliberate topic changes and traps inside a follow-up.
 
 - **OCR for scanned PDFs (optional):** `pip install "ipsis[ocr]"` plus the
   Tesseract program. Pages without text are rendered and read with

@@ -17,6 +17,10 @@
         "doc_id": "greenhouse-irrigation"
       },
       {
+        "ruta": "it_help_desk_faq.md",
+        "doc_id": "it-help-desk-faq"
+      },
+      {
         "ruta": "lab_protocol.md",
         "doc_id": "lab-protocol"
       },
@@ -31,13 +35,23 @@
       {
         "ruta": "refunds.md",
         "doc_id": "refunds"
+      },
+      {
+        "ruta": "remote_work_regulation.md",
+        "doc_id": "remote-work-regulation"
+      },
+      {
+        "ruta": "travel_allowance_policy.md",
+        "doc_id": "travel-allowance-policy"
       }
     ],
-    "sha256": "d0c7f5e9e57087d1b044d24266230ac5a791c42b05ef7f9d56ccc3d22bcb3466"
+    "sha256": "6e18d80c14929ba3a5497e9763006dcc48c4575bbfab3ecaada7b39e7fa4b7cb"
   },
   "categorias_requeridas": [
+    "ambigua",
     "exacta",
     "parafrasis",
+    "premisa_falsa",
     "sin_respuesta"
   ],
   "uso": "regresion",

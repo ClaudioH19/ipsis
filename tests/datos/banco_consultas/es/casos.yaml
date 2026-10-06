@@ -85,3 +85,174 @@
   respuesta: dentro de treinta días corridos desde la recepción conforme
 - id: es-fuera-001
   pregunta: ¿Cuál es la capital de Mongolia?
+
+# --- ampliación a 60 casos: reglamento, preguntas frecuentes y política ------
+# Documentos de otros tipos (artículos numerados, preguntas como títulos,
+# montos y plazos), preguntas coloquiales y con palabras que el documento no
+# usa («clave», «computador», «software»), trampas del mismo tema, premisas
+# falsas y preguntas ambiguas.
+- id: es-exacta-005
+  documento: reglamento_teletrabajo.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días a la semana se puede teletrabajar?
+  respuesta: hasta tres días por semana
+- id: es-trampa-007
+  par: es-exacta-005
+  pregunta: ¿Cuántos días de vacaciones tiene un funcionario en teletrabajo?
+- id: es-exacta-006
+  documento: reglamento_teletrabajo.md
+  capacidad: cantidad
+  pregunta: ¿Qué asignación mensual se da para gastos de conexión?
+  respuesta: asignación mensual de 20.000 pesos
+- id: es-trampa-008
+  par: es-exacta-006
+  pregunta: ¿Qué asignación mensual se da para gastos de electricidad?
+- id: es-exacta-007
+  documento: preguntas_frecuentes_ti.md
+  capacidad: duracion
+  pregunta: ¿Cada cuánto vence la contraseña?
+  respuesta: La contraseña vence cada 90 días
+- id: es-trampa-009
+  par: es-exacta-007
+  pregunta: ¿Cada cuánto vence la tarjeta de acceso?
+- id: es-exacta-008
+  documento: preguntas_frecuentes_ti.md
+  capacidad: cantidad
+  pregunta: ¿Después de cuántos intentos fallidos se bloquea la cuenta?
+  respuesta: después de cinco intentos fallidos
+- id: es-exacta-009
+  documento: politica_viaticos.md
+  capacidad: cantidad
+  pregunta: ¿Cuál es el viático diario dentro del país?
+  respuesta: 45.000 pesos dentro del país
+- id: es-trampa-010
+  par: es-exacta-009
+  pregunta: ¿Cuánto se paga por kilómetro si viajo en auto propio?
+- id: es-exacta-010
+  documento: politica_viaticos.md
+  capacidad: persona
+  pregunta: ¿Quién compra los pasajes aéreos?
+  respuesta: Los pasajes aéreos los compra la Unidad de Viajes
+- id: es-trampa-011
+  par: es-exacta-010
+  pregunta: ¿Quién compra los pasajes de bus?
+- id: es-exacta-011
+  documento: preguntas_frecuentes_ti.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos caracteres debe tener la nueva contraseña?
+  respuesta: al menos 12 caracteres
+- id: es-exacta-012
+  documento: reglamento_teletrabajo.md
+  capacidad: duracion
+  pregunta: ¿Con cuánta anticipación se comunica la suspensión del teletrabajo?
+  respuesta: con diez días de anticipación
+- id: es-exacta-013
+  documento: reglamento_teletrabajo.md
+  capacidad: duracion
+  pregunta: ¿Cada cuánto se revisa el acuerdo de teletrabajo?
+  respuesta: se revisa cada seis meses
+- id: es-trampa-012
+  par: es-exacta-013
+  pregunta: ¿Cada cuánto se revisa el plan de metas del funcionario?
+- id: es-exacta-014
+  documento: preguntas_frecuentes_ti.md
+  capacidad: fecha
+  pregunta: ¿Qué horario tiene la Mesa de Ayuda?
+  respuesta: de lunes a viernes de 8:00 a 18:00 horas
+
+- id: es-parafrasis-008
+  documento: reglamento_teletrabajo.md
+  capacidad: condicion
+  pregunta: quien puede pedir teletrabajo
+  respuesta: al menos seis meses de antigüedad en la institución
+- id: es-parafrasis-009
+  documento: reglamento_teletrabajo.md
+  capacidad: duracion
+  pregunta: ¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?
+  respuesta: La jefatura responde dentro de cinco días hábiles
+- id: es-parafrasis-010
+  documento: reglamento_teletrabajo.md
+  capacidad: lista
+  pregunta: ¿Qué equipos me pasan para trabajar desde la casa?
+  respuesta: La institución entrega un notebook y un monitor
+- id: es-trampa-013
+  par: es-parafrasis-010
+  pregunta: ¿Qué muebles me pasan para trabajar desde la casa?
+- id: es-parafrasis-011
+  documento: reglamento_teletrabajo.md
+  capacidad: fecha
+  pregunta: ¿En qué horario tengo que estar conectado si teletrabajo?
+  respuesta: entre las 9:00 y las 17:00 horas
+- id: es-parafrasis-012
+  documento: reglamento_teletrabajo.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si no cumplo mis metas teletrabajando?
+  respuesta: puede suspender el teletrabajo
+- id: es-trampa-014
+  par: es-parafrasis-012
+  pregunta: ¿Qué pasa si me enfermo mientras teletrabajo?
+- id: es-parafrasis-013
+  documento: preguntas_frecuentes_ti.md
+  capacidad: procedimiento
+  pregunta: olvidé la clave, cómo la cambio?
+  respuesta: Ingrese al portal de autoservicio
+- id: es-parafrasis-014
+  documento: preguntas_frecuentes_ti.md
+  capacidad: procedimiento
+  pregunta: me bloquearon la cuenta, qué hago?
+  respuesta: llame a la Mesa de Ayuda al anexo 4500
+- id: es-parafrasis-015
+  documento: preguntas_frecuentes_ti.md
+  capacidad: duracion
+  pregunta: ¿Cuánto tarda en llegar un computador nuevo?
+  respuesta: entrega el equipo dentro de diez días hábiles
+- id: es-parafrasis-016
+  documento: preguntas_frecuentes_ti.md
+  capacidad: persona
+  pregunta: ¿Quién autoriza instalar software?
+  respuesta: las aprueba el Encargado de Seguridad
+- id: es-trampa-015
+  par: es-parafrasis-016
+  pregunta: ¿Quién autoriza comprar licencias de software?
+- id: es-parafrasis-017
+  documento: politica_viaticos.md
+  capacidad: cantidad
+  pregunta: ¿Cuánta plata me dan por día si viajo al extranjero?
+  respuesta: 150 dólares en el extranjero
+- id: es-parafrasis-018
+  documento: politica_viaticos.md
+  capacidad: duracion
+  pregunta: ¿Con cuántos días de anticipación pido el viático?
+  respuesta: al menos siete días antes del viaje
+- id: es-parafrasis-019
+  documento: politica_viaticos.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si no rindo los gastos a tiempo?
+  respuesta: el monto se descuenta de la remuneración siguiente
+- id: es-trampa-016
+  par: es-parafrasis-019
+  pregunta: ¿Qué pasa si pierdo las boletas originales?
+- id: es-parafrasis-020
+  documento: politica_viaticos.md
+  capacidad: fecha
+  pregunta: ¿Cuándo me depositan el viático?
+  respuesta: Finanzas transfiere el viático dos días antes de la salida
+
+- id: es-premisa-001
+  pregunta: ¿Qué dice el artículo 12 del reglamento de teletrabajo?
+- id: es-premisa-002
+  pregunta: ¿Qué cubre la asignación de 35.000 pesos del teletrabajo?
+- id: es-premisa-003
+  pregunta: ¿Qué pasa si el viático diario supera los 100.000 pesos?
+- id: es-ambigua-001
+  pregunta: ¿Cuántos días son?
+- id: es-ambigua-002
+  pregunta: ¿Quién lo aprueba?
+- id: es-ambigua-003
+  pregunta: ¿Cuánto es?
+- id: es-fuera-002
+  pregunta: ¿Quién ganó el mundial de fútbol de 2014?
+- id: es-fuera-003
+  pregunta: ¿Cómo se prepara un pisco sour?
+- id: es-fuera-004
+  pregunta: ¿A qué distancia está la Luna de la Tierra?

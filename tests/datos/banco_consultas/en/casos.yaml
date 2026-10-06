@@ -81,3 +81,172 @@
   respuesta: within thirty calendar days from the receipt of goods
 - id: en-fuera-001
   pregunta: What is the capital of Mongolia?
+
+# --- ampliación a 60 casos: reglamento, preguntas frecuentes y política ------
+# Los mismos casos que es/, escritos como los diría alguien en inglés, con
+# palabras que el documento no usa («login», «computer», «software»).
+- id: en-exacta-005
+  documento: remote_work_regulation.md
+  capacidad: cantidad
+  pregunta: How many days a week can I work remotely?
+  respuesta: up to three days per week
+- id: en-trampa-007
+  par: en-exacta-005
+  pregunta: How many vacation days does a remote employee get?
+- id: en-exacta-006
+  documento: remote_work_regulation.md
+  capacidad: cantidad
+  pregunta: What monthly allowance is paid for connection costs?
+  respuesta: A monthly allowance of 20,000 pesos
+- id: en-trampa-008
+  par: en-exacta-006
+  pregunta: What monthly allowance is paid for electricity costs?
+- id: en-exacta-007
+  documento: it_help_desk_faq.md
+  capacidad: duracion
+  pregunta: How often does the password expire?
+  respuesta: The password expires every 90 days
+- id: en-trampa-009
+  par: en-exacta-007
+  pregunta: How often does the access card expire?
+- id: en-exacta-008
+  documento: it_help_desk_faq.md
+  capacidad: cantidad
+  pregunta: After how many failed attempts is the account locked?
+  respuesta: after five failed attempts
+- id: en-exacta-009
+  documento: travel_allowance_policy.md
+  capacidad: cantidad
+  pregunta: What is the daily allowance within the country?
+  respuesta: 45,000 pesos within the country
+- id: en-trampa-010
+  par: en-exacta-009
+  pregunta: How much is paid per kilometre when driving my own car?
+- id: en-exacta-010
+  documento: travel_allowance_policy.md
+  capacidad: persona
+  pregunta: Who buys the air tickets?
+  respuesta: Air tickets are bought by the Travel Unit
+- id: en-trampa-011
+  par: en-exacta-010
+  pregunta: Who buys the bus tickets?
+- id: en-exacta-011
+  documento: it_help_desk_faq.md
+  capacidad: cantidad
+  pregunta: How many characters must the new password have?
+  respuesta: at least 12 characters
+- id: en-exacta-012
+  documento: remote_work_regulation.md
+  capacidad: duracion
+  pregunta: How far in advance is the suspension of remote work notified?
+  respuesta: ten days in advance
+- id: en-exacta-013
+  documento: remote_work_regulation.md
+  capacidad: duracion
+  pregunta: How often is the remote work agreement reviewed?
+  respuesta: reviewed every six months
+- id: en-trampa-012
+  par: en-exacta-013
+  pregunta: How often is the employee's goal plan reviewed?
+- id: en-exacta-014
+  documento: it_help_desk_faq.md
+  capacidad: fecha
+  pregunta: What are the Help Desk hours?
+  respuesta: Monday to Friday from 8:00 to 18:00
+
+- id: en-parafrasis-008
+  documento: remote_work_regulation.md
+  capacidad: condicion
+  pregunta: who can apply for remote work
+  respuesta: at least six months of service at the institution
+- id: en-parafrasis-009
+  documento: remote_work_regulation.md
+  capacidad: duracion
+  pregunta: How long does my manager take to answer a remote work application?
+  respuesta: The manager replies within five business days
+- id: en-parafrasis-010
+  documento: remote_work_regulation.md
+  capacidad: lista
+  pregunta: What equipment do I get to work from home?
+  respuesta: The institution provides a laptop and a monitor
+- id: en-trampa-013
+  par: en-parafrasis-010
+  pregunta: What furniture do I get to work from home?
+- id: en-parafrasis-011
+  documento: remote_work_regulation.md
+  capacidad: fecha
+  pregunta: What hours do I have to be online when working from home?
+  respuesta: between 9:00 and 17:00
+- id: en-parafrasis-012
+  documento: remote_work_regulation.md
+  capacidad: condicion
+  pregunta: What happens if I don't meet my goals while working remotely?
+  respuesta: may suspend remote work
+- id: en-trampa-014
+  par: en-parafrasis-012
+  pregunta: What happens if I get sick while working remotely?
+- id: en-parafrasis-013
+  documento: it_help_desk_faq.md
+  capacidad: procedimiento
+  pregunta: forgot my login password, how do I change it?
+  respuesta: Go to the self-service portal
+- id: en-parafrasis-014
+  documento: it_help_desk_faq.md
+  capacidad: procedimiento
+  pregunta: my account got locked, what now?
+  respuesta: call the Help Desk at extension 4500
+- id: en-parafrasis-015
+  documento: it_help_desk_faq.md
+  capacidad: duracion
+  pregunta: How long does it take to get a new computer?
+  respuesta: delivers the equipment within ten business days
+- id: en-parafrasis-016
+  documento: it_help_desk_faq.md
+  capacidad: persona
+  pregunta: Who authorizes installing software?
+  respuesta: approved by the Security Officer
+- id: en-trampa-015
+  par: en-parafrasis-016
+  pregunta: Who authorizes buying software licenses?
+- id: en-parafrasis-017
+  documento: travel_allowance_policy.md
+  capacidad: cantidad
+  pregunta: How much money do I get per day when travelling abroad?
+  respuesta: 150 dollars abroad
+- id: en-parafrasis-018
+  documento: travel_allowance_policy.md
+  capacidad: duracion
+  pregunta: How many days ahead should I ask for the allowance?
+  respuesta: at least seven days before the trip
+- id: en-parafrasis-019
+  documento: travel_allowance_policy.md
+  capacidad: condicion
+  pregunta: What happens if I don't report my expenses on time?
+  respuesta: the amount is deducted from the next salary
+- id: en-trampa-016
+  par: en-parafrasis-019
+  pregunta: What happens if I lose the original receipts?
+- id: en-parafrasis-020
+  documento: travel_allowance_policy.md
+  capacidad: fecha
+  pregunta: When is the allowance paid into my account?
+  respuesta: Finance transfers the allowance two days before departure
+
+- id: en-premisa-001
+  pregunta: What does article 12 of the remote work regulation say?
+- id: en-premisa-002
+  pregunta: What does the 35,000 pesos remote work allowance cover?
+- id: en-premisa-003
+  pregunta: What happens if the daily allowance exceeds 100,000 pesos?
+- id: en-ambigua-001
+  pregunta: How many days is it?
+- id: en-ambigua-002
+  pregunta: Who approves it?
+- id: en-ambigua-003
+  pregunta: How much is it?
+- id: en-fuera-002
+  pregunta: Who won the 2014 football World Cup?
+- id: en-fuera-003
+  pregunta: How do you make a pisco sour?
+- id: en-fuera-004
+  pregunta: How far is the Moon from the Earth?
