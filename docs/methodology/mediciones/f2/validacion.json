@@ -1,0 +1,24 @@
+{
+  "criterios": {
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true,
+    "G6": true
+  },
+  "suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "2",
+    "tests": "1033",
+    "time": "947.479",
+    "timestamp": "2026-10-06T19:28:16.445608-03:00",
+    "hostname": "Laptop"
+  },
+  "g5_mediciones_originales": false,
+  "g5_rondas_alternadas": true,
+  "codigo_final": "sha256:111347399e776b70fb21f54dfe30fe2604cbd9ac6acb6715122e64a020268b5c",
+  "notas": "No se sustituyen mediciones originales; referencias HTTP actualizadas desde la captura anterior a F2."
+}

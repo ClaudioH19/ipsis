@@ -91,6 +91,11 @@ stayed, and `{state: "event", event, key}` on each reaction.
 
 ## HTTP API
 
+The `session_id` is created on each page load, without `localStorage`.
+Reloading or navigating starts a new conversation; closing and reopening
+the panel preserves it. The server forgets conversations after the configured
+inactivity period (30 minutes by default). Memory is local to each worker.
+
 The widget uses three public endpoints; you can call them too:
 
 | Endpoint | What it returns |

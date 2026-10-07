@@ -237,8 +237,24 @@ marcadores:
 # reconocen en la pregunta y sus palabras no cuentan como tema; las pistas
 # suelen estar en la oración que responde y la suben en la selección. En
 # minúsculas y sin tildes; gana la primera intención que calza.
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.85
+    margen: 0.0
+    habilitadas: [fin, procedimiento]
 intenciones:
   umbral:
+    ejemplos:
+    - "¿Qué cantidad máxima de entradas puedo reservar?"
+    - "¿Cuál es el mínimo de asistentes para abrir el taller?"
+    - "¿Cuánto debe superar el ingreso para pagar ese impuesto?"
+    - "¿Por debajo de qué temperatura se detiene el aparato?"
+    - "¿Desde qué valor se exige una declaración?"
+    - "¿A partir de qué edad se permite entrar al museo?"
+    - "¿Cuál es el límite de peso del equipaje?"
+    - "¿Qué importe mínimo activa el descuento?"
+    - "¿Desde cuántas personas se considera un grupo?"
+    - "¿Qué temperatura máxima soporta el horno?"
     patrones:
     - (desde|a partir de) que (monto|cantidad|valor|cifra|importe|edad|numero)
     - que (monto|cantidad|valor|importe|limite|tope)( minimo| maximo)?
@@ -260,6 +276,17 @@ intenciones:
     - igual o superior
     - a partir de
   inicio:
+    ejemplos:
+    - "¿Qué fecha marca el inicio de la campaña?"
+    - "¿Cuándo me activan la suscripción?"
+    - "¿Cuándo se habilita el acceso a la piscina?"
+    - "¿Desde qué momento rige la cobertura?"
+    - "¿En qué momento dan comienzo las clases?"
+    - "¿Qué tiene que pasar para que arranque la inscripción?"
+    - "¿Cuándo comienza la temporada de pesca?"
+    - "¿A partir de cuándo entra en vigor la norma?"
+    - "¿En qué momento puedo empezar a usar el abono?"
+    - "¿Qué da inicio al periodo de matrícula?"
     patrones:
     - cuando (empieza|empiezan|comienza|comienzan|parte|parten|inicia|inician|arranca|se inicia|se empieza|se comienza)
     - desde cuando
@@ -279,6 +306,17 @@ intenciones:
     - al momento de
     - cuando
   fin:
+    ejemplos:
+    - "¿Cada cuánto caduca el pase de visitante?"
+    - "¿Con qué frecuencia vence el permiso de conducir?"
+    - "¿Cuándo tengo que renovar la licencia porque vence?"
+    - "¿En qué fecha deja de funcionar la tarjeta?"
+    - "¿Cuándo finaliza la vigencia del abono?"
+    - "¿En qué fecha se acaba la promoción?"
+    - "¿Hasta cuándo sigue vigente el permiso?"
+    - "¿Cuándo deja de ser válido el cupón?"
+    - "¿En qué momento termina la convocatoria?"
+    - "¿Cuál es el último día para inscribirse?"
     patrones:
     - cuando (termina|terminan|finaliza|finalizan|vence|vencen|acaba|concluye|expira)
     - hasta cuando
@@ -290,6 +328,17 @@ intenciones:
     - termina
     - finaliza
   consecuencia:
+    ejemplos:
+    - "¿Qué me sucede por incumplir la inscripción?"
+    - "¿Qué resultado tiene rechazar la invitación?"
+    - "¿Qué efectos trae no entregar la declaración?"
+    - "¿Qué medidas toman cuando se pierde la llave?"
+    - "¿Cómo afecta que falte un documento?"
+    - "¿Qué ocurre si llego tarde a la función?"
+    - "¿Qué pasa cuando se interrumpe el suministro?"
+    - "¿Qué sucede si el paquete llega dañado?"
+    - "¿Cuál es el efecto de cancelar la reserva?"
+    - "¿Y si falta la firma en el formulario?"
     patrones:
     - que (pasa|ocurre|sucede|hago|se hace) (si|cuando)
     - en caso de que
@@ -300,6 +349,17 @@ intenciones:
     - se procede
     - debera
   responsable:
+    ejemplos:
+    - "¿A quién le toca revisar el inventario?"
+    - "¿Quién tiene la tarea de abrir la sala?"
+    - "¿Qué entidad se ocupa de cobrar la matrícula?"
+    - "¿Quién lleva el control de las visitas?"
+    - "¿A cargo de quién está la reserva del alojamiento?"
+    - "¿Qué persona revisa las reservas del hotel?"
+    - "¿Quién se encarga del mantenimiento del ascensor?"
+    - "¿A qué oficina corresponde emitir el certificado?"
+    - "¿Quién autoriza el acceso al laboratorio?"
+    - "¿De quién es la responsabilidad de actualizar el registro?"
     patrones:
     - quien(es)?( se encarga| es responsable| debe| tiene que)?
     - a quien
@@ -311,6 +371,17 @@ intenciones:
     - corresponde a
     - le corresponde
   requisito:
+    ejemplos:
+    - "¿Qué se exige para que acepten la inscripción?"
+    - "¿Qué antecedentes hacen falta para postular?"
+    - "¿Qué características debe tener una foto válida?"
+    - "¿Cuántas páginas como mínimo debe tener el informe?"
+    - "¿Cuáles son las condiciones para recibir el permiso?"
+    - "¿Qué documentos debo llevar para renovar el permiso?"
+    - "¿Qué condiciones tengo que cumplir para obtener una beca?"
+    - "¿Qué hace falta para inscribirse en el taller?"
+    - "¿Cuáles son los requisitos para adoptar un animal?"
+    - "¿Qué debo presentar para acreditar mi residencia?"
     patrones:
     - que (se necesita|necesito|se requiere|requisitos|documentos)
     - que (debo|hay que) (presentar|tener|cumplir|entregar)
@@ -324,6 +395,17 @@ intenciones:
     - requisito
     - requisitos
   procedimiento:
+    ejemplos:
+    - "Olvidé mi código de acceso, ¿cómo lo recupero?"
+    - "No encuentro mi carné, ¿qué hago para recuperarlo?"
+    - "Me cancelaron la reserva, ¿qué hago ahora?"
+    - "Necesito cambiar mis datos, ¿cómo lo tramito?"
+    - "¿De qué forma consigo un duplicado de la credencial?"
+    - "¿Cómo tramito una devolución en la tienda?"
+    - "¿Qué pasos debo seguir para reservar una sala?"
+    - "¿De qué manera se registra un visitante?"
+    - "¿Cuál es el procedimiento para cambiar una cita?"
+    - "Se perdió mi carné, ¿cómo consigo otro?"
     patrones:
     - como (se|puedo|hago|debo|hay que)
     - que pasos
@@ -364,6 +446,7 @@ sinonimos:
 - [dura, duran, durar, vigencia]
 # Palabras que nunca son término foco (ipsis.consulta.etapas.filtros): verbos de apoyo y
 # unidades. «¿Desde cuándo se hace la compra?» habla de la compra, no de hacer.
+genericas_memoria: [tiempo]
 genericas: [hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos]
 # Sufijos de sustantivos derivados que el stemmer deja (ipsis.lenguaje.consultas.equivalentes).
 # El de español ya lleva «aprobación» y «firma» a la raíz del verbo.

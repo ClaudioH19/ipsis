@@ -8,6 +8,74 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **V4 validation:** 1,054 tests pass with two skips; the three evaluation
+  banks and paired latency measurements satisfy G1–G6. Conversation topic
+  inheritance improves, while four literal answers regress against F1 and
+  five newly direct positive answers have incomplete or incorrect selected
+  spans, including two wrong roles in `medium`. Secondary banks also expose
+  mistaken intent labels. Preserve these limits, raw results and rejected
+  measurements in the [V4 report](docs/methodology/v4-results.md).
+
+- **Intent similarity fallback:** ten independent examples per intention in
+  es/en/pt, encoded once at startup. Reuse the query vector for unknown
+  intentions with corpus topic; require measured cosine/margin and categories
+  with correct dev fallback cases. Patterns win; BM25 and unmeasured models
+  skip it. Preserve focus terms and answer thresholds. Diagnostics expose
+  origin, candidate, cosine, margin and rejected attempts. Example/threshold
+  changes invalidate previous lexical calibrations.
+- **Verified conversation context:** record vocabulary of the first cited
+  source passage after final verification, excluding other candidates and
+  out-of-domain turns. Reject stale concurrent evidence, discard obsolete
+  surface forms and expire sessions at the exact configured boundary.
+- **Separate topic and answer terms:** `genericas_memoria` keeps
+  `tiempo/tempo` out of topic recognition without removing their original
+  weight from answer focus and selection. The F1 comparison caught a lost
+  correct answer when those words were treated as globally generic; retain
+  the failed measurement and validate the correction separately.
+
+- **Offline lexical retrieval:** load the filtered es/en/pt WordNet tables
+  once per language/stemmer and expand only OOV content words with a single
+  sense. Preserve source/synset/POS in diagnostics. Automatic groups expand
+  BM25 while retaining the original dense vector and acceptance signals.
+  Project `domain.yaml::synonyms` takes precedence, with complete phrase
+  matching for abbreviations. Effective lexical hashes invalidate stale
+  calibrations; older files without the hash require recalibration.
+- **Literal evaluation:** count the QA reader's selected span, rather than
+  a correct fact elsewhere in its enclosing evidence. Apply the same rule
+  in query/conversation coverage and calibration risk estimates.
+- **HTTP regression references:** refresh historical snapshots from the
+  working tree before lexical integration after confirming identical
+  before/after responses in both profiles. Record previous confidence and
+  related-evidence changes, including Sunday queries moving from no answer
+  to related before this integration; retain the original score tolerance.
+
+- **Extended dictionaries for all supported languages:** complete frozen
+  Kaikki/Wiktionary es/en/pt downloads expand the combined inventory to
+  3,635,200 written forms/expressions. Archive original gzip bytes losslessly
+  in parts and retain verified lexical projections for offline rebuilds.
+  Separate compressed indexes distinguish lemmas, inflections, alternatives
+  and legacy membership; preserve morphology and directed synonym records
+  with original sense identities and qualifiers. No automatic runtime loading.
+
+- **Development synonym converter:** pinned MCR/OMW Spanish, Open English
+  Wordnet 2025 and OpenWN-PT/OMW sources with verified downloads, synset/POS
+  preserving TSV conversion, conservative polysemy filters, original notices
+  and deterministic per-language manifests. Approved original sources are
+  stored losslessly in the repository; rebuilds are offline by default, with
+  explicit `--download` only for source updates. Full lexical tables preserve
+  272,979 written forms/expressions across es/en/pt; filtered tables retain
+  67,365 words with senses kept separate. Derived files and notices ship in
+  wheel/sdist; sdist also includes the originals and converter. Automatic
+  filtered tables support conservative BM25 expansion in the answer engine. See ADR 0007 and
+  `herramientas/sinonimos/README.md`.
+
+- **Broader stored vocabulary:** four pinned LibreOffice/MyThes thesauri
+  add 110,886 distinct written forms/expressions, bringing the combined
+  es/en/pt inventory to 383,865. Preserve directed records, original
+  labels, relation annotations and per-form provenance; archive original
+  downloads and notices for offline rebuilds. Existing filtered WordNet
+  groups remain separate. Runtime activation still requires evaluation.
+
 - **Deterministic query understanding** ([ADR 0005](docs/decisions/0005-deterministic-query-understanding.md)):
   the language packs (es, en, pt) declare intentions (threshold, start, end,
   consequence, person in charge, requirement, procedure) with patterns and
@@ -78,6 +146,21 @@ a minor change may break compatibility and is marked as such.
   "require"), and the relation's words no longer pull the selection to a
   sentence that merely contains them ("…starts a new purchase" for "when
   does the purchase start?"). See ADR 0005.
+- **Conversation memory** ([ADR 0006](docs/decisions/0006-conversation-memory.md)):
+  follow-up questions inherit the topic of the whole conversation, not only
+  of the previous turn. A question can return to an earlier topic ("back to
+  the allowance, and abroad?"), an out-of-domain question in the middle does
+  not break the thread, and a deliberate change of topic never inherits.
+  Conversations expire after `conversation.expiry_minutes` without
+  questions (30 by default, `engine.yaml`) instead of only dropping the least
+  used session. Conversations bank (light): inherited correctly 26 → 36
+  (es), 25 → 35 (en), 21 → 34 (pt) of 38, with no wrong inheritance.
+- **The widget starts a new conversation on every page load** (it no longer
+  keeps the `session_id` in `localStorage`): the server no longer remembers a
+  topic the person no longer sees after a reload.
+- **`ipsis ask --diagnostics` shows the query understanding:** the
+  recognized intention, the synonyms used, what the turn did with the
+  conversation and the interpreted question.
 - **Numbered labels stay with their sentence:** "Artículo 4." or "4.2." is
   no longer split off as a sentence of its own, so answers and citations
   show "Artículo 4. Si el cliente no está…" and the label counts for the

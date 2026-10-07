@@ -214,7 +214,11 @@ class QueryDiagnostic(EsquemaEstricto):
     rerank: list[dict[str, Any]] | None = None  # chunk_id y puntaje, en el orden del reranker
     lectura_por_pista: str | None = None  # chunk que el lector leyó por la pista de la intención
     pregunta_interpretada: str | None = None  # la de seguimiento, con el tema heredado
+    intencion: dict[str, Any] | None = None  # origen, relación o similitud/margen del respaldo
+    conversacion: dict[str, str] | None = None  # qué hizo el turno (hereda, retoma, tema_nuevo) y el tema en curso
     sinonimos: dict[str, list[str]] | None = None  # palabra ausente del corpus → sinónimos presentes
+    recursos_lexicos: list[dict[str, Any]] | None = None  # fuente/sentido/POS de la expansión automática
+    pregunta_recuperacion: str | None = None  # texto expandido solo para BM25
     lecturas: list[dict[str, Any]] | None = None
     regla: str | None = None
     senales_politica: dict[str, Any] | None = None

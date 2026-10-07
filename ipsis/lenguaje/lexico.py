@@ -7,6 +7,8 @@ cualquiera con la misma forma). Ver ``docs/methodology/lexical.md``.
 from __future__ import annotations
 
 import math
+import functools
+from types import SimpleNamespace
 import zlib
 from collections import Counter
 from collections.abc import Sequence
@@ -121,11 +123,19 @@ def terminos_contenido(terminos_q: Sequence[str], stop: set[str] | frozenset[str
     return vistos
 
 
+@functools.lru_cache(maxsize=64)
+def _stopwords_normalizadas(stemmer: str | None, palabras: tuple[str, ...]) -> frozenset[str]:
+    from ipsis.lenguaje.texto import terminos
+
+    return frozenset(terminos(" ".join(palabras), SimpleNamespace(stemmer=stemmer)))
+
+
 def terminos_pregunta(pregunta: str, paquete=None) -> list[str]:
     """Términos de contenido de una pregunta: ``terminos()`` sin stopwords del idioma."""
     from ipsis.lenguaje.texto import terminos
 
-    stop = set(terminos(" ".join(paquete.stopwords), paquete)) if paquete is not None else set()
+    stop = (_stopwords_normalizadas(getattr(paquete, "stemmer", None), tuple(paquete.stopwords))
+            if paquete is not None else frozenset())
     return terminos_contenido(terminos(pregunta, paquete), stop)
 
 

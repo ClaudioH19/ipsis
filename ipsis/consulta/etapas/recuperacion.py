@@ -82,6 +82,10 @@ class RetrieverQdrant:
     def _codificar(self, texto: str):
         return self.coleccion.codificador.codificar_consultas([texto])[0]
 
+    def vector_consulta(self, texto: str):
+        """El mismo vector memoizado que utiliza la recuperación y la confianza."""
+        return self._vector_consulta(texto)
+
     def estimar_confianza(self, consulta: QueryAnalysis, limite: int = 2) -> SenalesRecuperacion:
         """Coseno denso del mejor chunk y su margen sobre el segundo.
 
@@ -101,10 +105,10 @@ class RetrieverQdrant:
 
     def recuperar(self, consulta: QueryAnalysis, limite: int,
                   filtro: FiltroEntidad | None = None) -> list[RetrievalCandidate]:
-        pregunta = consulta.pregunta_original
+        pregunta = consulta.contexto.get("pregunta_recuperacion", consulta.pregunta_original)
         filtro_qdrant = construir_filtro_entidad(filtro.valor_norm) if filtro else None
         res = buscar(self.coleccion, pregunta, modo=self.modo, limit=limite,
-                     vector_precomputado=self._vector_consulta(pregunta), query_filter=filtro_qdrant)
+                     vector_precomputado=self._vector_consulta(consulta.pregunta_original), query_filter=filtro_qdrant)
         candidatos = []
         for rango, (payload, score) in enumerate(zip(res.payloads, res.scores), start=1):
             if self.modo == "hibrida":
@@ -114,12 +118,14 @@ class RetrieverQdrant:
             candidatos.append(RetrievalCandidate(chunk=chunk_desde_payload(payload), signals=senales))
         return candidatos
 
-    def rankings_diagnostico(self, pregunta: str, limite: int = 10) -> dict[str, list[str]]:
+    def rankings_diagnostico(self, pregunta: str, limite: int = 10, *,
+                            pregunta_bm25: str | None = None) -> dict[str, list[str]]:
         """Solo para ``ipsis ask --diagnostics``: los chunk_id del ranking denso y del
         BM25 por separado (la búsqueda híbrida devuelve solo la fusión)."""
         salida = {}
         for nombre, modo in (("denso", "vectorial"), ("bm25", "dispersa")):
-            res = buscar(self.coleccion, pregunta, modo=modo, limit=limite,
+            texto = (pregunta_bm25 or pregunta) if modo == "dispersa" else pregunta
+            res = buscar(self.coleccion, texto, modo=modo, limit=limite,
                          vector_precomputado=self._vector_consulta(pregunta) if modo == "vectorial" else None)
             salida[nombre] = [p["chunk_id"] for p in res.payloads]
         return salida
@@ -165,6 +171,21 @@ class EtapaSenales(_Etapa):
         ctx.senales = m.retriever.estimar_confianza(ctx.consulta, max(m.top_k, 2))
         ctx.confianza = m._confianza(ctx.senales)
         ctx.diagnostico["senales"] = ctx.senales.model_dump(mode="python")
+        respaldo = getattr(m, "respaldo_intenciones", None)
+        if respaldo is not None and ctx.consulta.intencion == "desconocida":
+            from ipsis.lenguaje.intenciones import tiene_tema
+
+            if not tiene_tema(ctx.consulta.pregunta_original, m.idioma, m.retriever.estadisticas_lexico()):
+                return
+            prediccion = respaldo.predecir(m.retriever.vector_consulta(ctx.consulta.pregunta_original))
+            ctx.diagnostico["intencion"] = {
+                "nombre": prediccion.nombre or "desconocida", "origen": "similitud",
+                "candidato": prediccion.candidato, "similitud": prediccion.similitud,
+                "margen": prediccion.margen, "ejemplo": prediccion.ejemplo,
+                "aceptada": prediccion.nombre is not None,
+            }
+            if prediccion.nombre is not None:
+                ctx.consulta = ctx.consulta.model_copy(update={"intencion": prediccion.nombre})
 
 
 class EtapaRecuperacion(_Etapa):

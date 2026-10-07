@@ -110,6 +110,8 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `texto.py` | `terminos()` (the only path from text to terms) and `dividir_oraciones()` |
 | `lexico.py` | BM25, TF-IDF, MMR and the signals `s_oov`, focus, `s_foco`, `s_cov`, `s_lex` |
 | `consultas.py` | Query understanding: intention and relation words, cues, synonyms, generic words, derived nouns |
+| `intenciones.py` | Similarity fallback: cached examples, cosine and margin between intentions |
+| `sinonimos.py` | Packaged WordNet stem index, OOV expansion for BM25, project phrase equivalences and lexical provenance hash |
 | `entidades.py` | Universal and pack entities (dates, amounts, deadlines, references) |
 | `dominio.py` | Your own domain rules (`domain.yaml`) |
 | `tonos.py` | Answer tones, their linter and neutrality |
@@ -150,7 +152,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 |---|---|
 | `motor.py` | Runs the profile's stages, times each one and builds the result |
 | `contexto.py` | `ContextoConsulta`: what each stage reads and fills in |
-| `seguimiento.py` | Follow-up questions: session memory and the topic a question inherits |
+| `seguimiento.py` | Conversation memory: topics per session, follow-ups, expiry ([ADR 0006](decisions/0006-conversation-memory.md)) |
 | `admision.py` | Limit of concurrent queries (503 when saturated) |
 | `variantes.py` | Picks the tone variant by session and turn |
 | `etapas/` | One file per stage (see §4) |
@@ -197,21 +199,23 @@ flowchart TD
     P([Question]) --> C{conversational}
     C -- "hello, thanks…" --> RF([Fixed answer from the tone])
     C -- no --> A["analysis<br/>follow-up? → inherit the topic<br/>intention and relation words<br/>synonyms of missing words"]
-    MEM[("session memory<br/>previous topic")] -.->|"“and with 90?”"| A
+    MEM[("conversation memory<br/>current and earlier topics")] -.->|"“and with 90?”"| A
+    WN[("filtered local WordNet<br/>source + sense + POS")] -.->|"OOV, one sense only"| A
     A --> CF[confidence<br/>dense cosine → s_ret]
-    CF --> F["filters<br/>focus terms (not relation<br/>nor generic words), s_oov"]
-    F --> R[retrieval<br/>e5 + BM25 with RRF<br/>+ entity-directed]
+    CF --> IF["unknown intention + corpus topic?<br/>reuse vector → example similarity"]
+    IF --> F["filters<br/>focus terms (not relation<br/>nor generic words), s_oov"]
+    F --> R[retrieval<br/>original e5 vector + expanded BM25<br/>RRF + entity-directed]
     R --> T{any candidate<br/>with a focus term?}
     T -- no --> E
     T -- yes --> RR[reranking<br/>cross-encoder → s_rr]
     RR --> L["reading<br/>QA reader → span, s_qa<br/>+ the candidate with a cue"]
     L --> E["evidence<br/>anchor sentence, cue bonus<br/>→ s_foco, s_cov"]
-    E -.->|"topic of the answer"| MEM
     E --> PO{policy<br/>cascade_v1}
     PO -- ok --> RD[rendering<br/>tone + citation]
     PO -- related --> RD
     PO -- no_answer --> RD
     RD --> V[verification<br/>text == corpus start:end]
+    V -.->|"first cited source passage<br/>same topic and turn only"| MEM
     V --> S([Answer + citations + diagnostics])
 ```
 
@@ -234,18 +238,42 @@ The analysis stage reads the question with the language pack's rules
 word lists and the corpus statistics. Nothing is generated and the question
 the user wrote is the one that is answered. Three things come out of it:
 
+After dense confidence, an unrecognized intention can use example similarity
+with the same cached query vector. Examples are encoded at startup. This
+fallback needs a corpus topic, measured model/language settings, minimum
+cosine and a margin against the second intention. It supplies answer cues;
+it removes no query terms and changes no acceptance thresholds. BM25 skips it.
+Shipped E5-small settings enable only categories with correct dev fallback
+cases: end/procedure in Spanish, end in English and procedure in Portuguese.
+
 | | What it looks for | Example | What changes afterwards |
 |---|---|---|---|
-| **Follow-up** | A short question with a follow-up marker ("and", "y", "e") or without a topic of its own, in a session with a previous turn | "¿y con 90?" after "¿Qué pasa si el proveedor rechaza la orden?" | Retrieval uses "¿y con 90? proveedor rechaza orden"; the selection weighs the user's own words fully and the inherited ones half |
+| **Follow-up** | Whether the question follows the conversation's current topic, returns to an earlier one or opens a new one, by its topic terms and a follow-up marker ("and", "y", "e") | "¿y con 90?" after "¿Qué pasa si el proveedor rechaza la orden?" | Retrieval uses "¿y con 90? proveedor rechaza orden"; the selection weighs the user's own words fully and the inherited ones half |
 | **Intention** | Which relation is asked for: start, end, threshold, consequence, person in charge, requirement, procedure | "cuando empieza la compra?" → start; relation words "cuando", "empieza" | Relation words are not topic (not focus, not scored in the selection); a sentence with one of the intention's cues ("Una vez…", "después de…") weighs ×2, and the reader also reads the candidate with the best cued sentence |
 | **Synonyms** | A question word missing from the corpus whose synonym is in it | "necesita" → "requieren" | The synonym is searched and measured instead of the missing word |
 
-The session memory keeps, per `session_id`, the previous question and the
-vocabulary of the passage that answered it (at most 1,024 sessions, in
-memory; it is lost on restart). A question with a topic of its own never
-inherits. The rationale and the measurements are in
-[ADR 0005](decisions/0005-deterministic-query-understanding.md); the signals
-in [lexical](methodology/lexical.md).
+The conversation memory keeps, per `session_id`, the current topic (its
+core terms, the last follow-up and the vocabulary of the passages that
+answered it) and up to four earlier ones, so a question can return to them.
+An out-of-domain question in the middle does not change the topic; a
+deliberate change of topic never inherits, even if it starts with "and". A
+conversation is forgotten after `conversation.expiry_minutes` without
+questions (30 by default, in `engine.yaml`), and the widget starts a new one
+on every page load. The rationale and the measurements are in
+[ADR 0005](decisions/0005-deterministic-query-understanding.md) and
+[ADR 0006](decisions/0006-conversation-memory.md); the signals in
+[lexical](methodology/lexical.md).
+
+Vocabulary enters memory only after final verification, from the source
+passage containing the first displayed citation. That context lets the next
+question refer to a neighboring step; other candidates are excluded. An
+out-of-domain turn cannot replace the vocabulary. Turn tokens reject stale
+concurrent replies, and compaction also removes obsolete surface forms.
+
+`genericas_memoria` is separate from the answer's generic-word list:
+`tiempo/tempo` do not open or contaminate a topic, but keep their original
+weight in focus and answer selection. Topic compaction must not change
+how an independent question is answered.
 
 ## 5. Ingestion
 

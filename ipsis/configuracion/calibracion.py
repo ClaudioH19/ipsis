@@ -33,6 +33,7 @@ class ProcedenciaCalibracion(BaseModel):
     hash_corpus: str  # del manifiesto del índice: el corpus que respondió el golden
     banco: str  # dataset_id@versión
     hash_banco: str
+    hash_lexico: str | None = None  # reglas y fuentes efectivas; calibraciones antiguas no lo incluyen
 
 
 class ArchivoCalibracion(BaseModel):
@@ -75,6 +76,7 @@ def motivo_no_aplicable(
     perfil: str,
     modelos: dict[str, str | None],
     hash_corpus: str | None,
+    hash_lexico: str | None = None,
 ) -> str | None:
     """Por qué no se aplica la calibración (``None`` si se aplica)."""
     if archivo.estado != EstadoCalibracion.CALIBRADO:
@@ -86,6 +88,8 @@ def motivo_no_aplicable(
         return t("evaluation.calibration_models")
     if hash_corpus is None or procedencia.hash_corpus != hash_corpus:
         return t("evaluation.calibration_corpus")
+    if hash_lexico is not None and procedencia.hash_lexico != hash_lexico:
+        return t("evaluation.calibration_lexical")
     return None
 
 
@@ -95,9 +99,11 @@ def umbrales_aplicables(
     perfil: str,
     modelos: dict[str, str | None],
     hash_corpus: str | None,
+    hash_lexico: str | None = None,
 ) -> dict[str, float] | None:
     archivo = leer_calibracion(ruta)
-    if archivo is None or motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus):
+    if archivo is None or motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus,
+                                            hash_lexico=hash_lexico):
         return None
     return dict(archivo.umbrales)
 

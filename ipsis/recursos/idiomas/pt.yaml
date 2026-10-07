@@ -191,8 +191,24 @@ marcadores:
 # na pergunta e suas palavras não contam como tema; as pistas costumam estar na
 # frase que responde e a sobem na seleção. Em minúsculas e sem acentos; vence a
 # primeira intenção que casa.
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.895
+    margen: 0.0
+    habilitadas: [procedimiento]
 intenciones:
   umbral:
+    ejemplos:
+    - "Qual é a quantidade máxima de ingressos que posso reservar?"
+    - "Qual é o mínimo de participantes para abrir a oficina?"
+    - "Acima de que renda é preciso pagar esse imposto?"
+    - "Abaixo de que temperatura o aparelho para?"
+    - "A partir de que valor se exige uma declaração?"
+    - "A partir de que idade é permitido entrar no museu?"
+    - "Qual é o limite de peso da bagagem?"
+    - "Que valor mínimo dá direito ao desconto?"
+    - "A partir de quantas pessoas se considera um grupo?"
+    - "Qual é a temperatura máxima que o forno suporta?"
     patrones:
     - (desde|a partir de) que (valor|montante|quantia|quantidade|idade|numero)
     - que (valor|montante|limite|teto)( minimo| maximo)?
@@ -210,6 +226,17 @@ intenciones:
     - no maximo
     - a partir de
   inicio:
+    ejemplos:
+    - "Que data marca o início da campanha?"
+    - "Quando minha assinatura será ativada?"
+    - "Quando é liberado o acesso à piscina?"
+    - "Desde que momento vale a cobertura?"
+    - "Em que momento as aulas têm início?"
+    - "O que precisa acontecer para que a inscrição comece?"
+    - "Quando começa a temporada de pesca?"
+    - "A partir de quando a norma entra em vigor?"
+    - "Em que momento posso começar a usar o passe?"
+    - "O que dá início ao período de matrícula?"
     patrones:
     - quando (comeca|comecam|inicia|iniciam|parte|se inicia|se comeca)
     - desde quando
@@ -226,6 +253,17 @@ intenciones:
     - antes de
     - quando
   fin:
+    ejemplos:
+    - "A cada quanto tempo vence o passe de visitante?"
+    - "Com que frequência vence a licença para dirigir?"
+    - "Quando preciso renovar a licença porque vence?"
+    - "Em que data o cartão deixa de funcionar?"
+    - "Quando termina a validade do passe mensal?"
+    - "Em que data acaba a promoção?"
+    - "Até quando a licença continua válida?"
+    - "Quando o cupom deixa de ser válido?"
+    - "Em que momento termina a chamada para inscrições?"
+    - "Qual é o último dia para se inscrever?"
     patrones:
     - quando (termina|terminam|acaba|vence|vencem|expira|finaliza)
     - ate quando
@@ -236,6 +274,17 @@ intenciones:
     - expira
     - termina
   consecuencia:
+    ejemplos:
+    - "O que ocorre comigo por não concluir a inscrição?"
+    - "Qual é o resultado de rejeitar o convite?"
+    - "Quais são os efeitos de não entregar a declaração?"
+    - "Que medidas são tomadas quando se perde a chave?"
+    - "Como a falta de um documento afeta o pedido?"
+    - "O que acontece se eu chegar atrasado ao espetáculo?"
+    - "O que ocorre quando o fornecimento é interrompido?"
+    - "O que acontece se a encomenda chegar danificada?"
+    - "Qual é o efeito de cancelar a reserva?"
+    - "E se faltar a assinatura no formulário?"
     patrones:
     - o que (acontece|ocorre|faco) (se|quando)
     - e se
@@ -245,6 +294,17 @@ intenciones:
     - em caso de
     - devera
   responsable:
+    ejemplos:
+    - "A quem cabe revisar o inventário?"
+    - "Quem tem a tarefa de abrir a sala?"
+    - "Que entidade se ocupa de cobrar a matrícula?"
+    - "Quem controla as visitas?"
+    - "Quem fica encarregado de reservar a hospedagem?"
+    - "Que pessoa revisa as reservas do hotel?"
+    - "Quem é responsável pela manutenção do elevador?"
+    - "A que setor cabe emitir o certificado?"
+    - "Quem autoriza o acesso ao laboratório?"
+    - "De quem é a responsabilidade de atualizar o cadastro?"
     patrones:
     - quem( e responsavel| deve| tem que)?
     - a quem
@@ -255,6 +315,17 @@ intenciones:
     - a cargo
     - cabe a
   requisito:
+    ejemplos:
+    - "O que é exigido para que aceitem a inscrição?"
+    - "Que informações são necessárias para se candidatar?"
+    - "Que características deve ter uma foto válida?"
+    - "Quantas páginas no mínimo o relatório precisa ter?"
+    - "Quais são as condições para receber a licença?"
+    - "Que documentos devo levar para renovar a licença?"
+    - "Que condições preciso cumprir para obter uma bolsa?"
+    - "O que é necessário para se inscrever na oficina?"
+    - "Quais são os requisitos para adotar um animal?"
+    - "O que devo apresentar para comprovar minha residência?"
     patrones:
     - o que (e preciso|preciso|se exige|e necessario)
     - que (documentos|requisitos)
@@ -266,6 +337,17 @@ intenciones:
     - devem
     - requisito
   procedimiento:
+    ejemplos:
+    - "Esqueci meu código de acesso, como faço para recuperá-lo?"
+    - "Não encontro minha carteirinha, o que faço para recuperá-la?"
+    - "Cancelaram minha reserva, o que faço agora?"
+    - "Preciso mudar meus dados, como faço isso?"
+    - "De que forma consigo uma segunda via da credencial?"
+    - "Como solicito uma devolução na loja?"
+    - "Que passos devo seguir para reservar uma sala?"
+    - "De que maneira se cadastra um visitante?"
+    - "Qual é o procedimento para mudar uma consulta?"
+    - "Perdi minha carteirinha, como consigo outra?"
     patrones:
     - como (se|posso|faco|devo)
     - quais (os )?passos
@@ -299,6 +381,7 @@ sinonimos:
 - [conserta, consertam, consertar, repara, reparam, reparar]
 - [custa, custam, custar, preco]
 # Palavras que nunca são termo foco (ipsis.consulta.etapas.filtros): verbos de apoio e unidades.
+genericas_memoria: [tempo]
 genericas: [fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos]
 # Sufixos de substantivos derivados que o stemmer mantém: «assinatura» conta como «assina».
 sufijos_derivados: [atur, ament, ment, aca, ica]

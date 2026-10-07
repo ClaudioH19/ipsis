@@ -1,0 +1,40 @@
+{
+  "criterios": {
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true,
+    "G6": true,
+    "F4_herencia_no_disminuye": true,
+    "F4_retornos_mejoran_todas_combinaciones": true,
+    "sin_regresiones_desde_inicio": true,
+    "F3_etiquetas_naturales": true
+  },
+  "estados_sin_explicar": [],
+  "perdidas_literales_f1": [
+    {
+      "perfil": "light",
+      "idioma": "pt",
+      "casos": [
+        "pt-conv-003:2",
+        "pt-conv-016:2"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "idioma": "es",
+      "casos": [
+        "es-conv-013:3"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "idioma": "en",
+      "casos": [
+        "en-conv-013:3"
+      ]
+    }
+  ],
+  "alcance": "G4 solo mide directas en turnos negativos. Hay pérdidas literales positivas frente a F1; no se declara ausencia general de regresiones."
+}

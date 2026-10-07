@@ -40,12 +40,15 @@ def _indice(modelo: str, dimension: int | None = None) -> Path:
 
 def _calibracion(perfil: str) -> Path:
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.sinonimos import huella_lexica
 
     ruta = Path("config/calibration.yaml")
     ruta.write_text(yaml.safe_dump({
         "estado": "calibrado", "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
-                        "hash_corpus": HASH, "banco": "golden@1.0.0", "hash_banco": "x"},
+                        "hash_corpus": HASH, "banco": "golden@1.0.0", "hash_banco": "x",
+                        "hash_lexico": huella_lexica(cargar_paquete("es", proyecto=Path.cwd()))},
         "umbrales": {"ok": 0.9},
     }), encoding="utf-8")
     return ruta

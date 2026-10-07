@@ -5,6 +5,8 @@ Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
 
 - [tareas.md](tareas.md): cada tarea con sus pasos y su criterio de aceptación.
 - [avance.md](avance.md): estado, fecha, commit y medición de cada tarea.
+- [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
+  conversión reproducible y activación medida de F2.
 
 ## Objetivo
 

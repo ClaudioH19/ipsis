@@ -132,10 +132,10 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
     actual = linea_base.resumir(artefacto)
     nuevos = sorted(set(actual["falsos_ok"]) - set(referencia["falsos_ok"]))
     assert not nuevos, f"falsos ok nuevos respecto de la línea base: {nuevos}"
-    # La evidencia mostrada en cada ok respondible sigue siendo literal.
-    for nombre in ("exacta", "parafrasis"):
-        grupo = actual["grupos"][nombre]
-        assert grupo["ok_literal"] == grupo["ok"], (nombre, grupo)
+    # Un literal en la cita amplia no vuelve correcto al tramo equivocado del
+    # lector. La referencia corregida registra esos errores previos por ID.
+    nuevas_sin_literal = sorted(set(actual["directas_sin_literal"]) - set(referencia["directas_sin_literal"]))
+    assert not nuevas_sin_literal, f"tramos equivocados nuevos respecto de la línea base: {nuevas_sin_literal}"
     # Las observaciones guardan la decisión auditable de cada caso…
     cobertura = artefacto.reporte.cobertura
     assert set(cobertura.por_idioma) == {idioma}

@@ -1,0 +1,71 @@
+{
+  "turnos": [
+    {
+      "conversacion": "es-conv-013",
+      "turno": 1,
+      "pregunta": "¿Hasta cuándo puedo pedir el reembolso?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "hasta 30 días después de recibir el pedido",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Según el texto cargado:\n\nEl cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. (Fuente: Política de reembolsos).",
+      "tramo_lector": "30 días después de recibir el pedido",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "pedir reembolso"
+      }
+    },
+    {
+      "conversacion": "es-conv-013",
+      "turno": 2,
+      "pregunta": "¿y en cuántos días lo pagan?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y en cuántos días lo pagan? pedir reembolso",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "dentro de 10 días hábiles",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Aquí está lo que encontré:\n\nEl reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).",
+      "tramo_lector": "10",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "pedir reembolso"
+      }
+    },
+    {
+      "conversacion": "es-conv-013",
+      "turno": 3,
+      "pregunta": "¿y si el producto llega dañado?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y si el producto llega dañado? pedir reembolso pagan",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "el envío de la devolución es gratuito",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "El documento responde así:\n\nSi el producto llega dañado, el envío de la devolución es gratuito. (Fuente: Política de reembolsos).",
+      "tramo_lector": "gratuito",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "pedir reembolso"
+      }
+    }
+  ],
+  "resumen": {
+    "herencia_correcta": 2,
+    "con_hereda": 2,
+    "herencia_indebida": 0,
+    "herencia_perdida": 0,
+    "respuestas_correctas": 0,
+    "con_respuesta": 3,
+    "directas_indebidas": 0,
+    "sin_directa": 0
+  }
+}

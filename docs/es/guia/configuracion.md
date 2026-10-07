@@ -224,6 +224,55 @@ El idioma de los documentos es independiente del idioma de la línea de
 comandos (`IPSIS_LANG`): un proyecto en portugués se puede administrar con
 mensajes en inglés o en español.
 
+## Sinónimos locales
+
+### Respaldo de intenciones
+
+El paquete contiene `intenciones.<nombre>.ejemplos` y ajustes por modelo en
+`respaldo_intencion`. Se sobrescriben en `config/language.yaml`:
+
+```yaml
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.85
+    margen: 0.0
+    habilitadas: [fin, procedimiento]
+```
+
+Son los valores medidos para español. Inglés usa 0.87 y `[fin]`; portugués,
+0.895 y `[procedimiento]`, ambos con margen estrictamente positivo. Los
+patrones mantienen prioridad. BM25 y modelos sin ajustes medidos no usan
+el respaldo; E5 base no tiene ajustes predeterminados. Cambiar los ejemplos
+o valores exige reconstruir el motor y regenerar la calibración. Antes de
+activar categorías nuevas, mídalas en dev. Estos valores no son los umbrales
+de la política que decide si puede responder.
+
+### Grupos de sinónimos
+
+Español, inglés y portugués usan las tablas filtradas de WordNet incluidas
+en el paquete para ampliar la recuperación BM25, reutilizando el vector
+denso original. Solo se expande una palabra
+ausente del corpus, con un único sentido después del stemming; las palabras
+de la relación y las correcciones manuales tienen prioridad. Los grupos
+automáticos no cambian la validación del foco ni los umbrales de aceptación.
+Los diccionarios completos y los índices morfológicos quedan como recursos
+de desarrollo, sin descargas al instalar.
+
+Declare equivalencias propias en `config/domain.yaml`:
+
+```yaml
+synonyms:
+  - [OC, orden de compra]
+```
+
+Los grupos del proyecto reemplazan los del idioma que se superponen. Las
+frases coinciden completas y todos los términos de contenido de un reemplazo
+deben existir en el corpus. Reinicie el servicio después de cambiar la
+configuración léxica. Un motor nuevo empieza con memoria de conversación y
+cachés de consultas vacías. La procedencia de calibración incluye
+`lexical_hash`: una huella ausente o diferente invalida la calibración
+anterior. `ipsis doctor` lo informa; recalibre con el golden del proyecto.
+
 ## Tono de las respuestas
 
 Lo que el asistente dice alrededor del texto del documento viene de un
@@ -361,6 +410,30 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 
 En modo Qdrant local hay que detener `ipsis serve` antes, porque Qdrant
 bloquea la carpeta del índice.
+
+## Memoria de la conversación
+
+Las preguntas de seguimiento («¿y en el extranjero?») heredan el tema de la
+conversación (ver la [arquitectura](../../architecture.md#understanding-the-question),
+en inglés). El motor guarda cada conversación en memoria, por `session_id`, y
+la olvida tras un tiempo sin preguntas:
+
+```yaml
+# engine.yaml
+conversation:
+  expiry_minutes: 30     # se olvida tras 30 minutos sin preguntas
+  max_sessions: 1024     # a lo sumo estas conversaciones a la vez
+```
+
+Los paquetes distinguen `genericas` (se ignoran en foco/selección de respuesta)
+de `genericas_memoria` (solo se ignoran en la memoria de temas). Esta última
+excluye `tiempo/tempo` del núcleo sin cambiar su peso original al seleccionar
+una respuesta. Ambas listas se pueden sobrescribir en `config/language.yaml`.
+
+La memoria vive en el proceso del servicio (cada worker tiene la suya),
+guarda términos de las preguntas y de los pasajes que las respondieron, nunca
+las respuestas, y se pierde al reiniciar. El widget empieza una conversación
+nueva en cada carga de página.
 
 ## Registro de consultas y auditoría (`ipsis audit`)
 

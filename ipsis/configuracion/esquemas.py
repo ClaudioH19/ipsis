@@ -79,6 +79,12 @@ class ServicioConfig(ConfiguracionEstricta):
     concurrencia_maxima: int = Field(default=4, ge=1)
 
 
+class ConversacionConfig(ConfiguracionEstricta):
+    # Una conversación sin preguntas por este tiempo se olvida (ipsis.consulta.seguimiento).
+    vencimiento_minutos: float = Field(default=30, gt=0)
+    max_sesiones: int = Field(default=1024, ge=1)
+
+
 class LimitePeticionesConfig(ConfiguracionEstricta):
     capacidad: int = Field(default=100, ge=1)
     tasa_por_segundo: float = Field(default=1.0, gt=0)
@@ -102,6 +108,7 @@ class MotorConfig(ConfiguracionEstricta):
     componentes: ComponentesConfig = Field(default_factory=ComponentesConfig)
     qdrant: QdrantConfig = Field(default_factory=QdrantConfig)
     servicio: ServicioConfig = Field(default_factory=ServicioConfig)
+    conversacion: ConversacionConfig = Field(default_factory=ConversacionConfig)
     seguridad: SeguridadConfig = Field(default_factory=SeguridadConfig)
     redaccion: RedaccionConfig = Field(default_factory=RedaccionConfig)
     abstencion: dict[str, Any] | None = None

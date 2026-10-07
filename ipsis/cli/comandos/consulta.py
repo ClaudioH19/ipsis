@@ -195,6 +195,22 @@ class ComandoPreguntar(Comando):
         if d.senales:
             print(t("ask.signals"))
             print("  " + "  ".join(f"{k}={_valor(v)}" for k, v in d.senales.items()))
+        if d.intencion:
+            if d.intencion.get("origen") == "similitud":
+                print(t("ask.intention_similarity", name=d.intencion["nombre"],
+                        score=_valor(d.intencion["similitud"]), margin=_valor(d.intencion["margen"])))
+            else:
+                print(t("ask.intention", name=d.intencion["nombre"], relation=d.intencion.get("relacion") or nada))
+        if d.sinonimos:
+            print(t("ask.synonyms", values="; ".join(f"{p} → {', '.join(f)}" for p, f in d.sinonimos.items())))
+        for recurso in d.recursos_lexicos:
+            print(t("ask.lexical_source", word=recurso["palabra"], forms=", ".join(recurso["formas"]),
+                    source=recurso["fuente"], sense=recurso["sentido"], pos=recurso["pos"]))
+        if d.conversacion:
+            print(t("ask.conversation", action=t(f"ask.conversation_{d.conversacion['accion']}"),
+                    topic=d.conversacion.get("tema") or nada))
+        if d.pregunta_interpretada:
+            print(t("ask.interpreted", question=d.pregunta_interpretada))
         print(t("ask.focus", found=", ".join(d.foco_encontrados) or nada, missing=", ".join(d.foco_ausentes) or nada))
         if d.ausentes_del_corpus:
             print(t("ask.absent", terms=", ".join(d.ausentes_del_corpus)))

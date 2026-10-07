@@ -37,8 +37,9 @@ def cargar(idioma: str) -> list[dict]:
 
 
 def _literal(resultado, esperado: str) -> bool:
-    textos = [resultado.mensaje_usuario] + [e.texto for e in resultado.evidencias]
-    return any(esperado in t for t in textos)
+    exacta = (resultado.diagnostico.get("contrato_http") or {}).get("respuesta_exacta")
+    texto = exacta["texto"] if exacta is not None else resultado.mensaje_usuario
+    return esperado in texto
 
 
 def medir_idioma(idioma: str, perfil: str) -> dict:
@@ -71,6 +72,9 @@ def medir_idioma(idioma: str, perfil: str) -> dict:
                         "respuesta": turno.get("respuesta"),
                         "correcta": bool(turno.get("respuesta")) and directa and _literal(r, turno["respuesta"]),
                         "directa": directa,
+                        "mensaje": r.mensaje_usuario,
+                        "tramo_lector": ((r.diagnostico.get("contrato_http") or {}).get("respuesta_exacta") or {}).get("texto"),
+                        "conversacion_diagnostico": r.diagnostico.get("conversacion"),
                     })
         finally:
             os.chdir(anterior)

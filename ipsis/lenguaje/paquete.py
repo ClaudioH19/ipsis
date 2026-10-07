@@ -74,6 +74,13 @@ class Intencion(_Estricto):
 
     patrones: list[str] = Field(min_length=1)
     pistas: list[str] = Field(default_factory=list)
+    ejemplos: list[str] = Field(default_factory=list)
+
+
+class UmbralesIntencion(_Estricto):
+    similitud: float = Field(ge=0.0, le=1.0)
+    margen: float = Field(ge=0.0, le=2.0)
+    habilitadas: list[str] | None = None
 
 
 IDIOMA_RESPALDO = "en"
@@ -98,14 +105,18 @@ class PaqueteIdioma(_Estricto):
     marcadores: Marcadores = Field(default_factory=Marcadores)
     # En orden: gana la primera cuyo patrón aparece en la pregunta.
     intenciones: dict[str, Intencion] = Field(default_factory=dict)
+    respaldo_intencion: dict[str, UmbralesIntencion] = Field(default_factory=dict)
     # Cómo empieza una pregunta de seguimiento («y», «entonces»; ipsis.consulta.seguimiento).
     seguimiento: list[str] = Field(default_factory=list)
     # Grupos de sinónimos con sus formas comunes (ipsis.lenguaje.consultas.sinonimos_presentes):
     # solo reemplazan una palabra de la pregunta que no está en el corpus.
     sinonimos: list[list[str]] = Field(default_factory=list)
+    sinonimos_dominio: list[list[str]] = Field(default_factory=list)
     # Palabras que nunca son término foco: verbos de apoyo («hacer», «tener») y
     # unidades («días», «veces»). Dicen cómo se pregunta, no de qué se habla.
     genericas: list[str] = Field(default_factory=list)
+    # Solo la memoria de temas las ignora; conservan su peso en selección/foco.
+    genericas_memoria: list[str] = Field(default_factory=list)
     # Sufijos de sustantivos derivados que el stemmer deja («signatur», «assinatur»;
     # ipsis.lenguaje.consultas.equivalentes): para el foco, «signature» cuenta como «sign».
     sufijos_derivados: list[str] = Field(default_factory=list)
@@ -180,7 +191,19 @@ def cargar_paquete(codigo: str, proyecto: str | Path | None = None) -> PaqueteId
         if ruta.is_file():
             propios, legado = extraer_legado(yaml.safe_load(ruta.read_text(encoding="utf-8")) or {})
             datos = _fusionar(datos, propios)
-    return PaqueteIdioma.model_validate({**datos, "plantillas_legado": legado})
+    paquete = PaqueteIdioma.model_validate({**datos, "plantillas_legado": legado})
+    if proyecto is not None:
+        from ipsis.configuracion.archivos import leer
+
+        dominio = leer(Path(proyecto) / rutas.DOMINIO, "dominio")
+        grupos = dominio.get("sinonimos") or []
+        if not isinstance(grupos, list) or any(
+            not isinstance(g, list) or len(g) < 2 or any(not isinstance(f, str) or not f.strip() for f in g)
+            for g in grupos
+        ):
+            raise ValueError("domain.yaml: synonyms must contain groups of at least two nonempty strings")
+        paquete.sinonimos_dominio = grupos
+    return paquete
 
 
 __all__ = ["IDIOMA_RESPALDO", "PaqueteIdioma", "cargar_paquete", "idiomas_disponibles", "validar_codigo_idioma"]

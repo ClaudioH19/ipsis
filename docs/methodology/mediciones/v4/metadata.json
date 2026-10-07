@@ -1,0 +1,73 @@
+{
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "onnx_threads_quality_and_paired_latency": 2,
+  "memory_at_preparation": {
+    "total": 16442789888,
+    "available": 868171776,
+    "percent": 94.7,
+    "used": 15574618112,
+    "free": 868171776
+  },
+  "before_reuses_f2_results": true,
+  "f1_runtime_commit": "39c7878",
+  "f1_evaluation_adjustment": "Solo metricas.py: misma comprobación del tramo literal del lector que F2/final; ninguna modificación del motor F1.",
+  "models": "Snapshots locales fijados en metadata.json de F2; ejecución offline",
+  "f4_v2": "Ensayo detenido por pérdidas de herencia tras recortar el contexto; no es la versión final.",
+  "model_cache_snapshots": {
+    "models--intfloat--multilingual-e5-small": [
+      "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    ],
+    "models--cross-encoder--mmarco-mMiniLMv2-L12-H384-v1": [
+      "1427fd652930e4ba29e8149678df786c240d8825"
+    ],
+    "models--dewdev--mdeberta-v3-base-squad2-onnx": [
+      "8e70bb4dd7955b69e39e0c7347302e536a4b5f27"
+    ]
+  },
+  "before_python_yaml_byte_identical_to_f2_final": true,
+  "before_banks_byte_identical_to_f2_results": true,
+  "policy_thresholds_changed": false,
+  "data_downloads": false,
+  "metric": "selected_reader_span_v2",
+  "comparison_baselines": {
+    "antes": "Fin de F2; ya contenía memoria de temas",
+    "f1": "39c7878, solo evaluación literal corregida"
+  },
+  "final_source": "corregido-code.zip; separación de genéricas de memoria y respuesta",
+  "previous_round_post_bank_change": {
+    "files": [
+      "ipsis/aplicacion/consulta.py"
+    ],
+    "reason": "El ranking de diagnóstico ahora usa la intención efectiva y el contexto, como la selección real. No modifica respuestas ni decisiones.",
+    "validated_by": "pruebas-diagnostico.xml: 19 aprobadas; una prueba añadida después de recoger la suite completa"
+  },
+  "validation": {
+    "full": {
+      "tests": 1056.0,
+      "failures": 0.0,
+      "errors": 0.0,
+      "skipped": 2.0,
+      "time": 1313.781
+    },
+    "separation_unit_tests": {
+      "tests": 62.0,
+      "failures": 0.0,
+      "errors": 0.0,
+      "skipped": 0.0,
+      "time": 8.134
+    }
+  },
+  "previous_round_failure": "comparacion-antes-separacion.json: G3 falla por es-parafrasis-019; validacion-antes-separacion.json conserva todos los criterios",
+  "archives": {
+    "antes-code.zip": "2d7d4c23fc7b02827d318b18b832e8ee5cda68b5ef63a5d1cc238e303a80ffef",
+    "corregido-code.zip": "1934070399a9373c05cdca5204c8bca7f3d3e06ba03b1264a57e1adfca1d3490",
+    "f1-evaluacion-code.zip": "09db46554a7b1dbf37508345aba9aa0721a68564c34cf7def483d9a8a1063468",
+    "f1-original-code.zip": "6a1e75ce798384d9eace7ee7e0b5738ce0f49607e6cbf33a8d2df30dd1e59f4d",
+    "f4-code.zip": "eb8286fd437922642291a55701e12ca87e4574873f9159f3097d1fa99b86d5df",
+    "f4-final-code.zip": "9bed4dd7589c7249515b4c57e1e830614bf466afa53d4a2ead9b0d6c05aedc79",
+    "f4-v2-code.zip": "f562c0ac62b01804f277f5b874bb21083204face7bf878ec0156e4958496a614",
+    "final-code.zip": "5d240af548935debaf2cbe723974e708adf9809941d8d51047a55380293e6a26",
+    "final-revision-code.zip": "03503af60ba00b53234ba82bc57eb06a0a9ce0a44dd184aee09071034cbeb49b"
+  }
+}

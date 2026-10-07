@@ -1,0 +1,2882 @@
+[
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "cuando empieza la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo empieza la auditoría de compras?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "cuando parte la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo termina el contrato con el proveedor?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Desde cuándo se hace la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En qué momento se realiza la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo se empieza a comprar?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién envía la Orden de Compra al proveedor?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién aprueba el pago de la Orden de Compra en Finanzas?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si el proveedor rechaza la orden?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si la unidad requirente rechaza los productos recibidos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días tiene el proveedor para entregar los productos?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién firma la Resolución de compra?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Desde qué monto se necesita una Resolución? requiere requieren requerir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Desde qué monto se necesita una licitación pública? requiere requieren requerir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En cuántos días paga Finanzas las facturas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días a la semana se puede teletrabajar?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días de vacaciones tiene un funcionario en teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué asignación mensual se da para gastos de conexión?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué asignación mensual se da para gastos de electricidad?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Después de cuántos intentos fallidos se bloquea la cuenta?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto se paga por kilómetro si viajo en auto propio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién compra los pasajes aéreos?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-011",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién compra los pasajes de bus?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-011",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos caracteres debe tener la nueva contraseña?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-012",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Con cuánta anticipación se comunica la suspensión del teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-013",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cada cuánto se revisa el acuerdo de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-012",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cada cuánto se revisa el plan de metas del funcionario?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-014",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué horario tiene la Mesa de Ayuda?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "quien puede pedir teletrabajo",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué equipos me pasan para trabajar desde la casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-013",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué muebles me pasan para trabajar desde la casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-011",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En qué horario tengo que estar conectado si teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-012",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si no cumplo mis metas teletrabajando?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-014",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si me enfermo mientras teletrabajo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-013",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-014",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-015",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto tarda en llegar un computador nuevo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-016",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién autoriza instalar software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-015",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién autoriza comprar licencias de software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-017",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánta plata me dan por día si viajo al extranjero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-018",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Con cuántos días de anticipación pido el viático? pedir solicita solicitan solicitar",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-019",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si no rindo los gastos a tiempo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-016",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si pierdo las boletas originales?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-020",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo me depositan el viático?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué dice el artículo 12 del reglamento de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué cubre la asignación de 35.000 pesos del teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si el viático diario supera los 100.000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días son?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién lo aprueba?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto es?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 2014?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cómo se prepara un pisco sour?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿A qué distancia está la Luna de la Tierra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "when does the purchase start?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When does the purchasing audit start?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "when does buying begin",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When does the contract with the supplier end?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When is the purchase made?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "At what point does the purchase take place?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When do we start buying?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who sends the Purchase Order to the supplier?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who approves the payment of the Purchase Order in Finance?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if the supplier rejects the order?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if the requesting unit rejects the products received?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days does the supplier have to deliver the products?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who signs the purchase Resolution?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Above what amount do you need a Resolution?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Above what amount do you need a public tender?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Within how many days does Finance pay invoices?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days a week can I work remotely?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many vacation days does a remote employee get?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What monthly allowance is paid for connection costs?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What monthly allowance is paid for electricity costs?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How often does the password expire?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How often does the access card expire?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "After how many failed attempts is the account locked?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What is the daily allowance within the country?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How much is paid per kilometre when driving my own car?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who buys the air tickets?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-011",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who buys the bus tickets?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-011",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many characters must the new password have?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-012",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How far in advance is the suspension of remote work notified?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-013",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How often is the remote work agreement reviewed?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-012",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How often is the employee's goal plan reviewed?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-014",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What are the Help Desk hours?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "who can apply for remote work",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does my manager take to answer a remote work application?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What equipment do I get to work from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-013",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What furniture do I get to work from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-011",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What hours do I have to be online when working from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-012",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if I don't meet my goals while working remotely?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-014",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if I get sick while working remotely?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-013",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "forgot my login password, how do I change it?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-014",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "my account got locked, what now?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-015",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does it take to get a new computer?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-016",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who authorizes installing software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-015",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who authorizes buying software licenses?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-017",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How much money do I get per day when travelling abroad?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-018",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days ahead should I ask for the allowance? request requests requested",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-019",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if I don't report my expenses on time?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-016",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if I lose the original receipts?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-020",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When is the allowance paid into my account?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What does article 12 of the remote work regulation say?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What does the 35,000 pesos remote work allowance cover?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if the daily allowance exceeds 100,000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days is it?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who approves it?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How much is it?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who won the 2014 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How do you make a pisco sour?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How far is the Moon from the Earth?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "quando começa a compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando começa a auditoria de compras?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "quando inicia a compra",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando termina o contrato com o fornecedor?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A partir de quando se faz a compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em que momento a compra é realizada?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando se começa a comprar?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem envia a Ordem de Compra ao fornecedor?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem aprova o pagamento da Ordem de Compra no Financeiro?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se o fornecedor recusar a ordem?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se a unidade requisitante recusar os produtos recebidos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias o fornecedor tem para entregar os produtos?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem assina a Resolução de compra?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A partir de que valor se precisa de uma Resolução? exige exigem exigir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A partir de que valor se precisa de uma licitação pública? exige exigem exigir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em quantos dias o Financeiro paga as faturas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias por semana posso fazer teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias de férias tem um servidor em teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual auxílio mensal é concedido para despesas de conexão?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual auxílio mensal é concedido para despesas de energia elétrica?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A cada quanto tempo a senha expira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A cada quanto tempo o crachá de acesso expira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Depois de quantas tentativas falhas a conta é bloqueada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é o valor da diária dentro do país?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto se paga por quilômetro se eu viajar de carro próprio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem compra as passagens aéreas?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-011",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem compra as passagens de ônibus?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-011",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos caracteres a nova senha deve ter?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-012",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Com quanta antecedência a suspensão do teletrabalho é comunicada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-013",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A cada quanto tempo o acordo de teletrabalho é revisado?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-012",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A cada quanto tempo o plano de metas do servidor é revisado?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-014",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "quem pode pedir teletrabalho",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo a chefia demora para responder o pedido de teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Que equipamentos recebo para trabalhar de casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-013",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Que móveis recebo para trabalhar de casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-011",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em que horário tenho que estar conectado no teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-012",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se eu não cumprir minhas metas no teletrabalho?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-014",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se eu ficar doente durante o teletrabalho?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-013",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "esqueci a senha do login, como troco?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-014",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-015",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo demora para chegar um computador novo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-016",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem autoriza instalar software? aprova aprovam aprovar",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-015",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem autoriza comprar licenças de software? aprova aprovam aprovar",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-017",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto dinheiro recebo por dia se viajar para o exterior?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-018",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Com quantos dias de antecedência peço a diária?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-019",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se eu não prestar contas no prazo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-016",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se eu perder os recibos originais?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-020",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando a diária é depositada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que diz o artigo 12 do regulamento de teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que cobre o auxílio de 35.000 pesos do teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se a diária passar de 100.000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias são?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem aprova?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto é?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de futebol de 2014?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Como se prepara uma caipirinha?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é a distância da Lua até a Terra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "cuando empieza la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo empieza la auditoría de compras?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "cuando parte la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo termina el contrato con el proveedor?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Desde cuándo se hace la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En qué momento se realiza la compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo se empieza a comprar?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién envía la Orden de Compra al proveedor?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién aprueba el pago de la Orden de Compra en Finanzas?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si el proveedor rechaza la orden?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si la unidad requirente rechaza los productos recibidos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días tiene el proveedor para entregar los productos?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién firma la Resolución de compra?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Desde qué monto se necesita una Resolución? requiere requieren requerir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Desde qué monto se necesita una licitación pública? requiere requieren requerir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En cuántos días paga Finanzas las facturas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días a la semana se puede teletrabajar?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días de vacaciones tiene un funcionario en teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué asignación mensual se da para gastos de conexión?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué asignación mensual se da para gastos de electricidad?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Después de cuántos intentos fallidos se bloquea la cuenta?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto se paga por kilómetro si viajo en auto propio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién compra los pasajes aéreos?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-011",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién compra los pasajes de bus?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-011",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos caracteres debe tener la nueva contraseña?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-012",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Con cuánta anticipación se comunica la suspensión del teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-013",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cada cuánto se revisa el acuerdo de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-012",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cada cuánto se revisa el plan de metas del funcionario?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-014",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué horario tiene la Mesa de Ayuda?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "quien puede pedir teletrabajo",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué equipos me pasan para trabajar desde la casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-013",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué muebles me pasan para trabajar desde la casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-011",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En qué horario tengo que estar conectado si teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-012",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si no cumplo mis metas teletrabajando?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-014",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si me enfermo mientras teletrabajo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-013",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-014",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-015",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto tarda en llegar un computador nuevo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-016",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién autoriza instalar software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-015",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién autoriza comprar licencias de software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-017",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánta plata me dan por día si viajo al extranjero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-018",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Con cuántos días de anticipación pido el viático? pedir solicita solicitan solicitar",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-019",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si no rindo los gastos a tiempo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-016",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si pierdo las boletas originales?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-020",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo me depositan el viático?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué dice el artículo 12 del reglamento de teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué cubre la asignación de 35.000 pesos del teletrabajo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si el viático diario supera los 100.000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días son?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién lo aprueba?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto es?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 2014?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cómo se prepara un pisco sour?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿A qué distancia está la Luna de la Tierra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "when does the purchase start?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When does the purchasing audit start?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "when does buying begin",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When does the contract with the supplier end?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When is the purchase made?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "At what point does the purchase take place?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When do we start buying?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who sends the Purchase Order to the supplier?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who approves the payment of the Purchase Order in Finance?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if the supplier rejects the order?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if the requesting unit rejects the products received?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days does the supplier have to deliver the products?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who signs the purchase Resolution?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Above what amount do you need a Resolution?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Above what amount do you need a public tender?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Within how many days does Finance pay invoices?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days a week can I work remotely?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many vacation days does a remote employee get?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What monthly allowance is paid for connection costs?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What monthly allowance is paid for electricity costs?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How often does the password expire?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How often does the access card expire?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "After how many failed attempts is the account locked?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What is the daily allowance within the country?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How much is paid per kilometre when driving my own car?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who buys the air tickets?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-011",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who buys the bus tickets?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-011",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many characters must the new password have?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-012",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How far in advance is the suspension of remote work notified?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-013",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How often is the remote work agreement reviewed?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-012",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How often is the employee's goal plan reviewed?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-014",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What are the Help Desk hours?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "who can apply for remote work",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does my manager take to answer a remote work application?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What equipment do I get to work from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-013",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What furniture do I get to work from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-011",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What hours do I have to be online when working from home?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-012",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if I don't meet my goals while working remotely?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-014",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if I get sick while working remotely?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-013",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "forgot my login password, how do I change it?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-014",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "my account got locked, what now?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-015",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does it take to get a new computer?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-016",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who authorizes installing software?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-015",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who authorizes buying software licenses?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-017",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How much money do I get per day when travelling abroad?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-018",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days ahead should I ask for the allowance? request requests requested",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-019",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if I don't report my expenses on time?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-016",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if I lose the original receipts?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-020",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When is the allowance paid into my account?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What does article 12 of the remote work regulation say?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What does the 35,000 pesos remote work allowance cover?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if the daily allowance exceeds 100,000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days is it?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who approves it?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How much is it?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who won the 2014 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How do you make a pisco sour?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How far is the Moon from the Earth?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "quando começa a compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando começa a auditoria de compras?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "quando inicia a compra",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando termina o contrato com o fornecedor?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A partir de quando se faz a compra?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em que momento a compra é realizada?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando se começa a comprar?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem envia a Ordem de Compra ao fornecedor?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem aprova o pagamento da Ordem de Compra no Financeiro?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se o fornecedor recusar a ordem?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se a unidade requisitante recusar os produtos recebidos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias o fornecedor tem para entregar os produtos?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem assina a Resolução de compra?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A partir de que valor se precisa de uma Resolução? exige exigem exigir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A partir de que valor se precisa de uma licitação pública? exige exigem exigir",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em quantos dias o Financeiro paga as faturas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias por semana posso fazer teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias de férias tem um servidor em teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual auxílio mensal é concedido para despesas de conexão?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual auxílio mensal é concedido para despesas de energia elétrica?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A cada quanto tempo a senha expira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A cada quanto tempo o crachá de acesso expira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Depois de quantas tentativas falhas a conta é bloqueada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é o valor da diária dentro do país?",
+    "intencion": "umbral",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto se paga por quilômetro se eu viajar de carro próprio?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem compra as passagens aéreas?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-011",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem compra as passagens de ônibus?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-011",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos caracteres a nova senha deve ter?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-012",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Com quanta antecedência a suspensão do teletrabalho é comunicada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-013",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A cada quanto tempo o acordo de teletrabalho é revisado?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-012",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A cada quanto tempo o plano de metas do servidor é revisado?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-014",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "quem pode pedir teletrabalho",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo a chefia demora para responder o pedido de teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Que equipamentos recebo para trabalhar de casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-013",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Que móveis recebo para trabalhar de casa?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-011",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em que horário tenho que estar conectado no teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-012",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se eu não cumprir minhas metas no teletrabalho?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-014",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se eu ficar doente durante o teletrabalho?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-013",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "esqueci a senha do login, como troco?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-014",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-015",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo demora para chegar um computador novo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-016",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem autoriza instalar software? aprova aprovam aprovar",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-015",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem autoriza comprar licenças de software? aprova aprovam aprovar",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-017",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto dinheiro recebo por dia se viajar para o exterior?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-018",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Com quantos dias de antecedência peço a diária?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-019",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se eu não prestar contas no prazo?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-016",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se eu perder os recibos originais?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-020",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando a diária é depositada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que diz o artigo 12 do regulamento de teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que cobre o auxílio de 35.000 pesos do teletrabalho?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se a diária passar de 100.000 pesos?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias são?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem aprova?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto é?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de futebol de 2014?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Como se prepara uma caipirinha?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é a distância da Lua até a Terra?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  }
+]

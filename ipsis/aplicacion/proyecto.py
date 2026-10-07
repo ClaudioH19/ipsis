@@ -365,8 +365,14 @@ def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibr
     if archivo is None:
         return EstadoCalibracionPerfil("sin_calibracion")
     hash_corpus = indice.hash_corpus if indice.estado == "compatible" else None
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.sinonimos import huella_lexica
+    from ipsis.configuracion.carga import cargar_dominio
+
+    hash_lexico = huella_lexica(cargar_paquete(cargar_dominio().get("idioma", "es"), proyecto=Path.cwd()))
     motivo = motivo_no_aplicable(archivo, perfil=perfil_instalacion.perfil,
-                                 modelos=perfil_instalacion.modelos.model_dump(), hash_corpus=hash_corpus)
+                                 modelos=perfil_instalacion.modelos.model_dump(), hash_corpus=hash_corpus,
+                                 hash_lexico=hash_lexico)
     if motivo is None:
         return EstadoCalibracionPerfil("vigente")
     if archivo.estado != EstadoCalibracion.CALIBRADO:

@@ -317,9 +317,13 @@ def calibrar_proyecto(
 
     artefacto = (evaluar or evaluar_backend_activo)(str(manifiesto))
     resultado = calibrar(banco, artefacto.observaciones, perfil.umbrales_por_defecto, alfa)
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.sinonimos import huella_lexica
+
     procedencia = ProcedenciaCalibracion(
         perfil=perfil.perfil, modelos=perfil.modelos.model_dump(), hash_corpus=hash_corpus,
         banco=f"{banco.manifiesto.dataset_id}@{banco.manifiesto.dataset_version}", hash_banco=hash_banco(banco),
+        hash_lexico=huella_lexica(cargar_paquete(cargar_dominio().get("idioma", "es"), proyecto=Path.cwd())),
     )
     ruta = escribir_calibracion(resultado, procedencia, rutas.CALIBRACION) if aplicar else None
     return CalibracionProyecto(resultado, procedencia, ruta)

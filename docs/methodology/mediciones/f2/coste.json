@@ -1,0 +1,35 @@
+{
+  "metodo": "Proceso nuevo por idioma, RSS antes/despues; 10.000 accesos calientes. Incluye inicializacion del stemmer; no es RSS del servicio completo.",
+  "resultados": [
+    {
+      "idioma": "es",
+      "raices_indexadas": 8708,
+      "grupos_indexados": 4704,
+      "carga_fria_ms": 1557.885400019586,
+      "cache_ms": 0.00014402000233530997,
+      "rss_antes_bytes": 33366016,
+      "rss_despues_bytes": 43716608,
+      "incremento_rss_bytes": 10350592
+    },
+    {
+      "idioma": "en",
+      "raices_indexadas": 11827,
+      "grupos_indexados": 6599,
+      "carga_fria_ms": 2033.159299986437,
+      "cache_ms": 0.00018921999726444482,
+      "rss_antes_bytes": 33357824,
+      "rss_despues_bytes": 47124480,
+      "incremento_rss_bytes": 13766656
+    },
+    {
+      "idioma": "pt",
+      "raices_indexadas": 3900,
+      "grupos_indexados": 2157,
+      "carga_fria_ms": 1040.3657999704592,
+      "cache_ms": 0.0001622100011445582,
+      "rss_antes_bytes": 33198080,
+      "rss_despues_bytes": 40411136,
+      "incremento_rss_bytes": 7213056
+    }
+  ]
+}

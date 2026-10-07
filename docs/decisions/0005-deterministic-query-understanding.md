@@ -76,6 +76,10 @@ lost; one more exact answer in `light`/en; latency within noise.
 
 ## Follow-up questions
 
+> Partly superseded by [ADR 0006](0006-conversation-memory.md): the memory now
+> keeps the whole conversation as topics, with expiry; the rules below
+> describe the first version (one turn per session).
+
 "and with 90?" after "what happens above 100 UTM?" carries almost no topic.
 `ipsis/consulta/seguimiento.py` remembers, per session and in memory, the
 last effective question and the words of the passage that answered it. A
@@ -192,7 +196,52 @@ Resolución de compra?" and "Quem assina a Resolução de compra?" (another
 sentence on the same topic, with every focus term), and "Quando se começa a
 comprar?", whose answering chunk does not reach `light`'s three candidates.
 
-## Not done yet
+## Similarity fallback (plan V4, F3)
+
+Patterns remain authoritative. For an unknown intention, a question with a
+nongeneric corpus topic can compare its existing dense query vector with
+ten natural examples per intention and language, encoded once at startup
+using query prefixes on both sides. Each intention scores with its maximum
+example cosine; the margin is against the second **intention**, not another
+example of the winning intention.
+
+Both thresholds must be exceeded. Settings are keyed by dense model in the
+language pack. No encoder, BM25, or no measured setting means no fallback;
+E5 base remains inactive until separately measured. Diagnostics record
+pattern/similarity origin, candidate, cosine, margin, nearest example and
+acceptance, including rejected attempts.
+
+The inferred intention supplies only cues for selection and the reader
+window, including the extra candidate by cue. It cannot locate relation
+words: all query terms remain in focus, coverage and OOV checks. No text is
+generated, no answer threshold changes and no model weights are trained.
+
+Dev selects thresholds on a fixed grid with zero incorrect fallback
+intentions: maximize correct coverage, then minimize margin and cosine.
+Only categories actually accepted correctly on dev are enabled; the margin
+still compares all seven categories. Other categories keep their patterns.
+Test never enters threshold search. Iterations and their test errors are
+retained; this small bank is a regression check, not an untouched statistical
+certification set. Prepared queries use runtime manual synonym expansion;
+automatic WordNet expansion remains BM25-only.
+
+| Language | E5-small minimum cosine | Minimum margin (strict) | Enabled fallback |
+|---|---|---|---|
+| es | 0.850 | > 0.000 | end, procedure |
+| en | 0.870 | > 0.000 | end |
+| pt | 0.895 | > 0.000 | procedure |
+
+Intent examples, enabled categories and thresholds participate in lexical
+calibration provenance. Rebuild the motor and regenerate stale calibrations
+after changing them.
+
+The [V4 evaluation](../methodology/v4-results.md) records actual fallback
+activation: eight additional correctly labelled intentions per profile in
+the natural-query bank, without a change in answer correctness or wrong
+answers. Recognition coverage is small and does not establish a general
+answer-quality improvement.
+
+## Remaining proposal
 
 From the proposal that motivated this: parent/neighbor expansion. It should
 come with a failing case and a measurement, like these.

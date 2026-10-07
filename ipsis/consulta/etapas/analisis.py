@@ -12,8 +12,10 @@ class EtapaAnalisis(_Etapa):
         resolutor = getattr(m, "seguimiento", None)
         obtener = getattr(getattr(m, "retriever", None), "estadisticas_lexico", None)
         if resolutor is not None and callable(obtener):
-            # «¿y con 90?»: la pregunta de seguimiento hereda el tema del turno anterior.
+            # «¿y con 90?»: la pregunta de seguimiento hereda el tema de la conversación.
             resolucion = resolutor.resolver(ctx.pregunta, ctx.id_sesion, getattr(m, "idioma", None), obtener())
+            ctx.turno_memoria = resolucion.turno
+            ctx.diagnostico["conversacion"] = {"accion": resolucion.accion, "tema": resolucion.tema}
             if resolucion.seguimiento:
                 ctx.diagnostico["pregunta_interpretada"] = resolucion.pregunta
                 ctx.pregunta_usuario = ctx.pregunta
@@ -28,6 +30,21 @@ class EtapaAnalisis(_Etapa):
                 ctx.diagnostico["sinonimos"] = sinonimos
                 ctx.pregunta = f"{ctx.pregunta.rstrip()} {' '.join(f for formas in sinonimos.values() for f in formas)}"
         ctx.consulta = m._analizar(ctx.pregunta, ctx.id_sesion)
+        if callable(obtener) and getattr(m.retriever, "modo", "hibrida") != "vectorial":
+            from ipsis.lenguaje.sinonimos import expansion_automatica
+
+            expansion, detalles = expansion_automatica(ctx.pregunta, getattr(m, "idioma", None), obtener())
+            if expansion:
+                recuperacion = f"{ctx.pregunta.rstrip()} {' '.join(f for fs in expansion.values() for f in fs)}"
+                ctx.consulta = ctx.consulta.model_copy(update={"contexto": {
+                    **ctx.consulta.contexto, "pregunta_recuperacion": recuperacion,
+                }})
+                ctx.diagnostico["recursos_lexicos"] = detalles
+                ctx.diagnostico["pregunta_recuperacion"] = recuperacion
+        if ctx.consulta.intencion != "desconocida":
+            ctx.diagnostico["intencion"] = {"nombre": ctx.consulta.intencion,
+                                            "origen": "patron",
+                                            "relacion": ctx.consulta.contexto.get("relacion", "")}
         if ctx.pregunta_usuario:
             ctx.consulta = ctx.consulta.model_copy(
                 update={"contexto": {**ctx.consulta.contexto, "pregunta_usuario": ctx.pregunta_usuario}})

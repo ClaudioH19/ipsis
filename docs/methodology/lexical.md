@@ -151,6 +151,95 @@ Each language pack also declares:
   and "assinatura" as "assina". Spanish needs none: its stemmer already takes
   "aprobación" and "firma" to the verb's stem.
 
+## Versioned WordNet resources
+
+The package also includes prepared lexical data under
+`ipsis/recursos/sinonimos/` ([ADR 0007](../decisions/0007-versioned-lexical-sources.md)):
+full `*.lexicon.tsv` files preserve lemma/synset membership, POS, phrases and
+polysemy; separate `*.tsv` files apply reproducible filters (up to three
+senses, at most eight members, lowercase single words). Runtime uses only
+the filtered table for expansion and builds a cached stem index per language/stemmer.
+It counts senses in the full WordNet lexicon before applying runtime guards:
+a sense discarded by the group-size filter still blocks an ambiguous lemma.
+An automatic expansion requires an OOV content word, exactly one sense
+after stemming, and a replacement present in the corpus. Relation words,
+manual groups and project overrides take precedence. Only the BM25 query
+expands: dense confidence, focus validation, QA and acceptance retain the
+original question and vector. Automatic groups never enter `equivalentes()`.
+The diagnostic retains source, synset, POS and chosen forms.
+
+Project `domain.yaml::synonyms` groups override overlapping manual and
+automatic groups. Multiword forms require complete phrase matching and
+all replacement content stems in the corpus. Rebuild the motor after changing
+lexical rules; its conversation state and query caches start empty.
+Calibration provenance includes a SHA-256 of the behavior version, effective
+rules, project groups, filtered TSV and sense-count lexicon bytes. Old or mismatching hashes
+prevent the old calibration from applying.
+
+Original downloads and notices are permanently stored in
+`herramientas/sinonimos/datos/fuentes/`. The developer converter uses them
+offline by default, verifies source hashes and produces per-language
+manifests and attribution files. Only an explicit `--download` for a source
+update allows network access; installation uses packaged resources.
+
+Pinned LibreOffice/MyThes supplements add directed `*.thesaurus.tsv`
+records and a `*.vocabulary.tsv` inventory with source IDs. Records retain
+relation annotations; generic, related, similar and antonym terms are not
+turned into synonym groups. The combined inventory contains 383,865
+written forms/expressions across the three languages. Case variants and
+phrases count separately; this is a coverage inventory, not a runtime
+equivalence map. Supplemental originals are stored under
+`herramientas/sinonimos/datos/tesauros/` and rebuild offline as well.
+
+Preparation/reproducibility is validated. Runtime acceptance is measured
+against the query, conversation and universal banks with the corrected
+literal metric: a reader's selected span takes precedence over its enclosing
+sentence. Vocabulary counts do not establish answer correctness.
+The [F2 results](mediciones/f2/README.md) preserve all raw comparisons:
+no new wrong answers, lost correct answers or state changes in the 18
+profile/language/bank combinations; alternating timing repeats meet the
+light budget. Query content and normalized stopwords are cached without
+changing the effective rules.
+
+`genericas_memoria` is a separate topic-memory word list: `tiempo/tempo`
+are ignored when recognizing or compacting a topic, while keeping their
+original role in answer focus and sentence selection. Moving them to global
+generic words lost a correct Spanish answer in the F1 comparison. The final
+[V4 results](v4-results.md) preserve that failed iteration and the correction.
+
+The extended dictionary inventory also includes frozen Kaikki/Wiktionary
+snapshots for es/en/pt (extraction 2026-10-03, enwiktionary 2026-09-02).
+Complete downloads are archived losslessly in parts. Verified lexical
+projections support faster offline rebuilds; `--raw-dictionaries` audits
+directly from the complete originals. Separate compressed resources retain
+lemma/form/variant classifications, morphology records and explicit directed
+synonym edges with sense identifiers and qualifiers. Inflections, translations,
+antonyms and related terms never become synonym groups through this conversion.
+These files remain development data; the answer engine does not load them.
+
+## Intent similarity fallback
+
+Each pack includes ten independent examples for seven intentions. Patterns
+win. With no pattern and a nongeneric corpus topic, `intenciones.py` compares
+the cached dense query vector with example vectors computed at startup.
+The best example scores each intention; cosine and margin against a different
+intention must exceed the measured model/language settings. BM25 and
+unmeasured models skip this.
+
+Only natural-query dev and human relation labels in
+`tests/datos/banco_consultas/intenciones.yaml` select thresholds. Unsupported
+duration, frequency, simple amounts and descriptions remain unknown. The
+search maximizes correct fallback coverage without dev errors, then minimizes
+margin and cosine. Shipped categories also require a correct dev fallback;
+other relations keep their patterns. Test is reported separately and raw
+development iterations are retained, including incorrect predictions.
+
+The inferred intention supplies sentence cues and reader-window selection,
+including the extra candidate by cue. It removes no content word and changes
+no answer acceptance threshold. Example/threshold/activation data and the
+behavior version invalidate older calibration hashes. See
+[ADR 0005](../decisions/0005-deterministic-query-understanding.md).
+
 ## Numbered labels
 
 A label such as "Artículo 4." or "4.2." is not a sentence: the sentence

@@ -76,6 +76,8 @@ MOTOR = {
     } | {"abstention_policy": _c("abstention_policy", valores={"cascada_v1": "cascade_v1"})}),
     "qdrant": _c("qdrant", {"modo": _c("mode", valores={"servidor": "server"}), "url_servidor": _c("server_url")}),
     "servicio": _c("service", {"concurrencia_maxima": _c("max_concurrency")}),
+    "conversacion": _c("conversation", {"vencimiento_minutos": _c("expiry_minutes"),
+                                        "max_sesiones": _c("max_sessions")}),
     "seguridad": _c("security", {"limite_peticiones": _c("rate_limit", {
         "capacidad": _c("capacity"), "tasa_por_segundo": _c("rate_per_second")})}),
     "redaccion": _c("rendering", {
@@ -153,6 +155,7 @@ PERSONALIDAD = {
 }
 
 DOMINIO = {
+    "sinonimos": _c("synonyms"),
     "organismos": _c("organizations"),
     "extractores_regex": _c("regex_extractors", {
         "tipo": _c("type"), "patron": _c("pattern"), "valor_norm": _c("normalized_value"), "glosa": _c("gloss"),
@@ -173,7 +176,7 @@ CALIBRACION = {
     "alfa": _c("alpha"), "confianza": _c("confidence"),
     "procedencia": _c("provenance", {"perfil": _c("profile"), "modelos": _c("models", MODELOS),
                                      "hash_corpus": _c("corpus_hash"), "banco": _c("bank"),
-                                     "hash_banco": _c("bank_hash")}),
+                                     "hash_banco": _c("bank_hash"), "hash_lexico": _c("lexical_hash")}),
     "umbrales": _c("thresholds", UMBRALES),
     "resultado": _c("result"),
 }

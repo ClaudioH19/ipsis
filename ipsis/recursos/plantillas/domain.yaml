@@ -11,6 +11,12 @@
 organizations: []
 regex_extractors: []
 
+# Project-specific equivalences, matched as complete phrases. They override
+# overlapping language groups; they never provide facts for an answer.
+# synonyms:
+#   - [OC, orden de compra]
+synonyms: []
+
 # Taxonomy of the fragments. Add your own categories and trigger words;
 # `otro` is the mandatory fallback category.
 taxonomy:

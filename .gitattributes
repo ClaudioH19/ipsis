@@ -11,3 +11,6 @@ ipsis/servicio/estaticos/avatar.js.sha256 -text
 # Plantillas de despliegue e imagen: se usan en Linux (CRLF rompe RUN con \ y valores de .env).
 ipsis/recursos/despliegue/** text eol=lf
 tests/datos/banco_conversaciones/** text eol=lf
+# Fuentes y derivados léxicos: hashes y avisos originales byte a byte.
+herramientas/sinonimos/datos/** -text
+ipsis/recursos/sinonimos/** -text

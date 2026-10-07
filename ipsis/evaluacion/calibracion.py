@@ -334,7 +334,8 @@ def escribir_calibracion(resultado: ResultadoCalibracion, procedencia: Procedenc
     return ruta
 
 
-def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_corpus: str | None):
+def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_corpus: str | None,
+                       hash_lexico: str | None = None):
     """``(archivo, motivo)``: el archivo leído y por qué no se aplicaría
     (``None`` si se aplica). ``(None, None)`` si no hay calibración."""
     from ipsis.configuracion.calibracion import leer_calibracion, motivo_no_aplicable
@@ -342,7 +343,8 @@ def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_cor
     archivo = leer_calibracion(ruta)
     if archivo is None:
         return None, None
-    return archivo, motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus)
+    return archivo, motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus,
+                                       hash_lexico=hash_lexico)
 
 
 __all__ = [

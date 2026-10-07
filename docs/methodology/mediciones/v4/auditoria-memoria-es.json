@@ -1,0 +1,139 @@
+[
+  {
+    "sesion": "conversacion:es-conv-003",
+    "pregunta": "¿con cuánta anticipación lo pido?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "viático",
+      "diario",
+      "país"
+    ],
+    "propios": [
+      "anticipación",
+      "pedir",
+      "solicitar"
+    ],
+    "ausentes": [
+      "anticipación",
+      "pedir",
+      "solicitar"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-004",
+    "pregunta": "¿cada cuánto vence?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "cambio",
+      "contraseña"
+    ],
+    "propios": [
+      "vence"
+    ],
+    "ausentes": [
+      "vence"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-008",
+    "pregunta": "¿con cuánta anticipación me avisan?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "cumple",
+      "metas",
+      "teletrabajo"
+    ],
+    "propios": [
+      "anticipación",
+      "avisa"
+    ],
+    "ausentes": [
+      "avisa"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-009",
+    "pregunta": "¿y para entregar los productos?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "proveedor",
+      "aceptar",
+      "orden"
+    ],
+    "propios": [
+      "entrega",
+      "productos"
+    ],
+    "ausentes": [
+      "entrega",
+      "productos"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-010",
+    "pregunta": "¿y en cuántos días se emite la orden?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "compra"
+    ],
+    "propios": [
+      "emitir",
+      "orden"
+    ],
+    "ausentes": [
+      "emitir",
+      "orden"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-011",
+    "pregunta": "¿cuándo se apaga la bomba?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "funciona",
+      "riego"
+    ],
+    "propios": [
+      "apaga",
+      "bomba"
+    ],
+    "ausentes": [
+      "apaga",
+      "bomba"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-013",
+    "pregunta": "¿y si el producto llega dañado?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "pedir",
+      "reembolso"
+    ],
+    "propios": [
+      "productos",
+      "llega"
+    ],
+    "ausentes": [
+      "productos",
+      "llega"
+    ]
+  },
+  {
+    "sesion": "conversacion:es-conv-016",
+    "pregunta": "¿y fuera de horario?",
+    "accion": "tema_nuevo",
+    "nucleo": [
+      "cuenta",
+      "hago"
+    ],
+    "propios": [
+      "fuera",
+      "horario"
+    ],
+    "ausentes": [
+      "fuera",
+      "horario"
+    ]
+  }
+]

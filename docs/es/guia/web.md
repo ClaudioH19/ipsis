@@ -95,6 +95,11 @@ quedó el ícono, y `{state: "event", event, key}` en cada reacción.
 
 ## API HTTP
 
+El `session_id` se crea en cada carga de página, sin `localStorage`.
+Recargar o navegar empieza una conversación nueva; cerrar y reabrir el panel
+la conserva. El servidor olvida la conversación tras el periodo configurado
+de inactividad (30 minutos por defecto). La memoria pertenece a cada worker.
+
 El widget usa tres endpoints públicos; también puedes llamarlos tú:
 
 | Endpoint | Qué devuelve |

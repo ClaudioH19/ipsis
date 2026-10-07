@@ -140,6 +140,16 @@ ask:
   stages: 'Stages (ms):'
   early_exit: '   (early exit: no models)'
   signals: 'Signals:'
+  intention: 'Intention: {name} (recognized in “{relation}”)'
+  intention_similarity: 'Intention: {name} (similarity: {score}, margin: {margin})'
+  synonyms: 'Synonyms used: {values}'
+  lexical_source: 'BM25 expansion: {word} → {forms} ({source}, sense {sense}, POS {pos})'
+  conversation: 'Conversation: {action}; topic: {topic}'
+  conversation_hereda: follows the topic
+  conversation_retoma: returns to an earlier topic
+  conversation_tema_nuevo: new topic
+  conversation_sin_cambio: no topic change
+  interpreted: 'Interpreted question: "{question}"'
   focus: 'Focus terms: found: {found}; missing: {missing}'
   absent: 'Terms not in the corpus: {terms}'
   sentence: 'Evaluated sentence: «{sentence}»'
@@ -708,6 +718,7 @@ evaluation:
   calibration_profile: it was calibrated with the profile {calibrated!r} and the project uses {profile!r}
   calibration_models: it was calibrated with other models
   calibration_corpus: the indexed corpus changed since the calibration (or there is no index)
+  calibration_lexical: the lexical rules or sources changed since calibration (or its lexical hash is missing)
   offsets_mismatch: the evidence offsets do not match the literal text
   answerable_needs_evidence: an answerable question needs a literal answer and evidence
   literal_in_evidence: the literal answer must be contained in a piece of evidence

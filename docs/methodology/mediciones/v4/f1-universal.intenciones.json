@@ -1,0 +1,1442 @@
+[
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto dura la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué defectos cubre la garantía?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién autoriza las reparaciones de la garantía? aprueba aprueban",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Me cubren si se me cae la cafetera al suelo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Hasta cuándo puedo pedir el reembolso?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En cuántos días hábiles se paga el reembolso?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién aprueba la solicitud de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos litros por hora entrega cada gotero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos goteros tiene el invernadero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿A qué hora funciona el riego por goteo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué tipo de fertilizante se agrega al riego?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo se riega una tercera vez en los meses de calor?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién es la responsable del registro de muestras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién firma los resultados de las muestras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por qué se rechaza una muestra sin etiqueta?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántas muestras se rechazan cada mes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En qué piso está la biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Tiene ascensor el edificio B?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si el estanque baja del 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto dura?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cómo se prepara un pan de masa madre?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How much does it cost to extend the warranty for the Brio C2 coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What defects does the warranty cover?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who authorizes warranty repairs? approve approves approved",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What should I do if my coffee maker breaks down?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Until when can I request a refund?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Within how many business days is the refund paid?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who approves the refund request?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When is return shipping free?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Which carrier picks up the return?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Why can't toothbrushes be returned?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many drippers does the greenhouse have?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "At what time does drip irrigation run?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What type of fertilizer is added to the irrigation?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When are the plants watered a third time during the hot months?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who is in charge of sample registration?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who signs the sample results?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Why is a sample without a label rejected?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many samples are rejected each month?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "For how long can blood samples be stored?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "On which floor is the library?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Does building B have an elevator?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if the tank drops below 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does it last?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How do you make sourdough bread?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who won the 1998 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo dura a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto custa estender a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quais defeitos a garantia cobre?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem autoriza os reparos da garantia?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Até quando posso pedir o reembolso?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em quantos dias úteis o reembolso é pago?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem aprova a solicitação de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual transportadora retira a devolução?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos litros por hora cada gotejador fornece?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos gotejadores a estufa tem?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Que tipo de fertilizante é adicionado à irrigação?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando as plantas são regadas uma terceira vez nos meses quentes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem é a responsável pelo registro de amostras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem assina os resultados das amostras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por que uma amostra sem etiqueta é rejeitada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantas amostras são rejeitadas por mês?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por quanto tempo as amostras de sangue podem ser conservadas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em que andar fica a biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O prédio B tem elevador?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se o tanque ficar abaixo de 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo dura?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Como se faz pão de fermentação natural?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto dura la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué defectos cubre la garantía?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién autoriza las reparaciones de la garantía? aprueba aprueban",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Me cubren si se me cae la cafetera al suelo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Hasta cuándo puedo pedir el reembolso?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En cuántos días hábiles se paga el reembolso?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién aprueba la solicitud de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos litros por hora entrega cada gotero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos goteros tiene el invernadero?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿A qué hora funciona el riego por goteo?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué tipo de fertilizante se agrega al riego?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo se riega una tercera vez en los meses de calor?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién es la responsable del registro de muestras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién firma los resultados de las muestras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por qué se rechaza una muestra sin etiqueta?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántas muestras se rechazan cada mes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En qué piso está la biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Tiene ascensor el edificio B?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si el estanque baja del 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto dura?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cómo se prepara un pan de masa madre?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How much does it cost to extend the warranty for the Brio C2 coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What defects does the warranty cover?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who authorizes warranty repairs? approve approves approved",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What should I do if my coffee maker breaks down?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Until when can I request a refund?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Within how many business days is the refund paid?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who approves the refund request?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When is return shipping free?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Which carrier picks up the return?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Why can't toothbrushes be returned?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many drippers does the greenhouse have?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "At what time does drip irrigation run?",
+    "intencion": "inicio",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What type of fertilizer is added to the irrigation?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When are the plants watered a third time during the hot months?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who is in charge of sample registration?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who signs the sample results?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Why is a sample without a label rejected?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many samples are rejected each month?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "For how long can blood samples be stored?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "On which floor is the library?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Does building B have an elevator?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if the tank drops below 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does it last?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How do you make sourdough bread?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who won the 1998 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo dura a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto custa estender a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quais defeitos a garantia cobre?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem autoriza os reparos da garantia?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Até quando posso pedir o reembolso?",
+    "intencion": "fin",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em quantos dias úteis o reembolso é pago?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem aprova a solicitação de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual transportadora retira a devolução?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos litros por hora cada gotejador fornece?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos gotejadores a estufa tem?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Que tipo de fertilizante é adicionado à irrigação?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando as plantas são regadas uma terceira vez nos meses quentes?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem é a responsável pelo registro de amostras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem assina os resultados das amostras?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por que uma amostra sem etiqueta é rejeitada?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantas amostras são rejeitadas por mês?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por quanto tempo as amostras de sangue podem ser conservadas?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em que andar fica a biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O prédio B tem elevador?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se o tanque ficar abaixo de 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo dura?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Como se faz pão de fermentação natural?",
+    "intencion": "procedimiento",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {}
+  }
+]

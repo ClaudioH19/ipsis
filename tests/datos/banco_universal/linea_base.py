@@ -35,7 +35,8 @@ def resumir(artefacto) -> dict:
         grupos[nombre] = {"n": g.n, "ok": g.directas, "relacionado": g.relacionadas, "abstiene": g.abstenciones,
                           "falsos_ok": g.falsos_ok, "ok_literal": g.directas - g.directas_sin_literal
                           if nombre in ("exacta", "parafrasis") else 0}
-    return {"grupos": grupos, "falsos_ok": sorted(f.caso_id for f in cobertura.casos if f.falso_ok)}
+    return {"grupos": grupos, "falsos_ok": sorted(f.caso_id for f in cobertura.casos if f.falso_ok),
+            "directas_sin_literal": sorted(f.caso_id for f in cobertura.casos if f.directa_sin_literal)}
 
 
 def evaluar_artefacto(idioma: str, perfil: str):

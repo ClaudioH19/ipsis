@@ -1,0 +1,129 @@
+{
+  "base_y_final_iguales": true,
+  "tolerancia_score": 0.001,
+  "cambios_historicos": [
+    {
+      "perfil": "light",
+      "pregunta": "¿Cuánto cuesta el purificador?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "confidence"
+      ]
+    },
+    {
+      "perfil": "light",
+      "pregunta": "¿Qué pasa si no estoy en la visita?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "confidence"
+      ]
+    },
+    {
+      "perfil": "light",
+      "pregunta": "¿El equipo funciona con agua caliente?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "answer",
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "light",
+      "pregunta": "¿Atienden los domingos?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "related",
+      "campos": [
+        "status",
+        "plan",
+        "answer",
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "light",
+      "pregunta": "¿Qué dice el artículo 99?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "no_answer",
+      "campos": [
+        "confidence"
+      ]
+    },
+    {
+      "perfil": "light",
+      "pregunta": "¿Rechaza el 5% del agua?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "no_answer",
+      "campos": [
+        "confidence"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿Cuánto cuesta el purificador?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "answer",
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿Qué pasa si no estoy en la visita?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿El equipo funciona con agua caliente?",
+      "estado_historico": "related",
+      "estado_antes_f2": "related",
+      "campos": [
+        "answer",
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿Atienden los domingos?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "related",
+      "campos": [
+        "status",
+        "plan",
+        "answer",
+        "confidence",
+        "fragments"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿Qué dice el artículo 99?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "no_answer",
+      "campos": [
+        "confidence"
+      ]
+    },
+    {
+      "perfil": "medium",
+      "pregunta": "¿Rechaza el 5% del agua?",
+      "estado_historico": "no_answer",
+      "estado_antes_f2": "no_answer",
+      "campos": [
+        "confidence"
+      ]
+    }
+  ]
+}

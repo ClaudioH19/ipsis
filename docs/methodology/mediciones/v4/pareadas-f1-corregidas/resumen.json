@@ -1,0 +1,71 @@
+{
+  "rondas": 3,
+  "orden": "AB / BA alternado",
+  "perfil": "light",
+  "casos_por_idioma_y_ejecucion": 30,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "antes_code": "sha256:22778cd8deb2445274e3c3a25502365d05dcd8767016a3b18f8296679339c96b",
+  "despues_code": "sha256:96f6612a9c11a198fe9ccd1f96fe96611f3acb5b3b3c1210787a732ac4400160",
+  "calidad_identica": true,
+  "filas": [
+    {
+      "idioma": "es",
+      "medias_por_ronda": {
+        "antes": [
+          40.3,
+          40.2,
+          41.3
+        ],
+        "despues": [
+          28.1,
+          28.5,
+          30.5
+        ]
+      },
+      "media_antes_ms": 40.6,
+      "media_despues_ms": 29.033333333333335,
+      "cambio_pct": -28.489326765188828,
+      "g5": true
+    },
+    {
+      "idioma": "en",
+      "medias_por_ronda": {
+        "antes": [
+          29.8,
+          29.0,
+          30.8
+        ],
+        "despues": [
+          22.8,
+          26.4,
+          23.3
+        ]
+      },
+      "media_antes_ms": 29.866666666666667,
+      "media_despues_ms": 24.166666666666668,
+      "cambio_pct": -19.08482142857143,
+      "g5": true
+    },
+    {
+      "idioma": "pt",
+      "medias_por_ronda": {
+        "antes": [
+          33.8,
+          35.2,
+          35.0
+        ],
+        "despues": [
+          27.1,
+          35.0,
+          30.1
+        ]
+      },
+      "media_antes_ms": 34.666666666666664,
+      "media_despues_ms": 30.733333333333334,
+      "cambio_pct": -11.34615384615384,
+      "g5": true
+    }
+  ],
+  "g5": true
+}

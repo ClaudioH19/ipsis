@@ -51,7 +51,7 @@ def hay_discordancia(lecturas, umbral: float = 0.5) -> bool:
 
 
 def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
-                        pregunta_usuario: str | None = None) -> tuple[int, int]:
+                        pregunta_usuario: str | None = None, comprension=None) -> tuple[int, int]:
     """Rango ``[a, b)`` de ``texto`` (a lo más ``limite`` caracteres) más pertinente."""
     if len(texto) <= limite:
         return 0, len(texto)
@@ -60,11 +60,11 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
     obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
     resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est, centrada=True,
-                                             pregunta_usuario=pregunta_usuario)
+                                             pregunta_usuario=pregunta_usuario, comprension=comprension)
     return resultado.offset_inicio, resultado.offset_fin
 
 
-def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list):
+def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list, comprension=None):
     """Si la pregunta tiene una intención (``ipsis.lenguaje.consultas``) y la mejor
     oración con una pista suya está en un candidato que el reranker dejó fuera
     de la lectura (más abajo que ``leer_m`` o fuera de ``rerank_k``), ese
@@ -77,7 +77,7 @@ def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list):
     from ipsis.consulta.etapas.seleccion import _puntuar, dividir_en_unidades
     from ipsis.lenguaje.consultas import comprender, peso_pista
 
-    comprension = comprender(pregunta, motor.idioma)
+    comprension = comprension or comprender(pregunta, motor.idioma)
     if not comprension.pistas:
         return None
     obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
@@ -85,7 +85,7 @@ def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list):
 
     def mejor_con_pista(candidato) -> float:
         unidades = dividir_en_unidades(candidato.chunk.texto_fuente)
-        scores = _puntuar(pregunta, unidades, est)
+        scores = _puntuar(pregunta, unidades, est, comprension)
         return max((s for u, s in zip(unidades, scores) if peso_pista(u.texto, comprension) > 0), default=0.0)
 
     techo = max((mejor_con_pista(c) for c in leidos), default=0.0)
@@ -108,15 +108,18 @@ class EtapaLectura(_Etapa):
         perfil = getattr(m, "perfil_instalacion", None)
         leer_m = perfil.cascada.leer_m if perfil is not None and perfil.cascada.leer_m else 2
         candidatos = ctx.candidatos[:leer_m]
+        from ipsis.lenguaje.consultas import comprender_consulta
+
+        comprension = comprender_consulta(ctx.consulta, getattr(m, "idioma", None)) if ctx.consulta is not None else None
         extra = _candidato_por_pista(m, ctx.pregunta, candidatos,
-                                     [*ctx.candidatos[leer_m:], *ctx.descartados_rerank])
+                                     [*ctx.candidatos[leer_m:], *ctx.descartados_rerank], comprension)
         if extra is not None:
             candidatos = [*candidatos, extra]
             ctx.diagnostico["lectura_por_pista"] = extra.chunk.chunk_id
             if extra not in ctx.candidatos:  # lo había dejado fuera el reranker: vuelve, para verificar su evidencia
                 ctx.candidatos = [*ctx.candidatos, extra]
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
-        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None)
+        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None, comprension)
                     for c in candidatos]
         lecturas = m.lector.leer(ctx.pregunta, [texto[a:b] for texto, (a, b) in zip(
             (c.chunk.texto_fuente for c in candidatos), ventanas)])

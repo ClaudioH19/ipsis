@@ -93,7 +93,7 @@ def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]
     return indices
 
 
-def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[float]:
+def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None, comprension=None) -> list[float]:
     """``s_lex`` de cada unidad frente a la pregunta, en [0, 1]; si la pregunta
     tiene una intención (``ipsis.lenguaje.consultas``), la unidad que ya comparte
     tema con ella y contiene una de sus pistas sube (``peso_pista``)."""
@@ -106,7 +106,10 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[f
         return []
     paquete = idioma_activo()
     est = estadisticas or EstadisticasLexicas.construir([u.texto for u in unidades], paquete)
-    comprension = comprender(pregunta, paquete)
+    reconocida = comprender(pregunta, paquete)
+    # Lo que el usuario escribió conserva sus patrones propios. El respaldo
+    # no aplica la relación de la pregunta interpretada a otra pregunta.
+    comprension = reconocida if reconocida.intencion else comprension or reconocida
     # La relación la representan las pistas, no sus palabras: «…the Purchasing Officer
     # starts a new purchase» no dice cuándo empieza la compra aunque tenga «starts».
     # (En la cobertura se quedan si están en el corpus: ver terminos_de_contenido.)
@@ -125,7 +128,7 @@ PESO_HEREDADO = 0.5
 
 
 def _puntuar_turno(pregunta: str, unidades: list[Unidad], estadisticas=None,
-                   pregunta_usuario: str | None = None) -> list[float]:
+                   pregunta_usuario: str | None = None, comprension=None) -> list[float]:
     """``_puntuar`` para un turno de seguimiento: si lo que el usuario escribió
     ahora («¿y qué cubre?») aparece en alguna unidad, eso pesa entero y la
     pregunta interpretada (con lo heredado, «garantía cafetera») la mitad:
@@ -133,11 +136,11 @@ def _puntuar_turno(pregunta: str, unidades: list[Unidad], estadisticas=None,
     distintos decide el contexto («pagan» en el reembolso, no en las facturas).
     Si lo propio no aparece («¿y con 90?»), se usa la interpretada."""
     if pregunta_usuario:
-        propios = _puntuar(pregunta_usuario, unidades, estadisticas)
+        propios = _puntuar(pregunta_usuario, unidades, estadisticas, comprension)
         if any(propios):
-            interpretada = _puntuar(pregunta, unidades, estadisticas)
+            interpretada = _puntuar(pregunta, unidades, estadisticas, comprension)
             return [p + PESO_HEREDADO * i for p, i in zip(propios, interpretada)]
-    return _puntuar(pregunta, unidades, estadisticas)
+    return _puntuar(pregunta, unidades, estadisticas, comprension)
 
 
 def _es_salvedad(texto: str) -> bool:
@@ -172,7 +175,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
                                    entidades_pregunta: list[dict] | None = None,
                                    centrada: bool = False,
                                    secciones: list[tuple[int, int, list[str]]] | None = None,
-                                   pregunta_usuario: str | None = None) -> ResultadoSeleccion:
+                                   pregunta_usuario: str | None = None, comprension=None) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
     hasta ``limite_caracteres``. ``score_ancla`` (máximo de sus unidades)
@@ -199,7 +202,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     sección, el tramo no sale de la sección de la oración ancla y
     ``seccion_path`` la nombra, para que la cita sea la correcta."""
     unidades_completas = dividir_en_unidades(texto_chunk)
-    scores_completos = _puntuar_turno(pregunta, unidades_completas, estadisticas, pregunta_usuario)
+    scores_completos = _puntuar_turno(pregunta, unidades_completas, estadisticas, pregunta_usuario, comprension)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
 
     valores_norm_entidad = {e["valor_norm"] for e in entidades_pregunta} if entidades_pregunta else set()
@@ -271,7 +274,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
 def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_caracteres: int,
                                           estadisticas=None,
                                           entidades_pregunta: list[dict] | None = None,
-                                          pregunta_usuario: str | None = None) -> dict:
+                                          pregunta_usuario: str | None = None, comprension=None) -> dict:
     """Devuelve una COPIA del payload de un chunk con ``texto``,
     ``offset_inicio`` y ``offset_fin`` reemplazados por el tramo pertinente
     seleccionado -- el resto de los campos (``doc_titulo``, ``seccion_path``,
@@ -288,6 +291,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
         pregunta, payload["texto"], base, limite_caracteres,
         estadisticas=estadisticas, entidades_pregunta=entidades_pregunta, secciones=secciones or None,
         pregunta_usuario=pregunta_usuario,
+        comprension=comprension,
     )
     nuevo = dict(payload)
     if resultado.seccion_path is not None:
@@ -357,12 +361,13 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     return payloads_ordenados, scores_ordenados
 
 
-def oracion_ancla(pregunta: str, texto: str, estadisticas=None, pregunta_usuario: str | None = None) -> str:
+def oracion_ancla(pregunta: str, texto: str, estadisticas=None, pregunta_usuario: str | None = None,
+                  comprension=None) -> str:
     """Oración (o fila) de ``texto`` con mayor ``s_lex`` frente a la pregunta."""
     unidades = dividir_en_unidades(texto)
     if not unidades:
         return texto
-    scores = _puntuar_turno(pregunta, unidades, estadisticas, pregunta_usuario)
+    scores = _puntuar_turno(pregunta, unidades, estadisticas, pregunta_usuario, comprension)
     return unidades[max(range(len(unidades)), key=lambda i: scores[i])].texto
 
 
@@ -385,7 +390,10 @@ def _proximidad_del_foco(motor, ctx) -> None:
         return
     oracion = ctx.evidencias[0].texto
     if ctx.evidencia_lector is None:
-        oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None)
+        from ipsis.lenguaje.consultas import comprender_consulta
+
+        comprension = comprender_consulta(ctx.consulta, motor.idioma) if ctx.consulta is not None else None
+        oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None, comprension)
     ctx.diagnostico["oracion_foco"] = oracion
     terminos_oracion = terminos(oracion, motor.idioma)
     # El título de la sección enmarca la oración: en «¿Qué recargo se cobra según el
@@ -443,10 +451,3 @@ class EtapaEvidencia(_Etapa):
         _proximidad_del_foco(m, ctx)
         por_chunk = {c.chunk.chunk_id: c for c in ctx.candidatos}
         ctx.payloads = [payload_desde_evidencia(e, por_chunk[e.chunk_id].chunk) for e in evidencias]
-        resolutor = getattr(m, "seguimiento", None)
-        if resolutor is not None:
-            # El turno siguiente puede seguir hablando de lo que mostraron estos fragmentos.
-            raices = set()
-            for e in evidencias[:1]:  # el que respondió, no los relacionados de otros temas
-                raices.update(terminos(por_chunk[e.chunk_id].chunk.texto_fuente, m.idioma))
-            resolutor.recordar_evidencia(ctx.id_sesion, raices)

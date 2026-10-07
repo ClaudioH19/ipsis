@@ -66,6 +66,19 @@ class EtapaVerificacion(_Etapa):
             ctx.diagnostico["advertencias"].extend(fidelidad.motivos)
             ctx.resultado = m._abstener("guardia", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
             return
+        # Solo los pasajes mostrados tras superar ambas guardias alimentan el tema.
+        # El pasaje fuente de la primera cita aporta contexto para el siguiente
+        # turno; la oración recortada sola pierde referencias a pasos vecinos.
+        # No se incorpora vocabulario de candidatos de otros temas.
+        memoria = getattr(m, "seguimiento", None)
+        if (memoria is not None and ctx.turno_memoria is not None
+                and ctx.diagnostico.get("conversacion", {}).get("accion") != "sin_cambio"):
+            from ipsis.lenguaje.texto import terminos
+
+            for evidencia in ctx.evidencias[:1]:
+                fuente = next(c.chunk.texto_fuente for c in ctx.candidatos if c.chunk.chunk_id == evidencia.chunk_id)
+                memoria.recordar_evidencia(ctx.id_sesion, set(terminos(fuente, m.idioma)),
+                                          turno=ctx.turno_memoria)
         ctx.resultado = m._resultado(
             estado=ctx.estado,
             motivo=ctx.decision.motivo,

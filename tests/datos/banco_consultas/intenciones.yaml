@@ -1,0 +1,65 @@
+# Etiquetas semánticas de preguntas, independientes de la respuesta disponible.
+# Claves sin prefijo de idioma: es/en/pt plantean las mismas relaciones.
+# null: duración, frecuencia, horario, cantidad simple, descripción u otra
+# relación que ninguna de las siete intenciones representa suficientemente.
+# Elegir umbrales solo con dev; test se informa sin ajustarlos.
+parafrasis-001: inicio
+parafrasis-002: inicio
+parafrasis-003: inicio
+parafrasis-004: inicio
+parafrasis-005: inicio
+parafrasis-006: consecuencia
+parafrasis-007: umbral
+parafrasis-008: requisito
+parafrasis-009: null
+parafrasis-010: null
+parafrasis-011: null
+parafrasis-012: consecuencia
+parafrasis-013: procedimiento
+parafrasis-014: procedimiento
+parafrasis-015: null
+parafrasis-016: responsable
+parafrasis-017: null
+parafrasis-018: null
+parafrasis-019: consecuencia
+parafrasis-020: inicio
+exacta-001: responsable
+exacta-002: null
+exacta-003: responsable
+exacta-004: null
+exacta-005: null
+exacta-006: null
+exacta-007: fin
+exacta-008: umbral
+exacta-009: null
+exacta-010: responsable
+exacta-011: requisito
+exacta-012: null
+exacta-013: null
+exacta-014: null
+trampa-001: inicio
+trampa-002: fin
+trampa-003: responsable
+trampa-004: consecuencia
+trampa-005: null
+trampa-006: umbral
+trampa-007: null
+trampa-008: null
+trampa-009: fin
+trampa-010: null
+trampa-011: responsable
+trampa-012: null
+trampa-013: null
+trampa-014: consecuencia
+trampa-015: responsable
+trampa-016: consecuencia
+premisa-001: null
+premisa-002: null
+premisa-003: consecuencia
+ambigua-001: null
+ambigua-002: responsable
+ambigua-003: null
+fuera-001: null
+fuera-002: responsable
+fuera-003: procedimiento
+fuera-004: null

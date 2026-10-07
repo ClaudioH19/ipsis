@@ -1,0 +1,297 @@
+{
+  "approved_on": "2026-10-06",
+  "converter_version": 4,
+  "dictionary": {
+    "manifest": "diccionarios/es.manifest.json",
+    "source": {
+      "attribution": "English Wiktionary contributors; Kaikki/Wiktextract, Tatu Ylonen (2022), Wiktionary as Machine-Readable Structured Data, LREC 2022. Original pages and notices retained.",
+      "data": {
+        "bytes": 95164223,
+        "sha256": "c805cfb9f13c1769400d08e4a01bc4aeefb67775cbb36e2e4deb199e0af57b38",
+        "url": "https://kaikki.org/dictionary/Spanish/kaikki.org-dictionary-Spanish.jsonl.gz?download=1"
+      },
+      "homepage": "https://kaikki.org/dictionary/Spanish/index.html",
+      "http_headers": {
+        "ETag": "\"6ac0df0e-5ac173f\"",
+        "Last-Modified": "Sat, 03 Oct 2026 10:55:10 GMT"
+      },
+      "id": "kaikki-enwiktionary-es",
+      "label": "Wiktionary Spanish / Kaikki",
+      "lexical_parts": [
+        {
+          "bytes": 1939884,
+          "filename": "es.lexical.0001.jsonl.gz",
+          "sha256": "9d8b1bb192cbfd2aed063f556aaf54cf033caa163fb39712b3b91f519178cb52"
+        },
+        {
+          "bytes": 1148387,
+          "filename": "es.lexical.0002.jsonl.gz",
+          "sha256": "6fe2146df5130448a76f43d41c191c2b9a48b1a31069bf8143c1df0277b4a68e"
+        },
+        {
+          "bytes": 1633935,
+          "filename": "es.lexical.0003.jsonl.gz",
+          "sha256": "5d767221bd3cf43e50a614e642eb2acc23d50affab88c83d9d0eb6f651f615cb"
+        },
+        {
+          "bytes": 1770445,
+          "filename": "es.lexical.0004.jsonl.gz",
+          "sha256": "767bbfee469e51365a31311a0947263ab5bbb9e66630fb4d268e36fc83c1b889"
+        },
+        {
+          "bytes": 1924721,
+          "filename": "es.lexical.0005.jsonl.gz",
+          "sha256": "51068124753c4cf60b96d02919763dcf211c6c28291bec8d15e839991ba6560a"
+        },
+        {
+          "bytes": 2201343,
+          "filename": "es.lexical.0006.jsonl.gz",
+          "sha256": "a95cd2089e385ee4aeb677337a14fd12aff0dedd86a27ae02a6f2ab37d8c1b3a"
+        },
+        {
+          "bytes": 2401311,
+          "filename": "es.lexical.0007.jsonl.gz",
+          "sha256": "40e2e8843ede34efe659af4cc3be02e6c79f7cbce228d3b5ab9f0e545c5eded1"
+        },
+        {
+          "bytes": 2261568,
+          "filename": "es.lexical.0008.jsonl.gz",
+          "sha256": "af0b2c959f130960bd94186cc9aefd14f2be348e19a3440b9796c353f8ae199e"
+        },
+        {
+          "bytes": 2154087,
+          "filename": "es.lexical.0009.jsonl.gz",
+          "sha256": "cd4582808c0bc12d7be6ba9053e12a6a50a00058526f6c5d3d8fbf95b6df8d70"
+        },
+        {
+          "bytes": 2359076,
+          "filename": "es.lexical.0010.jsonl.gz",
+          "sha256": "a63a7ec0a018f67962fd3fd2369c2f2d29431c88df411b4fc880d13b22a90e11"
+        },
+        {
+          "bytes": 2236229,
+          "filename": "es.lexical.0011.jsonl.gz",
+          "sha256": "6a2734b0e06f1d4c243d844b1364ea4994b52ab97c91e03a6d3a9b14eb40da88"
+        },
+        {
+          "bytes": 2320512,
+          "filename": "es.lexical.0012.jsonl.gz",
+          "sha256": "2ceb0e85bebc7221056ed9a6be8e0c2cfbad1bccaa100d11c655ca15026cb001"
+        },
+        {
+          "bytes": 2212676,
+          "filename": "es.lexical.0013.jsonl.gz",
+          "sha256": "7eee26c08fbb64110eca5fcd185a31aaf9768ded93c8ae99e1b20ef0eba4f5a8"
+        },
+        {
+          "bytes": 2093762,
+          "filename": "es.lexical.0014.jsonl.gz",
+          "sha256": "9bddbc470de2d8e1081f830b34e0d2ba485c6a63df10380aafa073f794572880"
+        },
+        {
+          "bytes": 2215651,
+          "filename": "es.lexical.0015.jsonl.gz",
+          "sha256": "a0c03141e7d8fe93eb3d7f324db6966313c5c8363d42efbd7a505d4b14089532"
+        },
+        {
+          "bytes": 2330339,
+          "filename": "es.lexical.0016.jsonl.gz",
+          "sha256": "b23dbb7499b75d46bcc7a221575b3efba384f97f10d4cc3d8e3da533921b2ad0"
+        },
+        {
+          "bytes": 2313051,
+          "filename": "es.lexical.0017.jsonl.gz",
+          "sha256": "369c7315de49cf801cd62caa9cb0fcffe1b9d92ed4683f640d229b4429a26750"
+        },
+        {
+          "bytes": 1942311,
+          "filename": "es.lexical.0018.jsonl.gz",
+          "sha256": "1940b348d51bd896b719d805b20a0b3eafe49d0bc840a0262bccac6fec41e616"
+        },
+        {
+          "bytes": 260781,
+          "filename": "es.lexical.0019.jsonl.gz",
+          "sha256": "64b8185026daf9e2d46b94fe1691efbc71db6feacd3bb91587e3619598eaa579"
+        }
+      ],
+      "lexical_schema_version": 1,
+      "license": "CC-BY-SA-4.0 (Wiktionary data; dual GFDL availability declared by distributor)",
+      "notices": [
+        {
+          "bytes": 44855,
+          "filename": "CC-BY-SA-4.0.html",
+          "sha256": "d48546c6161cd2698445d184a859363a2436a6a3bcda655564730e3861e74a9e",
+          "url": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/by-sa_4.0.html"
+        },
+        {
+          "bytes": 17413,
+          "filename": "es.kaikki-source.html",
+          "sha256": "a6b487884d70b29a014a220dfa4b0276bb307209625e9ed4432a896d40857c42",
+          "url": "https://kaikki.org/dictionary/Spanish/index.html"
+        }
+      ],
+      "parts": [
+        {
+          "bytes": 25165824,
+          "filename": "es.jsonl.gz.0001.part",
+          "sha256": "e62fc780ff944b1d61988e731a859d6151993940832ba098526fcfce7c120ca4"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "es.jsonl.gz.0002.part",
+          "sha256": "cb2af4de62610b7c88e013b76fc7b47d8e18f414d138b4054db0036b4e556b14"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "es.jsonl.gz.0003.part",
+          "sha256": "6253c65e6c73bfbe75b7c39fab1a25739a83e1807e7ad4ac4c51b382562355ed"
+        },
+        {
+          "bytes": 19666751,
+          "filename": "es.jsonl.gz.0004.part",
+          "sha256": "3d1793c35a813c37b87ce2a9a02fad17fa871dbca68ce69efd27631151d7a10f"
+        }
+      ],
+      "prepared_on": "2026-10-06",
+      "version": "enwiktionary 2026-09-02; Kaikki extraction 2026-10-03"
+    },
+    "statistics": {
+      "additional_forms": 1228729,
+      "additional_single_lowercase_forms": 1144142,
+      "combined_unique_forms": 1325362,
+      "dictionary_lemma_forms": 108026,
+      "entries": 811049,
+      "excluded_nonlexical_forms": 16169,
+      "form_records": 1692516,
+      "inflected_or_alternative_forms": 1185351,
+      "legacy_unique_forms": 96633,
+      "proper_name_entries": 8752,
+      "single_lowercase_forms": 1202094,
+      "synonym_records": 56585
+    }
+  },
+  "filters": {
+    "max_members": 8,
+    "max_output_bytes": 2097152,
+    "max_senses": 3
+  },
+  "language": "es",
+  "lexicon": {
+    "bytes": 2658348,
+    "filename": "es.lexicon.tsv",
+    "groups": 78417,
+    "sha256": "feb88ed2f7fdb5e4aa2a4230130f8f5c40ad748244719b941866603cbd978457",
+    "unique_lemmas": 90899
+  },
+  "output": {
+    "bytes": 441157,
+    "filename": "es.tsv",
+    "sha256": "5a3a88f408f097e3f0dee754b8913b2f6cda8853888b3fd02d5c201c2c4e6258"
+  },
+  "reviewed_on": "2026-10-06",
+  "schema_version": 1,
+  "source": {
+    "attribution": "Aitor Gonzalez-Agirre, Egoitz Laparra and German Rigau (2012), Multilingual Central Repository version 3.0; distributed by OMW, Francis Bond and Ryan Foster (2013). See original citation.bib and LICENSE.",
+    "data": {
+      "bytes": 5995146,
+      "filename": "es.tab",
+      "sha256": "0ec37ce94ee2acc63ad6b120e1051f9841d172778cc24adc0023fb8dccf0a7cd",
+      "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/wn-data-spa.tab"
+    },
+    "format": "omw-tab",
+    "homepage": "https://github.com/omwn/omw-data/tree/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr",
+    "id": "mcr-omw-es",
+    "label": "Multilingual Central Repository (Spanish), OMW distribution",
+    "lemma_tag": "spa:lemma",
+    "license": "CC-BY-3.0 (Spanish lexical data)",
+    "notices": [
+      {
+        "bytes": 907,
+        "filename": "es.LICENSE",
+        "sha256": "ccbb7b96a812b37a88a9cb8dfda92dc251e61c5fca5225ff23f5fc3d33b32a70",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/LICENSE"
+      },
+      {
+        "bytes": 787,
+        "filename": "es.citation.bib",
+        "sha256": "566ecd207408493ec0dadb1808290971bac8c84587daa12703a30817a553c862",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/citation.bib"
+      }
+    ],
+    "version": "MCR 3.0 / omw-data 406bf83b3c507a3d1f26e88252d5d66893fd36bf"
+  },
+  "statistics": {
+    "discarded_groups": {
+      "fewer_than_two": 66388,
+      "oversized": 292
+    },
+    "excluded_non_single_lowercase_memberships": 39861,
+    "excluded_polysemous_lemmas": 6757,
+    "input_groups": 78417,
+    "input_lemma_memberships": 145641,
+    "output_groups": 11737,
+    "output_unique_lemmas": 24289
+  },
+  "supplements": [
+    {
+      "additional_forms": 5734,
+      "records": 44406,
+      "source": {
+        "attribution": "Marcelo Garrone, OpenThesaurus Espa?ol; snapshot 2012-01-11; distribuci?n LibreOffice.",
+        "data": {
+          "bytes": 2876858,
+          "filename": "es-thes.dat",
+          "sha256": "ee0b7ad7dfede636aa5d5509cbbcbab59bef4cb8cbdff01f9528b15bd139b889",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/th_es_v2.dat"
+        },
+        "format": "mythes",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es",
+        "id": "es-thes",
+        "label": "OpenThesaurus Espa?ol (LibreOffice)",
+        "license": "LGPL-2.1",
+        "notices": [
+          {
+            "bytes": 677,
+            "filename": "es-thes.README_th_es.txt",
+            "sha256": "874580e808ffd19bd28b9b6bddc3c1c1b691fd092287cc26bacf29060a0faa83",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/README_th_es.txt"
+          },
+          {
+            "bytes": 26530,
+            "filename": "es-thes.LGPLv2.1.txt",
+            "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LGPLv2.1.txt"
+          },
+          {
+            "bytes": 991,
+            "filename": "es-thes.LICENSE.md",
+            "sha256": "2b70fd5cb8d3b34cc6ae322c969557a2270b99017594addb2531ef5ffd9e1b17",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LICENSE.md"
+          }
+        ],
+        "prepared_on": "2026-10-06",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+      },
+      "unique_forms": 22307
+    }
+  ],
+  "vocabulary": {
+    "additional_forms": 5734,
+    "additional_single_lowercase_forms": 4985,
+    "base_forms": 90899,
+    "files": [
+      {
+        "bytes": 3783376,
+        "filename": "es.thesaurus.tsv",
+        "sha256": "0fb57f4744af4e2016c9ebf927ac130fdb114931a5b92edb259b3e5b52ca489c"
+      },
+      {
+        "bytes": 2372817,
+        "filename": "es.vocabulary.tsv",
+        "sha256": "b8323f1d2fb20904475cfef06b70c98c2baebaac95259c7e5e1e427d4e316e74"
+      }
+    ],
+    "single_lowercase_forms": 57952,
+    "unique_forms": 96633
+  }
+}

@@ -105,11 +105,14 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
 
 def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> None:
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.sinonimos import huella_lexica
 
     Path("config/calibration.yaml").write_text(yaml.safe_dump({
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
-                        "hash_corpus": hash_corpus, "banco": "golden@1.0.0", "hash_banco": "x"},
+                        "hash_corpus": hash_corpus, "banco": "golden@1.0.0", "hash_banco": "x",
+                        "hash_lexico": huella_lexica(cargar_paquete("es", proyecto=Path.cwd()))},
         "umbrales": {"ok": 0.9} if estado == "calibrado" else {},
     }), encoding="utf-8")
 

@@ -75,6 +75,17 @@ def test_ajustes_con_oov_anterior_se_migran_a_los_dos_umbrales():
     assert "oov" not in perfil.umbrales_por_defecto
 
 
+@pytest.mark.parametrize("guardada", [None, "sha256:anterior", "sha256:actual"])
+def test_calibracion_exige_la_huella_lexica_efectiva(tmp_path, guardada):
+    modelos = cargar_perfil_instalacion("medium").modelos.model_dump()
+    ruta = _calibracion(tmp_path, "medium", modelos)
+    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    datos["procedencia"]["hash_lexico"] = guardada
+    ruta.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    perfil = perfil_efectivo("medium", ruta_calibracion=ruta, hash_corpus=HASH, hash_lexico="sha256:actual")
+    assert perfil.origen_umbrales == ("calibracion" if guardada == "sha256:actual" else "perfil")
+
+
 def test_el_modelo_denso_sale_del_perfil_si_no_se_fija():
     cfg = {"recuperacion": {"modelo": None, "coleccion_base": "x"}}
     assert config_recuperacion(cfg, perfil="heavy")["modelo"] == "intfloat/multilingual-e5-base"

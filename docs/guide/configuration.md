@@ -223,6 +223,51 @@ The language of the documents is independent from the language of the
 command line (`IPSIS_LANG`): a project in Portuguese can be managed with
 English or Spanish messages.
 
+## Local synonyms
+
+### Intention fallback settings
+
+The language pack contains `intenciones.<name>.ejemplos` and model-specific
+`respaldo_intencion` settings. Override them in `config/language.yaml`:
+
+```yaml
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.85
+    margen: 0.0
+    habilitadas: [fin, procedimiento]
+```
+
+These are the measured Spanish values. English uses 0.87 with `[fin]` and
+Portuguese 0.895 with `[procedimiento]`; both require a strictly positive
+margin. Patterns retain priority. BM25 and models without measured settings
+skip fallback; E5 base has no default setting. Changes require rebuilding
+the motor and regenerating calibration. Measure new examples or categories
+on dev before enabling them; neither threshold is an answer policy threshold.
+
+### Synonym groups
+
+Spanish, English and Portuguese use packaged, filtered WordNet tables for
+BM25 retrieval expansion, reusing the original dense vector. Only a query word absent from the corpus can expand,
+with a single sense after stemming; relation words and manual corrections
+take precedence. Automatic groups do not change focus validation or the
+acceptance thresholds. Full dictionaries and morphology indexes stay as
+development resources, without installation downloads.
+
+Declare project equivalences in `config/domain.yaml`:
+
+```yaml
+synonyms:
+  - [OC, orden de compra]
+```
+
+Project groups override overlapping language groups. Phrases match in full,
+and every content term of a replacement must exist in the corpus. Restart
+the service after changing lexical configuration. A new motor starts with
+empty conversation memory and new query caches. Calibration provenance
+includes `lexical_hash`; a missing or different hash invalidates the old
+calibration. `ipsis doctor` reports it; recalibrate with the project's golden.
+
 ## Answer tone
 
 What the assistant says around the document text comes from a **tone**, in
@@ -360,6 +405,30 @@ operation. It shows:
 
 With local Qdrant, stop `ipsis serve` first, because Qdrant locks the index
 folder.
+
+## Conversation memory
+
+Follow-up questions ("and abroad?") inherit the topic of the conversation
+(see the [architecture](../architecture.md#understanding-the-question)). The
+engine keeps each conversation in memory, per `session_id`, and forgets it
+after a while without questions:
+
+```yaml
+# engine.yaml
+conversation:
+  expiry_minutes: 30     # forgotten after 30 minutes without questions
+  max_sessions: 1024     # at most this many conversations at a time
+```
+
+Language packs distinguish `genericas` (ignored by answer focus/selection)
+from `genericas_memoria` (ignored only by topic memory). The latter keeps
+`tiempo/tempo` out of the topic core without changing their original weight
+when selecting an answer. Both lists can be overridden in `config/language.yaml`.
+
+The memory lives in the service process (each worker has its own), keeps
+terms of the questions and of the passages that answered them, never the
+answers, and is lost on restart. The widget starts a new conversation on
+every page load.
 
 ## Query log and audit (`ipsis audit`)
 

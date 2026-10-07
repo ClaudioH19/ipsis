@@ -1,0 +1,3 @@
+# Fuentes aprobadas y conversor: reconstrucción offline desde el sdist.
+recursive-include herramientas/sinonimos *.py *.json *.md *.gz *.LICENSE *.bib *.txt
+recursive-include herramientas/sinonimos/datos *

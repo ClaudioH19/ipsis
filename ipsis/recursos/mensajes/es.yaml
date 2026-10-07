@@ -140,6 +140,16 @@ ask:
   stages: 'Etapas (ms):'
   early_exit: '   (salida temprana: sin modelos)'
   signals: 'Señales:'
+  intention: 'Intención: {name} (reconocida en «{relation}»)'
+  intention_similarity: 'Intención: {name} (similitud: {score}, margen: {margin})'
+  synonyms: 'Sinónimos usados: {values}'
+  lexical_source: 'Expansión BM25: {word} → {forms} ({source}, sentido {sense}, POS {pos})'
+  conversation: 'Conversación: {action}; tema: {topic}'
+  conversation_hereda: sigue el tema
+  conversation_retoma: retoma un tema anterior
+  conversation_tema_nuevo: tema nuevo
+  conversation_sin_cambio: sin cambio de tema
+  interpreted: 'Pregunta interpretada: «{question}»'
   focus: 'Términos foco: encontrados: {found}; ausentes: {missing}'
   absent: 'Términos que no están en el corpus: {terms}'
   sentence: 'Oración evaluada: «{sentence}»'
@@ -708,6 +718,7 @@ evaluation:
   calibration_profile: se calibró con el perfil {calibrated!r} y el proyecto usa {profile!r}
   calibration_models: se calibró con otros modelos
   calibration_corpus: el corpus indexado cambió desde la calibración (o no hay índice)
+  calibration_lexical: las reglas o fuentes léxicas cambiaron desde la calibración (o falta su huella léxica)
   offsets_mismatch: los offsets de evidencia no coinciden con el texto literal
   answerable_needs_evidence: una pregunta respondible exige respuesta literal y evidencia
   literal_in_evidence: la respuesta literal debe estar contenida en una evidencia

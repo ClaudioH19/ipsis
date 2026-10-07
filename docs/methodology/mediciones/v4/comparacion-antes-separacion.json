@@ -1,0 +1,4851 @@
+{
+  "desde_inicio": {
+    "consultas": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "correctas_antes": 14,
+        "correctas_despues": 14,
+        "erroneas_antes": 3,
+        "erroneas_despues": 3,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 5,
+        "parafrasis_despues": 5
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "correctas_antes": 5,
+        "correctas_despues": 5,
+        "erroneas_antes": 1,
+        "erroneas_despues": 1,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 3,
+        "parafrasis_despues": 3
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "correctas_antes": 8,
+        "correctas_despues": 8,
+        "erroneas_antes": 4,
+        "erroneas_despues": 4,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 5,
+        "parafrasis_despues": 5
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "correctas_antes": 7,
+        "correctas_despues": 7,
+        "erroneas_antes": 17,
+        "erroneas_despues": 17,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 7,
+        "parafrasis_despues": 7
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "correctas_antes": 4,
+        "correctas_despues": 4,
+        "erroneas_antes": 13,
+        "erroneas_despues": 13,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 4,
+        "parafrasis_despues": 4
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "correctas_antes": 7,
+        "correctas_despues": 7,
+        "erroneas_antes": 8,
+        "erroneas_despues": 8,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 7,
+        "parafrasis_despues": 7
+      }
+    ],
+    "universal": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "correctas_antes": 8,
+        "correctas_despues": 8,
+        "erroneas_antes": 1,
+        "erroneas_despues": 1,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "correctas_antes": 6,
+        "correctas_despues": 6,
+        "erroneas_antes": 0,
+        "erroneas_despues": 0,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "correctas_antes": 9,
+        "correctas_despues": 9,
+        "erroneas_antes": 0,
+        "erroneas_despues": 0,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "correctas_antes": 2,
+        "correctas_despues": 2,
+        "erroneas_antes": 11,
+        "erroneas_despues": 11,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "correctas_antes": 3,
+        "correctas_despues": 3,
+        "erroneas_antes": 9,
+        "erroneas_despues": 9,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 1,
+        "parafrasis_despues": 1
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "correctas_antes": 2,
+        "correctas_despues": 2,
+        "erroneas_antes": 8,
+        "erroneas_despues": 8,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      }
+    ],
+    "conversaciones": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "antes": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 34,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 34,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "es-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "antes": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 20,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 20,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "en-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "antes": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 22,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 22,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "pt-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "antes": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 5,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 5,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "es-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "antes": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 7,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 7,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "en-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "antes": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 8,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 8,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [],
+        "retoma_007_015": [
+          {
+            "id": "pt-conv-007:3",
+            "antes": true,
+            "despues": true
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": true,
+            "despues": true
+          }
+        ]
+      }
+    ],
+    "calidad_sin_regresiones_por_caso": true,
+    "g2": true,
+    "g3": true,
+    "g4": true,
+    "f4_herencia": true
+  },
+  "desde_f1": {
+    "consultas": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "correctas_antes": 14,
+        "correctas_despues": 14,
+        "erroneas_antes": 3,
+        "erroneas_despues": 3,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 5,
+        "parafrasis_despues": 5
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "correctas_antes": 5,
+        "correctas_despues": 5,
+        "erroneas_antes": 1,
+        "erroneas_despues": 1,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 3,
+        "parafrasis_despues": 3
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "correctas_antes": 8,
+        "correctas_despues": 8,
+        "erroneas_antes": 4,
+        "erroneas_despues": 4,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 5,
+        "parafrasis_despues": 5
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "correctas_antes": 8,
+        "correctas_despues": 7,
+        "erroneas_antes": 17,
+        "erroneas_despues": 17,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [
+          "es-parafrasis-019"
+        ],
+        "cambios": [
+          {
+            "id": "es-parafrasis-019",
+            "antes": {
+              "pregunta": "¿Qué pasa si no rindo los gastos a tiempo?",
+              "estado": "respuesta_directa",
+              "regla": "ok_lector",
+              "directa": true,
+              "falso_ok": false,
+              "sin_literal": false,
+              "senales": {
+                "s_ret": 0.4141543476116926,
+                "s_oov": 0.0,
+                "s_foco": 1.0,
+                "s_cov": 0.7289647741133932,
+                "s_lex": null,
+                "acuerdo": null,
+                "s_rr": 0.07017426047539548,
+                "s_qa": 0.9999198669226179,
+                "dominio": 0.4141543476116926
+              }
+            },
+            "despues": {
+              "pregunta": "¿Qué pasa si no rindo los gastos a tiempo?",
+              "estado": "relacionado",
+              "regla": "relacionado",
+              "directa": false,
+              "falso_ok": false,
+              "sin_literal": false,
+              "senales": {
+                "s_ret": 0.4141543476116926,
+                "s_oov": 0.0,
+                "s_foco": 0.5,
+                "s_cov": 0.7289647741133932,
+                "s_lex": null,
+                "acuerdo": null,
+                "s_rr": 0.07017426047539548,
+                "s_qa": 0.9999198669226179,
+                "dominio": 0.4141543476116926
+              }
+            }
+          }
+        ],
+        "parafrasis_antes": 8,
+        "parafrasis_despues": 7
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "correctas_antes": 4,
+        "correctas_despues": 4,
+        "erroneas_antes": 13,
+        "erroneas_despues": 13,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 4,
+        "parafrasis_despues": 4
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "correctas_antes": 7,
+        "correctas_despues": 7,
+        "erroneas_antes": 8,
+        "erroneas_despues": 8,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 7,
+        "parafrasis_despues": 7
+      }
+    ],
+    "universal": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "correctas_antes": 8,
+        "correctas_despues": 8,
+        "erroneas_antes": 1,
+        "erroneas_despues": 1,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "correctas_antes": 6,
+        "correctas_despues": 6,
+        "erroneas_antes": 0,
+        "erroneas_despues": 0,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "correctas_antes": 9,
+        "correctas_despues": 9,
+        "erroneas_antes": 0,
+        "erroneas_despues": 0,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "correctas_antes": 2,
+        "correctas_despues": 2,
+        "erroneas_antes": 11,
+        "erroneas_despues": 11,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "correctas_antes": 3,
+        "correctas_despues": 3,
+        "erroneas_antes": 9,
+        "erroneas_despues": 9,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 1,
+        "parafrasis_despues": 1
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "correctas_antes": 2,
+        "correctas_despues": 2,
+        "erroneas_antes": 8,
+        "erroneas_despues": 8,
+        "nuevas_erroneas": [],
+        "falsos_ok_nuevos": [],
+        "correctas_perdidas": [],
+        "cambios": [],
+        "parafrasis_antes": 0,
+        "parafrasis_despues": 0
+      }
+    ],
+    "conversaciones": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "antes": {
+          "herencia_correcta": 26,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 12,
+          "respuestas_correctas": 29,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 34,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "es-conv-002:2",
+            "antes": {
+              "conversacion": "es-conv-002",
+              "turno": 2,
+              "pregunta": "¿y cuántos días a la semana?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "hasta tres días por semana",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-002",
+              "turno": 2,
+              "pregunta": "¿y cuántos días a la semana?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y cuántos días a la semana? pedir teletrabajo",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "hasta tres días por semana",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esto es lo que dice el documento:\n\nArtículo 4. El teletrabajo puede abarcar hasta tres días por semana. Los días restantes son presenciales.\nArtículo 5. La institución entrega un notebook y un monitor. El funcionario debe contar con una conexión a internet de al menos 50 Mbps.\nArtículo 6. Durante la jornada de teletrabajo, el funcionario debe estar disponible entre las 9:00 y las 17:00 horas.\nArtículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión. (Fuente: Reglamento de Teletrabajo).\n\nTambién dice esto: El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "pedir teletrabajo"
+              }
+            }
+          },
+          {
+            "id": "es-conv-002:4",
+            "antes": {
+              "conversacion": "es-conv-002",
+              "turno": 4,
+              "pregunta": "¿y la asignación?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "asignación mensual de 20.000 pesos",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-002",
+              "turno": 4,
+              "pregunta": "¿y la asignación?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y la asignación? pedir teletrabajo equipos",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "asignación mensual de 20.000 pesos",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esto es lo que aparece en el documento:\n\nArtículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión.\nArtículo 8. La jefatura puede suspender el teletrabajo si el funcionario no cumple sus metas durante dos meses consecutivos. La suspensión se comunica por escrito con diez días de anticipación.\nArtículo 9. El acuerdo de teletrabajo se revisa cada seis meses. (Fuente: Reglamento de Teletrabajo).\n\nA esto se suma lo siguiente: El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "pedir teletrabajo"
+              }
+            }
+          },
+          {
+            "id": "es-conv-003:4",
+            "antes": {
+              "conversacion": "es-conv-003",
+              "turno": 4,
+              "pregunta": "¿y si no rindo a tiempo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "el monto se descuenta de la remuneración siguiente",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-003",
+              "turno": 4,
+              "pregunta": "¿y si no rindo a tiempo?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y si no rindo a tiempo? anticipacion",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "el monto se descuenta de la remuneración siguiente",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré «rindo» en los documentos. Te muestro lo más cercano:\n\nLa suspensión se comunica por escrito con diez días de anticipación.\nArtículo 9. El acuerdo de teletrabajo se revisa cada seis meses. (Fuente: Reglamento de Teletrabajo).\n\nY lo complementa así: La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos del motor, de la bomba y del calentador. (Fuente: Garantía de la cafetera Brío C2).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "anticipacion"
+              }
+            }
+          },
+          {
+            "id": "es-conv-005:4",
+            "antes": {
+              "conversacion": "es-conv-005",
+              "turno": 4,
+              "pregunta": "¿y los sábados?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "Los sábados abre de 10:00 a 14:00",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-005",
+              "turno": 4,
+              "pregunta": "¿y los sábados?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y los sábados? horario biblioteca",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "Los sábados abre de 10:00 a 14:00",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esto es lo que aparece en el documento:\n\nLos sábados abre de 10:00 a 14:00 y los domingos permanece cerrada. (Fuente: Horarios de la biblioteca municipal).\n\nY lo complementa así: Fuera de ese horario, las urgencias se reportan al anexo 4501. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "horario biblioteca"
+              }
+            }
+          },
+          {
+            "id": "es-conv-007:3",
+            "antes": {
+              "conversacion": "es-conv-007",
+              "turno": 3,
+              "pregunta": "¿y quién la redacta?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "El Operador de Compras redacta la Resolución de compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-007",
+              "turno": 3,
+              "pregunta": "¿y quién la redacta?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y quién la redacta? resolucion firma compra",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "El Operador de Compras redacta la Resolución de compra",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esta es la parte del documento que responde:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. La Resolución firmada se adjunta al expediente de compra. (Fuente: Manual de Procedimientos de Adquisiciones).\n\nEl documento pone esta condición: La unidad requirente recibe los productos y firma el acta de recepción conforme. El Departamento de Compras envía el acta a Finanzas para el pago de la factura. (Fuente: Manual de Procedimientos de Adquisiciones).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolucion firma compra"
+              }
+            }
+          },
+          {
+            "id": "es-conv-008:3",
+            "antes": {
+              "conversacion": "es-conv-008",
+              "turno": 3,
+              "pregunta": "¿y cada cuánto se revisa el acuerdo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "se revisa cada seis meses",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-008",
+              "turno": 3,
+              "pregunta": "¿y cada cuánto se revisa el acuerdo?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y cada cuánto se revisa el acuerdo? cumplo metas teletrabajando",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "se revisa cada seis meses",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Mira lo que señala el documento:\n\nArtículo 9. El acuerdo de teletrabajo se revisa cada seis meses. (Fuente: Reglamento de Teletrabajo).\n\nY lo complementa así: El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del portal. El proveedor tiene dos días hábiles para aceptar la Orden de Compra. Si el proveedor rechaza la Orden de Compra, el Supervisor de Compras anula la orden y el Operador de Compras inicia una nueva compra con otro proveedor. (Fuente: Manual de Procedimientos de Adquisiciones).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "cumplo metas teletrabajando"
+              }
+            }
+          },
+          {
+            "id": "es-conv-009:2",
+            "antes": {
+              "conversacion": "es-conv-009",
+              "turno": 2,
+              "pregunta": "¿y para entregar los productos?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-009",
+              "turno": 2,
+              "pregunta": "¿y para entregar los productos?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y para entregar los productos? proveedor aceptar orden",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré información específica sobre «entregar». Esto es lo más cercano:\n\nEl Operador de Compras selecciona el producto y genera la Orden de Compra en el portal. Las compras superiores a 100 UTM requieren una Resolución que apruebe la adquisición antes de emitir la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).\n\nHay algo más que conviene ver: Los productos de higiene personal no tienen devolución por razones sanitarias. (Fuente: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "proveedor aceptar orden"
+              }
+            }
+          },
+          {
+            "id": "es-conv-012:2",
+            "antes": {
+              "conversacion": "es-conv-012",
+              "turno": 2,
+              "pregunta": "¿por cuánto tiempo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "por un máximo de 72 horas",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-012",
+              "turno": 2,
+              "pregunta": "¿por cuánto tiempo?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿por cuánto tiempo? temperatura guardan muestras",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "por un máximo de 72 horas",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Busqué «tiempo» y no aparece. Te comparto lo relacionado:\n\nLas muestras de sangre se guardan a 4 °C por un máximo de 72 horas. (Fuente: Protocolo de muestras del laboratorio).\n\nTambién dice esto: En verano se agrega un tercer riego si la temperatura supera los 30 °C. (Fuente: Manual de riego del invernadero).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "temperatura guardan muestras"
+              }
+            }
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": {
+              "conversacion": "es-conv-015",
+              "turno": 3,
+              "pregunta": "volviendo al viático, ¿y en el extranjero?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares en el extranjero",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-015",
+              "turno": 3,
+              "pregunta": "volviendo al viático, ¿y en el extranjero?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "volviendo al viático, ¿y en el extranjero? diario pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares en el extranjero",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré justo eso, pero los documentos tratan el tema así:\n\nEl viático diario es de 45.000 pesos dentro del país y de 150 dólares en el extranjero. Si el viaje dura menos de doce horas, se paga el 40% del viático diario. (Fuente: Política de Viáticos).\n\nEl documento agrega, en otra sección: Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y equipos. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "viatico diario pais"
+              }
+            }
+          },
+          {
+            "id": "es-conv-018:2",
+            "antes": {
+              "conversacion": "es-conv-018",
+              "turno": 2,
+              "pregunta": "¿y la de 35.000 pesos qué cubre?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-018",
+              "turno": 2,
+              "pregunta": "¿y la de 35.000 pesos qué cubre?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "¿y la de 35.000 pesos qué cubre? mensual conexion asignacion",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré \"35.000\" en los documentos disponibles.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "mensual conexion asignacion"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "es-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "antes": {
+          "herencia_correcta": 25,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 13,
+          "respuestas_correctas": 19,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 20,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "en-conv-002:3",
+            "antes": {
+              "conversacion": "en-conv-002",
+              "turno": 3,
+              "pregunta": "and what equipment do I get?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The institution provides a laptop and a monitor",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-002",
+              "turno": 3,
+              "pregunta": "and what equipment do I get?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and what equipment do I get? apply remote work many",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The institution provides a laptop and a monitor",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "There is no exact answer, although the documents say this about the topic:\n\nIt gathers the most common questions about accounts and equipment. (Source: Help Desk FAQ).\n\nAnother part of the document says: Article 2. Staff with at least six months of service at the institution may apply for remote work.\nArticle 3. The application is submitted to the direct manager using the remote work form. The manager replies within five business days.\nArticle 4. Remote work may cover up to three days per week. The remaining days are worked on site.\nArticle 5. The institution provides a laptop and a monitor. Staff must have an internet connection of at least 50 Mbps. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "apply remote work"
+              }
+            }
+          },
+          {
+            "id": "en-conv-002:4",
+            "antes": {
+              "conversacion": "en-conv-002",
+              "turno": 4,
+              "pregunta": "and the allowance?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A monthly allowance of 20,000 pesos",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-002",
+              "turno": 4,
+              "pregunta": "and the allowance?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "and the allowance? apply remote work equipment",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A monthly allowance of 20,000 pesos",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "I found this in the document:\n\nIt regulates the allowances and tickets of staff travelling on official business. (Source: Travel Allowance Policy).\n\nAnd it continues: Article 7. A monthly allowance of 20,000 pesos is paid for connection costs.\nArticle 8. The manager may suspend remote work if the employee does not meet their goals for two consecutive months. The suspension is notified in writing ten days in advance.\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "apply remote work"
+              }
+            }
+          },
+          {
+            "id": "en-conv-003:4",
+            "antes": {
+              "conversacion": "en-conv-003",
+              "turno": 4,
+              "pregunta": "and if I report late?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "the amount is deducted from the next salary",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-003",
+              "turno": 4,
+              "pregunta": "and if I report late?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and if I report late? advance request",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "the amount is deducted from the next salary",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "There is no specific information about «late». This is what comes closest:\n\nOutside those hours, emergencies are reported to extension 4501. (Source: Help Desk FAQ).\n\nThe document also points out: The requesting unit receives the products and signs the receipt certificate. The Purchasing Department sends the certificate to Finance for payment of the invoice. (Source: Procurement Procedures Manual).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "advance request"
+              }
+            }
+          },
+          {
+            "id": "en-conv-007:3",
+            "antes": {
+              "conversacion": "en-conv-007",
+              "turno": 3,
+              "pregunta": "and who drafts it?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The Purchasing Officer drafts the purchase Resolution",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-007",
+              "turno": 3,
+              "pregunta": "and who drafts it?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and who drafts it? resolution signs purchase",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The Purchasing Officer drafts the purchase Resolution",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The direct answer isn't there. Let me share what relates most:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. The signed Resolution is attached to the purchase file. (Source: Procurement Procedures Manual).\n\nThere is an associated condition: The requesting unit receives the products and signs the receipt certificate. The Purchasing Department sends the certificate to Finance for payment of the invoice. (Source: Procurement Procedures Manual).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolution signs purchase"
+              }
+            }
+          },
+          {
+            "id": "en-conv-008:3",
+            "antes": {
+              "conversacion": "en-conv-008",
+              "turno": 3,
+              "pregunta": "and how often is the agreement reviewed?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "reviewed every six months",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-008",
+              "turno": 3,
+              "pregunta": "and how often is the agreement reviewed?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and how often is the agreement reviewed? meet goals working",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "reviewed every six months",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents say nothing direct about «agreement». Take a look at the closest:\n\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).\n\nIt also says: Fictitious document created for testing. It gathers the most common questions about accounts and equipment. (Source: Help Desk FAQ).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "meet goals working"
+              }
+            }
+          },
+          {
+            "id": "en-conv-009:2",
+            "antes": {
+              "conversacion": "en-conv-009",
+              "turno": 2,
+              "pregunta": "and to deliver the products?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-009",
+              "turno": 2,
+              "pregunta": "and to deliver the products?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and to deliver the products? supplier accept purchase",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents do not specifically cover «deliver». This is the most similar:\n\nThe Purchasing Officer selects the product and generates the Purchase Order on the portal. Purchases above 100 UTM require a Resolution approving the acquisition before the Purchase Order is issued. (Source: Procurement Procedures Manual).\n\nIn another section, the document adds: If the product arrives damaged, return shipping is free. Personal hygiene products cannot be returned for sanitary reasons. (Source: Refund policy).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "supplier accept purchase"
+              }
+            }
+          },
+          {
+            "id": "en-conv-013:2",
+            "antes": {
+              "conversacion": "en-conv-013",
+              "turno": 2,
+              "pregunta": "and how many days until it's paid?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "within 10 business days",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-013",
+              "turno": 2,
+              "pregunta": "and how many days until it's paid?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and how many days until it's paid? refund request",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "within 10 business days",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents say nothing direct about «s». Take a look at the closest:\n\nThe refund is paid within 10 business days after the request is approved. (Source: Refund policy).\n\nAnd it continues: Flights longer than six hours may be in business class with the Director's authorization. (Source: Travel Allowance Policy).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "refund request"
+              }
+            }
+          },
+          {
+            "id": "en-conv-013:3",
+            "antes": {
+              "conversacion": "en-conv-013",
+              "turno": 3,
+              "pregunta": "and if the product arrives damaged?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "return shipping is free",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "en-conv-013",
+              "turno": 3,
+              "pregunta": "and if the product arrives damaged?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "and if the product arrives damaged? refund request many until s paid",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "return shipping is free",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "According to the loaded text:\n\nIf the product arrives damaged, return shipping is free. Personal hygiene products cannot be returned for sanitary reasons. (Source: Refund policy).\n\nI am adding this as well: The requesting unit receives the products and signs the receipt certificate. The Purchasing Department sends the certificate to Finance for payment of the invoice. (Source: Procurement Procedures Manual).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "refund request"
+              }
+            }
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": {
+              "conversacion": "en-conv-015",
+              "turno": 3,
+              "pregunta": "back to the allowance, and abroad?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dollars abroad",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-015",
+              "turno": 3,
+              "pregunta": "back to the allowance, and abroad?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "back to the allowance, and abroad? daily country",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dollars abroad",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "I didn't find exactly what you are looking for. This is the closest in the documents:\n\nThe daily allowance is 45,000 pesos within the country and 150 dollars abroad. If the trip lasts less than twelve hours, 40% of the daily allowance is paid. (Source: Travel Allowance Policy).\n\nRelated to the above, it says: Article 7. A monthly allowance of 20,000 pesos is paid for connection costs.\nArticle 8. The manager may suspend remote work if the employee does not meet their goals for two consecutive months. The suspension is notified in writing ten days in advance.\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "daily country allowance"
+              }
+            }
+          },
+          {
+            "id": "en-conv-018:2",
+            "antes": {
+              "conversacion": "en-conv-018",
+              "turno": 2,
+              "pregunta": "and what does the 35,000 pesos one cover?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-018",
+              "turno": 2,
+              "pregunta": "and what does the 35,000 pesos one cover?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "and what does the 35,000 pesos one cover? connection costs allowance",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "I didn't find \"35,000\" in the available documents.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "connection costs allowance"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "en-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "antes": {
+          "herencia_correcta": 21,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 17,
+          "respuestas_correctas": 20,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 22,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [],
+        "correctas_perdidas": [
+          "pt-conv-003:2",
+          "pt-conv-016:2"
+        ],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "pt-conv-001:2",
+            "antes": {
+              "conversacion": "pt-conv-001",
+              "turno": 2,
+              "pregunta": "e quantos dias ele tem para aceitar?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "dois dias úteis para aceitar a Ordem de Compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-001",
+              "turno": 2,
+              "pregunta": "e quantos dias ele tem para aceitar?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e quantos dias ele tem para aceitar? fornecedor recusar ordem",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "dois dias úteis para aceitar a Ordem de Compra",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sobre «quantos» os documentos não dizem nada direto. Veja o mais próximo:\n\nO fornecedor tem dois dias úteis para aceitar a Ordem de Compra. Se o fornecedor recusar a Ordem de Compra, o Supervisor de Compras cancela a ordem e o Operador de Compras inicia uma nova compra com outro fornecedor. (Fonte: Manual de Procedimentos de Aquisições).\n\nTambém diz isto: O cliente pode pedir o reembolso até 30 dias depois de receber o pedido. O reembolso é pago em até 10 dias úteis após a aprovação da solicitação. (Fonte: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "fornecedor recusar ordem"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-002:3",
+            "antes": {
+              "conversacion": "pt-conv-002",
+              "turno": 3,
+              "pregunta": "e que equipamentos eu recebo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A instituição fornece um notebook e um monitor",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-002",
+              "turno": 3,
+              "pregunta": "e que equipamentos eu recebo?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e que equipamentos eu recebo? teletrabalho pedir quantos",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A instituição fornece um notebook e um monitor",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sobre «equipamentos» não há uma resposta direta. Isto é o relacionado:\n\nReúne as dúvidas mais comuns sobre contas e equipamentos. (Fonte: Perguntas frequentes da Central de Atendimento).\n\nHá algo mais que vale a pena ver: O cliente pode pedir o reembolso até 30 dias depois de receber o pedido. O reembolso é pago em até 10 dias úteis após a aprovação da solicitação. (Fonte: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "teletrabalho pedir"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-002:4",
+            "antes": {
+              "conversacion": "pt-conv-002",
+              "turno": 4,
+              "pregunta": "e o auxílio?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "auxílio mensal de 20.000 pesos",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-002",
+              "turno": 4,
+              "pregunta": "e o auxílio?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e o auxílio? teletrabalho pedir equipamentos eu recebo",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "auxílio mensal de 20.000 pesos",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Segundo o que encontrei no texto:\n\nArtigo 7. É concedido um auxílio mensal de 20.000 pesos para despesas de conexão.\nArtigo 8. A chefia pode suspender o teletrabalho se o servidor não cumprir suas metas durante dois meses consecutivos. A suspensão é comunicada por escrito com dez dias de antecedência.\nArtigo 9. O acordo de teletrabalho é revisado a cada seis meses. (Fonte: Regulamento de Teletrabalho).\n\nOutra parte do documento diz: O cliente pode pedir o reembolso até 30 dias depois de receber o pedido. O reembolso é pago em até 10 dias úteis após a aprovação da solicitação. (Fonte: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "teletrabalho pedir"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-003:2",
+            "antes": {
+              "conversacion": "pt-conv-003",
+              "turno": 2,
+              "pregunta": "e no exterior?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e no exterior? valor diaria dentro pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-003",
+              "turno": 2,
+              "pregunta": "e no exterior?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e no exterior? diaria dentro pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não tenho uma resposta direta, mas isto se relaciona com sua pergunta:\n\nA diária é de 45.000 pesos dentro do país e de 150 dólares no exterior. Se a viagem durar menos de doze horas, é paga 40% da diária. (Fonte: Política de Diárias).\n\nO documento também aponta: Documento fictício criado para testes. Regula o trabalho a distância dos servidores da instituição.\nArtigo 1. Este regulamento estabelece as condições para que os servidores realizem parte da jornada em regime de teletrabalho.\nArtigo 2. Poderão solicitar teletrabalho os servidores com pelo menos seis meses de exercício na instituição.\nArtigo 3. A solicitação é apresentada à chefia imediata por meio do formulário de teletrabalho. A chefia responde em até cinco dias úteis. (Fonte: Regulamento de Teletrabalho).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "diaria dentro pais"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-003:4",
+            "antes": {
+              "conversacion": "pt-conv-003",
+              "turno": 4,
+              "pregunta": "e se eu não prestar contas no prazo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o valor é descontado da remuneração seguinte",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-003",
+              "turno": 4,
+              "pregunta": "e se eu não prestar contas no prazo?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e se eu não prestar contas no prazo? diaria dentro pais exterior",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o valor é descontado da remuneração seguinte",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esta é a parte do documento que responde:\n\nSe não prestar contas no prazo, o valor é descontado da remuneração seguinte. (Fonte: Política de Diárias).\n\nHá algo mais que vale a pena ver: A conta é bloqueada após cinco tentativas falhas. Para desbloqueá-la, ligue para a Central de Atendimento no ramal 4500. (Fonte: Perguntas frequentes da Central de Atendimento).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "diaria dentro pais"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-004:2",
+            "antes": {
+              "conversacion": "pt-conv-004",
+              "turno": 2,
+              "pregunta": "a cada quanto tempo expira?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A senha expira a cada 90 dias",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-004",
+              "turno": 2,
+              "pregunta": "a cada quanto tempo expira?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "a cada quanto tempo expira? troco minha senha",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A senha expira a cada 90 dias",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não tenho uma resposta direta, mas isto se relaciona com sua pergunta:\n\nA senha expira a cada 90 dias. O sistema avisa por e-mail cinco dias antes. (Fonte: Perguntas frequentes da Central de Atendimento).\n\nE complementa assim: As amostras de sangue são guardadas a 4 °C por no máximo 72 horas. (Fonte: Protocolo de amostras do laboratório).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "troco minha senha"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-005:4",
+            "antes": {
+              "conversacion": "pt-conv-005",
+              "turno": 4,
+              "pregunta": "e aos sábados?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "Aos sábados abre das 10:00 às 14:00",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-005",
+              "turno": 4,
+              "pregunta": "e aos sábados?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e aos sábados? horario biblioteca",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "Aos sábados abre das 10:00 às 14:00",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "O documento responde assim:\n\nAos sábados abre das 10:00 às 14:00 e aos domingos fica fechada. (Fonte: Horários da biblioteca municipal).\n\nAlém disso, encontrei isto: Fora desse horário, as urgências são informadas no ramal 4501. (Fonte: Perguntas frequentes da Central de Atendimento).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "horario biblioteca"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-007:3",
+            "antes": {
+              "conversacion": "pt-conv-007",
+              "turno": 3,
+              "pregunta": "e quem a redige?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "O Operador de Compras redige a Resolução de compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-007",
+              "turno": 3,
+              "pregunta": "e quem a redige?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e quem a redige? resolucao assina compra",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "O Operador de Compras redige a Resolução de compra",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "O texto explica desta forma:\n\nO Operador de Compras redige a Resolução de compra e a envia ao Diretor de Administração para assinatura. A Resolução assinada é anexada ao processo de compra. (Fonte: Manual de Procedimentos de Aquisições).\n\nLeve em conta esta condição: A unidade requisitante recebe os produtos e assina o termo de recebimento. O Departamento de Compras envia o termo ao Financeiro para o pagamento da fatura. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolucao assina compra"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-009:2",
+            "antes": {
+              "conversacion": "pt-conv-009",
+              "turno": 2,
+              "pregunta": "e para entregar os produtos?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-009",
+              "turno": 2,
+              "pregunta": "e para entregar os produtos?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e para entregar os produtos? quantos fornecedor aceitar",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Os documentos não falam especificamente de «entregar». Isto é o mais parecido:\n\nProdutos de higiene pessoal não têm devolução por razões sanitárias. (Fonte: Política de reembolsos).\n\nO documento também aponta: A unidade requisitante recebe os produtos e assina o termo de recebimento. O Departamento de Compras envia o termo ao Financeiro para o pagamento da fatura. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "quantos fornecedor aceitar"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-010:3",
+            "antes": {
+              "conversacion": "pt-conv-010",
+              "turno": 3,
+              "pregunta": "e em quantos dias a ordem é emitida?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "prazo de dez dias úteis a partir da aprovação do Formulário de Requisição",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-010",
+              "turno": 3,
+              "pregunta": "e em quantos dias a ordem é emitida?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e em quantos dias a ordem é emitida? compra registra requisicao",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "prazo de dez dias úteis a partir da aprovação do Formulário de Requisição",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não há informação pontual sobre «quantos». Isto é o que mais se parece:\n\nO Departamento de Compras tem um prazo de dez dias úteis a partir da aprovação do Formulário de Requisição para emitir a Ordem de Compra. O Financeiro paga as faturas em até trinta dias corridos a partir do recebimento. (Fonte: Manual de Procedimentos de Aquisições).\n\nIsto se aplica sob uma condição: As compras superiores a 100 UTM exigem uma Resolução que aprove a aquisição antes de emitir a Ordem de Compra. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "compra"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-013:2",
+            "antes": {
+              "conversacion": "pt-conv-013",
+              "turno": 2,
+              "pregunta": "e em quantos dias ele é pago?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "em até 10 dias úteis",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-013",
+              "turno": 2,
+              "pregunta": "e em quantos dias ele é pago?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e em quantos dias ele é pago? reembolso pedir ate",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "em até 10 dias úteis",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não encontrei informação específica sobre «quantos». Isto é o mais próximo:\n\nO reembolso é pago em até 10 dias úteis após a aprovação da solicitação. (Fonte: Política de reembolsos).\n\nMais adiante, o texto acrescenta: O Financeiro paga as faturas em até trinta dias corridos a partir do recebimento. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "reembolso pedir ate"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-013:3",
+            "antes": {
+              "conversacion": "pt-conv-013",
+              "turno": 3,
+              "pregunta": "e se o produto chegar danificado?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o frete da devolução é grátis",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-013",
+              "turno": 3,
+              "pregunta": "e se o produto chegar danificado?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e se o produto chegar danificado? reembolso pedir ate quantos ele pago",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o frete da devolução é grátis",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esta é a parte do documento que responde:\n\nSe o produto chegar danificado, o frete da devolução é grátis. Produtos de higiene pessoal não têm devolução por razões sanitárias. (Fonte: Política de reembolsos).\n\nTambém diz isto: A unidade requisitante recebe os produtos e assina o termo de recebimento. O Departamento de Compras envia o termo ao Financeiro para o pagamento da fatura. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "reembolso pedir ate"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": {
+              "conversacion": "pt-conv-015",
+              "turno": 3,
+              "pregunta": "voltando à diária, e no exterior?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-015",
+              "turno": 3,
+              "pregunta": "voltando à diária, e no exterior?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "voltando à diária, e no exterior? dentro pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sem uma resposta direta à mão, isto é o mais pertinente:\n\nA diária é de 45.000 pesos dentro do país e de 150 dólares no exterior. Se a viagem durar menos de doze horas, é paga 40% da diária. (Fonte: Política de Diárias).\n\nHá algo mais que vale a pena ver: Documento fictício criado para testes. Reúne as dúvidas mais comuns sobre contas e equipamentos. (Fonte: Perguntas frequentes da Central de Atendimento).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "diaria dentro pais"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-016:2",
+            "antes": {
+              "conversacion": "pt-conv-016",
+              "turno": 2,
+              "pregunta": "e fora do horário?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e fora do horário? bloquearam minha conta eu faco",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "as urgências são informadas no ramal 4501",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-016",
+              "turno": 2,
+              "pregunta": "e fora do horário?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e fora do horário? bloquearam minha faco",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "as urgências são informadas no ramal 4501",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não encontrei exatamente o que você procura. Isto é o mais próximo nos documentos:\n\nFora desse horário, as urgências são informadas no ramal 4501. (Fonte: Perguntas frequentes da Central de Atendimento).\n\nMais adiante, o texto acrescenta: Documento fictício criado para testes. Regula o trabalho a distância dos servidores da instituição.\nArtigo 1. Este regulamento estabelece as condições para que os servidores realizem parte da jornada em regime de teletrabalho.\nArtigo 2. Poderão solicitar teletrabalho os servidores com pelo menos seis meses de exercício na instituição.\nArtigo 3. A solicitação é apresentada à chefia imediata por meio do formulário de teletrabalho. A chefia responde em até cinco dias úteis. (Fonte: Regulamento de Teletrabalho).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "bloquearam minha faco"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-018:2",
+            "antes": {
+              "conversacion": "pt-conv-018",
+              "turno": 2,
+              "pregunta": "e o de 35.000 pesos, o que cobre?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-018",
+              "turno": 2,
+              "pregunta": "e o de 35.000 pesos, o que cobre?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "e o de 35.000 pesos, o que cobre? auxilio mensal concedido",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Os documentos não mencionam \"35.000\". Talvez esteja fora do que eles cobrem.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "auxilio mensal concedido"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "pt-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "antes": {
+          "herencia_correcta": 29,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 9,
+          "respuestas_correctas": 6,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 36,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 2,
+          "respuestas_correctas": 5,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [
+          "es-conv-004:3",
+          "es-conv-007:3",
+          "es-conv-013:3"
+        ],
+        "correctas_perdidas": [
+          "es-conv-013:3"
+        ],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "es-conv-002:3",
+            "antes": {
+              "conversacion": "es-conv-002",
+              "turno": 3,
+              "pregunta": "¿y qué equipos me pasan?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "La institución entrega un notebook y un monitor",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-002",
+              "turno": 3,
+              "pregunta": "¿y qué equipos me pasan?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y qué equipos me pasan? pedir teletrabajo dias semana",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "La institución entrega un notebook y un monitor",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Los documentos no hablan específicamente de «equipos». Esto es lo más parecido:\n\nEl cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).\n\nTambién dice esto: Artículo 4. El teletrabajo puede abarcar hasta tres días por semana. Los días restantes son presenciales.\nArtículo 5. La institución entrega un notebook y un monitor. El funcionario debe contar con una conexión a internet de al menos 50 Mbps.\nArtículo 6. Durante la jornada de teletrabajo, el funcionario debe estar disponible entre las 9:00 y las 17:00 horas.\nArtículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión. (Fuente: Reglamento de Teletrabajo).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "pedir teletrabajo"
+              }
+            }
+          },
+          {
+            "id": "es-conv-002:4",
+            "antes": {
+              "conversacion": "es-conv-002",
+              "turno": 4,
+              "pregunta": "¿y la asignación?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "asignación mensual de 20.000 pesos",
+              "correcta": false,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "es-conv-002",
+              "turno": 4,
+              "pregunta": "¿y la asignación?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y la asignación? pedir teletrabajo equipos",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "asignación mensual de 20.000 pesos",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No hay una respuesta exacta, aunque los documentos dicen esto sobre el tema:\n\nArtículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión.\nArtículo 8. La jefatura puede suspender el teletrabajo si el funcionario no cumple sus metas durante dos meses consecutivos. La suspensión se comunica por escrito con diez días de anticipación.\nArtículo 9. El acuerdo de teletrabajo se revisa cada seis meses. (Fuente: Reglamento de Teletrabajo).\n\nEl documento agrega, en otra sección: El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso. (Fuente: Manual de Procedimientos de Adquisiciones).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "pedir teletrabajo"
+              }
+            }
+          },
+          {
+            "id": "es-conv-004:3",
+            "antes": {
+              "conversacion": "es-conv-004",
+              "turno": 3,
+              "pregunta": "¿y cuántos caracteres debe tener?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y cuántos caracteres debe tener? vence cambio contrasena",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "al menos 12 caracteres",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-004",
+              "turno": 3,
+              "pregunta": "¿y cuántos caracteres debe tener?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y cuántos caracteres debe tener? cambio contrasena vence",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "al menos 12 caracteres",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "Aquí está lo que encontré:\n\nLa nueva contraseña debe tener al menos 12 caracteres e incluir un número. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+              "tramo_lector": "12",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "cambio contrasena"
+              }
+            }
+          },
+          {
+            "id": "es-conv-007:3",
+            "antes": {
+              "conversacion": "es-conv-007",
+              "turno": 3,
+              "pregunta": "¿y quién la redacta?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "El Operador de Compras redacta la Resolución de compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-007",
+              "turno": 3,
+              "pregunta": "¿y quién la redacta?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y quién la redacta? resolucion firma compra",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "El Operador de Compras redacta la Resolución de compra",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "Esta es la parte del documento que responde:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+              "tramo_lector": "Director de Administración",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolucion firma compra"
+              }
+            }
+          },
+          {
+            "id": "es-conv-009:2",
+            "antes": {
+              "conversacion": "es-conv-009",
+              "turno": 2,
+              "pregunta": "¿y para entregar los productos?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-009",
+              "turno": 2,
+              "pregunta": "¿y para entregar los productos?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿y para entregar los productos? proveedor aceptar orden",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Busqué «entregar» y no aparece. Te comparto lo relacionado:\n\nEl proveedor tiene dos días hábiles para aceptar la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "proveedor aceptar orden"
+              }
+            }
+          },
+          {
+            "id": "es-conv-012:2",
+            "antes": {
+              "conversacion": "es-conv-012",
+              "turno": 2,
+              "pregunta": "¿por cuánto tiempo?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "por un máximo de 72 horas",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-012",
+              "turno": 2,
+              "pregunta": "¿por cuánto tiempo?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "¿por cuánto tiempo? temperatura guardan muestras",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "por un máximo de 72 horas",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Busqué «tiempo» y no aparece. Te comparto lo relacionado:\n\nLas muestras de sangre se guardan a 4 °C por un máximo de 72 horas. (Fuente: Protocolo de muestras del laboratorio).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "temperatura guardan muestras"
+              }
+            }
+          },
+          {
+            "id": "es-conv-013:3",
+            "antes": {
+              "conversacion": "es-conv-013",
+              "turno": 3,
+              "pregunta": "¿y si el producto llega dañado?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y si el producto llega dañado? pagan pedir reembolso",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "el envío de la devolución es gratuito",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "es-conv-013",
+              "turno": 3,
+              "pregunta": "¿y si el producto llega dañado?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "¿y si el producto llega dañado? pedir reembolso pagan",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "el envío de la devolución es gratuito",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "El documento responde así:\n\nSi el producto llega dañado, el envío de la devolución es gratuito. (Fuente: Política de reembolsos).",
+              "tramo_lector": "gratuito",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "pedir reembolso"
+              }
+            }
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": {
+              "conversacion": "es-conv-015",
+              "turno": 3,
+              "pregunta": "volviendo al viático, ¿y en el extranjero?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares en el extranjero",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-015",
+              "turno": 3,
+              "pregunta": "volviendo al viático, ¿y en el extranjero?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "volviendo al viático, ¿y en el extranjero? diario pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares en el extranjero",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré justo eso, pero los documentos tratan el tema así:\n\nEl viático diario es de 45.000 pesos dentro del país y de 150 dólares en el extranjero. (Fuente: Política de Viáticos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "viatico diario pais"
+              }
+            }
+          },
+          {
+            "id": "es-conv-018:2",
+            "antes": {
+              "conversacion": "es-conv-018",
+              "turno": 2,
+              "pregunta": "¿y la de 35.000 pesos qué cubre?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "es-conv-018",
+              "turno": 2,
+              "pregunta": "¿y la de 35.000 pesos qué cubre?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "¿y la de 35.000 pesos qué cubre? mensual conexion asignacion",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "No encontré \"35.000\" en los documentos disponibles.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "mensual conexion asignacion"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "es-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "es-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "antes": {
+          "herencia_correcta": 26,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 12,
+          "respuestas_correctas": 8,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 35,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 3,
+          "respuestas_correctas": 7,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [
+          "en-conv-010:3"
+        ],
+        "correctas_perdidas": [
+          "en-conv-013:3"
+        ],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "en-conv-002:3",
+            "antes": {
+              "conversacion": "en-conv-002",
+              "turno": 3,
+              "pregunta": "and what equipment do I get?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The institution provides a laptop and a monitor",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-002",
+              "turno": 3,
+              "pregunta": "and what equipment do I get?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and what equipment do I get? apply remote work many",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The institution provides a laptop and a monitor",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents say nothing direct about «equipment». Take a look at the closest:\n\nArticle 5. The institution provides a laptop and a monitor. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "apply remote work"
+              }
+            }
+          },
+          {
+            "id": "en-conv-002:4",
+            "antes": {
+              "conversacion": "en-conv-002",
+              "turno": 4,
+              "pregunta": "and the allowance?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A monthly allowance of 20,000 pesos",
+              "correcta": false,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "en-conv-002",
+              "turno": 4,
+              "pregunta": "and the allowance?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and the allowance? apply remote work equipment",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A monthly allowance of 20,000 pesos",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "There is no direct answer in the documents, but this is the most related:\n\nIt regulates the allowances and tickets of staff travelling on official business. (Source: Travel Allowance Policy).\n\nAnd it continues: Article 7. A monthly allowance of 20,000 pesos is paid for connection costs.\nArticle 8. The manager may suspend remote work if the employee does not meet their goals for two consecutive months. The suspension is notified in writing ten days in advance.\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "apply remote work"
+              }
+            }
+          },
+          {
+            "id": "en-conv-007:3",
+            "antes": {
+              "conversacion": "en-conv-007",
+              "turno": 3,
+              "pregunta": "and who drafts it?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The Purchasing Officer drafts the purchase Resolution",
+              "correcta": false,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "en-conv-007",
+              "turno": 3,
+              "pregunta": "and who drafts it?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "and who drafts it? resolution signs purchase",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "The Purchasing Officer drafts the purchase Resolution",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "This is what appears in the document:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. (Source: Procurement Procedures Manual).",
+              "tramo_lector": "Director of Administration",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolution signs purchase"
+              }
+            }
+          },
+          {
+            "id": "en-conv-008:3",
+            "antes": {
+              "conversacion": "en-conv-008",
+              "turno": 3,
+              "pregunta": "and how often is the agreement reviewed?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "reviewed every six months",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-008",
+              "turno": 3,
+              "pregunta": "and how often is the agreement reviewed?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and how often is the agreement reviewed? meet goals working",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "reviewed every six months",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents say nothing direct about «agreement». Take a look at the closest:\n\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "meet goals working"
+              }
+            }
+          },
+          {
+            "id": "en-conv-009:2",
+            "antes": {
+              "conversacion": "en-conv-009",
+              "turno": 2,
+              "pregunta": "and to deliver the products?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-009",
+              "turno": 2,
+              "pregunta": "and to deliver the products?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and to deliver the products? supplier accept purchase",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents do not specifically cover «deliver». This is the most similar:\n\nThe Purchasing Officer selects the product and generates the Purchase Order on the portal. Purchases above 100 UTM require a Resolution approving the acquisition before the Purchase Order is issued. (Source: Procurement Procedures Manual).\n\nIn another section, the document adds: If the product arrives damaged, return shipping is free. Personal hygiene products cannot be returned for sanitary reasons. (Source: Refund policy).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "supplier accept purchase"
+              }
+            }
+          },
+          {
+            "id": "en-conv-010:3",
+            "antes": {
+              "conversacion": "en-conv-010",
+              "turno": 3,
+              "pregunta": "and in how many days is the order issued?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and in how many days is the order issued? registers request purchase start",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "ten business days from the approval of the Requisition Form",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-010",
+              "turno": 3,
+              "pregunta": "and in how many days is the order issued?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "and in how many days is the order issued? start purchase registers request",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "ten business days from the approval of the Requisition Form",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "This is what the document says:\n\nThe Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order. (Source: Procurement Procedures Manual).",
+              "tramo_lector": "ten",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "start purchase"
+              }
+            }
+          },
+          {
+            "id": "en-conv-013:2",
+            "antes": {
+              "conversacion": "en-conv-013",
+              "turno": 2,
+              "pregunta": "and how many days until it's paid?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "within 10 business days",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-013",
+              "turno": 2,
+              "pregunta": "and how many days until it's paid?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and how many days until it's paid? refund request",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "within 10 business days",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents say nothing direct about «s». Take a look at the closest:\n\nThe refund is paid within 10 business days after the request is approved. (Source: Refund policy).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "refund request"
+              }
+            }
+          },
+          {
+            "id": "en-conv-013:3",
+            "antes": {
+              "conversacion": "en-conv-013",
+              "turno": 3,
+              "pregunta": "and if the product arrives damaged?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "return shipping is free",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "en-conv-013",
+              "turno": 3,
+              "pregunta": "and if the product arrives damaged?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "and if the product arrives damaged? refund request many until s paid",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "return shipping is free",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "The documents don't answer it as such. This is what comes closest:\n\nIf the product arrives damaged, return shipping is free. (Source: Refund policy).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "refund request"
+              }
+            }
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": {
+              "conversacion": "en-conv-015",
+              "turno": 3,
+              "pregunta": "back to the allowance, and abroad?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dollars abroad",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-015",
+              "turno": 3,
+              "pregunta": "back to the allowance, and abroad?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "back to the allowance, and abroad? daily country",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dollars abroad",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "I didn't find exactly what you are looking for. This is the closest in the documents:\n\nThe daily allowance is 45,000 pesos within the country and 150 dollars abroad. If the trip lasts less than twelve hours, 40% of the daily allowance is paid. (Source: Travel Allowance Policy).\n\nRelated to the above, it says: Article 7. A monthly allowance of 20,000 pesos is paid for connection costs.\nArticle 8. The manager may suspend remote work if the employee does not meet their goals for two consecutive months. The suspension is notified in writing ten days in advance.\nArticle 9. The remote work agreement is reviewed every six months. (Source: Remote Work Regulation).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "daily country allowance"
+              }
+            }
+          },
+          {
+            "id": "en-conv-018:2",
+            "antes": {
+              "conversacion": "en-conv-018",
+              "turno": 2,
+              "pregunta": "and what does the 35,000 pesos one cover?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "en-conv-018",
+              "turno": 2,
+              "pregunta": "and what does the 35,000 pesos one cover?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "and what does the 35,000 pesos one cover? connection costs allowance",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "I didn't find \"35,000\" in the available documents.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "connection costs allowance"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "en-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "en-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "antes": {
+          "herencia_correcta": 21,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 17,
+          "respuestas_correctas": 8,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "despues": {
+          "herencia_correcta": 34,
+          "con_hereda": 38,
+          "herencia_indebida": 0,
+          "herencia_perdida": 4,
+          "respuestas_correctas": 8,
+          "con_respuesta": 54,
+          "directas_indebidas": 0,
+          "sin_directa": 4
+        },
+        "nuevas_erroneas": [
+          "pt-conv-007:3"
+        ],
+        "correctas_perdidas": [],
+        "nuevas_herencias_indebidas": [],
+        "cambios": [
+          {
+            "id": "pt-conv-001:2",
+            "antes": {
+              "conversacion": "pt-conv-001",
+              "turno": 2,
+              "pregunta": "e quantos dias ele tem para aceitar?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "dois dias úteis para aceitar a Ordem de Compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-001",
+              "turno": 2,
+              "pregunta": "e quantos dias ele tem para aceitar?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e quantos dias ele tem para aceitar? fornecedor recusar ordem",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "dois dias úteis para aceitar a Ordem de Compra",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sobre «quantos» os documentos não dizem nada direto. Veja o mais próximo:\n\nO fornecedor tem dois dias úteis para aceitar a Ordem de Compra. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "fornecedor recusar ordem"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-002:2",
+            "antes": {
+              "conversacion": "pt-conv-002",
+              "turno": 2,
+              "pregunta": "e quantos dias por semana?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "até três dias por semana",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-002",
+              "turno": 2,
+              "pregunta": "e quantos dias por semana?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e quantos dias por semana? teletrabalho pedir",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "até três dias por semana",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não encontrei «quantos» nos documentos. Mostro o mais próximo:\n\nArtigo 4. O teletrabalho pode abranger até três dias por semana. (Fonte: Regulamento de Teletrabalho).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "teletrabalho pedir"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-002:4",
+            "antes": {
+              "conversacion": "pt-conv-002",
+              "turno": 4,
+              "pregunta": "e o auxílio?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "auxílio mensal de 20.000 pesos",
+              "correcta": false,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-002",
+              "turno": 4,
+              "pregunta": "e o auxílio?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e o auxílio? equipamentos recebo",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "auxílio mensal de 20.000 pesos",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não encontrei exatamente isso, mas os documentos tratam o tema assim:\n\nArtigo 7. É concedido um auxílio mensal de 20.000 pesos para despesas de conexão.\nArtigo 8. A chefia pode suspender o teletrabalho se o servidor não cumprir suas metas durante dois meses consecutivos. A suspensão é comunicada por escrito com dez dias de antecedência.\nArtigo 9. O acordo de teletrabalho é revisado a cada seis meses. (Fonte: Regulamento de Teletrabalho).\n\nOutra parte do documento diz: Reúne as dúvidas mais comuns sobre contas e equipamentos. (Fonte: Perguntas frequentes da Central de Atendimento).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "equipamentos recebo"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-003:4",
+            "antes": {
+              "conversacion": "pt-conv-003",
+              "turno": 4,
+              "pregunta": "e se eu não prestar contas no prazo?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o valor é descontado da remuneração seguinte",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-003",
+              "turno": 4,
+              "pregunta": "e se eu não prestar contas no prazo?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e se eu não prestar contas no prazo? diaria dentro pais exterior",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o valor é descontado da remuneração seguinte",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esta é a parte do documento que responde:\n\nSe não prestar contas no prazo, o valor é descontado da remuneração seguinte. (Fonte: Política de Diárias).",
+              "tramo_lector": "o valor é descontado da remuneração seguinte",
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "diaria dentro pais"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-004:2",
+            "antes": {
+              "conversacion": "pt-conv-004",
+              "turno": 2,
+              "pregunta": "a cada quanto tempo expira?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A senha expira a cada 90 dias",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-004",
+              "turno": 2,
+              "pregunta": "a cada quanto tempo expira?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "a cada quanto tempo expira? troco minha senha",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "A senha expira a cada 90 dias",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sobre «expira» os documentos não dizem nada direto. Veja o mais próximo:\n\nA senha expira a cada 90 dias. (Fonte: Perguntas frequentes da Central de Atendimento).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "troco minha senha"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-007:3",
+            "antes": {
+              "conversacion": "pt-conv-007",
+              "turno": 3,
+              "pregunta": "e quem a redige?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "O Operador de Compras redige a Resolução de compra",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-007",
+              "turno": 3,
+              "pregunta": "e quem a redige?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e quem a redige? resolucao assina compra",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "O Operador de Compras redige a Resolução de compra",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "O texto explica desta forma:\n\nO Operador de Compras redige a Resolução de compra e a envia ao Diretor de Administração para assinatura. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": "Diretor de Administração",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "resolucao assina compra"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-008:3",
+            "antes": {
+              "conversacion": "pt-conv-008",
+              "turno": 3,
+              "pregunta": "e a cada quanto tempo o acordo é revisado?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "revisado a cada seis meses",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-008",
+              "turno": 3,
+              "pregunta": "e a cada quanto tempo o acordo é revisado?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e a cada quanto tempo o acordo é revisado? antecedencia avisam",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "revisado a cada seis meses",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Sobre «acordo» os documentos não dizem nada direto. Veja o mais próximo:\n\nArtigo 9. O acordo de teletrabalho é revisado a cada seis meses. (Fonte: Regulamento de Teletrabalho).\n\nTambém diz isto: O Supervisor de Compras revisa a Ordem de Compra e a envia ao fornecedor pelo portal. O fornecedor tem dois dias úteis para aceitar a Ordem de Compra. Se o fornecedor recusar a Ordem de Compra, o Supervisor de Compras cancela a ordem e o Operador de Compras inicia uma nova compra com outro fornecedor. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "quanta antecedencia avisam"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-009:2",
+            "antes": {
+              "conversacion": "pt-conv-009",
+              "turno": 2,
+              "pregunta": "e para entregar os produtos?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-009",
+              "turno": 2,
+              "pregunta": "e para entregar os produtos?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e para entregar os produtos? quantos fornecedor aceitar",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Os documentos não falam especificamente de «entregar». Isto é o mais parecido:\n\nO fornecedor tem dois dias úteis para aceitar a Ordem de Compra. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "quantos fornecedor aceitar"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-010:3",
+            "antes": {
+              "conversacion": "pt-conv-010",
+              "turno": 3,
+              "pregunta": "e em quantos dias a ordem é emitida?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "prazo de dez dias úteis a partir da aprovação do Formulário de Requisição",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-010",
+              "turno": 3,
+              "pregunta": "e em quantos dias a ordem é emitida?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e em quantos dias a ordem é emitida? compra registra requisicao",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "prazo de dez dias úteis a partir da aprovação do Formulário de Requisição",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não há informação pontual sobre «quantos». Isto é o que mais se parece:\n\nO Departamento de Compras tem um prazo de dez dias úteis a partir da aprovação do Formulário de Requisição para emitir a Ordem de Compra. (Fonte: Manual de Procedimentos de Aquisições).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "compra"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-013:2",
+            "antes": {
+              "conversacion": "pt-conv-013",
+              "turno": 2,
+              "pregunta": "e em quantos dias ele é pago?",
+              "estado": "relacionado",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "em até 10 dias úteis",
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-013",
+              "turno": 2,
+              "pregunta": "e em quantos dias ele é pago?",
+              "estado": "relacionado",
+              "heredo": true,
+              "interpretada": "e em quantos dias ele é pago? reembolso pedir ate",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "em até 10 dias úteis",
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Não encontrei informação específica sobre «quantos». Isto é o mais próximo:\n\nO reembolso é pago em até 10 dias úteis após a aprovação da solicitação. (Fonte: Política de reembolsos).",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "reembolso pedir ate"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-013:3",
+            "antes": {
+              "conversacion": "pt-conv-013",
+              "turno": 3,
+              "pregunta": "e se o produto chegar danificado?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o frete da devolução é grátis",
+              "correcta": true,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-013",
+              "turno": 3,
+              "pregunta": "e se o produto chegar danificado?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "e se o produto chegar danificado? reembolso pedir ate quantos ele pago",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "o frete da devolução é grátis",
+              "correcta": true,
+              "directa": true,
+              "mensaje": "Esta é a parte do documento que responde:\n\nSe o produto chegar danificado, o frete da devolução é grátis. (Fonte: Política de reembolsos).",
+              "tramo_lector": "o frete da devolução é grátis",
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "reembolso pedir ate"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": {
+              "conversacion": "pt-conv-015",
+              "turno": 3,
+              "pregunta": "voltando à diária, e no exterior?",
+              "estado": "respuesta_directa",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": false,
+              "directa": true
+            },
+            "despues": {
+              "conversacion": "pt-conv-015",
+              "turno": 3,
+              "pregunta": "voltando à diária, e no exterior?",
+              "estado": "respuesta_directa",
+              "heredo": true,
+              "interpretada": "voltando à diária, e no exterior? dentro pais",
+              "hereda": true,
+              "directa_esperada": null,
+              "respuesta": "150 dólares no exterior",
+              "correcta": false,
+              "directa": true,
+              "mensaje": "Encontrei isto no documento:\n\nA diária é de 45.000 pesos dentro do país e de 150 dólares no exterior. (Fonte: Política de Diárias).",
+              "tramo_lector": "150 dólares",
+              "conversacion_diagnostico": {
+                "accion": "retoma",
+                "tema": "diaria dentro pais"
+              }
+            }
+          },
+          {
+            "id": "pt-conv-018:2",
+            "antes": {
+              "conversacion": "pt-conv-018",
+              "turno": 2,
+              "pregunta": "e o de 35.000 pesos, o que cobre?",
+              "estado": "sin_respuesta",
+              "heredo": false,
+              "interpretada": null,
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false
+            },
+            "despues": {
+              "conversacion": "pt-conv-018",
+              "turno": 2,
+              "pregunta": "e o de 35.000 pesos, o que cobre?",
+              "estado": "sin_respuesta",
+              "heredo": true,
+              "interpretada": "e o de 35.000 pesos, o que cobre? auxilio mensal concedido",
+              "hereda": true,
+              "directa_esperada": false,
+              "respuesta": null,
+              "correcta": false,
+              "directa": false,
+              "mensaje": "Os documentos não mencionam \"35.000\". Talvez esteja fora do que eles cobrem.",
+              "tramo_lector": null,
+              "conversacion_diagnostico": {
+                "accion": "hereda",
+                "tema": "auxilio mensal concedido"
+              }
+            }
+          }
+        ],
+        "retoma_007_015": [
+          {
+            "id": "pt-conv-007:3",
+            "antes": false,
+            "despues": true
+          },
+          {
+            "id": "pt-conv-015:3",
+            "antes": false,
+            "despues": true
+          }
+        ]
+      }
+    ],
+    "calidad_sin_regresiones_por_caso": false,
+    "g2": true,
+    "g3": false,
+    "g4": true,
+    "f4_herencia": true
+  },
+  "intenciones": {
+    "consultas": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "consultas": 60,
+        "patrones": 27,
+        "intentos": 30,
+        "aceptadas": 4,
+        "detalle": [
+          {
+            "sesion": "evaluacion:es-exacta-007",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8878806829452515,
+              "margen": 0.048098087310791016,
+              "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-trampa-009",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8843004703521729,
+              "margen": 0.027689456939697266,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-013",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8945013284683228,
+              "margen": 0.04917609691619873,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-014",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9040016531944275,
+              "margen": 0.06777042150497437,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "es-exacta-007",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": true,
+            "correcta_despues": true,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "respuesta_directa",
+            "estado_despues": "respuesta_directa"
+          },
+          {
+            "id": "es-trampa-009",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "es-parafrasis-013",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "es-parafrasis-014",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "consultas": 60,
+        "patrones": 28,
+        "intentos": 28,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "evaluacion:en-exacta-007",
+            "idioma": "en",
+            "perfil": "light",
+            "pregunta_efectiva": "How often does the password expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.9011116027832031,
+              "margen": 0.05385380983352661,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:en-trampa-009",
+            "idioma": "en",
+            "perfil": "light",
+            "pregunta_efectiva": "How often does the access card expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8793419599533081,
+              "margen": 0.04062134027481079,
+              "ejemplo": "How frequently does the driving permit expire?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "en-exacta-007",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": true,
+            "correcta_despues": true,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "respuesta_directa",
+            "estado_despues": "respuesta_directa"
+          },
+          {
+            "id": "en-trampa-009",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "consultas": 60,
+        "patrones": 28,
+        "intentos": 31,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "evaluacion:pt-parafrasis-013",
+            "idioma": "pt",
+            "perfil": "light",
+            "pregunta_efectiva": "esqueci a senha do login, como troco?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8993871212005615,
+              "margen": 0.010230660438537598,
+              "ejemplo": "Esqueci meu código de acesso, como faço para recuperá-lo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:pt-parafrasis-014",
+            "idioma": "pt",
+            "perfil": "light",
+            "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9022531509399414,
+              "margen": 0.02493363618850708,
+              "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "pt-parafrasis-013",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "pt-parafrasis-014",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "consultas": 60,
+        "patrones": 27,
+        "intentos": 30,
+        "aceptadas": 4,
+        "detalle": [
+          {
+            "sesion": "evaluacion:es-exacta-007",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8878806829452515,
+              "margen": 0.048098087310791016,
+              "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-trampa-009",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8843004703521729,
+              "margen": 0.027689456939697266,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-013",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8945013284683228,
+              "margen": 0.04917609691619873,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-014",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9040016531944275,
+              "margen": 0.06777042150497437,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "es-exacta-007",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": true,
+            "erronea_despues": true,
+            "estado_antes": "respuesta_directa",
+            "estado_despues": "respuesta_directa"
+          },
+          {
+            "id": "es-trampa-009",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "es-parafrasis-013",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "es-parafrasis-014",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "consultas": 60,
+        "patrones": 28,
+        "intentos": 28,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "evaluacion:en-exacta-007",
+            "idioma": "en",
+            "perfil": "medium",
+            "pregunta_efectiva": "How often does the password expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.9011116027832031,
+              "margen": 0.05385380983352661,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:en-trampa-009",
+            "idioma": "en",
+            "perfil": "medium",
+            "pregunta_efectiva": "How often does the access card expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8793419599533081,
+              "margen": 0.04062134027481079,
+              "ejemplo": "How frequently does the driving permit expire?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "en-exacta-007",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "en-trampa-009",
+            "esperada": "fin",
+            "elegida": "fin",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "consultas": 60,
+        "patrones": 28,
+        "intentos": 31,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "evaluacion:pt-parafrasis-013",
+            "idioma": "pt",
+            "perfil": "medium",
+            "pregunta_efectiva": "esqueci a senha do login, como troco?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8993871212005615,
+              "margen": 0.010230660438537598,
+              "ejemplo": "Esqueci meu código de acesso, como faço para recuperá-lo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:pt-parafrasis-014",
+            "idioma": "pt",
+            "perfil": "medium",
+            "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9022531509399414,
+              "margen": 0.02493363618850708,
+              "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+              "aceptada": true
+            }
+          }
+        ],
+        "errores_intencion": [],
+        "efectos": [
+          {
+            "id": "pt-parafrasis-013",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          },
+          {
+            "id": "pt-parafrasis-014",
+            "esperada": "procedimiento",
+            "elegida": "procedimiento",
+            "correcta_antes": false,
+            "correcta_despues": false,
+            "erronea_antes": false,
+            "erronea_despues": false,
+            "estado_antes": "relacionado",
+            "estado_despues": "relacionado"
+          }
+        ]
+      }
+    ],
+    "universal": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "consultas": 30,
+        "patrones": 8,
+        "intentos": 21,
+        "aceptadas": 4,
+        "detalle": [
+          {
+            "sesion": "evaluacion:es-parafrasis-001",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8586478233337402,
+              "margen": 0.012680113315582275,
+              "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-exacta-005",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8709890842437744,
+              "margen": 0.030670523643493652,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-trampa-005",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8772735595703125,
+              "margen": 0.0469592809677124,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-003",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8539042472839355,
+              "margen": 0.025885581970214844,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "consultas": 30,
+        "patrones": 9,
+        "intentos": 20,
+        "aceptadas": 0,
+        "detalle": []
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "consultas": 30,
+        "patrones": 8,
+        "intentos": 21,
+        "aceptadas": 1,
+        "detalle": [
+          {
+            "sesion": "evaluacion:pt-exacta-005",
+            "idioma": "pt",
+            "perfil": "light",
+            "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8966479301452637,
+              "margen": 0.012849628925323486,
+              "ejemplo": "Como solicito uma devolução na loja?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "consultas": 30,
+        "patrones": 8,
+        "intentos": 21,
+        "aceptadas": 4,
+        "detalle": [
+          {
+            "sesion": "evaluacion:es-parafrasis-001",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8586478233337402,
+              "margen": 0.012680113315582275,
+              "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-exacta-005",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8709890842437744,
+              "margen": 0.030670523643493652,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-trampa-005",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8772735595703125,
+              "margen": 0.0469592809677124,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "evaluacion:es-parafrasis-003",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8539042472839355,
+              "margen": 0.025885581970214844,
+              "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "consultas": 30,
+        "patrones": 9,
+        "intentos": 20,
+        "aceptadas": 0,
+        "detalle": []
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "consultas": 30,
+        "patrones": 8,
+        "intentos": 21,
+        "aceptadas": 1,
+        "detalle": [
+          {
+            "sesion": "evaluacion:pt-exacta-005",
+            "idioma": "pt",
+            "perfil": "medium",
+            "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8966479301452637,
+              "margen": 0.012849628925323486,
+              "ejemplo": "Como solicito uma devolução na loja?",
+              "aceptada": true
+            }
+          }
+        ]
+      }
+    ],
+    "conversaciones": [
+      {
+        "perfil": "light",
+        "idioma": "es",
+        "consultas": 58,
+        "patrones": 15,
+        "intentos": 42,
+        "aceptadas": 17,
+        "detalle": [
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y cuántos días a la semana? pedir teletrabajo",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8647536635398865,
+              "margen": 0.012881875038146973,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y qué equipos me pasan? pedir teletrabajo dias semana",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.867284893989563,
+              "margen": 0.02594006061553955,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y la asignación? pedir teletrabajo equipos",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8646836280822754,
+              "margen": 0.008033275604248047,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-003",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿con cuánta anticipación lo pido? pedir solicita solicitan solicitar",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8687312006950378,
+              "margen": 0.011316835880279541,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Cómo cambio mi contraseña?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9050199389457703,
+              "margen": 0.06226879358291626,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿cada cuánto vence? cambio contrasena",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8748670816421509,
+              "margen": 0.010416865348815918,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y cuántos caracteres debe tener? cambio contrasena vence",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8736635446548462,
+              "margen": 0.0015492439270019531,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-005",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y qué no cubre? garantia cafetera brio",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8655868768692017,
+              "margen": 0.010714292526245117,
+              "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-006",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y cuánto es el viático en el extranjero?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.852733850479126,
+              "margen": 0.020242035388946533,
+              "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-008",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿con cuánta anticipación me avisan?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8586710691452026,
+              "margen": 0.005002260208129883,
+              "ejemplo": "Olvidé mi código de acceso, ¿cómo lo recupero?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-008",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y cada cuánto se revisa el acuerdo? cumplo metas teletrabajando",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8508651256561279,
+              "margen": 0.009300053119659424,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-010",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8505277633666992,
+              "margen": 0.0069220662117004395,
+              "ejemplo": "¿Cuál es el último día para inscribirse?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-013",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y en cuántos días lo pagan? pedir reembolso",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.86046302318573,
+              "margen": 0.008266687393188477,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-014",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8878806829452515,
+              "margen": 0.048098087310791016,
+              "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-015",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "volviendo al viático, ¿y en el extranjero? diario pais",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8611014485359192,
+              "margen": 0.009938180446624756,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-016",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9040016531944275,
+              "margen": 0.06777042150497437,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-018",
+            "idioma": "es",
+            "perfil": "light",
+            "pregunta_efectiva": "¿y la de 35.000 pesos qué cubre? mensual conexion asignacion",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8633505702018738,
+              "margen": 0.008129775524139404,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "en",
+        "consultas": 58,
+        "patrones": 14,
+        "intentos": 42,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "conversacion:en-conv-004",
+            "idioma": "en",
+            "perfil": "light",
+            "pregunta_efectiva": "how often does it expire? change password",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8819155693054199,
+              "margen": 0.03127396106719971,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:en-conv-014",
+            "idioma": "en",
+            "perfil": "light",
+            "pregunta_efectiva": "How often does the password expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.9011116027832031,
+              "margen": 0.05385380983352661,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "light",
+        "idioma": "pt",
+        "consultas": 58,
+        "patrones": 17,
+        "intentos": 40,
+        "aceptadas": 1,
+        "detalle": [
+          {
+            "sesion": "conversacion:pt-conv-016",
+            "idioma": "pt",
+            "perfil": "light",
+            "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9022531509399414,
+              "margen": 0.02493363618850708,
+              "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "es",
+        "consultas": 58,
+        "patrones": 15,
+        "intentos": 42,
+        "aceptadas": 17,
+        "detalle": [
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y cuántos días a la semana? pedir teletrabajo",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8647536635398865,
+              "margen": 0.012881875038146973,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y qué equipos me pasan? pedir teletrabajo dias semana",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.867284893989563,
+              "margen": 0.02594006061553955,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-002",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y la asignación? pedir teletrabajo equipos",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8646836280822754,
+              "margen": 0.008033275604248047,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-003",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿con cuánta anticipación lo pido? pedir solicita solicitan solicitar",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8687312006950378,
+              "margen": 0.011316835880279541,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Cómo cambio mi contraseña?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9050199389457703,
+              "margen": 0.06226879358291626,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿cada cuánto vence? cambio contrasena",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8748670816421509,
+              "margen": 0.010416865348815918,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-004",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y cuántos caracteres debe tener? cambio contrasena vence",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8736635446548462,
+              "margen": 0.0015492439270019531,
+              "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-005",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y qué no cubre? garantia cafetera brio",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8655868768692017,
+              "margen": 0.010714292526245117,
+              "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-006",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y cuánto es el viático en el extranjero?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.852733850479126,
+              "margen": 0.020242035388946533,
+              "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-008",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿con cuánta anticipación me avisan?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8586710691452026,
+              "margen": 0.005002260208129883,
+              "ejemplo": "Olvidé mi código de acceso, ¿cómo lo recupero?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-008",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y cada cuánto se revisa el acuerdo? anticipacion avisan",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8699697852134705,
+              "margen": 0.01707637310028076,
+              "ejemplo": "Olvidé mi código de acceso, ¿cómo lo recupero?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-010",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8505277633666992,
+              "margen": 0.0069220662117004395,
+              "ejemplo": "¿Cuál es el último día para inscribirse?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-013",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y en cuántos días lo pagan? pedir reembolso",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.86046302318573,
+              "margen": 0.008266687393188477,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-014",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8878806829452515,
+              "margen": 0.048098087310791016,
+              "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-015",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "volviendo al viático, ¿y en el extranjero? diario pais",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8611014485359192,
+              "margen": 0.009938180446624756,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-016",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9040016531944275,
+              "margen": 0.06777042150497437,
+              "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:es-conv-018",
+            "idioma": "es",
+            "perfil": "medium",
+            "pregunta_efectiva": "¿y la de 35.000 pesos qué cubre? mensual conexion asignacion",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.8633505702018738,
+              "margen": 0.008129775524139404,
+              "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "en",
+        "consultas": 58,
+        "patrones": 14,
+        "intentos": 42,
+        "aceptadas": 2,
+        "detalle": [
+          {
+            "sesion": "conversacion:en-conv-004",
+            "idioma": "en",
+            "perfil": "medium",
+            "pregunta_efectiva": "how often does it expire? change password",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.8819155693054199,
+              "margen": 0.03127396106719971,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          },
+          {
+            "sesion": "conversacion:en-conv-014",
+            "idioma": "en",
+            "perfil": "medium",
+            "pregunta_efectiva": "How often does the password expire?",
+            "intencion": "fin",
+            "diagnostico": {
+              "nombre": "fin",
+              "origen": "similitud",
+              "candidato": "fin",
+              "similitud": 0.9011116027832031,
+              "margen": 0.05385380983352661,
+              "ejemplo": "How often does the visitor pass expire?",
+              "aceptada": true
+            }
+          }
+        ]
+      },
+      {
+        "perfil": "medium",
+        "idioma": "pt",
+        "consultas": 58,
+        "patrones": 17,
+        "intentos": 40,
+        "aceptadas": 1,
+        "detalle": [
+          {
+            "sesion": "conversacion:pt-conv-016",
+            "idioma": "pt",
+            "perfil": "medium",
+            "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+            "intencion": "procedimiento",
+            "diagnostico": {
+              "nombre": "procedimiento",
+              "origen": "similitud",
+              "candidato": "procedimiento",
+              "similitud": 0.9022531509399414,
+              "margen": 0.02493363618850708,
+              "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+              "aceptada": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pruebas": {
+    "tests": 1054.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 2.0,
+    "time": 1391.559
+  },
+  "pruebas_diagnostico": {
+    "tests": 19.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 3.628
+  },
+  "cambios_post_medicion": [
+    "ipsis/aplicacion/consulta.py"
+  ],
+  "latencia_desde_inicio": {
+    "rondas": 3,
+    "orden": "AB / BA alternado",
+    "perfil": "light",
+    "casos_por_idioma_y_ejecucion": 30,
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "antes_code": "sha256:111347399e776b70fb21f54dfe30fe2604cbd9ac6acb6715122e64a020268b5c",
+    "despues_code": "sha256:2507d3fb7c40ed898c3301b366bf4521d42f5c25b4ea99790bd369ebfac501e9",
+    "calidad_identica": true,
+    "filas": [
+      {
+        "idioma": "es",
+        "medias_por_ronda": {
+          "antes": [
+            36.4,
+            25.1,
+            25.9
+          ],
+          "despues": [
+            29.3,
+            30.6,
+            24.8
+          ]
+        },
+        "media_antes_ms": 29.133333333333333,
+        "media_despues_ms": 28.233333333333334,
+        "cambio_pct": -3.089244851258577,
+        "g5": true
+      },
+      {
+        "idioma": "en",
+        "medias_por_ronda": {
+          "antes": [
+            22.7,
+            20.4,
+            28.5
+          ],
+          "despues": [
+            25.1,
+            19.7,
+            25.1
+          ]
+        },
+        "media_antes_ms": 23.866666666666667,
+        "media_despues_ms": 23.3,
+        "cambio_pct": -2.3743016759776525,
+        "g5": true
+      },
+      {
+        "idioma": "pt",
+        "medias_por_ronda": {
+          "antes": [
+            30.5,
+            27.3,
+            26.6
+          ],
+          "despues": [
+            24.2,
+            24.7,
+            24.4
+          ]
+        },
+        "media_antes_ms": 28.133333333333333,
+        "media_despues_ms": 24.433333333333334,
+        "cambio_pct": -13.151658767772512,
+        "g5": true
+      }
+    ],
+    "g5": true
+  },
+  "latencia_desde_f1": {
+    "rondas": 3,
+    "orden": "AB / BA alternado",
+    "perfil": "light",
+    "casos_por_idioma_y_ejecucion": 30,
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "antes_code": "sha256:22778cd8deb2445274e3c3a25502365d05dcd8767016a3b18f8296679339c96b",
+    "despues_code": "sha256:2507d3fb7c40ed898c3301b366bf4521d42f5c25b4ea99790bd369ebfac501e9",
+    "calidad_identica": true,
+    "filas": [
+      {
+        "idioma": "es",
+        "medias_por_ronda": {
+          "antes": [
+            43.3,
+            40.6,
+            34.7
+          ],
+          "despues": [
+            27.7,
+            36.6,
+            25.8
+          ]
+        },
+        "media_antes_ms": 39.53333333333333,
+        "media_despues_ms": 30.033333333333335,
+        "cambio_pct": -24.03035413153456,
+        "g5": true
+      },
+      {
+        "idioma": "en",
+        "medias_por_ronda": {
+          "antes": [
+            29.7,
+            27.0,
+            26.8
+          ],
+          "despues": [
+            24.5,
+            21.2,
+            21.5
+          ]
+        },
+        "media_antes_ms": 27.833333333333332,
+        "media_despues_ms": 22.4,
+        "cambio_pct": -19.52095808383234,
+        "g5": true
+      },
+      {
+        "idioma": "pt",
+        "medias_por_ronda": {
+          "antes": [
+            30.5,
+            31.9,
+            34.1
+          ],
+          "despues": [
+            28.9,
+            24.8,
+            31.0
+          ]
+        },
+        "media_antes_ms": 32.166666666666664,
+        "media_despues_ms": 28.233333333333334,
+        "cambio_pct": -12.22797927461139,
+        "g5": true
+      }
+    ],
+    "g5": true
+  },
+  "g1": true,
+  "g5": true
+}

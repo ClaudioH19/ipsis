@@ -95,6 +95,7 @@ def perfil_efectivo(
     ajustes: dict[str, Any] | None = None,
     ruta_calibracion: str | Path | None = rutas.CALIBRACION,
     hash_corpus: str | None = None,
+    hash_lexico: str | None = None,
 ) -> PerfilInstalacion:
     """Perfil ← ajustes del proyecto ← calibración vigente.
 
@@ -116,7 +117,7 @@ def perfil_efectivo(
     if ruta_calibracion is None:
         return perfil
     calibrados = umbrales_aplicables(ruta_calibracion, perfil=perfil.perfil, modelos=perfil.modelos.model_dump(),
-                                     hash_corpus=hash_corpus)
+                                     hash_corpus=hash_corpus, hash_lexico=hash_lexico)
     if calibrados:
         perfil = perfil.model_copy(update={
             "umbrales_por_defecto": {**perfil.umbrales_por_defecto, **calibrados},

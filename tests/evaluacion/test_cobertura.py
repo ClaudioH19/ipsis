@@ -105,6 +105,19 @@ def test_por_idioma_no_mezcla_casos():
     assert set(reporte.por_idioma_y_grupo["en"]) == {"exacta"}
 
 
+@pytest.mark.parametrize("exacta", [None, "el motor"])
+def test_cita_amplia_no_oculta_respuesta_equivocada(exacta):
+    obs = _obs("r1", "respuesta_directa").model_copy(update={
+        "respuesta": "La garantía cubre el motor.", "respuesta_exacta": exacta,
+    })
+    assert reporte_cobertura([(_respondible("r1"), obs)]).total.directas_sin_literal == 1
+
+
+def test_tramo_del_lector_prevalece_sobre_prosa_amplia():
+    obs = _obs("r1", "respuesta_directa").model_copy(update={"respuesta_exacta": "el motor"})
+    assert reporte_cobertura([(_respondible("r1"), obs)]).total.directas_sin_literal == 1
+
+
 def test_las_senales_no_disponibles_quedan_en_none():
     senales = SenalesObservadas.desde_diagnostico({
         "senales_politica": {"s_ret": 0.5, "s_oov": 0.1, "s_foco": 1.0, "s_cov": 1.0, "acuerdo": None,

@@ -91,9 +91,12 @@ class Motor:
         self.lector = lector
         from ipsis.consulta.variantes import SelectorVariantes
 
-        from ipsis.consulta.seguimiento import ResolutorSeguimiento
+        from ipsis.consulta.seguimiento import MemoriaConversacion
 
-        self.seguimiento = ResolutorSeguimiento()
+        self.seguimiento = MemoriaConversacion()
+        from ipsis.lenguaje.intenciones import construir_respaldo
+
+        self.respaldo_intenciones = construir_respaldo(idioma, retriever)
         self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial",
                                                     fija=(plantillas or {}).get("variedad") == "fija")
 

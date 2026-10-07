@@ -37,5 +37,9 @@ Values not yet checked against a golden set are marked as
 7. [Multilingual](multilingual.md): language packs and tones.
 8. [Evaluation bank](evaluation.md): format, categories and splits.
 
+[V4 evaluation results](v4-results.md) compare memory, local synonyms and
+intent fallback against F1 with the corrected selected-span metric, including
+raw evidence and observed limitations.
+
 The notes use the internal names of the code (signals such as `s_foco`,
 rules such as `ok_lector`), because they describe the implementation.

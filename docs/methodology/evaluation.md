@@ -49,7 +49,8 @@ language:
 - abstention recall over the unanswerable ones;
 - **false `ok`:** an unanswerable case that ends in a direct answer;
 - direct answers without the literal answer (a direct answer counts as
-  correct only when its text and evidence contain the case's literal
+  correct only when its selected reader span, or its answer text when no
+  reader span exists, and its evidence contain the case's literal
   answer);
 - risk of the accepted answers `x/n` with its Clopper-Pearson bound;
 - Recall@k and MRR over the evidence, offset accuracy;
@@ -112,6 +113,11 @@ a new false `ok` appears relative to its baseline.
 
 The included banks are small: they serve to detect defects and verify the
 process, not to certify a profile or choose defaults on their own.
+
+The [V4 evaluation](v4-results.md) remeasures F1 using the selected-span
+metric before comparing final results. It reports memory inheritance and
+negative-turn checks separately from positive literal answers; improved
+inheritance does not compensate for a lost correct answer.
 
 ## 13. References and provenance
 

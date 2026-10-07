@@ -43,7 +43,7 @@ exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 "ipsis.recursos" = ["plantillas/*.yaml", "idiomas/*.yaml", "mensajes/*.yaml", "perfiles/*.yaml", "tonos/*/*.yaml", "avatares/*",
-                  "despliegue/preparar/*"]
+                  "despliegue/preparar/*", "sinonimos/*.tsv", "sinonimos/*.json", "sinonimos/*.md", "sinonimos/licencias/*", "sinonimos/diccionarios/*"]
 "ipsis.servicio" = ["estaticos/*.js", "estaticos/*.html", "estaticos/*.LICENSE.txt", "estaticos/*.sha256", "estaticos/admin/*"]
 
 [tool.pytest.ini_options]

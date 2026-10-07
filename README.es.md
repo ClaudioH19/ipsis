@@ -239,14 +239,26 @@ en español; todo lo que ve el usuario está en inglés. Lee
 - Un sinónimo que no está en los grupos del paquete de idioma ni en el
   documento puede llevar a una respuesta relacionada en vez de directa: es el
   lado seguro del error.
-- Las preguntas de seguimiento («¿y con 90?») solo heredan el tema del turno
-  anterior de la misma sesión, guardado en memoria.
+- Las preguntas de seguimiento («¿y con 90?») heredan el tema de la
+  conversación, que el servicio guarda en memoria hasta 30 minutos sin
+  preguntas; cada carga de página empieza una conversación nueva.
 - Un idioma por proyecto; no detecta el idioma de cada pregunta.
+- El respaldo de intenciones es conservador y está medido para E5 small:
+  categorías seleccionadas de fin/procedimiento en es/en/pt. Las demás
+  conservan los patrones; BM25 y modelos sin medir omiten el respaldo.
+  Reconocer la intención no demuestra que el documento contenga la respuesta.
+- El lector de medium aún elige tramos literales incompletos o incorrectos.
+  La memoria mejora la herencia, pero pierde cuatro aciertos conversacionales frente a F1;
+  la similitud también puede inferir una intención equivocada. Ver
+  [resultados V4](docs/methodology/v4-results.md) para las mediciones y sus límites.
 - En modo local, Qdrant bloquea su carpeta mientras otro proceso la usa.
 
 </details>
 
 ## ⚖️ Licencia
+
+Los datos léxicos incluidos conservan sus propias licencias y atribuciones;
+ver [fuentes de los sinónimos](ipsis/recursos/sinonimos/FUENTES.md).
 
 [GNU AGPL-3.0](LICENSE) (`AGPL-3.0-only`), la misma licencia que el motor del
 avatar ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab)).

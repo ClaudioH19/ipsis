@@ -1,0 +1,26 @@
+[
+  {
+    "filename": "CC-BY-SA-4.0.html",
+    "url": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/by-sa_4.0.html",
+    "bytes": 44855,
+    "sha256": "d48546c6161cd2698445d184a859363a2436a6a3bcda655564730e3861e74a9e"
+  },
+  {
+    "filename": "es.kaikki-source.html",
+    "url": "https://kaikki.org/dictionary/Spanish/index.html",
+    "bytes": 17413,
+    "sha256": "a6b487884d70b29a014a220dfa4b0276bb307209625e9ed4432a896d40857c42"
+  },
+  {
+    "filename": "en.kaikki-source.html",
+    "url": "https://kaikki.org/dictionary/English/index.html",
+    "bytes": 17608,
+    "sha256": "6c34001597ea97fde66663b2a55e6d4c0590d1b744eda1cbd6aa4492316b5cec"
+  },
+  {
+    "filename": "pt.kaikki-source.html",
+    "url": "https://kaikki.org/dictionary/Portuguese/index.html",
+    "bytes": 17152,
+    "sha256": "18ec899c0f368da9a07726489057b8834ec90e5b2751ff7c64348dd7f340e7c6"
+  }
+]

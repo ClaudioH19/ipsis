@@ -371,12 +371,12 @@ def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
         return _no_evaluado("calibracion", t("check.dep_profile_index"))
     try:
         leer_calibracion(rutas.CALIBRACION)
+        estado = estado_calibracion(ctx.instalacion, ctx.indice)
     except Exception as e:  # noqa: BLE001 -- el motor tampoco podría leerla
         return _chequeo("calibracion", Estado.ERROR,
                         t("check.calibration_invalid", path=rutas.CALIBRACION, error=_breve(e, "calibracion")),
                         [t("check.calibration_rewrite"), t("check.calibration_delete", path=rutas.CALIBRACION)],
                         estado="ilegible")
-    estado = estado_calibracion(ctx.instalacion, ctx.indice)
     if estado.estado == "sin_calibracion":
         return _chequeo("calibracion", Estado.AVISO, t("check.calibration_none"), estado="sin_calibracion")
     if estado.estado == "vigente":

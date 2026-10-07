@@ -20,7 +20,10 @@ default), while maximizing direct coverage.
   profile, with their signals.
 - **Output:** `config/calibration.yaml` (version 1) with the status,
   `alpha`, `confidence`, thresholds, result per split and **provenance**
-  (profile, models, the index's `corpus_hash`, bank and its hash).
+  (profile, models, the index's `corpus_hash`, effective `lexical_hash`, bank
+  and its hash). The lexical hash covers runtime behavior version, effective
+  language rules, project synonym groups, the active filtered table and
+  its full WordNet sense-count lexicon.
 
 ## 4. Algorithm and tie-breaking
 
@@ -70,7 +73,8 @@ by a person.
 
 - The engine applies the calibration only when its status is `calibrated`
   **and** its provenance matches the profile, the models and the
-  `corpus_hash` of the open index. If something changed, it ignores it and
+  `corpus_hash` of the open index and effective lexical rules. A missing
+  lexical hash in an old calibration also invalidates it. If something changed, it ignores it and
   `ipsis doctor` says so.
 - `calibration.yaml` is written in any status, for auditing.
 

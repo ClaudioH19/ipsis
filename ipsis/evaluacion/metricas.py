@@ -175,8 +175,7 @@ def evaluar_observaciones(
     abstenciones = [(c, o) for c, o in pares if o.estado in ESTADOS_ABSTENCION]
     abstenciones_correctas = sum(not c.respondible for c, _o in abstenciones)
     literales = sum(
-        bool(c.respuesta_literal)
-        and c.respuesta_literal in o.respuesta
+        muestra_respuesta_literal(c, o)
         and any(c.respuesta_literal in evidencia.texto for evidencia in o.evidencias)
         for c, o in respondibles
     )
@@ -311,9 +310,9 @@ def es_no_respondible(caso: CasoEvaluacion) -> bool:
 
 
 def muestra_respuesta_literal(caso: CasoEvaluacion, observacion: ObservacionEvaluacion) -> bool:
-    """La respuesta o su evidencia contienen la respuesta literal esperada."""
-    textos = [observacion.respuesta] + [e.texto for e in observacion.evidencias]
-    return bool(caso.respuesta_literal) and any(caso.respuesta_literal in t for t in textos)
+    """El tramo seleccionado contiene el literal; una cita amplia no basta."""
+    texto = observacion.respuesta_exacta if observacion.respuesta_exacta is not None else observacion.respuesta
+    return bool(caso.respuesta_literal) and caso.respuesta_literal in texto
 
 
 class FilaCaso(BaseModel):

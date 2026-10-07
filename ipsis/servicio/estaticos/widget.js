@@ -42,7 +42,7 @@
  *    `textContent`, nunca `innerHTML` con datos de la API interpolados.
  *  - Accesible: roles ARIA, cierre con Escape, foco atrapado en el panel
  *    abierto, pantalla completa en móvil.
- *  - Identificador de sesión en `localStorage` (la API exige `session_id`).
+ *  - Identificador de sesión nuevo en cada carga de página (la API exige `session_id`).
  */
 (function () {
   "use strict";
@@ -186,9 +186,12 @@
   }
 
   // -------------------------------------------------------------------
-  // 1. Identificador de sesión: se genera una vez por navegador y se
-  //    reusa entre recargas (localStorage) -- la API exige `session_id`
-  //    en cada POST /ask.
+  // 1. Identificador de sesión: uno nuevo en cada carga de página -- la
+  //    API exige `session_id` en cada POST /ask. El servidor recuerda la
+  //    conversación por sesión (preguntas de seguimiento); salir de la
+  //    página o recargarla empieza otra, como lo que ve la persona (el
+  //    widget no guarda el historial). La anterior se olvida en el
+  //    servidor por inactividad.
   // -------------------------------------------------------------------
   function generarIdSesion() {
     if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -199,21 +202,7 @@
     return "session-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
   }
 
-  function idSesion() {
-    var CLAVE_STORAGE = "ipsis_widget_session_id";
-    try {
-      var existente = window.localStorage.getItem(CLAVE_STORAGE);
-      if (existente) return existente;
-      var nuevo = generarIdSesion();
-      window.localStorage.setItem(CLAVE_STORAGE, nuevo);
-      return nuevo;
-    } catch (e) {
-      // localStorage puede fallar (modo privado estricto, cuotas): la
-      // sesión sigue funcionando, solo no sobrevive a una recarga.
-      return generarIdSesion();
-    }
-  }
-  var ID_SESION = idSesion();
+  var ID_SESION = generarIdSesion();
 
   // -------------------------------------------------------------------
   // 2. Contenedor con Shadow DOM: aísla el CSS del widget del sitio

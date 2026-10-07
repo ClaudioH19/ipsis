@@ -1,0 +1,107 @@
+RONDA 1: antes
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\antes\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=36.4 ms
+light en correctas=6/30 erróneas=0 media=22.7 ms
+light pt correctas=9/30 erróneas=0 media=30.5 ms
+RONDA 1: despues
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\final\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=29.3 ms
+light en correctas=6/30 erróneas=0 media=25.1 ms
+light pt correctas=9/30 erróneas=0 media=24.2 ms
+RONDA 2: despues
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\final\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=30.6 ms
+light en correctas=6/30 erróneas=0 media=19.7 ms
+light pt correctas=9/30 erróneas=0 media=24.7 ms
+RONDA 2: antes
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\antes\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=25.1 ms
+light en correctas=6/30 erróneas=0 media=20.4 ms
+light pt correctas=9/30 erróneas=0 media=27.3 ms
+RONDA 3: antes
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\antes\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=25.9 ms
+light en correctas=6/30 erróneas=0 media=28.5 ms
+light pt correctas=9/30 erróneas=0 media=26.6 ms
+RONDA 3: despues
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\final\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=24.8 ms
+light en correctas=6/30 erróneas=0 media=25.1 ms
+light pt correctas=9/30 erróneas=0 media=24.4 ms
+{
+  "rondas": 3,
+  "orden": "AB / BA alternado",
+  "perfil": "light",
+  "casos_por_idioma_y_ejecucion": 30,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "antes_code": "sha256:111347399e776b70fb21f54dfe30fe2604cbd9ac6acb6715122e64a020268b5c",
+  "despues_code": "sha256:2507d3fb7c40ed898c3301b366bf4521d42f5c25b4ea99790bd369ebfac501e9",
+  "calidad_identica": true,
+  "filas": [
+    {
+      "idioma": "es",
+      "medias_por_ronda": {
+        "antes": [
+          36.4,
+          25.1,
+          25.9
+        ],
+        "despues": [
+          29.3,
+          30.6,
+          24.8
+        ]
+      },
+      "media_antes_ms": 29.133333333333333,
+      "media_despues_ms": 28.233333333333334,
+      "cambio_pct": -3.089244851258577,
+      "g5": true
+    },
+    {
+      "idioma": "en",
+      "medias_por_ronda": {
+        "antes": [
+          22.7,
+          20.4,
+          28.5
+        ],
+        "despues": [
+          25.1,
+          19.7,
+          25.1
+        ]
+      },
+      "media_antes_ms": 23.866666666666667,
+      "media_despues_ms": 23.3,
+      "cambio_pct": -2.3743016759776525,
+      "g5": true
+    },
+    {
+      "idioma": "pt",
+      "medias_por_ronda": {
+        "antes": [
+          30.5,
+          27.3,
+          26.6
+        ],
+        "despues": [
+          24.2,
+          24.7,
+          24.4
+        ]
+      },
+      "media_antes_ms": 28.133333333333333,
+      "media_despues_ms": 24.433333333333334,
+      "cambio_pct": -13.151658767772512,
+      "g5": true
+    }
+  ],
+  "g5": true
+}

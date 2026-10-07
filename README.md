@@ -238,15 +238,27 @@ Spanish; everything user-facing is in English. Read
 - A synonym outside the language pack's groups that does not appear in the
   document may lead to a related answer instead of a direct one: it is the
   safe side of the error.
-- Follow-up questions ("and with 90?") only inherit the topic of the previous
-  turn of the same session, kept in memory.
+- Follow-up questions ("and with 90?") inherit the topic of the conversation,
+  kept in the service's memory until 30 minutes without questions; a new
+  page load starts a new conversation.
 - One language per project; it does not detect the language of each
   question.
+- Intention similarity is conservative and measured for E5 small: selected
+  end/procedure categories in es/en/pt. Other categories retain patterns;
+  BM25 and unmeasured models skip fallback. Recognition alone does not
+  establish that a document answers the question.
+- The medium reader still selects incomplete or incorrect literal spans.
+  Memory improves inheritance but loses four correct conversational answers relative to F1;
+  similarity can also infer a wrong intention. See the
+  [V4 results](docs/methodology/v4-results.md) for measurements and limits.
 - In local mode, Qdrant locks its folder while another process uses it.
 
 </details>
 
 ## ⚖️ License
+
+The bundled lexical datasets retain their own licenses and attribution;
+see [synonym data sources](ipsis/recursos/sinonimos/FUENTES.md).
 
 [GNU AGPL-3.0](LICENSE) (`AGPL-3.0-only`), the same license as the avatar
 engine ([@bible-strong/avatar-web](https://github.com/smontlouis/bible-strong-avatar-lab)).
