@@ -60,42 +60,51 @@ missing entity of a type the project declares, the chunks with the
 nearest values of its **family**: same form with the digits masked
 (`codigo_tp-#`), nearest number first, at most four, through the entity
 inventory that premise verification already uses. Each candidate line gets
-six signals, all from data the index already keeps, no new model:
+seven signals, all from data the index already keeps, no new model:
 
 | Signal | Value |
 |---|---|
 | `familia` | 1 if the line has a family value of a missing declared entity |
+| `medida` | the same for a missing core measure ("60 días" → "90 días", "20 %"), only if the line also shares a question word; searched only if it weighs (or when recording for calibration) |
 | `terminos` | fraction of the question's content words in the line, over all of them (also the ones missing from the corpus); the words of the question's entities do not count |
 | `seccion`, `keywords` | the same fraction over the document title and the line's section, or over the chunk keywords |
 | `categoria` | 1 if the chunk category equals the question's category in a taxonomy with at least two categories of the project |
 | `similitud` | dense cosine with the question from the model floor; computed only if it weighs (or when recording for calibration) |
 
-A line is eligible if `familia` or `terminos` is positive. Affinity is the
+A line is eligible if `familia`, `medida` or `terminos` is positive. Affinity is the
 weighted mean of the signals; a line is offered if it reaches the
 threshold. When some eligible line has the family, only family lines are
 offered. Weights and threshold live in the installation profile
 (`alternatives.threshold`, `alternatives.weights`), overridable in
 `profile_overrides`.
 
-**Shipped values:** `familia` 1, every other signal 0, threshold 0.5. In
-practice: alternatives are the family of a missing declared entity.
+**Shipped values:** `familia` 1, `terminos` 2, every other signal 0,
+threshold 0.5. In practice: the family of a missing declared entity (with
+at least one question word, or one in three without the entity's own
+words: (1 + 2·t)/3 ≥ 0.5 ⇔ t ≥ 0.25), or, without family, a line with at
+least three quarters of the question's content words (2·t/3 ≥ 0.5).
 
-**Only declared types have a family.** A core measure ("90 días", "20 %",
-an amount) appears in unrelated documents. Requiring a shared question word
-as well was measured and failed (below).
+**Core measures are not a family.** A core measure ("90 días", "20 %", an
+amount) appears in unrelated documents. As a family it failed the first
+held-out validation (round 3); as `medida` (with a shared word) the
+calibration of round 5 leaves it at weight 0. Premises on measures are
+covered instead by `terminos`: "¿El despacho a regiones tarda 3 días
+hábiles?" → "El despacho a regiones tarda 5 días hábiles."
 
 ## Measurement
 
 ### Alternatives bank
 
-`tests/datos/banco_alternativas/{es,en,pt}`: a hardware catalog and a
-stock document per language, with product codes declared in `dominio.yaml`
-(`regex_extractors`) and four categories in the taxonomy, plus the query
-bank's documents as distractors. 58 cases per language in `casos.yaml`
-(exact, missing code with family, missing product described, absent without
-neighbor, document premises with a neighbor, document topics without one,
-out of domain), split dev/test, and 16 per language in `validacion.yaml`
-(written before the rule was frozen). `medir.py` records every eligible
+`tests/datos/banco_alternativas/{es,en,pt}`: per language, a hardware
+catalog and a stock document, an office supplies catalog and a delivery
+and warranty policy, with product codes declared in `dominio.yaml`
+(`regex_extractors`) and eight categories in the taxonomy, plus the query
+bank's documents as distractors. 128 cases per language in `casos.yaml`
+(exact, missing code with family, missing product described, premises on
+measures with a neighbor, hard negatives that share one word with the
+corpus, absent without neighbor, out of domain), split dev/test, and 20 per
+language in `validacion.yaml`, written before round 5 was calibrated and
+measured once. `medir.py` records every eligible
 line with its signals; `--calibrar` and `--resumir` re-decide offline with
 the engine's rule.
 
@@ -116,19 +125,23 @@ development did not show.
 | 3 | core measures need a shared word; entity words excluded; calibration on dev + test with the widest margin | only `familia` survives; development precision 0.99, coverage 39/44 |
 | validation (once) | round 3 frozen, `validacion.yaml` | precision **0.87** light, **0.85** medium: below 0.9. Codes 24/24 correct; "N días" premises offered unrelated requests |
 | 4 | family only for declared types | development and validation (no longer untouched) precision **1.0**, coverage 30/44 and 12/18 |
+| 5 | bank 58 → 128 cases per language (the round-3 validation moved to development, hard negatives in dev and test, an office catalog and a delivery policy); signal `medida`; seven weights | `familia` 1 + `terminos` 2, threshold 0.5, margin 0.34–0.66; development precision 0.98, coverage 129/136 |
+| validation 2 (once) | round 5 frozen, new `validacion.yaml` (20 per language) | precision **1.0** light and medium, no out-of-domain alternatives, coverage 30/32 and 32/34 |
 
-Final rule, light and medium alike:
+Final rule (round 5), light / medium:
 
-| | Development (dev + test) | Validation |
+| | Development (dev + test) | Held-out validation |
 |---|---|---|
-| alternatives offered | 74 / 71 | 27 / 27 |
-| precision | 1.0 / 1.0 | 1.0 / 1.0 |
+| alternatives offered | 202 / 200 | 45 / 47 |
+| precision | 0.98 / 0.98 | 1.0 / 1.0 |
 | out-of-domain cases with alternatives | 0 | 0 |
-| missing items with a neighbor that ended in `no_answer` and got one | 30 of 44 | 12 of 18 |
+| missing items with a neighbor that ended in `no_answer` and got one | 129 of 136 | 30 of 32 / 32 of 34 |
+| hard negatives (one shared word) with alternatives | 0 | 0 |
 
-Every missing product code with a family got its neighbors. The uncovered
-cases are premises on core measures ("¿Puedo teletrabajar cuatro días por
-semana?"), which now get no alternatives.
+The four wrong development alternatives come from one question in es and
+pt ("¿Puedo teletrabajar cuatro días por semana?"): without the entity's
+words only "teletrabajo" is left, and any article with it covers the whole
+question. Short questions are the weak spot of `terminos`.
 
 ### Existing banks
 
@@ -139,10 +152,14 @@ identical.
 
 ### Latency
 
+Round 5 weights, light, 188 Spanish questions × 3 rounds: mean 50.7 vs
+49.8 ms, p95 80.4 vs 81.8 ms; on the 25 questions with alternatives, 59.4
+vs 55.5 ms. The query bank keeps all 180 light states and rules. Round 4:
+
 Warm engine, light, 118 Spanish questions × 3 rounds, proactive and strict
 alternated per question: mean 57.1 vs 56.1 ms, p95 89.9 vs 89.0 ms (budget
 150). On the 10 questions that get alternatives, mean 83.9 vs 70.3 ms (the
-family retrieval: one filtered search per neighbor). Medium: 2,793 vs
+family retrieval: one filtered search per neighbor; round 4 weights). Medium: 2,793 vs
 2,791 ms, no measurable difference. HTTP load (light, 8 clients, 240
 requests per posture): 9.4 vs 9.7 requests/s, p95 1,043 vs 1,049 ms, no
 errors. The first load run exposed a thread-safety bug in the stemmer, older
@@ -152,15 +169,15 @@ than this change, now fixed (see the measurements).
 
 - The default changes: a false premise on a declared code now shows its
   neighbors. `posture.mode: strict` restores the previous replies.
-- A project gets alternatives only if it declares its codes in
-  `domain.yaml`. Without declared entities, the proactive posture behaves
-  as strict. The documentation says so.
+- Missing codes get their family only if the project declares them in
+  `domain.yaml`; without that, only lines with nearly all the question's
+  words are offered. The documentation says so.
 - `alternatives_none` was not added: when nothing qualifies, the existing
   `no_answer` and `premise_not_found` messages already say so.
 - `tipo_contenido` was not used: the bank has no tables to measure it.
 - The other signals stay computed and recorded for future calibration with
-  other corpora; their weight is 0 because, alone or combined, they did not
-  hold 0.9 with a margin.
-- The bank is small and synthetic (one catalog per language). The test split
-  was examined during development; only the first validation run is a
-  held-out measurement, and it failed the bar before round 4.
+  other corpora; their weight is 0 because they did not widen the margin.
+- The bank is synthetic (two catalogs and two policies per language). The
+  test split was examined during development. Two held-out validations were
+  measured once each: round 3 failed the bar (0.87/0.85) and round 5 passed
+  it (1.0).

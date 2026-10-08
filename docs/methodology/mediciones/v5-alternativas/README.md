@@ -32,6 +32,31 @@ del núcleo («¿responde en quince días hábiles?» → otro trámite con «N 
 hábiles»); los códigos declarados acertaron 24 de 24. La ronda 4 quitó la
 familia de las medidas del núcleo.
 
+## Ronda 5: banco ampliado
+
+El banco pasó de 58 a 128 casos por idioma (la validación de la ronda 3 pasó
+a desarrollo; se agregaron un catálogo de oficina, una política de despacho
+y garantías, premisas sobre medidas y negativos difíciles en dev y test) y
+se escribió una validación nueva de 20 por idioma antes de calibrar. Señal
+nueva `medida`. Calibración vectorizada sobre 2.187 combinaciones de pesos
+(`calibracion_6.json`): `familia` 1 + `terminos` 2, umbral 0,5, tramo válido
+0,34–0,66.
+
+| | precisión light / medium | fuera de dominio con alternativas | vecinos cubiertos |
+|---|---|---|---|
+| ronda 5, desarrollo (`registro_5.json`) | 0,98 / 0,98 | 0 | 129 / 136 |
+| ronda 5, validación apartada (`validacion_3.json`, una sola corrida) | **1,0 / 1,0** | 0 | 30 / 32 y 32 / 34 |
+
+Los 4 errores de desarrollo son una misma pregunta en es y pt («¿Puedo
+teletrabajar cuatro días por semana?»): sin las palabras de la entidad
+queda solo «teletrabajo». Ningún negativo difícil recibió alternativas.
+
+Latencia light con estos pesos (`rend_light_r5.json`, 188 preguntas × 3
+rondas): 50,7 / 80,4 ms (media / p95) proactiva contra 49,8 / 81,8 ms
+estricta; en las 25 preguntas con alternativas, 59,4 contra 55,5 ms. Banco
+de consultas light con estos pesos (`r5_consultas_light.json`): 180 de 180
+casos con el mismo estado y regla que la base.
+
 ## Bancos existentes
 
 `base_*.json` con el código de `c3b5f01` (worktree, `IPSIS_CODIGO`) y

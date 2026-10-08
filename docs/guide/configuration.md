@@ -456,39 +456,42 @@ ipsis configure posture.max_alternatives=2
 
 - **When:** only after a false premise (an entity of the question is not in
   the documents) or a question without an answer. Out-of-domain questions,
-  related answers and conversational turns never carry alternatives. With
-  the shipped profiles, in practice only after a false premise whose entity
-  has a family in the documents (see below).
+  related answers and conversational turns never carry alternatives.
 - **What is shown:** each alternative is a literal paragraph of the
   documents with its citation, checked like the evidence of an answer.
   Nothing is generated. The status stays `no_answer`: alternatives travel in
   their own `alternatives` field of `/ask` and never count as an answer.
 - **How they are chosen:** by the metadata the index already keeps for each
   fragment, without another model. Each candidate paragraph gets an
-  affinity, the weighted mean of six signals; the weights and the threshold
+  affinity, the weighted mean of seven signals; the weights and the threshold
   are part of the installation profile
   ([ADR 0008](../decisions/0008-proactive-posture-and-metadata-similarity.md)):
 
   | Signal | Value for the paragraph | Shipped weight |
   |---|---|---|
-  | `family` | 1 if it has an entity of the family of the missing one: same type and form ("TP-400" for "TP-500"). Only types declared in domain.yaml have a family: the core measures ("90 days", "20 %") appear in unrelated documents | 1 |
-  | `terms` | fraction of the question words it has (over all of them, also the missing ones; the words of the entity itself do not count) | 0 |
+  | `family` | 1 if it has an entity of the family of the missing one: same type and form ("TP-400" for "TP-500"), for the types `domain.yaml` declares | 1 |
+  | `measure` | the same for a missing core measure ("90 days" for "60 days", "20 %"), only if it also shares a question word | 0 |
+  | `terms` | fraction of the question words it has (over all of them, also the missing ones; the words of the entity itself do not count) | 2 |
   | `section`, `keywords` | the same fraction over its document title and section, or its keywords | 0 |
   | `category` | 1 if it is of the question category in the project taxonomy | 0 |
   | `similarity` | dense cosine with the question, from the model floor | 0 |
 
-  The weights were chosen with the alternatives bank for a precision of at
-  least 0.9 and the widest margin of thresholds: only the family survived.
-  Words, sections or categories alone also offered unrelated passages ("How
-  far away is the Moon?" → "remote work"). When the missing entity has a
-  family, only paragraphs of that family are offered. Alternatives do not
-  feed the conversation memory.
+  With threshold 0.5 this means: the family of a missing code, or, without
+  a family, a paragraph with at least three quarters of the question words
+  ("Does delivery to the regions take 3 business days?" → "Delivery to the
+  regions takes 5 business days."). The weights were chosen with the
+  alternatives bank for a precision of at least 0.9 and the widest margin
+  of thresholds; a held-out validation measured once gave 1.0. When the
+  missing entity has a family, only paragraphs of that family are offered.
+  Short questions are the weak spot: with a single content word, any
+  paragraph that has it covers the whole question. Alternatives do not feed
+  the conversation memory.
 - **Your codes:** a product code is an entity only if `domain.yaml`
   declares it (`regex_extractors`, for example
   `'\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'` with `transform: {pre:
-  minusculas}`). Without it, a missing code has no family and gets no
-  alternatives. The category signal needs at least two categories of your
-  own in `taxonomy`.
+  minusculas}`). Without it, a missing code has no family and only
+  paragraphs with nearly all the question words are offered. The category
+  signal needs at least two categories of your own in `taxonomy`.
 - **Tuning:** `profile_overrides.alternatives.threshold` and
   `profile_overrides.alternatives.weights` in `engine.yaml`. `ipsis ask
   --diagnostics` shows each alternative offered or discarded, with its

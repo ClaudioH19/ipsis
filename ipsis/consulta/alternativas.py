@@ -11,6 +11,9 @@ y de la recuperación, sin modelos nuevos:
 - ``familia``: el párrafo tiene una entidad de la misma familia que la
   entidad ausente de la pregunta (mismo tipo y forma: «TP-500» → «TP-400»),
   si ese tipo lo declara el proyecto en ``domain.yaml``;
+- ``medida``: lo mismo para una medida del núcleo («60 días» → «90 días»,
+  «20 %»), solo si el párrafo además comparte una palabra de la pregunta: esas
+  medidas aparecen en documentos sin relación;
 - ``terminos``: parte de los términos de la pregunta que el párrafo contiene;
 - ``seccion``: parte de esos términos en el título del documento o la ruta
   de sección;
@@ -35,7 +38,7 @@ from typing import Any
 
 from ipsis.nucleo.esquemas import ChunkRecord, EvidenceSpan, FiltroEntidad
 
-SENALES = ("familia", "terminos", "seccion", "keywords", "categoria", "similitud")
+SENALES = ("familia", "medida", "terminos", "seccion", "keywords", "categoria", "similitud")
 MOTIVOS_CON_ALTERNATIVAS = frozenset({"premisa", "generico"})
 # Párrafos que se puntúan como mucho por abstención: acota el costo del coseno.
 MAX_PARRAFOS = 16
@@ -49,6 +52,7 @@ _LINEA = re.compile(r"[^\n]+")
 @dataclass(frozen=True)
 class SenalesAlternativa:
     familia: float = 0.0
+    medida: float = 0.0
     terminos: float = 0.0
     seccion: float = 0.0
     keywords: float = 0.0
@@ -68,7 +72,7 @@ def afinidad(senales: SenalesAlternativa | dict, pesos: dict[str, float]) -> flo
 def elegible(senales: SenalesAlternativa | dict) -> bool:
     """Un párrafo que no comparte nada con la pregunta nunca es alternativa."""
     valores = senales if isinstance(senales, dict) else asdict(senales)
-    return valores.get("familia", 0.0) > 0 or valores.get("terminos", 0.0) > 0
+    return any(valores.get(s, 0.0) > 0 for s in ("familia", "medida", "terminos"))
 
 
 @dataclass
@@ -290,21 +294,24 @@ def buscar_alternativas(motor, ctx, *, entidades_ausentes: list[dict] | None = N
     fragmentos: dict[str, tuple[ChunkRecord, str]] = {}
     for candidato in ctx.candidatos:
         fragmentos.setdefault(candidato.chunk.chunk_id, (candidato.chunk, "candidato"))
-    # Solo la familia de un tipo que declara el proyecto (sus códigos de
-    # producto): una medida del núcleo («90 días», «20 %») aparece en documentos
-    # sin relación, y ni exigir además una palabra de la pregunta alcanzó la
-    # precisión de 0,9 en la validación apartada (ADR 0008).
+    # La familia de un tipo que declara el proyecto (sus códigos de producto)
+    # es la señal «familia». La de una medida del núcleo («90 días», «20 %»)
+    # es «medida»: aparece en documentos sin relación, y solo se busca si pesa
+    # (o para calibrar).
     from ipsis.lenguaje.entidades import perfil_activo
 
     perfil = perfil_activo()
     declarados = perfil.tipos_aportados() if perfil is not None else set()
+    con_medidas = config.pesos.get("medida", 0.0) > 0 or guardar_todas
     familia: set[str] = set()
+    medidas: set[str] = set()
     inventario = motor.retriever.inventario_entidades()
     for entidad in entidades_ausentes or []:
-        if entidad.get("tipo") not in declarados:
+        propia = entidad.get("tipo") in declarados
+        if not propia and not con_medidas:
             continue
         for valor in vecinos_de_familia(entidad["valor_norm"], inventario):
-            familia.add(valor)
+            (familia if propia else medidas).add(valor)
             for candidato in motor.retriever.recuperar(ctx.consulta, 1, filtro=FiltroEntidad(valor_norm=valor)):
                 fragmentos.setdefault(candidato.chunk.chunk_id, (candidato.chunk, "familia"))
 
@@ -318,7 +325,7 @@ def buscar_alternativas(motor, ctx, *, entidades_ausentes: list[dict] | None = N
                    *(t for seccion in meta.get("secciones") or [] for t in seccion["ruta"]))
         en_keywords = _stems(" ".join(meta.get("keywords") or []), paquete)
         misma_categoria = 1.0 if categoria is not None and meta.get("categoria") == categoria else 0.0
-        valores_familia = {e["valor_norm"] for e in chunk.entidades} & familia if familia else set()
+        valores_familia = {e["valor_norm"] for e in chunk.entidades} & (familia | medidas)
         for inicio, fin in parrafos(chunk.texto_fuente, limite, titulos):
             texto = chunk.texto_fuente[inicio:fin]
             ruta = _ruta(chunk, inicio)
@@ -326,7 +333,8 @@ def buscar_alternativas(motor, ctx, *, entidades_ausentes: list[dict] | None = N
                           if e["valor_norm"] in valores_familia and inicio <= e.get("offset", -1) < fin}
             terminos_parrafo = _fraccion(tq, _stems(texto, paquete), total)
             senales = {
-                "familia": 1.0 if en_parrafo else 0.0,
+                "familia": 1.0 if en_parrafo & familia else 0.0,
+                "medida": 1.0 if en_parrafo & medidas and terminos_parrafo > 0 else 0.0,
                 "terminos": terminos_parrafo,
                 "seccion": _fraccion(tq, _stems(" ".join([chunk.doc_titulo, *ruta]), paquete), total),
                 "keywords": _fraccion(tq, en_keywords, total),
@@ -334,7 +342,7 @@ def buscar_alternativas(motor, ctx, *, entidades_ausentes: list[dict] | None = N
             }
             if elegible(senales):
                 unidades.append((chunk, inicio, fin, ruta, senales, origen))
-    unidades.sort(key=lambda u: (-u[4]["familia"], -u[4]["terminos"], -u[4]["seccion"]))
+    unidades.sort(key=lambda u: (-u[4]["familia"], -u[4]["medida"], -u[4]["terminos"], -u[4]["seccion"]))
     unidades = unidades[:MAX_PARRAFOS]
     # Si la entidad ausente tiene vecinos («TP-400» para «TP-500»), lo parecido
     # son ellos: un párrafo que solo comparte el tema no se ofrece a su lado.

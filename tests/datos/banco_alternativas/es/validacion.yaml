@@ -1,74 +1,121 @@
-# Validación apartada del banco de alternativas: escrita antes de congelar la
-# regla y medida una sola vez después (ADR 0008). Mismos campos que casos.yaml.
-- id: es-val-codigo-001
+# Validación apartada de la ronda 5 (ADR 0008): escrita antes de calibrar y medida
+# una sola vez con la regla congelada. La anterior pasó a casos.yaml.
+- id: es-val2-codigo-001
   tipo: vecino
   particion: validacion
-  pregunta: ¿Tienen la escalera ET-9?
-  aceptables: [ET-5, ET-7, EX-12]
-- id: es-val-codigo-002
+  pregunta: ¿Tienen la resma PA-100?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-val2-codigo-002
   tipo: vecino
   particion: validacion
-  pregunta: ¿Qué precio tiene la lijadora LO-200?
-  aceptables: [LO-300, LB-900]
-- id: es-val-codigo-003
+  pregunta: ¿Cuánto cuesta la impresora IM-500?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-val2-codigo-003
   tipo: vecino
   particion: validacion
-  pregunta: ¿Hay stock del taladro TI-24?
-  aceptables: [TI-18, TP-400, TP-600]
-- id: es-val-codigo-004
+  pregunta: ¿Venden la silla SO-20?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-val2-codigo-004
   tipo: vecino
   particion: validacion
-  pregunta: ¿Venden la sierra caladora SK-50?
-  aceptables: [SK-65, SC-185, SC-235]
-- id: es-val-plazo-001
+  pregunta: ¿Tienen el escritorio ES-200?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: es-val2-codigo-005
   tipo: vecino
   particion: validacion
-  pregunta: ¿Puedo pedir el reembolso hasta 45 días después de recibir el pedido?
-  aceptables: [hasta 30 días después de recibir el pedido]
-- id: es-val-plazo-002
+  pregunta: ¿Hay stock de la impresora IT-10?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-val2-codigo-006
   tipo: vecino
   particion: validacion
-  pregunta: ¿La jefatura responde la solicitud de teletrabajo en quince días hábiles?
-  aceptables: [responde dentro de cinco días hábiles]
-- id: es-val-dificil-001
+  pregunta: ¿Tienen la escalera ET-8?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: es-val2-descrito-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Venden papel bond?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-val2-descrito-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen silla ergonómica?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-val2-medida-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El despacho a regiones tarda 7 días hábiles?
+  aceptables:
+  - despacho a regiones tarda 5 días hábiles
+- id: es-val2-medida-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿La garantía de las sillas es de 30 meses?
+  aceptables:
+  - sillas y los escritorios tienen una garantía de 24 meses
+- id: es-val2-medida-003
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El descuento para empresas es de 25 %?
+  aceptables:
+  - descuento de 15 %
+- id: es-val2-medida-004
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿La contraseña vence cada 45 días?
+  aceptables:
+  - La contraseña vence cada 90 días
+- id: es-val2-medida-005
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El préstamo de libros dura 7 días?
+  aceptables:
+  - préstamo de libros dura 14 días
+- id: es-val2-dificil-001
   tipo: sin_vecino
   particion: validacion
-  pregunta: ¿A qué distancia queda el aeropuerto?
-- id: es-val-dificil-002
+  pregunta: ¿Venden papel tapiz?
+- id: es-val2-dificil-002
   tipo: sin_vecino
   particion: validacion
-  pregunta: ¿Cuánto cuesta el curso de seguridad industrial?
-- id: es-val-dificil-003
+  pregunta: ¿Tienen sillas para bebé?
+- id: es-val2-dificil-003
   tipo: sin_vecino
   particion: validacion
-  pregunta: ¿Cuánto pesa un monitor de 27 pulgadas?
-- id: es-val-dificil-004
+  pregunta: ¿Cuál es la garantía de un celular?
+- id: es-val2-dificil-004
   tipo: sin_vecino
   particion: validacion
-  pregunta: ¿Qué horario tiene el gimnasio?
-- id: es-val-dificil-005
+  pregunta: ¿Qué horario tiene el banco?
+- id: es-val2-dificil-005
   tipo: sin_vecino
   particion: validacion
-  pregunta: ¿Venden repuestos para la bomba de agua del auto?
-- id: es-val-dificil-006
-  tipo: sin_vecino
-  particion: validacion
-  pregunta: ¿Tienen una biblioteca de música?
-- id: es-val-fuera-001
+  pregunta: ¿Tienen tinta china para caligrafía?
+- id: es-val2-fuera-001
   tipo: fuera_dominio
   particion: validacion
-  pregunta: ¿Quién escribió El Quijote?
-- id: es-val-fuera-002
+  pregunta: ¿Cuál es la montaña más alta del mundo?
+- id: es-val2-fuera-002
   tipo: fuera_dominio
   particion: validacion
-  pregunta: ¿Cuántos planetas tiene el sistema solar?
-- id: es-val-exacta-001
-  tipo: exacta
-  particion: validacion
-  pregunta: ¿Cuántas unidades del taladro TP-600 hay en la Bodega Central?
-  aceptables: [TP-600]
-- id: es-val-exacta-002
-  tipo: exacta
-  particion: validacion
-  pregunta: ¿Hasta qué altura llega la escalera EX-12?
-  aceptables: [EX-12]
+  pregunta: ¿Cuántos huesos tiene el cuerpo humano?

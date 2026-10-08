@@ -214,10 +214,10 @@ def test_la_postura_nunca_cambia_el_estado_ni_el_motivo(motivo):
     assert proactiva.evidencias == estricta.evidencias == []
 
 
-def test_una_medida_del_nucleo_no_tiene_familia():
+def test_una_medida_del_nucleo_es_la_senal_medida_y_exige_una_palabra_de_la_pregunta():
     """«60 días» se parece a todo «N días» del corpus, de documentos sin
-    relación: solo los tipos que declara el proyecto (sus códigos) tienen
-    familia. Ni exigir una palabra de la pregunta alcanzó 0,9 (ADR 0008)."""
+    relación: no es «familia» (solo los tipos que declara el proyecto), sino
+    «medida», que no se busca si no pesa y exige una palabra de la pregunta."""
     from types import SimpleNamespace
 
     from ipsis.consulta.alternativas import buscar_alternativas
@@ -240,6 +240,10 @@ def test_una_medida_del_nucleo_no_tiene_familia():
         ctx = SimpleNamespace(pregunta=pregunta, pregunta_usuario="", candidatos=[],
                               consulta=SimpleNamespace(pregunta_original=pregunta),
                               terminos_pregunta=[t for t in terminos(pregunta, idioma) if t in {"contraseñ", "venc"}])
-        resultado = buscar_alternativas(motor, ctx, entidades_ausentes=ausente, config=ConfigAlternativas(
+        sin_peso = buscar_alternativas(motor, ctx, entidades_ausentes=ausente, config=ConfigAlternativas(
             umbral=0.4, pesos={"familia": 1.0, "terminos": 1.0}))
-    assert resultado.ofrecidas == [] and resultado.descartadas == []
+        con_peso = buscar_alternativas(motor, ctx, entidades_ausentes=ausente, config=ConfigAlternativas(
+            umbral=0.5, pesos={"medida": 1.0}))
+    assert sin_peso.ofrecidas == [] and sin_peso.descartadas == []
+    assert [a.evidencia.texto for a in con_peso.ofrecidas] == ["La contraseña vence cada 90 días."]
+    assert con_peso.ofrecidas[0].senales.familia == 0.0 and con_peso.ofrecidas[0].senales.medida == 1.0

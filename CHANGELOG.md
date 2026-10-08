@@ -8,6 +8,17 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Larger alternatives bank and round-5 weights:** 128 cases per language
+  (from 58: an office catalog, a delivery and warranty policy, premises on
+  measures and hard negatives in dev and test) and a new held-out validation
+  of 20 per language. New signal `medida` (core-measure family with a shared
+  word, weight 0). Calibration now weighs `familia` 1 and `terminos` 2
+  (threshold 0.5): without a family, a line with three quarters of the
+  question words is offered. Development: precision 0.98, coverage 129/136
+  (was 30/44); held-out validation measured once: precision 1.0, coverage
+  30/32 (light) and 32/34 (medium), no out-of-domain or hard-negative
+  alternatives.
+
 - **Proactive posture ([ADR 0008](docs/decisions/0008-proactive-posture-and-metadata-similarity.md)):**
   after a false premise or a question without an answer, `no_answer` can
   carry up to `posture.max_alternatives` (3) similar literal lines from the

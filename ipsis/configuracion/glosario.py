@@ -39,7 +39,7 @@ ETAPAS = {"conversacional": "conversational", "analisis": "analysis", "confianza
           "evidencia": "evidence", "politica": "policy", "redaccion": "rendering", "verificacion": "verification"}
 
 POSTURAS = {"proactiva": "proactive", "estricta": "strict"}
-SENALES_ALTERNATIVA = {"familia": _c("family"), "terminos": _c("terms"), "seccion": _c("section"),
+SENALES_ALTERNATIVA = {"familia": _c("family"), "medida": _c("measure"), "terminos": _c("terms"), "seccion": _c("section"),
                        "keywords": _c("keywords"), "categoria": _c("category"), "similitud": _c("similarity")}
 
 PERFIL = {

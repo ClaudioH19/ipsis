@@ -23,6 +23,18 @@ taxonomy:
     - id: escaleras
       description: Escaleras tijera y extensibles.
       trigger_words: [escalera, escaleras, peldaños]
+    - id: papel
+      description: Resmas de papel carta y papel fotográfico.
+      trigger_words: [papel, resma, hojas]
+    - id: impresoras
+      description: Impresoras láser y de tinta.
+      trigger_words: [impresora, impresoras, imprime, láser, tinta]
+    - id: sillas
+      description: Sillas operativas y ejecutivas.
+      trigger_words: [silla, sillas, respaldo]
+    - id: escritorios
+      description: Escritorios de oficina.
+      trigger_words: [escritorio, escritorios, cajones]
     - id: otro
       description: No corresponde a ninguna categoría anterior.
   hard_filter_threshold: 0.95

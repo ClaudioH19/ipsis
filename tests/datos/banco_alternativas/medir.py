@@ -42,7 +42,7 @@ import yaml
 RAIZ = Path(__file__).resolve().parent
 CONSULTAS = RAIZ.parent / "banco_consultas"
 IDIOMAS = ("es", "en", "pt")
-SENALES = ("familia", "terminos", "seccion", "keywords", "categoria", "similitud")
+SENALES = ("familia", "medida", "terminos", "seccion", "keywords", "categoria", "similitud")
 
 
 def cargar(idioma: str, archivo: str = "casos") -> list[dict]:
@@ -105,7 +105,7 @@ def ofrecidas(caso: dict, umbral: float, pesos: dict, maximo: int = 3) -> list[d
     if caso["estado"] != "sin_respuesta":
         return []
     elegibles = [u for u in caso["unidades"]
-                 if u["senales"].get("familia", 0) > 0 or u["senales"].get("terminos", 0) > 0]
+                 if any(u["senales"].get(s, 0) > 0 for s in ("familia", "medida", "terminos"))]
     hay_familia = any(u["senales"].get("familia", 0) > 0 for u in elegibles)
     puntuadas = sorted(((afinidad(u["senales"], pesos), u) for u in elegibles), key=lambda par: -par[0])
     salida, vistos = [], set()
@@ -154,9 +154,68 @@ def _casos(datos: dict, particion: str | None = None, perfil: str | None = None)
             if particion in (None, c["particion"])]
 
 
+def _preparar(casos: list[dict]) -> list[dict]:
+    """Por caso, las líneas elegibles agrupadas por texto, como matrices: la
+    calibración prueba miles de combinaciones de pesos sin rehacer el orden."""
+    import numpy as np
+
+    preparados = []
+    for caso in casos:
+        if caso["estado"] != "sin_respuesta":
+            continue
+        elegibles = [u for u in caso["unidades"]
+                     if any(u["senales"].get(s, 0) > 0 for s in ("familia", "medida", "terminos"))]
+        if not elegibles:
+            continue
+        if any(u["senales"].get("familia", 0) > 0 for u in elegibles):
+            elegibles = [u for u in elegibles if u["senales"].get("familia", 0) > 0]
+        grupos: dict[str, list[dict]] = {}
+        for u in elegibles:
+            grupos.setdefault(" ".join(u["texto"].split()), []).append(u)
+        filas, grupo, buenas = [], [], []
+        for g, (clave, unidades) in enumerate(grupos.items()):
+            buenas.append(aceptable(caso, clave))
+            for u in unidades:
+                filas.append([u["senales"].get(s, 0.0) for s in SENALES])
+                grupo.append(g)
+        preparados.append({"tipo": caso["tipo"], "senales": np.asarray(filas), "grupo": np.asarray(grupo),
+                           "n": len(grupos), "buenas": np.asarray(buenas)})
+    return preparados
+
+
+def _tabla(preparados: list[dict], pesos, umbrales, maximo: int = 3) -> dict:
+    """Por umbral: alternativas, correctas, casos fuera de dominio con alguna y
+    vecinos cubiertos; lo mismo que ``resumir`` con esos pesos."""
+    import numpy as np
+
+    w = np.asarray(pesos, dtype=float)
+    total = w.sum()
+    u = np.asarray(umbrales)
+    ofrecidas = np.zeros(len(u))
+    correctas = np.zeros(len(u))
+    fuera = np.zeros(len(u))
+    cubiertos = np.zeros(len(u))
+    for caso in preparados:
+        afinidad_unidad = caso["senales"] @ w / total
+        mejor = np.full(caso["n"], -1.0)
+        np.maximum.at(mejor, caso["grupo"], afinidad_unidad)
+        orden = np.argsort(-mejor, kind="stable")[:maximo]
+        valores, buenas = mejor[orden], caso["buenas"][orden]
+        dadas = (valores[None, :] >= u[:, None])  # umbral × posición (valores ya en orden)
+        n_dadas = dadas.sum(axis=1)
+        n_buenas = (dadas & buenas[None, :]).sum(axis=1)
+        ofrecidas += n_dadas
+        correctas += n_buenas
+        if caso["tipo"] == "fuera_dominio":
+            fuera += n_dadas > 0
+        if caso["tipo"] == "vecino":
+            cubiertos += n_buenas > 0
+    return {"ofrecidas": ofrecidas, "correctas": correctas, "fuera": fuera, "cubiertos": cubiertos}
+
+
 def calibrar(datos: dict, *, precision_minima: float = 0.9, tolerancia: float = 0.9) -> dict:
     """Pesos (una sola combinación) y umbral por perfil, elegidos con los casos
-    de desarrollo (dev y test de ``casos.yaml``: test se usó durante el
+    de desarrollo (dev y test de ``casos.yaml``: test se mira durante el
     desarrollo, así que no es una validación intacta; la validación apartada
     es ``validacion.yaml``, que se mide una vez con lo elegido aquí).
 
@@ -168,46 +227,49 @@ def calibrar(datos: dict, *, precision_minima: float = 0.9, tolerancia: float = 
     alcanzan. El umbral es el centro del tramo. Con cobertura máxima, todas
     las combinaciones quedaban al borde (tramos de 0,05): un umbral así deja
     pasar lo que el desarrollo no mostró."""
+    import numpy as np
+
     perfiles = sorted(datos)
-    umbrales = [round(0.01 * i, 2) for i in range(101)]
-    casos = {perfil: _casos(datos, None, perfil) for perfil in perfiles}
+    umbrales = np.round(np.arange(101) * 0.01, 2)
+    preparados = {perfil: _preparar(_casos(datos, None, perfil)) for perfil in perfiles}
     tablas = {}
     for combinacion in itertools.product((0.0, 1.0, 2.0), repeat=len(SENALES)):
         if not any(combinacion):
             continue
-        pesos = dict(zip(SENALES, combinacion))
         tabla = {}
         for perfil in perfiles:
-            filas = []
-            for umbral in umbrales:
-                r = resumir(casos[perfil], umbral, pesos)
-                ok = not r["fuera_dominio_con_alternativas"] and (r["precision"] is None or r["precision"] >= precision_minima)
-                filas.append((umbral, ok, r))
-            tabla[perfil] = filas
+            t = _tabla(preparados[perfil], combinacion, umbrales)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                precision = np.where(t["ofrecidas"] > 0, t["correctas"] / t["ofrecidas"], 1.0)
+            tabla[perfil] = ((precision >= precision_minima) & (t["fuera"] == 0), t["cubiertos"])
         tablas[combinacion] = tabla
-    mejor_cobertura = {perfil: max((r["vecinos_cubiertos"] for t in tablas.values() for _, ok, r in t[perfil] if ok),
-                                   default=0) for perfil in perfiles}
+    mejor_cobertura = {perfil: max((float(c[v].max()) for t in tablas.values() for v, c in [t[perfil]] if v.any()),
+                                   default=0.0) for perfil in perfiles}
     mejor = None
     for combinacion, tabla in tablas.items():
         por_perfil, margen = {}, 0.0
         for perfil in perfiles:
-            piso = tolerancia * mejor_cobertura[perfil]
-            tramo, actual = [], []
-            for umbral, ok, r in tabla[perfil]:
-                actual = [*actual, umbral] if ok and r["vecinos_cubiertos"] >= piso else []
-                if len(actual) > len(tramo):
-                    tramo = actual
-            if not tramo:
+            validos, cubiertos = tabla[perfil]
+            ok = validos & (cubiertos >= tolerancia * mejor_cobertura[perfil])
+            tramo, actual = (0, -1), None
+            for i, bien in enumerate(ok):
+                if bien:
+                    actual = (actual[0], i) if actual else (i, i)
+                    if actual[1] - actual[0] > tramo[1] - tramo[0]:
+                        tramo = actual
+                else:
+                    actual = None
+            if tramo[1] < tramo[0]:
                 break
-            centro = round((tramo[0] + tramo[-1]) / 2, 2)
-            por_perfil[perfil] = {"umbral": centro, "tramo": [tramo[0], tramo[-1]]}
-            margen += tramo[-1] - tramo[0]
+            bajo, alto = float(umbrales[tramo[0]]), float(umbrales[tramo[1]])
+            por_perfil[perfil] = {"umbral": round((bajo + alto) / 2, 2), "tramo": [bajo, alto]}
+            margen += alto - bajo
         else:
             clave = (round(margen, 4), -sum(combinacion))
             if mejor is None or clave > mejor[0]:
                 mejor = (clave, dict(zip(SENALES, combinacion)), por_perfil)
     if mejor is None:
-        return {"pesos": None, "perfiles": {}}
+        return {"pesos": None, "mejor_cobertura": mejor_cobertura, "perfiles": {}}
     _, pesos, por_perfil = mejor
     for perfil, valores in por_perfil.items():
         for nombre, particion in (("desarrollo", None), ("dev", "dev"), ("test", "test")):

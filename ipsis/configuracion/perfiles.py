@@ -56,9 +56,9 @@ class AlternativasPerfil(_Estricto):
     """Afinidad mínima y pesos de las señales de una alternativa (ADR 0008)."""
 
     umbral: float = Field(default=0.5, ge=0.0, le=1.0)
-    pesos: dict[Literal["familia", "terminos", "seccion", "keywords", "categoria", "similitud"], float] = Field(
-        default_factory=lambda: {"familia": 1.0, "terminos": 0.0, "seccion": 0.0, "keywords": 0.0,
-                                 "categoria": 0.0, "similitud": 0.0})
+    pesos: dict[Literal["familia", "medida", "terminos", "seccion", "keywords", "categoria", "similitud"],
+                float] = Field(default_factory=lambda: {"familia": 1.0, "medida": 0.0, "terminos": 2.0, "seccion": 0.0,
+                                                       "keywords": 0.0, "categoria": 0.0, "similitud": 0.0})
 
 
 class PerfilInstalacion(_Estricto):

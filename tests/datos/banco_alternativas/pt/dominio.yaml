@@ -23,6 +23,18 @@ taxonomy:
     - id: escadas
       description: Escadas tesoura e extensíveis.
       trigger_words: [escada, escadas, degraus]
+    - id: papel
+      description: Resmas de papel carta e papel fotográfico.
+      trigger_words: [papel, resma, folhas]
+    - id: impressoras
+      description: Impressoras a laser e jato de tinta.
+      trigger_words: [impressora, impressoras, imprime, laser, tinta]
+    - id: cadeiras
+      description: Cadeiras operacionais e executivas.
+      trigger_words: [cadeira, cadeiras, encosto]
+    - id: escrivaninhas
+      description: Escrivaninhas de escritório.
+      trigger_words: [escrivaninha, escrivaninhas, gavetas]
     - id: otro
       description: Não corresponde a nenhuma categoria anterior.
   hard_filter_threshold: 0.95

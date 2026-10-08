@@ -23,6 +23,18 @@ taxonomy:
     - id: ladders
       description: Step and extension ladders.
       trigger_words: [ladder, ladders, steps]
+    - id: paper
+      description: Reams of letter paper and photo paper.
+      trigger_words: [paper, ream, sheets]
+    - id: printers
+      description: Laser and inkjet printers.
+      trigger_words: [printer, printers, prints, laser, inkjet]
+    - id: chairs
+      description: Task and executive chairs.
+      trigger_words: [chair, chairs, backrest]
+    - id: desks
+      description: Office desks.
+      trigger_words: [desk, desks, drawers]
     - id: otro
       description: Does not fit any previous category.
   hard_filter_threshold: 0.95

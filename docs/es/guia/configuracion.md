@@ -462,39 +462,42 @@ ipsis configure posture.max_alternatives=2
 - **Cuándo:** solo tras una premisa falsa (una entidad de la pregunta no está
   en los documentos) o una pregunta sin respuesta. Las preguntas fuera de
   dominio, las respuestas relacionadas y los turnos conversacionales nunca
-  traen alternativas. Con los perfiles incluidos, en la práctica solo tras
-  una premisa falsa cuya entidad tiene familia en los documentos (abajo).
+  traen alternativas.
 - **Qué se muestra:** cada alternativa es un párrafo literal de los
   documentos con su cita, verificado como la evidencia de una respuesta. No
   se genera nada. El estado sigue siendo `no_answer`: las alternativas viajan
   en su propio campo `alternatives` de `/ask` y nunca cuentan como respuesta.
 - **Cómo se eligen:** con los metadatos que el índice ya guarda de cada
   fragmento, sin otro modelo. Cada párrafo candidato recibe una afinidad,
-  la media ponderada de seis señales; los pesos y el umbral son parte del
+  la media ponderada de siete señales; los pesos y el umbral son parte del
   perfil de instalación
   ([ADR 0008](../../decisions/0008-proactive-posture-and-metadata-similarity.md)):
 
   | Señal | Valor para el párrafo | Peso incluido |
   |---|---|---|
-  | `family` | 1 si tiene una entidad de la familia de la ausente: mismo tipo y forma («TP-400» para «TP-500»). Solo tienen familia los tipos que declara domain.yaml: las medidas del núcleo («90 días», «20 %») aparecen en documentos sin relación | 1 |
-  | `terms` | parte de las palabras de la pregunta que tiene (sobre todas, también las ausentes; las de la propia entidad no cuentan) | 0 |
+  | `family` | 1 si tiene una entidad de la familia de la ausente: mismo tipo y forma («TP-400» para «TP-500»), para los tipos que declara `domain.yaml` | 1 |
+  | `measure` | lo mismo para una medida del núcleo ausente («90 días» para «60 días», «20 %»), solo si además comparte una palabra de la pregunta | 0 |
+  | `terms` | parte de las palabras de la pregunta que tiene (sobre todas, también las ausentes; las de la propia entidad no cuentan) | 2 |
   | `section`, `keywords` | la misma parte sobre su título de documento y sección, o sus palabras clave | 0 |
   | `category` | 1 si es de la categoría de la pregunta en la taxonomía del proyecto | 0 |
   | `similarity` | coseno denso con la pregunta, desde el piso del modelo | 0 |
 
-  Los pesos se eligieron con el banco de alternativas para una precisión de
-  al menos 0,9 y el margen de umbrales más ancho: solo sobrevivió la
-  familia. Las palabras, secciones o categorías por sí solas también
-  ofrecían pasajes sin relación («¿A qué distancia está la Luna?» → «trabajo
-  a distancia»). Si la entidad ausente tiene familia, solo se ofrecen
-  párrafos de esa familia. Las alternativas no alimentan la memoria de la
-  conversación.
+  Con umbral 0,5 eso significa: la familia de un código ausente o, sin
+  familia, un párrafo con al menos tres cuartos de las palabras de la
+  pregunta («¿El despacho a regiones tarda 3 días hábiles?» → «El despacho a
+  regiones tarda 5 días hábiles.»). Los pesos se eligieron con el banco de
+  alternativas para una precisión de al menos 0,9 y el margen de umbrales
+  más ancho; una validación apartada, medida una sola vez, dio 1,0. Si la
+  entidad ausente tiene familia, solo se ofrecen párrafos de esa familia.
+  El punto débil son las preguntas cortas: con una sola palabra de
+  contenido, cualquier párrafo que la tenga cubre la pregunta entera. Las
+  alternativas no alimentan la memoria de la conversación.
 - **Tus códigos:** un código de producto es una entidad solo si
   `domain.yaml` lo declara (`regex_extractors`, por ejemplo
   `'\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'` con `transform: {pre:
-  minusculas}`). Sin eso, un código ausente no tiene familia ni
-  alternativas. La señal de categoría necesita al menos dos categorías
-  propias en `taxonomy`.
+  minusculas}`). Sin eso, un código ausente no tiene familia y solo se
+  ofrecen párrafos con casi todas las palabras de la pregunta. La señal de
+  categoría necesita al menos dos categorías propias en `taxonomy`.
 - **Ajuste:** `profile_overrides.alternatives.threshold` y
   `profile_overrides.alternatives.weights` en `engine.yaml`. `ipsis ask
   --diagnostics` muestra cada alternativa ofrecida o descartada, con su

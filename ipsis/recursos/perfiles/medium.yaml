@@ -42,13 +42,14 @@ default_thresholds:
   cov: 0.6
 # Alternatives of the proactive posture (ADR 0008): affinity = weighted mean
 # of the signals; offered when it reaches the threshold. Calibrated with
-# tests/datos/banco_alternativas (precision >= 0.9, widest margin): only the
-# family of the missing entity counts.
+# tests/datos/banco_alternativas (precision >= 0.9, widest margin): the family
+# of a missing declared entity, or a line with nearly all the question words.
 alternatives:
   threshold: 0.5
   weights:
     family: 1.0
-    terms: 0.0
+    measure: 0.0
+    terms: 2.0
     section: 0.0
     keywords: 0.0
     category: 0.0
