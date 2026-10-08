@@ -4,6 +4,11 @@
 codigo: pt
 nombre: Português
 stemmer: portuguese
+bordes_respuesta:
+  unidades_cantidad: [caractere, caracteres, página, páginas]
+  prefijos_cantidad: [pelo menos, no mínimo, no máximo, até, em até, em, por, a partir de]
+  referencias_cantidad: [desde, depois de, a partir de, após]
+  limites_actor: ['\s+e\s+(?:(?:a|o|as|os)\s+)?(?:envia|encaminha|entrega|assina|aprova|autoriza)\b', ',\s*(?:que|quem)\b']
 stopwords:
 - a
 - ao
@@ -253,6 +258,8 @@ intenciones:
     - antes de
     - quando
   fin:
+    respaldo_patrones:
+    - venc\w*|expir\w*|caduc\w*|renov\w*|validade|termin\w*|finaliz\w*|ate|ultimo dia|data limite
     ejemplos:
     - "A cada quanto tempo vence o passe de visitante?"
     - "Com que frequência vence a licença para dirigir?"
@@ -337,6 +344,8 @@ intenciones:
     - devem
     - requisito
   procedimiento:
+    respaldo_patrones:
+    - como|o que (eu |nos )?(faco|fazemos|fazer)|que passos|de que (forma|maneira)|procedimento|processo
     ejemplos:
     - "Esqueci meu código de acesso, como faço para recuperá-lo?"
     - "Não encontro minha carteirinha, o que faço para recuperá-la?"

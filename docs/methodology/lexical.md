@@ -226,6 +226,22 @@ The best example scores each intention; cosine and margin against a different
 intention must exceed the measured model/language settings. BM25 and
 unmeasured models skip this.
 
+For follow-ups, the vector for the current question is memoized separately
+from the interpreted retrieval question. Pattern recognition and the
+`respaldo_patrones` compatibility gate also use that current question. The
+gate requires a compatible question form for end/procedure fallback; it
+does not infer a relation on its own. This prevents inherited deadline words
+or a similar topic from changing an amount or actor question into another
+intent. The lexical behavior version is v5, invalidating stale calibrations.
+
+Follow-up QA answers use literal offsets when quantity boundaries
+are completed with adjacent units/limits/reference points, or a selected
+actor is extended with the matching action clause. `bordes_respuesta` stores
+language-dependent forms; the raw span remains in `tramo_completado` and
+`lecturas`. No other actor or quantity is substituted. The
+[correction measurements](mediciones/v4-correcciones/README.md) separate
+these extraction changes from intent coverage.
+
 Only natural-query dev and human relation labels in
 `tests/datos/banco_consultas/intenciones.yaml` select thresholds. Unsupported
 duration, frequency, simple amounts and descriptions remain unknown. The

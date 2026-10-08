@@ -327,8 +327,8 @@
     "plan": "no_answer",
     "answer": "No hay rastro de \"artículo 99\" en los documentos disponibles.",
     "confidence": {
-      "top1": 0.82561,
-      "margin": 0.05864
+      "top1": 0.82813,
+      "margin": 0.0552
     },
     "fragments": []
   },
@@ -338,8 +338,8 @@
     "plan": "no_answer",
     "answer": "No hay información sobre \"5%\" en tus documentos; puede que no forme parte de ellos.",
     "confidence": {
-      "top1": 0.83084,
-      "margin": 0.01347
+      "top1": 0.84075,
+      "margin": 0.01515
     },
     "fragments": []
   },

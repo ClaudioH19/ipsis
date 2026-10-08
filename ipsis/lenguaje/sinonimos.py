@@ -128,7 +128,7 @@ def huella_lexica(paquete) -> str:
     # La primera intención coincidente gana: ordenar las claves al serializar
     # no debe ocultar un cambio de esa prioridad.
     datos["orden_intenciones"] = list(paquete.intenciones)
-    h = hashlib.sha256(b"ipsis-lexical-runtime-v4\n")
+    h = hashlib.sha256(b"ipsis-lexical-runtime-v5\n")
     h.update(json.dumps(datos, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
     if not paquete.respaldo:
         for sufijo in (".tsv", ".lexicon.tsv"):

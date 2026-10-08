@@ -41,5 +41,9 @@ Values not yet checked against a golden set are marked as
 intent fallback against F1 with the corrected selected-span metric, including
 raw evidence and observed limitations.
 
+[V4 correction measurements](mediciones/v4-correcciones/README.md) track
+the follow-up reader, topic compaction and intent compatibility changes
+against that initial snapshot and F1.
+
 The notes use the internal names of the code (signals such as `s_foco`,
 rules such as `ok_lector`), because they describe the implementation.

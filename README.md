@@ -248,9 +248,10 @@ Spanish; everything user-facing is in English. Read
   BM25 and unmeasured models skip fallback. Recognition alone does not
   establish that a document answers the question.
 - The medium reader still selects incomplete or incorrect literal spans.
-  Memory improves inheritance but loses four correct conversational answers relative to F1;
-  similarity can also infer a wrong intention. See the
-  [V4 results](docs/methodology/v4-results.md) for measurements and limits.
+  Follow-up corrections recover the eight problematic cases found in V4,
+  with no lost correct answers or added errors in the banks compared with
+  F1 and initial V4. Existing reader errors in independent queries remain.
+  See the [measurements and limits](docs/methodology/mediciones/v4-correcciones/README.md).
 - In local mode, Qdrant locks its folder while another process uses it.
 
 </details>

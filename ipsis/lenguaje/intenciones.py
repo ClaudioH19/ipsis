@@ -83,3 +83,18 @@ def tiene_tema(pregunta, paquete, estadisticas) -> bool:
     genericos = terminos_genericos(paquete)
     return any(t not in genericos and df.get(t, 0) > 0
                for t in terminos_de_contenido(pregunta, paquete, estadisticas))
+
+
+def compatible_con_respaldo(pregunta: str, paquete, candidato: str) -> bool:
+    """La similitud no debe convertir un importe o un actor en un plazo.
+
+    Las formas compatibles son declaradas por el idioma y se comprueban
+    sobre el turno actual, sin las palabras heredadas de la conversación.
+    Un paquete sin restricciones mantiene su comportamiento anterior.
+    """
+    import re
+    from ipsis.lenguaje.consultas import _como_palabras, plano
+
+    intencion = (getattr(paquete, "intenciones", None) or {}).get(candidato)
+    patrones = getattr(intencion, "respaldo_patrones", None) or []
+    return not patrones or any(re.search(_como_palabras(p), plano(pregunta)) for p in patrones)

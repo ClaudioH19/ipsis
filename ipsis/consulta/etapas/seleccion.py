@@ -109,7 +109,7 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None, comprensi
     reconocida = comprender(pregunta, paquete)
     # Lo que el usuario escribió conserva sus patrones propios. El respaldo
     # no aplica la relación de la pregunta interpretada a otra pregunta.
-    comprension = reconocida if reconocida.intencion else comprension or reconocida
+    comprension = comprension or reconocida
     # La relación la representan las pistas, no sus palabras: «…the Purchasing Officer
     # starts a new purchase» no dice cuándo empieza la compra aunque tenga «starts».
     # (En la cobertura se quedan si están en el corpus: ver terminos_de_contenido.)

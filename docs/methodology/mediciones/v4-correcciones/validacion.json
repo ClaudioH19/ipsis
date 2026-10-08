@@ -1,0 +1,185 @@
+{
+  "criterios": {
+    "suite": true,
+    "codigo_medido_actual": true,
+    "ocho_objetivos": true,
+    "latencia_ambas_bases": true,
+    "f1_conversaciones_sin_perdidas": true,
+    "f1_conversaciones_sin_errores_nuevos": true,
+    "f1_sin_herencia_indebida": true,
+    "f1_herencia_no_disminuye": true,
+    "f1_sin_directas_negativas": true,
+    "retornos_007_015": true,
+    "f1_estados_explicados": true,
+    "f1_consultas_sin_perdidas": true,
+    "f1_consultas_sin_errores_nuevos": true,
+    "f1_universal_sin_perdidas": true,
+    "f1_universal_sin_errores_nuevos": true,
+    "corregido_conversaciones_sin_perdidas": true,
+    "corregido_conversaciones_sin_errores_nuevos": true,
+    "corregido_sin_herencia_indebida": true,
+    "corregido_herencia_no_disminuye": true,
+    "corregido_sin_directas_negativas": true,
+    "corregido_estados_explicados": true,
+    "corregido_consultas_sin_perdidas": true,
+    "corregido_consultas_sin_errores_nuevos": true,
+    "corregido_universal_sin_perdidas": true,
+    "corregido_universal_sin_errores_nuevos": true,
+    "sin_error_intencion_natural": true
+  },
+  "pruebas": {
+    "tests": 1074,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "aprobadas": 1072
+  },
+  "hash_codigo": "33fc749f6ed2f7d337ad59e7181eb8d43ffb5d3324da0073ce290add09452fd0",
+  "archivos_distintos": [],
+  "latencia": {
+    "V4": {
+      "rondas": 3,
+      "orden": "AB / BA alternado",
+      "perfil": "light",
+      "casos_por_idioma_y_ejecucion": 30,
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "antes_code": "sha256:96f6612a9c11a198fe9ccd1f96fe96611f3acb5b3b3c1210787a732ac4400160",
+      "despues_code": "sha256:44ab85fcd3a67acb3a31739e127099993f92330071244a4389f7032e7f2210f7",
+      "calidad_identica": true,
+      "filas": [
+        {
+          "idioma": "es",
+          "medias_por_ronda": {
+            "antes": [
+              27.7,
+              38.6,
+              36.2
+            ],
+            "despues": [
+              26.6,
+              41.0,
+              25.7
+            ]
+          },
+          "media_antes_ms": 34.16666666666667,
+          "media_despues_ms": 31.1,
+          "cambio_pct": -8.975609756097569,
+          "g5": true
+        },
+        {
+          "idioma": "en",
+          "medias_por_ronda": {
+            "antes": [
+              23.6,
+              30.4,
+              22.0
+            ],
+            "despues": [
+              27.2,
+              28.5,
+              22.7
+            ]
+          },
+          "media_antes_ms": 25.333333333333332,
+          "media_despues_ms": 26.133333333333333,
+          "cambio_pct": 3.157894736842115,
+          "g5": true
+        },
+        {
+          "idioma": "pt",
+          "medias_por_ronda": {
+            "antes": [
+              27.9,
+              28.6,
+              32.4
+            ],
+            "despues": [
+              28.4,
+              32.7,
+              29.4
+            ]
+          },
+          "media_antes_ms": 29.633333333333333,
+          "media_despues_ms": 30.166666666666668,
+          "cambio_pct": 1.7997750281214975,
+          "g5": true
+        }
+      ],
+      "g5": true
+    },
+    "F1": {
+      "rondas": 3,
+      "orden": "AB / BA alternado",
+      "perfil": "light",
+      "casos_por_idioma_y_ejecucion": 30,
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "antes_code": "sha256:22778cd8deb2445274e3c3a25502365d05dcd8767016a3b18f8296679339c96b",
+      "despues_code": "sha256:44ab85fcd3a67acb3a31739e127099993f92330071244a4389f7032e7f2210f7",
+      "calidad_identica": true,
+      "filas": [
+        {
+          "idioma": "es",
+          "medias_por_ronda": {
+            "antes": [
+              44.9,
+              48.2,
+              62.9
+            ],
+            "despues": [
+              33.1,
+              32.1,
+              31.6
+            ]
+          },
+          "media_antes_ms": 52.0,
+          "media_despues_ms": 32.266666666666666,
+          "cambio_pct": -37.94871794871795,
+          "g5": true
+        },
+        {
+          "idioma": "en",
+          "medias_por_ronda": {
+            "antes": [
+              36.6,
+              33.7,
+              36.5
+            ],
+            "despues": [
+              25.3,
+              25.9,
+              34.9
+            ]
+          },
+          "media_antes_ms": 35.6,
+          "media_despues_ms": 28.7,
+          "cambio_pct": -19.38202247191012,
+          "g5": true
+        },
+        {
+          "idioma": "pt",
+          "medias_por_ronda": {
+            "antes": [
+              55.0,
+              39.5,
+              40.4
+            ],
+            "despues": [
+              27.4,
+              34.4,
+              27.6
+            ]
+          },
+          "media_antes_ms": 44.96666666666667,
+          "media_despues_ms": 29.8,
+          "cambio_pct": -33.728687916975545,
+          "g5": true
+        }
+      ],
+      "g5": true
+    }
+  },
+  "errores_intencion_natural": [],
+  "alcance": "Criterios de los bancos locales; no certifican exactitud general ni corrigen todos los errores previos del lector."
+}

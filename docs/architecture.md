@@ -111,6 +111,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `lexico.py` | BM25, TF-IDF, MMR and the signals `s_oov`, focus, `s_foco`, `s_cov`, `s_lex` |
 | `consultas.py` | Query understanding: intention and relation words, cues, synonyms, generic words, derived nouns |
 | `intenciones.py` | Similarity fallback: cached examples, cosine and margin between intentions |
+| `respuestas.py` | Literal QA boundary completion: quantities with units and limits, actors with their current action |
 | `sinonimos.py` | Packaged WordNet stem index, OOV expansion for BM25, project phrase equivalences and lexical provenance hash |
 | `entidades.py` | Universal and pack entities (dates, amounts, deadlines, references) |
 | `dominio.py` | Your own domain rules (`domain.yaml`) |
@@ -239,12 +240,28 @@ word lists and the corpus statistics. Nothing is generated and the question
 the user wrote is the one that is answered. Three things come out of it:
 
 After dense confidence, an unrecognized intention can use example similarity
-with the same cached query vector. Examples are encoded at startup. This
+with a cached query vector. Examples are encoded at startup. In a follow-up,
+both pattern recognition and similarity use the current user's question;
+inherited words supply retrieval context, not a different relation. This
 fallback needs a corpus topic, measured model/language settings, minimum
-cosine and a margin against the second intention. It supplies answer cues;
+cosine, a margin against the second intention and language-declared compatible
+question forms. The extra check rejects amount/actor questions that resemble
+deadline/procedure examples. It supplies answer cues;
 it removes no query terms and changes no acceptance thresholds. BM25 skips it.
 Shipped E5-small settings enable only categories with correct dev fallback
 cases: end/procedure in Spanish, end in English and procedure in Portuguese.
+
+The QA reader receives the current follow-up when it expresses a recognized
+relation or multiple content terms. A bare qualifier ("and in summer?")
+retains the interpreted question so the topic and preceding relation remain
+available. Intent recognition still uses the current turn. For actor
+questions, it reads the sentence selected for that action, excluding other
+roles elsewhere in the passage. Selected quantity spans can include their
+adjacent unit, limit and reference point; selected actor spans can include
+the matching action clause. This completion is literal, retains exact
+offsets and records the raw model span in diagnostics. It does not replace
+the selected actor or number with another one, and answer thresholds remain
+unchanged.
 
 | | What it looks for | Example | What changes afterwards |
 |---|---|---|---|

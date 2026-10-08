@@ -248,9 +248,11 @@ en español; todo lo que ve el usuario está en inglés. Lee
   conservan los patrones; BM25 y modelos sin medir omiten el respaldo.
   Reconocer la intención no demuestra que el documento contenga la respuesta.
 - El lector de medium aún elige tramos literales incompletos o incorrectos.
-  La memoria mejora la herencia, pero pierde cuatro aciertos conversacionales frente a F1;
-  la similitud también puede inferir una intención equivocada. Ver
-  [resultados V4](docs/methodology/v4-results.md) para las mediciones y sus límites.
+  Las correcciones de seguimiento recuperan los ocho casos problemáticos
+  detectados en V4, sin perder aciertos ni añadir errores en los bancos
+  comparados con F1 y V4 inicial. Los errores anteriores del lector en
+  consultas independientes permanecen. Ver
+  [mediciones y límites](docs/methodology/mediciones/v4-correcciones/README.md).
 - En modo local, Qdrant bloquea su carpeta mientras otro proceso la usa.
 
 </details>

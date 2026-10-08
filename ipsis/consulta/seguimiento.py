@@ -228,11 +228,17 @@ def _abrir(pregunta: str, con_tema: list[str], paquete, estadisticas) -> _Tema:
     # El núcleo son los términos más específicos (mayor IDF) de la pregunta que lo abre.
     idf = getattr(estadisticas, "idf", None)
     nucleo = sorted(dict.fromkeys(con_tema), key=lambda t: -(idf(t) if callable(idf) else 0))[:MAX_NUCLEO]
-    return _Tema(nucleo=nucleo, formas=_formas(pregunta, nucleo, paquete))
+    # Los términos fuera del núcleo sobreviven al primer seguimiento, igual
+    # que los de cualquier otro turno. Compactar no debe perder contenido
+    # de la pregunta inicial antes de que se use una sola vez.
+    ultimo = [t for t in dict.fromkeys(con_tema) if t not in nucleo]
+    return _Tema(nucleo=nucleo, ultimo=ultimo, formas=_formas(pregunta, nucleo + ultimo, paquete))
 
 
 def _heredar(pregunta: str, tema: _Tema, propios: list[str], paquete, retoma: bool = False) -> Resolucion:
-    heredado = [t for t in dict.fromkeys(tema.nucleo + tema.ultimo) if t not in propios and t in tema.formas]
+    # El IDF decide qué guardar, no el orden lingüístico de la pregunta.
+    vigentes = set(tema.nucleo + tema.ultimo)
+    heredado = [t for t in tema.formas if t in vigentes and t not in propios]
     # Compactación: lo propio de este turno pasa a ser «el último»; lo del anterior se pliega.
     nuevos = [t for t in propios if t not in tema.nucleo]
     tema.ultimo = nuevos

@@ -75,12 +75,22 @@ class Intencion(_Estricto):
     patrones: list[str] = Field(min_length=1)
     pistas: list[str] = Field(default_factory=list)
     ejemplos: list[str] = Field(default_factory=list)
+    # Formas compatibles para admitir el respaldo semántico. No reconocen
+    # una intención por sí solas ni eliminan términos de la pregunta.
+    respaldo_patrones: list[str] = Field(default_factory=list)
 
 
 class UmbralesIntencion(_Estricto):
     similitud: float = Field(ge=0.0, le=1.0)
     margen: float = Field(ge=0.0, le=2.0)
     habilitadas: list[str] | None = None
+
+
+class BordesRespuesta(_Estricto):
+    unidades_cantidad: list[str] = Field(default_factory=list)
+    prefijos_cantidad: list[str] = Field(default_factory=list)
+    referencias_cantidad: list[str] = Field(default_factory=list)
+    limites_actor: list[str] = Field(default_factory=list)
 
 
 IDIOMA_RESPALDO = "en"
@@ -106,6 +116,7 @@ class PaqueteIdioma(_Estricto):
     # En orden: gana la primera cuyo patrón aparece en la pregunta.
     intenciones: dict[str, Intencion] = Field(default_factory=dict)
     respaldo_intencion: dict[str, UmbralesIntencion] = Field(default_factory=dict)
+    bordes_respuesta: BordesRespuesta = Field(default_factory=BordesRespuesta)
     # Cómo empieza una pregunta de seguimiento («y», «entonces»; ipsis.consulta.seguimiento).
     seguimiento: list[str] = Field(default_factory=list)
     # Grupos de sinónimos con sus formas comunes (ipsis.lenguaje.consultas.sinonimos_presentes):

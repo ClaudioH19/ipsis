@@ -1,0 +1,971 @@
+{
+  "ronda": "vigente",
+  "bases": {
+    "f1": {
+      "conversaciones": {
+        "light": {
+          "es": {
+            "antes": {
+              "herencia_correcta": 26,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 12,
+              "respuestas_correctas": 29,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 34,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "es-conv-002:2",
+              "es-conv-002:4",
+              "es-conv-005:4",
+              "es-conv-007:3",
+              "es-conv-008:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {
+              "es-conv-002:2": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-002:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-005:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-007:3": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-008:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "en": {
+            "antes": {
+              "herencia_correcta": 25,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 13,
+              "respuestas_correctas": 19,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 21,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "en-conv-002:4",
+              "en-conv-007:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {
+              "en-conv-002:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "en-conv-007:3": [
+                "sin_respuesta",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "pt": {
+            "antes": {
+              "herencia_correcta": 21,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 17,
+              "respuestas_correctas": 20,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 24,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "pt-conv-002:4",
+              "pt-conv-003:4",
+              "pt-conv-005:4",
+              "pt-conv-007:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {
+              "pt-conv-002:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-003:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-005:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-007:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          }
+        },
+        "medium": {
+          "es": {
+            "antes": {
+              "herencia_correcta": 29,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 9,
+              "respuestas_correctas": 6,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 11,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "es-conv-003:4",
+              "es-conv-004:3",
+              "es-conv-007:3",
+              "es-conv-010:2",
+              "es-conv-013:2"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "es-conv-002:4",
+              "es-conv-010:2",
+              "es-conv-013:2"
+            ],
+            "cambios_estado": {
+              "es-conv-002:4": [
+                "respuesta_directa",
+                "relacionado"
+              ],
+              "es-conv-003:4": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-004:3": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "es-conv-007:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "en": {
+            "antes": {
+              "herencia_correcta": 26,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 12,
+              "respuestas_correctas": 8,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 12,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "en-conv-004:3",
+              "en-conv-007:3",
+              "en-conv-010:2",
+              "en-conv-010:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "en-conv-002:4",
+              "en-conv-007:3",
+              "en-conv-010:2"
+            ],
+            "cambios_estado": {
+              "en-conv-002:4": [
+                "respuesta_directa",
+                "relacionado"
+              ],
+              "en-conv-004:3": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "en-conv-010:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "pt": {
+            "antes": {
+              "herencia_correcta": 21,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 17,
+              "respuestas_correctas": 8,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 11,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "pt-conv-007:3",
+              "pt-conv-010:2",
+              "pt-conv-016:2"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "pt-conv-002:4",
+              "pt-conv-010:2",
+              "pt-conv-017:2"
+            ],
+            "cambios_estado": {
+              "pt-conv-002:4": [
+                "respuesta_directa",
+                "relacionado"
+              ],
+              "pt-conv-007:3": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-016:2": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-017:2": [
+                "respuesta_directa",
+                "relacionado"
+              ]
+            }
+          }
+        }
+      },
+      "consultas": {
+        "light": {
+          "es": {
+            "correctas": [
+              14,
+              14
+            ],
+            "erroneas": [
+              3,
+              3
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              5,
+              5
+            ],
+            "erroneas": [
+              1,
+              1
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              4,
+              4
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        },
+        "medium": {
+          "es": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              17,
+              17
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              4,
+              4
+            ],
+            "erroneas": [
+              13,
+              13
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              7,
+              7
+            ],
+            "erroneas": [
+              8,
+              8
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        }
+      },
+      "universal": {
+        "light": {
+          "es": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              1,
+              1
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              6,
+              6
+            ],
+            "erroneas": [
+              0,
+              0
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              9,
+              9
+            ],
+            "erroneas": [
+              0,
+              0
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        },
+        "medium": {
+          "es": {
+            "correctas": [
+              2,
+              2
+            ],
+            "erroneas": [
+              11,
+              11
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              3,
+              3
+            ],
+            "erroneas": [
+              9,
+              9
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              2,
+              2
+            ],
+            "erroneas": [
+              8,
+              8
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        }
+      }
+    },
+    "corregido": {
+      "conversaciones": {
+        "light": {
+          "es": {
+            "antes": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 34,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 34,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "antes": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 20,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 21,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "en-conv-007:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {
+              "en-conv-007:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "pt": {
+            "antes": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 22,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 24,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "pt-conv-003:2",
+              "pt-conv-016:2"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {
+              "pt-conv-003:2": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-016:2": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          }
+        },
+        "medium": {
+          "es": {
+            "antes": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 5,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 36,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 2,
+              "respuestas_correctas": 11,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "es-conv-003:4",
+              "es-conv-004:3",
+              "es-conv-007:3",
+              "es-conv-010:2",
+              "es-conv-013:2",
+              "es-conv-013:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "es-conv-004:3",
+              "es-conv-007:3",
+              "es-conv-010:2",
+              "es-conv-013:2",
+              "es-conv-013:3"
+            ],
+            "cambios_estado": {
+              "es-conv-003:4": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "en": {
+            "antes": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 7,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 35,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 3,
+              "respuestas_correctas": 12,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "en-conv-004:3",
+              "en-conv-007:3",
+              "en-conv-010:2",
+              "en-conv-010:3",
+              "en-conv-013:3"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "en-conv-007:3",
+              "en-conv-010:2",
+              "en-conv-010:3"
+            ],
+            "cambios_estado": {
+              "en-conv-004:3": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "en-conv-013:3": [
+                "relacionado",
+                "respuesta_directa"
+              ]
+            }
+          },
+          "pt": {
+            "antes": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 8,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "despues": {
+              "herencia_correcta": 34,
+              "con_hereda": 38,
+              "herencia_indebida": 0,
+              "herencia_perdida": 4,
+              "respuestas_correctas": 11,
+              "con_respuesta": 54,
+              "directas_indebidas": 0,
+              "sin_directa": 4
+            },
+            "perdidas": [],
+            "ganancias": [
+              "pt-conv-007:3",
+              "pt-conv-010:2",
+              "pt-conv-016:2"
+            ],
+            "errores_nuevos": [],
+            "errores_corregidos": [
+              "pt-conv-007:3",
+              "pt-conv-010:2",
+              "pt-conv-017:2"
+            ],
+            "cambios_estado": {
+              "pt-conv-016:2": [
+                "relacionado",
+                "respuesta_directa"
+              ],
+              "pt-conv-017:2": [
+                "respuesta_directa",
+                "relacionado"
+              ]
+            }
+          }
+        }
+      },
+      "consultas": {
+        "light": {
+          "es": {
+            "correctas": [
+              14,
+              14
+            ],
+            "erroneas": [
+              3,
+              3
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              5,
+              5
+            ],
+            "erroneas": [
+              1,
+              1
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              4,
+              4
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        },
+        "medium": {
+          "es": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              17,
+              17
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              4,
+              4
+            ],
+            "erroneas": [
+              13,
+              13
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              7,
+              7
+            ],
+            "erroneas": [
+              8,
+              8
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        }
+      },
+      "universal": {
+        "light": {
+          "es": {
+            "correctas": [
+              8,
+              8
+            ],
+            "erroneas": [
+              1,
+              1
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              6,
+              6
+            ],
+            "erroneas": [
+              0,
+              0
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              9,
+              9
+            ],
+            "erroneas": [
+              0,
+              0
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        },
+        "medium": {
+          "es": {
+            "correctas": [
+              2,
+              2
+            ],
+            "erroneas": [
+              11,
+              11
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "en": {
+            "correctas": [
+              3,
+              3
+            ],
+            "erroneas": [
+              9,
+              9
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          },
+          "pt": {
+            "correctas": [
+              2,
+              2
+            ],
+            "erroneas": [
+              8,
+              8
+            ],
+            "perdidas": [],
+            "ganancias": [],
+            "errores_nuevos": [],
+            "errores_corregidos": [],
+            "cambios_estado": {}
+          }
+        }
+      }
+    }
+  },
+  "objetivos": {
+    "light/pt-conv-003:2": {
+      "correcta": true,
+      "tramo": null
+    },
+    "light/pt-conv-016:2": {
+      "correcta": true,
+      "tramo": null
+    },
+    "medium/es-conv-004:3": {
+      "correcta": true,
+      "tramo": "al menos 12 caracteres"
+    },
+    "medium/es-conv-007:3": {
+      "correcta": true,
+      "tramo": "El Operador de Compras redacta la Resolución de compra"
+    },
+    "medium/es-conv-013:3": {
+      "correcta": true,
+      "tramo": "el envío de la devolución es gratuito"
+    },
+    "medium/en-conv-010:3": {
+      "correcta": true,
+      "tramo": "ten business days from the approval of the Requisition Form to issue the Purchase Order"
+    },
+    "medium/en-conv-013:3": {
+      "correcta": true,
+      "tramo": "return shipping is free"
+    },
+    "medium/pt-conv-007:3": {
+      "correcta": true,
+      "tramo": "O Operador de Compras redige a Resolução de compra"
+    }
+  }
+}

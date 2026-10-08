@@ -4,6 +4,11 @@
 codigo: en
 nombre: English
 stemmer: english
+bordes_respuesta:
+  unidades_cantidad: [character, characters, page, pages]
+  prefijos_cantidad: [at least, at most, up to, within, in, for, a maximum of, a minimum of]
+  referencias_cantidad: [from, after, following]
+  limites_actor: ['\s+and\s+(?:(?:it|they|he|she|then)\s+)?(?:sends?|forwards?|submits?|signs?|approves?|authorises?)\b', ',\s*(?:who|which)\b']
 stopwords:
 - a
 - about
@@ -262,6 +267,8 @@ intenciones:
     - before
     - when
   fin:
+    respaldo_patrones:
+    - expir\w*|renew\w*|valid\w*|end\w*|finish\w*|deadline|until|last (day|date)
     ejemplos:
     - "How often does the visitor pass expire?"
     - "How frequently does the driving permit expire?"
@@ -347,6 +354,8 @@ intenciones:
     - needs
     - requirement
   procedimiento:
+    respaldo_patrones:
+    - how|what (do|should) (i|we)|what steps|in what (way|manner)|procedure|process
     ejemplos:
     - "I forgot my access code, how do I recover it?"
     - "I cannot find my membership card, what do I do to recover it?"

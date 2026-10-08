@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from ipsis.lenguaje.intenciones import RespaldoIntenciones, construir_respaldo, tiene_tema
+from ipsis.lenguaje.intenciones import compatible_con_respaldo
 from ipsis.lenguaje.paquete import cargar_paquete
 from ipsis.lenguaje.consultas import comprender_consulta, plano
 from ipsis.nucleo.esquemas import QueryAnalysis, SenalesRecuperacion
@@ -165,3 +166,46 @@ def test_ejemplos_y_etiquetas_cubren_tres_idiomas_sin_copiar_bancos():
             assert 5 <= len(intencion.ejemplos) <= 10
             assert len({plano(e) for e in intencion.ejemplos}) == len(intencion.ejemplos)
             assert not preguntas.intersection(plano(e) for e in intencion.ejemplos)
+
+
+@pytest.mark.parametrize("idioma,fin,importe,procedimiento,actor", [
+    ("es", "¿Cada cuánto caduca el carnet?", "¿Y cuánto vale fuera del país?", "Perdí la tarjeta, ¿qué hago?", "¿Qué empresa recoge el paquete?"),
+    ("en", "How frequently does the pass expire?", "How much is the foreign allowance?", "I lost my card, what do I do?", "Which carrier collects it?"),
+    ("pt", "A cada quanto expira a carteira?", "Qual é o valor no exterior?", "Perdi a carteirinha, o que eu faço?", "Qual empresa retira o pacote?"),
+])
+def test_compatibilidad_no_confunde_importes_ni_actores(idioma, fin, importe, procedimiento, actor):
+    paquete = cargar_paquete(idioma)
+    assert compatible_con_respaldo(fin, paquete, "fin")
+    assert not compatible_con_respaldo(importe, paquete, "fin")
+    assert compatible_con_respaldo(procedimiento, paquete, "procedimiento")
+    assert not compatible_con_respaldo(actor, paquete, "procedimiento")
+
+
+def test_la_comprension_del_turno_actual_prevalece_sobre_la_heredada():
+    paquete = cargar_paquete("es")
+    consulta = QueryAnalysis(pregunta_original="¿Y quién la redacta? hasta cuándo firma resolución",
+                            pregunta_normalizada="redacta", intencion="responsable",
+                            contexto={"pregunta_usuario": "¿Y quién la redacta?"})
+    assert comprender_consulta(consulta, paquete).intencion == "responsable"
+
+
+def test_similitud_y_compatibilidad_usan_la_pregunta_actual():
+    from ipsis.consulta.contexto import ContextoConsulta
+    from ipsis.consulta.etapas.recuperacion import EtapaSenales
+    from ipsis.indice.estadisticas import EstadisticasLexicas
+
+    paquete = cargar_paquete("es")
+    est = EstadisticasLexicas.construir(["El importe en el exterior es de 200 euros. La licencia vence el lunes."], paquete)
+    codificadas = []
+    retriever = SimpleNamespace(estimar_confianza=lambda *a: SenalesRecuperacion(confianza_top1=0.9, margen_top1_top2=0.1),
+                               vector_consulta=lambda q: codificadas.append(q) or [1., 0.], estadisticas_lexico=lambda: est)
+    respaldo = SimpleNamespace(predecir=lambda v: SimpleNamespace(nombre="fin", candidato="fin", similitud=0.99, margen=0.4, ejemplo="ejemplo"))
+    motor = SimpleNamespace(retriever=retriever, top_k=3, idioma=paquete, respaldo_intenciones=respaldo, _confianza=lambda s: {})
+    actual = "¿Y cuál es el importe en el exterior?"
+    ctx = ContextoConsulta(actual + " licencia vence", "s", pregunta_usuario=actual,
+                           consulta=QueryAnalysis(pregunta_original=actual + " licencia vence", pregunta_normalizada="importe"))
+    EtapaSenales(motor).ejecutar(ctx)
+    assert codificadas == [actual]
+    assert ctx.consulta.intencion == "desconocida"
+    assert not ctx.diagnostico["intencion"]["aceptada"]
+    assert not ctx.diagnostico["intencion"]["compatible"]

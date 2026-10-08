@@ -35,6 +35,20 @@ lost.
   context supplies neighboring steps; the short display window alone loses
   valid follow-ups. Candidates of other topics are excluded.
 
+The opening turn's terms outside the core remain available for the first
+follow-up, then are compacted like any other turn. IDF selects the core;
+inheritance preserves the original word order. Dropping the remaining terms
+immediately or emitting them in descending IDF order lost two Portuguese
+answers despite otherwise correct inheritance.
+
+The interpreted question is retrieval context. Patterns and semantic intent
+compatibility use the current follow-up. The reader uses it when it expresses
+a recognized relation or multiple content terms; a bare qualifier ("and in
+summer?") keeps the interpreted question to retain what it modifies. For actor
+questions, the reader window isolates the sentence on the current action:
+the previous turn asking who signs must not override who now drafts. See
+the [correction measurements](../methodology/mediciones/v4-correcciones/README.md).
+
 A question is a follow-up of the current topic when its topic terms (those
 in the corpus, minus the pack's generic words) are:
 

@@ -135,3 +135,67 @@ def test_el_lector_recibe_solo_la_ventana_pertinente_y_los_offsets_vuelven_al_pa
     EtapaLectura(motor).ejecutar(ctx)
     assert len(lector.leidos[0]) <= 120
     assert largo[ctx.lecturas[0].inicio:ctx.lecturas[0].fin] == "6 meses"
+
+
+def test_seguimiento_lee_relacion_actual_y_aisla_el_actor_con_offsets_exactos():
+    from ipsis.indice.estadisticas import EstadisticasLexicas
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.nucleo.esquemas import QueryAnalysis
+    from types import SimpleNamespace
+
+    paquete = cargar_paquete("es")
+    texto = "El Director firma la resolución. La Secretaría redacta la resolución y la envía al Director para su firma."
+    est = EstadisticasLexicas.construir([texto], paquete)
+
+    class Lector(_LectorFalso):
+        def leer(self, pregunta, pasajes):
+            self.pregunta, self.pasajes = pregunta, pasajes
+            return super().leer(pregunta, pasajes)
+
+    lector = Lector("La Secretaría")
+    motor = _Motor(lector)
+    motor.idioma = paquete
+    motor.retriever = SimpleNamespace(estadisticas_lexico=lambda: est)
+    candidato = _candidato()
+    candidato.chunk.texto_fuente = texto
+    candidato.chunk.offset_fin = 100 + len(texto)
+    actual = "¿Y quién la redacta?"
+    ctx = ContextoConsulta(actual + " firma resolución", "s", pregunta_usuario=actual,
+                           consulta=QueryAnalysis(pregunta_original=actual + " firma resolución", pregunta_normalizada=actual,
+                                                  intencion="responsable", contexto={"pregunta_usuario": actual}))
+    ctx.candidatos = [candidato]
+    EtapaLectura(motor).ejecutar(ctx)
+    assert lector.pregunta == actual
+    assert lector.pasajes == ["La Secretaría redacta la resolución y la envía al Director para su firma."]
+    assert ctx.respuesta_exacta["texto"] == "La Secretaría redacta la resolución"
+    a, b = ctx.respuesta_exacta["offset_inicio"] - 100, ctx.respuesta_exacta["offset_fin"] - 100
+    assert texto[a:b] == ctx.respuesta_exacta["texto"]
+    assert ctx.diagnostico["tramo_completado"]["original"] == "La Secretaría"
+
+
+def test_un_calificativo_eliptico_conserva_la_pregunta_interpretada_del_lector():
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from types import SimpleNamespace
+    from ipsis.nucleo.esquemas import QueryAnalysis
+
+    class Lector(_LectorFalso):
+        def leer(self, pregunta, pasajes):
+            self.pregunta = pregunta
+            return super().leer(pregunta, pasajes)
+
+    texto = "En invierno se cambia el filtro cada 6 meses."
+    lector = Lector("6 meses")
+    motor = _Motor(lector)
+    motor.idioma = cargar_paquete("es")
+    actual = "¿Y en invierno?"
+    interpretada = actual + " cambia filtro"
+    candidato = _candidato()
+    candidato.chunk.texto_fuente = texto
+    candidato.chunk.offset_fin = 100 + len(texto)
+    ctx = ContextoConsulta(interpretada, "s", pregunta_usuario=actual,
+                           consulta=QueryAnalysis(pregunta_original=interpretada, pregunta_normalizada=interpretada,
+                                                  contexto={"pregunta_usuario": actual}))
+    ctx.candidatos = [candidato]
+    EtapaLectura(motor).ejecutar(ctx)
+    assert lector.pregunta == interpretada
+    assert ctx.respuesta_exacta["texto"] == "6 meses"

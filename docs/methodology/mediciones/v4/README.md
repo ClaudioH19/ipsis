@@ -104,8 +104,10 @@ de verificación; ampliar ejemplos y etiquetas exige una evaluación nueva.
   diferencia frente al código de los bancos es `ipsis/aplicacion/consulta.py`.
   `metadata.json` verifica esa procedencia y conserva hashes de archivos,
   modelos locales, plataforma, métrica y estado de recursos.
-- `corregido-code.zip`: código final, incluida la separación de las
-  palabras genéricas de memoria; coincide byte a byte con el código actual.
+- `corregido-code.zip`: código de V4 inicial, incluida la separación de las
+  palabras genéricas de memoria; corresponde al commit `b23ad8a`. Las
+  [correcciones posteriores](../v4-correcciones/README.md) guardan otro ZIP
+  y mantienen esta ronda como referencia histórica.
 
 Todas las mediciones son offline con los mismos modelos locales y dos
 hilos ONNX, bajo carga variable del equipo. El valor por defecto del servicio

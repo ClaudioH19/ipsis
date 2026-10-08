@@ -38,6 +38,25 @@ sentence (centered, with context on both sides), not the whole passage: it
 cut reading from ~1 s to ~0.5 s in medium. What is **shown** starts at the
 anchor sentence and only adds context to the right.
 
+For follow-ups expressing a recognized relation or multiple content terms,
+the reader receives the current user's question. A bare qualifier ("and in
+summer?") retains the interpreted question; the current question alone
+does not say what the qualifier modifies. The interpreted question with
+inherited topic terms also retrieves context.
+Actor questions use the single sentence selected for the current action,
+even when the passage fits within `max_reading_chars`. This keeps other
+question/answer pairs in the same passage from selecting an unrelated role.
+
+After selection, follow-up quantity spans can be completed with adjacent
+units, bounds and a reference point. An actor span can be completed with
+its immediately following matching action clause, stopping before a
+different role/action. Language forms live in `bordes_respuesta`; the raw
+span stays in `lecturas` and `tramo_completado`. Confidence and policy
+thresholds are unchanged. These boundaries are literal offsets, never a
+newly written answer or a replacement actor/number. The
+[correction measurements](mediciones/v4-correcciones/README.md) compare
+the published exact answer rather than crediting facts elsewhere in a citation.
+
 ## 5. Assumptions
 
 The question and the corpus are in the same language; the model is
@@ -48,6 +67,8 @@ no guarantee).
 
 - The span is always a literal substring of the passage.
 - In `related`, the span is never published as the answer.
+- Completing a span preserves its selected actor or quantity and its source
+  offsets; an incorrect actor is not repaired by widening to the entire citation.
 
 ## 7. Parameters and defaults
 

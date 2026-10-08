@@ -1,0 +1,146 @@
+{
+  "light": {
+    "solo_puntajes": true,
+    "cambios": [
+      {
+        "pregunta": "¿Qué dice el artículo 99?",
+        "confianza_antes": {
+          "top1": 0.82561,
+          "margin": 0.05864
+        },
+        "confianza_actual": {
+          "top1": 0.82813,
+          "margin": 0.0552
+        },
+        "scores_fragmentos_antes": [],
+        "scores_fragmentos_actuales": []
+      },
+      {
+        "pregunta": "¿Rechaza el 5% del agua?",
+        "confianza_antes": {
+          "top1": 0.83084,
+          "margin": 0.01347
+        },
+        "confianza_actual": {
+          "top1": 0.84075,
+          "margin": 0.01515
+        },
+        "scores_fragmentos_antes": [],
+        "scores_fragmentos_actuales": []
+      }
+    ],
+    "presentacion_relacionada": []
+  },
+  "medium": {
+    "solo_puntajes": false,
+    "cambios": [
+      {
+        "pregunta": "¿Cuánto cuesta el purificador?",
+        "confianza_antes": {
+          "top1": 0.88395,
+          "margin": 0.04861
+        },
+        "confianza_actual": {
+          "top1": 0.88395,
+          "margin": 0.04861
+        },
+        "scores_fragmentos_antes": [
+          0.54194
+        ],
+        "scores_fragmentos_actuales": [
+          1.0,
+          0.66667
+        ]
+      },
+      {
+        "pregunta": "¿Qué pasa si no estoy en la visita?",
+        "confianza_antes": {
+          "top1": 0.86534,
+          "margin": 0.08885
+        },
+        "confianza_actual": {
+          "top1": 0.86534,
+          "margin": 0.08885
+        },
+        "scores_fragmentos_antes": [
+          0.86451
+        ],
+        "scores_fragmentos_actuales": [
+          0.99926
+        ]
+      },
+      {
+        "pregunta": "¿Qué dice el artículo 99?",
+        "confianza_antes": {
+          "top1": 0.82561,
+          "margin": 0.05864
+        },
+        "confianza_actual": {
+          "top1": 0.82813,
+          "margin": 0.0552
+        },
+        "scores_fragmentos_antes": [],
+        "scores_fragmentos_actuales": []
+      },
+      {
+        "pregunta": "¿Rechaza el 5% del agua?",
+        "confianza_antes": {
+          "top1": 0.83084,
+          "margin": 0.01347
+        },
+        "confianza_actual": {
+          "top1": 0.84075,
+          "margin": 0.01515
+        },
+        "scores_fragmentos_antes": [],
+        "scores_fragmentos_actuales": []
+      }
+    ],
+    "presentacion_relacionada": [
+      {
+        "pregunta": "¿Cuánto cuesta el purificador?",
+        "antes": {
+          "status": "related",
+          "service_level": "normal",
+          "plan": "gray_zone",
+          "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
+          "fragments": [
+            {
+              "chunk_id": "manual-purificador__c0000",
+              "doc_title": "Manual del purificador de agua Aqualis P3",
+              "section": "Manual del purificador de agua Aqualis P3",
+              "offset_start": 463,
+              "offset_end": 510,
+              "text": "El filtro de sedimentos se cambia cada 6 meses."
+            }
+          ]
+        },
+        "actual": {
+          "status": "related",
+          "service_level": "normal",
+          "plan": "gray_zone",
+          "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nTe sumo también esto: Reglamento ficticio creado para las pruebas de caracterización. (Fuente: Reglamento del servicio técnico Aqualis).",
+          "fragments": [
+            {
+              "chunk_id": "manual-purificador__c0000",
+              "doc_title": "Manual del purificador de agua Aqualis P3",
+              "section": "Manual del purificador de agua Aqualis P3",
+              "offset_start": 105,
+              "offset_end": 141,
+              "text": "El purificador Aqualis P3 no existe."
+            },
+            {
+              "chunk_id": "reglamento-servicio__c0000",
+              "doc_title": "Reglamento del servicio técnico Aqualis",
+              "section": "Reglamento del servicio técnico Aqualis",
+              "offset_start": 40,
+              "offset_end": 103,
+              "text": "Reglamento ficticio creado para las pruebas de caracterización."
+            }
+          ]
+        },
+        "causa": "El lector usa la pregunta actual y deja de escoger una oración del filtro para un precio que el corpus no informa; cae a evidencia relacionada."
+      }
+    ]
+  }
+}

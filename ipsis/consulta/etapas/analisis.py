@@ -30,6 +30,14 @@ class EtapaAnalisis(_Etapa):
                 ctx.diagnostico["sinonimos"] = sinonimos
                 ctx.pregunta = f"{ctx.pregunta.rstrip()} {' '.join(f for formas in sinonimos.values() for f in formas)}"
         ctx.consulta = m._analizar(ctx.pregunta, ctx.id_sesion)
+        if ctx.pregunta_usuario:
+            # La pregunta interpretada recupera el tema; sus patrones antiguos
+            # no determinan qué relación se pregunta en este turno.
+            actual = m._analizar(ctx.pregunta_usuario, ctx.id_sesion)
+            contexto = {k: v for k, v in ctx.consulta.contexto.items() if k != "relacion"}
+            if "relacion" in actual.contexto:
+                contexto["relacion"] = actual.contexto["relacion"]
+            ctx.consulta = ctx.consulta.model_copy(update={"intencion": actual.intencion, "contexto": contexto})
         if callable(obtener) and getattr(m.retriever, "modo", "hibrida") != "vectorial":
             from ipsis.lenguaje.sinonimos import expansion_automatica
 

@@ -86,7 +86,7 @@ def comprender_consulta(consulta, paquete) -> Comprension:
     La similitud identifica una intención, pero no localiza una relación en
     la pregunta. Solo los patrones pueden declarar términos de relación.
     """
-    comprension = comprender(consulta.pregunta_original, paquete)
+    comprension = comprender(consulta.contexto.get("pregunta_usuario") or consulta.pregunta_original, paquete)
     if comprension.intencion:
         return comprension
     intencion = (getattr(paquete, "intenciones", None) or {}).get(consulta.intencion)

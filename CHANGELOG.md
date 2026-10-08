@@ -8,7 +8,24 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
-- **V4 validation:** 1,054 tests pass with two skips; the three evaluation
+- **Follow-up extraction corrections:** retain opening-topic terms outside
+  the core for one follow-up and preserve their original order. Determine
+  intentions from the current question and use it for reading when it
+  expresses a relation or multiple content terms; bare qualifiers retain
+  inherited context. Actor questions isolate the matching
+  sentence; literal QA boundary completion retains quantity units, limits
+  and reference points, or the selected actor's matching action clause.
+  Preserve raw model spans and offsets in diagnostics. Add language-declared
+  compatibility for end/procedure fallback without lowering cosine/margin
+  or answer thresholds. Lexical behavior v5 invalidates stale calibrations.
+  [Correction measurements](docs/methodology/mediciones/v4-correcciones/README.md)
+  retain the initial V4 defects and each development round separately.
+  Recover all eight targeted turns with no lost correct answers or new
+  direct errors against F1 and initial V4 in the three banks. All 1,072 tests
+  pass with two skips; paired light latency satisfies G5 against both bases.
+  Existing medium reader errors in independent queries remain documented.
+
+- **Initial V4 validation (`b23ad8a`):** 1,054 tests pass with two skips; the three evaluation
   banks and paired latency measurements satisfy G1–G6. Conversation topic
   inheritance improves, while four literal answers regress against F1 and
   five newly direct positive answers have incomplete or incorrect selected

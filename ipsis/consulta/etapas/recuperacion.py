@@ -173,19 +173,22 @@ class EtapaSenales(_Etapa):
         ctx.diagnostico["senales"] = ctx.senales.model_dump(mode="python")
         respaldo = getattr(m, "respaldo_intenciones", None)
         if respaldo is not None and ctx.consulta.intencion == "desconocida":
-            from ipsis.lenguaje.intenciones import tiene_tema
+            from ipsis.lenguaje.intenciones import compatible_con_respaldo, tiene_tema
 
-            if not tiene_tema(ctx.consulta.pregunta_original, m.idioma, m.retriever.estadisticas_lexico()):
+            pregunta_actual = ctx.pregunta_usuario or ctx.consulta.pregunta_original
+            if not tiene_tema(pregunta_actual, m.idioma, m.retriever.estadisticas_lexico()):
                 return
-            prediccion = respaldo.predecir(m.retriever.vector_consulta(ctx.consulta.pregunta_original))
+            prediccion = respaldo.predecir(m.retriever.vector_consulta(pregunta_actual))
+            compatible = compatible_con_respaldo(pregunta_actual, m.idioma, prediccion.candidato)
+            nombre = prediccion.nombre if compatible else None
             ctx.diagnostico["intencion"] = {
-                "nombre": prediccion.nombre or "desconocida", "origen": "similitud",
+                "nombre": nombre or "desconocida", "origen": "similitud",
                 "candidato": prediccion.candidato, "similitud": prediccion.similitud,
                 "margen": prediccion.margen, "ejemplo": prediccion.ejemplo,
-                "aceptada": prediccion.nombre is not None,
+                "aceptada": nombre is not None, "compatible": compatible,
             }
-            if prediccion.nombre is not None:
-                ctx.consulta = ctx.consulta.model_copy(update={"intencion": prediccion.nombre})
+            if nombre is not None:
+                ctx.consulta = ctx.consulta.model_copy(update={"intencion": nombre})
 
 
 class EtapaRecuperacion(_Etapa):

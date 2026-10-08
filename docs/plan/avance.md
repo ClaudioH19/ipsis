@@ -5,6 +5,10 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado (explicar 
 Punto de partida (2026-10-06): rama `v2/ruta` en `39c7878`, PR #7 abierto
 hacia `main`; suite completa 935 pruebas, 2 omitidas.
 
+La tabla registra la integración inicial del 2026-10-06: «este commit»
+se refiere a `b23ad8a`. Las correcciones posteriores y el estado vigente
+se registran al final; los resultados iniciales se conservan como referencia.
+
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | F1.1 | ✅ | 2026-10-06 | `c209690` | 60 casos por idioma (14/20/16/4/3/3); 3 documentos nuevos por idioma. Capacidad `requisito` normalizada a `condicion`. |
@@ -358,3 +362,58 @@ medición. Se mantienen como limitaciones y requieren revisión del cierre.
 | conversaciones | medium | es | 42 | 17 |
 | conversaciones | medium | en | 42 | 2 |
 | conversaciones | medium | pt | 40 | 1 |
+
+## Correcciones posteriores, 2026-10-07–08
+
+Validación terminada: **1.072 pruebas aprobadas, 2 omitidas**, cero fallos
+y errores (15 min 7 s). Pasan los 26 criterios finales, incluida la
+comparación de todos los turnos positivos frente a F1 y V4 inicial.
+[Informe y reproducción](../methodology/mediciones/v4-correcciones/README.md).
+
+Los ocho turnos que reunían cuatro pérdidas literales y cinco nuevas
+directas incorrectas vuelven a ser correctos. Frente a F1 y V4 inicial,
+ningún acierto se pierde y no aparecen nuevas directas erróneas en los
+tres bancos. El núcleo conserva una vez los términos iniciales adicionales
+y el orden de las formas; la intención usa el turno actual. El lector
+conserva contexto para calificativos aislados y distingue el actor de la
+acción que se pregunta ahora. La terminación literal del tramo conserva
+su puntaje bruto y registra offsets literales; el tramo original queda en
+el diagnóstico. No selecciona otro actor ni otra cifra.
+
+| Perfil | es: F1 / V4 inicial / vigente | en | pt |
+|---|---|---|---|
+| light | 29 / 34 / 34 | 19 / 20 / 21 | 20 / 22 / 24 |
+| medium | 6 / 5 / 11 | 8 / 7 / 12 | 8 / 8 / 11 |
+
+Respuestas literales correctas sobre 54 por idioma. Herencia: 36/35/34
+sobre 38 en ambos perfiles; cero herencias indebidas y directas negativas.
+Los bancos independientes mantienen sus aciertos y errores anteriores;
+la corrección no resuelve todos los errores del lector de medium.
+
+Latencia light: tres pares alternados y 90 consultas por idioma/versión
+contra cada referencia, sin ejecutar la suite en paralelo. G5 pasa en las
+seis comparaciones:
+
+| Referencia | Idioma | Antes → vigente (ms) | Cambio |
+|---|---|---|---|
+| V4 inicial | es | 34,2 → 31,1 | −9,0 % |
+| V4 inicial | en | 25,3 → 26,1 | +3,2 % |
+| V4 inicial | pt | 29,6 → 30,2 | +1,8 % |
+| F1 | es | 52,0 → 32,3 | −37,9 % |
+| F1 | en | 35,6 → 28,7 | −19,4 % |
+| F1 | pt | 45,0 → 29,8 | −33,7 % |
+
+La variación entre rondas se conserva; estas medias no son una promesa
+de rendimiento ni atribuyen toda la diferencia al código.
+
+El respaldo conserva ocho aceptaciones correctas por perfil en el banco
+natural (seis dev y dos test), con los umbrales anteriores. Los patrones
+de compatibilidad rechazan las confusiones observadas de importe con fin
+y transportadora con procedimiento. Los casos de test ya se observaron
+durante el desarrollo, por lo que no se presentan como una validación
+estadística intacta. Las aceptaciones de los bancos secundarios se
+inspeccionan y conservan, sin etiquetas exhaustivas independientes.
+
+**F5.1 sigue pendiente de revisión y aprobación del usuario.** Se conserva
+`docs/plan/` hasta ese cierre. Las pérdidas específicas de la integración
+inicial están corregidas; los demás errores del lector quedan documentados.

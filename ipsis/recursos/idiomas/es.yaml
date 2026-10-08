@@ -4,6 +4,11 @@
 codigo: es
 nombre: Español
 stemmer: spanish
+bordes_respuesta:
+  unidades_cantidad: [carácter, caracteres, página, páginas]
+  prefijos_cantidad: [al menos, como mínimo, como máximo, hasta, dentro de, en, con, a partir de]
+  referencias_cantidad: [desde, después de, a partir de, tras]
+  limites_actor: ['\s+y\s+(?:(?:la|lo|las|los)\s+)?(?:envía|remite|entrega|firma|aprueba|autoriza)\b', ',\s*(?:que|quien)\b']
 stopwords:
 - a
 - al
@@ -306,6 +311,9 @@ intenciones:
     - al momento de
     - cuando
   fin:
+    respaldo_patrones:
+    - venc\w*|expir\w*|caduc\w*|renov\w*|vigencia|validez|termin\w*|finaliz\w*
+    - hasta|ultimo dia|ultima fecha|fecha limite
     ejemplos:
     - "¿Cada cuánto caduca el pase de visitante?"
     - "¿Con qué frecuencia vence el permiso de conducir?"
@@ -395,6 +403,8 @@ intenciones:
     - requisito
     - requisitos
   procedimiento:
+    respaldo_patrones:
+    - como|que (hago|hacemos|hacer|pasos)|de que (forma|manera)|procedimiento|proceso|tramitar|tramito
     ejemplos:
     - "Olvidé mi código de acceso, ¿cómo lo recupero?"
     - "No encuentro mi carné, ¿qué hago para recuperarlo?"

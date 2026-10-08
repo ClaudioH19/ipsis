@@ -1,5 +1,10 @@
 # V4 evaluation: conversation memory, local synonyms and intent fallback
 
+This report describes the initial V4 snapshot (`b23ad8a`). Subsequent
+[conversation and intent corrections](mediciones/v4-correcciones/README.md)
+retain this comparison as their baseline and report verification separately.
+The defects listed below describe that initial snapshot.
+
 The engine now keeps bounded conversation topics with inactivity expiry,
 uses versioned local WordNet tables for conservative BM25 expansion, and
 can infer an unknown intention from measured examples. These features

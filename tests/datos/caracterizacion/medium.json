@@ -88,7 +88,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nTe sumo también esto: Reglamento ficticio creado para las pruebas de caracterización. (Fuente: Reglamento del servicio técnico Aqualis).",
     "confidence": {
       "top1": 0.88395,
       "margin": 0.04861
@@ -98,10 +98,19 @@
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 463,
-        "offset_end": 510,
-        "text": "El filtro de sedimentos se cambia cada 6 meses.",
-        "score": 0.54194
+        "offset_start": 105,
+        "offset_end": 141,
+        "text": "El purificador Aqualis P3 no existe.",
+        "score": 1.0
+      },
+      {
+        "chunk_id": "reglamento-servicio__c0000",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis",
+        "offset_start": 40,
+        "offset_end": 103,
+        "text": "Reglamento ficticio creado para las pruebas de caracterización.",
+        "score": 0.66667
       }
     ]
   },
@@ -122,7 +131,7 @@
         "offset_start": 260,
         "offset_end": 383,
         "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.86451
+        "score": 0.99926
       }
     ]
   },
@@ -255,8 +264,8 @@
     "plan": "no_answer",
     "answer": "No hay rastro de \"artículo 99\" en los documentos disponibles.",
     "confidence": {
-      "top1": 0.82561,
-      "margin": 0.05864
+      "top1": 0.82813,
+      "margin": 0.0552
     },
     "fragments": []
   },
@@ -266,8 +275,8 @@
     "plan": "no_answer",
     "answer": "No hay información sobre \"5%\" en tus documentos; puede que no forme parte de ellos.",
     "confidence": {
-      "top1": 0.83084,
-      "margin": 0.01347
+      "top1": 0.84075,
+      "margin": 0.01515
     },
     "fragments": []
   },

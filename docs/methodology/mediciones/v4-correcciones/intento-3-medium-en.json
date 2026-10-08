@@ -1,0 +1,3378 @@
+{
+  "turnos": [
+    {
+      "conversacion": "en-conv-007",
+      "turno": 1,
+      "pregunta": "Who signs the purchase Resolution?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "Director of Administration for signature",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Take a look at what the document says:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. (Source: Procurement Procedures Manual).",
+      "tramo_lector": "Director of Administration",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "resolution signs purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-007",
+      "turno": 2,
+      "pregunta": "What is the capital of Mongolia?",
+      "estado": "sin_respuesta",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": false,
+      "directa_esperada": false,
+      "respuesta": null,
+      "correcta": false,
+      "directa": false,
+      "mensaje": "I went through the documents and that information isn't there.",
+      "tramo_lector": null,
+      "conversacion_diagnostico": {
+        "accion": "sin_cambio",
+        "tema": "resolution signs purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-007",
+      "turno": 3,
+      "pregunta": "and who drafts it?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "and who drafts it? signs purchase resolution",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "The Purchasing Officer drafts the purchase Resolution",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "This is what appears in the document:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. (Source: Procurement Procedures Manual).",
+      "tramo_lector": "The Purchasing Officer",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "resolution signs purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-010",
+      "turno": 1,
+      "pregunta": "when does the purchase start?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "Once the Requisition Form has been approved",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "This is what appears in the document:\n\nOnce the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount. (Source: Procurement Procedures Manual).",
+      "tramo_lector": "Once the Requisition Form has been approved by the Head of the Purchasing Department",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "start purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-010",
+      "turno": 2,
+      "pregunta": "and who registers the request?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "and who registers the request? purchase start",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "The Purchasing Officer registers the request in the system",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "The document puts it this way:\n\nThe Purchasing Officer registers the request in the system and assigns a process number. (Source: Procurement Procedures Manual).",
+      "tramo_lector": "The Purchasing Officer",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "start purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-010",
+      "turno": 3,
+      "pregunta": "and in how many days is the order issued?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "and in how many days is the order issued? purchase start registers request",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "ten business days from the approval of the Requisition Form",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "This is what the document says:\n\nThe Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order. (Source: Procurement Procedures Manual).",
+      "tramo_lector": "ten",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "start purchase"
+      }
+    },
+    {
+      "conversacion": "en-conv-013",
+      "turno": 1,
+      "pregunta": "Until when can I request a refund?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "up to 30 days after receiving the order",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "This is what the document says:\n\nCustomers can request a refund up to 30 days after receiving the order. (Source: Refund policy).",
+      "tramo_lector": "30 days",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "refund request"
+      }
+    },
+    {
+      "conversacion": "en-conv-013",
+      "turno": 2,
+      "pregunta": "and how many days until it's paid?",
+      "estado": "relacionado",
+      "heredo": true,
+      "interpretada": "and how many days until it's paid? request refund",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "within 10 business days",
+      "correcta": false,
+      "directa": false,
+      "mensaje": "The documents say nothing direct about «s». Take a look at the closest:\n\nThe refund is paid within 10 business days after the request is approved. (Source: Refund policy).",
+      "tramo_lector": null,
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "refund request"
+      }
+    },
+    {
+      "conversacion": "en-conv-013",
+      "turno": 3,
+      "pregunta": "and if the product arrives damaged?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "and if the product arrives damaged? request refund many until s paid",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "return shipping is free",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "According to the loaded text:\n\nIf the product arrives damaged, return shipping is free. (Source: Refund policy).",
+      "tramo_lector": "return shipping is free",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "refund request"
+      }
+    }
+  ],
+  "resumen": {
+    "herencia_correcta": 6,
+    "con_hereda": 6,
+    "herencia_indebida": 0,
+    "herencia_perdida": 0,
+    "respuestas_correctas": 2,
+    "con_respuesta": 8,
+    "directas_indebidas": 0,
+    "sin_directa": 1
+  },
+  "diagnosticos": [
+    {
+      "pregunta": "Who signs the purchase Resolution?",
+      "sesion": "conversacion:en-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 1,
+          "analisis_ms": 30,
+          "confianza_ms": 19,
+          "filtros_ms": 1,
+          "recuperacion_ms": 68,
+          "reranking_ms": 5437,
+          "lectura_ms": 17521,
+          "evidencia_ms": 2,
+          "politica_ms": 1,
+          "redaccion_ms": 0,
+          "verificacion_ms": 20
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.375,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.375,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.35,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.35,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.34285714285714286,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34285714285714286,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.25396825396825395,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25396825396825395,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.20202020202020202,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.20202020202020202,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.19090909090909092,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.19090909090909092,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.836125364107538,
+          "margen_top1_top2": 0.017084508462007375,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.8013126154220759,
+          "candidato_id": "procurement-manual__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "procurement-manual",
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+            "offset_inicio": 1438,
+            "offset_fin": 1553,
+            "seccion_path": [
+              "Procurement Procedures Manual"
+            ],
+            "score": 0.9999790177888688
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "resolution",
+            "signs"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 0.679248544652491,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "signs": 1.4816,
+            "purchasing": 1.1451,
+            "resolution": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "resolution",
+            "signs"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          1.3945,
+          -2.7851,
+          -6.1609,
+          -6.4913
+        ],
+        "rerank": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": 1.3945
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -2.7851
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -6.1609
+          },
+          {
+            "chunk_id": "refunds__c0000",
+            "score": -6.4913
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "Who signs the purchase Resolution?",
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "who"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "resolution signs purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "Director of Administration",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "The requesting unit",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.45375121369179344,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 0.679248544652491,
+          "s_rr": 0.8013126154220759,
+          "s_qa": 0.9999790177888688,
+          "dominio": 0.8013126154220759
+        },
+        "oracion_foco": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.11"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Take a look at what the document says:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. (Source: Procurement Procedures Manual).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Take a look at what the document says:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+              "conector": null,
+              "cita": "(Source: Procurement Procedures Manual)",
+              "chunk_id": "procurement-manual__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "procurement-manual__c0000",
+              "doc_titulo": "Procurement Procedures Manual",
+              "seccion": "Procurement Procedures Manual",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 1438,
+              "offset_fin": 1553,
+              "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+              "score": 0.9999790177888688
+            }
+          ],
+          "confianza": {
+            "top1": 0.836125364107538,
+            "margen": 0.017084508462007375,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 23102,
+          "respuesta_exacta": {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "Director of Administration",
+            "offset_inicio": 1512,
+            "offset_fin": 1538
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "What is the capital of Mongolia?",
+      "sesion": "conversacion:en-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 5,
+          "confianza_ms": 22,
+          "filtros_ms": 1,
+          "recuperacion_ms": 8,
+          "reranking_ms": 3734,
+          "lectura_ms": 579,
+          "evidencia_ms": 29,
+          "politica_ms": 0
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.75,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.75,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.5333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5333333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.4444444444444444,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4444444444444444,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.41666666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.41666666666666663,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.34285714285714286,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34285714285714286,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.26785714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26785714285714285,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.2361111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2361111111111111,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.2,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.18181818181818182,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.18181818181818182,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.7424546367734728,
+          "margen_top1_top2": 0.009730168741075795,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "abstiene",
+          "motivo": "fuera_dominio",
+          "entidad_texto": null,
+          "capa_decisora": "fuera_dominio",
+          "confianza_utilizada": 0.14151545591157608,
+          "candidato_id": "library-hours__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "library-hours",
+            "chunk_id": "library-hours__c0000",
+            "texto": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to 14:00 and on Sundays it is closed.",
+            "offset_inicio": 38,
+            "offset_fin": 163,
+            "seccion_path": [
+              "Municipal library hours",
+              "Opening hours"
+            ],
+            "score": 0.34285714285714286
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "travel-allowance-policy",
+            "chunk_id": "travel-allowance-policy__c0000",
+            "texto": "Fictitious document created for testing. It regulates the allowances and tickets of staff travelling on official business.",
+            "offset_inicio": 24,
+            "offset_fin": 146,
+            "seccion_path": [
+              "Travel Allowance Policy"
+            ],
+            "score": 0.6666666666666666
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "greenhouse-irrigation",
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "texto": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per hour.",
+            "offset_inicio": 38,
+            "offset_fin": 134,
+            "seccion_path": [
+              "Greenhouse irrigation manual",
+              "Schedule"
+            ],
+            "score": 0.18181818181818182
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "remote-work-regulation",
+            "chunk_id": "remote-work-regulation__c0000",
+            "texto": "Fictitious document created for testing. It regulates remote work for the institution's staff.\nArticle 1. This regulation sets the conditions under which staff may work part of their week remotely.\nArticle 2. Staff with at least six months of service at the institution may apply for remote work.\nArticle 3. The application is submitted to the direct manager using the remote work form. The manager replies within five business days.\nArticle 4. Remote work may cover up to three days per week.",
+            "offset_inicio": 23,
+            "offset_fin": 516,
+            "seccion_path": [
+              "Remote Work Regulation"
+            ],
+            "score": 0.5333333333333333
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [],
+          "s_oov": 1.0,
+          "s_cov": 0.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "capit": 3.091,
+            "mongolia": 3.091
+          },
+          "ausentes_del_corpus": [
+            "capit",
+            "mongolia"
+          ],
+          "foco_encontrados": [],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -5.5044,
+          -6.8661,
+          -7.8576,
+          -8.1721
+        ],
+        "rerank": [
+          {
+            "chunk_id": "library-hours__c0000",
+            "score": -5.5044
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -6.8661
+          },
+          {
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": -7.8576
+          },
+          {
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": -8.1721
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "What is the capital of Mongolia?",
+        "intencion": null,
+        "conversacion": {
+          "accion": "sin_cambio",
+          "tema": "resolution signs purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "library-hours__c0000",
+            "texto": "second floor of building B",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "texto": "Staff request the allowance at least seven days before the trip using the official travel form",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "fuera_dominio",
+        "senales_politica": {
+          "s_ret": 0.14151545591157608,
+          "s_oov": 1.0,
+          "s_foco": 1.0,
+          "s_cov": 0.0,
+          "s_rr": 0.004052226298736612,
+          "s_qa": 0.0,
+          "dominio": 0.14151545591157608
+        },
+        "oracion_foco": "The library opens Monday to Friday from 8:30 to 20:00.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.no_answer.7"
+        ],
+        "contrato_http": {
+          "estado": "sin_respuesta",
+          "nivel_servicio": "normal",
+          "respuesta": "I went through the documents and that information isn't there.",
+          "bloques": [
+            {
+              "tipo": "mensaje",
+              "texto": "I went through the documents and that information isn't there."
+            }
+          ],
+          "plan": "sin_respuesta",
+          "fragmentos": [],
+          "confianza": {
+            "top1": 0.7424546367734728,
+            "margen": 0.009730168741075795,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4383
+        }
+      }
+    },
+    {
+      "pregunta": "and who drafts it?",
+      "sesion": "conversacion:en-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 3,
+          "confianza_ms": 17,
+          "filtros_ms": 1,
+          "recuperacion_ms": 81,
+          "reranking_ms": 3304,
+          "lectura_ms": 313,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 14
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.35,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.35,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.325,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.325,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.3111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3111111111111111,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.26666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26666666666666666,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.20202020202020202,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.20202020202020202,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.14285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.14285714285714285,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8507941138340454,
+          "margen_top1_top2": 0.013141257607000467,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.7501262697929075,
+          "candidato_id": "procurement-manual__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "procurement-manual",
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+            "offset_inicio": 1438,
+            "offset_fin": 1553,
+            "seccion_path": [
+              "Procurement Procedures Manual"
+            ],
+            "score": 0.999962583921264
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "drafts"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "drafts": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "drafts"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          1.0993,
+          -3.7364,
+          -6.4252,
+          -7.0893
+        ],
+        "rerank": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": 1.0993
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -3.7364
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -6.4252
+          },
+          {
+            "chunk_id": "lab-protocol__c0000",
+            "score": -7.0893
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "and who drafts it? signs purchase resolution",
+        "pregunta_lectura": "and who drafts it?",
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "who"
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "resolution signs purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "The requesting unit",
+            "prob_respuesta": 0.0001,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5026470461134845,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.7501262697929075,
+          "s_qa": 0.999962583921264,
+          "dominio": 0.7501262697929075
+        },
+        "oracion_foco": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.8"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "This is what appears in the document:\n\nThe Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature. (Source: Procurement Procedures Manual).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "This is what appears in the document:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+              "conector": null,
+              "cita": "(Source: Procurement Procedures Manual)",
+              "chunk_id": "procurement-manual__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "procurement-manual__c0000",
+              "doc_titulo": "Procurement Procedures Manual",
+              "seccion": "Procurement Procedures Manual",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 1438,
+              "offset_fin": 1553,
+              "texto": "The Purchasing Officer drafts the purchase Resolution and sends it to the Director of Administration for signature.",
+              "score": 0.999962583921264
+            }
+          ],
+          "confianza": {
+            "top1": 0.8507941138340454,
+            "margen": 0.013141257607000467,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3739,
+          "respuesta_exacta": {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer",
+            "offset_inicio": 1438,
+            "offset_fin": 1460
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "when does the purchase start?",
+      "sesion": "conversacion:en-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 3,
+          "confianza_ms": 18,
+          "filtros_ms": 1,
+          "recuperacion_ms": 53,
+          "reranking_ms": 3293,
+          "lectura_ms": 996,
+          "evidencia_ms": 2,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 13
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.2909090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2909090909090909,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.25757575757575757,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25757575757575757,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.25,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8700172536251315,
+          "margen_top1_top2": 0.01523114201545328,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.5667241787504383,
+          "candidato_id": "procurement-manual__c0001"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "procurement-manual",
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "Once the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount.",
+            "offset_inicio": 794,
+            "offset_fin": 983,
+            "seccion_path": [
+              "Procurement Procedures Manual"
+            ],
+            "score": 0.8951380287219859
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "purchasing"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "purchasing": 1.1451,
+            "starts": 1.4816
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "purchasing"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -3.2607,
+          -3.6265,
+          -3.7417,
+          -5.3654
+        ],
+        "rerank": [
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -3.2607
+          },
+          {
+            "chunk_id": "library-hours__c0000",
+            "score": -3.6265
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": -3.7417
+          },
+          {
+            "chunk_id": "refunds__c0000",
+            "score": -5.3654
+          }
+        ],
+        "lectura_por_pista": "procurement-manual__c0000",
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "when does the purchase start?",
+        "intencion": {
+          "nombre": "inicio",
+          "origen": "patron",
+          "relacion": "when does the purchase start"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "start purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "two business days",
+            "prob_respuesta": 0.0031,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "library-hours__c0000",
+            "texto": "Book loans last 14 days and can be renewed once",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "Once the Requisition Form has been approved by the Head of the Purchasing Department",
+            "prob_respuesta": 0.9476,
+            "s_qa": 0.8951
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5667241787504383,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.03694497470931964,
+          "s_qa": 0.8951380287219859,
+          "dominio": 0.5667241787504383
+        },
+        "oracion_foco": "Once the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.8"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "This is what appears in the document:\n\nOnce the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount. (Source: Procurement Procedures Manual).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "This is what appears in the document:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "Once the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount.",
+              "conector": null,
+              "cita": "(Source: Procurement Procedures Manual)",
+              "chunk_id": "procurement-manual__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "procurement-manual__c0000",
+              "doc_titulo": "Procurement Procedures Manual",
+              "seccion": "Procurement Procedures Manual",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 794,
+              "offset_fin": 983,
+              "texto": "Once the Requisition Form has been approved by the Head of the Purchasing Department, the requested product and/or service will be purchased using the method that corresponds to the amount.",
+              "score": 0.8951380287219859
+            }
+          ],
+          "confianza": {
+            "top1": 0.8700172536251315,
+            "margen": 0.01523114201545328,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4382,
+          "respuesta_exacta": {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "Once the Requisition Form has been approved by the Head of the Purchasing Department",
+            "offset_inicio": 794,
+            "offset_fin": 878
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "and who registers the request?",
+      "sesion": "conversacion:en-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 4,
+          "confianza_ms": 14,
+          "filtros_ms": 1,
+          "recuperacion_ms": 47,
+          "reranking_ms": 3862,
+          "lectura_ms": 388,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 19
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.2909090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2909090909090909,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.20202020202020202,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.20202020202020202,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8603644465643787,
+          "margen_top1_top2": 0.0045214449638850684,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.6587601113126537,
+          "candidato_id": "procurement-manual__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "procurement-manual",
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer registers the request in the system and assigns a process number.",
+            "offset_inicio": 984,
+            "offset_fin": 1072,
+            "seccion_path": [
+              "Procurement Procedures Manual"
+            ],
+            "score": 0.9999969841393057
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "registers",
+            "request"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "registers": 1.9924,
+            "request": 0.6931
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "registers",
+            "request"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          0.6578,
+          -0.9312,
+          -5.2717,
+          -6.4368
+        ],
+        "rerank": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.6578
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -0.9312
+          },
+          {
+            "chunk_id": "lab-protocol__c0000",
+            "score": -5.2717
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -6.4368
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "and who registers the request? purchase start",
+        "pregunta_lectura": "and who registers the request?",
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "who"
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "start purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "The requesting unit",
+            "prob_respuesta": 0.0369,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5345481552145958,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.6587601113126537,
+          "s_qa": 0.9999969841393057,
+          "dominio": 0.6587601113126537
+        },
+        "oracion_foco": "The Purchasing Officer registers the request in the system and assigns a process number.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.3"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "The document puts it this way:\n\nThe Purchasing Officer registers the request in the system and assigns a process number. (Source: Procurement Procedures Manual).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "The document puts it this way:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "The Purchasing Officer registers the request in the system and assigns a process number.",
+              "conector": null,
+              "cita": "(Source: Procurement Procedures Manual)",
+              "chunk_id": "procurement-manual__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "procurement-manual__c0000",
+              "doc_titulo": "Procurement Procedures Manual",
+              "seccion": "Procurement Procedures Manual",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 984,
+              "offset_fin": 1072,
+              "texto": "The Purchasing Officer registers the request in the system and assigns a process number.",
+              "score": 0.9999969841393057
+            }
+          ],
+          "confianza": {
+            "top1": 0.8603644465643787,
+            "margen": 0.0045214449638850684,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4339,
+          "respuesta_exacta": {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "The Purchasing Officer",
+            "offset_inicio": 984,
+            "offset_fin": 1006
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "and in how many days is the order issued?",
+      "sesion": "conversacion:en-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 6,
+          "confianza_ms": 50,
+          "filtros_ms": 4,
+          "recuperacion_ms": 64,
+          "reranking_ms": 3912,
+          "lectura_ms": 406,
+          "evidencia_ms": 2,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 8
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 0.45,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.45,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.375,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.375,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.30952380952380953,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.30952380952380953,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.2909090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2909090909090909,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.23376623376623376,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.23376623376623376,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.2111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2111111111111111,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.2111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2111111111111111,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8870424414849489,
+          "margen_top1_top2": 0.014049766284691456,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.8113591529478352,
+          "candidato_id": "procurement-manual__c0001"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "procurement-manual",
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "The Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order.",
+            "offset_inicio": 2187,
+            "offset_fin": 2305,
+            "seccion_path": [
+              "Procurement Procedures Manual",
+              "6.3 Purchasing Procedure",
+              "6.3.3 Sending the Purchase Order to the supplier"
+            ],
+            "score": 0.9999983848501044
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "issued",
+            "order"
+          ],
+          "s_oov": 0.5172766089019869,
+          "s_cov": 0.48272339109801315,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "mani": 3.091,
+            "days": 0.2578,
+            "order": 1.1451,
+            "issued": 1.4816
+          },
+          "ausentes_del_corpus": [
+            "mani"
+          ],
+          "foco_encontrados": [
+            "issued",
+            "order"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          1.4589,
+          -1.1779,
+          -2.8918,
+          -6.1669
+        ],
+        "rerank": [
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": 1.4589
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": -1.1779
+          },
+          {
+            "chunk_id": "refunds__c0000",
+            "score": -2.8918
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -6.1669
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "and in how many days is the order issued? purchase start registers request",
+        "pregunta_lectura": "and in how many days is the order issued?",
+        "intencion": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8709404468536377,
+          "margen": 0.011292874813079834,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "start purchase"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "ten",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "100",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6234748049498299,
+          "s_oov": 0.5172766089019869,
+          "s_foco": 1.0,
+          "s_cov": 0.48272339109801315,
+          "s_rr": 0.8113591529478352,
+          "s_qa": 0.9999983848501044,
+          "dominio": 0.8113591529478352
+        },
+        "oracion_foco": "The Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.1"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "This is what the document says:\n\nThe Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order. (Source: Procurement Procedures Manual).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "This is what the document says:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "The Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order.",
+              "conector": null,
+              "cita": "(Source: Procurement Procedures Manual)",
+              "chunk_id": "procurement-manual__c0001"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "procurement-manual__c0001",
+              "doc_titulo": "Procurement Procedures Manual",
+              "seccion": "Procurement Procedures Manual > 6.3 Purchasing Procedure > 6.3.3 Sending the Purchase Order to the supplier",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 2187,
+              "offset_fin": 2305,
+              "texto": "The Purchasing Department has ten business days from the approval of the Requisition Form to issue the Purchase Order.",
+              "score": 0.9999983848501044
+            }
+          ],
+          "confianza": {
+            "top1": 0.8870424414849489,
+            "margen": 0.014049766284691456,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4456,
+          "respuesta_exacta": {
+            "chunk_id": "procurement-manual__c0001",
+            "texto": "ten",
+            "offset_inicio": 2217,
+            "offset_fin": 2220
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "Until when can I request a refund?",
+      "sesion": "conversacion:en-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 3,
+          "confianza_ms": 21,
+          "filtros_ms": 1,
+          "recuperacion_ms": 75,
+          "reranking_ms": 3752,
+          "lectura_ms": 651,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.5333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.47619047619047616,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.47619047619047616,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.34285714285714286,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34285714285714286,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.34090909090909094,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34090909090909094,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.34090909090909094,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34090909090909094,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.2777777777777778,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2777777777777778,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.2777777777777778,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2777777777777778,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8878757886628048,
+          "margen_top1_top2": 0.06235570789894651,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.9752876387418351,
+          "candidato_id": "refunds__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "refunds",
+            "chunk_id": "refunds__c0000",
+            "texto": "Customers can request a refund up to 30 days after receiving the order.",
+            "offset_inicio": 24,
+            "offset_fin": 95,
+            "seccion_path": [
+              "Refund policy",
+              "Deadlines"
+            ],
+            "score": 0.9999898981843676
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "refund",
+            "request"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "request": 0.6931,
+            "refund": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "refund",
+            "request"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          3.6754,
+          -3.5253,
+          -4.5468,
+          -5.0953
+        ],
+        "rerank": [
+          {
+            "chunk_id": "refunds__c0000",
+            "score": 3.6754
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -3.5253
+          },
+          {
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": -4.5468
+          },
+          {
+            "chunk_id": "library-hours__c0000",
+            "score": -5.0953
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "Until when can I request a refund?",
+        "intencion": {
+          "nombre": "fin",
+          "origen": "patron",
+          "relacion": "until when"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "refund request"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "refunds__c0000",
+            "texto": "30 days",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "texto": "two days before departure",
+            "prob_respuesta": 0.0013,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6262526288760161,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.9752876387418351,
+          "s_qa": 0.9999898981843676,
+          "dominio": 0.9752876387418351
+        },
+        "oracion_foco": "Customers can request a refund up to 30 days after receiving the order.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.1"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "This is what the document says:\n\nCustomers can request a refund up to 30 days after receiving the order. (Source: Refund policy).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "This is what the document says:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "Customers can request a refund up to 30 days after receiving the order.",
+              "conector": null,
+              "cita": "(Source: Refund policy)",
+              "chunk_id": "refunds__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "refunds__c0000",
+              "doc_titulo": "Refund policy",
+              "seccion": "Refund policy > Deadlines",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 24,
+              "offset_fin": 95,
+              "texto": "Customers can request a refund up to 30 days after receiving the order.",
+              "score": 0.9999898981843676
+            }
+          ],
+          "confianza": {
+            "top1": 0.8878757886628048,
+            "margen": 0.06235570789894651,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4510,
+          "respuesta_exacta": {
+            "chunk_id": "refunds__c0000",
+            "texto": "30 days",
+            "offset_inicio": 61,
+            "offset_fin": 68
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "and how many days until it's paid?",
+      "sesion": "conversacion:en-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 5,
+          "confianza_ms": 32,
+          "filtros_ms": 1,
+          "recuperacion_ms": 55,
+          "reranking_ms": 4095,
+          "lectura_ms": 362,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.5333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.47619047619047616,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.47619047619047616,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.45,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.45,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.2777777777777778,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2777777777777778,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.25757575757575757,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25757575757575757,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.2361111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2361111111111111,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.19090909090909092,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.19090909090909092,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.9094162739641416,
+          "margen_top1_top2": 0.03409945736110698,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "relacionado",
+          "motivo": "foco_ausente",
+          "entidad_texto": "s",
+          "capa_decisora": "relacionado",
+          "confianza_utilizada": 0.9873681478231431,
+          "candidato_id": "refunds__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "refunds",
+            "chunk_id": "refunds__c0000",
+            "texto": "The refund is paid within 10 business days after the request is approved.",
+            "offset_inicio": 96,
+            "offset_fin": 169,
+            "seccion_path": [
+              "Refund policy",
+              "Deadlines"
+            ],
+            "score": 0.9740069569606027
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "s",
+            "paid"
+          ],
+          "s_oov": 0.681848788634956,
+          "s_cov": 0.15473866095383162,
+          "s_foco": 0.5,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "mani": 3.091,
+            "days": 0.2578,
+            "until": 3.091,
+            "s": 1.4816,
+            "paid": 1.1451
+          },
+          "ausentes_del_corpus": [
+            "mani",
+            "until"
+          ],
+          "foco_encontrados": [
+            "paid"
+          ],
+          "foco_ausentes": [
+            "s"
+          ]
+        },
+        "puntajes_rerank": [
+          4.3588,
+          -3.2045,
+          -4.4021,
+          -4.8893
+        ],
+        "rerank": [
+          {
+            "chunk_id": "refunds__c0000",
+            "score": 4.3588
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -3.2045
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -4.4021
+          },
+          {
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": -4.8893
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "and how many days until it's paid? request refund",
+        "pregunta_lectura": "and how many days until it's paid?",
+        "intencion": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8728499412536621,
+          "margen": 0.01374351978302002,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": true,
+          "compatible": true
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "refund request"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "refunds__c0000",
+            "texto": "10",
+            "prob_respuesta": 0.987,
+            "s_qa": 0.974
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "texto": "six hours",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "relacionado",
+        "senales_politica": {
+          "s_ret": 0.6980542465471387,
+          "s_oov": 0.681848788634956,
+          "s_foco": 0.5,
+          "s_cov": 0.15473866095383162,
+          "s_rr": 0.9873681478231431,
+          "s_qa": 0.9740069569606027,
+          "dominio": 0.9873681478231431
+        },
+        "oracion_foco": "The refund is paid within 10 business days after the request is approved.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.missing_focus.8"
+        ],
+        "contrato_http": {
+          "estado": "relacionado",
+          "nivel_servicio": "normal",
+          "respuesta": "The documents say nothing direct about «s». Take a look at the closest:\n\nThe refund is paid within 10 business days after the request is approved. (Source: Refund policy).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "The documents say nothing direct about «s». Take a look at the closest:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "The refund is paid within 10 business days after the request is approved.",
+              "conector": null,
+              "cita": "(Source: Refund policy)",
+              "chunk_id": "refunds__c0000"
+            }
+          ],
+          "plan": "zona_gris",
+          "fragmentos": [
+            {
+              "chunk_id": "refunds__c0000",
+              "doc_titulo": "Refund policy",
+              "seccion": "Refund policy > Deadlines",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 96,
+              "offset_fin": 169,
+              "texto": "The refund is paid within 10 business days after the request is approved.",
+              "score": 0.9740069569606027
+            }
+          ],
+          "confianza": {
+            "top1": 0.9094162739641416,
+            "margen": 0.03409945736110698,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4557
+        }
+      }
+    },
+    {
+      "pregunta": "and if the product arrives damaged?",
+      "sesion": "conversacion:en-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 5,
+          "confianza_ms": 32,
+          "filtros_ms": 1,
+          "recuperacion_ms": 55,
+          "reranking_ms": 3758,
+          "lectura_ms": 262,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "refunds__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Customers can request a refund up to 30 days after receiving the order. The refund is paid"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0001",
+            "score": 0.5,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The Purchasing Supervisor reviews the Purchase Order and sends it to the supplier through "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": 0.4583333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4583333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates the allowances and tickets of staff "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "procurement-manual__c0000",
+            "score": 0.45,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.45,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It describes how the institution acquires goods a"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "coffee-maker-warranty__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The warranty for the Brio C2 coffee maker lasts 24 months from the date of purchase. It co"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "remote-work-regulation__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It regulates remote work for the institution's st"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "lab-protocol__c0000",
+            "score": 0.26785714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26785714285714285,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Blood samples are kept at 4 °C for a maximum of 72 hours. Registration The person in charg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "it-help-desk-faq__c0000",
+            "score": 0.2222222222222222,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2222222222222222,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Fictitious document created for testing. It gathers the most common questions about accoun"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "greenhouse-irrigation__c0000",
+            "score": 0.2,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Drip irrigation runs twice a day, at 7:00 and at 19:00. Each dripper delivers 4 liters per"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "library-hours__c0000",
+            "score": 0.18181818181818182,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.18181818181818182,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "The library opens Monday to Friday from 8:30 to 20:00. On Saturdays it opens from 10:00 to"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8970049255037222,
+          "margen_top1_top2": 0.057252113184083187,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.9925506154235083,
+          "candidato_id": "refunds__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "refunds",
+            "chunk_id": "refunds__c0000",
+            "texto": "If the product arrives damaged, return shipping is free.",
+            "offset_inicio": 178,
+            "offset_fin": 234,
+            "seccion_path": [
+              "Refund policy",
+              "Deadlines"
+            ],
+            "score": 0.9868320968646105
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "arrives",
+            "damaged"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "products": 1.1451,
+            "arrives": 1.4816,
+            "damaged": 1.4816
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "arrives",
+            "damaged"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          4.8921,
+          -6.0313,
+          -7.1822,
+          -7.1974
+        ],
+        "rerank": [
+          {
+            "chunk_id": "refunds__c0000",
+            "score": 4.8921
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "score": -6.0313
+          },
+          {
+            "chunk_id": "travel-allowance-policy__c0000",
+            "score": -7.1822
+          },
+          {
+            "chunk_id": "procurement-manual__c0001",
+            "score": -7.1974
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "and if the product arrives damaged? request refund many until s paid",
+        "pregunta_lectura": "and if the product arrives damaged?",
+        "intencion": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "consecuencia",
+          "similitud": 0.9215124845504761,
+          "margen": 0.07353925704956055,
+          "ejemplo": "What happens if the parcel arrives damaged?",
+          "aceptada": false,
+          "compatible": true
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "refund request"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "refunds__c0000",
+            "texto": "return shipping is free",
+            "prob_respuesta": 0.9934,
+            "s_qa": 0.9868
+          },
+          {
+            "chunk_id": "procurement-manual__c0000",
+            "texto": "ChileCompra Express catalog are purchased directly on the portal.",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6566830850124075,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.9925506154235083,
+          "s_qa": 0.9868320968646105,
+          "dominio": 0.9925506154235083
+        },
+        "oracion_foco": "If the product arrives damaged, return shipping is free.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.4"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "According to the loaded text:\n\nIf the product arrives damaged, return shipping is free. (Source: Refund policy).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "According to the loaded text:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "If the product arrives damaged, return shipping is free.",
+              "conector": null,
+              "cita": "(Source: Refund policy)",
+              "chunk_id": "refunds__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "refunds__c0000",
+              "doc_titulo": "Refund policy",
+              "seccion": "Refund policy > Deadlines",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 178,
+              "offset_fin": 234,
+              "texto": "If the product arrives damaged, return shipping is free.",
+              "score": 0.9868320968646105
+            }
+          ],
+          "confianza": {
+            "top1": 0.8970049255037222,
+            "margen": 0.057252113184083187,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 4119,
+          "respuesta_exacta": {
+            "chunk_id": "refunds__c0000",
+            "texto": "return shipping is free",
+            "offset_inicio": 210,
+            "offset_fin": 233
+          }
+        }
+      }
+    }
+  ]
+}

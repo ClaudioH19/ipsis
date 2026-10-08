@@ -287,3 +287,18 @@ def test_vocabulario_guarda_solo_los_ultimos_tres_pasajes(es):
         memoria.recordar_evidencia("s", {f"palabra{n}"})
     tema = memoria._sesiones["s"].tema
     assert tema.respuestas == [frozenset({f"palabra{n}"}) for n in (2, 3, 4)]
+
+
+def test_el_primer_seguimiento_recibe_los_terminos_fuera_del_nucleo_en_orden_original(es):
+    from ipsis.indice.estadisticas import EstadisticasLexicas
+    pregunta = "importe viático nacional mensual"
+    est = EstadisticasLexicas.construir([pregunta + " extranjero", "importe viático"], es)
+    memoria = MemoriaConversacion()
+    memoria.resolver(pregunta, "s", es, est)
+    tema = memoria._sesiones["s"].tema
+    assert len(tema.nucleo) == 3 and len(tema.ultimo) == 1
+    fuera = tema.formas[tema.ultimo[0]]
+    r = memoria.resolver("¿y en el extranjero?", "s", es, est)
+    assert r.heredado == "importe viatico nacional mensual"
+    r2 = memoria.resolver("¿y con 90?", "s", es, est)
+    assert fuera not in r2.heredado

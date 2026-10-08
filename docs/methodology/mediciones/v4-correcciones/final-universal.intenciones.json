@@ -1,0 +1,2758 @@
+[
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto dura la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8321385383605957,
+      "margen": 0.0030895471572875977,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8281275033950806,
+      "margen": 0.006086170673370361,
+      "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué defectos cubre la garantía?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8399296998977661,
+      "margen": 0.016432642936706543,
+      "ejemplo": "¿Qué sucede si el paquete llega dañado?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién autoriza las reparaciones de la garantía? aprueba aprueban",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8586478233337402,
+      "margen": 0.012680113315582275,
+      "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+      "aceptada": true,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8389448523521423,
+      "margen": 0.00742572546005249,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Me cubren si se me cae la cafetera al suelo?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.850066065788269,
+      "margen": 0.007284641265869141,
+      "ejemplo": "¿Qué sucede si el paquete llega dañado?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Hasta cuándo puedo pedir el reembolso?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "hasta cuando"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En cuántos días hábiles se paga el reembolso?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8447291851043701,
+      "margen": 4.3392181396484375e-05,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién aprueba la solicitud de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8709890842437744,
+      "margen": 0.030670523643493652,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8772735595703125,
+      "margen": 0.0469592809677124,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8539042472839355,
+      "margen": 0.025885581970214844,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos litros por hora entrega cada gotero?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.8262968063354492,
+      "margen": 0.00627744197845459,
+      "ejemplo": "¿Qué cantidad máxima de entradas puedo reservar?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántos goteros tiene el invernadero?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8051130771636963,
+      "margen": 0.011690497398376465,
+      "ejemplo": "¿A quién le toca revisar el inventario?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿A qué hora funciona el riego por goteo?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8216999769210815,
+      "margen": 0.002399265766143799,
+      "ejemplo": "¿Cuándo comienza la temporada de pesca?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué tipo de fertilizante se agrega al riego?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8030579090118408,
+      "margen": 0.014306426048278809,
+      "ejemplo": "¿En qué momento puedo empezar a usar el abono?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuándo se riega una tercera vez en los meses de calor?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8281938433647156,
+      "margen": 0.011591494083404541,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién es la responsable del registro de muestras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién firma los resultados de las muestras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por qué se rechaza una muestra sin etiqueta?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8609387278556824,
+      "margen": 0.04329651594161987,
+      "ejemplo": "¿Qué resultado tiene rechazar la invitación?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuántas muestras se rechazan cada mes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8466855883598328,
+      "margen": 0.021014928817749023,
+      "ejemplo": "¿Qué resultado tiene rechazar la invitación?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8310630917549133,
+      "margen": 0.0008870959281921387,
+      "ejemplo": "¿Hasta cuándo sigue vigente el permiso?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿En qué piso está la biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8218088746070862,
+      "margen": 0.01479947566986084,
+      "ejemplo": "¿Quién tiene la tarea de abrir la sala?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Tiene ascensor el edificio B?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8509955406188965,
+      "margen": 0.0532875657081604,
+      "ejemplo": "¿Quién se encarga del mantenimiento del ascensor?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Qué pasa si el estanque baja del 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "que pasa si"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuánto dura?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.8509747982025146,
+      "margen": 0.004182755947113037,
+      "ejemplo": "¿Qué cantidad máxima de entradas puedo reservar?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Cómo se prepara un pan de masa madre?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "como se"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "light",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8338724970817566,
+      "margen": 0.010019838809967041,
+      "ejemplo": "When does the coupon stop being valid?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How much does it cost to extend the warranty for the Brio C2 coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8185589909553528,
+      "margen": 0.0002700686454772949,
+      "ejemplo": "When will my subscription be activated?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What defects does the warranty cover?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.80600506067276,
+      "margen": 0.004333555698394775,
+      "ejemplo": "What happens if the parcel arrives damaged?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who authorizes warranty repairs? approve approves approved",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What should I do if my coffee maker breaks down?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8636623620986938,
+      "margen": 0.0335690975189209,
+      "ejemplo": "My booking was cancelled, what do I do now?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8175427317619324,
+      "margen": 0.005039989948272705,
+      "ejemplo": "On which date does the card stop working?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8539541959762573,
+      "margen": 0.023966073989868164,
+      "ejemplo": "I need to change my details, how is that arranged?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Until when can I request a refund?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "until when"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Within how many business days is the refund paid?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8378063440322876,
+      "margen": 0.010987341403961182,
+      "ejemplo": "What is the last day to sign up?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who approves the refund request?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When is return shipping free?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8546823859214783,
+      "margen": 0.01603466272354126,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Which carrier picks up the return?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.848060131072998,
+      "margen": 0.02746570110321045,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Why can't toothbrushes be returned?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8671712875366211,
+      "margen": 0.03689086437225342,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8000999689102173,
+      "margen": 0.0016716718673706055,
+      "ejemplo": "How frequently does the driving permit expire?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many drippers does the greenhouse have?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.7797116637229919,
+      "margen": 0.0037139058113098145,
+      "ejemplo": "How frequently does the driving permit expire?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "At what time does drip irrigation run?",
+    "intencion": "inicio",
+    "diagnostico": {
+      "nombre": "inicio",
+      "origen": "patron",
+      "relacion": "at what time"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What type of fertilizer is added to the irrigation?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.780307412147522,
+      "margen": 0.001765906810760498,
+      "ejemplo": "When does the fishing season begin?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "When are the plants watered a third time during the hot months?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8128876686096191,
+      "margen": 0.01793825626373291,
+      "ejemplo": "When does the fishing season begin?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who is in charge of sample registration?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who signs the sample results?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Why is a sample without a label rejected?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8446863293647766,
+      "margen": 0.010405123233795166,
+      "ejemplo": "And if the form has no signature?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How many samples are rejected each month?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8310770392417908,
+      "margen": 0.023171842098236084,
+      "ejemplo": "What is the outcome of rejecting the invitation?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "For how long can blood samples be stored?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8205474615097046,
+      "margen": 0.016841650009155273,
+      "ejemplo": "Who authorises access to the laboratory?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "On which floor is the library?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8219655752182007,
+      "margen": 0.024702072143554688,
+      "ejemplo": "Who has the task of opening the room?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Does building B have an elevator?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.836186408996582,
+      "margen": 0.05669105052947998,
+      "ejemplo": "Who is in charge of maintaining the lift?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What happens if the tank drops below 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "what happens if"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How long does it last?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8551569581031799,
+      "margen": 0.001538097858428955,
+      "ejemplo": "What is the last day to sign up?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "How do you make sourdough bread?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "how do you"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "light",
+    "pregunta_efectiva": "Who won the 1998 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo dura a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8565182089805603,
+      "margen": 0.0047446489334106445,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto custa estender a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.853888750076294,
+      "margen": 0.0035991668701171875,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quais defeitos a garantia cobre?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8505792617797852,
+      "margen": 0.010212540626525879,
+      "ejemplo": "Que medidas são tomadas quando se perde a chave?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem autoriza os reparos da garantia?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8846879005432129,
+      "margen": 0.024056434631347656,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8632948398590088,
+      "margen": 0.003900766372680664,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.863090455532074,
+      "margen": 0.005486667156219482,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Até quando posso pedir o reembolso?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "ate quando"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em quantos dias úteis o reembolso é pago?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8691070675849915,
+      "margen": 0.0056261420249938965,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem aprova a solicitação de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8966479301452637,
+      "margen": 0.012849628925323486,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual transportadora retira a devolução?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8796859979629517,
+      "margen": 0.027665019035339355,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8852246999740601,
+      "margen": 0.015964031219482422,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos litros por hora cada gotejador fornece?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.836928129196167,
+      "margen": 0.0027127861976623535,
+      "ejemplo": "Abaixo de que temperatura o aparelho para?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantos gotejadores a estufa tem?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.839506208896637,
+      "margen": 0.02495807409286499,
+      "ejemplo": "Abaixo de que temperatura o aparelho para?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8441722393035889,
+      "margen": 0.007487773895263672,
+      "ejemplo": "Em que momento termina a chamada para inscrições?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Que tipo de fertilizante é adicionado à irrigação?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "requisito",
+      "similitud": 0.8211080431938171,
+      "margen": 0.0007857680320739746,
+      "ejemplo": "O que é exigido para que aceitem a inscrição?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quando as plantas são regadas uma terceira vez nos meses quentes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8388774394989014,
+      "margen": 0.0001043081283569336,
+      "ejemplo": "O que ocorre quando o fornecimento é interrompido?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem é a responsável pelo registro de amostras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem assina os resultados das amostras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por que uma amostra sem etiqueta é rejeitada?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8678354024887085,
+      "margen": 0.015672624111175537,
+      "ejemplo": "Qual é o resultado de rejeitar o convite?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quantas amostras são rejeitadas por mês?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8601112365722656,
+      "margen": 0.015974700450897217,
+      "ejemplo": "Qual é o resultado de rejeitar o convite?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Por quanto tempo as amostras de sangue podem ser conservadas?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.855453610420227,
+      "margen": 0.006187736988067627,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Em que andar fica a biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8422027826309204,
+      "margen": 0.006437897682189941,
+      "ejemplo": "Quem tem a tarefa de abrir a sala?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O prédio B tem elevador?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8845841884613037,
+      "margen": 0.041087329387664795,
+      "ejemplo": "Quem é responsável pela manutenção do elevador?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "O que acontece se o tanque ficar abaixo de 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "o que acontece se"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quanto tempo dura?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8787474036216736,
+      "margen": 0.0021725893020629883,
+      "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Como se faz pão de fermentação natural?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "como se"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "light",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto dura la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8321385383605957,
+      "margen": 0.0030895471572875977,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8281275033950806,
+      "margen": 0.006086170673370361,
+      "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué defectos cubre la garantía?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8399296998977661,
+      "margen": 0.016432642936706543,
+      "ejemplo": "¿Qué sucede si el paquete llega dañado?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién autoriza las reparaciones de la garantía? aprueba aprueban",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8586478233337402,
+      "margen": 0.012680113315582275,
+      "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+      "aceptada": true,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8389448523521423,
+      "margen": 0.00742572546005249,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Me cubren si se me cae la cafetera al suelo?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.850066065788269,
+      "margen": 0.007284641265869141,
+      "ejemplo": "¿Qué sucede si el paquete llega dañado?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Hasta cuándo puedo pedir el reembolso?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "hasta cuando"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En cuántos días hábiles se paga el reembolso?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8447291851043701,
+      "margen": 4.3392181396484375e-05,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién aprueba la solicitud de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8709890842437744,
+      "margen": 0.030670523643493652,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8772735595703125,
+      "margen": 0.0469592809677124,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8539042472839355,
+      "margen": 0.025885581970214844,
+      "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos litros por hora entrega cada gotero?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.8262968063354492,
+      "margen": 0.00627744197845459,
+      "ejemplo": "¿Qué cantidad máxima de entradas puedo reservar?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-006",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántos goteros tiene el invernadero?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8051130771636963,
+      "margen": 0.011690497398376465,
+      "ejemplo": "¿A quién le toca revisar el inventario?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿A qué hora funciona el riego por goteo?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8216999769210815,
+      "margen": 0.002399265766143799,
+      "ejemplo": "¿Cuándo comienza la temporada de pesca?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-007",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué tipo de fertilizante se agrega al riego?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8030579090118408,
+      "margen": 0.014306426048278809,
+      "ejemplo": "¿En qué momento puedo empezar a usar el abono?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-004",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuándo se riega una tercera vez en los meses de calor?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8281938433647156,
+      "margen": 0.011591494083404541,
+      "ejemplo": "¿Desde qué momento rige la cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién es la responsable del registro de muestras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-008",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién firma los resultados de las muestras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por qué se rechaza una muestra sin etiqueta?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8609387278556824,
+      "margen": 0.04329651594161987,
+      "ejemplo": "¿Qué resultado tiene rechazar la invitación?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-009",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuántas muestras se rechazan cada mes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8466855883598328,
+      "margen": 0.021014928817749023,
+      "ejemplo": "¿Qué resultado tiene rechazar la invitación?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-parafrasis-005",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8310630917549133,
+      "margen": 0.0008870959281921387,
+      "ejemplo": "¿Hasta cuándo sigue vigente el permiso?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:es-exacta-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿En qué piso está la biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8218088746070862,
+      "margen": 0.01479947566986084,
+      "ejemplo": "¿Quién tiene la tarea de abrir la sala?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-trampa-010",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Tiene ascensor el edificio B?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8509955406188965,
+      "margen": 0.0532875657081604,
+      "ejemplo": "¿Quién se encarga del mantenimiento del ascensor?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-premisa-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Qué pasa si el estanque baja del 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "que pasa si"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-ambigua-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuánto dura?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.8509747982025146,
+      "margen": 0.004182755947113037,
+      "ejemplo": "¿Qué cantidad máxima de entradas puedo reservar?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:es-fuera-001",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cuál es la capital de Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:es-fuera-002",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Cómo se prepara un pan de masa madre?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "como se"
+    }
+  },
+  {
+    "sesion": "evaluacion:es-fuera-003",
+    "idioma": "es",
+    "perfil": "medium",
+    "pregunta_efectiva": "¿Quién ganó el mundial de fútbol de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quien"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8338724970817566,
+      "margen": 0.010019838809967041,
+      "ejemplo": "When does the coupon stop being valid?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How much does it cost to extend the warranty for the Brio C2 coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8185589909553528,
+      "margen": 0.0002700686454772949,
+      "ejemplo": "When will my subscription be activated?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What defects does the warranty cover?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.80600506067276,
+      "margen": 0.004333555698394775,
+      "ejemplo": "What happens if the parcel arrives damaged?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who authorizes warranty repairs? approve approves approved",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What should I do if my coffee maker breaks down?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8636623620986938,
+      "margen": 0.0335690975189209,
+      "ejemplo": "My booking was cancelled, what do I do now?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8175427317619324,
+      "margen": 0.005039989948272705,
+      "ejemplo": "On which date does the card stop working?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8539541959762573,
+      "margen": 0.023966073989868164,
+      "ejemplo": "I need to change my details, how is that arranged?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Until when can I request a refund?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "until when"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Within how many business days is the refund paid?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8378063440322876,
+      "margen": 0.010987341403961182,
+      "ejemplo": "What is the last day to sign up?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who approves the refund request?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When is return shipping free?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8546823859214783,
+      "margen": 0.01603466272354126,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Which carrier picks up the return?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.848060131072998,
+      "margen": 0.02746570110321045,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Why can't toothbrushes be returned?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8671712875366211,
+      "margen": 0.03689086437225342,
+      "ejemplo": "How do I arrange a return at the shop?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8000999689102173,
+      "margen": 0.0016716718673706055,
+      "ejemplo": "How frequently does the driving permit expire?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-006",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many drippers does the greenhouse have?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.7797116637229919,
+      "margen": 0.0037139058113098145,
+      "ejemplo": "How frequently does the driving permit expire?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "At what time does drip irrigation run?",
+    "intencion": "inicio",
+    "diagnostico": {
+      "nombre": "inicio",
+      "origen": "patron",
+      "relacion": "at what time"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-007",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What type of fertilizer is added to the irrigation?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.780307412147522,
+      "margen": 0.001765906810760498,
+      "ejemplo": "When does the fishing season begin?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-004",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "When are the plants watered a third time during the hot months?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8128876686096191,
+      "margen": 0.01793825626373291,
+      "ejemplo": "When does the fishing season begin?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who is in charge of sample registration?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-008",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who signs the sample results?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Why is a sample without a label rejected?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8446863293647766,
+      "margen": 0.010405123233795166,
+      "ejemplo": "And if the form has no signature?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-009",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How many samples are rejected each month?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8310770392417908,
+      "margen": 0.023171842098236084,
+      "ejemplo": "What is the outcome of rejecting the invitation?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-parafrasis-005",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "For how long can blood samples be stored?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8205474615097046,
+      "margen": 0.016841650009155273,
+      "ejemplo": "Who authorises access to the laboratory?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-exacta-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "On which floor is the library?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8219655752182007,
+      "margen": 0.024702072143554688,
+      "ejemplo": "Who has the task of opening the room?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-trampa-010",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Does building B have an elevator?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.836186408996582,
+      "margen": 0.05669105052947998,
+      "ejemplo": "Who is in charge of maintaining the lift?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:en-premisa-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What happens if the tank drops below 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "what happens if"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-ambigua-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How long does it last?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8551569581031799,
+      "margen": 0.001538097858428955,
+      "ejemplo": "What is the last day to sign up?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:en-fuera-001",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "What is the capital of Mongolia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:en-fuera-002",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "How do you make sourdough bread?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "how do you"
+    }
+  },
+  {
+    "sesion": "evaluacion:en-fuera-003",
+    "idioma": "en",
+    "perfil": "medium",
+    "pregunta_efectiva": "Who won the 1998 football World Cup?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "who"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo dura a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8565182089805603,
+      "margen": 0.0047446489334106445,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto custa estender a garantia da cafeteira Brío C2?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.853888750076294,
+      "margen": 0.0035991668701171875,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quais defeitos a garantia cobre?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8505792617797852,
+      "margen": 0.010212540626525879,
+      "ejemplo": "Que medidas são tomadas quando se perde a chave?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem autoriza os reparos da garantia?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8846879005432129,
+      "margen": 0.024056434631347656,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8632948398590088,
+      "margen": 0.003900766372680664,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.863090455532074,
+      "margen": 0.005486667156219482,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Até quando posso pedir o reembolso?",
+    "intencion": "fin",
+    "diagnostico": {
+      "nombre": "fin",
+      "origen": "patron",
+      "relacion": "ate quando"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em quantos dias úteis o reembolso é pago?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.8691070675849915,
+      "margen": 0.0056261420249938965,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem aprova a solicitação de reembolso?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8966479301452637,
+      "margen": 0.012849628925323486,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual transportadora retira a devolução?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8796859979629517,
+      "margen": 0.027665019035339355,
+      "ejemplo": "Como solicito uma devolução na loja?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "procedimiento",
+      "similitud": 0.8852246999740601,
+      "margen": 0.015964031219482422,
+      "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos litros por hora cada gotejador fornece?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.836928129196167,
+      "margen": 0.0027127861976623535,
+      "ejemplo": "Abaixo de que temperatura o aparelho para?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-006",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantos gotejadores a estufa tem?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "umbral",
+      "similitud": 0.839506208896637,
+      "margen": 0.02495807409286499,
+      "ejemplo": "Abaixo de que temperatura o aparelho para?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8441722393035889,
+      "margen": 0.007487773895263672,
+      "ejemplo": "Em que momento termina a chamada para inscrições?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-007",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Que tipo de fertilizante é adicionado à irrigação?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "requisito",
+      "similitud": 0.8211080431938171,
+      "margen": 0.0007857680320739746,
+      "ejemplo": "O que é exigido para que aceitem a inscrição?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-004",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quando as plantas são regadas uma terceira vez nos meses quentes?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8388774394989014,
+      "margen": 0.0001043081283569336,
+      "ejemplo": "O que ocorre quando o fornecimento é interrompido?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem é a responsável pelo registro de amostras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-008",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem assina os resultados das amostras?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por que uma amostra sem etiqueta é rejeitada?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8678354024887085,
+      "margen": 0.015672624111175537,
+      "ejemplo": "Qual é o resultado de rejeitar o convite?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-009",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quantas amostras são rejeitadas por mês?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "consecuencia",
+      "similitud": 0.8601112365722656,
+      "margen": 0.015974700450897217,
+      "ejemplo": "Qual é o resultado de rejeitar o convite?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-parafrasis-005",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Por quanto tempo as amostras de sangue podem ser conservadas?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "inicio",
+      "similitud": 0.855453610420227,
+      "margen": 0.006187736988067627,
+      "ejemplo": "Desde que momento vale a cobertura?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-exacta-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Em que andar fica a biblioteca?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8422027826309204,
+      "margen": 0.006437897682189941,
+      "ejemplo": "Quem tem a tarefa de abrir a sala?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-trampa-010",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O prédio B tem elevador?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "responsable",
+      "similitud": 0.8845841884613037,
+      "margen": 0.041087329387664795,
+      "ejemplo": "Quem é responsável pela manutenção do elevador?",
+      "aceptada": false,
+      "compatible": true
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-premisa-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "O que acontece se o tanque ficar abaixo de 50 %?",
+    "intencion": "consecuencia",
+    "diagnostico": {
+      "nombre": "consecuencia",
+      "origen": "patron",
+      "relacion": "o que acontece se"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-ambigua-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quanto tempo dura?",
+    "intencion": "desconocida",
+    "diagnostico": {
+      "nombre": "desconocida",
+      "origen": "similitud",
+      "candidato": "fin",
+      "similitud": 0.8787474036216736,
+      "margen": 0.0021725893020629883,
+      "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+      "aceptada": false,
+      "compatible": false
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-001",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Qual é a capital da Mongólia?",
+    "intencion": "desconocida",
+    "diagnostico": {}
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-002",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Como se faz pão de fermentação natural?",
+    "intencion": "procedimiento",
+    "diagnostico": {
+      "nombre": "procedimiento",
+      "origen": "patron",
+      "relacion": "como se"
+    }
+  },
+  {
+    "sesion": "evaluacion:pt-fuera-003",
+    "idioma": "pt",
+    "perfil": "medium",
+    "pregunta_efectiva": "Quem ganhou a Copa do Mundo de 1998?",
+    "intencion": "responsable",
+    "diagnostico": {
+      "nombre": "responsable",
+      "origen": "patron",
+      "relacion": "quem"
+    }
+  }
+]

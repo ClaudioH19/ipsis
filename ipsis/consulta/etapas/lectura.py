@@ -53,13 +53,17 @@ def hay_discordancia(lecturas, umbral: float = 0.5) -> bool:
 def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
                         pregunta_usuario: str | None = None, comprension=None) -> tuple[int, int]:
     """Rango ``[a, b)`` de ``texto`` (a lo más ``limite`` caracteres) más pertinente."""
-    if len(texto) <= limite:
+    recortar_relacion = bool(pregunta_usuario and getattr(comprension, "intencion", None) == "responsable")
+    if len(texto) <= limite and not recortar_relacion:
         return 0, len(texto)
     from ipsis.consulta.etapas.seleccion import seleccionar_texto_pertinente
 
     obtener = getattr(getattr(motor, "retriever", None), "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
-    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, limite, estadisticas=est, centrada=True,
+    # En un seguimiento, la oración sobre lo que se pregunta ahora evita
+    # que otra pregunta/respuesta del mismo pasaje domine al lector.
+    resultado = seleccionar_texto_pertinente(pregunta, texto, 0, 0 if recortar_relacion else limite,
+                                             estadisticas=est, centrada=not recortar_relacion,
                                              pregunta_usuario=pregunta_usuario, comprension=comprension)
     return resultado.offset_inicio, resultado.offset_fin
 
@@ -121,7 +125,21 @@ class EtapaLectura(_Etapa):
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
         ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None, comprension)
                     for c in candidatos]
-        lecturas = m.lector.leer(ctx.pregunta, [texto[a:b] for texto, (a, b) in zip(
+        # El contexto recuperado resuelve el tema; la relación que responde el
+        # lector es la del turno actual. Un verbo heredado («firma») no debe
+        # competir con el que acaba de preguntar el usuario («redacta»).
+        pregunta_lectura = ctx.pregunta
+        if ctx.pregunta_usuario:
+            from ipsis.lenguaje.consultas import terminos_de_contenido
+
+            propios = terminos_de_contenido(ctx.pregunta_usuario, getattr(m, "idioma", None))
+            # «¿y en verano?» solo aporta un calificativo: necesita la relación
+            # heredada. «¿quién redacta?» trae una relación nueva y «¿si llega
+            # dañado?» varios términos propios; sus verbos previos no mandan.
+            if getattr(comprension, "intencion", None) or len(propios) > 1:
+                pregunta_lectura = ctx.pregunta_usuario
+        ctx.diagnostico["pregunta_lectura"] = pregunta_lectura
+        lecturas = m.lector.leer(pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(
             (c.chunk.texto_fuente for c in candidatos), ventanas)])
         # offsets de la ventana -> offsets del pasaje completo
         ctx.lecturas = [
@@ -142,6 +160,20 @@ class EtapaLectura(_Etapa):
         if not mejor.texto or mejor.s_qa <= 0:
             return
         chunk = candidatos[mejor.indice_pasaje].chunk
+        if ctx.pregunta_usuario:
+            from ipsis.lenguaje.respuestas import completar_tramo
+
+            a, b = ventanas[mejor.indice_pasaje]
+            ini_completa, fin_completa = completar_tramo(
+                ctx.pregunta_usuario, chunk.texto_fuente[a:b], mejor.inicio - a, mejor.fin - a,
+                getattr(m, "idioma", None))
+            ini_completa, fin_completa = ini_completa + a, fin_completa + a
+            if (ini_completa, fin_completa) != (mejor.inicio, mejor.fin):
+                ctx.diagnostico["tramo_completado"] = {
+                    "original": mejor.texto, "inicio_original": mejor.inicio, "fin_original": mejor.fin,
+                }
+                mejor = mejor.model_copy(update={"inicio": ini_completa, "fin": fin_completa,
+                                                  "texto": chunk.texto_fuente[ini_completa:fin_completa]})
         ini, fin = oracion_que_contiene(chunk.texto_fuente, mejor.inicio, mejor.fin)
         ctx.evidencia_lector = EvidenceSpan(
             doc_id=chunk.doc_id,

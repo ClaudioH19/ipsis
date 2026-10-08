@@ -235,6 +235,15 @@ Intent examples, enabled categories and thresholds participate in lexical
 calibration provenance. Rebuild the motor and regenerate stale calibrations
 after changing them.
 
+Follow-up intent recognition uses the current user's question, not its
+inherited topic words. Compatibility forms (`respaldo_patrones`) add a
+necessary condition for the measured end/procedure fallback: a similar
+amount or actor question cannot become a deadline or a procedure solely
+because its topic resembles an example. These forms do not recognize an
+intent independently and remove no words. Thresholds remain unchanged;
+the [correction measurements](../methodology/mediciones/v4-correcciones/README.md)
+repeat dev/test and the response banks after this change.
+
 The [V4 evaluation](../methodology/v4-results.md) records actual fallback
 activation: eight additional correctly labelled intentions per profile in
 the natural-query bank, without a change in answer correctness or wrong
