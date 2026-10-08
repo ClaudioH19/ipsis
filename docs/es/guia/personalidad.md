@@ -127,9 +127,9 @@ En español, inglés y portugués:
 | `empathetic` | reconoce lo que la persona necesita | «Entiendo que lo necesitas; no aparece en los documentos disponibles.» |
 | `direct` | seco e imperativo, nunca agresivo | «No está en los documentos. Pregunta otra cosa.» |
 
-Cada tono trae 18 situaciones: 12 variantes en las cuatro que se ven en
+Cada tono trae 19 situaciones: 12 variantes en las cuatro que se ven en
 casi toda respuesta (`opening`, `addition`, `no_answer`, `related_intro`), 7
-en las del widget y 8 en el resto. Son 154 por tono e idioma, 3.234 en
+en las del widget y 8 en el resto. Son 162 por tono e idioma, 3.402 en
 total, y todos los idiomas tienen la misma cantidad por situación.
 
 ## Situaciones
@@ -143,6 +143,7 @@ total, y todos los idiomas tienen la misma cantidad por situación.
 | `missing_focus` | relacionada, falta el término principal | `{term}` (obligatoria) |
 | `no_answer` | no está en los documentos | — |
 | `premise_not_found` | se preguntó por algo que no existe | `{entity}` (obligatoria) |
+| `alternatives_intro` | tras `no_answer` o `premise_not_found`, antes de los pasajes parecidos de la postura proactiva ([configuración](configuracion.md#cuando-la-respuesta-no-está-postura)) | — |
 | `welcome`, `waiting`, `citations_hint`, `network_error`, `rate_limit_error`, `service_error` | textos del widget | `welcome`: `{assistant_name}` |
 
 ## Variedad y trazabilidad
@@ -268,10 +269,11 @@ no se revisa.
 El linter no juzga el sentido. Antes de publicar un tono, una persona
 revisa:
 
-1. **Tono reconocible:** las 154 variantes suenan al mismo carácter.
+1. **Tono reconocible:** las 162 variantes suenan al mismo carácter.
 2. **Honestidad:** `related_intro` y `missing_focus` dicen que no es una
    respuesta directa; `no_answer` y `premise_not_found` no sugieren que la
-   información exista en otra parte.
+   información exista en otra parte; `alternatives_intro` dice que lo que
+   sigue es parecido, no lo pedido, y no promete nada sobre ello.
 3. **Sin contenido:** ninguna plantilla se lee como algo que dice el
    documento.
 4. **El conector encaja:** `opening`, `addition`, `condition` y `exception`

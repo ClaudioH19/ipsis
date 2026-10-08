@@ -126,6 +126,15 @@ situations:
   - ¡Revisé todo y no hay nada sobre "{entity}"! Prueba con otra pregunta.
   - '"{entity}" no está en los documentos, ¡pero sigo aquí para ayudarte!'
   - ¡Qué curioso! "{entity}" no figura en los documentos.
+  alternatives_intro:
+  - '¡Pero tengo algo parecido! Mira estas opciones:'
+  - '¡No te vayas con las manos vacías! Esto se le parece:'
+  - '¡Atención, esto podría servirte! Son opciones similares:'
+  - '¡Encontré alternativas cercanas! Aquí van:'
+  - '¡Tengo estas opciones que se le parecen mucho!:'
+  - '¡Buenas noticias, hay opciones similares! Míralas:'
+  - '¡Quizá alguna de estas te sirva!:'
+  - '¡Mira lo más parecido que encontré!:'
   welcome:
   - ¡Hola! ¿Qué descubrimos hoy?
   - ¡Pregúntame lo que quieras sobre los documentos!

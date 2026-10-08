@@ -8,6 +8,25 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Proactive posture ([ADR 0008](docs/decisions/0008-proactive-posture-and-metadata-similarity.md)):**
+  after a false premise or a question without an answer, `no_answer` can
+  carry up to `posture.max_alternatives` (3) similar literal lines from the
+  documents, cited and verified, under the new tone situation
+  `alternatives_intro` (7 tones × es/en/pt, 162 variants per tone). The state
+  does not change: alternatives travel in `alternatives` of `/ask`; the
+  widget shows them with their citations. Affinity is a weighted mean of
+  metadata signals (entity family, question words, section, keywords,
+  category, dense similarity); the shipped profiles weigh only the family
+  of a missing entity whose type `domain.yaml` declares ("TP-400" for
+  "TP-500"). `posture.mode: strict` restores the previous replies;
+  `ipsis ask --diagnostics` lists offered and discarded alternatives. New
+  bank `tests/datos/banco_alternativas` (58 + 16 held-out cases per
+  language): precision 1.0 and no out-of-domain alternatives in development
+  and validation after the fourth round; the first held-out run (0.87/0.85)
+  failed the 0.9 bar and removed core-measure families. The query,
+  universal and conversation banks keep every state and rule.
+  [Measurements](docs/methodology/mediciones/v5-alternativas/README.md).
+
 - **Follow-up extraction corrections:** retain opening-topic terms outside
   the core for one follow-up and preserve their original order. Determine
   intentions from the current question and use it for reading when it
@@ -232,6 +251,11 @@ a minor change may break compatibility and is marked as such.
   parity.
 
 ### Fixed
+
+- **Concurrent requests:** `terminos()` shared one snowballstemmer instance
+  across service threads; concurrent `/ask` calls could fail with an
+  `IndexError` (16 of 240 requests under an 8-client load). One stemmer per
+  thread.
 
 - **The same passage no longer shows twice** when two overlapping chunks
   yield the same span.

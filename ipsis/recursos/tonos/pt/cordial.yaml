@@ -127,6 +127,15 @@ situations:
   - Não há rastro de "{entity}" nos documentos disponíveis.
   - '"{entity}" não consta nos documentos. Talvez esteja fora do seu alcance.'
   - Revisei os documentos e não encontrei "{entity}".
+  alternatives_intro:
+  - 'Mostro o mais parecido que aparece nos documentos:'
+  - 'Isto é o mais próximo do que você procura:'
+  - 'Talvez uma destas opções dos documentos ajude:'
+  - 'Encontrei algumas opções parecidas:'
+  - 'Isto é o que mais se aproxima da sua pergunta:'
+  - 'Caso ajude, este é o conteúdo mais semelhante que encontrei:'
+  - 'Estas opções dos documentos se parecem com o que você pediu:'
+  - 'O mais parecido que tenho é isto:'
   welcome:
   - Olá, como posso ajudar?
   - Olá! Pergunte o que precisar sobre os documentos.

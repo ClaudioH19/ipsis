@@ -130,6 +130,14 @@ def construir_motor(
         abstencion_calibrada=perfil_instalacion.origen_umbrales == "calibracion",
     )
     motor.perfil_instalacion = perfil_instalacion
+    from ipsis.consulta.alternativas import ConfigAlternativas
+    from ipsis.ingesta.metadata import cargar_taxonomia
+
+    postura = cfg_dominio.get("postura") or {}
+    motor.alternativas = ConfigAlternativas(
+        modo=postura.get("modo", "proactiva"), max_alternativas=int(postura.get("max_alternativas", 3)),
+        umbral=perfil_instalacion.alternativas.umbral, pesos=dict(perfil_instalacion.alternativas.pesos))
+    motor.taxonomia = cargar_taxonomia()
     from ipsis.consulta.seguimiento import MemoriaConversacion
 
     cfg_conv = cfg.get("conversacion") or {}
@@ -191,6 +199,8 @@ class DiagnosticoConsulta:
     pregunta_interpretada: str | None = None
     conversacion: dict[str, str] | None = None
     recursos_lexicos: list[dict[str, Any]] = field(default_factory=list)
+    # Postura proactiva (ADR 0008): alternativas ofrecidas y descartadas, con sus señales.
+    alternativas: dict[str, Any] | None = None
 
     @property
     def total_ms(self) -> int:
@@ -242,6 +252,7 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         pregunta_interpretada=d.get("pregunta_interpretada"),
         conversacion=d.get("conversacion"),
         recursos_lexicos=list(d.get("recursos_lexicos") or []),
+        alternativas=d.get("alternativas"),
     )
 
 

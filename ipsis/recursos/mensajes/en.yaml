@@ -160,6 +160,9 @@ ask:
   candidate: '  {chunk_id}: dense {dense}, bm25 {bm25}, fusion {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
   sentences: 'Best scored sentences (s_lex, what the selection uses):'
   scored_sentence: '  {score:.3f} «{text}»'
+  alternatives: 'Alternatives (posture): {offered} offered, {discarded} discarded'
+  alternative_offered: '  offered    {affinity:.2f}  {signals}  {text}'
+  alternative_discarded: '  discarded  {affinity:.2f}  {signals}  {text}'
   tone: 'Tone: {tone}; templates: {templates}'
   warning: 'Warning: {warning}'
 doctor:
@@ -480,6 +483,8 @@ app:
   avatar_missing: 'there is no avatar {name!r}; available: {available}'
   avatar_name_rules: 'invalid name {name!r}: use lowercase letters, digits and hyphens (e.g. «my-avatar»)'
   expects_boolean: '{key} expects true or false, not {value!r}'
+  posture_alternatives_range: 'posture.max_alternatives expects a whole number from 1 to 5, not {value!r}'
+  unknown_posture: 'unknown posture {value!r}: use one of {available}'
   unknown_configure_keys: 'unknown key(s) for ''ipsis configure'': {keys}. Valid: {valid}'
   unknown_profile: 'unknown profile {name!r} (available: {available})'
   bm25_not_installable: 'bm25 is a diagnostic profile of ''ipsis benchmark'', not an installable profile. Available profiles: {available}'

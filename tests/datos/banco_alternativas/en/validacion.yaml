@@ -1,0 +1,74 @@
+# Held-out validation of the alternatives bank: written before freezing the
+# rule and measured once afterwards (ADR 0008). Same fields as casos.yaml.
+- id: en-val-codigo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: Do you have the ET-9 ladder?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: en-val-codigo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: What does the LO-200 sander cost?
+  aceptables: [LO-300, LB-900]
+- id: en-val-codigo-003
+  tipo: vecino
+  particion: validacion
+  pregunta: Is the TI-24 drill in stock?
+  aceptables: [TI-18, TP-400, TP-600]
+- id: en-val-codigo-004
+  tipo: vecino
+  particion: validacion
+  pregunta: Do you sell the SK-50 jigsaw?
+  aceptables: [SK-65, SC-185, SC-235]
+- id: en-val-plazo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: Can I request a refund up to 45 days after receiving the order?
+  aceptables: [up to 30 days after receiving the order]
+- id: en-val-plazo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: Does the manager reply to a remote work application within fifteen business days?
+  aceptables: [replies within five business days]
+- id: en-val-dificil-001
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: How far away is the airport?
+- id: en-val-dificil-002
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: How much is the industrial safety course?
+- id: en-val-dificil-003
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: How much does a 27-inch monitor weigh?
+- id: en-val-dificil-004
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: What are the gym opening hours?
+- id: en-val-dificil-005
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Do you sell spare parts for a car water pump?
+- id: en-val-dificil-006
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Do you have a music library?
+- id: en-val-fuera-001
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: Who wrote Don Quixote?
+- id: en-val-fuera-002
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: How many planets are in the solar system?
+- id: en-val-exacta-001
+  tipo: exacta
+  particion: validacion
+  pregunta: How many units of the TP-600 drill are in the Central Warehouse?
+  aceptables: [TP-600]
+- id: en-val-exacta-002
+  tipo: exacta
+  particion: validacion
+  pregunta: How high does the EX-12 ladder reach?
+  aceptables: [EX-12]

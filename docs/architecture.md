@@ -154,6 +154,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `motor.py` | Runs the profile's stages, times each one and builds the result |
 | `contexto.py` | `ContextoConsulta`: what each stage reads and fills in |
 | `seguimiento.py` | Conversation memory: topics per session, follow-ups, expiry ([ADR 0006](decisions/0006-conversation-memory.md)) |
+| `alternativas.py` | Proactive posture: similar literal paragraphs after a `no_answer`, chosen by the family of a missing declared entity ("TP-400" for "TP-500") ([ADR 0008](decisions/0008-proactive-posture-and-metadata-similarity.md)) |
 | `admision.py` | Limit of concurrent queries (503 when saturated) |
 | `variantes.py` | Picks the tone variant by session and turn |
 | `etapas/` | One file per stage (see §4) |
@@ -214,7 +215,8 @@ flowchart TD
     E --> PO{policy<br/>cascade_v1}
     PO -- ok --> RD[rendering<br/>tone + citation]
     PO -- related --> RD
-    PO -- no_answer --> RD
+    PO -- no_answer --> ALT["alternatives (proactive posture)<br/>premise or no answer only<br/>family of a declared entity<br/>→ literal paragraphs, verified"]
+    ALT --> RD
     RD --> V[verification<br/>text == corpus start:end]
     V -.->|"first cited source passage<br/>same topic and turn only"| MEM
     V --> S([Answer + citations + diagnostics])
@@ -229,7 +231,10 @@ flowchart TD
 | measured p95 (universal bank) | 85 ms | 815 ms | 2,130 ms |
 
 Each stage receives the `ContextoConsulta`, fills it in and may close the
-query. If no candidate contains a focus term, the reranker and the reader
+query. A `no_answer` from a false premise or without an answer may carry
+alternatives: similar paragraphs that are in the documents, never an answer
+and never part of the conversation memory
+([configuration](guide/configuration.md#when-the-answer-is-not-there-posture)). If no candidate contains a focus term, the reranker and the reader
 are skipped (early exit). The rules in detail: [policy](methodology/policy.md).
 
 ### Understanding the question

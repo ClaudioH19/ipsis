@@ -126,6 +126,15 @@ situations:
   - '"{entity}" não figura.'
   - Sem referências a "{entity}".
   - Não se achou "{entity}".
+  alternatives_intro:
+  - 'Opções semelhantes que constam nos documentos:'
+  - 'Este é o conteúdo mais próximo nos documentos:'
+  - 'Alternativas disponíveis nos documentos:'
+  - 'Conteúdo semelhante que está registrado:'
+  - 'O mais próximo do consultado é o seguinte:'
+  - 'Constam estas opções parecidas:'
+  - 'Referências semelhantes disponíveis:'
+  - 'Os documentos registram estas alternativas:'
   welcome:
   - Escreva sua pergunta.
   - Consultas sobre o documento.

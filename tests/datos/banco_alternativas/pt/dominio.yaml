@@ -1,0 +1,28 @@
+# config/domain.yaml do projeto de medição: o que declararia uma loja de
+# ferragens que instala o assistente. Os códigos de produto são uma entidade
+# própria (a família de um código ausente é buscada por ela) e a taxonomia dá a
+# categoria de cada fragmento e da pergunta.
+regex_extractors:
+  - type: codigo
+    pattern: '\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'
+    normalized_value: 'codigo_{pre}-{num}'
+    transform: {pre: minusculas}
+    gloss: código de produto
+taxonomy:
+  domain: ferramentas da loja e documentos internos
+  categories:
+    - id: furadeiras
+      description: Furadeiras de impacto e sem fio para furar.
+      trigger_words: [furadeira, furadeiras, impacto, mandril, furar]
+    - id: serras
+      description: Serras circulares e tico-tico para cortar.
+      trigger_words: [serra, serras, disco, cortar, tico-tico]
+    - id: lixadeiras
+      description: Lixadeiras orbitais e de cinta para lixar.
+      trigger_words: [lixadeira, lixadeiras, lixar, lixa]
+    - id: escadas
+      description: Escadas tesoura e extensíveis.
+      trigger_words: [escada, escadas, degraus]
+    - id: otro
+      description: Não corresponde a nenhuma categoria anterior.
+  hard_filter_threshold: 0.95

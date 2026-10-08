@@ -126,6 +126,15 @@ situations:
   - Os documentos disponíveis não mencionam "{entity}".
   - Não se achou "{entity}" nos documentos; é possível que exceda seu alcance.
   - Não disponho de informação sobre "{entity}" nos documentos.
+  alternatives_intro:
+  - 'Apresento as opções mais próximas que constam nos documentos:'
+  - 'A seguir, o conteúdo mais semelhante à sua consulta:'
+  - 'Os documentos contêm as seguintes opções afins:'
+  - 'Indico as alternativas mais próximas disponíveis:'
+  - 'Alguma das seguintes opções pode lhe ser útil:'
+  - 'Estas são as referências mais parecidas com o solicitado:'
+  - 'Permito-me sugerir as seguintes alternativas documentadas:'
+  - 'Foram encontradas as seguintes opções semelhantes:'
   welcome:
   - Saudações. Em que posso ajudar?
   - Boas-vindas. Formule a sua consulta, por favor.

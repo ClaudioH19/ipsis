@@ -59,6 +59,7 @@ SITUACIONES: dict[str, Situacion] = {
     "exception": Situacion("motor", dos_puntos=True),
     "related_intro": Situacion("motor", dos_puntos=True),
     "missing_focus": Situacion("motor", frozenset({"term"}), frozenset({"term"}), dos_puntos=True),
+    "alternatives_intro": Situacion("motor", dos_puntos=True),
     "no_answer": Situacion("motor"),
     "premise_not_found": Situacion("motor", frozenset({"entity"}), frozenset({"entity"})),
     "welcome": Situacion("widget", frozenset({"assistant_name"})),

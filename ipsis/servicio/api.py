@@ -117,6 +117,9 @@ class RespuestaConsulta(BaseModel):
     confidence: Confianza
     latency_ms: int
     exact_answer: Optional[RespuestaExacta] = None
+    # Solo en ``no_answer`` con la postura proactiva (ADR 0008): lo más parecido
+    # que sí está, literal y citado. No responde la pregunta.
+    alternatives: list[Fragmento] = Field(default_factory=list)
     # Solo en respuestas conversacionales (para el avatar del widget).
     conversational_category: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
 
@@ -164,6 +167,8 @@ def respuesta_publica(contrato: dict) -> dict:
     if exacta:
         publica["exact_answer"] = {"chunk_id": exacta["chunk_id"], "text": exacta["texto"],
                                    "offset_start": exacta["offset_inicio"], "offset_end": exacta["offset_fin"]}
+    if contrato.get("alternativas"):
+        publica["alternatives"] = [fragmento(f) for f in contrato["alternativas"]]
     if contrato.get("categoria_conversacional"):
         publica["conversational_category"] = contrato["categoria_conversacional"]
     return publica

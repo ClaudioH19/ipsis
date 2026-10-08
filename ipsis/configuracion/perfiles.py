@@ -52,6 +52,15 @@ class CascadaPerfil(_Estricto):
     max_caracteres_lectura: int = Field(default=600, ge=100)
 
 
+class AlternativasPerfil(_Estricto):
+    """Afinidad mínima y pesos de las señales de una alternativa (ADR 0008)."""
+
+    umbral: float = Field(default=0.5, ge=0.0, le=1.0)
+    pesos: dict[Literal["familia", "terminos", "seccion", "keywords", "categoria", "similitud"], float] = Field(
+        default_factory=lambda: {"familia": 1.0, "terminos": 0.0, "seccion": 0.0, "keywords": 0.0,
+                                 "categoria": 0.0, "similitud": 0.0})
+
+
 class PerfilInstalacion(_Estricto):
     perfil: Literal["light", "medium", "heavy", "bm25"]
     descripcion: str = ""
@@ -63,6 +72,7 @@ class PerfilInstalacion(_Estricto):
     umbrales_por_defecto: dict[str, float]
     # Modo de recuperación propio del perfil; si falta, el de engine.yaml.
     recuperacion_modo: Literal["vectorial", "hibrida", "dispersa"] | None = None
+    alternativas: AlternativasPerfil = Field(default_factory=AlternativasPerfil)
     # Lo agrega la fusión: de dónde salieron los umbrales.
     origen_umbrales: Literal["perfil", "calibracion"] = "perfil"
 

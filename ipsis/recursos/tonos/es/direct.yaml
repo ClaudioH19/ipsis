@@ -127,6 +127,15 @@ situations:
   - '"{entity}": sin datos.'
   - No encuentro "{entity}".
   - Ninguna mención de "{entity}".
+  alternatives_intro:
+  - 'Parecido:'
+  - 'Lo más cercano:'
+  - 'Alternativas:'
+  - 'Opciones similares:'
+  - 'Sí hay esto:'
+  - 'Lo que más se acerca:'
+  - 'Esto se parece:'
+  - 'Disponible y similar:'
   welcome:
   - Pregunta.
   - Escribe tu pregunta.

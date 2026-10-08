@@ -234,6 +234,14 @@ class ComandoPreguntar(Comando):
             print(t("ask.sentences"))
             for o in d.oraciones:
                 print(t("ask.scored_sentence", score=o["score"], text=o["texto"][:110]))
+        if d.alternativas is not None:
+            print(t("ask.alternatives", offered=len(d.alternativas["ofrecidas"]),
+                    discarded=len(d.alternativas["descartadas"])))
+            for clave, lista in (("ask.alternative_offered", d.alternativas["ofrecidas"]),
+                                 ("ask.alternative_discarded", d.alternativas["descartadas"][:5])):
+                for a in lista:
+                    senales = " ".join(f"{k}={v:.2f}" for k, v in a["senales"].items() if v)
+                    print(t(clave, affinity=a["afinidad"], signals=senales, text=a["texto"][:90]))
         if d.tono:
             print(t("ask.tone", tone=d.tono, templates=", ".join(d.plantillas) or nada))
         for a in d.advertencias:

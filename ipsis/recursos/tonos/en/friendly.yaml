@@ -126,6 +126,15 @@ situations:
   - Nothing on "{entity}" in the documents, sorry.
   - I looked and "{entity}" doesn't come up at all.
   - '"{entity}" isn''t in what you uploaded.'
+  alternatives_intro:
+  - 'But look, I have similar things:'
+  - 'Maybe something here works for you, it is close:'
+  - 'Here is the closest I could find:'
+  - 'This comes pretty close, just in case:'
+  - 'I have these similar options, have a look:'
+  - 'Maybe one of these will work for you:'
+  - 'The closest thing I have on hand is this:'
+  - 'Check out these similar options:'
   welcome:
   - Hey! What do you need?
   - Hi! Ask me anything.

@@ -41,6 +41,9 @@ cors_origins: []          # origins allowed to embed the widget
 widget_keys: []           # optional public keys for the widget
 query_log:
   enabled: false          # .ipsis/logs/queries.jsonl, for `ipsis audit`
+posture:
+  mode: proactive         # proactive | strict: see "When the answer is not there"
+  max_alternatives: 3     # 1 to 5
 ```
 
 ## Versioning
@@ -275,11 +278,11 @@ What the assistant says around the document text comes from a **tone**, in
 `formal`, `serious`, `upbeat`, `friendly`, `empathetic` and `direct`. See
 [personality.md](personality.md).
 
-Each tone has 18 situations, with 7 to 12 variants each:
+Each tone has 19 situations, with 7 to 12 variants each:
 
 - engine: `greeting`, `thanks`, `farewell`, `capability`, `opening`,
   `addition`, `condition`, `exception`, `related_intro`, `missing_focus`,
-  `no_answer` and `premise_not_found`;
+  `alternatives_intro`, `no_answer` and `premise_not_found`;
 - widget: `welcome`, `waiting`, `citations_hint`, `network_error`,
   `rate_limit_error` and `service_error`.
 
@@ -429,6 +432,67 @@ The memory lives in the service process (each worker has its own), keeps
 terms of the questions and of the passages that answered them, never the
 answers, and is lost on restart. The widget starts a new conversation on
 every page load.
+
+## When the answer is not there (posture)
+
+When the documents do not have what was asked, the assistant says so. With
+the **proactive** posture (the default) it then offers up to
+`max_alternatives` passages that are similar and are in the documents,
+under a fixed sentence of the tone that says they are not what was asked:
+
+```
+No encontré "TP-500" en los documentos disponibles.
+
+Te muestro lo más parecido que sí aparece en los documentos:
+
+El taladro percutor TP-600 tiene un motor de 800 W … (Fuente: Catálogo …).
+El taladro percutor TP-400 tiene un motor de 600 W … (Fuente: Catálogo …).
+```
+
+```
+ipsis configure posture.mode=strict          # only "it is not there"
+ipsis configure posture.max_alternatives=2
+```
+
+- **When:** only after a false premise (an entity of the question is not in
+  the documents) or a question without an answer. Out-of-domain questions,
+  related answers and conversational turns never carry alternatives. With
+  the shipped profiles, in practice only after a false premise whose entity
+  has a family in the documents (see below).
+- **What is shown:** each alternative is a literal paragraph of the
+  documents with its citation, checked like the evidence of an answer.
+  Nothing is generated. The status stays `no_answer`: alternatives travel in
+  their own `alternatives` field of `/ask` and never count as an answer.
+- **How they are chosen:** by the metadata the index already keeps for each
+  fragment, without another model. Each candidate paragraph gets an
+  affinity, the weighted mean of six signals; the weights and the threshold
+  are part of the installation profile
+  ([ADR 0008](../decisions/0008-proactive-posture-and-metadata-similarity.md)):
+
+  | Signal | Value for the paragraph | Shipped weight |
+  |---|---|---|
+  | `family` | 1 if it has an entity of the family of the missing one: same type and form ("TP-400" for "TP-500"). Only types declared in domain.yaml have a family: the core measures ("90 days", "20 %") appear in unrelated documents | 1 |
+  | `terms` | fraction of the question words it has (over all of them, also the missing ones; the words of the entity itself do not count) | 0 |
+  | `section`, `keywords` | the same fraction over its document title and section, or its keywords | 0 |
+  | `category` | 1 if it is of the question category in the project taxonomy | 0 |
+  | `similarity` | dense cosine with the question, from the model floor | 0 |
+
+  The weights were chosen with the alternatives bank for a precision of at
+  least 0.9 and the widest margin of thresholds: only the family survived.
+  Words, sections or categories alone also offered unrelated passages ("How
+  far away is the Moon?" → "remote work"). When the missing entity has a
+  family, only paragraphs of that family are offered. Alternatives do not
+  feed the conversation memory.
+- **Your codes:** a product code is an entity only if `domain.yaml`
+  declares it (`regex_extractors`, for example
+  `'\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'` with `transform: {pre:
+  minusculas}`). Without it, a missing code has no family and gets no
+  alternatives. The category signal needs at least two categories of your
+  own in `taxonomy`.
+- **Tuning:** `profile_overrides.alternatives.threshold` and
+  `profile_overrides.alternatives.weights` in `engine.yaml`. `ipsis ask
+  --diagnostics` shows each alternative offered or discarded, with its
+  affinity and signals.
 
 ## Query log and audit (`ipsis audit`)
 

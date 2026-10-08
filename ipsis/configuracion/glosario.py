@@ -38,6 +38,10 @@ ETAPAS = {"conversacional": "conversational", "analisis": "analysis", "confianza
           "filtros": "filters", "recuperacion": "retrieval", "reranking": "reranking", "lectura": "reading",
           "evidencia": "evidence", "politica": "policy", "redaccion": "rendering", "verificacion": "verification"}
 
+POSTURAS = {"proactiva": "proactive", "estricta": "strict"}
+SENALES_ALTERNATIVA = {"familia": _c("family"), "terminos": _c("terms"), "seccion": _c("section"),
+                       "keywords": _c("keywords"), "categoria": _c("category"), "similitud": _c("similarity")}
+
 PERFIL = {
     "perfil": _c("profile"), "descripcion": _c("description"), "presupuesto_p95_ms": _c("p95_budget_ms"),
     "modelos": _c("models", MODELOS),
@@ -51,6 +55,7 @@ PERFIL = {
     "lexico": _c("lexical", {"k1": _c("k1"), "b": _c("b"), "max_terminos_foco": _c("max_focus_terms")}),
     "umbrales_por_defecto": _c("default_thresholds", UMBRALES),
     "recuperacion_modo": _c("retrieval_mode", valores=MODOS_RECUPERACION),
+    "alternativas": _c("alternatives", {"umbral": _c("threshold"), "pesos": _c("weights", SENALES_ALTERNATIVA)}),
 }
 
 # --- archivos ------------------------------------------------------------------------------------
@@ -59,6 +64,7 @@ ASISTENTE = {
     "descripcion_dominio": _c("domain_description"), "idioma": _c("language"), "perfil": _c("profile"),
     "cors_origenes": _c("cors_origins"), "claves_widget": _c("widget_keys"),
     "registro": _c("query_log", {"activo": _c("enabled")}),
+    "postura": _c("posture", {"modo": _c("mode", valores=POSTURAS), "max_alternativas": _c("max_alternatives")}),
 }
 
 MOTOR = {

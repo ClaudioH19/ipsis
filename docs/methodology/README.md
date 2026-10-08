@@ -32,6 +32,9 @@ Values not yet checked against a golden set are marked as
 3. [Reranker](reranker.md): cross-encoder in medium and heavy.
 4. [QA reader](reader.md): a literal span or "no answer", the `s_qa` signal.
 5. [`cascade_v1` policy](policy.md): `ok`, `related` or `no_answer`.
+   With the proactive posture, a `no_answer` may carry
+   [alternatives](../decisions/0008-proactive-posture-and-metadata-similarity.md)
+   ([measurements](mediciones/v5-alternativas/README.md)).
 6. [Calibration](calibration.md): thresholds with risk ≤ α
    (Clopper-Pearson).
 7. [Multilingual](multilingual.md): language packs and tones.

@@ -42,6 +42,9 @@ cors_origins: []          # orígenes que pueden insertar el widget
 widget_keys: []           # claves públicas opcionales del widget
 query_log:
   enabled: false          # .ipsis/logs/queries.jsonl, para `ipsis audit`
+posture:
+  mode: proactive         # proactive | strict: ver «Cuando la respuesta no está»
+  max_alternatives: 3     # de 1 a 5
 ```
 
 ## Versionado
@@ -280,11 +283,11 @@ Lo que el asistente dice alrededor del texto del documento viene de un
 defecto), `formal`, `serious`, `upbeat`, `friendly`, `empathetic` y
 `direct`. Ver [personalidad.md](personalidad.md).
 
-Cada tono tiene 18 situaciones, con 7 a 12 variantes cada una:
+Cada tono tiene 19 situaciones, con 7 a 12 variantes cada una:
 
 - motor: `greeting`, `thanks`, `farewell`, `capability`, `opening`,
   `addition`, `condition`, `exception`, `related_intro`, `missing_focus`,
-  `no_answer` y `premise_not_found`;
+  `alternatives_intro`, `no_answer` y `premise_not_found`;
 - widget: `welcome`, `waiting`, `citations_hint`, `network_error`,
   `rate_limit_error` y `service_error`.
 
@@ -434,6 +437,68 @@ La memoria vive en el proceso del servicio (cada worker tiene la suya),
 guarda términos de las preguntas y de los pasajes que las respondieron, nunca
 las respuestas, y se pierde al reiniciar. El widget empieza una conversación
 nueva en cada carga de página.
+
+## Cuando la respuesta no está (postura)
+
+Cuando los documentos no tienen lo pedido, el asistente lo dice. Con la
+postura **proactiva** (la de fábrica) además ofrece hasta `max_alternatives`
+pasajes parecidos que sí están en los documentos, bajo una frase fija del
+tono que dice que no son lo pedido:
+
+```
+No encontré "TP-500" en los documentos disponibles.
+
+Te muestro lo más parecido que sí aparece en los documentos:
+
+El taladro percutor TP-600 tiene un motor de 800 W … (Fuente: Catálogo …).
+El taladro percutor TP-400 tiene un motor de 600 W … (Fuente: Catálogo …).
+```
+
+```
+ipsis configure posture.mode=strict          # solo «no está»
+ipsis configure posture.max_alternatives=2
+```
+
+- **Cuándo:** solo tras una premisa falsa (una entidad de la pregunta no está
+  en los documentos) o una pregunta sin respuesta. Las preguntas fuera de
+  dominio, las respuestas relacionadas y los turnos conversacionales nunca
+  traen alternativas. Con los perfiles incluidos, en la práctica solo tras
+  una premisa falsa cuya entidad tiene familia en los documentos (abajo).
+- **Qué se muestra:** cada alternativa es un párrafo literal de los
+  documentos con su cita, verificado como la evidencia de una respuesta. No
+  se genera nada. El estado sigue siendo `no_answer`: las alternativas viajan
+  en su propio campo `alternatives` de `/ask` y nunca cuentan como respuesta.
+- **Cómo se eligen:** con los metadatos que el índice ya guarda de cada
+  fragmento, sin otro modelo. Cada párrafo candidato recibe una afinidad,
+  la media ponderada de seis señales; los pesos y el umbral son parte del
+  perfil de instalación
+  ([ADR 0008](../../decisions/0008-proactive-posture-and-metadata-similarity.md)):
+
+  | Señal | Valor para el párrafo | Peso incluido |
+  |---|---|---|
+  | `family` | 1 si tiene una entidad de la familia de la ausente: mismo tipo y forma («TP-400» para «TP-500»). Solo tienen familia los tipos que declara domain.yaml: las medidas del núcleo («90 días», «20 %») aparecen en documentos sin relación | 1 |
+  | `terms` | parte de las palabras de la pregunta que tiene (sobre todas, también las ausentes; las de la propia entidad no cuentan) | 0 |
+  | `section`, `keywords` | la misma parte sobre su título de documento y sección, o sus palabras clave | 0 |
+  | `category` | 1 si es de la categoría de la pregunta en la taxonomía del proyecto | 0 |
+  | `similarity` | coseno denso con la pregunta, desde el piso del modelo | 0 |
+
+  Los pesos se eligieron con el banco de alternativas para una precisión de
+  al menos 0,9 y el margen de umbrales más ancho: solo sobrevivió la
+  familia. Las palabras, secciones o categorías por sí solas también
+  ofrecían pasajes sin relación («¿A qué distancia está la Luna?» → «trabajo
+  a distancia»). Si la entidad ausente tiene familia, solo se ofrecen
+  párrafos de esa familia. Las alternativas no alimentan la memoria de la
+  conversación.
+- **Tus códigos:** un código de producto es una entidad solo si
+  `domain.yaml` lo declara (`regex_extractors`, por ejemplo
+  `'\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'` con `transform: {pre:
+  minusculas}`). Sin eso, un código ausente no tiene familia ni
+  alternativas. La señal de categoría necesita al menos dos categorías
+  propias en `taxonomy`.
+- **Ajuste:** `profile_overrides.alternatives.threshold` y
+  `profile_overrides.alternatives.weights` en `engine.yaml`. `ipsis ask
+  --diagnostics` muestra cada alternativa ofrecida o descartada, con su
+  afinidad y sus señales.
 
 ## Registro de consultas y auditoría (`ipsis audit`)
 

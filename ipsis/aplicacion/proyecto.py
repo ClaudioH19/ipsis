@@ -48,6 +48,18 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     for clave, valor in pares.items():
         if clave == "registro.activo":
             nuevo["registro"] = {**(nuevo.get("registro") or {}), "activo": _booleano(clave, valor)}
+        elif clave == "postura.modo":
+            from ipsis.configuracion.glosario import POSTURAS
+
+            interno = {externo: interno for interno, externo in POSTURAS.items()}
+            modo = valor.strip().lower()
+            if modo not in interno and modo not in POSTURAS:
+                raise ValueError(t("app.unknown_posture", value=valor, available=sorted(interno)))
+            nuevo["postura"] = {**(nuevo.get("postura") or {}), "modo": interno.get(modo, modo)}
+        elif clave == "postura.max_alternativas":
+            if not valor.strip().isdigit() or not 1 <= int(valor) <= 5:
+                raise ValueError(t("app.posture_alternatives_range", value=valor))
+            nuevo["postura"] = {**(nuevo.get("postura") or {}), "max_alternativas": int(valor)}
         elif clave in _CLAVES_LISTA_SEPARADA_POR_COMA:
             nuevo[clave] = [v.strip() for v in valor.split(",") if v.strip()]
         else:

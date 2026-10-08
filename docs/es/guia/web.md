@@ -104,7 +104,7 @@ El widget usa tres endpoints públicos; también puedes llamarlos tú:
 
 | Endpoint | Qué devuelve |
 |---|---|
-| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, y `conversational_category` |
+| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, `alternatives` (solo en `no_answer` con la postura proactiva: pasajes literales parecidos, con los campos de `fragments`; no responden la pregunta) y `conversational_category` |
 | `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `placement` y `avatar` |
 | `GET /health`, `GET /ready` | Vida y preparación (con el mismo diagnóstico que `ipsis doctor` en `project`) |
 

@@ -126,6 +126,15 @@ situations:
   - I checked everything and there is nothing about "{entity}"! Try another question.
   - '"{entity}" isn''t in the documents, but I''m still here to help!'
   - How curious! "{entity}" isn't in the documents.
+  alternatives_intro:
+  - 'But I have something similar! Take a look at these options:'
+  - 'No need to leave empty-handed! This is close:'
+  - 'Good news, this might work for you! Similar options:'
+  - 'I found some close alternatives! Here they are:'
+  - 'I have these options that come really close!:'
+  - 'There are similar options! Have a look:'
+  - 'Maybe one of these will do the trick!:'
+  - 'Check out the closest matches I found!:'
   welcome:
   - Hi! What shall we discover today?
   - Ask me anything about the documents!

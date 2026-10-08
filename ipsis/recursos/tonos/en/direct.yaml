@@ -127,6 +127,15 @@ situations:
   - '"{entity}": no data.'
   - Can't find "{entity}".
   - No mention of "{entity}".
+  alternatives_intro:
+  - 'Similar:'
+  - 'Closest match:'
+  - 'Alternatives:'
+  - 'Similar options:'
+  - 'Available instead:'
+  - 'Nearest options:'
+  - 'This is close:'
+  - 'Available and similar:'
   welcome:
   - Ask.
   - Type your question.

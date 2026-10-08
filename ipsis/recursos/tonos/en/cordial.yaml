@@ -127,6 +127,15 @@ situations:
   - There is no trace of "{entity}" in the available documents.
   - '"{entity}" is not in the documents. It may be outside their scope.'
   - I went through the documents and didn't find "{entity}".
+  alternatives_intro:
+  - 'Here is the closest match that does appear in the documents:'
+  - 'This is the closest thing to what you are looking for:'
+  - 'One of these options from the documents might help:'
+  - 'I found a few similar options:'
+  - 'This is what comes closest to your question:'
+  - 'In case it helps, this is the most similar content I found:'
+  - 'These options in the documents are similar to what you asked:'
+  - 'The closest thing I have is this:'
   welcome:
   - Hi, how can I help you?
   - Hi! Ask me anything about the documents.

@@ -126,6 +126,15 @@ situations:
   - Sorry, "{entity}" does not appear in the available documents.
   - I understand you are interested in "{entity}", but it is not in the documents.
   - I checked carefully and there is nothing about "{entity}".
+  alternatives_intro:
+  - 'I know it is not exactly what you need, but this might help:'
+  - 'I understand you were after something else; here is the closest match that is available:'
+  - 'So you are not left without options, this is the closest:'
+  - 'Perhaps one of these alternatives will help:'
+  - 'I looked for something similar to help you and found this:'
+  - 'I hope one of these similar options is useful to you:'
+  - 'It is not the same, but it may point you in the right direction:'
+  - 'Here is the most similar content I found, in case it helps:'
   welcome:
   - Hi, I'm here to help you.
   - Hi, tell me what you need.

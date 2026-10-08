@@ -51,6 +51,12 @@ contradict each other.
 After the policy, verification checks that every piece of evidence is
 `corpus[start:end]` and that the entities of the answer are in the source.
 
+**After a `no_answer`.** With the proactive posture, a `premisa` or
+`sin_respuesta` decision may carry alternatives: lines of the family of a
+missing declared entity, literal and verified. They never change the
+decision, the state or the evidence
+([ADR 0008](../decisions/0008-proactive-posture-and-metadata-similarity.md)).
+
 ## 5. Assumptions
 
 The signals are in [0, 1] and comparable across queries of the same profile

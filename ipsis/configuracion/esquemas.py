@@ -26,6 +26,16 @@ class RegistroConfig(ConfiguracionEstricta):
     activo: bool = False
 
 
+class PosturaConfig(ConfiguracionEstricta):
+    """Qué hace el asistente cuando no encuentra lo pedido (ADR 0008).
+
+    ``proactiva``: ofrece hasta ``max_alternativas`` párrafos parecidos que sí
+    están en el corpus; ``estricta``: solo dice que no está."""
+
+    modo: Literal["proactiva", "estricta"] = "proactiva"
+    max_alternativas: int = Field(default=3, ge=1, le=5)
+
+
 class AsistenteConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
@@ -36,6 +46,7 @@ class AsistenteConfig(ConfiguracionEstricta):
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
     registro: RegistroConfig = Field(default_factory=RegistroConfig)
+    postura: PosturaConfig = Field(default_factory=PosturaConfig)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):

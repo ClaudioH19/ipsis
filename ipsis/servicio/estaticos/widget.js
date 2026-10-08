@@ -420,6 +420,9 @@
     "  border-left:3px solid var(--rw-aviso-borde);border-bottom-left-radius:5px;}",
     ".rw-msg-sin_respuesta{align-self:center;background:transparent;color:var(--rw-texto-suave);",
     "  border:none;font-size:var(--rw-tamano-cita);text-align:center;padding:4px 8px;max-width:100%;}",
+    // Sin respuesta, pero con alternativas parecidas (postura proactiva): burbuja con citas.
+    ".rw-msg-alternativas{align-self:flex-start;background:var(--rw-superficie);",
+    "  color:var(--rw-texto);border:1px solid var(--rw-borde);border-bottom-left-radius:5px;}",
     ".rw-msg-conversacional{align-self:flex-start;background:var(--rw-superficie);",
     "  color:var(--rw-texto);border:1px dashed var(--rw-borde);border-bottom-left-radius:5px;}",
     ".rw-aviso{display:flex;align-items:center;gap:5px;font-size:var(--rw-tamano-etiqueta);",
@@ -817,6 +820,10 @@
   // Respuesta pública de /ask → la forma interna que pinta el widget.
   var ESTADOS_INTERNOS = { ok: "ok", related: "relacionado", no_answer: "sin_respuesta",
                            conversational: "conversacional", degraded: "degradado", saturated: "saturado" };
+  function fragmentoInterno(f) {
+    return { chunk_id: f.chunk_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
+             offset_inicio: f.offset_start, offset_fin: f.offset_end };
+  }
   function respuestaInterna(r) {
     r = r || {};
     var exacta = r.exact_answer;
@@ -826,10 +833,8 @@
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
       }),
-      fragmentos: (r.fragments || []).map(function (f) {
-        return { chunk_id: f.chunk_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
-                 offset_inicio: f.offset_start, offset_fin: f.offset_end };
-      }),
+      fragmentos: (r.fragments || []).map(fragmentoInterno),
+      alternativas: (r.alternatives || []).map(fragmentoInterno),
       respuesta_exacta: exacta ? { chunk_id: exacta.chunk_id, texto: exacta.text, offset_inicio: exacta.offset_start,
                                    offset_fin: exacta.offset_end } : null
     };
@@ -858,8 +863,10 @@
 
   function agregarMensajeAsistente(respuesta) {
     var estadoResp = respuesta.estado || "sin_respuesta";
+    var alternativas = estadoResp === "sin_respuesta" ? (respuesta.alternativas || []) : [];
     var burbuja = document.createElement("div");
-    burbuja.className = "rw-msg rw-msg-" + (ETIQUETAS_ESTADO.hasOwnProperty(estadoResp) ? estadoResp : "sin_respuesta");
+    burbuja.className = "rw-msg rw-msg-" + (alternativas.length ? "alternativas"
+      : ETIQUETAS_ESTADO.hasOwnProperty(estadoResp) ? estadoResp : "sin_respuesta");
 
     var aviso = ETIQUETAS_ESTADO[estadoResp];
     if (aviso && PRESENTACION.mostrarEtiquetaEstado) {
@@ -879,8 +886,9 @@
       burbuja.appendChild(parrafo);
     });
 
-    if (estadoResp === "ok" || estadoResp === "relacionado") {
-      agregarCitas(burbuja, respuesta.fragmentos, respuesta.respuesta_exacta);
+    if (estadoResp === "ok" || estadoResp === "relacionado" || alternativas.length) {
+      agregarCitas(burbuja, alternativas.length ? alternativas : respuesta.fragmentos,
+                   alternativas.length ? null : respuesta.respuesta_exacta);
       var citas = burbuja.querySelector(".rw-citas");
       if (citas) citas.style.animationDelay = (Math.min(bloques.length, 6) * 70 + 80) + "ms";
     }

@@ -1,0 +1,28 @@
+# config/domain.yaml of the measurement project: what a hardware store
+# installing the assistant would declare. Product codes are an entity of their
+# own (the family of an absent code is looked up through it) and the taxonomy
+# gives the category of each fragment and of the question.
+regex_extractors:
+  - type: code
+    pattern: '\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'
+    normalized_value: 'code_{pre}-{num}'
+    transform: {pre: minusculas}
+    gloss: product code
+taxonomy:
+  domain: hardware store tools and internal documents
+  categories:
+    - id: drills
+      description: Hammer and cordless drills for drilling.
+      trigger_words: [drill, drills, hammer, chuck, drilling]
+    - id: saws
+      description: Circular saws and jigsaws for cutting.
+      trigger_words: [saw, saws, blade, cutting, jigsaw]
+    - id: sanders
+      description: Orbital and belt sanders for sanding.
+      trigger_words: [sander, sanders, sanding, sandpaper]
+    - id: ladders
+      description: Step and extension ladders.
+      trigger_words: [ladder, ladders, steps]
+    - id: otro
+      description: Does not fit any previous category.
+  hard_filter_threshold: 0.95

@@ -126,6 +126,15 @@ situations:
   - The available documents do not mention "{entity}".
   - '"{entity}" was not found in the documents; it may fall outside their scope.'
   - I have no information on "{entity}" in the documents.
+  alternatives_intro:
+  - 'Please find below the closest options contained in the documents:'
+  - 'The following content is the most similar to your enquiry:'
+  - 'The documents do contain the following related options:'
+  - 'These are the nearest alternatives available:'
+  - 'One of the following options may be of use to you:'
+  - 'These are the references most similar to your request:'
+  - 'May I suggest the following documented alternatives:'
+  - 'The following similar options were found:'
   welcome:
   - Good day. How may I assist you?
   - Welcome. Please state your enquiry.

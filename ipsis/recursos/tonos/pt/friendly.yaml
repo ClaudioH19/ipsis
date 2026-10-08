@@ -126,6 +126,15 @@ situations:
   - Nada sobre "{entity}" nos documentos, desculpe.
   - Procurei e "{entity}" não sai em parte alguma.
   - '"{entity}" não está no que você carregou.'
+  alternatives_intro:
+  - 'Mas olha, tenho coisas parecidas:'
+  - 'Talvez algo daqui sirva, é bem parecido:'
+  - 'Deixo aqui o mais parecido que achei:'
+  - 'Isto chega bem perto, só por garantia:'
+  - 'Tenho estas opções parecidas, dá uma olhada:'
+  - 'Quem sabe uma destas funciona para você:'
+  - 'O mais próximo que tenho à mão é isto:'
+  - 'Olha estas opções semelhantes:'
   welcome:
   - Olá! Do que precisa?
   - Olá! Pergunte o que quiser.

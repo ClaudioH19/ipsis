@@ -1,0 +1,28 @@
+# config/domain.yaml del proyecto de medición: lo que declararía una
+# ferretería que instala el asistente. Los códigos de producto son una entidad
+# propia (la familia de un código ausente se busca por ella) y la taxonomía da
+# la categoría de cada fragmento y de la pregunta.
+regex_extractors:
+  - type: codigo
+    pattern: '\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'
+    normalized_value: 'codigo_{pre}-{num}'
+    transform: {pre: minusculas}
+    gloss: código de producto
+taxonomy:
+  domain: herramientas de la ferretería y documentos internos
+  categories:
+    - id: taladros
+      description: Taladros percutores e inalámbricos para perforar.
+      trigger_words: [taladro, taladros, percutor, mandril, perforar]
+    - id: sierras
+      description: Sierras circulares y caladoras para cortar.
+      trigger_words: [sierra, sierras, disco, cortar, caladora]
+    - id: lijadoras
+      description: Lijadoras orbitales y de banda para lijar.
+      trigger_words: [lijadora, lijadoras, lijar, lija]
+    - id: escaleras
+      description: Escaleras tijera y extensibles.
+      trigger_words: [escalera, escaleras, peldaños]
+    - id: otro
+      description: No corresponde a ninguna categoría anterior.
+  hard_filter_threshold: 0.95

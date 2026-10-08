@@ -231,10 +231,35 @@ class EtapaPolitica(_Etapa):
         ctx.diagnostico["regla"] = decision.capa_decisora or decision.motivo
         if decision.abstiene:
             motivo = decision.motivo if decision.motivo in {"premisa", "fuera_dominio"} else "generico"
+            alternativas = _alternativas(m, ctx, motivo)
             ctx.resultado = m._abstener(
                 motivo, ctx.confianza, ctx.latencia_ms(),
-                entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico,
+                entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico, alternativas=alternativas,
             )
+
+
+def _alternativas(motor, ctx, motivo: str):
+    """Con la postura proactiva, lo más parecido a lo pedido (ADR 0008).
+
+    Solo tras ``premisa`` o ``sin_respuesta``: fuera de dominio nunca se
+    ofrece nada. Las alternativas no tocan la decisión ni la memoria de la
+    conversación (no pasan por la verificación, que es quien la alimenta)."""
+    from ipsis.consulta.alternativas import MOTIVOS_CON_ALTERNATIVAS, buscar_alternativas
+
+    config = getattr(motor, "alternativas", None)
+    if config is None or not config.activa or motivo not in MOTIVOS_CON_ALTERNATIVAS or ctx.consulta is None:
+        return None
+    ausentes = verificar_premisa_candidatos(ctx.consulta, ctx.candidatos).entidades_ausentes if motivo == "premisa" else []
+    resultado = buscar_alternativas(motor, ctx, entidades_ausentes=ausentes, config=config,
+                                    guardar_todas=bool(getattr(motor, "registrar_alternativas", False)))
+    # La misma guardia que la evidencia de una respuesta: texto y offsets literales del chunk.
+    if motor.verificador is not None and resultado.ofrecidas:
+        from ipsis.nucleo.esquemas import RetrievalCandidate
+
+        resultado.ofrecidas = [a for a in resultado.ofrecidas if motor.verificador.verificar(
+            [a.evidencia], [RetrievalCandidate(chunk=a.chunk)])[0]]
+    ctx.diagnostico["alternativas"] = resultado.diagnostico()
+    return resultado
 
 
 __all__ = [

@@ -158,6 +158,7 @@ CLAVES_DOMINIO = {
     "assistant_name": "nombre_asistente", "domain_description": "descripcion_dominio", "language": "idioma",
     "profile": "perfil", "cors_origins": "cors_origenes", "widget_keys": "claves_widget",
     "query_log.enabled": "registro.activo",
+    "posture.mode": "postura.modo", "posture.max_alternatives": "postura.max_alternativas",
 }
 CLAVES_DOMINIO_VALIDAS = set(CLAVES_DOMINIO)
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}

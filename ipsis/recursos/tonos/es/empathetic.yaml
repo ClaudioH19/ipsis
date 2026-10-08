@@ -126,6 +126,15 @@ situations:
   - Perdón, "{entity}" no aparece en los documentos disponibles.
   - Comprendo que te interesa "{entity}", pero no figura en los documentos.
   - Revisé con atención y no hay nada sobre "{entity}".
+  alternatives_intro:
+  - 'Sé que no es exactamente lo que necesitas, pero esto podría ayudarte:'
+  - 'Entiendo que buscabas otra cosa; te muestro lo más parecido que sí está:'
+  - 'Para que no te quedes sin opciones, esto es lo más cercano:'
+  - 'Quizá alguna de estas alternativas te sirva:'
+  - 'Busqué algo parecido para ayudarte y encontré esto:'
+  - 'Ojalá alguna de estas opciones similares te resulte útil:'
+  - 'No es lo mismo, pero puede orientarte:'
+  - 'Te comparto lo más similar que encontré, por si te ayuda:'
   welcome:
   - Hola, estoy aquí para ayudarte.
   - Hola, cuéntame qué necesitas.

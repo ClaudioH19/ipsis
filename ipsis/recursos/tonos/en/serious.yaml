@@ -126,6 +126,15 @@ situations:
   - '"{entity}" is not listed.'
   - No references to "{entity}".
   - '"{entity}" was not found.'
+  alternatives_intro:
+  - 'Similar options recorded in the documents:'
+  - 'This is the closest content in the documents:'
+  - 'Alternatives available in the documents:'
+  - 'Similar content that is on record:'
+  - 'The nearest match to the query is the following:'
+  - 'These similar options are on record:'
+  - 'Similar references available:'
+  - 'The documents record these alternatives:'
   welcome:
   - Type your question.
   - Questions about the document.

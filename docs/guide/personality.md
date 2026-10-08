@@ -127,10 +127,10 @@ In English, Spanish and Portuguese:
 | `empathetic` | acknowledges what the person needs | "I'm sorry, that information is not in the available documents." |
 | `direct` | blunt and imperative, never aggressive | "Not in the documents. Ask something else." |
 
-Each tone brings 18 situations: 12 variants in the four the user sees in
+Each tone brings 19 situations: 12 variants in the four the user sees in
 almost every answer (`opening`, `addition`, `no_answer`, `related_intro`), 7
-in the widget ones and 8 in the rest. That is 154 per tone and language,
-3,234 in total, and every language has the same count per situation.
+in the widget ones and 8 in the rest. That is 162 per tone and language,
+3,402 in total, and every language has the same count per situation.
 
 ## Situations
 
@@ -143,6 +143,7 @@ in the widget ones and 8 in the rest. That is 154 per tone and language,
 | `missing_focus` | related, the main term is missing | `{term}` (required) |
 | `no_answer` | it is not in the documents | — |
 | `premise_not_found` | the question asked about something that does not exist | `{entity}` (required) |
+| `alternatives_intro` | after `no_answer` or `premise_not_found`, before the similar passages of the proactive posture ([configuration](configuration.md#when-the-answer-is-not-there-posture)) | — |
 | `welcome`, `waiting`, `citations_hint`, `network_error`, `rate_limit_error`, `service_error` | widget texts | `welcome`: `{assistant_name}` |
 
 ## Variety and traceability
@@ -270,10 +271,11 @@ checked.
 The linter does not judge meaning. Before publishing a tone, a person
 checks:
 
-1. **Recognizable tone:** the 154 variants sound like the same character.
+1. **Recognizable tone:** the 162 variants sound like the same character.
 2. **Honesty:** `related_intro` and `missing_focus` say it is not a direct
    answer; `no_answer` and `premise_not_found` never suggest the
-   information exists elsewhere.
+   information exists elsewhere; `alternatives_intro` says the passages that
+   follow are similar, not what was asked, and promises nothing about them.
 3. **No content:** no template reads as something the document says.
 4. **The connector fits:** `opening`, `addition`, `condition` and
    `exception` read well followed by a citation that starts with a capital

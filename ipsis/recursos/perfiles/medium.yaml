@@ -40,3 +40,16 @@ default_thresholds:
   focus: 1.0  # la oración que responde tiene todos los términos foco (ADR 0005)
   ok: 0.8
   cov: 0.6
+# Alternatives of the proactive posture (ADR 0008): affinity = weighted mean
+# of the signals; offered when it reaches the threshold. Calibrated with
+# tests/datos/banco_alternativas (precision >= 0.9, widest margin): only the
+# family of the missing entity counts.
+alternatives:
+  threshold: 0.5
+  weights:
+    family: 1.0
+    terms: 0.0
+    section: 0.0
+    keywords: 0.0
+    category: 0.0
+    similarity: 0.0

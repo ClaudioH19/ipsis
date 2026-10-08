@@ -1,0 +1,39 @@
+{
+ "carga": {
+  "proactiva": {
+   "peticiones": 240,
+   "clientes": 8,
+   "segundos": 25.5,
+   "por_segundo": 9.4,
+   "codigos": {
+    "200": 238,
+    "503": 2
+   },
+   "latencia_ok": {
+    "n": 238,
+    "media": 838.4,
+    "p50": 824.7,
+    "p95": 1043.2,
+    "max": 1339.4
+   },
+   "con_alternativas": 20
+  },
+  "estricta": {
+   "peticiones": 240,
+   "clientes": 8,
+   "segundos": 24.6,
+   "por_segundo": 9.7,
+   "codigos": {
+    "200": 240
+   },
+   "latencia_ok": {
+    "n": 240,
+    "media": 811.8,
+    "p50": 772.6,
+    "p95": 1048.6,
+    "max": 1212.8
+   },
+   "con_alternativas": 0
+  }
+ }
+}

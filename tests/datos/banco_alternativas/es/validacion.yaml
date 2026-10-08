@@ -1,0 +1,74 @@
+# Validación apartada del banco de alternativas: escrita antes de congelar la
+# regla y medida una sola vez después (ADR 0008). Mismos campos que casos.yaml.
+- id: es-val-codigo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen la escalera ET-9?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: es-val-codigo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Qué precio tiene la lijadora LO-200?
+  aceptables: [LO-300, LB-900]
+- id: es-val-codigo-003
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Hay stock del taladro TI-24?
+  aceptables: [TI-18, TP-400, TP-600]
+- id: es-val-codigo-004
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Venden la sierra caladora SK-50?
+  aceptables: [SK-65, SC-185, SC-235]
+- id: es-val-plazo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Puedo pedir el reembolso hasta 45 días después de recibir el pedido?
+  aceptables: [hasta 30 días después de recibir el pedido]
+- id: es-val-plazo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿La jefatura responde la solicitud de teletrabajo en quince días hábiles?
+  aceptables: [responde dentro de cinco días hábiles]
+- id: es-val-dificil-001
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿A qué distancia queda el aeropuerto?
+- id: es-val-dificil-002
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Cuánto cuesta el curso de seguridad industrial?
+- id: es-val-dificil-003
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Cuánto pesa un monitor de 27 pulgadas?
+- id: es-val-dificil-004
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Qué horario tiene el gimnasio?
+- id: es-val-dificil-005
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Venden repuestos para la bomba de agua del auto?
+- id: es-val-dificil-006
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Tienen una biblioteca de música?
+- id: es-val-fuera-001
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: ¿Quién escribió El Quijote?
+- id: es-val-fuera-002
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: ¿Cuántos planetas tiene el sistema solar?
+- id: es-val-exacta-001
+  tipo: exacta
+  particion: validacion
+  pregunta: ¿Cuántas unidades del taladro TP-600 hay en la Bodega Central?
+  aceptables: [TP-600]
+- id: es-val-exacta-002
+  tipo: exacta
+  particion: validacion
+  pregunta: ¿Hasta qué altura llega la escalera EX-12?
+  aceptables: [EX-12]
