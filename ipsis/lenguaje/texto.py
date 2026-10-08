@@ -1,7 +1,7 @@
 """Utilidades léxicas deterministas compartidas por el motor."""
 from __future__ import annotations
 
-import functools
+import threading
 import re
 import unicodedata
 
@@ -38,11 +38,22 @@ def tokenizar(texto: str, *, normalizado: bool = True) -> list[str]:
     return [normalizar(t) for t in tokens] if normalizado else tokens
 
 
-@functools.lru_cache(maxsize=None)
-def _stemmer(nombre: str):
-    import snowballstemmer
+_POR_HILO = threading.local()
 
-    return snowballstemmer.stemmer(nombre)
+
+def _stemmer(nombre: str):
+    """Un stemmer por hilo: snowballstemmer guarda el estado de la palabra en
+    curso en la instancia, y el servicio atiende peticiones en varios hilos.
+    Compartido, dos consultas simultáneas lo corrompían (``IndexError``)."""
+    propios = getattr(_POR_HILO, "stemmers", None)
+    if propios is None:
+        propios = _POR_HILO.stemmers = {}
+    stemmer = propios.get(nombre)
+    if stemmer is None:
+        import snowballstemmer
+
+        stemmer = propios[nombre] = snowballstemmer.stemmer(nombre)
+    return stemmer
 
 
 def terminos(texto: str, paquete=None) -> list[str]:
