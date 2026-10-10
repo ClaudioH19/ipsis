@@ -25,6 +25,10 @@ class FilaComparacion(BaseModel):
     tasa_falsos_ok: float
     exactitud_estado: float
     exactitud_literal: float
+    exactitud_tramo_qa: float | None = None
+    directas_con_literal: int | None = None
+    tramos_qa_evaluados: int | None = None
+    tramos_qa_sin_literal: int | None = None
     exactitud_offsets: float
     latencia_media_ms: float
     latencia_p95_ms: float
@@ -34,6 +38,7 @@ class InformeComparativo(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     schema_version: int = 1
+    criterio_respuesta: str = "tramo_o_respuesta_v1"
     dataset_id: str
     dataset_version: str
     dataset_sha256: str
@@ -68,6 +73,8 @@ def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeCompara
         )
         if actual != identidad:
             raise ValueError(t("evaluation.compare_identity"))
+        if artefacto.reporte.criterio_respuesta != referencia.reporte.criterio_respuesta:
+            raise ValueError(t("evaluation.compare_criterion"))
     filas = [
         FilaComparacion(
             backend=artefacto.backend,
@@ -78,6 +85,13 @@ def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeCompara
             tasa_falsos_ok=artefacto.reporte.tasa_falsos_ok,
             exactitud_estado=artefacto.reporte.exactitud_estado,
             exactitud_literal=artefacto.reporte.exactitud_literal,
+            exactitud_tramo_qa=artefacto.reporte.exactitud_tramo_qa,
+            directas_con_literal=(artefacto.reporte.cobertura.total.directas_con_literal
+                                  if artefacto.reporte.cobertura else None),
+            tramos_qa_evaluados=(artefacto.reporte.cobertura.total.tramos_qa_evaluados
+                                 if artefacto.reporte.cobertura else None),
+            tramos_qa_sin_literal=(artefacto.reporte.cobertura.total.tramos_qa_sin_literal
+                                  if artefacto.reporte.cobertura else None),
             exactitud_offsets=artefacto.reporte.exactitud_offsets,
             latencia_media_ms=artefacto.reporte.latencia_media_ms,
             latencia_p95_ms=artefacto.reporte.latencia_p95_ms,
@@ -85,6 +99,8 @@ def comparar_artefactos(artefactos: list[ArtefactoEvaluacion]) -> InformeCompara
         for artefacto in artefactos
     ]
     return InformeComparativo(
+        schema_version=2,
+        criterio_respuesta=referencia.reporte.criterio_respuesta,
         dataset_id=referencia.dataset_id,
         dataset_version=referencia.dataset_version,
         dataset_sha256=referencia.dataset_sha256,

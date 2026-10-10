@@ -114,6 +114,15 @@ def test_elige_el_umbral_mas_permisivo_que_cumple():
     assert resultado.dev.cobertura_directa == pytest.approx(70 / 75)
 
 
+def test_calibracion_mide_respuesta_completa_y_no_castiga_resaltado_incompleto():
+    casos, obs = _escenario([0.9] * 70, [0.5] * 10)
+    obs = [o.model_copy(update={"respuesta_exacta": "24"}) for o in obs]
+    resultado = calibrar(_banco(casos), obs, BASE)
+    assert resultado.estado == EstadoCalibracion.CALIBRADO
+    assert resultado.dev.riesgo.n == 70 and resultado.dev.riesgo.x == 0
+    assert resultado.dev.riesgo.criterio_respuesta == "respuesta_completa_v2"
+
+
 def test_ante_empate_conserva_el_valor_del_perfil():
     """P10.3: con todos los s_oov en 0 y s_foco en 1, dev no distingue oov_ok ni foco;
     antes el desempate «más estricto» los llevaba a ~0 y a 1,0 sin evidencia."""

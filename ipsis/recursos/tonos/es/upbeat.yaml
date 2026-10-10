@@ -95,6 +95,15 @@ situations:
   - 'Sin respuesta directa, ¡pero no te vas con las manos vacías! Mira:'
   - '¡Casi lo tengo! Directo no está, pero esto se relaciona:'
   - '¡No aparece la respuesta exacta, pero hay algo cercano! Esto:'
+  related_check:
+  - "¿Es esto lo que buscabas? ¡Si no, dímelo con otras palabras y sigo buscando!"
+  - "¡Ojalá te sirva! Si no, pregúntame de otra forma."
+  - "¡Si no es justo esto, dame otra pista y lo encuentro!"
+  - "¿Te ayuda? ¡Si no, seguimos buscando juntos!"
+  - "¡Revisa este pasaje! Si no responde tu duda, lo intento de nuevo."
+  - "¿Era esto? ¡Con un detalle más lo afino!"
+  - "¡Puedo buscar otra vez si me cuentas un poco más!"
+  - "¿Coincide con lo que necesitabas? ¡Si no, vamos con otra pregunta!"
   missing_focus:
   - 'No encontré nada sobre «{term}», pero esto es lo más cercano:'
   - '«{term}» no aparece, pero mira esto relacionado:'
@@ -126,6 +135,15 @@ situations:
   - ¡Revisé todo y no hay nada sobre "{entity}"! Prueba con otra pregunta.
   - '"{entity}" no está en los documentos, ¡pero sigo aquí para ayudarte!'
   - ¡Qué curioso! "{entity}" no figura en los documentos.
+  needs_clarification:
+  - ¡Con gusto busco! ¿Sobre qué tema es tu pregunta?
+  - ¡Casi lo tengo! Solo dime de qué trámite se trata.
+  - ¡Hay varias opciones en los documentos! ¿Cuál te interesa?
+  - ¡Cuéntame un poco más y lo encuentro enseguida!
+  - ¡Buena pregunta! ¿A qué documento te refieres?
+  - ¡Vamos a encontrarlo! Necesito saber el tema.
+  - ¡Puedo ayudarte con eso! ¿De qué se trata exactamente?
+  - ¡Dame una pista más y busco la respuesta!
   alternatives_intro:
   - '¡Pero tengo algo parecido! Mira estas opciones:'
   - '¡No te vayas con las manos vacías! Esto se le parece:'

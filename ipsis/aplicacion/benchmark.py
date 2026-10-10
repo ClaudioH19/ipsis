@@ -36,7 +36,7 @@ from ipsis.evaluacion.benchmark import (
 )
 from ipsis.recursos.mensajes import t
 
-PERFILES_BENCHMARK = ("bm25", "light", "medium", "heavy")
+PERFILES_BENCHMARK = ("bm25", "light", "medium")
 OK_EXPERIMENTAL_MEDIUM = 0.85
 
 
@@ -51,8 +51,10 @@ def _modelos(perfil) -> list[ModeloCargado]:
             continue
         spec = obtener(id_hf)
         try:
-            archivo = ruta_local(spec) / spec.archivo_onnx()
-            mb = round(archivo.stat().st_size / 1e6, 1) if archivo.is_file() else None
+            carpeta = ruta_local(spec)
+            archivo = carpeta / spec.archivo_onnx()
+            onnx = [archivo, *(carpeta / p for p in spec.datos_onnx())]
+            mb = round(sum(p.stat().st_size for p in onnx if p.is_file()) / 1e6, 1) if archivo.is_file() else None
         except FileNotFoundError:
             mb = None
         salida.append(ModeloCargado(rol=rol, id_hf=id_hf, parametros=spec.parametros, onnx_mb=mb))
@@ -96,7 +98,8 @@ def _acuerdo_por_caso(banco) -> tuple[dict[str, float], dict[str, float]]:
         motor.cerrar()
 
 
-def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimentos: bool):
+def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimentos: bool,
+                         ajustes: dict | None = None):
     """Proyecto temporal del perfil para un banco: artefacto, indexado y acuerdo."""
     from ipsis.aplicacion.evaluacion import evaluar_backend_activo
     from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
@@ -116,6 +119,13 @@ def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimento
                     raise RuntimeError(t("app.init_failed_for", profile=perfil))
                 if perfil == "bm25":
                     _fijar_perfil("bm25")
+                if ajustes:
+                    from ipsis.configuracion import rutas
+                    from ipsis.configuracion.archivos import leer, escribir
+
+                    config = leer(rutas.MOTOR, "motor")
+                    config["ajustes_perfil"] = ajustes
+                    escribir(rutas.MOTOR, config, "motor")
                 for archivo in banco.manifiesto.corpus.archivos:
                     if main(["load", str(corpus / archivo.ruta)]) != 0:
                         raise RuntimeError(t("app.load_failed", file=archivo.ruta))
@@ -231,7 +241,10 @@ def ejecutar_benchmark_perfiles(
 
     usados = [BancoUsado(dataset_id=b.manifiesto.dataset_id, dataset_version=b.manifiesto.dataset_version,
                          uso=b.manifiesto.uso, idioma=b.manifiesto.idioma, n_casos=len(b.casos)) for b in bancos]
-    return ReporteBenchmark(bancos=usados, nota=nota_de(usados), perfiles=resultados, artefactos=artefactos)
+    from ipsis.evaluacion.metricas import CRITERIO_RESPUESTA
+
+    return ReporteBenchmark(schema_version=2, criterio_respuesta=CRITERIO_RESPUESTA,
+                            bancos=usados, nota=nota_de(usados), perfiles=resultados, artefactos=artefactos)
 
 
 def escribir_reporte_benchmark(reporte: ReporteBenchmark, salida: str | Path) -> tuple[Path, Path]:

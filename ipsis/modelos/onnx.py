@@ -66,7 +66,9 @@ class ModeloOnnx:
         """Codificaciones con truncado y relleno al más largo del lote."""
         tokenizador = self.tokenizador
         tokenizador.enable_truncation(max_length=max_tokens or self.spec.max_tokens)
-        id_relleno = tokenizador.token_to_id("<pad>") or tokenizador.token_to_id("[PAD]") or 0
+        id_relleno = self.spec.pad_token_id
+        if id_relleno is None:
+            id_relleno = tokenizador.token_to_id("<pad>") or tokenizador.token_to_id("[PAD]") or 0
         tokenizador.enable_padding(pad_id=id_relleno)
         try:
             return tokenizador.encode_batch(list(textos))
@@ -85,6 +87,9 @@ class ModeloOnnx:
         }
         if "token_type_ids" in nombres:
             tensores["token_type_ids"] = np.array([c.type_ids for c in codificaciones], dtype=np.int64)
+        for nombre, forma in self.spec.entradas_vacias.items():
+            if nombre in nombres:
+                tensores[nombre] = np.empty(forma, dtype=np.float32)
         return {nombre: valor for nombre, valor in tensores.items() if nombre in nombres}
 
     def ejecutar(self, codificaciones) -> list:

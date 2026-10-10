@@ -17,7 +17,7 @@ def _proyecto(tmp_path, grupos):
     return cargar_paquete("es", proyecto=tmp_path)
 
 
-def _grupo(paquete, sentido="uno", formas=("vehículo", "automóvil")):
+def _grupo(paquete, sentido="uno", formas=("edificio", "inmueble")):
     return recursos.GrupoLexico("fuente", sentido, "n", formas,
                                 tuple(terminos(f, paquete)[0] for f in formas))
 
@@ -27,30 +27,30 @@ def test_automaticos_solo_expanden_recuperacion_y_conservan_foco(monkeypatch):
     g = _grupo(p)
     monkeypatch.setattr(recursos, "indice_automatico", lambda *_: {r: (g,) for r in g.raices})
     est = SimpleNamespace(df={g.raices[1]: 1})
-    expansion, detalles = recursos.expansion_automatica("¿Qué vehículo?", p, est)
-    assert expansion == {"vehiculo": ["automóvil"]}
+    expansion, detalles = recursos.expansion_automatica("¿Qué edificio?", p, est)
+    assert expansion == {"edificio": ["inmueble"]}
     assert detalles[0]["sentido"] == "uno" and detalles[0]["pos"] == "n"
-    assert g.raices[0] in terminos_de_contenido("¿Qué vehículo?", p, est)
+    assert g.raices[0] in terminos_de_contenido("¿Qué edificio?", p, est)
     assert g.raices[0] not in equivalentes([g.raices[1]], p)
     est.df[g.raices[0]] = 1
-    assert recursos.expansion_automatica("vehículo", p, est) == ({}, [])
+    assert recursos.expansion_automatica("edificio", p, est) == ({}, [])
 
 
 def test_colision_de_sentidos_o_stems_se_abstiene(monkeypatch):
     p = cargar_paquete("es")
     g = _grupo(p)
-    otro = _grupo(p, "dos", ("vehículo", "transporte"))
+    otro = _grupo(p, "dos", ("edificio", "transporte"))
     monkeypatch.setattr(recursos, "indice_automatico", lambda *_: {g.raices[0]: (g, otro)})
-    assert recursos.expansion_automatica("vehículo", p, SimpleNamespace(df={g.raices[1]: 1})) == ({}, [])
+    assert recursos.expansion_automatica("edificio", p, SimpleNamespace(df={g.raices[1]: 1})) == ({}, [])
 
 
 def test_reemplazo_con_raiz_ambigua_no_se_expande(monkeypatch):
     p = cargar_paquete("es")
     g = _grupo(p)
-    otro = _grupo(p, "dos", ("automóvil", "motorizado"))
+    otro = _grupo(p, "dos", ("inmueble", "motorizado"))
     indice = {g.raices[0]: (g,), g.raices[1]: (g, otro)}
     monkeypatch.setattr(recursos, "indice_automatico", lambda *_: indice)
-    assert recursos.expansion_automatica("vehículo", p, SimpleNamespace(df={g.raices[1]: 1})) == ({}, [])
+    assert recursos.expansion_automatica("edificio", p, SimpleNamespace(df={g.raices[1]: 1})) == ({}, [])
 
 
 def test_relacion_y_manuales_tienen_prioridad(monkeypatch):
@@ -75,10 +75,10 @@ def test_analisis_preserva_pregunta_y_guarda_expansion_aparte(monkeypatch):
     motor = SimpleNamespace(idioma=p, retriever=SimpleNamespace(estadisticas_lexico=lambda: est),
                             _analizar=lambda pregunta, sesion: QueryAnalysis(pregunta_original=pregunta,
                                                                           pregunta_normalizada=pregunta))
-    ctx = ContextoConsulta(pregunta="¿Qué vehículo?", id_sesion="uno")
+    ctx = ContextoConsulta(pregunta="¿Qué edificio?", id_sesion="uno")
     EtapaAnalisis(motor).ejecutar(ctx)
-    assert ctx.consulta.pregunta_original == ctx.pregunta == "¿Qué vehículo?"
-    assert ctx.consulta.contexto["pregunta_recuperacion"] == "¿Qué vehículo? automóvil"
+    assert ctx.consulta.pregunta_original == ctx.pregunta == "¿Qué edificio?"
+    assert ctx.consulta.contexto["pregunta_recuperacion"] == "¿Qué edificio? inmueble"
     assert ctx.diagnostico["recursos_lexicos"][0]["sentido"] == "uno"
 
 
@@ -93,10 +93,10 @@ def test_recuperacion_bm25_expandida_reutiliza_vector_original(monkeypatch):
         busquedas.append((args[1], kwargs["vector_precomputado"]))
         return SimpleNamespace(payloads=[], scores=[])
     monkeypatch.setattr(recuperacion, "buscar", buscar)
-    q = QueryAnalysis(pregunta_original="vehículo", pregunta_normalizada="vehiculo",
-                      contexto={"pregunta_recuperacion": "vehículo automóvil"})
+    q = QueryAnalysis(pregunta_original="edificio", pregunta_normalizada="edificio",
+                      contexto={"pregunta_recuperacion": "edificio inmueble"})
     assert retriever.recuperar(q, 3) == []
-    assert consultas == ["vehículo"] and busquedas == [("vehículo automóvil", [0.5])]
+    assert consultas == ["edificio"] and busquedas == [("edificio inmueble", [0.5])]
 
 
 @pytest.mark.parametrize("codigo", ["es", "en", "pt"])
@@ -110,12 +110,12 @@ def test_tabla_real_indexada_una_vez(codigo):
 
 def test_sentido_descartado_sigue_bloqueando_lema(tmp_path, monkeypatch):
     (tmp_path / "sinonimos").mkdir()
-    (tmp_path / "sinonimos/zz.tsv").write_text("# source\tfuente\nuno\tn\tvehículo\tautomóvil\n", encoding="utf-8")
+    (tmp_path / "sinonimos/zz.tsv").write_text("# source\tfuente\nuno\tn\tedificio\tinmueble\n", encoding="utf-8")
     (tmp_path / "sinonimos/zz.lexicon.tsv").write_text(
-        "uno\tn\tvehículo\tautomóvil\ndos\tn\tvehículo\n", encoding="utf-8")
+        "uno\tn\tedificio\tinmueble\ndos\tn\tedificio\n", encoding="utf-8")
     monkeypatch.setattr(recursos, "files", lambda *_: tmp_path)
     p = cargar_paquete("es")
-    assert terminos("vehículo", p)[0] not in recursos.indice_automatico("zz", p.stemmer)
+    assert terminos("edificio", p)[0] not in recursos.indice_automatico("zz", p.stemmer)
 
 
 def test_respaldo_no_hereda_diccionario_ingles(monkeypatch):

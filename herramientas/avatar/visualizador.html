@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ipsis · Visualizador de Folio</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0c1118;color:#f1f5f9}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:28px}
+    main{width:min(760px,100%)}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px}
+    .brand{font-size:38px;font-weight:800;letter-spacing:-1.7px}.tag{font-size:12px;color:#94a3b8;border:1px solid #283340;border-radius:99px;padding:7px 12px}
+    .stage{display:grid;grid-template-columns:1fr 1fr;gap:24px;background:#111923;border:1px solid #26313e;border-radius:24px;padding:36px 20px}
+    .sample{text-align:center;display:flex;align-items:center;flex-direction:column;gap:12px}
+    .sample img,.canvas{width:220px;height:220px;max-width:100%}.sample p{margin:0;color:#94a3b8;font-size:13px}
+    .controls{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:24px 0}
+    button,select{font:inherit;font-size:14px;color:#e2e8f0;background:#17212d;border:1px solid #334155;border-radius:10px;padding:11px 16px;cursor:pointer}
+    button:hover{background:#233044}button:focus-visible,select:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+    button.selected{border-color:#93c5fd;color:#93c5fd;background:#15293e}footer{display:flex;align-items:center;justify-content:space-between;gap:16px;color:#94a3b8;font-size:12px}
+    #error{color:#fda4af;text-align:center}#close{color:#cbd5e1;background:transparent;font-size:12px}
+    .catalog{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin-top:24px}.catalog label{font-size:14px;color:#cbd5e1}.catalog select{max-width:100%}.count{text-align:center;color:#94a3b8;font-size:13px}
+    .draft-box{margin:22px 0}.draft-box label{display:block;font-size:14px;margin-bottom:8px;color:#cbd5e1}
+    textarea{width:100%;min-height:76px;resize:vertical;font:inherit;color:#e2e8f0;background:#111923;border:1px solid #334155;border-radius:12px;padding:12px 16px}
+    textarea:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}.draft-box p{font-size:13px;color:#94a3b8;margin:8px 0 0}
+    @media(max-width:560px){body{padding:20px}.stage{gap:4px;padding:22px 6px}.sample img,.canvas{width:150px;height:150px}.controls{gap:8px}button,select{padding:10px 12px}footer{align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <main>
+    <header><span class="brand">ipsis</span><span class="tag">Visualizador de Folio</span></header>
+    <div class="stage">
+      <div class="sample"><img src="/logo.svg" alt="Hoja del logo de ipsis"><p>Logo de referencia</p></div>
+      <div class="sample"><div class="canvas" id="avatar"></div><p id="state" aria-live="polite">En reposo</p></div>
+    </div>
+    <div class="draft-box"><label for="draft">Escribe para probar sus reacciones</label><textarea id="draft" rows="2" maxlength="2000" placeholder="Prueba: tengo sueño · no entiendo · te quiero · jajaja"></textarea><p id="interaction">Pasa el mouse sobre Folio o prueba palabras como «hola», «increíble», «ayuda» o «gracias».</p></div>
+    <div class="catalog"><label for="situation">Situación del widget</label><select id="situation"></select></div>
+    <div class="catalog"><label for="catalog">Todas las animaciones y expresiones</label><select id="catalog"></select></div>
+    <p class="count" id="count"></p>
+    <div class="controls" aria-label="Gestos del avatar">
+      <button data-animation="idle" class="selected">Reposo</button>
+      <button data-animation="wave">Saludo</button>
+      <button data-animation="listening">Escuchando</button>
+      <button data-animation="thinking">Buscando</button>
+      <button data-animation="happy">Encontró una cita</button>
+      <button data-animation="spin">Vuelta 360°</button>
+      <button data-animation="flip">Giro sobre su eje</button>
+      <button data-animation="bounce">Saltos</button>
+      <button data-animation="sway">Balanceo</button>
+      <button data-animation="dance">Baile</button>
+      <button data-animation="float">Flotar</button>
+      <button data-animation="paper-plane-out">Doblar y despegar</button>
+      <button data-animation="paper-plane-in">Llegar y desplegar</button>
+      <button id="autonomy" class="selected" aria-pressed="true">Vida propia: activada</button>
+      <button id="pause" aria-pressed="false">Pausar</button>
+    </div>
+    <p id="error" role="alert"></p>
+    <footer><span>Flota mientras espera y reacciona con pausas cortas. Los vuelos cambian de recorrido.</span><button id="close">Detener visualizador</button></footer>
+  </main>
+  <script type="module">
+    import { createAvatar, reactionForText, withPointerGaze } from "/avatar.js";
+    const error = document.getElementById("error");
+    const status = document.getElementById("state");
+    const pause = document.getElementById("pause");
+    const catalog = document.getElementById("catalog");
+    const situation = document.getElementById("situation");
+    const autonomy = document.getElementById("autonomy");
+    const draft = document.getElementById("draft");
+    const interaction = document.getElementById("interaction");
+    let tecleo = null, quieto = null, pointerFrame = null, gaze = "mirada-c2-f1", sobre = false;
+    let lastSignal = null, lastHover = -Infinity;
+    let liveMode = true, autonomous = true;
+    function showAutonomy() {
+      const active = autonomous && liveMode;
+      autonomy.textContent = active ? "Vida propia: activada" : "Vida propia: desactivada";
+      autonomy.setAttribute("aria-pressed", String(active));
+      autonomy.classList.toggle("selected", active);
+    }
+    let events, persistent = "attentive";
+    let avatar, current = "idle", currentKind = "animation", paused = false;
+    const labels = {idle:"En reposo",wave:"Saludando",attentive:"Atento",listening:"Escuchando",nod:"Asintiendo",thinking:"Buscando en los documentos","thinking-long":"Búsqueda prolongada",happy:"Encontró una cita",unsure:"Dudando",sorry:"Sin respuesta",kind:"Amable",goodbye:"Despedida",worried:"Preocupado",sleepy:"Somnoliento","wake-up":"Despertando",neutral:"Neutral",reading:"Leyendo","thinking-side":"Pensando hacia un lado","eyes-closed":"Ojos cerrados",surprised:"Sorprendido","nod-down":"Cabeceo","look-left":"Mirando a la izquierda","look-right":"Mirando a la derecha",curious:"Curioso",wink:"Guiño"};
+    Object.assign(labels, {spin:"Vuelta de 360°",flip:"Giro sobre su eje",bounce:"Saltos",sway:"Balanceo",dance:"Baile",float:"Flotando"});
+    Object.assign(labels, {"paper-plane-out":"Avioncito: doblar y despegar", "paper-plane-in":"Avioncito: llegar y desplegar"});
+    function select(animation, kind = "animation") {
+      current = animation; currentKind = kind; paused = false;
+      catalog.value = `${kind}:${animation}`;
+      document.querySelectorAll("[data-animation]").forEach(button => button.classList.toggle("selected", kind === "animation" && button.dataset.animation === animation));
+      pause.textContent = "Pausar"; pause.setAttribute("aria-pressed", "false");
+      status.textContent = labels[animation] || animation;
+    }
+    try {
+      const response = await fetch("/folio.avatar.json");
+      if (!response.ok) throw new Error("No se pudo cargar el avatar.");
+      const definition = await response.json();
+      const configResponse = await fetch("/config");
+      if (!configResponse.ok) throw new Error("No se pudo cargar la configuración.");
+      events = (await configResponse.json()).events;
+      const situations = {greeting:"Abrir widget",idle:"Widget cerrado",attentive:"Esperando",typing:"Escribiendo",sent:"Enviar pregunta",thinking:"Buscando",thinking_long:"Búsqueda prolongada",answer_ok:"Respuesta encontrada",answer_related:"Respuesta relacionada",no_answer:"Sin respuesta",conversational:"Conversación",error:"Error",farewell:"Cerrar widget",sleepy:"Inactividad",wake_up:"Actividad después de dormir"};
+      for (const [event, label] of Object.entries(situations)) {
+        const option = document.createElement("option"); option.value = event;
+        option.textContent = `${label} · ${events[event]}`; situation.append(option);
+      }
+      situation.value = "greeting";
+      for (const [kind, title, keys] of [["animation", "Animaciones", definition.animationOrder], ["expression", "Expresiones", definition.expressionOrder]]) {
+        const group = document.createElement("optgroup"); group.label = title;
+        for (const key of keys) {
+          const option = document.createElement("option"); option.value = `${kind}:${key}`;
+          option.textContent = `${labels[key] || key} · ${key}`; group.append(option);
+        }
+        catalog.append(group);
+      }
+      document.getElementById("count").textContent = `${definition.animationOrder.length} animaciones y ${definition.expressionOrder.length} expresiones disponibles`;
+      function show(key, kind = definition.animations[key] ? "animation" : "expression", waiting = false) {
+        clearTimeout(tecleo); clearTimeout(quieto);
+        gaze = "mirada-c2-f1";
+        avatar.setAutonomy(false);
+        select(key, kind);
+        if (kind === "animation") avatar.play(key); else avatar.setExpression(key);
+        avatar.setAutonomy(autonomous && liveMode && waiting);
+        showAutonomy();
+      }
+      avatar = createAvatar(document.getElementById("avatar"), {
+        definition:withPointerGaze(definition),size:"100%",autoplay:false,ariaLabel:"Folio, la hoja animada de ipsis",
+        onError: e => {error.textContent = e.message;},
+        onAnimationEnd: () => {show(events[persistent], undefined, ["idle", "attentive"].includes(persistent));},
+      });
+      show(events.greeting);
+
+      function terminarEscritura() {
+        if (paused || persistent !== "typing") return;
+        persistent = "attentive"; situation.value = "attentive";
+        show(events.attentive, undefined, true);
+        if (draft.value.trim()) avatar.react(reactionForText(draft.value));
+      }
+      draft.addEventListener("focus", () => {
+        if (paused) return;
+        liveMode = true; persistent = "attentive"; situation.value = "attentive";
+        show(events.attentive, undefined, true);
+      });
+      draft.addEventListener("input", () => {
+        if (paused) return;
+        const empieza = persistent !== "typing";
+        liveMode = true; persistent = "typing"; situation.value = "typing";
+        if (empieza || current !== events.typing) show(events.typing);
+        const signal = reactionForText(draft.value);
+        if (empieza || signal !== lastSignal) avatar.react(signal);
+        lastSignal = signal;
+        const mensajes = {attentive:"Listo para seguir.",reading:"Leyendo lo que escribes.",curious:"Un gesto curioso ante tu pregunta.",surprised:"¡Una pequeña sorpresa!",kind:"Un gesto de cariño.",sorry:"Te acompaña con un gesto suave.",wink:"Te devuelve el saludo.",happy:"Se alegra contigo.",worried:"Te mira con preocupación.",sleepy:"Un gesto somnoliento.",unsure:"Ladea la cabeza ante la duda.",thinking:"Se queda pensativo.","nod-down":"Asiente suavemente."};
+        interaction.textContent = mensajes[signal] ?? "Folio reacciona a lo que escribes.";
+        clearTimeout(tecleo); tecleo = setTimeout(terminarEscritura, 1200);
+      });
+
+      function puedeMirar() {
+        return liveMode && !paused && ["idle", "attentive"].includes(persistent)
+          && current === events[persistent] && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+      document.addEventListener("pointermove", e => {
+        if (pointerFrame !== null) cancelAnimationFrame(pointerFrame);
+        pointerFrame = requestAnimationFrame(() => {
+          pointerFrame = null;
+          if (!puedeMirar()) return;
+          const caja = document.getElementById("avatar").getBoundingClientRect();
+          const dx = e.clientX - (caja.left + caja.width / 2), dy = e.clientY - (caja.top + caja.height / 2);
+          const col = 2 + Math.sign(dx) * (Math.abs(dx) < 30 ? 0 : Math.abs(dx) < 150 ? 1 : 2);
+          const fila = 1 + Math.sign(dy) * (Math.abs(dy) < 30 ? 0 : 1);
+          const clave = `mirada-c${col}-f${fila}`;
+          avatar.setAutonomy(false);
+          if (clave !== gaze) { gaze = clave; avatar.setExpression(clave); }
+          const dentro = e.clientX >= caja.left && e.clientX <= caja.right && e.clientY >= caja.top && e.clientY <= caja.bottom;
+          if (dentro && !sobre && performance.now() - lastHover >= 2000) {
+            avatar.react("kind"); lastHover = performance.now();
+            interaction.textContent = "Folio te saluda al pasar por encima.";
+          }
+          sobre = dentro;
+          clearTimeout(quieto);
+          quieto = setTimeout(() => {
+            if (puedeMirar()) show(events[persistent], undefined, true);
+          }, 1500);
+        });
+      }, {passive:true});
+      document.addEventListener("pointerleave", () => {sobre = false;});
+      situation.addEventListener("change", () => {
+        const event = situation.value;
+        liveMode = true;
+        persistent = ["idle", "farewell"].includes(event) ? "idle"
+          : ["typing", "thinking", "thinking_long", "sleepy"].includes(event) ? event
+          : event === "sent" ? "thinking" : "attentive";
+        show(events[event], undefined, ["idle", "attentive"].includes(event));
+      });
+      catalog.addEventListener("change", () => {
+        liveMode = false;
+        const [kind, key] = catalog.value.split(":"); show(key, kind);
+      });
+      document.querySelectorAll("[data-animation]").forEach(button => button.addEventListener("click", () => {
+        liveMode = false; show(button.dataset.animation);
+      }));
+      autonomy.addEventListener("click", () => {
+        autonomous = !(autonomous && liveMode);
+        if (autonomous) {
+          liveMode = true; persistent = "attentive"; situation.value = "attentive";
+          show(events.attentive, undefined, true);
+        } else { avatar.setAutonomy(false); showAutonomy(); }
+      });
+      pause.addEventListener("click", () => {
+        paused = !paused;
+        clearTimeout(tecleo); clearTimeout(quieto);
+        if (paused) avatar.pause(); else if (currentKind === "animation") avatar.play(current); else avatar.setExpression(current);
+        if (!paused && persistent === "typing") tecleo = setTimeout(terminarEscritura, 1200);
+        pause.textContent = paused ? "Reanudar" : "Pausar";
+        pause.setAttribute("aria-pressed", String(paused));
+        status.textContent = paused ? "En pausa" : labels[current] || current;
+      });
+    } catch(e) {error.textContent = e.message;}
+    document.getElementById("close").addEventListener("click", async () => {
+      try {
+        const response = await fetch("/cerrar", {method:"POST"});
+        if (!response.ok) throw new Error("No se pudo detener el visualizador.");
+        avatar?.destroy();
+        document.querySelector("main").innerHTML = '<header><span class="brand">ipsis</span></header><p>Visualizador detenido. Puedes volver a iniciarlo desde herramientas/avatar/visualizador.py.</p>';
+      } catch(e) {error.textContent = e.message;}
+    });
+  </script>
+</body>
+</html>

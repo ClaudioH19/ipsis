@@ -128,6 +128,128 @@
     });
   });
 
+  // --- estado del proyecto y umbrales ----------------------------------
+  function fila(dl, termino, valor) {
+    dl.appendChild(elemento("dt", termino));
+    dl.appendChild(elemento("dd", valor == null ? "-" : String(valor)));
+  }
+  function textoTarea(t) {
+    if (!t || t.state === "idle") return "";
+    if (t.state === "running") return textos.tareaCorriendo;
+    if (t.state === "done") return textos.tareaLista;
+    return textos.tareaError + " " + (t.message || "");
+  }
+  function pintarProyecto(d) {
+    var dl = $("resumen-proyecto");
+    vaciar(dl);
+    fila(dl, textos.perfil, d.profile + " -- " + d.description);
+    fila(dl, textos.indice, d.index.state + (d.index.chunks != null ? " (" + d.index.chunks + " " + textos.fragmentos + ")" : ""));
+    fila(dl, textos.calibracion, d.calibration.state + (d.calibration.reason ? " -- " + d.calibration.reason : ""));
+    fila(dl, d.ready ? textos.listo : textos.noListo, textoTarea(d.task));
+    var cuerpo = $("tabla-umbrales");
+    vaciar(cuerpo);
+    d.thresholds.forEach(function (u) {
+      var tr = elemento("tr");
+      tr.appendChild(elemento("td", u.key));
+      tr.appendChild(elemento("td", u.value == null ? "-" : String(u.value)));
+      tr.appendChild(elemento("td", u.profile == null ? "-" : String(u.profile)));
+      var td = elemento("td");
+      var entrada = elemento("input", null, { type: "number", min: "0", max: "1", step: "0.01",
+                                             "data-umbral": u.key, "aria-label": u.key });
+      if (u.source !== "profile" && u.project != null) entrada.value = String(u.project);
+      entrada.dataset.inicial = entrada.value;
+      td.appendChild(entrada);
+      tr.appendChild(td);
+      tr.appendChild(elemento("td", textos["origen" + u.source.charAt(0).toUpperCase() + u.source.slice(1)] || u.source));
+      cuerpo.appendChild(tr);
+    });
+    var lista = $("lista-doctor");
+    vaciar(lista);
+    d.doctor.forEach(function (c) {
+      var li = elemento("li", "[" + c.level + "] " + c.name + ": " + c.message, { "class": "nivel-" + c.level });
+      lista.appendChild(li);
+    });
+  }
+  function cargarProyecto() {
+    return api("GET", "/status").then(pintarProyecto, fallo);
+  }
+  // Mientras el motor se recarga (umbrales o reindexado), se consulta /task cada 2 s.
+  function seguirTarea(alTerminar) {
+    api("GET", "/task").then(function (r) {
+      $("doc-tarea").textContent = textoTarea(r.task);
+      if (r.task && r.task.state === "running") { setTimeout(function () { seguirTarea(alTerminar); }, 2000); return; }
+      if (alTerminar) alTerminar();
+    }, fallo);
+  }
+  $("actualizar-proyecto").addEventListener("click", cargarProyecto);
+  $("pestana-proyecto").addEventListener("click", cargarProyecto);
+  $("guardar-umbrales").addEventListener("click", function () {
+    var cambios = {};
+    Array.prototype.forEach.call(document.querySelectorAll("[data-umbral]"), function (e) {
+      if (e.value === e.dataset.inicial) return;
+      cambios[e.dataset.umbral] = e.value === "" ? null : Number(e.value);
+    });
+    if (!Object.keys(cambios).length) { avisar(textos.sinCambios); return; }
+    mostrarErrores([]);
+    api("PUT", "/thresholds", { thresholds: cambios }).then(function () {
+      avisar(textos.guardado);
+      seguirTarea(cargarProyecto);
+    }, fallo);
+  });
+
+  // --- documentos -------------------------------------------------------
+  function pintarDocumentos(lista) {
+    var cuerpo = $("tabla-documentos");
+    vaciar(cuerpo);
+    lista.forEach(function (d) {
+      var tr = elemento("tr");
+      tr.appendChild(elemento("td", d.title || d.doc_id));
+      tr.appendChild(elemento("td", d.file || "-"));
+      tr.appendChild(elemento("td", d.active ? textos.si : textos.no));
+      cuerpo.appendChild(tr);
+    });
+  }
+  function cargarDocumentos() { return api("GET", "/documents").then(pintarDocumentos, fallo); }
+  $("pestana-documentos").addEventListener("click", cargarDocumentos);
+  function subirArchivo(archivo) {
+    return fetch("/admin/documents?name=" + encodeURIComponent(archivo.name), {
+      method: "POST", body: archivo,
+      headers: { Authorization: "Bearer " + tokenEnMemoria, "Content-Type": "application/octet-stream" }
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (json) {
+        if (r.ok) return json;
+        var error = new Error("http " + r.status);
+        error.errores = erroresDe(json);
+        throw error;
+      });
+    });
+  }
+  $("doc-subir").addEventListener("click", function () {
+    var archivos = Array.prototype.slice.call($("doc-archivo").files || []);
+    if (!archivos.length) { avisar(textos.sinArchivo); return; }
+    var lista = $("doc-resultados");
+    vaciar(lista);
+    mostrarErrores([]);
+    archivos.reduce(function (p, archivo) {
+      return p.then(function () {
+        return subirArchivo(archivo).then(function (r) {
+          var texto = r.rejected ? textos.rechazado + " " + r.rejected : (r.duplicate ? textos.duplicado : textos.subido);
+          lista.appendChild(elemento("li", archivo.name + ": " + texto));
+        }, function (e) { lista.appendChild(elemento("li", archivo.name + ": " + (e.errores || [String(e)]).join(" "))); });
+      });
+    }, Promise.resolve()).then(function () {
+      avisar(textos.reindexarAviso);
+      cargarDocumentos();
+    });
+  });
+  $("doc-reindexar").addEventListener("click", function () {
+    mostrarErrores([]);
+    api("POST", "/reindex").then(function (r) {
+      $("doc-tarea").textContent = textoTarea(r.task);
+      seguirTarea(function () { cargarDocumentos(); recargarVista(); });
+    }, fallo);
+  });
+
   // --- carga ------------------------------------------------------------
   function cargarTodo() {
     return Promise.all([api("GET", "/personality"), api("GET", "/styles"), api("GET", "/styles/presets"),

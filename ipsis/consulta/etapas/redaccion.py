@@ -52,7 +52,9 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
         "abstencion": {
             "generico": tono.variantes("no_answer"),
             "premisa_no_encontrada": tono.variantes("premise_not_found"),
+            "aclaracion": tono.variantes("needs_clarification"),
             "zona_gris_intro": tono.variantes("related_intro"),
+            "zona_gris_cierre": tono.variantes("related_check"),
             "foco_ausente": tono.variantes("missing_focus"),
             "alternativas_intro": tono.variantes("alternatives_intro"),
         },
@@ -286,9 +288,15 @@ def redactar_zona_gris_bloques(
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
-    return [{"tipo": "encabezado", "texto": intro},
-            *_bloques_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas,
-                                           cfg_redaccion=cfg_redaccion)]
+    bloques = [{"tipo": "encabezado", "texto": intro},
+               *_bloques_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas,
+                                              cfg_redaccion=cfg_redaccion)]
+    # Un usuario que escribe informal suele recibir el pasaje correcto como «relacionado»:
+    # se le pregunta si es lo que buscaba y cómo seguir, en vez de cerrar ahí.
+    cierre = elegir("related_check", _lista(plantillas["abstencion"].get("zona_gris_cierre") or []), semilla)
+    if cierre:
+        bloques.append({"tipo": "mensaje", "texto": cierre})
+    return bloques
 
 
 def bloques_alternativas(

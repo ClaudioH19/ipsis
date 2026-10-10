@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from ipsis.evaluacion.metricas import ObservacionEvaluacion, ReporteCobertura
+from ipsis.evaluacion.metricas import CRITERIO_LEGADO, ObservacionEvaluacion, ReporteCobertura
 from ipsis.recursos.mensajes import t
 
 
@@ -83,6 +83,7 @@ class BancoUsado(BaseModel):
 
 class ReporteBenchmark(BaseModel):
     schema_version: int = 1
+    criterio_respuesta: str = CRITERIO_LEGADO
     bancos: list[BancoUsado]
     nota: str
     perfiles: list[ResultadoPerfil]
@@ -96,13 +97,13 @@ def nota_de(bancos: list[BancoUsado]) -> str:
 
 def codigo_salida(reporte: ReporteBenchmark) -> int:
     """≠ 0 si un perfil (no las variantes experimentales) excede su presupuesto
-    p95 o, con un banco de evaluación del cliente, da algún falso ok (la misma
+    p95 o, con un banco de evaluación del cliente, da una directa errónea (la misma
     guardia de ``ipsis evaluate``). Un banco de regresión no tiene límite de falsos
     ok propio: los compara la línea base de las pruebas."""
     perfiles = [p for p in reporte.perfiles if p.variante is None]
     if any(not p.cumple_presupuesto for p in perfiles):
         return 1
-    if all(b.uso == "evaluacion" for b in reporte.bancos) and any(p.cobertura.total.falsos_ok for p in perfiles):
+    if all(b.uso == "evaluacion" for b in reporte.bancos) and any(p.cobertura.riesgo_aceptadas.x for p in perfiles):
         return 1
     return 0
 
@@ -138,6 +139,15 @@ def markdown(reporte: ReporteBenchmark) -> str:
             f"{trampas.falsos_ok if trampas else 0}/{trampas.n if trampas else 0} | {r.x}/{r.n} | "
             f"{p.latencia.p50} | {p.latencia.p95} | {p.presupuesto_p95_ms} | "
             f"{t('evaluation.report_yes') if p.cumple_presupuesto else t('evaluation.report_no')} |")
+    lineas += ["", t("evaluation.report_answer_quality"), "",
+               t("evaluation.report_answer_quality_header"), "|---|---|---|---|---|"]
+    for p in reporte.perfiles:
+        c = p.cobertura.total
+        qa = ("—" if not c.tramos_qa_evaluados else
+              f"{c.tramos_qa_evaluados - c.tramos_qa_sin_literal}/{c.tramos_qa_evaluados}")
+        completas = "—" if c.directas_con_literal is None else f"{c.directas_con_literal}/{c.directas}"
+        lineas.append(f"| {p.nombre} | {completas} | {_pct(c.cobertura_literal)} | "
+                      f"{qa} | {c.tramos_qa_sin_literal if c.tramos_qa_evaluados else '—'} |")
     lineas += ["", t("evaluation.report_rejection"), "",
                t("evaluation.report_rejection_header"), "|---|---|---|---|---|---|"]
     for p in reporte.perfiles:

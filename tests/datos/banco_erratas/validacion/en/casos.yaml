@@ -1,0 +1,685 @@
+# Banco de erratas (validacion), generado por generar.py desde banco_validacion. No editar a mano.
+- id: en-exacta-001
+  documento: equipment_policy.md
+  capacidad: lista
+  pregunta: What equipment does eaach employee receivve?
+  respuesta: a laptop and a wireless mouse
+  original: What equipment does each employee receive?
+  erratas:
+  - duplicacion
+  - duplicacion
+- id: en-parafrasis-001
+  documento: equipment_policy.md
+  capacidad: lista
+  pregunta: what do they give me to work with when i satrt
+  respuesta: a laptop and a wireless mouse
+  original: what do they give me to work with when i start
+  erratas:
+  - transposicion
+- id: en-trampa-001
+  par: en-exacta-001
+  pregunta: what mobile phone does each employeereceive?
+  original: What mobile phone does each employee receive?
+  erratas:
+  - pegadas
+- id: en-exacta-002
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: who siggns the equipment handover record tgether with the employee?
+  respuesta: the Inventory Officer
+  original: Who signs the equipment handover record together with the employee?
+  erratas:
+  - omision
+  - duplicacion
+- id: en-exacta-003
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: what can the equipmennt be used for?
+  respuesta: only for institutional work
+  original: What can the equipment be used for?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-002
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: can i install games on my work com puter?
+  respuesta: Installing games or file-sharing programs is forbidden
+  original: can i install games on my work computer?
+  erratas:
+  - separada
+- id: en-exacta-004
+  documento: equipment_policy.md
+  capacidad: cantidad
+  pregunta: how many characters must the equipment passeord have?
+  respuesta: at least 10 characters
+  original: How many characters must the equipment password have?
+  erratas:
+  - vecina
+- id: en-trampa-002
+  par: en-exacta-004
+  pregunta: How many characters must the email passw ord have?
+  original: How many characters must the email password have?
+  erratas:
+  - separada
+- id: en-exacta-005
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: after how long does the equipment screeen lock?
+  respuesta: after 5 minutes of inactivity
+  original: After how long does the equipment screen lock?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-003
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: how long till the screen locks if i dontuse it
+  respuesta: after 5 minutes of inactivity
+  original: how long till the screen locks if i dont use it
+  erratas:
+  - pegadas
+- id: en-exacta-006
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: Within what period is the loss of the euqipment reprted?
+  respuesta: within 24 hours
+  original: Within what period is the loss of the equipment reported?
+  erratas:
+  - omision
+  - transposicion
+- id: en-parafrasis-004
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: who do i tell if my laptop geets stolen
+  respuesta: to the Help Desk
+  original: who do i tell if my laptop gets stolen
+  erratas:
+  - duplicacion
+- id: en-trampa-003
+  par: en-parafrasis-004
+  pregunta: Who do I tell if my personal phone gets stoolen?
+  original: Who do I tell if my personal phone gets stolen?
+  erratas:
+  - duplicacion
+- id: en-exacta-007
+  documento: equipment_policy.md
+  capacidad: procedimiento
+  pregunta: What is attached in casse of theft of the equipent?
+  respuesta: the police report
+  original: What is attached in case of theft of the equipment?
+  erratas:
+  - omision
+  - duplicacion
+- id: en-exacta-008
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: who is the equipment reutrned to when the contact ends?
+  respuesta: to the Inventory Officer
+  original: Who is the equipment returned to when the contract ends?
+  erratas:
+  - omision
+  - transposicion
+- id: en-exacta-009
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: What is done to the equupment beore assigning it to someone else?
+  respuesta: is formatted
+  original: What is done to the equipment before assigning it to someone else?
+  erratas:
+  - vecina
+  - omision
+- id: en-trampa-004
+  par: en-exacta-009
+  pregunta: who pays for repairing damgaed equipment?
+  original: Who pays for repairing damaged equipment?
+  erratas:
+  - transposicion
+- id: en-exacta-010
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: What are the canteen's lunch hourrs?
+  respuesta: between 12:30 and 15:00
+  original: What are the canteen's lunch hours?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-005
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: until what time can i have lnch at the cabteen
+  respuesta: between 12:30 and 15:00
+  original: until what time can i have lunch at the canteen
+  erratas:
+  - omision
+  - vecina
+- id: en-trampa-005
+  par: en-parafrasis-005
+  pregunta: until what time is dniner served at the cantewn?
+  original: Until what time is dinner served at the canteen?
+  erratas:
+  - transposicion
+  - vecina
+- id: en-exacta-011
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: When is brdakfast served?
+  respuesta: from 8:00 to 9:30
+  original: When is breakfast served?
+  erratas:
+  - vecina
+- id: en-exacta-012
+  documento: canteen_rules.md
+  capacidad: cantidad
+  pregunta: how much does lunch costfor staff?
+  respuesta: 3,500 pesos
+  original: How much does lunch cost for staff?
+  erratas:
+  - pegadas
+- id: en-parafrasis-006
+  documento: canteen_rules.md
+  capacidad: cantidad
+  pregunta: how much do interns pay for lucnh
+  respuesta: Interns pay half price
+  original: how much do interns pay for lunch
+  erratas:
+  - transposicion
+- id: en-trampa-006
+  par: en-parafrasis-006
+  pregunta: How much do visitors pay for lunch at the caneten?
+  original: How much do visitors pay for lunch at the canteen?
+  erratas:
+  - transposicion
+- id: en-exacta-013
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: When is the weekly menu pbulished?
+  respuesta: every Friday on the intranet
+  original: When is the weekly menu published?
+  erratas:
+  - transposicion
+- id: en-parafrasis-007
+  documento: canteen_rules.md
+  capacidad: condicion
+  pregunta: is there vegetarian foood at the cnateen?
+  respuesta: There is a vegetarian option every day
+  original: is there vegetarian food at the canteen?
+  erratas:
+  - duplicacion
+  - transposicion
+- id: en-trampa-007
+  par: en-parafrasis-007
+  pregunta: Is there gluten-free fopd at the canteen?
+  original: Is there gluten-free food at the canteen?
+  erratas:
+  - vecina
+- id: en-exacta-014
+  documento: canteen_rules.md
+  capacidad: procedimiento
+  pregunta: How is lunch paud for?
+  respuesta: with the staff card or in cash
+  original: How is lunch paid for?
+  erratas:
+  - vecina
+- id: en-exacta-015
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: where is the staff carrd tpoped up?
+  respuesta: at the canteen till
+  original: Where is the staff card topped up?
+  erratas:
+  - duplicacion
+  - transposicion
+- id: en-exacta-016
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: Where are complaits about the canteen service left?
+  respuesta: in the suggestions book
+  original: Where are complaints about the canteen service left?
+  erratas:
+  - omision
+- id: en-exacta-017
+  documento: canteen_rules.md
+  capacidad: persona
+  pregunta: Who answerrs csnteen complaints?
+  respuesta: The Welfare Unit
+  original: Who answers canteen complaints?
+  erratas:
+  - duplicacion
+  - vecina
+- id: en-parafrasis-008
+  documento: canteen_rules.md
+  capacidad: duracion
+  pregunta: how long do they take to answer a canteen cmplaint
+  respuesta: within five working days
+  original: how long do they take to answer a canteen complaint
+  erratas:
+  - omision
+- id: en-exacta-018
+  documento: projector_manual.md
+  capacidad: cantidad
+  pregunta: How far from the sxreen is the Vista X2 projeector installed?
+  respuesta: between 2 and 5 metres from the screen
+  original: How far from the screen is the Vista X2 projector installed?
+  erratas:
+  - duplicacion
+  - vecina
+- id: en-exacta-019
+  documento: projector_manual.md
+  capacidad: procedimiento
+  pregunta: what cable conneccts the projecgor to the computer?
+  respuesta: with an HDMI cable
+  original: What cable connects the projector to the computer?
+  erratas:
+  - duplicacion
+  - vecina
+- id: en-parafrasis-009
+  documento: projector_manual.md
+  capacidad: procedimiento
+  pregunta: how do i hoook the projector up to my laltop
+  respuesta: It connects to the computer with an HDMI cable
+  original: how do i hook the projector up to my laptop
+  erratas:
+  - vecina
+  - duplicacion
+- id: en-exacta-020
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How long does the projector lamp laast?
+  respuesta: approximately 4,000 hours
+  original: How long does the projector lamp last?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-010
+  documento: projector_manual.md
+  capacidad: condicion
+  pregunta: the lamp liggt is red, what do i do
+  respuesta: it must be replaced
+  original: the lamp light is red, what do i do
+  erratas:
+  - vecina
+- id: en-trampa-008
+  par: en-parafrasis-010
+  pregunta: what do i do if the power liht blinks greeen?
+  original: What do I do if the power light blinks green?
+  erratas:
+  - duplicacion
+  - omision
+- id: en-exacta-021
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How offten is the projector's air filter cleqned?
+  respuesta: every 200 hours of use
+  original: How often is the projector's air filter cleaned?
+  erratas:
+  - vecina
+  - duplicacion
+- id: en-exacta-022
+  documento: projector_manual.md
+  capacidad: cantidad
+  pregunta: what batteries does the projectorremote control use?
+  respuesta: two AAA batteries
+  original: What batteries does the projector remote control use?
+  erratas:
+  - pegadas
+- id: en-parafrasis-011
+  documento: projector_manual.md
+  capacidad: condicion
+  pregunta: what is the freeze butotn for
+  respuesta: freezes the image on the screen
+  original: what is the Freeze button for
+  erratas:
+  - transposicion
+- id: en-exacta-023
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How long is the projeector warranty?
+  respuesta: a two-year warranty
+  original: How long is the projector warranty?
+  erratas:
+  - duplicacion
+- id: en-exacta-024
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: how long is the lamp waranty?
+  respuesta: a six-month warranty
+  original: How long is the lamp warranty?
+  erratas:
+  - fonetica
+- id: en-trampa-009
+  par: en-exacta-024
+  pregunta: How long is the reemote control warranty?
+  original: How long is the remote control warranty?
+  erratas:
+  - duplicacion
+- id: en-exacta-025
+  documento: training_rules.md
+  capacidad: fecha
+  pregunta: when is the annual tarining poan approved?
+  respuesta: is approved in March
+  original: When is the annual training plan approved?
+  erratas:
+  - vecina
+  - transposicion
+- id: en-exacta-026
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: Who draws up the annual trainng pllan?
+  respuesta: the Joint Training Committee
+  original: Who draws up the annual training plan?
+  erratas:
+  - duplicacion
+  - omision
+- id: en-parafrasis-012
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: who puts together the yaerly course plan
+  respuesta: the Joint Training Committee
+  original: who puts together the yearly course plan
+  erratas:
+  - transposicion
+- id: en-exacta-027
+  documento: training_rules.md
+  capacidad: procedimiento
+  pregunta: Where do staff ebrol in courses?
+  respuesta: through the training portal
+  original: Where do staff enrol in courses?
+  erratas:
+  - vecina
+- id: en-exacta-028
+  documento: training_rules.md
+  capacidad: condicion
+  pregunta: What authorisasion does course enrollment require?
+  respuesta: the authorisation of the direct manager
+  original: What authorisation does course enrolment require?
+  erratas:
+  - fonetica
+  - duplicacion
+- id: en-parafrasis-013
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: who has to sign off on me taking a coourse
+  respuesta: the authorisation of the direct manager
+  original: who has to sign off on me taking a course
+  erratas:
+  - duplicacion
+- id: en-trampa-010
+  par: en-parafrasis-013
+  pregunta: who authorises courses abrod?
+  original: Who authorises courses abroad?
+  erratas:
+  - omision
+- id: en-exacta-029
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: what minimum attendance is requ ired to pass a course?
+  respuesta: A minimum attendance of 75 %
+  original: What minimum attendance is required to pass a course?
+  erratas:
+  - separada
+- id: en-parafrasis-014
+  documento: training_rules.md
+  capacidad: condicion
+  pregunta: what haopens if i dont finish a course without a goood reason
+  respuesta: cannot enrol in another course for six months
+  original: what happens if i dont finish a course without a good reason
+  erratas:
+  - vecina
+  - duplicacion
+- id: en-exacta-030
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: How many hours of training a year can each emoloyee use?
+  respuesta: up to 40 hours of training a year
+  original: How many hours of training a year can each employee use?
+  erratas:
+  - vecina
+- id: en-parafrasis-015
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: how many coursehours do i get a year
+  respuesta: up to 40 hours of training a year
+  original: how many course hours do i get a year
+  erratas:
+  - pegadas
+- id: en-trampa-011
+  par: en-parafrasis-015
+  pregunta: how many hoursof online courses can be done outside working hours?
+  original: How many hours of online courses can be done outside working hours?
+  erratas:
+  - pegadas
+- id: en-exacta-031
+  documento: training_rules.md
+  capacidad: duracion
+  pregunta: Within what perod are corse certificates downloaded?
+  respuesta: within ten working days after the course ends
+  original: Within what period are course certificates downloaded?
+  erratas:
+  - fonetica
+  - omision
+- id: en-trampa-012
+  par: en-exacta-031
+  pregunta: Who can teach the traininng courses?
+  original: Who can teach the training courses?
+  erratas:
+  - duplicacion
+- id: en-exacta-032
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: What percentage of outpaatient expenses does the insurance reiimburse?
+  respuesta: 70 % of outpatient medical expenses
+  original: What percentage of outpatient expenses does the insurance reimburse?
+  erratas:
+  - duplicacion
+  - duplicacion
+- id: en-exacta-033
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: At what pefcentage are hospital expenses reimbursed?
+  respuesta: are reimbursed at 90 %
+  original: At what percentage are hospital expenses reimbursed?
+  erratas:
+  - vecina
+- id: en-parafrasis-016
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: how much does the insurence pay back if im hospittalised
+  respuesta: Hospital expenses are reimbursed at 90 %
+  original: how much does the insurance pay back if im hospitalised
+  erratas:
+  - fonetica
+  - duplicacion
+- id: en-trampa-013
+  par: en-parafrasis-016
+  pregunta: How much does the insurence pay bzck for dental expenses?
+  original: How much does the insurance pay back for dental expenses?
+  erratas:
+  - vecina
+  - fonetica
+- id: en-exacta-034
+  documento: health_insurance.md
+  capacidad: persona
+  pregunta: Who can be added as dependantsto the insurance?
+  respuesta: The spouse and children under 24
+  original: Who can be added as dependants to the insurance?
+  erratas:
+  - pegadas
+- id: en-parafrasis-017
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: can i add my 20 year old son to the insuurance?
+  respuesta: The spouse and children under 24 can be added as dependants
+  original: can i add my 20 year old son to the insurance?
+  erratas:
+  - duplicacion
+- id: en-trampa-014
+  par: en-parafrasis-017
+  pregunta: Can I add my parents as dependnats to the insurance?
+  original: Can I add my parents as dependants to the insurance?
+  erratas:
+  - transposicion
+- id: en-exacta-035
+  documento: health_insurance.md
+  capacidad: duracion
+  pregunta: Within what prriod are insurance reimbursements requested?
+  respuesta: within 60 days of the medical appointment
+  original: Within what period are insurance reimbursements requested?
+  erratas:
+  - vecina
+- id: en-parafrasis-018
+  documento: health_insurance.md
+  capacidad: procedimiento
+  pregunta: what papers do i need to claim back from the insurrance
+  respuesta: The receipt and the medical order
+  original: what papers do i need to claim back from the insurance
+  erratas:
+  - duplicacion
+- id: en-exacta-036
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: what does the supplmeentary insurence not cover?
+  respuesta: cosmetic treatments or glasses
+  original: What does the supplementary insurance not cover?
+  erratas:
+  - fonetica
+  - transposicion
+- id: en-parafrasis-019
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: does the insurence cover glsases?
+  respuesta: The insurance does not cover cosmetic treatments or glasses
+  original: does the insurance cover glasses?
+  erratas:
+  - transposicion
+  - fonetica
+- id: en-exacta-037
+  documento: health_insurance.md
+  capacidad: persona
+  pregunta: Who are questions aboutthe insurance sent to?
+  respuesta: to the Welfare Unit
+  original: Who are questions about the insurance sent to?
+  erratas:
+  - pegadas
+- id: en-exacta-038
+  documento: health_insurance.md
+  capacidad: duracion
+  pregunta: within what peeriod does the insurer pay reimbursements?
+  respuesta: within ten working days
+  original: Within what period does the insurer pay reimbursements?
+  erratas:
+  - duplicacion
+- id: en-trampa-015
+  par: en-exacta-038
+  pregunta: Who takes out the supplementsry innsurance?
+  original: Who takes out the supplementary insurance?
+  erratas:
+  - duplicacion
+  - vecina
+- id: en-exacta-039
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: what are the gym's openinghours?
+  respuesta: Monday to Friday from 7:00 to 20:00
+  original: What are the gym's opening hours?
+  erratas:
+  - pegadas
+- id: en-parafrasis-020
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: what tkme does the gym close
+  respuesta: Monday to Friday from 7:00 to 20:00
+  original: what time does the gym close
+  erratas:
+  - vecina
+- id: en-trampa-016
+  par: en-parafrasis-020
+  pregunta: what time does the swimming poil coose?
+  original: What time does the swimming pool close?
+  erratas:
+  - vecina
+  - vecina
+- id: en-exacta-040
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: What is requiired to use the gym?
+  respuesta: A valid medical certificate
+  original: What is required to use the gym?
+  erratas:
+  - duplicacion
+- id: en-exacta-041
+  documento: gym_rules.md
+  capacidad: persona
+  pregunta: who handles gym registrasion?
+  respuesta: with the Welfare Unit
+  original: Who handles gym registration?
+  erratas:
+  - fonetica
+- id: en-exacta-042
+  documento: gym_rules.md
+  capacidad: duracion
+  pregunta: How long can a sesion last when people are waiting?
+  respuesta: at most one hour
+  original: How long can a session last when people are waiting?
+  erratas:
+  - fonetica
+- id: en-parafrasis-021
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: do i need to bringa towel to the gym?
+  respuesta: Using a towel on the machines is mandatory
+  original: do i need to bring a towel to the gym?
+  erratas:
+  - pegadas
+- id: en-exacta-043
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: When are the yogaclasses?
+  respuesta: on Tuesdays and Thursdays at 18:00
+  original: When are the yoga classes?
+  erratas:
+  - pegadas
+- id: en-parafrasis-022
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: what dayys is yoga
+  respuesta: on Tuesdays and Thursdays at 18:00
+  original: what days is yoga
+  erratas:
+  - duplicacion
+- id: en-trampa-017
+  par: en-parafrasis-022
+  pregunta: What days are the pilatees classes?
+  original: What days are the pilates classes?
+  erratas:
+  - duplicacion
+- id: en-exacta-044
+  documento: gym_rules.md
+  capacidad: cantidad
+  pregunta: How many people does each yooga class take?
+  respuesta: up to 15 people
+  original: How many people does each yoga class take?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-023
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: what happens to stuff i leave in the locker over night
+  respuesta: are removed and kept at reception
+  original: what happens to stuff i leave in the locker overnight
+  erratas:
+  - separada
+- id: en-trampa-018
+  par: en-parafrasis-023
+  pregunta: How much does it coxt to rent a locker?
+  original: How much does it cost to rent a locker?
+  erratas:
+  - vecina
+- id: en-trampa-019
+  par: en-exacta-040
+  pregunta: Who can use the gym at weeeknds?
+  original: Who can use the gym at weekends?
+  erratas:
+  - transposicion
+- id: en-trampa-020
+  par: en-exacta-044
+  pregunta: How many peoole does each spinning class take?
+  original: How many people does each spinning class take?
+  erratas:
+  - vecina

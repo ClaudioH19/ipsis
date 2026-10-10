@@ -11,7 +11,7 @@ está en [configuracion.md](configuracion.md).
 ## Ciclo de trabajo
 
 ```text
-ipsis init → ipsis models download → ipsis load → ipsis index → ipsis doctor → ipsis serve
+ipsis init → ipsis models download → ipsis load → ipsis index → ipsis doctor → ipsis chat / ipsis serve
                                                     ↑                  │
                     documentos nuevos o cambiados ──┘                  ↓
                                          ipsis ask / widget en tu sitio
@@ -32,12 +32,42 @@ Cada respuesta tiene un estado, que el widget pinta distinto:
 |---|---|
 | `ok` | Encontró el texto que responde; lo muestra literal, con la cita |
 | `related` | No hay respuesta directa; muestra lo más cercano y lo dice |
-| `no_answer` | No está en los documentos |
+| `no_answer` | No está en los documentos. Con `plan: clarification`, la pregunta no dice de qué se trata («¿Quién lo aprueba?» sin conversación previa) y el asistente pide el tema |
 | `conversational` | Saludo, agradecimiento, despedida o «qué puedes hacer» |
+
+Cada respuesta trae además un nivel de confianza (`confidence_level`): `high`
+para una respuesta directa leída por el lector QA (medium), `medium` para una
+respuesta directa sin lector (light; el widget muestra «Revisa la cita») y
+`low` para un pasaje relacionado. Los niveles salen de precisiones medidas, no
+de un umbral nuevo; ver [paráfrasis informales](../../methodology/informal-paraphrases.md) (en inglés).
 
 El asistente nunca redacta contenido: el texto viene literal de tus
 documentos, y las citas, con documento, sección y offsets, van debajo para
 comprobarlo.
+
+## La terminal: menú y modo interactivo
+
+`ipsis` sin argumentos imprime todos los comandos agrupados por tarea
+(Empezar, Documentos, Preguntar, Personalizar, Medir y calibrar, Desplegar y
+operar) con ejemplos; `ipsis help <comando>` imprime las opciones de un
+comando, igual que `ipsis <comando> --help`.
+
+`ipsis chat` abre el modo interactivo, al estilo de Claude Code o Codex. Lo
+que escribes es una pregunta; lo que empieza con `/` es un comando:
+
+| En `ipsis chat` | Qué hace |
+|---|---|
+| cualquier texto | Pregunta al motor del proyecto de esta carpeta; las preguntas de seguimiento conservan el tema |
+| `/help` | Lista los comandos del modo interactivo |
+| `/diagnostics on\|off` | Muestra, en cada respuesta, las etapas, las señales, la regla que decidió y el tramo exacto (lo que imprime `ipsis ask --diagnostics`) |
+| `/reload` | Recarga el motor tras cambiar configuración o documentos |
+| `/<comando> …` | Cualquier comando de ipsis: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/calibrate --help` |
+| `/exit`, `/quit`, Ctrl+D | Sale |
+
+Los modelos se cargan una vez, con la primera pregunta. Antes de correr un
+comando se cierra el motor (el índice local admite un solo cliente) y se
+vuelve a cargar con la pregunta siguiente. Igual que `ipsis ask
+--diagnostics`, requiere detener `ipsis serve` cuando el índice es local.
 
 ## Referencia de comandos
 
@@ -45,7 +75,7 @@ comprobarlo.
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis init [--profile light\|medium\|heavy] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Crea `config/` y `documents/`. El idioma por defecto es `en` (o `es` con `IPSIS_LANG=es`). Sin `--force` no pisa un proyecto existente |
+| `ipsis init [--profile light\|medium] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Crea `config/` y `documents/`. El idioma por defecto es `en` (o `es` con `IPSIS_LANG=es`). Sin `--force` no pisa un proyecto existente |
 | `ipsis configure clave=valor …` | Edita `assistant.yaml`: `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys` (listas separadas por coma) y `query_log.enabled` (true o false) |
 | `ipsis profile show` | Perfil activo, modelos, presupuesto p95 y si el índice y la calibración le sirven |
 | `ipsis profile set <perfil>` | Cambia el perfil. Avisa si hay que reindexar; la calibración anterior deja de aplicarse |
@@ -72,6 +102,7 @@ comprobarlo.
 | Comando | Qué hace |
 |---|---|
 | `ipsis serve [carpeta] [--host H] [--port P] [--reindex] [--mode production\|development]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.ipsis-project/`. `--mode`: ver [despliegue.md](despliegue.md#modos-de-ejecución-desarrollo-y-producción); en desarrollo, sin `IPSIS_ADMIN_TOKEN`, imprime un token temporal |
+| `ipsis chat [--diagnostics]` | Modo interactivo: preguntas y `/comandos` (ver arriba) |
 | `ipsis ask "<pregunta>" [--url URL] [--timeout S]` | Pregunta al servicio en marcha |
 | `ipsis ask "<pregunta>" --diagnostics` | Ejecuta el motor localmente, sin servicio, y muestra etapas con su latencia, señales, términos foco, la regla que decidió, el tramo exacto, el tono y las plantillas usadas. En modo Qdrant local, detén `ipsis serve` antes |
 

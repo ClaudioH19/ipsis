@@ -30,10 +30,17 @@ class EstadisticasLexicas(BaseModel):
     largo_medio: float = Field(default=0.0, ge=0.0)
     df: dict[str, int] = Field(default_factory=dict)
     superficie: dict[str, str] = Field(default_factory=dict)
+    # Pares de palabras de contenido vecinas (presencia) para corregir erratas con contexto,
+    # y si la autoprueba al indexar lo activó. Un índice anterior no los trae: sin contexto.
+    pares: list[str] = Field(default_factory=list)
+    contexto_erratas: bool = False
 
     @classmethod
-    def construir(cls, textos: Iterable[str], paquete=None, *, hash_corpus: str = "") -> "EstadisticasLexicas":
-        """Calcula frecuencia de documentos, largo medio y forma de superficie."""
+    def construir(cls, textos: Iterable[str], paquete=None, *, hash_corpus: str = "",
+                  textos_contexto: list[str] | None = None) -> "EstadisticasLexicas":
+        """Calcula frecuencia de documentos, largo medio y forma de superficie. Con
+        ``textos_contexto`` (el texto de cada fragmento, sin el título antepuesto) también
+        los pares para corregir erratas con contexto y su autoprueba."""
         df: Counter[str] = Counter()
         formas: dict[str, Counter[str]] = {}
         largos: list[int] = []
@@ -46,7 +53,7 @@ class EstadisticasLexicas(BaseModel):
             for termino, forma in zip(terms, tokenizar(texto, normalizado=False)):
                 formas.setdefault(termino, Counter())[forma] += 1
         superficie = {t: max(c.items(), key=lambda par: (par[1], par[0]))[0] for t, c in formas.items()}
-        return cls(
+        estadisticas = cls(
             stemmer=getattr(paquete, "stemmer", None),
             hash_corpus=hash_corpus,
             n_chunks=len(largos),
@@ -54,6 +61,13 @@ class EstadisticasLexicas(BaseModel):
             df=dict(sorted(df.items())),
             superficie=dict(sorted(superficie.items())),
         )
+        if textos_contexto and paquete is not None and not getattr(paquete, "respaldo", True):
+            from ipsis.lenguaje.ortografia import autoprueba_contexto, pares_de_contexto
+
+            pares = pares_de_contexto(textos_contexto, paquete)
+            estadisticas.pares = pares
+            estadisticas.contexto_erratas = autoprueba_contexto(textos_contexto, paquete, estadisticas, pares)
+        return estadisticas
 
     def idf(self, termino: str) -> float:
         """IDF de BM25: ``ln(1 + (N - df + 0,5) / (df + 0,5))``; un término ausente

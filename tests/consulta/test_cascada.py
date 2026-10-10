@@ -137,7 +137,7 @@ def test_sin_umbrales_completos_falla():
         CascadaV1(umbrales={"oov": 0.5})
 
 
-@pytest.mark.parametrize("perfil, con_lector", [("light", False), ("medium", True), ("heavy", True)])
+@pytest.mark.parametrize("perfil, con_lector", [("light", False), ("medium", True)])
 def test_cada_perfil_se_registra_y_decide(perfil, con_lector, tmp_path):
     umbrales = perfil_efectivo(perfil, ruta_calibracion=tmp_path / "no_existe.yaml").umbrales_por_defecto
     registro = registrar_componentes_base(RegistroComponentes())
@@ -160,3 +160,21 @@ def test_etapa_politica_usa_el_contexto_y_conserva_fuera_de_dominio():
     EtapaPolitica(motor).ejecutar(ctx)
     assert llamadas == ["fuera_dominio"]
     assert ctx.diagnostico["regla"] == "fuera_dominio"
+
+
+def test_el_tramo_fuerte_del_lector_tolera_mas_vocabulario_ausente():
+    """«quien anota las muestras»: foco completo, lector casi seguro, s_oov 0.61 → ok."""
+    from ipsis.consulta.etapas.politica import SenalesPolitica, regla_cascada
+
+    base = {"oov_dominio": 0.6, "oov_ok": 0.6, "dominio": 0.33, "relacionado": 0.33, "foco": 1.0, "ok": 0.8,
+            "cov": 0.6}
+    fuerte = {**base, "ok_fuerte": 0.99, "oov_ok_fuerte": 0.67}
+
+    def senales(s_oov, s_qa, s_foco=1.0):
+        return SenalesPolitica(s_ret=0.5, s_oov=s_oov, s_foco=s_foco, s_cov=0.3, s_rr=0.5, s_qa=s_qa)
+
+    assert regla_cascada(senales(0.61, 1.0), base) == "relacionado"  # sin el tramo, como antes
+    assert regla_cascada(senales(0.61, 1.0), fuerte) == "ok_lector"
+    assert regla_cascada(senales(0.61, 0.98), fuerte) == "relacionado"  # lector no tan seguro
+    assert regla_cascada(senales(0.73, 1.0), fuerte) == "relacionado"  # demasiado ausente
+    assert regla_cascada(senales(0.61, 1.0, s_foco=0.5), fuerte) == "relacionado"  # foco incompleto

@@ -111,11 +111,12 @@ def guardar_snapshot_configuracion(
 def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perfil: str | None = None) -> dict:
     """Recuperación efectiva: si ``modelo`` falta, se usa el modelo denso del
     perfil; si el perfil fija un modo de recuperación (``bm25``), manda ese."""
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import perfil_efectivo
 
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     recuperacion = dict(cfg["recuperacion"])
-    instalacion = cargar_perfil_instalacion(perfil or cargar_dominio().get("perfil", "light"))
+    instalacion = perfil_efectivo(perfil or cargar_dominio().get("perfil", "light"),
+                                cfg.get("ajustes_perfil"), ruta_calibracion=None)
     if not recuperacion.get("modelo"):
         recuperacion["modelo"] = instalacion.modelos.denso
     if instalacion.recuperacion_modo:

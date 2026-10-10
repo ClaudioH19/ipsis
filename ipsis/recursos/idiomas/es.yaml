@@ -10,6 +10,41 @@ bordes_respuesta:
   referencias_cantidad: [desde, después de, a partir de, tras]
   limites_actor: ['\s+y\s+(?:(?:la|lo|las|los)\s+)?(?:envía|remite|entrega|firma|aprueba|autoriza)\b', ',\s*(?:que|quien)\b']
 stopwords:
+# Pronombres personales («te», «usted», «conmigo»): sin ellos sumaban a s_oov.
+- te
+- ti
+- tu
+- tus
+- usted
+- ustedes
+- nosotros
+- nosotras
+- nuestro
+- nuestra
+- nuestros
+- nuestras
+- mio
+- mia
+- conmigo
+- contigo
+# Abreviaturas informales de palabras funcionales («q» por «que», «pa» por «para»): sin
+# ellas, «a q hora se riega» sumaba «q» a s_oov como una palabra ausente del corpus.
+- q
+- k
+- xq
+- pq
+- porq
+- pa
+- pal
+- x
+- xa
+- d
+- dl
+- tb
+- tmb
+- tbn
+- dnd
+- cdo
 - a
 - al
 - asi
@@ -426,6 +461,59 @@ intenciones:
     - despues
     - paso
     - se debe
+  # «¿Cuánto cuesta cambiar el filtro?» pide un monto: «cada 45 días» habla del filtro
+  # pero no responde lo que se pregunta.
+  costo:
+    exige_pista: true
+    entidades_pista: [monto]
+    ejemplos:
+    - "¿Cuánto cuesta renovar el pasaporte?"
+    - "¿Cuánto vale la entrada al museo?"
+    - "¿Qué precio tiene el curso de inglés?"
+    - "¿Cuánto cobran por el estacionamiento?"
+    - "¿Cuál es el costo de la matrícula?"
+    - "¿Cuánto sale reparar la lavadora?"
+    patrones:
+    - cuanto (cuesta|cuestan|vale|valen|cobra|cobran|sale|salen)
+    - que (precio|costo) tiene
+    - cual es el (precio|costo)
+    pistas:
+    - pesos
+    - dolares
+    - euros
+    - precio
+    - costo
+    - tarifa
+    - gratis
+    - gratuito
+    - gratuita
+    - sin costo
+  # «¿Cada cuánto vence la contraseña?» pide un período: la oración que responde lo dice
+  # con «cada 90 días», no con el procedimiento para cambiarla.
+  frecuencia:
+    exige_pista: true
+    ejemplos:
+    - "¿Cada cuánto se renueva la licencia de conducir?"
+    - "¿Con qué frecuencia se limpia el filtro del aire?"
+    - "¿Cuántas veces al año se revisa el extintor?"
+    - "¿Cada cuánto tiempo se respalda el servidor?"
+    - "¿Con qué periodicidad se pagan las cuotas?"
+    - "¿Cada cuánto pasa el camión de la basura?"
+    patrones:
+    - cada cuanto( tiempo)?
+    - con que (frecuencia|periodicidad)
+    - cada que tiempo
+    - cuantas veces (al|por|a la) (dia|semana|mes|ano)
+    pistas:
+    - cada
+    - veces al
+    - veces por
+    - veces a la
+    - diario
+    - diaria
+    - semanal
+    - mensual
+    - anual
 # Cómo empieza una pregunta de seguimiento (ipsis.consulta.seguimiento), en minúsculas y sin tildes.
 seguimiento:
 - y
@@ -454,10 +542,35 @@ sinonimos:
 - [arregla, arreglan, arreglar, repara, reparan, reparar]
 - [cuesta, cuestan, costar, vale, valen, precio]
 - [dura, duran, durar, vigencia]
+# Equivalencias coloquiales de uso general (cualquier documento de oficina): solo actúan
+# cuando la palabra de la pregunta no está en el corpus y un miembro del grupo sí.
+- [aguanta, aguantan, aguantar, dura, duran, durar]
+- [plata, dinero, monto, importe]
+- [demora, demoran, demorar, tarda, tardan, tardar]
+- [contesta, contestan, contestar, responde, responden, responder]
+- [anota, anotan, anotar, registra, registran, registrar]
+- [roto, rota, rotos, rotas, dañado, dañada, dañados, dañadas]
+- [refri, refrigerador, nevera, heladera]
+- [pc, compu, computador, computadora, ordenador]
+- [auto, autos, carro, carros, coche, coches, vehiculo, vehiculos]
+- [avion, aviones, aereo, aerea, aereos, aereas, vuelo, vuelos]
+- [gente, personas]
+- [cabe, caben, caber, capacidad]
+- [arrendar, arrienda, arriendo, alquilar, alquila, alquiler]
+- [muere, muera, morir, fallece, fallecer, fallecimiento]
+- [fuego, incendio]
+- [clave, contraseña]
+- [rendir, rinde, rinden, rindo]
+- [usar, usa, usan, utilizar, utiliza, utilizan]
+- [significa, significan, significar, indica, indican, indicar]
 # Palabras que nunca son término foco (ipsis.consulta.etapas.filtros): verbos de apoyo y
 # unidades. «¿Desde cuándo se hace la compra?» habla de la compra, no de hacer.
+# Pronombres anafóricos: «¿Quién lo aprueba?» sin antecedente pide aclaración.
+pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
+# «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
+preposiciones_modificador: [de, del, para]
 genericas_memoria: [tiempo]
-genericas: [hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos]
+genericas: [tiempo, hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos, alguien, algo, cualquiera, voy, va, van, vamos, viene, vienen, vengo, tenga, tuviera, estoy, estan]
 # Sufijos de sustantivos derivados que el stemmer deja (ipsis.lenguaje.consultas.equivalentes).
 # El de español ya lleva «aprobación» y «firma» a la raíz del verbo.
 sufijos_derivados: []
@@ -516,6 +629,7 @@ interfaz:
   placeholder: Escribe tu pregunta...
   send: Enviar pregunta
   not_direct: No es una respuesta directa
+  check_citation: Revisa la cita
   origin_error: Este sitio no está autorizado para usar el asistente.
   http_error: El servicio no pudo responder (HTTP {status}).
   source_code: Código fuente

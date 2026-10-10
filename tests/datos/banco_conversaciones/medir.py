@@ -11,7 +11,7 @@ El resumen por perfil e idioma cuenta:
   (``herencia_indebida``: el peligro de un cambio de tema) y no heredó
   debiendo (``herencia_perdida``);
 - respuestas correctas sobre los turnos con ``respuesta`` (directa y con el
-  literal);
+  literal en la respuesta completa y en una evidencia); QA se mide aparte;
 - directas indebidas: turnos con ``directa: false`` que terminaron en
   respuesta directa.
 """
@@ -37,9 +37,7 @@ def cargar(idioma: str) -> list[dict]:
 
 
 def _literal(resultado, esperado: str) -> bool:
-    exacta = (resultado.diagnostico.get("contrato_http") or {}).get("respuesta_exacta")
-    texto = exacta["texto"] if exacta is not None else resultado.mensaje_usuario
-    return esperado in texto
+    return esperado in resultado.mensaje_usuario and any(esperado in e.texto for e in resultado.evidencias)
 
 
 def medir_idioma(idioma: str, perfil: str) -> dict:
@@ -51,6 +49,7 @@ def medir_idioma(idioma: str, perfil: str) -> dict:
     anterior = Path.cwd()
     turnos = []
     with tempfile.TemporaryDirectory(prefix=f"conversaciones_{idioma}_{perfil}_", ignore_cleanup_errors=True) as tmp:
+        motor = None
         try:
             os.chdir(tmp)
             with contextlib.redirect_stdout(io.StringIO()):
@@ -64,6 +63,7 @@ def medir_idioma(idioma: str, perfil: str) -> dict:
                     r = motor.consultar(turno["pregunta"], sesion)
                     heredo = bool(r.diagnostico.get("pregunta_interpretada"))
                     directa = r.estado.value == "respuesta_directa"
+                    exacta = ((r.diagnostico.get("contrato_http") or {}).get("respuesta_exacta") or {}).get("texto")
                     turnos.append({
                         "conversacion": conversacion["id"], "turno": n, "pregunta": turno["pregunta"],
                         "estado": r.estado.value, "heredo": heredo,
@@ -73,26 +73,32 @@ def medir_idioma(idioma: str, perfil: str) -> dict:
                         "correcta": bool(turno.get("respuesta")) and directa and _literal(r, turno["respuesta"]),
                         "directa": directa,
                         "mensaje": r.mensaje_usuario,
-                        "tramo_lector": ((r.diagnostico.get("contrato_http") or {}).get("respuesta_exacta") or {}).get("texto"),
+                        "tramo_lector": exacta,
+                        "tramo_qa_correcto": (turno["respuesta"] in exacta
+                                               if directa and turno.get("respuesta") and exacta is not None else None),
                         "conversacion_diagnostico": r.diagnostico.get("conversacion"),
                     })
         finally:
+            if motor is not None:
+                motor.cerrar()
             os.chdir(anterior)
             configurar_idioma(previo[0])
             configurar_perfil(previo[1])
-    return {"turnos": turnos, "resumen": resumir(turnos)}
+    return {"criterio_respuesta": "respuesta_completa_conversaciones_v2", "turnos": turnos, "resumen": resumir(turnos)}
 
 
 def resumir(turnos: list[dict]) -> dict:
     con_hereda = [t for t in turnos if t["hereda"] is not None]
     con_respuesta = [t for t in turnos if t["respuesta"]]
     sin_directa = [t for t in turnos if t["directa_esperada"] is False]
+    tramos = [t for t in turnos if t.get("tramo_qa_correcto") is not None]
     return {
         "herencia_correcta": sum(t["heredo"] == t["hereda"] for t in con_hereda), "con_hereda": len(con_hereda),
         "herencia_indebida": sum(t["heredo"] and t["hereda"] is False for t in con_hereda),
         "herencia_perdida": sum(not t["heredo"] and t["hereda"] is True for t in con_hereda),
         "respuestas_correctas": sum(t["correcta"] for t in con_respuesta), "con_respuesta": len(con_respuesta),
         "directas_indebidas": sum(t["directa"] for t in sin_directa), "sin_directa": len(sin_directa),
+        "tramos_qa_evaluados": len(tramos), "tramos_qa_sin_literal": sum(not t["tramo_qa_correcto"] for t in tramos),
     }
 
 

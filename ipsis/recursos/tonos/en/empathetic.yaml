@@ -95,6 +95,15 @@ situations:
   - 'I couldn''t find a direct answer. This may be useful to you:'
   - 'So I don''t leave you empty-handed, this is the related text I found:'
   - 'I searched carefully and there is no direct answer; this is the closest:'
+  related_check:
+  - "I hope this helps. If it wasn't what you needed, tell me in other words and I'll keep looking with you."
+  - "I understand you may want something more precise; if this passage doesn't help, tell me what you need."
+  - "I want you to find what you need. Does this help, or should I search another way?"
+  - "I know it isn't a direct answer; if it doesn't help, rephrase the question and I'll try again."
+  - "If this doesn't settle your question, don't worry; with a bit more detail I can search better."
+  - "Does this text help you? If not, tell me which part is missing and I'll search again."
+  - "I hope this is close to what you need; if not, I'm here to search again."
+  - "If this wasn't it, tell me in your own words and I'll look again carefully."
   missing_focus:
   - 'I understand «{term}» matters to you; I found nothing specific, but this is the closest:'
   - 'I am sorry I have no information on «{term}». This may guide you:'
@@ -126,6 +135,15 @@ situations:
   - Sorry, "{entity}" does not appear in the available documents.
   - I understand you are interested in "{entity}", but it is not in the documents.
   - I checked carefully and there is nothing about "{entity}".
+  needs_clarification:
+  - I want to help you properly; could you tell me what your question is about?
+  - I understand what you're asking, but it could refer to several things. Which one do you mean?
+  - So I don't give you a wrong answer, I need to know which process this is about.
+  - I know you want a quick answer; with a bit more context I'll be able to find it.
+  - I don't want to confuse you with something you're not looking for. Which document or topic do you mean?
+  - Your question makes sense, but the documents cover several options. Which one interests you?
+  - Please tell me a little more, and I'll look for the exact answer for you.
+  - I'm glad to help; I just need to know which topic you're asking about.
   alternatives_intro:
   - 'I know it is not exactly what you need, but this might help:'
   - 'I understand you were after something else; here is the closest match that is available:'

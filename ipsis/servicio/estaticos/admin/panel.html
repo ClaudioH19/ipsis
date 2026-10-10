@@ -30,6 +30,8 @@
       <button role="tab" id="pestana-tono" aria-controls="seccion-tono" aria-selected="true">{{tab_tone}}</button>
       <button role="tab" id="pestana-avatar" aria-controls="seccion-avatar" aria-selected="false">{{tab_avatar}}</button>
       <button role="tab" id="pestana-widget" aria-controls="seccion-widget" aria-selected="false">{{tab_widget}}</button>
+      <button role="tab" id="pestana-proyecto" aria-controls="seccion-proyecto" aria-selected="false">{{tab_status}}</button>
+      <button role="tab" id="pestana-documentos" aria-controls="seccion-documentos" aria-selected="false">{{tab_documents}}</button>
       <button type="button" id="salir" class="secundario">{{sign_out}}</button>
     </nav>
     <p id="estado" class="estado" role="status" aria-live="polite"></p>
@@ -130,6 +132,35 @@
             <button type="button" id="guardar-estilo">{{save_style}}</button>
           </details>
         </section>
+        <section id="seccion-proyecto" role="tabpanel" aria-labelledby="pestana-proyecto" class="tarjeta" hidden>
+          <h2>{{status_title}}</h2>
+          <dl id="resumen-proyecto" class="resumen"></dl>
+          <h3>{{thresholds_title}}</h3>
+          <p class="nota">{{thresholds_note}}</p>
+          <table class="eventos umbrales">
+            <thead><tr><th>{{threshold}}</th><th>{{effective}}</th><th>{{profile_value}}</th><th>{{project_value}}</th><th>{{source}}</th></tr></thead>
+            <tbody id="tabla-umbrales"></tbody>
+          </table>
+          <button type="button" id="guardar-umbrales">{{save_thresholds}}</button>
+          <h3>{{doctor_title}}</h3>
+          <ul id="lista-doctor" class="doctor"></ul>
+          <button type="button" id="actualizar-proyecto" class="secundario">{{refresh}}</button>
+        </section>
+
+        <section id="seccion-documentos" role="tabpanel" aria-labelledby="pestana-documentos" class="tarjeta" hidden>
+          <h2>{{documents_title}}</h2>
+          <p class="nota">{{documents_note}}</p>
+          <label for="doc-archivo">{{choose_files}}</label>
+          <input id="doc-archivo" type="file" multiple accept=".pdf,.docx,.md,.markdown,.txt">
+          <button type="button" id="doc-subir">{{upload}}</button>
+          <ul id="doc-resultados" class="nota"></ul>
+          <table class="eventos">
+            <thead><tr><th>{{doc_title}}</th><th>{{doc_file}}</th><th>{{doc_active}}</th></tr></thead>
+            <tbody id="tabla-documentos"></tbody>
+          </table>
+          <button type="button" id="doc-reindexar">{{reindex}}</button>
+          <p id="doc-tarea" class="nota" aria-live="polite"></p>
+        </section>
       </div>
 
       <section class="tarjeta vista" aria-labelledby="titulo-vista">
@@ -152,7 +183,25 @@
   data-sugerida="{{suggested}}"
   data-sin-sesion="{{session_ended}}"
   data-error-red="{{network_error}}"
-  data-sin-cambios="{{no_changes}}"></div>
+  data-sin-cambios="{{no_changes}}"
+  data-listo="{{ready}}"
+  data-no-listo="{{not_ready}}"
+  data-perfil="{{profile_label}}"
+  data-indice="{{index_label}}"
+  data-calibracion="{{calibration_label}}"
+  data-fragmentos="{{chunks}}"
+  data-tarea-corriendo="{{task_running}}"
+  data-tarea-lista="{{task_done}}"
+  data-tarea-error="{{task_error}}"
+  data-subido="{{uploaded}}"
+  data-duplicado="{{duplicate}}"
+  data-rechazado="{{rejected}}"
+  data-reindexar-aviso="{{reindex_hint}}"
+  data-si="{{yes}}"
+  data-no="{{no}}"
+  data-origen-calibration="{{source_calibration}}"
+  data-origen-project="{{source_project}}"
+  data-origen-profile="{{source_profile}}"></div>
 <script src="/admin/panel/panel.js"></script>
 </body>
 </html>

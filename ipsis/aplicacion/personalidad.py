@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from ipsis.configuracion import rutas
-from ipsis.configuracion.personalidad import EVENTOS, HEX, TONOS, PersonalidadConfig
+from ipsis.configuracion.personalidad import EVENTOS, HEX, TONOS, PersonalidadConfig, claves_sugeridas_avatar
 from ipsis.recursos.mensajes import t
 
 
@@ -331,11 +331,12 @@ def resumen_admin() -> dict:
 
     resumen = resumen_personalidad()
     avatares, _ = listar_avatares()
+    sugeridas = claves_sugeridas_avatar(resumen.avatar.nombre, resumen.avatar.expresiones + resumen.avatar.animaciones)
     return {
         "config": resumen.config.model_dump(mode="json"),
         "tonos": [t.__dict__ for t in listar_tonos()],
         "situaciones": {s: {"origen": r.origen, "variables": sorted(r.permitidas)} for s, r in SITUACIONES.items()},
-        "eventos": {e: {"sugerida": s, "respaldo": r} for e, (s, r) in EVENTOS.items()},
+        "eventos": {e: {"sugerida": sugeridas[e], "respaldo": r} for e, (_, r) in EVENTOS.items()},
         "avatares": [{"nombre": a.nombre, "origen": a.origen, "animaciones": list(a.animaciones),
                       "expresiones": list(a.expresiones)} if not isinstance(a, tuple)
                      else {"nombre": a[0], "origen": a[1], "error": a[2]} for a in avatares],

@@ -88,7 +88,7 @@ class ProyectoNoEncontrado(RuntimeError):
 
 ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
          "personalidad", "modo")
-_PERFIL_CAMBIAR = "ipsis profile set light|medium|heavy"
+_PERFIL_CAMBIAR = "ipsis profile set light|medium"
 
 
 def _chequeo(clave: str, nivel: Estado, mensaje: str, acciones=(), detalles=(), **datos) -> ChequeoDoctor:
@@ -171,8 +171,10 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
     else:
         try:
             motor = cargar_proyecto()
-            config_recuperacion(motor, perfil="light")  # la sección recuperacion: existe
+            # Conservar el YAML validado para que el chequeo de perfil pueda
+            # identificar ajustes inválidos, aunque falle resolver recuperación.
             ctx.motor = motor
+            config_recuperacion(motor, perfil="light")
         except Exception as e:  # noqa: BLE001
             problemas.append(f"{rutas.MOTOR}: {_breve(e, 'motor')}")
             acciones.append(t("check.fix_file", path=rutas.MOTOR))

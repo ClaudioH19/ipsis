@@ -49,7 +49,78 @@ deployment.
 In production `/admin` requires HTTPS. Without a token, the panel does not
 exist.
 
+## Changing configuration
+
+In your original project, before preparing deployment:
+
+```bash
+ipsis configure cors_origins=https://www.your-site.com query_log.enabled=true
+ipsis configure posture.mode=strict
+ipsis profile set medium
+ipsis models download
+ipsis profile show
+ipsis snapshot-config --output reports/config-review.yaml
+```
+
+`configure` edits `config/assistant.yaml`. Reading and thresholds use
+`config/engine.yaml`; merge this block with existing settings:
+
+```yaml
+profile_overrides:
+  cascade:
+    read_m: 2
+    max_reading_chars: 600
+  default_thresholds:
+    ok: 0.80
+    focus: 1.0
+```
+
+These are `medium` values, not an accuracy guarantee. Precedence is profile,
+overrides and applicable calibration. Before measuring reading or threshold
+changes, rename and retain `config/calibration.yaml`: those changes do not
+automatically invalidate every calibration. Version 1 is ignored under the
+new evaluation criterion; recalibrate.
+
+Evaluate in the original project, which contains the golden set (not copied here):
+
+```bash
+ipsis golden validate
+ipsis evaluate --output reports/evaluation.json
+ipsis benchmark --bank golden/bank/manifest.json --profiles light,medium --output reports/profiles
+ipsis calibrate                    # inspect dev and test before using --apply
+ipsis doctor
+```
+
+Full answers use the same criterion across profiles; QA span quality is separate
+and not applicable without a reader. `evaluate` fails for wrong direct answers
+or false `ok`. Failed `test` verification does not automatically block `--apply`.
+`doctor` and `/ready` check operation, not answer accuracy.
+
+After deployment, edit this folder's `config/assistant.yaml` or `config/engine.yaml`
+and run `docker compose restart asistente`. To use the container's CLI, stop
+the service first when Qdrant is local:
+
+```bash
+docker compose stop asistente
+docker compose run --rm --no-deps asistente ipsis configure posture.mode=strict
+docker compose run --rm --no-deps asistente ipsis doctor
+docker compose --profile https up -d
+```
+
+Corpus, chunking or dense-model changes require indexing, golden validation and
+recalibration. Tone/avatar
+use `ipsis personality` or `config/personality.yaml`; widget settings use
+`ipsis widget style` or `config/styles.yaml`.
+
 ## Updating
+
+Medium uses e5-small + mMiniLM + mDeBERTa and cascade 20/4/2. Select
+alternatives through `config/engine.yaml::profile_overrides.models` (`dense`,
+`reranker`, `reader`), keeping `retrieval.model: null`. The image reads these
+overrides when downloading models. Reindex and rebuild after changes with
+`docker compose build --no-cache asistente`. In the source repository,
+`python herramientas/evaluacion/general.py --download` runs document regression;
+the real project's golden set remains necessary for answer evaluation.
 
 - **Documents or configuration:** on your computer, run `ipsis load`,
   `ipsis index` and `ipsis deploy prepare` again; copy the folder and run

@@ -43,12 +43,22 @@ list.
 |---|---|---|
 | light | — (does not run) | 0 |
 | medium | cross-encoder/mmarco-mMiniLMv2-L12-H384-v1, published int8 (118 M, 119 MB) | 4 |
-| heavy | onnx-community/bge-reranker-v2-m3-ONNX, int8 (568 M, 571 MB) | 8 |
+
+`rerank_candidates` (medium: 5) is how many fused candidates the reranker
+scores; the rest keep their fusion order behind them. With semantic reading
+the fine ordering is per sentence, so scoring 20 long chunks was redundant: on
+678 questions (query, informal and guarantee banks) 20 → 5 candidates kept
+308 correct answers and 11 errors, and cut medium's p50 from 5.3 s to 2.5 s
+(reranking 4.0 s → 0.64 s) on a 2-thread CPU. With 8 candidates: 307 and 11.
 
 ## 8. Complexity and resources
 
-Measured p95 on the universal bank: 293 ms (medium) and 1,207 ms (heavy).
+Historical p95 on the universal bank: 293 ms (medium) and 1,207 ms (former heavy, BGE).
 mmarco scored 20 passages in 124 ms.
+Horizon multilingual base/small are supported experimental replacements;
+on the Spanish query bank they added no correct answer, one accepted error
+and 1.6–4× the p95. BGE remains available
+by override. See [candidate regression](../../herramientas/evaluacion/README.md).
 
 ## 9. Failures and fallback
 
@@ -67,9 +77,11 @@ with the real ONNX.
 
 ## 12. Limitations
 
-On the universal bank, heavy does not separate the two same-topic traps
-that medium does not separate either: the large reranker buys no material
-safety with that evidence.
+On the universal bank, the former heavy (BGE) did not separate the two
+same-topic traps that medium does not separate either: the large reranker
+bought no material safety with that evidence. On colloquial paraphrases
+mmarco can rank another passage of the same document above the one that
+answers; no larger reranker fixed that in the measured banks.
 
 ## 13. References and provenance
 

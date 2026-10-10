@@ -102,20 +102,20 @@
       },
       "eyes": {
         "left": {
-          "width": 25,
-          "height": 56,
+          "width": 22.615384615384617,
+          "height": 50.256410256410255,
           "x": 0,
-          "y": -24,
+          "y": -25.128205128205128,
           "angle": 0
         },
         "right": {
-          "width": 25,
-          "height": 56,
+          "width": 22.615384615384617,
+          "height": 50.256410256410255,
           "x": 0,
-          "y": -24,
+          "y": -25.128205128205128,
           "angle": 0
         },
-        "spacing": 50
+        "spacing": 52.76923076923077
       },
       "perspective": 1,
       "motion": {
@@ -1186,6 +1186,190 @@
         "description": "",
         "group": "ipsis"
       }
+    },
+    "spin": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 1800,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "spin",
+        "description": "One complete 360-degree turn.",
+        "group": "ipsis"
+      }
+    },
+    "flip": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 2000,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "flip",
+        "description": "Turns around its vertical axis, showing the back of the page.",
+        "group": "ipsis"
+      }
+    },
+    "bounce": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 1500,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "bounce",
+        "description": "Two small jumps with a soft squash and stretch.",
+        "group": "ipsis"
+      }
+    },
+    "sway": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 2600,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "sway",
+        "description": "Rocks from side to side.",
+        "group": "ipsis"
+      }
+    },
+    "dance": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "happy",
+          "holdMs": 2100,
+          "transitionMs": 300,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "dance",
+        "description": "Steps sideways, bobs and rocks with happy eyes.",
+        "group": "ipsis"
+      }
+    },
+    "float": {
+      "playbackMode": "loop",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 4000,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": true,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "float",
+        "description": "Floats gently up and down.",
+        "group": "ipsis"
+      }
+    },
+    "paper-plane-out": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 3200,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "paper-plane-out",
+        "description": "Folds into a paper plane and flies away with the question.",
+        "group": "ipsis"
+      }
+    },
+    "paper-plane-in": {
+      "playbackMode": "once",
+      "steps": [
+        {
+          "expression": "neutral",
+          "holdMs": 3200,
+          "transitionMs": 0,
+          "transition": "smooth"
+        }
+      ],
+      "blink": {
+        "enabled": false,
+        "initialDelayMs": 1800,
+        "minIntervalMs": 3000,
+        "maxIntervalMs": 6000,
+        "durationMs": 160
+      },
+      "metadata": {
+        "label": "paper-plane-in",
+        "description": "Flies in with a citation, lands and unfolds into Folio.",
+        "group": "ipsis"
+      }
     }
   },
   "animationOrder": [
@@ -1203,6 +1387,14 @@
     "goodbye",
     "worried",
     "sleepy",
-    "wake-up"
+    "wake-up",
+    "spin",
+    "flip",
+    "bounce",
+    "sway",
+    "dance",
+    "float",
+    "paper-plane-out",
+    "paper-plane-in"
   ]
 }

@@ -66,6 +66,40 @@ ipsis calibrate                    # ver «Calibrar»
 - No se copian documentos institucionales sensibles al repositorio; el
   manifiesto identifica y hashea el corpus evaluado localmente.
 
+## Leer la evaluación y comparar perfiles
+
+```bash
+ipsis evaluate --output reports/evaluation.json
+ipsis benchmark --bank golden/bank/manifest.json --profiles light,medium --output reports/profiles
+```
+
+Todos los perfiles usan el criterio `respuesta_completa_v2`: el literal esperado
+debe estar en la respuesta publicada y en evidencia del documento y rango del
+golden. Tener el dato solo dentro de una cita que no se usa en la respuesta no
+cuenta como acierto. `related` tampoco cuenta como respuesta directa correcta.
+
+- `directas_con_literal` y `cobertura_literal`: aciertos de respuesta completa
+  y su proporción sobre las preguntas respondibles.
+- `riesgo_aceptadas`: falsos `ok` más directas sin el dato esperado, dividido por
+  las respuestas directas. Una abstención no entra en ese denominador.
+- `tramos_qa_evaluados`, `tramos_qa_sin_literal` y `exactitud_tramo_qa`: calidad
+  del tramo seleccionado respecto al literal del golden. Sin lector, no aplica.
+  Resaltar «dos» cuando se esperan «dos días hábiles» falla aquí, aunque la
+  respuesta completa pueda contener la información correcta.
+  Si el golden exige una cláusula larga, un actor correctamente seleccionado
+  también puede fallar esta comparación; el fallo no significa por sí solo
+  que el dato QA sea falso. Cura `literal_answer` con el dato mínimo y sus unidades
+  o condiciones necesarias.
+- `exactitud_offsets`: fidelidad de las citas contra el texto fuente.
+
+`evaluate` devuelve 1 si hay falsos `ok` o directas sin el dato esperado; un
+resaltado insuficiente, por sí solo, se reporta aparte. Un literal en la respuesta
+no verifica toda su semántica: revisa acciones, condiciones y pasajes añadidos.
+
+Los nuevos reportes llevan versión 2 y declaran el criterio. Los anteriores
+se pueden leer, pero `compare` rechaza mezclar criterios: vuelve a evaluar
+ambas configuraciones. No se modifican los reportes históricos.
+
 ## Calibrar
 
 ```text
@@ -92,6 +126,9 @@ Si `dev` no distingue dos valores de un umbral, ese umbral no se mueve.
 | `SIN_UMBRAL_SEGURO` | Hay muestra, pero ninguna combinación cumple α | 1 |
 
 - Sin `--apply`, solo informa y no escribe nada.
+- La calibración versión 2 calcula riesgo sobre respuestas completas con
+  respaldo en la evidencia esperada; el tramo QA se mide aparte. La versión 1
+  queda conservada pero no se aplica: vuelve a calibrar.
 - Con `--apply`, escribe `config/calibration.yaml` en cualquier
   estado, para auditoría. El motor **solo** usa sus umbrales si el estado es
   `calibrated` y su procedencia coincide con el proyecto: perfil, modelos y

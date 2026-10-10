@@ -1,5 +1,9 @@
 # ADR 0003: ONNX models on CPU and installation profiles
 
+Update 2026-10-08: **the `heavy` profile is removed**; two installable
+profiles remain, `light` and `medium`. The decision and table below are kept
+as history. See [Removal of heavy](#update-removal-of-heavy-2026-10-08).
+
 ## Context
 
 The assistant is installed on its user's server (a server without a GPU).
@@ -51,5 +55,39 @@ pretrained, multilingual, with a compatible license and no fine-tuning.
 
 ## Status
 
-Accepted and implemented. Open: a larger reader for heavy, if a reliable
-ONNX appears.
+Accepted and implemented; amended on 2026-10-08 by the removal of heavy.
+
+## Update: removal of heavy (2026-10-08)
+
+Under the full-answer criterion (v2), the original heavy (e5-base + BGE,
+cascade 30/8/4, agreement) got 21/34 correct answers on the Spanish query
+bank with two accepted errors and a p95 of 17 s, against medium's 25/34,
+zero errors and 3.1 s. Six newer candidates were then measured on top of
+medium's cascade, changing one model at a time: Granite-311M R2,
+Granite-97M R2, Harrier-270M and EmbeddingGemma 2 as retriever; Horizon
+base/small as reranker. **All six got exactly the same 25 correct answers as
+medium**; the Horizon rerankers added an accepted error and exceeded the 4 s
+budget.
+
+The reason is structural, not a weakness of the models. In all 240
+comparisons the reranker score `s_rr` was identical to medium's: with
+`retrieve_n=20` over a small corpus the hybrid search already brings the
+right passage into the candidate set, so the dense model cannot change what
+reaches the reranker and the reader. The nine questions medium misses are
+lost downstream, the same nine for every variant: four have the correct
+evidence but the focus/coverage gate rejects it (a paraphrase does not repeat
+the question's words), and five are colloquial paraphrases where the
+reranker ranks another passage of the same document higher. A larger
+embedding also compresses the cosine scale (Granite: 0.73–0.94 for
+out-of-corpus questions too), which breaks the domain threshold calibrated
+for e5.
+
+Decision: a profile has to buy measurable quality, and heavy bought none.
+It is removed. A project whose `assistant.yaml` says `heavy` loads as
+`medium` (and `ipsis profile show` asks to reindex if its index used another
+dense model). The candidate models stay in the catalog and can be tried
+through `profile_overrides`; the model variants of the general regression
+(`herramientas/evaluacion/general.py --variants`) are built on medium. The
+improvement effort moves to the focus gate and paraphrase handling, which
+benefit both profiles. Evidence: [evaluation v2](../methodology/evaluacion-v2/README.md),
+[candidate research](../methodology/modelos-heavy-2026-10-08/README.md).

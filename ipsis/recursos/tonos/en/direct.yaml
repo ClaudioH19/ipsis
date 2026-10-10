@@ -96,6 +96,15 @@ situations:
   - 'Direct answer missing. See:'
   - 'Not exact. Nearest:'
   - 'Direct answer: none. Close:'
+  related_check:
+  - "Is this it? If not, ask differently."
+  - "Useful? If not, rephrase."
+  - "If not this, add details."
+  - "Does it answer you? If not, be specific."
+  - "Check the passage. If it doesn't help, ask another way."
+  - "Was this it? If not, say what's missing."
+  - "If you meant something else, specify it."
+  - "A match? If not, change the question."
   missing_focus:
   - '«{term}» is not there. Closest:'
   - 'Nothing on «{term}». Related:'
@@ -127,6 +136,15 @@ situations:
   - '"{entity}": no data.'
   - Can't find "{entity}".
   - No mention of "{entity}".
+  needs_clarification:
+  - Which topic? Say it and I'll search.
+  - Topic missing. Be more specific.
+  - Could be more than one thing. Which?
+  - Name the document or process.
+  - Incomplete question. What is it about?
+  - Several options possible. Specify the topic.
+  - I need the topic to search.
+  - Add what you mean and I'll answer.
   alternatives_intro:
   - 'Similar:'
   - 'Closest match:'

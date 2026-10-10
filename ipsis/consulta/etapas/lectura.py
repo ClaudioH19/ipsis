@@ -13,6 +13,18 @@ def _es_titulo(linea: str) -> bool:
     return bool(linea) and len(linea.split()) <= 10 and not linea.endswith((".", ":", ";", "?", "!", ")", "»", '"'))
 
 
+def seccion_de(chunk, offset: int) -> list[str]:
+    """Ruta de la sección que contiene ``offset`` (absoluto) dentro del chunk.
+
+    Un chunk puede cruzar varias secciones (un FAQ entero); la evidencia nombra la
+    de su oración, como en la selección sin lector: «¿Qué horario tiene la Mesa de
+    Ayuda?» enmarca «La Mesa de Ayuda atiende…», no el título del documento."""
+    for seccion in (chunk.metadata or {}).get("secciones") or []:
+        if seccion["inicio"] <= offset < seccion["fin"]:
+            return list(seccion["ruta"])
+    return list(chunk.seccion_path)
+
+
 def oracion_que_contiene(texto: str, inicio: int, fin: int) -> tuple[int, int]:
     """Rango de las oraciones de ``texto`` que cubren ``[inicio, fin)``. Se corta
     primero por línea: un título («6.3 Procedimiento de Compra») no es parte de la
@@ -66,6 +78,82 @@ def _ventana_pertinente(motor, pregunta: str, texto: str, limite: int,
                                              estadisticas=est, centrada=not recortar_relacion,
                                              pregunta_usuario=pregunta_usuario, comprension=comprension)
     return resultado.offset_inicio, resultado.offset_fin
+
+
+VENTANAS_SEMANTICAS = 3
+_RRF_K = 5
+
+
+def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None,
+                        n: int = VENTANAS_SEMANTICAS) -> list[tuple[object, int, int]]:
+    """Las ``n`` oraciones de los candidatos que mejor ordena la fusión (RRF) de tres
+    órdenes: cross-encoder y coseno denso sobre «título de la sección. oración», y
+    ``s_lex`` con las pistas de la intención. Cada una se lee con la oración anterior
+    de su línea como contexto. Devuelve ``(candidato, inicio, fin)`` con offsets del chunk.
+
+    Elegir la ventana por palabras perdía las paráfrasis: «olvidé la clave, cómo la
+    cambio?» leía «La contraseña vence cada 90 días» y no «Ingrese al portal…». Un
+    cross-encoder no da una escala absoluta, pero ordena bien dentro de una consulta.
+    Sin reranker o sin codificador, ``[]``: se usa la ventana léxica."""
+    codificador = getattr(getattr(motor, "retriever", None), "codificador", None)
+    vector = getattr(getattr(motor, "retriever", None), "vector_consulta", None)
+    if motor.reranker is None or codificador is None or not callable(vector):
+        return []
+    import numpy as np
+
+    from ipsis.consulta.etapas.seleccion import _puntuar, dividir_en_unidades
+
+    # La presentación de un documento con secciones («Establece las condiciones de la beca
+    # de perfeccionamiento para funcionarios») repite el tema de todas sus secciones y no
+    # responde ninguna: «¿Quiénes pueden postular a la beca…?» se lee en «Requisitos».
+    con_secciones = {c.chunk.doc_id for c in candidatos
+                     if any(len(s["ruta"]) > 1 for s in (c.chunk.metadata or {}).get("secciones") or [])}
+    unidades = []  # (candidato, unidad, inicio de la oración previa de la línea)
+    for candidato in candidatos:
+        texto = candidato.chunk.texto_fuente
+        base = candidato.chunk.offset_inicio
+        # Como en la selección: en un chunk con secciones, una línea fuera de todas es
+        # un título («¿Cómo cambio mi contraseña?»), nunca la respuesta.
+        secciones = [(s["inicio"] - base, s["fin"] - base)
+                     for s in (candidato.chunk.metadata or {}).get("secciones") or []]
+        previa = None
+        for u in dividir_en_unidades(texto):
+            misma_linea = previa is not None and "\n" not in texto[previa.offset_fin:u.offset_inicio]
+            dentro = not secciones or any(a <= u.offset_inicio and u.offset_fin <= b for a, b in secciones)
+            if dentro and candidato.chunk.doc_id in con_secciones:
+                dentro = len(seccion_de(candidato.chunk, base + u.offset_inicio)) > 1
+            if dentro and len(u.texto.split()) >= 3:
+                unidades.append((candidato, u, previa.offset_inicio if misma_linea else u.offset_inicio))
+            previa = u
+    if not unidades:
+        return []
+    textos = []
+    for candidato, u, _ in unidades:
+        titulo = seccion_de(candidato.chunk, candidato.chunk.offset_inicio + u.offset_inicio)
+        textos.append(f"{titulo[-1]}. {u.texto}" if titulo else u.texto)
+    obtener = getattr(motor.retriever, "estadisticas_lexico", None)
+    est = obtener() if callable(obtener) else None
+    lex = _puntuar(pregunta, [u for _, u, _ in unidades], est, comprension)
+    ce = motor.reranker.puntuar(pregunta, textos)
+    q = np.asarray(vector(pregunta), dtype=float)
+    matriz = np.asarray(codificador.codificar_documentos(textos), dtype=float)
+    cos = list(matriz @ q)
+    fusion = [0.0] * len(unidades)
+    for puntajes in (ce, cos, lex):
+        for rango, i in enumerate(sorted(range(len(unidades)), key=lambda i: -puntajes[i])):
+            fusion[i] += 1.0 / (_RRF_K + rango + 1)
+    ventanas: list[list] = []
+    for i in sorted(range(len(unidades)), key=lambda i: -fusion[i]):
+        candidato, u, inicio = unidades[i]
+        # Una oración y la siguiente (que la trae como contexto) se leen juntas.
+        solapada = next((v for v in ventanas if v[0] is candidato and inicio < v[2] and v[1] < u.offset_fin), None)
+        if solapada is not None:
+            solapada[1], solapada[2] = min(solapada[1], inicio), max(solapada[2], u.offset_fin)
+        elif len(ventanas) < n:
+            ventanas.append([candidato, inicio, u.offset_fin])
+        else:
+            break
+    return [(c, a, b) for c, a, b in ventanas]
 
 
 def _candidato_por_pista(motor, pregunta: str, leidos: list, resto: list, comprension=None):
@@ -123,8 +211,21 @@ class EtapaLectura(_Etapa):
             if extra not in ctx.candidatos:  # lo había dejado fuera el reranker: vuelve, para verificar su evidencia
                 ctx.candidatos = [*ctx.candidatos, extra]
         limite = perfil.cascada.max_caracteres_lectura if perfil is not None else 600
-        ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite, ctx.pregunta_usuario or None, comprension)
-                    for c in candidatos]
+        semanticas = []
+        if perfil is not None and getattr(perfil.cascada, "lectura_semantica", False):
+            # Todos los candidatos del reranker, no solo los leer_m primeros: la oración
+            # que responde puede estar en el segundo o tercer chunk.
+            todos = list({c.chunk.chunk_id: c for c in [*ctx.candidatos, *candidatos]}.values())
+            semanticas = ventanas_semanticas(m, ctx.pregunta_usuario or ctx.pregunta, todos, comprension)
+        if semanticas:
+            candidatos = [c for c, _, _ in semanticas]
+            ventanas = [(a, b) for _, a, b in semanticas]
+            ctx.diagnostico["lectura_semantica"] = [
+                {"chunk_id": c.chunk.chunk_id, "texto": c.chunk.texto_fuente[a:b]} for c, a, b in semanticas]
+        else:
+            ventanas = [_ventana_pertinente(m, ctx.pregunta, c.chunk.texto_fuente, limite,
+                                            ctx.pregunta_usuario or None, comprension)
+                        for c in candidatos]
         # El contexto recuperado resuelve el tema; la relación que responde el
         # lector es la del turno actual. Un verbo heredado («firma») no debe
         # competir con el que acaba de preguntar el usuario («redacta»).
@@ -181,7 +282,7 @@ class EtapaLectura(_Etapa):
             texto=chunk.texto_fuente[ini:fin],
             offset_inicio=chunk.offset_inicio + ini,
             offset_fin=chunk.offset_inicio + fin,
-            seccion_path=chunk.seccion_path,
+            seccion_path=seccion_de(chunk, chunk.offset_inicio + ini),
             score=mejor.s_qa,
         )
         ctx.respuesta_exacta = {
@@ -192,4 +293,4 @@ class EtapaLectura(_Etapa):
         }
 
 
-__all__ = ["EtapaLectura", "hay_discordancia", "oracion_que_contiene"]
+__all__ = ["EtapaLectura", "hay_discordancia", "oracion_que_contiene", "seccion_de"]

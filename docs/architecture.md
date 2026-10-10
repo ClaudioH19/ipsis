@@ -97,7 +97,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `archivos.py` | Reads and writes project YAML through the glossary (atomic writes) |
 | `carga.py` | Loads and validates the configuration; copies the templates on `ipsis init` |
 | `migraciones.py` | Migrates older projects (folders, files and Spanish keys) |
-| `perfiles.py` | Profiles `light`, `medium`, `heavy` and `bm25`; merge profile ← `engine.yaml` ← calibration |
+| `perfiles.py` | Profiles `light`, `medium` and `bm25`; merge profile ← `engine.yaml` ← calibration |
 | `calibracion.py` | `calibration.yaml` and when it applies (provenance) |
 | `personalidad.py` | `personality.yaml`: tone, avatar and the event catalog |
 | `rutas.py` | Relative paths of a project |
@@ -183,8 +183,9 @@ production), `despliegue` and `publico` (public ↔ internal names).
 | Module | What it does |
 |---|---|
 | `cli/base.py`, `cli/comandos/*` | One command per class (Command pattern), grouped as in `ipsis --help`; texts from the message catalog |
+| `cli/menu.py`, `cli/comandos/chat.py` | `ipsis` alone (or `ipsis help`): the commands grouped by task with examples; `ipsis chat`: the interactive mode, questions to one engine loaded once and `/commands` dispatched to the same CLI |
 | `servicio/api.py` | FastAPI: `/ask`, `/config`, `/ready`, static files, CORS, cache and errors; translates the engine contract to the public one |
-| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel` |
+| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel`: personality and styles, and also status, thresholds, document upload and reindexing (`aplicacion/panel.py`); a reload replaces the engine in the background (`servicio/api.py::recargar_motor`) |
 | `servicio/seguridad.py` | Rate limit and widget keys |
 | `servicio/estaticos/` | `widget.js`, `avatar.js` (the bundled avatar engine) and the panel |
 
@@ -222,13 +223,18 @@ flowchart TD
     V --> S([Answer + citations + diagnostics])
 ```
 
-| Stage | light | medium | heavy |
-|---|:-:|:-:|:-:|
-| conversational, analysis, confidence, filters, retrieval | ✓ | ✓ | ✓ |
-| reranking | — | ✓ (mmarco, k=4) | ✓ (bge-m3, k=8) |
-| reading | — | ✓ (2 passages) | ✓ (4 passages + agreement) |
-| evidence, policy, rendering, verification | ✓ | ✓ | ✓ |
-| measured p95 (universal bank) | 85 ms | 815 ms | 2,130 ms |
+| Stage | light | medium |
+|---|:-:|:-:|
+| conversational, analysis (typo correction), confidence, filters, retrieval | ✓ | ✓ |
+| clarification (inside retrieval: no topic → `necesita_aclaracion`) | ✓ | ✓ |
+| reranking | — | ✓ (mmarco, k=4) |
+| reading | — | ✓ (semantic reading: top 3 sentences by RRF of cross-encoder, e5, lexical) |
+| evidence, policy, rendering, verification | ✓ | ✓ |
+| historical p95 (universal bank) | 85 ms | 815 ms |
+
+The former `heavy` profile was removed on 2026-10-08 (ADR 0003). See
+[general regression](../herramientas/evaluacion/README.md) for reproducible
+measurements and alternative-model comparisons.
 
 Each stage receives the `ContextoConsulta`, fills it in and may close the
 query. A `no_answer` from a false premise or without an answer may carry
@@ -344,7 +350,7 @@ sequenceDiagram
 | `GET /config` | What the widget needs: language texts, tone microcopy, styles, placement and avatar |
 | `GET /widget.js`, `/avatar.js`, `/styles.css`, `/avatars/*.avatar.json` | Static files (long cache in production) |
 | `GET /health` · `GET /ready` | Alive · ready, with the project diagnosis (503 when something blocks) |
-| `/admin/*`, `/admin/panel` | Personality and styles over HTTP, with a token and HTTPS |
+| `/admin/*`, `/admin/panel` | Personality, styles, status, thresholds, documents and reindexing over HTTP, with a token and HTTPS |
 | `GET /source` | Source code (AGPL §13) |
 
 ## 7. Deployment

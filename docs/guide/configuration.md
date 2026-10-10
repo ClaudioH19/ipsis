@@ -36,7 +36,7 @@ config_version: 5
 assistant_name: "Support assistant"
 domain_description: "the product manuals"
 language: en              # ISO 639 code: es, en, pt, pt-br...
-profile: medium           # light | medium | heavy
+profile: medium           # light | medium
 cors_origins: []          # origins allowed to embed the widget
 widget_keys: []           # optional public keys for the widget
 query_log:
@@ -128,8 +128,8 @@ representation changes.
 
 ## Installation profile
 
-The active profile is in `config/assistant.yaml::profile` (`light`, `medium`
-or `heavy`). `bm25` is a diagnostic profile of `ipsis benchmark` only and
+The active profile is in `config/assistant.yaml::profile` (`light` or
+`medium`). `bm25` is a diagnostic profile of `ipsis benchmark` only and
 cannot be installed.
 
 ```
@@ -144,10 +144,10 @@ against the target profile. Setting the active profile again does nothing.
 
 - **light ↔ medium:** they use the same dense model (e5-small, 384), so the
   index works for both.
-- **heavy:** it uses e5-base (768) and needs its own index (`ipsis index`).
-  Each dense model lives in its own collection: the previous index is kept,
-  and going back to the previous profile makes it compatible again without
-  reindexing.
+- **Projects with `heavy`:** that profile was removed. An `assistant.yaml`
+  that names it loads as `medium`; if its index was built with another dense
+  model, `ipsis profile show` marks it incompatible and asks for `ipsis index`.
+  Each dense model lives in its own collection: the previous index is kept.
 - **Index compatibility:** it is decided by the manifest
   (`.ipsis/index/<collection>.manifest.json`), with the dense model, the
   dimension and the payload version. It is not decided by the profile name.
@@ -156,7 +156,129 @@ against the target profile. Setting the active profile again does nothing.
   profile thresholds apply. The file is kept for auditing. To get it back:
   `ipsis calibrate --apply`.
 
+## Changing configuration for deployment
+
+Run commands in the project directory containing `config/` and `documents/`.
+With local Qdrant, stop `ipsis serve` before another process opens the index.
+
+| Setting | Command or file | Follow-up |
+|---|---|---|
+| Profile | `ipsis profile set medium` | Download models, check `profile show`, evaluate and recalibrate |
+| Identity and CORS | `ipsis configure assistant_name="Support" cors_origins=https://www.your-site.com` | Restart the service |
+| Query log | `ipsis configure query_log.enabled=true` | Restart; `ipsis audit` checks logged citations |
+| Abstention alternatives | `ipsis configure posture.mode=strict` or `posture.mode=proactive` | Restart; alternatives remain an abstention |
+| Reading, retrieval and thresholds | `config/engine.yaml`, `profile_overrides` | Set aside the old calibration, restart, evaluate and recalibrate |
+| Chunking, dense model or index representation | `config/engine.yaml`, `retrieval` | Reindex, validate the golden set, evaluate and recalibrate |
+| Active documents | `documents/catalog.yaml`, `active` | Reindex, validate the golden set and recalibrate |
+| Synonyms | `config/domain.yaml`, `synonyms` | Restart, evaluate and recalibrate |
+| Tone and avatar | `ipsis personality` or `config/personality.yaml` | Service reload; see [personality](personality.md) |
+| Widget theme and placement | `ipsis widget style` or `config/styles.yaml` | See [web](web.md) |
+
+`ipsis configure` edits supported `assistant.yaml` keys. Engine adjustments
+use YAML; leave the packaged profiles intact. Add or merge this block into
+`config/engine.yaml`:
+
+```yaml
+profile_overrides:
+  cascade:
+    retrieve_n: 20
+    rerank_k: 4
+    read_m: 2
+    max_reading_chars: 600
+    early_exit_without_focus: true
+  default_thresholds:
+    ok: 0.80
+    focus: 1.0
+    oov_ok: 0.60
+    cov: 0.60
+    ok_strong: 0.99
+    oov_ok_strong: 0.67
+```
+
+The **Status** tab of `/admin` and `PUT /admin/thresholds` write the same
+`default_thresholds` of this file and reload the engine. These values reproduce `medium` defaults. Without a reader, `read_m` does not
+apply. `ok` gates QA with a reader and similarity without one; `cov` gates
+direct answers without a reader. `ok_strong` and `oov_ok_strong` are a second
+tier for the reader: when it is nearly sure, an informal question may carry
+somewhat more words the documents lack. Remove both to turn the tier off. More candidates or larger windows increase
+work without guaranteeing better accuracy.
+
+Precedence is **profile → `profile_overrides` → applicable calibration**.
+To test manual thresholds, rename `config/calibration.yaml` and retain it
+under another filename. Reading parameter changes do not automatically
+invalidate calibration, so set it aside before measuring those changes too.
+Version 1 calibrations are ignored under answer criterion v2; regenerate them.
+
+Before preparing a deployment:
+
+```bash
+ipsis profile show
+ipsis snapshot-config --output reports/config-review.yaml
+ipsis golden validate
+ipsis evaluate --output reports/evaluation.json
+ipsis calibrate                    # inspect dev and test before applying
+ipsis doctor
+ipsis deploy prepare --domain assistant.your-site.com
+```
+
+The snapshot records validated settings and defaults. Full answers and QA
+spans have separate metrics ([golden set](golden.md)). If you apply thresholds,
+run `ipsis calibrate --apply` and evaluate again. A failed `test` does not
+automatically block `--apply`; inspect that result before treating calibration
+as validated. `doctor` and `/ready` check operation, not answer accuracy.
+In Docker, edit the deployed `config/` directory and run
+`docker compose restart asistente`. Changing models requires preparing the
+image and index again. Generated `DEPLOY.md` includes these instructions.
+
 ## Models
+
+### Alternative models
+
+Until October 2026 there was a `heavy` profile with larger models. It was
+removed because no variant beat medium: with Granite-311M R2, Granite-97M R2,
+Harrier-270M or EmbeddingGemma 2 as the retriever, and Horizon base/small as
+the reranker, the Spanish query bank gave exactly the same 25 correct answers
+as medium, and both Horizon models added an accepted error. The former
+e5-base/BGE 30/8/4 configuration had fewer correct answers and more errors.
+See [ADR 0003](../decisions/0003-onnx-and-profiles.md).
+
+The models stay in the catalog so they can be tried on top of medium with a
+deployment's corpus. Merge this block into `config/engine.yaml`:
+
+```yaml
+retrieval:
+  model: null
+profile_overrides:
+  models:
+    dense: ibm-granite/granite-embedding-311m-multilingual-r2
+```
+
+| Role | Supported repository |
+|---|---|
+| Dense | `ibm-granite/granite-embedding-311m-multilingual-r2` |
+| Dense | `ibm-granite/granite-embedding-97m-multilingual-r2` |
+| Dense | `onnx-community/harrier-oss-v1-270m-ONNX` |
+| Dense | `onnx-community/embeddinggemma-2-ONNX` (text only) |
+| Dense | `intfloat/multilingual-e5-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-small` |
+| Reranker | `onnx-community/bge-reranker-v2-m3-ONNX` |
+
+The catalog pins their revisions and declares padding, prefixes, pooling,
+outputs and required external weights. The profile thresholds were measured
+with e5-small and **do not transfer**: Granite, for example, gives cosines of
+0.73–0.94 to out-of-corpus questions too, so the `domain` threshold of 0.33
+stops filtering. Calibrate with the deployment's golden set before using
+another retriever; e5-small's intent fallback does not transfer either.
+
+Stop the service, run `ipsis models download`, `ipsis models verify`,
+`ipsis index`, `ipsis profile show`, `ipsis golden validate` and `ipsis evaluate`.
+Reindex whenever the dense model changes, even at the same dimension. Set aside
+old calibration and remeasure. Overrides persist across profile switches;
+remove them to use packaged defaults.
+The prepared Docker image reads project overrides during model download;
+rebuild it after changing models (`docker compose build --no-cache asistente`).
+See [repeatable regression and candidate commands](../../herramientas/evaluacion/README.md).
 
 ONNX models live in a global per-user cache shared by every project. The
 default is `~/.cache/ipsis/models`, and `IPSIS_MODELS_DIR` changes it. It
@@ -166,7 +288,7 @@ With `HF_HUB_OFFLINE=1` the network is never used.
 ```
 ipsis models list                     # models of the active profile
 ipsis models download                 # downloads what the active profile is missing
-ipsis models download --profile heavy # prepares another profile without activating it
+ipsis models download --profile medium # prepares another profile without activating it
 ipsis models verify                   # complete files and a test inference
 ipsis models export org/model --int8  # development: converts to ONNX
 ```
@@ -178,10 +300,9 @@ ipsis models export org/model --int8  # development: converts to ONNX
   - whether it is cached, and its size.
 
   Everything comes from the catalog (`ipsis/modelos/catalogo.py`). light uses
-  only the dense model; medium and heavy use dense, reranker and reader.
+  only the dense model; medium uses dense, reranker and reader.
 - **`download`** fetches only what is missing. A model shared between
-  profiles, such as e5-small (light and medium) or the reader (medium and
-  heavy), is downloaded once.
+  profiles, such as e5-small (light and medium), is downloaded once.
   - With `--profile` it does not change the active profile, and it works
     outside a project.
   - Without `--profile` it needs a project (`ipsis init`).
@@ -211,6 +332,14 @@ ipsis models export org/model --int8  # development: converts to ONNX
 `pt-br`. `es`, `en` and `pt` have their own pack: stemmer, stopwords,
 numbers, dates, connectors, messages and interface. A regional variant
 (`pt-br`, `es-cl`) uses its base language pack.
+
+Questions are rarely written like the documents. Each pack treats informal
+abbreviations and contraction pieces as function words ("q", "pa", "pra",
+"vc", "u", "ur", the "t" of "don't"), and the analysis corrects typos against
+the corpus vocabulary ("pasword" → "password", "covran" → "cobra", "abreel" →
+"abre el", "estacio namiento" → "estacionamiento"; never a real word the corpus
+lacks, such as "feriados", nor a proper noun). `ipsis ask --diagnostics` shows each correction.
+See [informal paraphrases](../methodology/informal-paraphrases.md).
 
 Any other code works with a fallback:
 
@@ -423,10 +552,10 @@ conversation:
   max_sessions: 1024     # at most this many conversations at a time
 ```
 
-Language packs distinguish `genericas` (ignored by answer focus/selection)
-from `genericas_memoria` (ignored only by topic memory). The latter keeps
-`tiempo/tempo` out of the topic core without changing their original weight
-when selecting an answer. Both lists can be overridden in `config/language.yaml`.
+Language packs distinguish `genericas` (support verbs, units and question
+quantifiers such as `time/tiempo/tempo`, `often`, `quantos`: never focus
+terms, ignored by answer selection) from `genericas_memoria` (ignored only by
+topic memory). Both lists can be overridden in `config/language.yaml`.
 
 The memory lives in the service process (each worker has its own), keeps
 terms of the questions and of the passages that answered them, never the

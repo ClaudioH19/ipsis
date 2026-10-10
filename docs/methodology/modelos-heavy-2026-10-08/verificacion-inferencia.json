@@ -1,0 +1,38 @@
+[
+  {
+    "modelo": "ibm-granite/granite-embedding-311m-multilingual-r2",
+    "revision": "44399559930365213510b1ee2eb15ded83374f0e",
+    "ok": true,
+    "segundos": 4.71
+  },
+  {
+    "modelo": "ibm-granite/granite-embedding-97m-multilingual-r2",
+    "revision": "835ad14087e140460703cf0fae09f97d469d65c2",
+    "ok": true,
+    "segundos": 1.89
+  },
+  {
+    "modelo": "onnx-community/harrier-oss-v1-270m-ONNX",
+    "revision": "d59c919d0159aea2c19ed7d04288fcdd048d0f9c",
+    "ok": true,
+    "segundos": 2.98
+  },
+  {
+    "modelo": "onnx-community/embeddinggemma-2-ONNX",
+    "revision": "daa72c51243991dfcaf9f9137d2c573d8f7790c0",
+    "ok": true,
+    "segundos": 3.91
+  },
+  {
+    "modelo": "Horizon-Labs/multilingual-reranker-base",
+    "revision": "1302619c8478dd630e06a934d4064ae345a7d0da",
+    "ok": true,
+    "segundos": 4.2
+  },
+  {
+    "modelo": "Horizon-Labs/multilingual-reranker-small",
+    "revision": "4fd96cc3b19fd47e790cf923879b193d3ebf0bc9",
+    "ok": true,
+    "segundos": 2.99
+  }
+]

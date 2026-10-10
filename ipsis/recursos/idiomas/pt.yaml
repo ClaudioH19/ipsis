@@ -10,6 +10,74 @@ bordes_respuesta:
   referencias_cantidad: [desde, depois de, a partir de, após]
   limites_actor: ['\s+e\s+(?:(?:a|o|as|os)\s+)?(?:envia|encaminha|entrega|assina|aprova|autoriza)\b', ',\s*(?:que|quem)\b']
 stopwords:
+# Pronomes pessoais e contrações («eu», «minha», «numa»): sem eles, «quantos dias eu
+# tenho» somava «eu» a s_oov como palavra ausente do corpus.
+- eu
+- me
+- mim
+- comigo
+- meu
+- minha
+- meus
+- minhas
+- você
+- vocês
+- voce
+- voces
+- te
+- ti
+- tu
+- teu
+- tua
+- teus
+- tuas
+- nós
+- nosso
+- nossa
+- nossos
+- nossas
+- ele
+- ela
+- eles
+- elas
+- lhe
+- lhes
+- num
+- numa
+- nuns
+- numas
+- dum
+- duma
+- nesse
+- nessa
+- neste
+- nesta
+- nisso
+- disso
+- desse
+- dessa
+- deste
+- desta
+# Abreviações informais de palavras funcionais («q» por «que», «pra» por «para», «vc» por
+# «você»): sem elas, somavam a s_oov como palavras ausentes do corpus.
+- q
+- pq
+- oq
+- pra
+- pro
+- pras
+- pros
+- p
+- vc
+- vcs
+- tb
+- tbm
+- n
+- td
+- cmg
+- msm
+- qdo
+- qnd
 - a
 - ao
 - aos
@@ -366,6 +434,59 @@ intenciones:
     - depois
     - em seguida
     - passo
+  # «Quanto custa trocar o filtro?» pede um valor: «a cada 45 dias» fala do filtro mas
+  # não responde o que se pergunta.
+  costo:
+    exige_pista: true
+    entidades_pista: [monto]
+    ejemplos:
+    - "Quanto custa renovar o passaporte?"
+    - "Quanto vale a entrada do museu?"
+    - "Qual é o preço do curso de inglês?"
+    - "Quanto cobram pelo estacionamento?"
+    - "Qual é o custo da matrícula?"
+    - "Quanto sai consertar a máquina de lavar?"
+    patrones:
+    - quanto (custa|custam|vale|valem|cobra|cobram|sai|saem)
+    - qual (e )?o (preco|custo)
+    - que preco tem
+    pistas:
+    - reais
+    - pesos
+    - dolares
+    - euros
+    - preco
+    - custo
+    - tarifa
+    - gratis
+    - gratuito
+    - gratuita
+  # «A cada quanto tempo a senha expira?» pede um período: a oração que responde diz
+  # «a cada 90 dias», não como trocá-la.
+  frecuencia:
+    exige_pista: true
+    ejemplos:
+    - "A cada quanto tempo a carteira de motorista é renovada?"
+    - "Com que frequência o filtro de ar deve ser limpo?"
+    - "Quantas vezes por ano o extintor é inspecionado?"
+    - "De quanto em quanto tempo é feito o backup do servidor?"
+    - "Com que periodicidade as mensalidades são pagas?"
+    - "A cada quanto tempo passa o caminhão de lixo?"
+    patrones:
+    - (a )?cada quanto( tempo)?
+    - de quanto em quanto tempo
+    - com que (frequencia|periodicidade)
+    - quantas vezes (por|ao|na) (dia|semana|mes|ano)
+    pistas:
+    - a cada
+    - cada
+    - vezes por
+    - vezes ao
+    - diario
+    - diaria
+    - semanal
+    - mensal
+    - anual
 # Como começa uma pergunta de seguimento (ipsis.consulta.seguimiento), em minúsculas e sem acentos.
 seguimiento:
 - e
@@ -385,13 +506,34 @@ sinonimos:
 - [termina, terminam, terminar, finaliza, finalizam, finalizar]
 - [paga, pagam, pagar]
 - [envia, enviam, enviar, remete, remetem, remeter, manda, mandam, mandar]
-- [pede, pedem, pedir, solicita, solicitam, solicitar]
 - [aprova, aprovam, aprovar, autoriza, autorizam, autorizar]
 - [conserta, consertam, consertar, repara, reparam, reparar]
 - [custa, custam, custar, preco]
-# Palavras que nunca são termo foco (ipsis.consulta.etapas.filtros): verbos de apoio e unidades.
+# Equivalências coloquiais de uso geral (qualquer documento de escritório): só atuam quando a
+# palavra da pergunta não está no corpus e um membro do grupo está.
+- [pede, pedem, pedir, peco, solicita, solicitam, solicitar]
+- [geladeira, refrigerador]
+- [anota, anotam, anotar, registra, registram, registrar]
+- [aguenta, aguentam, aguentar, dura, duram, durar]
+- [aviao, avioes, aereo, aerea, aereos, aereas, voo, voos]
+- [carro, carros, automovel, automoveis, veiculo, veiculos]
+- [quebrado, quebrada, quebrados, danificado, danificada, danificados]
+- [gente, pessoas]
+- [cabe, cabem, caber, capacidade]
+- [alugar, aluga, aluguel, locar, locacao]
+- [morrer, morre, falecer, falecimento]
+- [fogo, incendio]
+- [pc, computador]
+- [significa, significam, significar, indica, indicam, indicar]
+- [usar, usa, usam, utilizar, utiliza, utilizam]
+# Palavras que nunca são termo foco (ipsis.consulta.etapas.filtros): verbos de apoio, unidades
+# e quantificadores da pergunta («a cada quanto tempo»: a forma da pergunta, não o tema).
+# Pronomes anafóricos: «Quem aprova isso?» sem antecedente pede esclarecimento.
+pronombres_anaforicos: [isso, isto, aquilo, ele, ela, eles, elas, lo, la, los, las]
+# «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
+preposiciones_modificador: [de, da, do, das, dos, para]
 genericas_memoria: [tempo]
-genericas: [fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos]
+genericas: [quanto, quanta, quantos, quantas, tempo, fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos, alguém, algo, qualquer, vou, vai, vão, vamos, vem, vêm, venho, tiver, tiverem, tenha, der, derem, estou, está, estão]
 # Sufixos de substantivos derivados que o stemmer mantém: «assinatura» conta como «assina».
 sufijos_derivados: [atur, ament, ment, aca, ica]
 conversacional:
@@ -443,6 +585,7 @@ interfaz:
   placeholder: Escreva sua pergunta...
   send: Enviar pergunta
   not_direct: Não é uma resposta direta
+  check_citation: Confira a citação
   origin_error: Este site não está autorizado a usar o assistente.
   http_error: O serviço não conseguiu responder (HTTP {status}).
   source_code: Código-fonte

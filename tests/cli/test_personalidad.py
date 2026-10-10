@@ -186,6 +186,15 @@ def test_aplicar_un_avatar_inexistente_falla(proyecto, capsys):
     assert "no hay un avatar 'nadie'" in capsys.readouterr().out and PERSONALIDAD.read_bytes() == antes
 
 
+@pytest.mark.parametrize("clave", ["spin", "flip", "bounce", "sway", "dance", "float", "paper-plane-out", "paper-plane-in"])
+def test_movimientos_de_folio_se_asignan_por_cli(proyecto, capsys, clave):
+    assert main(["personality", "avatar", "assign", "greeting", clave]) == 0
+    assert leer_proyecto(PERSONALIDAD)["avatar"]["eventos"]["greeting"] == clave
+    capsys.readouterr()
+    assert main(["personality", "avatar", "events"]) == 0
+    assert f"{'greeting':22} → {clave}" in capsys.readouterr().out
+
+
 def test_colores_se_normalizan_y_validan(proyecto, capsys):
     assert main(["personality", "avatar", "colors", "--body", "#F5F1E8", "--eyes", "#1e293b"]) == 0
     colores = leer_proyecto(PERSONALIDAD)["avatar"]["colores"]

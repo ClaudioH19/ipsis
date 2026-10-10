@@ -95,6 +95,15 @@ situations:
   - 'Sin respuesta directa. Texto próximo:'
   - 'No se halló respuesta directa. Relacionado:'
   - 'La respuesta directa no consta. Contenido cercano:'
+  related_check:
+  - "Si el pasaje no responde la pregunta, reformúlela."
+  - "Verifique si el texto corresponde a lo consultado."
+  - "Si busca otro dato, indíquelo con más precisión."
+  - "Si no es la información requerida, plantee la pregunta de otra forma."
+  - "Es posible repetir la búsqueda con otros términos."
+  - "Si el contenido no es pertinente, especifique la consulta."
+  - "Confirme si el pasaje responde lo consultado."
+  - "Para otro resultado, precise la pregunta."
   missing_focus:
   - 'No hay información sobre «{term}». Lo más cercano:'
   - 'Sin datos sobre «{term}». Relacionado:'
@@ -126,6 +135,15 @@ situations:
   - '"{entity}" no figura.'
   - Sin referencias a "{entity}".
   - No se encontró "{entity}".
+  needs_clarification:
+  - Falta el tema de la pregunta.
+  - La pregunta admite varias interpretaciones. Se requiere el tema.
+  - Sin el tema no es posible buscar la respuesta.
+  - Varios documentos podrían corresponder. Precise cuál.
+  - Se necesita más contexto para responder.
+  - La consulta está incompleta. Precise el trámite o documento.
+  - No es posible determinar a qué se refiere la pregunta.
+  - Indique el tema para continuar.
   alternatives_intro:
   - 'Opciones similares que sí constan en los documentos:'
   - 'Esto es lo más cercano que contienen los documentos:'

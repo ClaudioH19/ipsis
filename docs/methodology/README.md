@@ -29,7 +29,7 @@ Values not yet checked against a golden set are marked as
 1. [Hybrid retrieval](retrieval.md): e5 + BM25 in Qdrant with RRF.
 2. [Lexical layer](lexical.md): `terminos()`, BM25, TF-IDF and the signals
    `s_oov`, focus, `s_foco`, `s_cov` and `s_lex`.
-3. [Reranker](reranker.md): cross-encoder in medium and heavy.
+3. [Reranker](reranker.md): cross-encoder in medium.
 4. [QA reader](reader.md): a literal span or "no answer", the `s_qa` signal.
 5. [`cascade_v1` policy](policy.md): `ok`, `related` or `no_answer`.
    With the proactive posture, a `no_answer` may carry
@@ -47,6 +47,26 @@ raw evidence and observed limitations.
 [V4 correction measurements](mediciones/v4-correcciones/README.md) track
 the follow-up reader, topic compaction and intent compatibility changes
 against that initial snapshot and F1.
+
+[Full-answer evaluation v2](evaluacion-v2/README.md) separates published-answer
+coverage from QA span completeness, compares light, medium and the former
+heavy on the same Spanish bank, and includes raw artifacts and deployment configuration
+instructions. Historical measurements retain their original criteria.
+
+[Heavy model candidate review](modelos-heavy-2026-10-08/README.md) records
+current multilingual CPU/ONNX options, integration contracts and an ablation
+matrix, followed by local measurements of the supported candidates. No
+candidate beat medium, and the heavy profile was removed (ADR 0003).
+
+[Informal paraphrases](informal-paraphrases.md) measures colloquial, misspelled
+and abbreviated questions in es/en/pt with a held-out informal bank, and
+records the fixes kept and the relaxations rejected.
+
+[General document regression](../../herramientas/evaluacion/README.md) exercises
+four topics and formats at three formatting qualities, with frozen evidence,
+per-case content guards, model variants and automatic CI execution. The six
+2026 candidates now have working CPU/ONNX adapters; the research note retains
+its original proposal and links to the subsequent local measurements.
 
 The notes use the internal names of the code (signals such as `s_foco`,
 rules such as `ok_lector`), because they describe the implementation.

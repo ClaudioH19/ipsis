@@ -29,7 +29,7 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """Crea un proyecto con ``perfil``; los modelos en caché se instalan con ``instalar``."""
     cache = tmp_path / "cache"
 
-    def snapshot_download(repo_id, allow_patterns, cache_dir, local_files_only):
+    def snapshot_download(repo_id, allow_patterns, cache_dir, local_files_only, revision=None):
         assert local_files_only, "doctor nunca descarga"
         carpeta = Path(cache_dir) / repo_id.replace("/", "--")
         if not carpeta.exists():
@@ -109,6 +109,7 @@ def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> Non
     from ipsis.lenguaje.sinonimos import huella_lexica
 
     Path("config/calibration.yaml").write_text(yaml.safe_dump({
+        "version": 2,
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
                         "hash_corpus": hash_corpus, "banco": "golden@1.0.0", "hash_banco": "x",
@@ -180,8 +181,8 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     instalar(E5_SMALL)  # faltan reranker y lector
     cargar_manual()
     importar_golden()
-    indexar(E5_BASE)  # índice de heavy
-    calibracion("heavy", "sha256:viejo")
+    indexar(E5_BASE)  # índice de otro modelo denso
+    calibracion("light", "sha256:viejo")
     modificar_documento()  # el corpus cambió después del golden y del índice
     editar("config/assistant.yaml", claves_widget=["clave-sitio"])
     r = reporte()
@@ -236,7 +237,7 @@ def test_perfil_bm25_editado_a_mano_es_error(proyecto):
     r = reporte()
     perfil = r.chequeo("perfil")
     assert perfil.estado.value == "error" and "diagnóstico" in perfil.mensaje
-    assert perfil.acciones == ("ipsis profile set light|medium|heavy",)
+    assert perfil.acciones == ("ipsis profile set light|medium",)
     assert r.chequeo("modelos").estado.value == "no_evaluado"
 
 
@@ -565,6 +566,8 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     assert leeme.startswith("# Despliegue de") and "https://asistente.ejemplo.cl/widget.js" in leeme
     assert "/admin/panel" in leeme and "{{" not in leeme
     assert "ARG PERFIL=light" in (dist / "Dockerfile").read_text(encoding="utf-8")
+    dockerfile = (dist / "Dockerfile").read_text(encoding="utf-8")
+    assert dockerfile.index("COPY config/") < dockerfile.index("RUN ipsis models download")
     for generado in ("Dockerfile", "docker-compose.yml", "Caddyfile", ".env.example", "DEPLOY.md"):
         assert b"\r" not in (dist / generado).read_bytes(), generado  # LF también en Windows
 

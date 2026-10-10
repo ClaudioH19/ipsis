@@ -1,0 +1,33 @@
+name: Regresión documental general
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  documentos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      IPSIS_MODELS_DIR: ${{ github.workspace }}/.cache/modelos
+      IPSIS_ONNX_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: .cache/modelos
+          key: onnx-linux-${{ hashFiles('ipsis/modelos/catalogo.py', 'ipsis/recursos/perfiles/*.yaml') }}
+      - run: python -m pip install '.[test]'
+      - name: Validar contratos y referencias congeladas
+        run: python -m pytest tests/evaluacion/test_banco_general.py tests/modelos/test_contratos_embeddings.py tests/modelos/test_catalogo_descarga.py tests/configuracion/test_perfiles.py -q
+      - name: Medir los dos perfiles y las tres calidades
+        run: python herramientas/evaluacion/general.py --download
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regresion-documental
+          path: .cache/regresion-general/

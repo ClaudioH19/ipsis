@@ -70,6 +70,39 @@ ipsis calibrate                      # see "Calibrate"
 - Sensitive institutional documents are never copied into the repository;
   the manifest identifies and hashes the corpus evaluated locally.
 
+## Reading evaluation results and comparing profiles
+
+```bash
+ipsis evaluate --output reports/evaluation.json
+ipsis benchmark --bank golden/bank/manifest.json --profiles light,medium --output reports/profiles
+```
+
+Every profile uses `respuesta_completa_v2`: the expected literal must appear
+in the published answer and in evidence from the golden document and range.
+A fact only present in an unused citation does not count; `related` does not
+count as a correct direct answer.
+
+- `directas_con_literal` and `cobertura_literal`: full-answer successes and
+  their proportion over answerable questions.
+- `riesgo_aceptadas`: false `ok` plus direct answers missing the expected fact,
+  divided by direct answers. Abstentions are outside this denominator.
+- `tramos_qa_evaluados`, `tramos_qa_sin_literal`, `exactitud_tramo_qa`: selected
+  span quality against the golden literal. Without a reader, not applicable.
+  Highlighting “two” instead of “two business days” fails this metric even
+  when the full answer contains the expected information.
+  A correct actor can also fail when the golden literal requires a longer clause;
+  this failure alone does not mean the QA fact is false. Curate `literal_answer`
+  as the minimal fact with its required units or conditions.
+- `exactitud_offsets`: citation fidelity against source text.
+
+`evaluate` exits 1 for false `ok` or direct answers missing the expected fact;
+an insufficient highlight alone is reported separately. Literal matching does
+not validate all semantics: review actions, conditions and added passages.
+
+New reports use schema 2 and declare the criterion. Old reports remain readable,
+but `compare` rejects mixed criteria: re-evaluate both configurations. Historical
+measurements are retained, not silently reinterpreted.
+
 ## Calibrate
 
 ```text
@@ -98,6 +131,8 @@ not move.
 | `NO_SAFE_THRESHOLD` | There is enough sample, but no combination meets α | 1 |
 
 - Without `--apply` it only reports and writes nothing.
+- Calibration version 2 measures full-answer risk with expected-source evidence;
+  QA span quality is separate. Version 1 is retained but ignored; recalibrate.
 - With `--apply` it writes `config/calibration.yaml` in any state, for
   auditing. The engine uses its thresholds **only** when the status is
   `calibrated` and its provenance matches the project: profile, models and

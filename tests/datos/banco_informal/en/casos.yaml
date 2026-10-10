@@ -1,0 +1,141 @@
+# Informal validation bank (source). Same rules as the universal bank
+# (see ../README.md): the category comes from the id and construir.py computes
+# evidence and offsets. Corpus: a copy of the query bank.
+#
+# Questions as a hurried user types them: lowercase, no question marks, typos
+# («hows», «pasword»), abbreviations («wfh», «PO»), slang («stuff», «gotta»)
+# and words the document does not use. None was used to design the rules:
+# they are measured only to validate.
+
+- id: en-parafrasis-001
+  documento: library_hours.md
+  capacidad: fecha
+  pregunta: what time does the library open on saturdays
+  respuesta: On Saturdays it opens from 10:00 to 14:00
+- id: en-trampa-001
+  par: en-parafrasis-001
+  pregunta: what time does the library open on bank holidays
+- id: en-parafrasis-002
+  documento: library_hours.md
+  capacidad: duracion
+  pregunta: how long can i keep a book
+  respuesta: Book loans last 14 days
+- id: en-parafrasis-003
+  documento: coffee_maker_warranty.md
+  capacidad: duracion
+  pregunta: hows long is the coffee machine warranty
+  respuesta: 24 months from the date of purchase
+- id: en-trampa-002
+  par: en-parafrasis-003
+  pregunta: how much does it cost to repair the coffee machine
+- id: en-parafrasis-004
+  documento: coffee_maker_warranty.md
+  capacidad: condicion
+  pregunta: dropped my coffee maker, is that covered??
+  respuesta: The warranty does not cover damage from drops
+- id: en-parafrasis-005
+  documento: lab_protocol.md
+  capacidad: duracion
+  pregunta: how long can blood samples sit in the fridge
+  respuesta: at 4 °C for a maximum of 72 hours
+- id: en-trampa-003
+  par: en-parafrasis-005
+  pregunta: how long can urine samples sit in the fridge
+- id: en-parafrasis-006
+  documento: lab_protocol.md
+  capacidad: persona
+  pregunta: who logs the samples
+  respuesta: the technician Marta Rojas
+- id: en-parafrasis-007
+  documento: procurement_manual.md
+  capacidad: duracion
+  pregunta: how long does purchasing take to send out the PO
+  respuesta: ten business days from the approval of the Requisition Form
+- id: en-parafrasis-008
+  documento: procurement_manual.md
+  capacidad: duracion
+  pregunta: when do suppliers get paid for invoices
+  respuesta: within thirty calendar days from the receipt of goods
+- id: en-parafrasis-009
+  documento: travel_allowance_policy.md
+  capacidad: cantidad
+  pregunta: how much per diem do i get for a domestic trip
+  respuesta: 45,000 pesos within the country
+- id: en-trampa-004
+  par: en-parafrasis-009
+  pregunta: how much per diem do i get if i drive my own car
+- id: en-parafrasis-010
+  documento: travel_allowance_policy.md
+  capacidad: persona
+  pregunta: who books my plane tickets
+  respuesta: Air tickets are bought by the Travel Unit
+- id: en-trampa-005
+  par: en-parafrasis-010
+  pregunta: who books my train tickets
+- id: en-parafrasis-011
+  documento: travel_allowance_policy.md
+  capacidad: duracion
+  pregunta: how many days do i have to hand in my receipts
+  respuesta: within five business days
+- id: en-parafrasis-012
+  documento: it_help_desk_faq.md
+  capacidad: duracion
+  pregunta: how often do i gotta change my pasword
+  respuesta: every 90 days
+- id: en-trampa-006
+  par: en-parafrasis-012
+  pregunta: how many characters does my username need
+- id: en-parafrasis-013
+  documento: it_help_desk_faq.md
+  capacidad: persona
+  pregunta: can i install stuff on my laptop myself
+  respuesta: Only the Help Desk can install programs
+- id: en-parafrasis-014
+  documento: it_help_desk_faq.md
+  capacidad: cantidad
+  pregunta: who do i call if stuff breaks after hours
+  respuesta: emergencies are reported to extension 4501
+- id: en-parafrasis-015
+  documento: refunds.md
+  capacidad: duracion
+  pregunta: how long have i got to ask for my money back
+  respuesta: up to 30 days after receiving the order
+- id: en-parafrasis-016
+  documento: refunds.md
+  capacidad: condicion
+  pregunta: item showed up broken, do i pay for shipping it back
+  respuesta: return shipping is free
+- id: en-parafrasis-017
+  documento: remote_work_regulation.md
+  capacidad: cantidad
+  pregunta: how many days a week can i wfh
+  respuesta: up to three days per week
+- id: en-parafrasis-018
+  documento: remote_work_regulation.md
+  capacidad: cantidad
+  pregunta: do they pay for my internet when working remotely
+  respuesta: monthly allowance of 20,000 pesos
+- id: en-trampa-007
+  par: en-parafrasis-018
+  pregunta: do they pay my electricity bill when working remotely
+- id: en-parafrasis-019
+  documento: remote_work_regulation.md
+  capacidad: duracion
+  pregunta: how often do they review the remote work deal
+  respuesta: every six months
+- id: en-parafrasis-020
+  documento: greenhouse_irrigation.md
+  capacidad: fecha
+  pregunta: what time does the greenhouse get watered
+  respuesta: at 7:00 and at 19:00
+- id: en-trampa-008
+  par: en-parafrasis-020
+  pregunta: how much water does the greenhouse use per month
+- id: en-premisa-001
+  pregunta: what happens to the warranty after 36 months
+- id: en-premisa-002
+  pregunta: can the 21 day book loan be renewed
+- id: en-fuera-001
+  pregunta: hows the weather in london tomorrow
+- id: en-fuera-002
+  pregunta: best pizza dough recipe

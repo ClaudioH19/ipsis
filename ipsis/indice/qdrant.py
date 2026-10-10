@@ -276,7 +276,9 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
 
     paquete = paquete if paquete is not None else idioma_activo()
     terminos_por_chunk = [terminos(t, paquete) for t in textos]
-    estadisticas = EstadisticasLexicas.construir(textos, paquete)
+    # Los pares de contexto salen del texto del fragmento, no del embebido: el título
+    # antepuesto a cada fragmento repetiría sus pares en todos.
+    estadisticas = EstadisticasLexicas.construir(textos, paquete, textos_contexto=[p["texto"] for p in payloads])
     puntos = []
     for i, (p, v) in enumerate(zip(payloads, vectores)):
         sparse = vector_disperso(bm25_doc(terminos_por_chunk[i], estadisticas))

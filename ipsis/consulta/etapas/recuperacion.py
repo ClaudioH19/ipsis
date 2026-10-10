@@ -211,6 +211,18 @@ class EtapaRecuperacion(_Etapa):
         if not ctx.candidatos:
             ctx.resultado = m._abstener("sin_fragmentos", ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
             return
+        from ipsis.lenguaje.aclaracion import motivo_aclaracion
+
+        obtener = getattr(m.retriever, "estadisticas_lexico", None)
+        motivo = motivo_aclaracion(ctx.pregunta, getattr(m, "idioma", None),
+                                   obtener() if callable(obtener) else None, ctx.candidatos)
+        if motivo is not None:
+            # «¿Quién lo aprueba?» sin conversación: cualquier «aprueba» parecería responder.
+            ctx.diagnostico["aclaracion"] = motivo
+            # Sin señales de política: la calibración no puede re-decidir lo que la política no vio.
+            ctx.diagnostico["regla"] = "aclaracion"
+            ctx.resultado = m._aclarar(motivo, ctx.confianza, ctx.latencia_ms(), diagnostico=ctx.diagnostico)
+            return
         perfil = getattr(m, "perfil_instalacion", None)
         if ctx.terminos_foco and (perfil is None or perfil.cascada.salida_temprana_sin_foco):
             from ipsis.lenguaje.texto import terminos

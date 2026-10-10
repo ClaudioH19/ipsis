@@ -1,0 +1,436 @@
+# Validation bank (source). New documents and questions, written before the fixes of
+# 2026-10-09 and never used to design them: it measures once whether they generalise.
+# Same rules as the universal bank (the category comes from the id).
+
+# --- equipment -----------------------------------------------------------------
+- id: en-exacta-001
+  documento: equipment_policy.md
+  capacidad: lista
+  pregunta: What equipment does each employee receive?
+  respuesta: a laptop and a wireless mouse
+- id: en-parafrasis-001
+  documento: equipment_policy.md
+  capacidad: lista
+  pregunta: what do they give me to work with when i start
+  respuesta: a laptop and a wireless mouse
+- id: en-trampa-001
+  par: en-exacta-001
+  pregunta: What mobile phone does each employee receive?
+- id: en-exacta-002
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: Who signs the equipment handover record together with the employee?
+  respuesta: the Inventory Officer
+- id: en-exacta-003
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: What can the equipment be used for?
+  respuesta: only for institutional work
+- id: en-parafrasis-002
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: can i install games on my work computer?
+  respuesta: Installing games or file-sharing programs is forbidden
+- id: en-exacta-004
+  documento: equipment_policy.md
+  capacidad: cantidad
+  pregunta: How many characters must the equipment password have?
+  respuesta: at least 10 characters
+- id: en-trampa-002
+  par: en-exacta-004
+  pregunta: How many characters must the email password have?
+- id: en-exacta-005
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: After how long does the equipment screen lock?
+  respuesta: after 5 minutes of inactivity
+- id: en-parafrasis-003
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: how long till the screen locks if i dont use it
+  respuesta: after 5 minutes of inactivity
+- id: en-exacta-006
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: Within what period is the loss of the equipment reported?
+  respuesta: within 24 hours
+- id: en-parafrasis-004
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: who do i tell if my laptop gets stolen
+  respuesta: to the Help Desk
+- id: en-trampa-003
+  par: en-parafrasis-004
+  pregunta: Who do I tell if my personal phone gets stolen?
+- id: en-exacta-007
+  documento: equipment_policy.md
+  capacidad: procedimiento
+  pregunta: What is attached in case of theft of the equipment?
+  respuesta: the police report
+- id: en-exacta-008
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: Who is the equipment returned to when the contract ends?
+  respuesta: to the Inventory Officer
+- id: en-exacta-009
+  documento: equipment_policy.md
+  capacidad: condicion
+  pregunta: What is done to the equipment before assigning it to someone else?
+  respuesta: is formatted
+- id: en-trampa-004
+  par: en-exacta-009
+  pregunta: Who pays for repairing damaged equipment?
+
+# --- canteen -------------------------------------------------------------------
+- id: en-exacta-010
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: What are the canteen's lunch hours?
+  respuesta: between 12:30 and 15:00
+- id: en-parafrasis-005
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: until what time can i have lunch at the canteen
+  respuesta: between 12:30 and 15:00
+- id: en-trampa-005
+  par: en-parafrasis-005
+  pregunta: Until what time is dinner served at the canteen?
+- id: en-exacta-011
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: When is breakfast served?
+  respuesta: from 8:00 to 9:30
+- id: en-exacta-012
+  documento: canteen_rules.md
+  capacidad: cantidad
+  pregunta: How much does lunch cost for staff?
+  respuesta: 3,500 pesos
+- id: en-parafrasis-006
+  documento: canteen_rules.md
+  capacidad: cantidad
+  pregunta: how much do interns pay for lunch
+  respuesta: Interns pay half price
+- id: en-trampa-006
+  par: en-parafrasis-006
+  pregunta: How much do visitors pay for lunch at the canteen?
+- id: en-exacta-013
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: When is the weekly menu published?
+  respuesta: every Friday on the intranet
+- id: en-parafrasis-007
+  documento: canteen_rules.md
+  capacidad: condicion
+  pregunta: is there vegetarian food at the canteen?
+  respuesta: There is a vegetarian option every day
+- id: en-trampa-007
+  par: en-parafrasis-007
+  pregunta: Is there gluten-free food at the canteen?
+- id: en-exacta-014
+  documento: canteen_rules.md
+  capacidad: procedimiento
+  pregunta: How is lunch paid for?
+  respuesta: with the staff card or in cash
+- id: en-exacta-015
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: Where is the staff card topped up?
+  respuesta: at the canteen till
+- id: en-exacta-016
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: Where are complaints about the canteen service left?
+  respuesta: in the suggestions book
+- id: en-exacta-017
+  documento: canteen_rules.md
+  capacidad: persona
+  pregunta: Who answers canteen complaints?
+  respuesta: The Welfare Unit
+- id: en-parafrasis-008
+  documento: canteen_rules.md
+  capacidad: duracion
+  pregunta: how long do they take to answer a canteen complaint
+  respuesta: within five working days
+
+# --- projector -----------------------------------------------------------------
+- id: en-exacta-018
+  documento: projector_manual.md
+  capacidad: cantidad
+  pregunta: How far from the screen is the Vista X2 projector installed?
+  respuesta: between 2 and 5 metres from the screen
+- id: en-exacta-019
+  documento: projector_manual.md
+  capacidad: procedimiento
+  pregunta: What cable connects the projector to the computer?
+  respuesta: with an HDMI cable
+- id: en-parafrasis-009
+  documento: projector_manual.md
+  capacidad: procedimiento
+  pregunta: how do i hook the projector up to my laptop
+  respuesta: It connects to the computer with an HDMI cable
+- id: en-exacta-020
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How long does the projector lamp last?
+  respuesta: approximately 4,000 hours
+- id: en-parafrasis-010
+  documento: projector_manual.md
+  capacidad: condicion
+  pregunta: the lamp light is red, what do i do
+  respuesta: it must be replaced
+- id: en-trampa-008
+  par: en-parafrasis-010
+  pregunta: What do I do if the power light blinks green?
+- id: en-exacta-021
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How often is the projector's air filter cleaned?
+  respuesta: every 200 hours of use
+- id: en-exacta-022
+  documento: projector_manual.md
+  capacidad: cantidad
+  pregunta: What batteries does the projector remote control use?
+  respuesta: two AAA batteries
+- id: en-parafrasis-011
+  documento: projector_manual.md
+  capacidad: condicion
+  pregunta: what is the Freeze button for
+  respuesta: freezes the image on the screen
+- id: en-exacta-023
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How long is the projector warranty?
+  respuesta: a two-year warranty
+- id: en-exacta-024
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: How long is the lamp warranty?
+  respuesta: a six-month warranty
+- id: en-trampa-009
+  par: en-exacta-024
+  pregunta: How long is the remote control warranty?
+
+# --- training ------------------------------------------------------------------
+- id: en-exacta-025
+  documento: training_rules.md
+  capacidad: fecha
+  pregunta: When is the annual training plan approved?
+  respuesta: is approved in March
+- id: en-exacta-026
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: Who draws up the annual training plan?
+  respuesta: the Joint Training Committee
+- id: en-parafrasis-012
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: who puts together the yearly course plan
+  respuesta: the Joint Training Committee
+- id: en-exacta-027
+  documento: training_rules.md
+  capacidad: procedimiento
+  pregunta: Where do staff enrol in courses?
+  respuesta: through the training portal
+- id: en-exacta-028
+  documento: training_rules.md
+  capacidad: condicion
+  pregunta: What authorisation does course enrolment require?
+  respuesta: the authorisation of the direct manager
+- id: en-parafrasis-013
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: who has to sign off on me taking a course
+  respuesta: the authorisation of the direct manager
+- id: en-trampa-010
+  par: en-parafrasis-013
+  pregunta: Who authorises courses abroad?
+- id: en-exacta-029
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: What minimum attendance is required to pass a course?
+  respuesta: A minimum attendance of 75 %
+- id: en-parafrasis-014
+  documento: training_rules.md
+  capacidad: condicion
+  pregunta: what happens if i dont finish a course without a good reason
+  respuesta: cannot enrol in another course for six months
+- id: en-exacta-030
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: How many hours of training a year can each employee use?
+  respuesta: up to 40 hours of training a year
+- id: en-parafrasis-015
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: how many course hours do i get a year
+  respuesta: up to 40 hours of training a year
+- id: en-trampa-011
+  par: en-parafrasis-015
+  pregunta: How many hours of online courses can be done outside working hours?
+- id: en-exacta-031
+  documento: training_rules.md
+  capacidad: duracion
+  pregunta: Within what period are course certificates downloaded?
+  respuesta: within ten working days after the course ends
+- id: en-trampa-012
+  par: en-exacta-031
+  pregunta: Who can teach the training courses?
+
+# --- insurance -----------------------------------------------------------------
+- id: en-exacta-032
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: What percentage of outpatient expenses does the insurance reimburse?
+  respuesta: 70 % of outpatient medical expenses
+- id: en-exacta-033
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: At what percentage are hospital expenses reimbursed?
+  respuesta: are reimbursed at 90 %
+- id: en-parafrasis-016
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: how much does the insurance pay back if im hospitalised
+  respuesta: Hospital expenses are reimbursed at 90 %
+- id: en-trampa-013
+  par: en-parafrasis-016
+  pregunta: How much does the insurance pay back for dental expenses?
+- id: en-exacta-034
+  documento: health_insurance.md
+  capacidad: persona
+  pregunta: Who can be added as dependants to the insurance?
+  respuesta: The spouse and children under 24
+- id: en-parafrasis-017
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: can i add my 20 year old son to the insurance?
+  respuesta: The spouse and children under 24 can be added as dependants
+- id: en-trampa-014
+  par: en-parafrasis-017
+  pregunta: Can I add my parents as dependants to the insurance?
+- id: en-exacta-035
+  documento: health_insurance.md
+  capacidad: duracion
+  pregunta: Within what period are insurance reimbursements requested?
+  respuesta: within 60 days of the medical appointment
+- id: en-parafrasis-018
+  documento: health_insurance.md
+  capacidad: procedimiento
+  pregunta: what papers do i need to claim back from the insurance
+  respuesta: The receipt and the medical order
+- id: en-exacta-036
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: What does the supplementary insurance not cover?
+  respuesta: cosmetic treatments or glasses
+- id: en-parafrasis-019
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: does the insurance cover glasses?
+  respuesta: The insurance does not cover cosmetic treatments or glasses
+- id: en-exacta-037
+  documento: health_insurance.md
+  capacidad: persona
+  pregunta: Who are questions about the insurance sent to?
+  respuesta: to the Welfare Unit
+- id: en-exacta-038
+  documento: health_insurance.md
+  capacidad: duracion
+  pregunta: Within what period does the insurer pay reimbursements?
+  respuesta: within ten working days
+- id: en-trampa-015
+  par: en-exacta-038
+  pregunta: Who takes out the supplementary insurance?
+
+# --- gym -----------------------------------------------------------------------
+- id: en-exacta-039
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: What are the gym's opening hours?
+  respuesta: Monday to Friday from 7:00 to 20:00
+- id: en-parafrasis-020
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: what time does the gym close
+  respuesta: Monday to Friday from 7:00 to 20:00
+- id: en-trampa-016
+  par: en-parafrasis-020
+  pregunta: What time does the swimming pool close?
+- id: en-exacta-040
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: What is required to use the gym?
+  respuesta: A valid medical certificate
+- id: en-exacta-041
+  documento: gym_rules.md
+  capacidad: persona
+  pregunta: Who handles gym registration?
+  respuesta: with the Welfare Unit
+- id: en-exacta-042
+  documento: gym_rules.md
+  capacidad: duracion
+  pregunta: How long can a session last when people are waiting?
+  respuesta: at most one hour
+- id: en-parafrasis-021
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: do i need to bring a towel to the gym?
+  respuesta: Using a towel on the machines is mandatory
+- id: en-exacta-043
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: When are the yoga classes?
+  respuesta: on Tuesdays and Thursdays at 18:00
+- id: en-parafrasis-022
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: what days is yoga
+  respuesta: on Tuesdays and Thursdays at 18:00
+- id: en-trampa-017
+  par: en-parafrasis-022
+  pregunta: What days are the pilates classes?
+- id: en-exacta-044
+  documento: gym_rules.md
+  capacidad: cantidad
+  pregunta: How many people does each yoga class take?
+  respuesta: up to 15 people
+- id: en-parafrasis-023
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: what happens to stuff i leave in the locker overnight
+  respuesta: are removed and kept at reception
+- id: en-trampa-018
+  par: en-parafrasis-023
+  pregunta: How much does it cost to rent a locker?
+- id: en-trampa-019
+  par: en-exacta-040
+  pregunta: Who can use the gym at weekends?
+- id: en-trampa-020
+  par: en-exacta-044
+  pregunta: How many people does each spinning class take?
+
+# --- false premises, out of domain and ambiguous ------------------------------
+- id: en-premisa-001
+  pregunta: What does article 15 of the gym rules say?
+- id: en-premisa-002
+  pregunta: How much is the 5,000 pesos lunch?
+- id: en-premisa-003
+  pregunta: When is the Saturday yoga class?
+- id: en-premisa-004
+  pregunta: What does the projector's five-year warranty cover?
+- id: en-fuera-001
+  pregunta: What is the longest river in the world?
+- id: en-fuera-002
+  pregunta: How do you bake sourdough bread?
+- id: en-fuera-003
+  pregunta: Who wrote One Hundred Years of Solitude?
+- id: en-fuera-004
+  pregunta: give me ideas for a birthday present
+- id: en-ambigua-001
+  pregunta: How much does it cost?
+- id: en-ambigua-002
+  pregunta: Who signs it?
+- id: en-ambigua-003
+  pregunta: How many hours is it?
+- id: en-ambigua-004
+  pregunta: And where is that done?

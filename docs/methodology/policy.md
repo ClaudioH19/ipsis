@@ -23,6 +23,14 @@ the question, and abstain when it is not.
 
 ## 4. Algorithm and tie-breaking
 
+Before the policy, right after retrieval, a question that does not say what
+it is about ends as **`necesita_aclaracion`** (needs clarification; HTTP
+`no_answer` with `plan: clarification`): no content word left, a single
+content word with an anaphoric pronoun, or a question of up to three words
+whose single content word is in two or more documents or in none
+(`ipsis/lenguaje/aclaracion.py`; see
+[informal paraphrases](informal-paraphrases.md)).
+
 Rules in order; the first that holds decides (`regla_cascada`, a pure
 function). Rule names are the internal ones shown in the diagnostics:
 
@@ -36,12 +44,20 @@ function). Rule names are the internal ones shown in the diagnostics:
    `s_oov < τ_oov_ok` and (see "Answerability" below):
    - with a reader: `s_qa ≥ τ_ok`;
    - without a reader (light): `s_ret ≥ τ_ok` and `s_cov ≥ τ_cov`.
+
+   With a reader there is a second, optional tier (`lector_seguro`):
+   `s_foco ≥ τ_focus`, `s_qa ≥ τ_ok_strong` and `s_oov < τ_oov_ok_strong`.
+   Informal questions bring words the corpus lacks ("quien **anota** las
+   muestras", "cuanta **plata** da la beca") and push `s_oov` just past 0.6
+   while the answering sentence has every focus term; a nearly sure reader
+   tolerates a little more. Without both thresholds the tier does not exist.
 4. **`relacionado` (related):** domain ≥ `τ_related`. If the focus failed,
    the message names the missing term ("I couldn't find specific information
    about «warranty»…").
 5. **`sin_respuesta` (no answer)** in any other case.
 
-In heavy, **agreement** lowers an `ok` to `related` if two reliable spans
+With the optional **agreement** (`profile_overrides.cascade.agreement_check`,
+off in every profile), an `ok` drops to `related` if two reliable spans
 contradict each other.
 
 **The decision rules over the reader.** In `related` there is no
@@ -75,13 +91,14 @@ The signals are in [0, 1] and comparable across queries of the same profile
 
 The profile's default thresholds (conservative, uncalibrated):
 
-| Threshold | light | medium / heavy |
+| Threshold | light | medium |
 |---|---|---|
 | `oov_domain`, `oov_ok` | 0.6 | 0.6 |
 | `domain`, `related` | 0.33 | 0.33 |
 | `focus` | 1.0 | 1.0 |
 | `ok` | 0.5 (on `s_ret`) | 0.8 (on `s_qa`) |
 | `cov` | 0.6 | 0.6 (not used with a reader) |
+| `ok_strong`, `oov_ok_strong` | — | 0.99, 0.67 |
 
 Order of application: profile ← `engine.yaml::profile_overrides` ←
 `calibration.yaml` (only when its provenance matches).
@@ -128,7 +145,7 @@ defaults; local CPU):
 |---|---|---|---|---|
 | light | 22/45 | 1/45 | 85 ms | 150 ms |
 | medium | 32/45 | 3/45 | 815 ms | 1,000 ms |
-| heavy | 31/45 | 2/45 | 2,130 ms | 4,000 ms |
+| former heavy (removed) | 31/45 | 2/45 | 2,130 ms | 4,000 ms |
 
 Out-of-domain and false-premise questions are rejected 100% of the time in
 every profile. "Same topic, missing fact" traps are the residual risk; a

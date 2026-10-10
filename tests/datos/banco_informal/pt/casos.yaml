@@ -1,0 +1,141 @@
+# Banco informal de validação (fonte). Mesmas regras do banco universal
+# (ver ../README.md): a categoria sai do id e construir.py calcula evidências
+# e offsets. Corpus: cópia do banco de consultas.
+#
+# Perguntas como um usuário com pressa escreve: minúsculas, sem acentos nem
+# sinais, abreviações («q», «pra», «pc»), gírias («der pau», «home office») e
+# palavras que o documento não usa. Nenhuma foi usada para desenhar as regras:
+# são medidas só para validar.
+
+- id: pt-parafrasis-001
+  documento: biblioteca.md
+  capacidad: fecha
+  pregunta: que horas a biblioteca abre no sabado
+  respuesta: Aos sábados abre das 10:00 às 14:00
+- id: pt-trampa-001
+  par: pt-parafrasis-001
+  pregunta: que horas a biblioteca abre nos feriados
+- id: pt-parafrasis-002
+  documento: biblioteca.md
+  capacidad: duracion
+  pregunta: quantos dias posso ficar com um livro
+  respuesta: O empréstimo de livros dura 14 dias
+- id: pt-parafrasis-003
+  documento: garantia_cafeteira.md
+  capacidad: duracion
+  pregunta: quanto tempo dura a garantia da cafeteira
+  respuesta: 24 meses a partir da data de compra
+- id: pt-trampa-002
+  par: pt-parafrasis-003
+  pregunta: quanto custa consertar a cafeteira
+- id: pt-parafrasis-004
+  documento: garantia_cafeteira.md
+  capacidad: condicion
+  pregunta: derrubei a cafeteira, a garantia cobre?
+  respuesta: A garantia não cobre danos por quedas
+- id: pt-parafrasis-005
+  documento: laboratorio.md
+  capacidad: duracion
+  pregunta: quanto tempo a amostra de sangue aguenta na geladeira
+  respuesta: a 4 °C por no máximo 72 horas
+- id: pt-trampa-003
+  par: pt-parafrasis-005
+  pregunta: quanto tempo a amostra de urina aguenta na geladeira
+- id: pt-parafrasis-006
+  documento: laboratorio.md
+  capacidad: persona
+  pregunta: quem anota as amostras
+  respuesta: a técnica Marta Rojas
+- id: pt-parafrasis-007
+  documento: manual_aquisicoes.md
+  capacidad: duracion
+  pregunta: quanto tempo compras leva pra emitir a ordem de compra
+  respuesta: um prazo de dez dias úteis
+- id: pt-parafrasis-008
+  documento: manual_aquisicoes.md
+  capacidad: duracion
+  pregunta: em quanto tempo o fornecedor recebe pela fatura
+  respuesta: em até trinta dias corridos
+- id: pt-parafrasis-009
+  documento: politica_diarias.md
+  capacidad: cantidad
+  pregunta: quanto ganho de diaria viajando dentro do pais
+  respuesta: 45.000 pesos dentro do país
+- id: pt-trampa-004
+  par: pt-parafrasis-009
+  pregunta: quanto ganho de diaria se for de carro proprio
+- id: pt-parafrasis-010
+  documento: politica_diarias.md
+  capacidad: persona
+  pregunta: quem compra minhas passagens de aviao
+  respuesta: As passagens aéreas são compradas pela Unidade de Viagens
+- id: pt-trampa-005
+  par: pt-parafrasis-010
+  pregunta: quem compra minhas passagens de onibus
+- id: pt-parafrasis-011
+  documento: politica_diarias.md
+  capacidad: duracion
+  pregunta: em quantos dias tenho q entregar os recibos
+  respuesta: em até cinco dias úteis
+- id: pt-parafrasis-012
+  documento: perguntas_frequentes_ti.md
+  capacidad: duracion
+  pregunta: de quanto em quanto tempo tenho q trocar a senha
+  respuesta: a cada 90 dias
+- id: pt-trampa-006
+  par: pt-parafrasis-012
+  pregunta: quantos caracteres precisa ter o nome de usuario
+- id: pt-parafrasis-013
+  documento: perguntas_frequentes_ti.md
+  capacidad: persona
+  pregunta: posso instalar programa no pc por conta propria?
+  respuesta: Somente a Central de Atendimento pode instalar programas
+- id: pt-parafrasis-014
+  documento: perguntas_frequentes_ti.md
+  capacidad: cantidad
+  pregunta: pra onde ligo se der pau fora do horario
+  respuesta: as urgências são informadas no ramal 4501
+- id: pt-parafrasis-015
+  documento: reembolsos.md
+  capacidad: duracion
+  pregunta: ate quando posso pedir meu dinheiro de volta
+  respuesta: até 30 dias depois de receber o pedido
+- id: pt-parafrasis-016
+  documento: reembolsos.md
+  capacidad: condicion
+  pregunta: o produto chegou quebrado, pago o frete pra devolver?
+  respuesta: o frete da devolução é grátis
+- id: pt-parafrasis-017
+  documento: regulamento_teletrabalho.md
+  capacidad: cantidad
+  pregunta: quantos dias por semana posso trabalhar de casa
+  respuesta: até três dias por semana
+- id: pt-parafrasis-018
+  documento: regulamento_teletrabalho.md
+  capacidad: cantidad
+  pregunta: pagam algo pela internet no home office
+  respuesta: auxílio mensal de 20.000 pesos
+- id: pt-trampa-007
+  par: pt-parafrasis-018
+  pregunta: pagam a conta de luz no home office
+- id: pt-parafrasis-019
+  documento: regulamento_teletrabalho.md
+  capacidad: duracion
+  pregunta: de quanto em quanto tempo revisam o acordo de home office
+  respuesta: a cada seis meses
+- id: pt-parafrasis-020
+  documento: irrigacao_estufa.md
+  capacidad: fecha
+  pregunta: que horas a estufa e regada
+  respuesta: às 7:00 e às 19:00
+- id: pt-trampa-008
+  par: pt-parafrasis-020
+  pregunta: quanta agua a estufa gasta por mes
+- id: pt-premisa-001
+  pregunta: o que acontece com a garantia depois de 36 meses
+- id: pt-premisa-002
+  pregunta: o emprestimo de 21 dias pode ser renovado
+- id: pt-fuera-001
+  pregunta: como faco um churrasco pra 10 pessoas
+- id: pt-fuera-002
+  pregunta: quem ganhou a copa de 2002

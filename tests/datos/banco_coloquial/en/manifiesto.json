@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "dataset_id": "coloquial_en",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "canteen_rules.md",
+        "doc_id": "canteen-rules"
+      },
+      {
+        "ruta": "coffee_maker_warranty.md",
+        "doc_id": "coffee-maker-warranty"
+      },
+      {
+        "ruta": "equipment_policy.md",
+        "doc_id": "equipment-policy"
+      },
+      {
+        "ruta": "greenhouse_irrigation.md",
+        "doc_id": "greenhouse-irrigation"
+      },
+      {
+        "ruta": "gym_rules.md",
+        "doc_id": "gym-rules"
+      },
+      {
+        "ruta": "health_insurance.md",
+        "doc_id": "health-insurance"
+      },
+      {
+        "ruta": "it_help_desk_faq.md",
+        "doc_id": "it-help-desk-faq"
+      },
+      {
+        "ruta": "lab_protocol.md",
+        "doc_id": "lab-protocol"
+      },
+      {
+        "ruta": "library_hours.md",
+        "doc_id": "library-hours"
+      },
+      {
+        "ruta": "procurement_manual.md",
+        "doc_id": "procurement-manual"
+      },
+      {
+        "ruta": "projector_manual.md",
+        "doc_id": "projector-manual"
+      },
+      {
+        "ruta": "refunds.md",
+        "doc_id": "refunds"
+      },
+      {
+        "ruta": "remote_work_regulation.md",
+        "doc_id": "remote-work-regulation"
+      },
+      {
+        "ruta": "training_rules.md",
+        "doc_id": "training-rules"
+      },
+      {
+        "ruta": "travel_allowance_policy.md",
+        "doc_id": "travel-allowance-policy"
+      }
+    ],
+    "sha256": "bd91ebea79cda512da2c30cb04360c333a85551a984147fc973a046c67ebd381"
+  },
+  "categorias_requeridas": [
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "en"
+}

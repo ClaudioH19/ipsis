@@ -1,0 +1,857 @@
+[
+  {
+    "perfil": "light",
+    "caso": "es-parafrasis-002",
+    "pregunta": "cuando parte la compra?",
+    "respondible": true,
+    "esperado": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras",
+    "estado": "respuesta_directa",
+    "respuesta": "Esto es lo que dice el documento:\n\nSi el proveedor rechaza la Orden de Compra, el Supervisor de Compras anula la orden y el Operador de Compras inicia una nueva compra con otro proveedor. (Fuente: Manual de Procedimientos de Adquisiciones).\n\nTambién dice esto: El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entrega 4 litros por hora. (Fuente: Manual de riego del invernadero).",
+    "respuesta_exacta": null,
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "Si el proveedor rechaza la Orden de Compra, el Supervisor de Compras anula la orden y el Operador de Compras inicia una nueva compra con otro proveedor.",
+        "offset_inicio": 1920,
+        "offset_fin": 2072,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.3 Envío de Orden de Compra al proveedor"
+        ],
+        "score": 0.75
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "riego-invernadero",
+        "chunk_id": "riego-invernadero__c0000",
+        "texto": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entrega 4 litros por hora.",
+        "offset_inicio": 45,
+        "offset_fin": 155,
+        "seccion_path": [
+          "Manual de riego del invernadero",
+          "Programación"
+        ],
+        "score": 0.5
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "reembolsos",
+        "chunk_id": "reembolsos__c0000",
+        "texto": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud.",
+        "offset_inicio": 30,
+        "offset_fin": 191,
+        "seccion_path": [
+          "Política de reembolsos",
+          "Plazos"
+        ],
+        "score": 0.3333333333333333
+      }
+    ],
+    "regla": "ok_lexico",
+    "senales": {
+      "s_ret": 0.5504861968245399,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5504861968245399
+    }
+  },
+  {
+    "perfil": "light",
+    "caso": "es-trampa-004",
+    "pregunta": "¿Qué pasa si la unidad requirente rechaza los productos recibidos?",
+    "respondible": false,
+    "esperado": null,
+    "estado": "respuesta_directa",
+    "respuesta": "Encontré esto en el documento:\n\nLa unidad requirente recibe los productos y firma el acta de recepción conforme. El Departamento de Compras envía el acta a Finanzas para el pago de la factura. (Fuente: Manual de Procedimientos de Adquisiciones).\n\nPara que aplique, el documento indica: Si falta información, el formulario se devuelve a la unidad requirente para su corrección. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": null,
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "La unidad requirente recibe los productos y firma el acta de recepción conforme. El Departamento de Compras envía el acta a Finanzas para el pago de la factura.",
+        "offset_inicio": 2098,
+        "offset_fin": 2258,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.4 Recepción conforme"
+        ],
+        "score": 1.0
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0000",
+        "texto": "Si falta información, el formulario se devuelve a la unidad requirente para su corrección.",
+        "offset_inicio": 736,
+        "offset_fin": 826,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.2 Formulario de Requerimiento"
+        ],
+        "score": 0.6666666666666666
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "reembolsos",
+        "chunk_id": "reembolsos__c0000",
+        "texto": "Si el producto llega dañado, el envío de la devolución es gratuito. Los productos de higiene personal no tienen devolución por razones sanitarias.",
+        "offset_inicio": 205,
+        "offset_fin": 351,
+        "seccion_path": [
+          "Política de reembolsos",
+          "Devoluciones"
+        ],
+        "score": 0.5
+      }
+    ],
+    "regla": "ok_lexico",
+    "senales": {
+      "s_ret": 0.5512161091427044,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.8137175873440208,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5512161091427044
+    }
+  },
+  {
+    "perfil": "light",
+    "caso": "es-exacta-003",
+    "pregunta": "¿Quién firma la Resolución de compra?",
+    "respondible": true,
+    "esperado": "Director de Administración para su firma",
+    "estado": "respuesta_directa",
+    "respuesta": "El texto lo explica de esta forma:\n\nLa Resolución firmada se adjunta al expediente de compra. (Fuente: Manual de Procedimientos de Adquisiciones).\n\nTen en cuenta esta condición: La unidad requirente recibe los productos y firma el acta de recepción conforme. El Departamento de Compras envía el acta a Finanzas para el pago de la factura. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": null,
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0000",
+        "texto": "La Resolución firmada se adjunta al expediente de compra.",
+        "offset_inicio": 1653,
+        "offset_fin": 1710,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.2 Generación de Resolución"
+        ],
+        "score": 1.0
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "La unidad requirente recibe los productos y firma el acta de recepción conforme. El Departamento de Compras envía el acta a Finanzas para el pago de la factura.",
+        "offset_inicio": 2098,
+        "offset_fin": 2258,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.4 Recepción conforme"
+        ],
+        "score": 0.6666666666666666
+      },
+      {
+        "schema_version": 1,
+        "doc_id": "preguntas-frecuentes-ti",
+        "chunk_id": "preguntas-frecuentes-ti__c0000",
+        "texto": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y equipos.",
+        "offset_inicio": 41,
+        "offset_fin": 137,
+        "seccion_path": [
+          "Preguntas frecuentes de la Mesa de Ayuda"
+        ],
+        "score": 0.25
+      }
+    ],
+    "regla": "ok_lexico",
+    "senales": {
+      "s_ret": 0.5297925418956912,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5297925418956912
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-001",
+    "pregunta": "¿Quién envía la Orden de Compra al proveedor?",
+    "respondible": true,
+    "esperado": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor",
+    "estado": "respuesta_directa",
+    "respuesta": "El documento lo plantea así:\n\nEl Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del portal. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": {
+      "chunk_id": "manual-adquisiciones__c0001",
+      "texto": "El Supervisor de Compras",
+      "offset_inicio": 1755,
+      "offset_fin": 1779
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del portal.",
+        "offset_inicio": 1755,
+        "offset_fin": 1850,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.3 Envío de Orden de Compra al proveedor"
+        ],
+        "score": 0.999977535391458
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.6261096006309388,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.9993950294747044,
+      "s_qa": 0.999977535391458,
+      "dominio": 0.9993950294747044
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-002",
+    "pregunta": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+    "respondible": true,
+    "esperado": "dos días hábiles para aceptar la Orden de Compra",
+    "estado": "respuesta_directa",
+    "respuesta": "Te muestro lo que indica el documento:\n\nEl proveedor tiene dos días hábiles para aceptar la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": {
+      "chunk_id": "manual-adquisiciones__c0001",
+      "texto": "dos",
+      "offset_inicio": 1870,
+      "offset_fin": 1873
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "El proveedor tiene dos días hábiles para aceptar la Orden de Compra.",
+        "offset_inicio": 1851,
+        "offset_fin": 1919,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.3 Envío de Orden de Compra al proveedor"
+        ],
+        "score": 0.999994975306455
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.7563029432471853,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.9997394605683334,
+      "s_qa": 0.999994975306455,
+      "dominio": 0.9997394605683334
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-003",
+    "pregunta": "¿Quién firma la Resolución de compra?",
+    "respondible": true,
+    "esperado": "Director de Administración para su firma",
+    "estado": "respuesta_directa",
+    "respuesta": "El texto lo explica de esta forma:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": {
+      "chunk_id": "manual-adquisiciones__c0000",
+      "texto": "Director de Administración",
+      "offset_inicio": 1611,
+      "offset_fin": 1637
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0000",
+        "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+        "offset_inicio": 1542,
+        "offset_fin": 1652,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones"
+        ],
+        "score": 0.9999740922519196
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5297925418956912,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.6949298444332881,
+      "s_qa": 0.9999740922519196,
+      "dominio": 0.6949298444332881
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-parafrasis-007",
+    "pregunta": "¿Desde qué monto se necesita una Resolución?",
+    "respondible": true,
+    "esperado": "Las compras superiores a 100 UTM requieren una Resolución",
+    "estado": "respuesta_directa",
+    "respuesta": "El documento lo plantea así:\n\nLas compras superiores a 100 UTM requieren una Resolución que apruebe la adquisición antes de emitir la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": {
+      "chunk_id": "manual-adquisiciones__c0000",
+      "texto": "superiores a 100 UTM",
+      "offset_inicio": 1402,
+      "offset_fin": 1422
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0000",
+        "texto": "Las compras superiores a 100 UTM requieren una Resolución que apruebe la adquisición antes de emitir la Orden de Compra.",
+        "offset_inicio": 1390,
+        "offset_fin": 1510,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones"
+        ],
+        "score": 0.9938701423294976
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.521593382355117,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.7289647741133932,
+      "s_rr": 0.14501747413518137,
+      "s_qa": 0.9938701423294976,
+      "dominio": 0.521593382355117
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-004",
+    "pregunta": "¿En cuántos días paga Finanzas las facturas?",
+    "respondible": true,
+    "esperado": "dentro de treinta días corridos desde la recepción conforme",
+    "estado": "respuesta_directa",
+    "respuesta": "El texto lo explica de esta forma:\n\nFinanzas paga las facturas dentro de treinta días corridos desde la recepción conforme. (Fuente: Manual de Procedimientos de Adquisiciones).",
+    "respuesta_exacta": {
+      "chunk_id": "manual-adquisiciones__c0001",
+      "texto": "treinta días corridos",
+      "offset_inicio": 2454,
+      "offset_fin": 2475
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "manual-adquisiciones",
+        "chunk_id": "manual-adquisiciones__c0001",
+        "texto": "Finanzas paga las facturas dentro de treinta días corridos desde la recepción conforme.",
+        "offset_inicio": 2417,
+        "offset_fin": 2504,
+        "seccion_path": [
+          "Manual de Procedimientos de Adquisiciones",
+          "6.3 Procedimiento de Compra",
+          "6.3.3 Envío de Orden de Compra al proveedor"
+        ],
+        "score": 0.9998741036997614
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5390775824760337,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.9414700153280952,
+      "s_qa": 0.9998741036997614,
+      "dominio": 0.9414700153280952
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-005",
+    "pregunta": "¿Cuántos días a la semana se puede teletrabajar?",
+    "respondible": true,
+    "esperado": "hasta tres días por semana",
+    "estado": "respuesta_directa",
+    "respuesta": "Te muestro lo que indica el documento:\n\nArtículo 4. El teletrabajo puede abarcar hasta tres días por semana. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "tres",
+      "offset_inicio": 584,
+      "offset_fin": 588
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "Artículo 4. El teletrabajo puede abarcar hasta tres días por semana.",
+        "offset_inicio": 537,
+        "offset_fin": 605,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999976094877909
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.6271502329239341,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.7205854748230561,
+      "s_qa": 0.9999976094877909,
+      "dominio": 0.7205854748230561
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-006",
+    "pregunta": "¿Qué asignación mensual se da para gastos de conexión?",
+    "respondible": true,
+    "esperado": "asignación mensual de 20.000 pesos",
+    "estado": "respuesta_directa",
+    "respuesta": "Esta es la parte del documento que responde:\n\nArtículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "20.000 pesos",
+      "offset_inicio": 946,
+      "offset_fin": 958
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "Artículo 7. Se otorga una asignación mensual de 20.000 pesos para gastos de conexión.",
+        "offset_inicio": 898,
+        "offset_fin": 983,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999940475126508
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.4659446283675131,
+      "s_oov": 0.30789999106015836,
+      "s_foco": 1.0,
+      "s_cov": 0.6921000089398417,
+      "s_rr": 0.5629610016254114,
+      "s_qa": 0.9999940475126508,
+      "dominio": 0.5629610016254114
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-007",
+    "pregunta": "¿Cada cuánto vence la contraseña?",
+    "respondible": true,
+    "esperado": "La contraseña vence cada 90 días",
+    "estado": "respuesta_directa",
+    "respuesta": "Mira lo que señala el documento:\n\nLa contraseña vence cada 90 días. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+    "respuesta_exacta": {
+      "chunk_id": "preguntas-frecuentes-ti__c0000",
+      "texto": "cada 90 días",
+      "offset_inicio": 364,
+      "offset_fin": 376
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "preguntas-frecuentes-ti",
+        "chunk_id": "preguntas-frecuentes-ti__c0000",
+        "texto": "La contraseña vence cada 90 días.",
+        "offset_inicio": 344,
+        "offset_fin": 377,
+        "seccion_path": [
+          "Preguntas frecuentes de la Mesa de Ayuda"
+        ],
+        "score": 0.9999509054524898
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5472231050893731,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.8712746588098985,
+      "s_qa": 0.9999509054524898,
+      "dominio": 0.8712746588098985
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-008",
+    "pregunta": "¿Después de cuántos intentos fallidos se bloquea la cuenta?",
+    "respondible": true,
+    "esperado": "después de cinco intentos fallidos",
+    "estado": "respuesta_directa",
+    "respuesta": "El documento responde así:\n\nLa cuenta se bloquea después de cinco intentos fallidos. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+    "respuesta_exacta": {
+      "chunk_id": "preguntas-frecuentes-ti__c0000",
+      "texto": "cinco",
+      "offset_inicio": 488,
+      "offset_fin": 493
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "preguntas-frecuentes-ti",
+        "chunk_id": "preguntas-frecuentes-ti__c0000",
+        "texto": "La cuenta se bloquea después de cinco intentos fallidos.",
+        "offset_inicio": 456,
+        "offset_fin": 512,
+        "seccion_path": [
+          "Preguntas frecuentes de la Mesa de Ayuda"
+        ],
+        "score": 0.9980834629426496
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.4595465888682618,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.9384864597022731,
+      "s_qa": 0.9980834629426496,
+      "dominio": 0.9384864597022731
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-009",
+    "pregunta": "¿Cuál es el viático diario dentro del país?",
+    "respondible": true,
+    "esperado": "45.000 pesos dentro del país",
+    "estado": "respuesta_directa",
+    "respuesta": "Aquí está lo que encontré:\n\nEl viático diario es de 45.000 pesos dentro del país y de 150 dólares en el extranjero. (Fuente: Política de Viáticos).",
+    "respuesta_exacta": {
+      "chunk_id": "politica-viaticos__c0000",
+      "texto": "45.000 pesos",
+      "offset_inicio": 182,
+      "offset_fin": 194
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "politica-viaticos",
+        "chunk_id": "politica-viaticos__c0000",
+        "texto": "El viático diario es de 45.000 pesos dentro del país y de 150 dólares en el extranjero.",
+        "offset_inicio": 158,
+        "offset_fin": 245,
+        "seccion_path": [
+          "Política de Viáticos"
+        ],
+        "score": 0.9999992087682341
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5282961954744118,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.6896562172674057,
+      "s_qa": 0.9999992087682341,
+      "dominio": 0.6896562172674057
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-010",
+    "pregunta": "¿Quién compra los pasajes aéreos?",
+    "respondible": true,
+    "esperado": "Los pasajes aéreos los compra la Unidad de Viajes",
+    "estado": "respuesta_directa",
+    "respuesta": "Esto es lo que dice el documento:\n\nLos pasajes aéreos los compra la Unidad de Viajes. (Fuente: Política de Viáticos).",
+    "respuesta_exacta": {
+      "chunk_id": "politica-viaticos__c0000",
+      "texto": "Unidad de Viajes",
+      "offset_inicio": 767,
+      "offset_fin": 783
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "politica-viaticos",
+        "chunk_id": "politica-viaticos__c0000",
+        "texto": "Los pasajes aéreos los compra la Unidad de Viajes.",
+        "offset_inicio": 734,
+        "offset_fin": 784,
+        "seccion_path": [
+          "Política de Viáticos"
+        ],
+        "score": 0.9999784995109782
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.3984058659631872,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.24425965168703576,
+      "s_qa": 0.9999784995109782,
+      "dominio": 0.3984058659631872
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-011",
+    "pregunta": "¿Cuántos caracteres debe tener la nueva contraseña?",
+    "respondible": true,
+    "esperado": "al menos 12 caracteres",
+    "estado": "respuesta_directa",
+    "respuesta": "Esto es lo que aparece en el documento:\n\nLa nueva contraseña debe tener al menos 12 caracteres e incluir un número. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+    "respuesta_exacta": {
+      "chunk_id": "preguntas-frecuentes-ti__c0000",
+      "texto": "12",
+      "offset_inicio": 275,
+      "offset_fin": 277
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "preguntas-frecuentes-ti",
+        "chunk_id": "preguntas-frecuentes-ti__c0000",
+        "texto": "La nueva contraseña debe tener al menos 12 caracteres e incluir un número.",
+        "offset_inicio": 235,
+        "offset_fin": 309,
+        "seccion_path": [
+          "Preguntas frecuentes de la Mesa de Ayuda"
+        ],
+        "score": 0.9998163354195895
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5782483756366245,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.9421349403508896,
+      "s_qa": 0.9998163354195895,
+      "dominio": 0.9421349403508896
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-012",
+    "pregunta": "¿Con cuánta anticipación se comunica la suspensión del teletrabajo?",
+    "respondible": true,
+    "esperado": "con diez días de anticipación",
+    "estado": "respuesta_directa",
+    "respuesta": "Esta es la parte del documento que responde:\n\nLa suspensión se comunica por escrito con diez días de anticipación. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "diez días",
+      "offset_inicio": 1151,
+      "offset_fin": 1160
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "La suspensión se comunica por escrito con diez días de anticipación.",
+        "offset_inicio": 1109,
+        "offset_fin": 1177,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999978290344396
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.6124489738380163,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.7328786428361924,
+      "s_rr": 0.9235857546053488,
+      "s_qa": 0.9999978290344396,
+      "dominio": 0.9235857546053488
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-exacta-013",
+    "pregunta": "¿Cada cuánto se revisa el acuerdo de teletrabajo?",
+    "respondible": true,
+    "esperado": "se revisa cada seis meses",
+    "estado": "respuesta_directa",
+    "respuesta": "Mira lo que señala el documento:\n\nArtículo 9. El acuerdo de teletrabajo se revisa cada seis meses. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "seis meses",
+      "offset_inicio": 1231,
+      "offset_fin": 1241
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "Artículo 9. El acuerdo de teletrabajo se revisa cada seis meses.",
+        "offset_inicio": 1178,
+        "offset_fin": 1242,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999946625580005
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5926419155356631,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_rr": 0.8795193271608372,
+      "s_qa": 0.9999946625580005,
+      "dominio": 0.8795193271608372
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-parafrasis-009",
+    "pregunta": "¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?",
+    "respondible": true,
+    "esperado": "La jefatura responde dentro de cinco días hábiles",
+    "estado": "respuesta_directa",
+    "respuesta": "Te muestro lo que indica el documento:\n\nLa jefatura responde dentro de cinco días hábiles. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "cinco días hábiles",
+      "offset_inicio": 517,
+      "offset_fin": 535
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "La jefatura responde dentro de cinco días hábiles.",
+        "offset_inicio": 486,
+        "offset_fin": 536,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999783086405374
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.6621216686391417,
+      "s_oov": 0.5859830841217296,
+      "s_foco": 1.0,
+      "s_cov": 0.1404372815061575,
+      "s_rr": 0.8271799777912858,
+      "s_qa": 0.9999783086405374,
+      "dominio": 0.8271799777912858
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-parafrasis-012",
+    "pregunta": "¿Qué pasa si no cumplo mis metas teletrabajando?",
+    "respondible": true,
+    "esperado": "puede suspender el teletrabajo",
+    "estado": "respuesta_directa",
+    "respuesta": "El documento responde así:\n\nArtículo 8. La jefatura puede suspender el teletrabajo si el funcionario no cumple sus metas durante dos meses consecutivos. (Fuente: Reglamento de Teletrabajo).",
+    "respuesta_exacta": {
+      "chunk_id": "reglamento-teletrabajo__c0000",
+      "texto": "suspender el teletrabajo",
+      "offset_inicio": 1014,
+      "offset_fin": 1038
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "reglamento-teletrabajo",
+        "chunk_id": "reglamento-teletrabajo__c0000",
+        "texto": "Artículo 8. La jefatura puede suspender el teletrabajo si el funcionario no cumple sus metas durante dos meses consecutivos.",
+        "offset_inicio": 984,
+        "offset_fin": 1108,
+        "seccion_path": [
+          "Reglamento de Teletrabajo"
+        ],
+        "score": 0.9999399881068844
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.5526694054519458,
+      "s_oov": 0.34086115621004986,
+      "s_foco": 1.0,
+      "s_cov": 0.65913884378995,
+      "s_rr": 0.4552893754378033,
+      "s_qa": 0.9999399881068844,
+      "dominio": 0.5526694054519458
+    }
+  },
+  {
+    "perfil": "medium",
+    "caso": "es-parafrasis-016",
+    "pregunta": "¿Quién autoriza instalar software?",
+    "respondible": true,
+    "esperado": "las aprueba el Encargado de Seguridad",
+    "estado": "respuesta_directa",
+    "respuesta": "Esto es lo que dice el documento:\n\nLas solicitudes de instalación las aprueba el Encargado de Seguridad. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+    "respuesta_exacta": {
+      "chunk_id": "preguntas-frecuentes-ti__c0000",
+      "texto": "Encargado de Seguridad",
+      "offset_inicio": 876,
+      "offset_fin": 898
+    },
+    "evidencias": [
+      {
+        "schema_version": 1,
+        "doc_id": "preguntas-frecuentes-ti",
+        "chunk_id": "preguntas-frecuentes-ti__c0000",
+        "texto": "Las solicitudes de instalación las aprueba el Encargado de Seguridad.",
+        "offset_inicio": 830,
+        "offset_fin": 899,
+        "seccion_path": [
+          "Preguntas frecuentes de la Mesa de Ayuda"
+        ],
+        "score": 0.9411317566204971
+      }
+    ],
+    "regla": "ok_lector",
+    "senales": {
+      "s_ret": 0.41246018178269706,
+      "s_oov": 0.43684071817644843,
+      "s_foco": 1.0,
+      "s_cov": 0.2815796409117758,
+      "s_rr": 0.00153522500106046,
+      "s_qa": 0.9411317566204971,
+      "dominio": 0.41246018178269706
+    }
+  }
+]

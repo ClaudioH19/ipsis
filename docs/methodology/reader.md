@@ -75,20 +75,30 @@ no guarantee).
 | Profile | `read_m` | `max_reading_chars` | Windows |
 |---|---|---|---|
 | medium | 2 | 600 | 384 tokens, stride 128 |
-| heavy | 4 | 1200 | 384 tokens, stride 128; plus agreement |
+
+`semantic_reading` (on in medium) replaces the lexical window: the reader
+reads the 3 sentences of the reranked candidates that an RRF of
+cross-encoder, e5 cosine and `s_lex` ranks first, each with the previous
+sentence of its line; headings are never read, nor the introduction of a
+document with sections (the text under its top-level title only). Medium: 68 → 72 correct on
+the query bank and 10 → 16 on the informal bank, one extra accepted error,
++0.8 s at p50 on a 2-thread CPU. Set it to `false` in `profile_overrides` to
+go back to the lexical window; see [informal paraphrases](informal-paraphrases.md).
 
 Model: [dewdev/mdeberta-v3-base-squad2-onnx](https://huggingface.co/dewdev/mdeberta-v3-base-squad2-onnx),
 an export of `timpal0l/mdeberta-v3-base-squad2` (MIT, 278 M), in **fp32**:
 the published int8 gives flat logits and the int16 does not load.
 
-**Agreement (heavy):** if the two best reliable spans from different
+**Optional agreement (`profile_overrides.cascade.agreement_check`):** if the two best reliable spans from different
 passages carry entities of the same type with different values, an `ok`
 drops to `related` (the `concordancia` rule).
+No profile enables it: more passages and agreement did not improve the
+former heavy's full-answer results.
 
 ## 8. Complexity and resources
 
 50–110 ms per passage; p95 of the stage on the universal bank: 513 ms
-(medium) and 874 ms (heavy). Disk: 1.1 GB.
+(medium) and 874 ms (former heavy, 4 passages). Disk: 1.1 GB.
 
 ## 9. Failures and fallback
 
@@ -112,11 +122,11 @@ Local inference.
   "What does the warranty cover?": telling the expected answer type apart
   would need per-language rules. `s_oov < τ_oov_ok` and `s_foco` cover it.
 - Two traps of the universal bank (`es-trampa-001`, `en-trampa-004`) give
-  `s_qa` 0.82–0.83 with `τ_ok` 0.8: false `ok` answers in medium and heavy
+  `s_qa` 0.82–0.83 with `τ_ok` 0.8: false `ok` answers in medium
   without calibration. With `τ_ok` 0.85 they disappear without losing
   coverage; `ipsis calibrate` chooses each project's threshold.
-- Heavy uses the same reader as medium: `deepset/xlm-roberta-large-squad2`
-  has no reliable ONNX with a declared license.
+- There is no larger reader: `deepset/xlm-roberta-large-squad2` has no
+  reliable ONNX export yet.
 
 ## 13. References and provenance
 

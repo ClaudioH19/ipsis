@@ -185,6 +185,23 @@ def test_folio_por_defecto_y_avatar_faltante_inactivo(proyecto):
     assert avatar["enabled"] is False and avatar["definition_url"] is None  # el widget muestra el ícono
 
 
+def test_predeterminados_de_folio_coinciden_en_panel_y_widget_y_se_personalizan(proyecto):
+    c = _cliente(PRODUCCION)
+    eventos = c.get("/config").json()["avatar"]["events"]
+    assert eventos["greeting"] == "wake-up"
+    assert eventos["idle"] == "float" and eventos["launcher"] == "float"
+    assert eventos["sent"] == "paper-plane-out"
+    assert eventos["answer_ok"] == "paper-plane-in"
+    panel = c.get("/admin/personality", headers=_auth()).json()
+    assert {e: datos["suggested"] for e, datos in panel["events"].items()} == eventos
+    cambio = c.put("/admin/personality", headers=_auth(),
+                   json={"avatar": {"events": {"greeting": "spin", "answer_ok": "happy"}}})
+    assert cambio.status_code == 200
+    eventos = c.get("/config").json()["avatar"]["events"]
+    assert eventos["greeting"] == "spin" and eventos["answer_ok"] == "happy"
+    assert eventos["idle"] == "float"  # Las asignaciones parciales conservan los demás predeterminados.
+
+
 # --- modos -------------------------------------------------------------------------------------
 def test_docs_y_errores_segun_el_modo(proyecto):
     class Roto:

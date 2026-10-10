@@ -61,4 +61,7 @@ def test_otro_tono_no_cambia_estados_reglas_ni_literalidad(tmp_path: Path):
     assert any("Plantilla" in o.respuesta for o in otro.observaciones)  # las plantillas nuevas se usaron
     assert _por_caso(cordial) == _por_caso(otro)
     # Por caso: estado, regla, falso ok, directa sin literal, señales, tramo y evidencia.
-    assert cordial.reporte.cobertura.model_dump() == otro.reporte.cobertura.model_dump()
+    # La respuesta publicada incluye las plantillas del tono; las métricas y
+    # los demás datos por caso deben permanecer idénticos.
+    excluir = {"casos": {"__all__": {"respuesta_completa"}}}
+    assert cordial.reporte.cobertura.model_dump(exclude=excluir) == otro.reporte.cobertura.model_dump(exclude=excluir)

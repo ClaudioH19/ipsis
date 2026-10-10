@@ -37,7 +37,7 @@ config_version: 5
 assistant_name: "Asistente de soporte"
 domain_description: "los manuales del producto"
 language: es              # código ISO 639: es, en, pt, pt-br...
-profile: medium           # light | medium | heavy
+profile: medium           # light | medium
 cors_origins: []          # orígenes que pueden insertar el widget
 widget_keys: []           # claves públicas opcionales del widget
 query_log:
@@ -130,8 +130,8 @@ indexar cuando cambia la representación persistida.
 
 ## Perfil de instalación
 
-El perfil activo está en `config/assistant.yaml::profile` (`light`,
-`medium` o `heavy`). `bm25` es solo un perfil de diagnóstico de
+El perfil activo está en `config/assistant.yaml::profile` (`light` o
+`medium`). `bm25` es solo un perfil de diagnóstico de
 `ipsis benchmark`, no se instala.
 
 ```
@@ -146,9 +146,10 @@ destino. Repetir el perfil activo no hace nada.
 
 - **light ↔ medium:** usan el mismo modelo denso (e5-small, 384), así que el
   índice sirve para ambos.
-- **heavy:** usa e5-base (768) y necesita su propio índice (`ipsis index`).
-  Cada modelo denso vive en su colección: el índice anterior se conserva, y
-  volver al perfil anterior lo hace compatible otra vez sin reindexar.
+- **Proyectos con `heavy`:** ese perfil se retiró. Un `assistant.yaml` que lo
+  tenga se carga como `medium`; si su índice se construyó con otro modelo
+  denso, `ipsis profile show` lo marca incompatible y pide `ipsis index`.
+  Cada modelo denso vive en su colección: el índice anterior se conserva.
 - **Compatibilidad del índice:** se decide por el manifiesto
   (`.ipsis/index/<coleccion>.manifest.json`), con el modelo denso, la
   dimensión y la versión del payload. No se decide por el nombre del perfil.
@@ -157,7 +158,140 @@ destino. Repetir el perfil activo no hace nada.
   los umbrales del perfil. El archivo se conserva para auditoría. Para
   recuperarla: `ipsis calibrate --apply`.
 
+## Cambiar configuración antes o después de desplegar
+
+Ejecuta los comandos desde la carpeta que contiene `config/` y `documents/`.
+Con Qdrant local, detén `ipsis serve` antes de abrir el índice desde otro proceso.
+En el servidor, usa la carpeta del proyecto desplegado.
+
+| Qué cambiar | Comando o archivo | Qué hacer después |
+|---|---|---|
+| Perfil | `ipsis profile set medium` | `ipsis models download`, `ipsis profile show`; evaluar y recalibrar |
+| Identidad y CORS | `ipsis configure assistant_name="Soporte" cors_origins=https://www.tu-sitio.com` | Reiniciar el servicio |
+| Registro de consultas | `ipsis configure query_log.enabled=true` | Reiniciar; después `ipsis audit` comprueba las citas registradas |
+| Alternativas en abstenciones | `ipsis configure posture.mode=strict` o `posture.mode=proactive` | Reiniciar; el modo no cambia una abstención por un `ok` |
+| Lectura, recuperación y umbrales | `config/engine.yaml`, sección `profile_overrides` | Apartar la calibración anterior, reiniciar, evaluar y recalibrar |
+| Fragmentación, modelo denso o representación del índice | `config/engine.yaml`, sección `retrieval` | Reindexar, validar el golden, evaluar y recalibrar |
+| Documentos vigentes | `documents/catalog.yaml`, `active` | Reindexar, validar el golden y recalibrar |
+| Sinónimos | `config/domain.yaml`, `synonyms` | Reiniciar, evaluar y recalibrar |
+| Tono y avatar | `ipsis personality` o `config/personality.yaml` | Se recargan en el servicio; ver [personalidad](personalidad.md) |
+| Tema y posición del widget | `ipsis widget style` o `config/styles.yaml` | Ver [web](web.md) |
+
+`ipsis configure` edita las claves de `assistant.yaml` que aparecen en esta
+guía; los ajustes del motor se cambian por archivo. No edites los perfiles
+incluidos en el paquete. Añade o combina este bloque en `config/engine.yaml`:
+
+```yaml
+profile_overrides:
+  cascade:
+    retrieve_n: 20
+    rerank_k: 4
+    read_m: 2
+    max_reading_chars: 600
+    early_exit_without_focus: true
+  default_thresholds:
+    ok: 0.80
+    focus: 1.0
+    oov_ok: 0.60
+    cov: 0.60
+    ok_strong: 0.99
+    oov_ok_strong: 0.67
+```
+
+La pestaña **Estado** de `/admin` y `PUT /admin/thresholds` escriben los mismos
+`default_thresholds` de este archivo y recargan el motor. Estos valores reproducen los ajustes de `medium`; un perfil sin lector no usa
+`read_m`. `ok` exige QA con lector y similitud sin él; `cov` se exige para el
+`ok` sin lector. `ok_strong` y `oov_ok_strong` son un segundo tramo del lector:
+cuando está casi seguro, una pregunta informal puede traer algo más de palabras
+que los documentos no tienen. Quita ambos para desactivarlo. Subir `ok` suele reducir respuestas directas. Más candidatos
+o ventanas mayores aumentan el trabajo, sin garantizar más exactitud.
+
+La precedencia es **perfil → `profile_overrides` → calibración vigente**.
+Para probar umbrales manuales, renombra `config/calibration.yaml` y conserva
+el archivo fuera de ese nombre. Los cambios de parámetros de lectura no
+invalidan automáticamente la calibración: también debes apartarla antes de
+medir. No reutilices umbrales obtenidos con otra configuración.
+Las calibraciones de versión 1 se ignoran desde el criterio de respuesta v2;
+deben regenerarse.
+
+Flujo de revisión antes de preparar el despliegue:
+
+```bash
+ipsis profile show
+ipsis snapshot-config --output reports/config-review.yaml
+ipsis golden validate
+ipsis evaluate --output reports/evaluation.json
+ipsis calibrate                    # revisar dev y test antes de aplicar
+ipsis doctor
+ipsis deploy prepare --domain asistente.tu-dominio.com
+```
+
+El snapshot conserva configuración validada y valores por defecto; el reporte
+de evaluación conserva las señales y la configuración del flujo usado. Evalúa
+la respuesta completa y el tramo QA por separado ([golden](golden.md)). Si
+decides aplicar los umbrales, ejecuta `ipsis calibrate --apply` y vuelve a
+evaluar. `test=excede` no bloquea automáticamente `--apply`: revisa ese resultado
+y no lo trates como una validación aprobada. `doctor` y `/ready` comprueban
+que el servicio pueda funcionar, no la exactitud de sus respuestas.
+
+En Docker, edita `config/` de la carpeta desplegada y reinicia con
+`docker compose restart asistente`. Para cambios de perfil con otros modelos,
+prepara de nuevo la imagen y el índice. El `DEPLOY.md` generado incluye
+estas instrucciones; consulta [despliegue](despliegue.md).
+
 ## Modelos
+
+### Modelos alternativos
+
+Hasta octubre de 2026 existía un perfil `heavy` con modelos mayores. Se
+retiró porque ninguna variante superó a medium: con Granite-311M R2,
+Granite-97M R2, Harrier-270M o EmbeddingGemma 2 como recuperador, y con
+Horizon base/small como reranker, el banco de consultas dio exactamente los
+mismos 25 aciertos que medium, y los Horizon añadieron un error aceptado. El
+antiguo e5-base/BGE con cascada 30/8/4 tenía menos aciertos y más errores.
+Ver [ADR 0003](../../decisions/0003-onnx-and-profiles.md).
+
+Los modelos siguen en el catálogo para probarlos sobre medium con el corpus
+de un despliegue. Combina este bloque con `config/engine.yaml` (claves en
+inglés):
+
+```yaml
+retrieval:
+  model: null
+profile_overrides:
+  models:
+    dense: ibm-granite/granite-embedding-311m-multilingual-r2
+```
+
+| Rol | Repositorio soportado |
+|---|---|
+| Denso | `ibm-granite/granite-embedding-311m-multilingual-r2` |
+| Denso | `ibm-granite/granite-embedding-97m-multilingual-r2` |
+| Denso | `onnx-community/harrier-oss-v1-270m-ONNX` |
+| Denso | `onnx-community/embeddinggemma-2-ONNX` (solo texto) |
+| Denso | `intfloat/multilingual-e5-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-small` |
+| Reranker | `onnx-community/bge-reranker-v2-m3-ONNX` |
+
+Usan revisiones fijas del catálogo. El runtime respeta sus prefijos,
+pooling, relleno, salidas y datos externos; EmbeddingGemma 2 recibe entradas
+vacías para las modalidades que no se usan. Los umbrales del perfil están
+medidos con e5-small y **no se trasladan**: Granite, por ejemplo, da cosenos
+entre 0,73 y 0,94 también a preguntas ajenas al corpus, de modo que el umbral
+`domain` de 0,33 deja de filtrar. Calibra con el golden del despliegue antes
+de usar otro recuperador. Los modelos nuevos no activan el respaldo de
+intención exclusivo de e5-small.
+
+Con el servicio detenido: `ipsis models download`, `ipsis models verify`,
+`ipsis index`, `ipsis profile show`, `ipsis golden validate`, `ipsis evaluate`.
+Cualquier cambio de recuperador exige reindexar, aunque la dimensión sea la
+misma. Aparta la calibración anterior y vuelve a medir antes de recalibrar.
+Los ajustes se conservan al cambiar de perfil: quítalos para usar sus valores
+predeterminados. La [regresión general](../../../herramientas/evaluacion/README.md)
+permite comparar variantes sin modificar un proyecto existente. La imagen
+Docker preparada lee estos ajustes al descargar; hay que reconstruirla si
+cambian modelos (`docker compose build --no-cache asistente`).
 
 Los modelos ONNX viven en una caché global por usuario, compartida por todos
 los proyectos. Por defecto es `~/.cache/ipsis/models`, y se cambia con
@@ -167,7 +301,7 @@ dentro del proyecto. Con `HF_HUB_OFFLINE=1` nunca se usa la red.
 ```
 ipsis models list                     # modelos del perfil activo
 ipsis models download                 # descarga los que falten del perfil activo
-ipsis models download --profile heavy # prepara otro perfil sin activarlo
+ipsis models download --profile medium # prepara otro perfil sin activarlo
 ipsis models verify                   # archivos completos e inferencia de prueba
 ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
 ```
@@ -179,10 +313,9 @@ ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
   - si está en la caché, y cuánto ocupa.
 
   Todo sale del catálogo (`ipsis/modelos/catalogo.py`). light usa solo el
-  denso; medium y heavy usan denso, reranker y lector.
+  denso; medium usa denso, reranker y lector.
 - **`download`** baja solo lo que falta. Un modelo compartido entre perfiles,
-  como e5-small (light y medium) o el lector (medium y heavy), se descarga una
-  sola vez.
+  como e5-small (light y medium), se descarga una sola vez.
   - Con `--profile` no cambia el perfil activo, y funciona fuera de un
     proyecto.
   - Sin `--profile` necesita el proyecto (`ipsis init`).
@@ -212,6 +345,16 @@ ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
 `pt-br`. `es`, `en` y `pt` tienen paquete propio: stemmer, stopwords,
 números, fechas, conectores, mensajes e interfaz. Una variante regional
 (`pt-br`, `es-cl`) usa el paquete de su idioma.
+
+Las preguntas casi nunca se escriben como los documentos. Cada paquete trata
+las abreviaturas informales y los restos de contracciones como palabras
+funcionales («q», «pa», «pra», «vc», «u», «ur», la «t» de «don't»), y el
+análisis corrige erratas con el vocabulario del corpus («pasword» →
+«password», «covran» → «cobra», «abreel» → «abre el», «estacio namiento» →
+«estacionamiento»; nunca una palabra real que el corpus no trae, como
+«feriados», ni un nombre propio).
+`ipsis ask --diagnostics` muestra cada corrección. Ver
+[paráfrasis informales](../../methodology/informal-paraphrases.md) (en inglés).
 
 Otro código funciona con un respaldo:
 
@@ -428,10 +571,11 @@ conversation:
   max_sessions: 1024     # a lo sumo estas conversaciones a la vez
 ```
 
-Los paquetes distinguen `genericas` (se ignoran en foco/selección de respuesta)
-de `genericas_memoria` (solo se ignoran en la memoria de temas). Esta última
-excluye `tiempo/tempo` del núcleo sin cambiar su peso original al seleccionar
-una respuesta. Ambas listas se pueden sobrescribir en `config/language.yaml`.
+Los paquetes distinguen `genericas` (verbos de apoyo, unidades y
+cuantificadores de la pregunta como `tiempo/tempo/time`, `often`, `quantos`:
+nunca son foco y no cuentan al seleccionar la respuesta) de
+`genericas_memoria` (solo se ignoran en la memoria de temas). Ambas listas se
+pueden sobrescribir en `config/language.yaml`.
 
 La memoria vive en el proceso del servicio (cada worker tiene la suya),
 guarda términos de las preguntas y de los pasajes que las respondieron, nunca

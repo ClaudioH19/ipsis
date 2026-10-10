@@ -49,9 +49,13 @@ language:
 - abstention recall over the unanswerable ones;
 - **false `ok`:** an unanswerable case that ends in a direct answer;
 - direct answers without the literal answer (a direct answer counts as
-  correct only when its selected reader span, or its answer text when no
-  reader span exists, and its evidence contain the case's literal
-  answer);
+  correct under criterion `respuesta_completa_v2` when the published answer
+  contains the expected literal and evidence from the expected document/range
+  also contains it, identically for every profile);
+- QA span completeness against the expected literal, measured separately on
+  direct answerable cases with a QA span; no reader means not applicable;
+  this is literal completeness, not semantic span accuracy, and a long golden
+  clause can penalize an otherwise correct selected actor;
 - risk of the accepted answers `x/n` with its Clopper-Pearson bound;
 - Recall@k and MRR over the evidence, offset accuracy;
 - p50/p95 latency, total and per stage.
@@ -63,16 +67,22 @@ The three languages together reach that order of magnitude.
 
 A false `ok` takes priority over recall: retrieving more evidence does not
 make up for asserting something the corpus does not support. `ipsis evaluate`
-exits with ≠ 0 if it finds any.
+exits with ≠ 0 if it finds any false `ok` or direct answer lacking the expected
+literal. An insufficient QA span alone does not fail the full-answer guard.
 
-`ipsis benchmark --bank … --profiles bm25,light,medium,heavy` creates a
+`ipsis benchmark --bank … --profiles bm25,light,medium` creates a
 temporary project per profile and bank, evaluates with a warm engine and
 writes `benchmark-profiles.{json,md}` plus one artifact per profile for
 `ipsis compare`. It exits with ≠ 0 if a profile exceeds its budget or, with
-an evaluation bank, gives false `ok` answers. `--latency-only` measures
+an evaluation bank, gives false `ok` or direct answers without the expected literal. `--latency-only` measures
 p50/p95 per stage.
 
-`ipsis compare` requires the same bank hash, version and `k`.
+New artifacts use schema 2 and explicitly identify the answer criterion.
+`ipsis compare` requires the same bank hash, version, `k` and answer criterion.
+Legacy artifacts remain readable as `tramo_o_respuesta_v1`; their stored numbers
+are not reinterpreted and cannot be mixed with v2. Re-evaluate both configurations.
+The bank itself keeps schema 1. Literal matching does not prove all semantics
+or remove irrelevant additional passages; curate relational and conditional cases.
 
 ## 5. Assumptions
 

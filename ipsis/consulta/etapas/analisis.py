@@ -11,6 +11,14 @@ class EtapaAnalisis(_Etapa):
         m = self.motor
         resolutor = getattr(m, "seguimiento", None)
         obtener = getattr(getattr(m, "retriever", None), "estadisticas_lexico", None)
+        if callable(obtener):
+            # «pasword» → «password»: una errata no es una palabra ausente del corpus.
+            from ipsis.lenguaje.ortografia import correcciones, corregir
+
+            cambios = correcciones(ctx.pregunta, getattr(m, "idioma", None), obtener())
+            if cambios:
+                ctx.diagnostico["ortografia"] = cambios
+                ctx.pregunta = corregir(ctx.pregunta, cambios)
         if resolutor is not None and callable(obtener):
             # «¿y con 90?»: la pregunta de seguimiento hereda el tema de la conversación.
             resolucion = resolutor.resolver(ctx.pregunta, ctx.id_sesion, getattr(m, "idioma", None), obtener())

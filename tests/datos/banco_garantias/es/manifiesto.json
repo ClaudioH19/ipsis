@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "dataset_id": "garantias_es",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "arriendo_salas.md",
+        "doc_id": "arriendo-salas"
+      },
+      {
+        "ruta": "bases_beca.md",
+        "doc_id": "bases-beca"
+      },
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafetera.md",
+        "doc_id": "garantia-cafetera"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_adquisiciones.md",
+        "doc_id": "manual-adquisiciones"
+      },
+      {
+        "ruta": "manual_impresora.md",
+        "doc_id": "manual-impresora"
+      },
+      {
+        "ruta": "politica_vacaciones.md",
+        "doc_id": "politica-vacaciones"
+      },
+      {
+        "ruta": "politica_viaticos.md",
+        "doc_id": "politica-viaticos"
+      },
+      {
+        "ruta": "preguntas_frecuentes_ti.md",
+        "doc_id": "preguntas-frecuentes-ti"
+      },
+      {
+        "ruta": "protocolo_emergencias.md",
+        "doc_id": "protocolo-emergencias"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "reglamento_estacionamiento.md",
+        "doc_id": "reglamento-estacionamiento"
+      },
+      {
+        "ruta": "reglamento_teletrabajo.md",
+        "doc_id": "reglamento-teletrabajo"
+      },
+      {
+        "ruta": "riego_invernadero.md",
+        "doc_id": "riego-invernadero"
+      }
+    ],
+    "sha256": "0ac7e3bbc8a82e0836d92ed138f4e081a09b28bc06b02235e48fc095f4959827"
+  },
+  "categorias_requeridas": [
+    "ambigua",
+    "exacta",
+    "parafrasis",
+    "premisa_falsa",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "es"
+}

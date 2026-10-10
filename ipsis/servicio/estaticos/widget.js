@@ -142,6 +142,7 @@
     placeholder: "Type your question...",
     send: "Send question",
     not_direct: "Not a direct answer",
+    check_citation: "Check the citation",
     waiting: "Searching the document",
     rate_limit_error: "Too many questions in a row. Wait a few seconds and try again.",
     origin_error: "This site is not allowed to use the assistant.",
@@ -357,12 +358,7 @@
     "  background:transparent;border-radius:0;}",
     ".rw-avatar-lienzo{width:100%;height:100%;display:block;pointer-events:none;}",
     ".rw-avatar-lienzo svg{width:100%;height:100%;}",
-    // Folio como el logo: la librería pinta el cuerpo de un solo color; aquí
-    // el contorno del papel y, en las piezas de delante (el pliegue y los
-    // renglones), el tono del doblez. Los ojos van dentro del <g>.
-    ".rw-avatar-lienzo[data-avatar='folio'] svg > path{stroke:var(--rw-folio-borde,#d6cdb8);",
-    "  stroke-width:7px;stroke-linejoin:round;}",
-    ".rw-avatar-lienzo[data-avatar='folio'] svg > g ~ path{fill:var(--rw-folio-pliegue,#e4dac4);}",
+    // El motor de Folio dibuja el logo completo y acepta --rw-folio-* del tema.
     ".rw-boton.rw-con-avatar[aria-expanded='false'] .rw-icono-chat{display:none;}",
     ".rw-boton .rw-avatar-lienzo{width:84%;height:84%;}",
     ".rw-boton[aria-expanded='true'] .rw-avatar-lienzo{display:none;}",
@@ -555,13 +551,13 @@
   // que un tema los cambie; por defecto, los del logo.
   var FOLIO_ICONO = [
     ["path", { d: "M32 18h48l18 18v62a12 12 0 0 1-12 12H32a12 12 0 0 1-12-12V30a12 12 0 0 1 12-12z",
-               "stroke-width": "4", "stroke-linejoin": "round" }, "papel", "borde"],
-    ["path", { d: "M80 18v12a6 6 0 0 0 6 6h12z", "stroke-width": "4", "stroke-linejoin": "round" }, "pliegue", "borde"],
-    ["rect", { x: "42", y: "42", width: "12", height: "24", rx: "6" }, "tinta"],
-    ["rect", { x: "64", y: "42", width: "12", height: "24", rx: "6" }, "tinta"],
-    ["rect", { x: "34", y: "78", width: "52", height: "6", rx: "3" }, "renglon"],
+               "stroke-width": "2.5", "stroke-linejoin": "round" }, "papel", "borde"],
+    ["path", { d: "M80 18v12a6 6 0 0 0 6 6h12z", "stroke-width": "2.5", "stroke-linejoin": "round" }, "pliegue", "borde"],
+    ["rect", { x: "44", y: "44", width: "9", height: "20", rx: "4.5" }, "tinta"],
+    ["rect", { x: "65", y: "44", width: "9", height: "20", rx: "4.5" }, "tinta"],
+    ["rect", { x: "34", y: "78", width: "52", height: "5", rx: "2.5" }, "renglon"],
     ["rect", { x: "34", y: "89", width: "34", height: "9", rx: "4.5" }, "resalte"],
-    ["rect", { x: "72", y: "91", width: "14", height: "6", rx: "3" }, "renglon"]
+    ["rect", { x: "72", y: "91", width: "14", height: "5", rx: "2.5" }, "renglon"]
   ];
   var FOLIO_COLORES = { papel: "#f5f1e8", borde: "#d6cdb8", pliegue: "#e4dac4", tinta: "#1e293b",
                         renglon: "#cbd5e1", resalte: "#93c5fd" };
@@ -833,6 +829,7 @@
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
       }),
+      nivel: r.confidence_level || null,
       fragmentos: (r.fragments || []).map(fragmentoInterno),
       alternativas: (r.alternatives || []).map(fragmentoInterno),
       respuesta_exacta: exacta ? { chunk_id: exacta.chunk_id, texto: exacta.text, offset_inicio: exacta.offset_start,
@@ -869,6 +866,8 @@
       : ETIQUETAS_ESTADO.hasOwnProperty(estadoResp) ? estadoResp : "sin_respuesta");
 
     var aviso = ETIQUETAS_ESTADO[estadoResp];
+    // Respuesta directa sin lector (confidence_level medium): pide revisar la cita.
+    if (estadoResp === "ok" && respuesta.nivel === "medium") aviso = texto("check_citation");
     if (aviso && PRESENTACION.mostrarEtiquetaEstado) {
       var spanAviso = document.createElement("span");
       spanAviso.className = "rw-aviso";
@@ -1209,7 +1208,8 @@
   //    CSP sin 'unsafe-eval', definición inválida) queda el ícono y se emite
   //    ipsis:avatar con el error: el chat nunca se rompe.
   // -------------------------------------------------------------------
-  var AVATAR = { config: null, promesa: null, controlador: null, definicion: null, lienzo: null };
+  var AVATAR = { config: null, promesa: null, controlador: null, definicion: null, lienzo: null,
+                 analizarTexto: null, expresionTexto: null, sobre: false, ultimoContacto: -Infinity };
 
   function urlDelServicio(ruta) {
     if (/^https?:\/\//.test(ruta)) return ruta;
@@ -1270,7 +1270,8 @@
     lienzo.setAttribute("aria-hidden", "true");
     var ajustes = AVATAR.config.mirada || {};
     if (ajustes.activa) {
-      definicion = conMirada(definicion, Number(ajustes.amplitud_ojos) || 0, Number(ajustes.amplitud_cabeza) || 0);
+      var agregarMirada = typeof motor.withPointerGaze === "function" ? motor.withPointerGaze : conMirada;
+      definicion = agregarMirada(definicion, Number(ajustes.amplitud_ojos) || 0, Number(ajustes.amplitud_cabeza) || 0);
     }
     AVATAR.definicion = definicion;
     var opciones = {
@@ -1284,6 +1285,8 @@
     // createAvatar valida la definición (y lanza si no es válida): recién
     // con el avatar montado se reemplaza el ícono.
     AVATAR.controlador = motor.createAvatar(lienzo, opciones);
+    AVATAR.analizarTexto = typeof motor.reactionForText === "function" ? motor.reactionForText : null;
+    autonomiaAvatar(true);
     AVATAR.lienzo = lienzo;
     maquina.ultimoPersistente = inicial;
     ubicarAvatar();
@@ -1342,7 +1345,7 @@
   var PENSANDO_LARGO_MS = 3000;
   var maquina = {
     persistente: "idle", transitorio: null, prioridad: 0, temporizador: null,
-    tecleo: null, largo: null, inactividad: null, ultimoPersistente: null, saludado: false
+    tecleo: null, largo: null, inactividad: null, ultimoPersistente: null
   };
 
   function existe(clave) {
@@ -1382,14 +1385,19 @@
   function aplicarPersistente() {
     if (maquina.transitorio) return;
     var clave = claveDe(maquina.persistente);
-    if (clave === maquina.ultimoPersistente) return;
+    if (clave === maquina.ultimoPersistente) {
+      autonomiaAvatar(maquina.persistente === "idle" || maquina.persistente === "attentive");
+      return;
+    }
     maquina.ultimoPersistente = clave;
     reproducir(clave);
+    autonomiaAvatar(maquina.persistente === "idle" || maquina.persistente === "attentive");
     emitir("ipsis:avatar", { state: "event", event: maquina.persistente, key: clave });
   }
 
   function persistir(estado) {
     maquina.persistente = estado;
+    if (estado !== "idle" && estado !== "attentive") autonomiaAvatar(false);
     if (estado !== "thinking" && estado !== "thinking_long") {
       clearTimeout(maquina.largo);
       maquina.largo = null;
@@ -1405,6 +1413,7 @@
     maquina.transitorio = evento;
     maquina.prioridad = prioridad;
     maquina.ultimoPersistente = null;
+    autonomiaAvatar(false);
     reproducir(clave);
     emitir("ipsis:avatar", { state: "event", event: evento, key: clave });
     maquina.temporizador = setTimeout(function () {
@@ -1415,6 +1424,16 @@
   }
 
   // Punto único de entrada: lo usan el widget, el panel /admin y los sitios.
+  function autonomiaAvatar(activa) {
+    var c = AVATAR.controlador;
+    if (c && typeof c.setAutonomy === "function") c.setAutonomy(activa);
+  }
+
+  function reaccionAvatar(clave) {
+    var c = AVATAR.controlador;
+    if (c && typeof c.react === "function" && existe(clave) && !maquina.transitorio) c.react(clave);
+  }
+
   function disparar(evento) {
     if (!AVATAR.controlador) return false;
     reiniciarInactividad(evento !== "sleepy");
@@ -1447,13 +1466,11 @@
 
   // --- 6.3 Enlace con el chat -------------------------------------------
   function avatarAlAbrir() {
-    if (!maquina.saludado) {
-      maquina.saludado = true;
-      maquina.persistente = "attentive";
-      transitar("greeting");
-    } else {
-      persistir("attentive");
-    }
+    // Cada apertura reproduce el gesto configurado (Folio despierta), también
+    // al reabrir antes de que termine la despedida.
+    maquina.persistente = "attentive";
+    reiniciarInactividad(false);
+    transitar("greeting");
   }
   function avatarAlCerrar() {
     maquina.persistente = "idle";
@@ -1462,15 +1479,25 @@
   function avatarAlTeclear() {
     if (!AVATAR.controlador) return;
     reiniciarInactividad(true);
+    var empieza = maquina.persistente !== "typing";
     if (maquina.persistente !== "thinking" && maquina.persistente !== "thinking_long") persistir("typing");
+    if (maquina.persistente === "typing" && AVATAR.analizarTexto) {
+      var expresion = AVATAR.analizarTexto(input.value);
+      if (empieza || expresion !== AVATAR.expresionTexto) reaccionAvatar(expresion);
+      AVATAR.expresionTexto = expresion;
+    }
     clearTimeout(maquina.tecleo);
     maquina.tecleo = setTimeout(function () {
-      if (maquina.persistente === "typing") persistir("attentive");
+      if (maquina.persistente === "typing") {
+        persistir("attentive");
+        if (input.value.trim() && AVATAR.analizarTexto) reaccionAvatar(AVATAR.analizarTexto(input.value));
+      }
     }, RETRASO_TECLEO_MS);
   }
   function avatarAlEnviar() {
     if (!AVATAR.controlador) return;
     clearTimeout(maquina.tecleo);
+    AVATAR.expresionTexto = null;
     maquina.persistente = "thinking";
     transitar("sent");
     clearTimeout(maquina.largo);
@@ -1562,6 +1589,7 @@
     var celda = celdaPara(x - (caja.left + caja.width / 2), y - (caja.top + caja.height / 2), zona);
     clearTimeout(mirada.quieto);
     mirada.quieto = setTimeout(volverAlCentro, QUIETO_MS);
+    autonomiaAvatar(false);
     if (celda.col === mirada.col && celda.fila === mirada.fila) return;
     mirada.col = celda.col;
     mirada.fila = celda.fila;
@@ -1570,7 +1598,10 @@
   }
 
   function volverAlCentro() {
-    if (mirada.col === 2 && mirada.fila === 1) return;
+    if (mirada.col === 2 && mirada.fila === 1) {
+      if (puedeMirar()) autonomiaAvatar(true);
+      return;
+    }
     mirada.col = 2;
     mirada.fila = 1;
     if (puedeMirar()) {
@@ -1585,8 +1616,20 @@
     mirada.pendiente = window.requestAnimationFrame(function () {
       mirada.pendiente = null;
       mirarHacia(x, y);
+      // El lienzo es decorativo (pointer-events:none): se detecta el contacto
+      // por su caja, sin interceptar los clics del lanzador o del chat.
+      if (!AVATAR.lienzo) return;
+      var caja = AVATAR.lienzo.getBoundingClientRect();
+      var dentro = caja.width > 0 && x >= caja.left && x <= caja.right && y >= caja.top && y <= caja.bottom;
+      if (dentro && !AVATAR.sobre && puedeMirar() && performance.now() - AVATAR.ultimoContacto >= 2000) {
+        AVATAR.ultimoContacto = performance.now();
+        reiniciarInactividad(true);
+        reaccionAvatar("kind");
+      }
+      AVATAR.sobre = dentro;
     });
   }, { passive: true });
+  document.addEventListener("pointerleave", function () { AVATAR.sobre = false; volverAlCentro(); });
 
   cargarConfigServidor();
 

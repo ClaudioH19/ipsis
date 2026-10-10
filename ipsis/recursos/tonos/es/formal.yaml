@@ -95,6 +95,15 @@ situations:
   - 'Carezco de una respuesta directa. Le presento el contenido más afín:'
   - 'No figura una respuesta expresa. Sobre el tema, los documentos indican:'
   - 'A falta de una respuesta directa, le comparto el texto más cercano:'
+  related_check:
+  - "¿Corresponde este pasaje a lo que buscaba? De lo contrario, le agradecería reformular su consulta."
+  - "Si la información mostrada no responde su consulta, puede plantearla con otros términos."
+  - "¿Atiende este texto su pregunta? En caso contrario, indique qué aspecto requiere."
+  - "Le invito a verificar si el pasaje responde su consulta; de no ser así, puedo realizar una nueva búsqueda."
+  - "Si busca un dato distinto, le ruego precisarlo para continuar la búsqueda."
+  - "¿Es esta la información que necesitaba? Con más detalles puedo afinar el resultado."
+  - "En caso de que el pasaje no resulte pertinente, reformule su pregunta y buscaré nuevamente."
+  - "¿Se ajusta este contenido a lo solicitado? Si no, indíqueme qué falta."
   missing_focus:
   - 'No se encontró información específica sobre «{term}». Le presento lo más cercano:'
   - 'Los documentos no tratan específicamente «{term}». Esto es lo más próximo:'
@@ -126,6 +135,15 @@ situations:
   - Los documentos disponibles no mencionan "{entity}".
   - No se halló "{entity}" en los documentos; es posible que exceda su alcance.
   - No dispongo de información sobre "{entity}" en los documentos.
+  needs_clarification:
+  - ¿Podría indicar a qué tema o documento se refiere su consulta?
+  - Su consulta admite más de una interpretación. Le agradecería precisar el tema.
+  - Para responder con exactitud, necesito conocer el procedimiento al que alude.
+  - Existen varios documentos que podrían corresponder. ¿Cuál es el de su interés?
+  - Le solicito un poco más de contexto para ubicar la información correcta.
+  - La pregunta no indica el tema. ¿Podría reformularla con más detalle?
+  - Con el fin de evitar una respuesta errónea, le pido especificar el asunto.
+  - ¿Sería tan amable de señalar a qué trámite corresponde su pregunta?
   alternatives_intro:
   - 'Le presento las opciones más próximas que figuran en los documentos:'
   - 'A continuación, el contenido más similar a su consulta:'

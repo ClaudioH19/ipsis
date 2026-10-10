@@ -96,6 +96,15 @@ situations:
   - 'A resposta direta não aparece. Compartilho o que mais se relaciona:'
   - 'Não encontrei exatamente isso, mas os documentos tratam o tema assim:'
   - 'Sem uma resposta direta à mão, isto é o mais pertinente:'
+  related_check:
+  - "É isto que você procurava? Se não, me diga com outras palavras o que precisa."
+  - "Este trecho ajuda? Se você queria outra coisa, escreva de outra forma e eu procuro de novo."
+  - "Se isto responde sua pergunta, ótimo. Se não, conte um pouco mais e eu procuro outra vez."
+  - "Era isto que você queria saber? Posso procurar de novo se me der mais detalhes."
+  - "Veja se este texto responde sua dúvida; se não, reformule a pergunta e eu tento de novo."
+  - "Isto responde o que você perguntou? Se não, diga qual parte falta."
+  - "Este trecho pode ser o que você procura. Se não for, pergunte com outras palavras."
+  - "Corresponde ao que você precisava? Com outro detalhe posso refinar a busca."
   missing_focus:
   - 'Não encontrei informação específica sobre «{term}». Isto é o mais próximo:'
   - 'Os documentos não falam especificamente de «{term}». Isto é o mais parecido:'
@@ -127,6 +136,15 @@ situations:
   - Não há rastro de "{entity}" nos documentos disponíveis.
   - '"{entity}" não consta nos documentos. Talvez esteja fora do seu alcance.'
   - Revisei os documentos e não encontrei "{entity}".
+  needs_clarification:
+  - Sobre qual tema é a sua pergunta? Conte um pouco mais e eu procuro nos documentos.
+  - Preciso saber a que você se refere para encontrar a resposta. Pode dar mais detalhes?
+  - Sua pergunta pode se referir a várias coisas dos documentos. Qual delas?
+  - Para responder bem, diga de qual processo ou documento se trata.
+  - Vários documentos poderiam responder a isso. A qual você se refere?
+  - Falta saber o tema. Pode escrever a pergunta com um pouco mais de contexto?
+  - Isso pode ter mais de uma resposta conforme o tema. Do que se trata?
+  - Com mais um dado eu encontro. Sobre qual procedimento ou documento é a sua pergunta?
   alternatives_intro:
   - 'Mostro o mais parecido que aparece nos documentos:'
   - 'Isto é o mais próximo do que você procura:'

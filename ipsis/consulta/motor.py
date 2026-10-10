@@ -244,6 +244,7 @@ class Motor:
             AssistantState.RELACIONADO: "relacionado",
             AssistantState.CONVERSACIONAL: "conversacional",
             AssistantState.SIN_RESPUESTA: "sin_respuesta",
+            AssistantState.NECESITA_ACLARACION: "sin_respuesta",
         }
         alternativas = (diagnostico or {}).pop("_alternativas_http", None)
         contrato = {
@@ -257,6 +258,9 @@ class Motor:
             "confianza": confianza,
             "latencia_ms": latencia_ms,
         }
+        nivel = self.nivel_confianza(estado)
+        if nivel is not None:
+            contrato["nivel_confianza"] = nivel
         if respuesta_exacta is not None:
             contrato["respuesta_exacta"] = respuesta_exacta
         if alternativas:
@@ -274,6 +278,24 @@ class Motor:
             confianza=confianza,
             diagnostico=detalles,
         )
+
+    def nivel_confianza(self, estado: AssistantState) -> str | None:
+        """Qué tan segura es la respuesta, por niveles medidos (docs/methodology/
+        informal-paraphrases.md, «Confidence and guarantees»):
+
+        - ``alta``: respuesta directa con lector (medium): 96,6 % correcta en 319
+          respuestas de los bancos, garantizado ≥ 94 % al 95 %;
+        - ``media``: respuesta directa sin lector (light): 85 % correcta;
+        - ``baja``: relacionado, el pasaje más cercano sin afirmar que responda;
+        - ``None``: abstención, aclaración o conversación (no hay respuesta que medir).
+
+        Sale del estado y del perfil, no de un umbral nuevo: los datos no sostienen
+        subniveles dentro de una respuesta directa de medium."""
+        if estado == AssistantState.RESPUESTA_DIRECTA:
+            return "alta" if self.lector is not None else "media"
+        if estado == AssistantState.RELACIONADO:
+            return "baja"
+        return None
 
     def _abstener(
         self,
@@ -311,6 +333,25 @@ class Motor:
             plan="sin_respuesta",
             diagnostico=diagnostico,
             bloques=bloques,
+        )
+
+    def _aclarar(self, motivo: str, confianza: dict[str, Any], latencia_ms: int, *,
+                 diagnostico: dict[str, Any] | None = None) -> AssistantResult:
+        """Resultado ``necesita_aclaracion``: la pregunta no dice de qué se habla
+        (ipsis.lenguaje.aclaracion). En el contrato HTTP es ``sin_respuesta`` con
+        ``plan: aclaracion``, para no romper a los clientes que validan el estado."""
+        from ipsis.consulta.variantes import elegir
+
+        textos = self.plantillas["abstencion"]
+        mensaje = elegir("needs_clarification", list(textos.get("aclaracion") or textos["generico"]), motivo)
+        return self._resultado(
+            estado=AssistantState.NECESITA_ACLARACION,
+            motivo=motivo,
+            mensaje=mensaje,
+            confianza=confianza,
+            latencia_ms=latencia_ms,
+            plan="aclaracion",
+            diagnostico=diagnostico,
         )
 
     def respuesta_conversacional(self, categoria: str, pregunta: str = "") -> str:

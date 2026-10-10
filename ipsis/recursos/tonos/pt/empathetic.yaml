@@ -95,6 +95,15 @@ situations:
   - 'Não consegui achar uma resposta direta. Isto talvez sirva:'
   - 'Para não deixar você sem nada, isto é o relacionado que encontrei:'
   - 'Procurei com cuidado e não há resposta direta; isto é o mais próximo:'
+  related_check:
+  - "Espero que isto ajude. Se não era o que você procurava, me conte com outras palavras e procuro de novo com você."
+  - "Entendo que talvez você quisesse algo mais preciso; se este trecho não serve, diga o que precisa."
+  - "Quero que você encontre o que precisa. Isto ajuda, ou procuro de outra maneira?"
+  - "Sei que não é uma resposta direta; se não ajudar, reformule a pergunta e eu tento de novo."
+  - "Se isto não resolve sua dúvida, não se preocupe: com um pouco mais de detalhe posso procurar melhor."
+  - "Este texto te ajuda? Se não, conte qual parte falta e eu procuro de novo."
+  - "Espero que isto se aproxime do que você precisa; se não, estou aqui para procurar de novo."
+  - "Se não era isto, me diga com suas palavras e procuro outra vez com calma."
   missing_focus:
   - 'Entendo que «{term}» te interessa; não encontrei nada específico, mas isto é o mais próximo:'
   - 'Lamento não ter informação sobre «{term}». Isto pode te orientar:'
@@ -126,6 +135,15 @@ situations:
   - Desculpe, "{entity}" não aparece nos documentos disponíveis.
   - Compreendo que "{entity}" interessa a você, mas não consta nos documentos.
   - Revisei com atenção e não há nada sobre "{entity}".
+  needs_clarification:
+  - Quero te ajudar bem; pode me contar sobre qual tema é a sua pergunta?
+  - Entendo o que você pergunta, mas pode se referir a várias coisas. Qual delas?
+  - Para não te dar uma resposta errada, preciso saber de qual processo se trata.
+  - Sei que você quer uma resposta rápida; com um pouco mais de contexto vou encontrá-la.
+  - Não quero te confundir com algo que você não procura. A qual documento ou tema você se refere?
+  - Sua pergunta faz sentido, mas os documentos têm várias opções. Qual te interessa?
+  - Conte um pouco mais, por favor, e eu procuro a resposta exata para você.
+  - Fico feliz em ajudar; só preciso saber sobre qual tema você pergunta.
   alternatives_intro:
   - 'Sei que não é exatamente o que você precisa, mas isto pode ajudar:'
   - 'Entendo que você buscava outra coisa; mostro o mais parecido que está disponível:'

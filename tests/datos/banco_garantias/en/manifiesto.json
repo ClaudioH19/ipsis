@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "dataset_id": "garantias_en",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "coffee_maker_warranty.md",
+        "doc_id": "coffee-maker-warranty"
+      },
+      {
+        "ruta": "emergency_protocol.md",
+        "doc_id": "emergency-protocol"
+      },
+      {
+        "ruta": "greenhouse_irrigation.md",
+        "doc_id": "greenhouse-irrigation"
+      },
+      {
+        "ruta": "it_help_desk_faq.md",
+        "doc_id": "it-help-desk-faq"
+      },
+      {
+        "ruta": "lab_protocol.md",
+        "doc_id": "lab-protocol"
+      },
+      {
+        "ruta": "leave_policy.md",
+        "doc_id": "leave-policy"
+      },
+      {
+        "ruta": "library_hours.md",
+        "doc_id": "library-hours"
+      },
+      {
+        "ruta": "parking_regulation.md",
+        "doc_id": "parking-regulation"
+      },
+      {
+        "ruta": "printer_manual.md",
+        "doc_id": "printer-manual"
+      },
+      {
+        "ruta": "procurement_manual.md",
+        "doc_id": "procurement-manual"
+      },
+      {
+        "ruta": "refunds.md",
+        "doc_id": "refunds"
+      },
+      {
+        "ruta": "remote_work_regulation.md",
+        "doc_id": "remote-work-regulation"
+      },
+      {
+        "ruta": "room_rental.md",
+        "doc_id": "room-rental"
+      },
+      {
+        "ruta": "scholarship_rules.md",
+        "doc_id": "scholarship-rules"
+      },
+      {
+        "ruta": "travel_allowance_policy.md",
+        "doc_id": "travel-allowance-policy"
+      }
+    ],
+    "sha256": "590cb4b57a04791ebf2b761b0e21fc3c41a5957ce5248a6cae780e275bef3fa7"
+  },
+  "categorias_requeridas": [
+    "ambigua",
+    "exacta",
+    "parafrasis",
+    "premisa_falsa",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "en"
+}

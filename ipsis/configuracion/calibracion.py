@@ -16,7 +16,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipsis.recursos.mensajes import t
-VERSION_CALIBRACION = 1
+VERSION_CALIBRACION = 2
 
 
 class EstadoCalibracion(str, Enum):
@@ -66,7 +66,9 @@ def leer_calibracion(ruta: str | Path) -> ArchivoCalibracion | None:
         return None
     from ipsis.configuracion.archivos import interpretar
 
-    archivo = ArchivoCalibracion.model_validate(interpretar(ruta.read_text(encoding="utf-8"), "calibracion"))
+    datos = interpretar(ruta.read_text(encoding="utf-8"), "calibracion")
+    datos.setdefault("version", 1)  # no promover calibraciones antiguas al criterio nuevo
+    archivo = ArchivoCalibracion.model_validate(datos)
     return archivo.model_copy(update={"umbrales": normalizar_umbrales(archivo.umbrales)})
 
 
@@ -79,6 +81,8 @@ def motivo_no_aplicable(
     hash_lexico: str | None = None,
 ) -> str | None:
     """Por qué no se aplica la calibración (``None`` si se aplica)."""
+    if archivo.version != VERSION_CALIBRACION:
+        return t("evaluation.calibration_criterion")
     if archivo.estado != EstadoCalibracion.CALIBRADO:
         return t("evaluation.calibration_status", status=archivo.estado.value)
     procedencia = archivo.procedencia

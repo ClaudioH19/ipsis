@@ -18,7 +18,7 @@ init:
   opt_name: 'Nombre visible del asistente (por defecto: ''Asistente documental'', o su traducción).'
   opt_description: 'Descripción corta del dominio, p.ej. ''el manual de mi equipo'' (por defecto: ''los documentos cargados'').'
   opt_language: 'Código del idioma de los documentos (por defecto: en, o es con IPSIS_LANG=es). es, en y pt tienen paquete propio; otro código usa las reglas universales, sin stem, y los textos en inglés.'
-  opt_profile: 'Perfil de instalación: light (sin modelos extra), medium o heavy (por defecto: medium).'
+  opt_profile: 'Perfil de instalación: light (sin modelos extra) o medium (por defecto: medium).'
   opt_force: Reinicia config/assistant.yaml si ya existe.
   exists: Ya existe {path} -- usa 'ipsis configure clave=valor' para modificarlo, o 'ipsis init --force' para reiniciarlo desde los valores por defecto.
   styles_created: 'config/styles.yaml creado: ahí se cambia TODO el diseño del widget (colores, tipografía, formas, sombras y animaciones), sin tocar código.'
@@ -40,10 +40,10 @@ configure:
   done: 'config/assistant.yaml actualizado:'
   value: '  {key} = {value!r}'
 profile:
-  help: Muestra o cambia el perfil de instalación (light, medium o heavy).
+  help: Muestra o cambia el perfil de instalación (light o medium).
   show_help: Muestra el perfil activo, sus modelos, su presupuesto y si el índice y la calibración le sirven.
   set_help: Cambia el perfil activo e indica si hay que reindexar o recalibrar (no ejecuta nada costoso).
-  arg_profile: 'Perfil de instalación destino: light, medium o heavy.'
+  arg_profile: 'Perfil de instalación destino: light o medium.'
   index_compatible: 'Índice: compatible (construido con {model}).'
   index_missing: 'Índice: todavía no existe; el próximo ''ipsis index'' lo construirá para {profile} ({model}).'
   index_incompatible: 'Índice: incompatible: se construyó con {built} y el perfil {profile} necesita {needed}.'
@@ -142,6 +142,11 @@ ask:
   signals: 'Señales:'
   intention: 'Intención: {name} (reconocida en «{relation}»)'
   intention_similarity: 'Intención: {name} (similitud: {score}, margen: {margin})'
+  spelling: 'Erratas corregidas con el corpus: {values}'
+  confidence_level: 'Confianza: {level}'
+  confidence_alta: alta (respuesta directa leída por el lector QA)
+  confidence_media: media (respuesta directa sin lector; revisa la cita)
+  confidence_baja: baja (pasaje más cercano, no una respuesta directa)
   synonyms: 'Sinónimos usados: {values}'
   lexical_source: 'Expansión BM25: {word} → {forms} ({source}, sentido {sense}, POS {pos})'
   conversation: 'Conversación: {action}; tema: {topic}'
@@ -228,7 +233,7 @@ models:
   cached: '  Caché:      disponible ({size})'
   missing: '  Caché:      falta'
   download_help: Descarga a la caché global los modelos del perfil activo (o de --profile) que falten.
-  opt_profile: 'Perfil cuyos modelos descargar (light, medium o heavy); no cambia el perfil activo. Por defecto: el perfil activo del proyecto.'
+  opt_profile: 'Perfil cuyos modelos descargar (light o medium); no cambia el perfil activo. Por defecto: el perfil activo del proyecto.'
   downloading: 'Descargando {role}: {model} ...'
   downloaded: '{role}: {model} -- descargado'
   available: '{role}: {model} -- ya disponible'
@@ -324,10 +329,12 @@ evaluate:
   running: Evaluando el backend activo contra {path}...
   failed: 'No se pudo evaluar: {error}'
   line1: N={n} Recall@{k}={recall:.3f} MRR={mrr:.3f} exactitud_estado={status:.3f}
-  line2: falsos_ok={false_ok:.3f} precision_abstencion={abstention:.3f} literalidad={literal:.3f} offsets={offsets:.3f}
+  line2: falsos_ok={false_ok:.3f} precision_abstencion={abstention:.3f} cobertura_respuesta_completa={literal:.3f} offsets={offsets:.3f}
+  answers: 'Respuestas completas con literal esperado: {correct}/{direct}; cobertura respondibles {coverage}; errores aceptados {errors}. Criterio: {criterion}.'
+  qa: 'Tramos QA: {n} evaluados, {incomplete} sin el literal esperado completo; exactitud {accuracy}. Sin lector: no aplica.'
   line3: respuestas_excesivas={excessive:.3f} latencia_media={mean:.1f}ms p95={p95:.1f}ms
   written: Reporte escrito en {path}
-  guard: 'Guardia de falsos ok (debe ser 0): {verdict}'
+  guard: 'Respuestas directas incorrectas en este banco (debe ser 0): {verdict}'
   pass: CUMPLE
   blocked: BLOQUEADO
 calibrate:
@@ -362,12 +369,13 @@ compare:
   failed: 'No se pudo comparar: {error}'
   dataset: Dataset {id}@{version}, k={k}
   row: '{backend}: Recall={recall:.3f} MRR={mrr:.3f} falsos_ok={false_ok:.3f} estado={status:.3f} latencia_p95={p95:.1f}ms'
+  answer_quality: '  cobertura respuesta completa {literal}; exactitud tramo QA {qa}; criterio {criterion}'
   written: Informe comparativo escrito en {path}
 benchmark:
   help: Compara perfiles (calidad, seguridad, latencia y costo), modos de recuperación o solo la latencia.
   opt_bank: Manifiesto versionado a evaluar; repetible (p. ej. un banco por idioma).
   opt_latency_only: Mide p50/p95 por etapa de cada perfil frente a su presupuesto.
-  opt_profiles: Perfiles a comparar (bm25,light,medium,heavy). Con --latency-only, por defecto light,medium.
+  opt_profiles: Perfiles a comparar (bm25,light,medium). Con --latency-only, por defecto light,medium.
   opt_experiments: Agrega variantes experimentales (medium con τ_ok 0,85; light con acuerdo).
   opt_repetitions: 'Veces que se repite cada pregunta con --latency-only (por defecto: 20).'
   opt_output: 'Directorio de salida (por defecto: golden/reports con --profiles, si no reports/benchmark).'
@@ -486,6 +494,11 @@ app:
   posture_alternatives_range: 'posture.max_alternatives espera un número entero de 1 a 5, no {value!r}'
   unknown_posture: 'postura desconocida {value!r}: usa una de {available}'
   unknown_configure_keys: 'clave(s) desconocida(s) para ''ipsis configure'': {keys}. Válidas: {valid}'
+  unknown_threshold: 'umbral desconocido {key!r}. Válidos: {valid}'
+  threshold_range: 'el umbral {key!r} debe ser un número entre 0 y 1 (llegó {value!r})'
+  upload_type: '{name!r} no es un documento soportado. Extensiones válidas: {valid}'
+  upload_empty: '{name!r} está vacío'
+  upload_size: '{name!r} supera {mb} MiB'
   unknown_profile: 'perfil desconocido {name!r} (disponibles: {available})'
   bm25_not_installable: 'bm25 es un perfil de diagnóstico de ''ipsis benchmark'', no un perfil instalable. Perfiles disponibles: {available}'
   unknown_profile_long: 'perfil desconocido {name!r}. Perfiles disponibles: {available}'
@@ -724,6 +737,7 @@ evaluation:
   calibration_models: se calibró con otros modelos
   calibration_corpus: el corpus indexado cambió desde la calibración (o no hay índice)
   calibration_lexical: las reglas o fuentes léxicas cambiaron desde la calibración (o falta su huella léxica)
+  calibration_criterion: cambió el criterio de evaluación de respuestas; vuelve a ejecutar 'ipsis calibrate' antes de aplicar umbrales
   offsets_mismatch: los offsets de evidencia no coinciden con el texto literal
   answerable_needs_evidence: una pregunta respondible exige respuesta literal y evidencia
   literal_in_evidence: la respuesta literal debe estar contenida en una evidencia
@@ -741,8 +755,9 @@ evaluation:
   compare_two: se requieren al menos dos ejecuciones para comparar
   compare_labels: cada ejecución debe tener una etiqueta de backend distinta
   compare_identity: las ejecuciones no usan el mismo dataset, corpus y k
+  compare_criterion: los reportes usan distintos criterios de evaluación de respuestas; vuelve a evaluar ambas ejecuciones
   note_regression: 'Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no certifican a ningún cliente; eso lo hace «ipsis calibrate» con el golden del cliente.'
-  note_evaluation: 'Banco de evaluación del cliente: la guardia de falsos ok (como en «ipsis evaluate») exige 0 en los perfiles; las cotas solo se certifican con «ipsis calibrate».'
+  note_evaluation: 'Banco de evaluación del cliente: las respuestas directas incorrectas (como en «ipsis evaluate») deben ser 0; la calidad QA se mide aparte y las cotas requieren revisar la calibración.'
   variant_medium_ok: 'medium con τ_ok = {value} (perfil: {profile_value}). Re-decide las observaciones de medium con la regla de producción; un umbral no cambia el costo, así que la latencia es la de medium.'
   variant_light_agreement: light exigiendo acuerdo ≥ 0,5 (top-1 denso en el top-3 BM25 y viceversa) para un ok léxico. Agrega dos búsquedas por pregunta; la latencia suma su costo medido a cada consulta de light.
   extra_p50: búsquedas extra p50 ms
@@ -751,6 +766,8 @@ evaluation:
   report_bank: '- Banco `{bank}` ({language}, uso {use}, {cases} casos)'
   report_project_language: idioma del proyecto
   report_quality: '## Calidad, seguridad y latencia'
+  report_answer_quality: '## Respuestas completas y tramos QA (métricas separadas)'
+  report_answer_quality_header: '| Perfil | Respuestas completas con literal esperado / directas | Cobertura respondibles | QA con literal completo / evaluados | QA sin literal |'
   report_quality_header: '| Perfil | Cobertura directa | Exactas | Paráfrasis | Falsos ok | Trampas con falso ok | Riesgo aceptadas x/n | p50 ms | p95 ms | Presupuesto p95 | Cumple |'
   report_yes: sí
   report_no: 'NO'
@@ -793,7 +810,6 @@ lint:
 panel:
   lang: es
   title: Panel del asistente
-  note: 'Solo presentación: nada de esto cambia qué responde el asistente.'
   access: Acceso
   token: Token de administración
   enter: Entrar
@@ -860,6 +876,46 @@ panel:
   session_ended: La sesión terminó o el token cambió. Vuelve a entrar.
   network_error: No se pudo conectar con el servicio.
   no_changes: No hay cambios de estilo para guardar.
+  note: "Tono, avatar y widget cambian solo la presentación. Los umbrales y los documentos (pestañas Estado y Documentos) cambian qué responde el asistente."
+  tab_status: "Estado"
+  tab_documents: "Documentos"
+  status_title: "Estado del proyecto"
+  thresholds_title: "Umbrales"
+  thresholds_note: "Deja un valor vacío para usar el del perfil. Una calibración vigente (config/calibration.yaml) tiene precedencia sobre ok, oov_ok y focus. Guardar recarga el motor durante unos segundos."
+  threshold: "Umbral"
+  effective: "Vigente"
+  profile_value: "Perfil"
+  project_value: "Proyecto"
+  source: "Origen"
+  save_thresholds: "Guardar umbrales"
+  doctor_title: "Diagnóstico (ipsis doctor)"
+  refresh: "Actualizar"
+  documents_title: "Documentos"
+  documents_note: "PDF con texto, DOCX, Markdown o TXT, hasta 20 MiB cada uno. Subir los agrega al corpus; Reindexar los vuelve respondibles (mientras tanto el asistente se pausa)."
+  choose_files: "Archivos para subir"
+  upload: "Subir"
+  doc_title: "Título"
+  doc_file: "Archivo"
+  doc_active: "Indexado"
+  reindex: "Reindexar"
+  ready: "Listo"
+  not_ready: "No listo"
+  profile_label: "Perfil"
+  index_label: "Índice"
+  calibration_label: "Calibración"
+  chunks: "fragmentos"
+  task_running: "Recargando el motor..."
+  task_done: "Motor recargado."
+  task_error: "La recarga falló:"
+  uploaded: "agregado al corpus"
+  duplicate: "ya estaba en el corpus"
+  rejected: "rechazado:"
+  reindex_hint: "Subido. Presiona Reindexar para que los documentos nuevos se puedan responder."
+  'yes': "sí"
+  'no': "no"
+  source_calibration: "calibración"
+  source_project: "proyecto (engine.yaml)"
+  source_profile: "perfil"
 presets:
   classic: Azul neutro, cómodo y equivalente al diseño de fábrica.
   minimal: Interfaz compacta, radios discretos y sombras suaves.
@@ -924,3 +980,37 @@ styles:
   unknown_key: 'clave desconocida {key!r}; en {section}: {valid}'
   key_error: '{key}: {error}'
   no_changes: 'indica al menos un cambio: seccion.clave=valor'
+menu:
+  group_start: Empezar
+  group_documents: Documentos
+  group_ask: Preguntar
+  group_customize: Personalizar
+  group_quality: Medir y calibrar
+  group_operate: Desplegar y operar
+  group_other: Otros
+  examples: Ejemplos
+  example_new: Proyecto nuevo en español con lector (perfil medium)
+  example_load: Agregar una carpeta de documentos y construir el índice
+  example_chat: Preguntar y correr comandos en modo interactivo (/help adentro)
+  example_serve: API, widget y panel /admin en http://127.0.0.1:8000
+  example_threshold: Elegir umbrales con tu golden set al 5 % de riesgo
+  footer: "Opciones de un comando: ipsis <comando> --help  ·  modo interactivo: ipsis chat"
+help:
+  help: Muestra los comandos agrupados por tarea, o la ayuda de un comando.
+  arg_command: Comando a explicar (p. ej. calibrate).
+chat:
+  help: 'Modo interactivo: escribe preguntas y /comandos (/help, /doctor, /index...).'
+  opt_diagnostics: Empezar con el diagnóstico activo (etapas, señales, regla y tramo de cada respuesta).
+  welcome: "ipsis chat -- escribe una pregunta, o /help para ver los comandos. /exit para salir."
+  loading: Cargando el motor (solo una vez)...
+  commands: 'Comandos:'
+  cmd_help: Muestra esta lista.
+  cmd_diagnostics: 'Activa o desactiva el diagnóstico (/diagnostics on|off).'
+  cmd_reload: Recarga el motor después de cambiar configuración o documentos.
+  cmd_exit: Salir (también /quit o Ctrl+D).
+  cmd_any: 'Cualquier comando de ipsis, p. ej. /doctor, /load ./docs, /index, /profile show.'
+  diagnostics_on: Diagnóstico activado.
+  diagnostics_off: Diagnóstico desactivado.
+  reloaded: El motor se recargará con la próxima pregunta.
+  unknown: "Comando desconocido: /{command}. Escribe /help."
+  bye: Hasta luego.

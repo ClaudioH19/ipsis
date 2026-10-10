@@ -58,10 +58,13 @@ SITUACIONES: dict[str, Situacion] = {
     "condition": Situacion("motor", dos_puntos=True),
     "exception": Situacion("motor", dos_puntos=True),
     "related_intro": Situacion("motor", dos_puntos=True),
+    # Cierra un «relacionado»: invita a confirmar o a reformular (no afirma nada del pasaje).
+    "related_check": Situacion("motor"),
     "missing_focus": Situacion("motor", frozenset({"term"}), frozenset({"term"}), dos_puntos=True),
     "alternatives_intro": Situacion("motor", dos_puntos=True),
     "no_answer": Situacion("motor"),
     "premise_not_found": Situacion("motor", frozenset({"entity"}), frozenset({"entity"})),
+    "needs_clarification": Situacion("motor"),
     "welcome": Situacion("widget", frozenset({"assistant_name"})),
     "waiting": Situacion("widget"),
     "citations_hint": Situacion("widget"),

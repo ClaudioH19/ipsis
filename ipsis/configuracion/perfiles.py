@@ -1,4 +1,4 @@
-"""Perfiles de instalación (light, medium, heavy) y su fusión por capas.
+"""Perfiles de instalación (light, medium) y su fusión por capas.
 
 El perfil define modelos, parámetros de la cascada, etapas y umbrales por
 defecto. La configuración efectiva se arma en este orden:
@@ -19,7 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from ipsis.configuracion import rutas
 from ipsis.recursos.mensajes import t
 
-PERFILES_INSTALABLES = ("light", "medium", "heavy")
+PERFILES_INSTALABLES = ("light", "medium")
 
 
 class _Estricto(BaseModel):
@@ -41,15 +41,23 @@ class LexicoPerfil(_Estricto):
 class CascadaPerfil(_Estricto):
     recuperar_n: int = Field(ge=1)
     rerank_k: int = Field(ge=0)
+    # Cuántos candidatos de la fusión puntúa el reranker (None: todos). Cada fragmento
+    # largo cuesta; con la lectura semántica el orden fino se hace por oración después.
+    rerank_candidatos: int | None = Field(default=None, ge=1)
     leer_m: int = Field(ge=0)
     max_tokens_pasaje: int = Field(default=384, ge=32)
     stride: int = Field(default=128, ge=0)
     salida_temprana_sin_foco: bool = True
     # Si los dos mejores tramos dan valores distintos del mismo tipo, no se responde «ok».
+    # Ningún perfil la activa; queda para ajustes_perfil.
     concordancia: bool = False
     # El lector lee la ventana más pertinente (por s_lex) de cada pasaje, no el
     # pasaje entero: su costo crece con la longitud.
     max_caracteres_lectura: int = Field(default=600, ge=100)
+    # El lector lee las oraciones de los candidatos que mejor ordena la fusión de
+    # cross-encoder, coseno denso y s_lex, en vez de una ventana elegida por palabras:
+    # una paráfrasis no comparte palabras con la oración que la responde.
+    lectura_semantica: bool = False  # medium la activa
 
 
 class AlternativasPerfil(_Estricto):
@@ -62,7 +70,7 @@ class AlternativasPerfil(_Estricto):
 
 
 class PerfilInstalacion(_Estricto):
-    perfil: Literal["light", "medium", "heavy", "bm25"]
+    perfil: Literal["light", "medium", "bm25"]
     descripcion: str = ""
     presupuesto_p95_ms: int = Field(ge=1)
     modelos: ModelosPerfil

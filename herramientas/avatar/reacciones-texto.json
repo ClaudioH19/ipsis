@@ -1,0 +1,61 @@
+{
+  "wink": {
+    "palabras": ["hola", "buenas", "hello", "hi", "olá", "hey", "holi", "saludos", "adiós", "chao", "chau", "bye"],
+    "frases": ["buenos días", "buenas tardes", "buenas noches", "hasta luego", "nos vemos"]
+  },
+  "kind": {
+    "palabras": ["gracias", "thanks", "genial", "excelente", "perfecto", "lindo", "linda", "tierno", "tierna", "bonito", "bonita", "amor", "abrazo", "beso", "cariño"],
+    "frases": ["te quiero", "te amo", "me encanta", "muy amable", "muchas gracias"],
+    "emoticonos": ["😊", "🙂", "❤️", "❤", "🥰", "😍", "🤗", "<3", ":)", ": )"]
+  },
+  "happy": {
+    "palabras": ["jajaja", "jaja", "jeje", "jejeje", "haha", "feliz", "contento", "contenta", "alegre", "divertido", "divertida", "bravo", "hurra"],
+    "frases": ["qué alegría", "que alegría", "lo logré", "lo logramos", "qué divertido"],
+    "emoticonos": ["😀", "😄", "😁", "😂", "🤣", "🎉", "🥳", ":D", "xd"]
+  },
+  "sorry": {
+    "palabras": ["triste", "tristeza", "pena", "llorando", "llorar", "decepcionado", "decepcionada"],
+    "frases": ["me siento mal", "me siento solo", "me siento sola", "mal día", "extraño a", "echo de menos"],
+    "emoticonos": ["😢", "😔", "🙁", "☹", "😭", ":(", ": ("]
+  },
+  "worried": {
+    "palabras": ["miedo", "preocupado", "preocupada", "nervioso", "nerviosa", "ansioso", "ansiosa", "asustado", "asustada", "urgente", "socorro"],
+    "frases": ["me preocupa", "qué susto", "estoy en problemas"],
+    "emoticonos": ["😟", "😰", "😨", "😱"]
+  },
+  "sleepy": {
+    "palabras": ["sueño", "cansado", "cansada", "agotado", "agotada", "dormir", "descansar", "bostezo", "aburrido", "aburrida"],
+    "frases": ["tengo sueño", "necesito descansar", "me voy a dormir"],
+    "emoticonos": ["😴", "🥱", "💤"]
+  },
+  "unsure": {
+    "palabras": ["duda", "dudas", "confundido", "confundida", "confuso", "confusa", "quizás", "quizá"],
+    "frases": ["no entiendo", "no sé", "no se", "no estoy seguro", "no estoy segura", "no me queda claro", "puede ser", "tal vez"],
+    "emoticonos": ["😕", "🤷", "🤷‍♀️", "🤷‍♂️"]
+  },
+  "curious": {
+    "palabras": ["ayuda", "ayúdame", "pregunta", "curiosidad", "curioso", "curiosa", "explícame", "cómo", "cuándo", "dónde", "cuál", "cuáles", "quién", "cuánto", "cuántos"],
+    "frases": ["por qué", "quiero saber", "me pregunto", "cuéntame", "puedes explicar"],
+    "emoticonos": ["🧐"]
+  },
+  "thinking": {
+    "palabras": ["pensando", "pienso", "reflexionar", "buscar", "busca", "investigar", "investiga", "analizar", "analiza", "averiguar"],
+    "frases": ["déjame pensar", "a ver", "un momento", "espera un segundo"],
+    "emoticonos": ["🤔"]
+  },
+  "nod-down": {
+    "palabras": ["sí", "vale", "ok", "okay", "entendido", "listo", "correcto", "exacto", "claro"],
+    "frases": ["de acuerdo", "está bien", "tienes razón", "ya entendí"],
+    "emoticonos": ["👍", "👌", "✅"]
+  },
+  "surprised": {
+    "palabras": ["wow", "guau", "increíble", "sorpresa", "sorprendente", "impresionante", "asombroso", "asombrosa"],
+    "frases": ["no lo puedo creer", "qué sorpresa"],
+    "emoticonos": ["😮", "😲", "🤯"]
+  },
+  "reading": {
+    "palabras": ["leer", "leyendo", "libro", "libros", "documento", "documentos", "página", "páginas", "texto", "cita", "citas", "resumen"],
+    "frases": ["voy a leer", "estoy leyendo"],
+    "emoticonos": ["📖", "📚", "📄"]
+  }
+}

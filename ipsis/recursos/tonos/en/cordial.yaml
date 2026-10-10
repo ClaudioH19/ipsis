@@ -96,6 +96,15 @@ situations:
   - 'The direct answer isn''t there. Let me share what relates most:'
   - 'I didn''t find exactly that, but the documents cover the topic like this:'
   - 'Without a direct answer at hand, this is the most relevant text:'
+  related_check:
+  - "Is this what you were looking for? If not, tell me in other words what you need."
+  - "Does this passage help? If you meant something else, rephrase it and I'll search again."
+  - "If this answers your question, great. If not, tell me a bit more and I'll look again."
+  - "Was this what you wanted to know? I can search again if you give me more details."
+  - "Check whether this text answers your question; if not, rephrase it and I'll try again."
+  - "Does this answer what you asked? If not, tell me which part is missing."
+  - "This passage may be what you need. If it isn't, ask me in other words."
+  - "Does it match what you needed? With another detail I can refine the search."
   missing_focus:
   - 'I couldn''t find specific information about «{term}». This is the closest:'
   - 'The documents do not specifically cover «{term}». This is the most similar:'
@@ -127,6 +136,15 @@ situations:
   - There is no trace of "{entity}" in the available documents.
   - '"{entity}" is not in the documents. It may be outside their scope.'
   - I went through the documents and didn't find "{entity}".
+  needs_clarification:
+  - Which topic is your question about? Tell me a bit more and I'll look it up.
+  - I need to know what you mean to find the answer. Could you add some details?
+  - Your question could refer to several things in the documents. Which one do you mean?
+  - To answer well, tell me which process or document this is about.
+  - Several documents could answer that. Which one are you asking about?
+  - I'm missing the topic. Could you write the question with a little more context?
+  - That can have more than one answer depending on the topic. What is it about?
+  - With one more detail I can find it. Which procedure or document is your question about?
   alternatives_intro:
   - 'Here is the closest match that does appear in the documents:'
   - 'This is the closest thing to what you are looking for:'

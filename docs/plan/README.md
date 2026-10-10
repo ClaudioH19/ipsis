@@ -118,4 +118,4 @@ medida y no en reglas validadas con pocos casos:
   compra?» y «Quem assina a Resolução de compra?» responden con otra oración
   del mismo tema; «Quando se começa a comprar?» no recupera el chunk que
   responde con 3 candidatos.
-- Medir el perfil heavy.
+- ~~Medir el perfil heavy.~~ Medido y retirado: no superó a medium (ADR 0003).

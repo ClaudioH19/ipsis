@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "dataset_id": "coloquial_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafeteira.md",
+        "doc_id": "garantia-cafeteira"
+      },
+      {
+        "ruta": "irrigacao_estufa.md",
+        "doc_id": "irrigacao-estufa"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_aquisicoes.md",
+        "doc_id": "manual-aquisicoes"
+      },
+      {
+        "ruta": "manual_projetor.md",
+        "doc_id": "manual-projetor"
+      },
+      {
+        "ruta": "perguntas_frequentes_ti.md",
+        "doc_id": "perguntas-frequentes-ti"
+      },
+      {
+        "ruta": "politica_diarias.md",
+        "doc_id": "politica-diarias"
+      },
+      {
+        "ruta": "politica_equipamentos.md",
+        "doc_id": "politica-equipamentos"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "regulamento_academia.md",
+        "doc_id": "regulamento-academia"
+      },
+      {
+        "ruta": "regulamento_capacitacao.md",
+        "doc_id": "regulamento-capacitacao"
+      },
+      {
+        "ruta": "regulamento_refeitorio.md",
+        "doc_id": "regulamento-refeitorio"
+      },
+      {
+        "ruta": "regulamento_teletrabalho.md",
+        "doc_id": "regulamento-teletrabalho"
+      },
+      {
+        "ruta": "seguro_saude.md",
+        "doc_id": "seguro-saude"
+      }
+    ],
+    "sha256": "e4b5c079a92d3638a51ef08e325704c6163797a2c7e3fae32ad21c8c29d9946d"
+  },
+  "categorias_requeridas": [
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}

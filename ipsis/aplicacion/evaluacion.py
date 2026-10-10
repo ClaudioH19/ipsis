@@ -110,8 +110,14 @@ def evaluar_backend_activo(
         k=k,
         limite_respuesta_chars=limite_respuesta_chars,
     )
+    from ipsis.modelos.catalogo import obtener
+
+    cfg = {**cfg, "perfil_resuelto": motor.perfil_instalacion.model_dump(mode="json"),
+           "contratos_modelos": {rol: obtener(id_hf).model_dump(mode="json")
+                                 for rol, id_hf in motor.perfil_instalacion.modelos.model_dump().items() if id_hf}}
     config_json = json.dumps(cfg, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return ArtefactoEvaluacion(
+        schema_version=2,
         backend=etiqueta_backend,
         dataset_id=banco.manifiesto.dataset_id,
         dataset_version=banco.manifiesto.dataset_version,
@@ -190,7 +196,7 @@ def medir_latencia(
 ) -> dict:
     """p50 y p95 por etapa y totales de cada perfil, con las preguntas del banco.
 
-    Crea un proyecto temporal por perfil (heavy usa otro modelo denso e índice),
+    Crea un proyecto temporal por perfil (con su propio índice),
     calienta el motor y repite cada pregunta ``repeticiones`` veces.
     """
     from ipsis.aplicacion.consulta import construir_motor

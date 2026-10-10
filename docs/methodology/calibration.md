@@ -18,12 +18,17 @@ default), while maximizing direct coverage.
 - **Input:** the `golden/bank/` bank (cases with a dev/test `split` and
   literal evidence) and the observations of an evaluation of the active
   profile, with their signals.
-- **Output:** `config/calibration.yaml` (version 1) with the status,
+- **Output:** `config/calibration.yaml` (version 2) with the status,
   `alpha`, `confidence`, thresholds, result per split and **provenance**
   (profile, models, the index's `corpus_hash`, effective `lexical_hash`, bank
   and its hash). The lexical hash covers runtime behavior version, effective
   language rules, project synonym groups, the active filtered table and
   its full WordNet sense-count lexicon.
+
+Version 2 measures risk on the published full answer with expected-source
+evidence (`respuesta_completa_v2`), equally across profiles. QA span quality
+is separate. Version 1 calibrations are preserved but ignored; recalibrate
+under the new criterion. This is literal golden matching, not semantic entailment.
 
 ## 4. Algorithm and tie-breaking
 
@@ -42,7 +47,9 @@ default), while maximizing direct coverage.
 6. Re-decide without models with `regla_cascada`, the same function used in
    production.
 7. `τ_oov_domain`, `τ_domain`, `τ_related` and `τ_cov` keep the profile's
-   value: they do not change the risk of an accepted answer.
+   value: they do not change the risk of an accepted answer. `τ_ok_strong`
+   and `τ_oov_ok_strong` also keep it, but their answers do count: a case
+   the strong reader tier accepts enters the sweep at every `τ_ok`.
 8. Verify the combination on `dev` with the full policy and report it on
    `test` separately (`cumple` = meets, `excede` = exceeds or
    `muestra_insuficiente` = insufficient sample). **`test` never chooses.**
@@ -72,11 +79,16 @@ by a person.
 ## 6. Invariants
 
 - The engine applies the calibration only when its status is `calibrated`
+  and its version is 2,
   **and** its provenance matches the profile, the models and the
   `corpus_hash` of the open index and effective lexical rules. A missing
   lexical hash in an old calibration also invalidates it. If something changed, it ignores it and
   `ipsis doctor` says so.
 - `calibration.yaml` is written in any status, for auditing.
+- `test` is reported independently but currently does not block application
+  when it fails or has insufficient samples. Reading/cascade overrides are
+  not fully covered by provenance: set aside calibration and re-evaluate after
+  changing them. A dev-selected bound does not by itself guarantee production risk.
 
 ## 7. Parameters and defaults
 

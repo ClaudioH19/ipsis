@@ -9,12 +9,18 @@ from ipsis.configuracion.esquemas import validar_asistente
 from ipsis.configuracion.perfiles import PERFILES_INSTALABLES, cargar_perfil_instalacion, perfil_efectivo
 
 
+def test_modelo_denso_del_ajuste_se_usa_al_indexar_y_consultar():
+    from ipsis.configuracion.variantes_modelos import ajustes_variante
+
+    cfg = {"recuperacion": {"modelo": None, "modo": "hibrida"}, "ajustes_perfil": ajustes_variante("harrier")}
+    assert config_recuperacion(cfg, perfil="medium")["modelo"] == "onnx-community/harrier-oss-v1-270m-ONNX"
+
+
 def test_perfiles_cumplen_presupuestos_y_modelos():
-    light, medium, heavy = (cargar_perfil_instalacion(p) for p in PERFILES_INSTALABLES)
+    light, medium = (cargar_perfil_instalacion(p) for p in PERFILES_INSTALABLES)
     assert light.presupuesto_p95_ms <= 150 and light.modelos.reranker is None and light.modelos.lector is None
     assert medium.presupuesto_p95_ms <= 1000 and medium.modelos.reranker and medium.modelos.lector
-    assert heavy.presupuesto_p95_ms <= 5000
-    assert "reranking" not in light.etapas  # medium y heavy suman reranking y lectura en P7
+    assert "reranking" not in light.etapas  # medium suma reranking y lectura
     assert light.modelos.denso == medium.modelos.denso  # comparten índice
 
 
@@ -35,6 +41,7 @@ HASH = "sha256:corpus"
 def _calibracion(tmp_path, perfil, modelos, estado="calibrado", hash_corpus=HASH):
     ruta = tmp_path / "calibration.yaml"
     ruta.write_text(yaml.safe_dump({
+        "version": 2,
         "estado": estado, "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": modelos, "hash_corpus": hash_corpus,
                         "banco": "golden@1.0.0", "hash_banco": "x"},
@@ -42,6 +49,19 @@ def _calibracion(tmp_path, perfil, modelos, estado="calibrado", hash_corpus=HASH
         "umbrales": {"ok": 0.71, "oov": 0.55},
     }), encoding="utf-8")
     return ruta
+
+
+@pytest.mark.parametrize("version", [None, 1])
+def test_calibraciones_con_criterio_anterior_exigen_recalibrar(tmp_path, version):
+    modelos = cargar_perfil_instalacion("medium").modelos.model_dump()
+    ruta = _calibracion(tmp_path, "medium", modelos)
+    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    if version is None:
+        datos.pop("version")
+    else:
+        datos["version"] = version
+    ruta.write_text(yaml.safe_dump(datos), encoding="utf-8")
+    assert perfil_efectivo("medium", ruta_calibracion=ruta, hash_corpus=HASH).origen_umbrales == "perfil"
 
 
 def test_calibracion_con_la_misma_procedencia_reemplaza_umbrales(tmp_path):
@@ -88,9 +108,13 @@ def test_calibracion_exige_la_huella_lexica_efectiva(tmp_path, guardada):
 
 def test_el_modelo_denso_sale_del_perfil_si_no_se_fija():
     cfg = {"recuperacion": {"modelo": None, "coleccion_base": "x"}}
-    assert config_recuperacion(cfg, perfil="heavy")["modelo"] == "intfloat/multilingual-e5-base"
-    cfg["recuperacion"]["modelo"] = "intfloat/multilingual-e5-small"
-    assert config_recuperacion(cfg, perfil="heavy")["modelo"] == "intfloat/multilingual-e5-small"
+    assert config_recuperacion(cfg, perfil="medium")["modelo"] == cargar_perfil_instalacion("medium").modelos.denso
+    cfg["recuperacion"]["modelo"] = "intfloat/multilingual-e5-base"
+    assert config_recuperacion(cfg, perfil="medium")["modelo"] == "intfloat/multilingual-e5-base"
+
+
+def test_proyecto_con_heavy_se_carga_como_medium():
+    assert validar_asistente({"config_version": 5, "nombre_asistente": "X", "perfil": "heavy"})["perfil"] == "medium"
 
 
 def test_migracion_v2_asigna_light():

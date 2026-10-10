@@ -95,6 +95,15 @@ situations:
   - 'No direct answer, but you won''t leave empty-handed! Look:'
   - 'Almost got it! It isn''t direct, but this relates:'
   - 'The exact answer doesn''t appear, but there is something close! This:'
+  related_check:
+  - "Is this what you were looking for? If not, tell me in other words and I'll keep searching!"
+  - "Hope this helps! If not, ask me another way."
+  - "If this isn't quite it, give me another clue and I'll find it!"
+  - "Does it help? If not, let's keep looking together!"
+  - "Take a look at this passage! If it doesn't answer you, I'll try again."
+  - "Was this it? With one more detail I'll fine-tune it!"
+  - "I can search again if you tell me a bit more!"
+  - "Does it match what you needed? If not, let's try another question!"
   missing_focus:
   - 'I found nothing on «{term}», but this is the closest:'
   - '«{term}» does not appear, but look at this related text:'
@@ -126,6 +135,15 @@ situations:
   - I checked everything and there is nothing about "{entity}"! Try another question.
   - '"{entity}" isn''t in the documents, but I''m still here to help!'
   - How curious! "{entity}" isn't in the documents.
+  needs_clarification:
+  - Happy to search! What topic is your question about?
+  - Almost there! Just tell me which process this is.
+  - The documents have several options! Which one interests you?
+  - Tell me a bit more and I'll find it right away!
+  - Good question! Which document do you mean?
+  - Let's find it! I just need to know the topic.
+  - I can help with that! What is it about exactly?
+  - Give me one more clue and I'll look for the answer!
   alternatives_intro:
   - 'But I have something similar! Take a look at these options:'
   - 'No need to leave empty-handed! This is close:'

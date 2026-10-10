@@ -1,8 +1,8 @@
 """Codificador denso (embeddings) sobre ONNX.
 
-Aplica los prefijos que el modelo exige (e5: ``query: `` y ``passage: ``),
-promedia los estados ocultos con la máscara de atención y normaliza a norma
-1 (el pooling que usa e5).
+Aplica los prefijos y el pooling del catálogo: media enmascarada, CLS,
+último token o salida ya agregada. Valida dimensión y valores finitos y
+normaliza a norma 1 antes de entregar los vectores al índice.
 """
 from __future__ import annotations
 
@@ -26,11 +26,30 @@ class CodificadorDenso(ModeloOnnx):
         partes = []
         for i in range(0, len(textos), self.lote):
             cod = self.tokenizar(textos[i:i + self.lote])
-            ocultos = self.ejecutar(cod)[0]  # (lote, tokens, dimensión)
-            mascara = np.array([c.attention_mask for c in cod], dtype=np.float32)[..., None]
-            promedio = (ocultos * mascara).sum(axis=1) / np.clip(mascara.sum(axis=1), 1e-9, None)
-            norma = np.linalg.norm(promedio, axis=1, keepdims=True)
-            partes.append(promedio / np.clip(norma, 1e-12, None))
+            salidas = self.ejecutar(cod)
+            indice = 0
+            if self.spec.salida:
+                nombres = [s.name for s in self.sesion.get_outputs()]
+                indice = nombres.index(self.spec.salida)
+            ocultos = np.asarray(salidas[indice], dtype=np.float32)
+            mascara = np.array([c.attention_mask for c in cod], dtype=np.float32)
+            if self.spec.pooling == "sentence":
+                vector = ocultos
+            elif self.spec.pooling == "cls":
+                vector = ocultos[:, 0, :]
+            elif self.spec.pooling == "last_token":
+                ultimo = np.where(mascara > 0, np.arange(mascara.shape[1]), -1).max(axis=1)
+                if np.any(ultimo < 0):
+                    raise ValueError("Cannot pool an empty token sequence")
+                vector = ocultos[np.arange(len(cod)), ultimo]
+            else:
+                vector = (ocultos * mascara[..., None]).sum(axis=1) / np.clip(mascara.sum(axis=1)[:, None], 1e-9, None)
+            if vector.shape != (len(cod), self.dimension) or not np.all(np.isfinite(vector)):
+                raise ValueError(f"Invalid embedding output: {vector.shape}, expected {(len(cod), self.dimension)}")
+            norma = np.linalg.norm(vector, axis=1, keepdims=True)
+            if np.any(norma <= 1e-12):
+                raise ValueError("Embedding output has zero norm")
+            partes.append(vector / norma)
         return np.vstack(partes).astype(np.float32)
 
     def codificar_consultas(self, textos: Sequence[str]):

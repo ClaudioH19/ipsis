@@ -95,6 +95,15 @@ situations:
   - 'A direct answer is not available. Please see the closest content:'
   - 'No explicit answer is recorded. On this subject, the documents indicate:'
   - 'In the absence of a direct answer, the nearest text is shown below:'
+  related_check:
+  - "Does this passage correspond to what you were seeking? Otherwise, please rephrase your query."
+  - "If the information shown does not answer your query, you may state it in other terms."
+  - "Does this text address your question? If not, please indicate which aspect you require."
+  - "Please verify whether the passage answers your query; if it does not, I can perform a new search."
+  - "If you are seeking a different detail, kindly specify it so the search can continue."
+  - "Is this the information you needed? With more details I can refine the result."
+  - "Should the passage not be relevant, please rephrase your question and I will search again."
+  - "Does this content match your request? If not, please indicate what is missing."
   missing_focus:
   - 'No specific information on «{term}» was found. The closest content is:'
   - 'The documents do not specifically address «{term}». The closest content is:'
@@ -126,6 +135,15 @@ situations:
   - The available documents do not mention "{entity}".
   - '"{entity}" was not found in the documents; it may fall outside their scope.'
   - I have no information on "{entity}" in the documents.
+  needs_clarification:
+  - Could you indicate which topic or document your query refers to?
+  - Your query allows more than one interpretation. Please specify the topic.
+  - To answer accurately, I need to know which procedure you are referring to.
+  - Several documents could apply. Which one is of interest to you?
+  - Kindly provide some more context so the correct information can be located.
+  - The question does not state its topic. Could you rephrase it in more detail?
+  - To avoid an incorrect answer, please specify the matter in question.
+  - Would you be so kind as to indicate which process your question concerns?
   alternatives_intro:
   - 'Please find below the closest options contained in the documents:'
   - 'The following content is the most similar to your enquiry:'

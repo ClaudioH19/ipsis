@@ -8,7 +8,8 @@ Solo existe si ``IPSIS_ADMIN_TOKEN`` está definido (≥ 32 caracteres). Reglas:
   declarado (``IPSIS_TRUSTED_PROXY``);
 - lista opcional de IPs (``IPSIS_ADMIN_IPS``);
 - tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos;
-- cuerpo ≤ 256 KiB, limitador de peticiones y sin CORS (lo excluye ``api``);
+- cuerpo ≤ 256 KiB (un documento subido, ≤ 20 MiB), limitador de peticiones y sin
+  CORS (lo excluye ``api``);
 - cada cambio queda en ``.ipsis/logs/admin.jsonl`` (sin el token ni los valores).
 
 Las rutas y los cuerpos usan los nombres de los archivos (``personality.yaml``,
@@ -74,8 +75,11 @@ def transporte_permitido(modo: ModoServicio, request: Request) -> str | None:
 
 
 def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], None] | None = None,
-                       reloj: Callable[[], float] = time.monotonic) -> APIRouter:
-    """Router de ``/admin``. ``al_cambiar`` se llama tras cada escritura (recarga en caliente)."""
+                       reloj: Callable[[], float] = time.monotonic, servicio=None,
+                       recargar: Callable[[bool], bool] | None = None) -> APIRouter:
+    """Router de ``/admin``. ``al_cambiar`` se llama tras cada escritura (recarga en caliente).
+    Con ``servicio`` (el estado de la aplicación) y ``recargar`` (recarga del motor en segundo
+    plano, ``True`` si arrancó) existen también estado, umbrales, documentos y reindexado."""
     from ipsis.aplicacion.avatar import AvatarInvalido
     from ipsis.aplicacion.personalidad import (
         PersonalidadInvalida,
@@ -114,10 +118,14 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         if not limitador.permitir(f"admin:{ip}"):
             raise HTTPException(status_code=429, detail="rate limit exceeded",
                                 headers={"Retry-After": "3"})
-        if int(request.headers.get("content-length") or 0) > LIMITE_CUERPO:
-            raise HTTPException(status_code=413, detail="body larger than 256 KiB")
-        if len(await request.body()) > LIMITE_CUERPO:
-            raise HTTPException(status_code=413, detail="body larger than 256 KiB")
+        from ipsis.aplicacion.panel import LIMITE_SUBIDA
+
+        subida = request.method == "POST" and request.url.path == "/admin/documents"
+        limite, texto = (LIMITE_SUBIDA, "20 MiB") if subida else (LIMITE_CUERPO, "256 KiB")
+        if int(request.headers.get("content-length") or 0) > limite:
+            raise HTTPException(status_code=413, detail=f"body larger than {texto}")
+        if len(await request.body()) > limite:
+            raise HTTPException(status_code=413, detail=f"body larger than {texto}")
         return ip
 
     router = APIRouter(prefix="/admin", dependencies=[Depends(verificar)])
@@ -237,7 +245,60 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
         _cambio(request, "preset", [str(cuerpo.get("name", ""))])
         return a_externo(tema, "estilos")
 
+    if servicio is not None and recargar is not None:
+        _rutas_de_operacion(router, servicio, recargar, _cambio, _invalido)
     return router
+
+
+def _rutas_de_operacion(router: APIRouter, servicio, recargar, cambio, invalido) -> None:
+    """Estado, umbrales, documentos y reindexado (pestañas Estado y Documentos del panel)."""
+    from ipsis.aplicacion import panel
+
+    def efectivos() -> dict | None:
+        politica = getattr(servicio.motor, "politica_abstencion", None)
+        return dict(getattr(politica, "umbrales", None) or {}) or None
+
+    @router.get("/status")
+    def estado_proyecto():
+        return {**panel.estado(efectivos()), "ready": servicio.listo, "task": servicio.tarea}
+
+    @router.put("/thresholds")
+    def cambiar_umbrales(request: Request, cuerpo: dict = Body(...)):
+        cambios = cuerpo.get("thresholds")
+        if not isinstance(cambios, dict) or not cambios:
+            raise HTTPException(status_code=422, detail={"errors": ["expected {thresholds: {key: value|null}}"]})
+        try:
+            filas = panel.cambiar_umbrales(cambios)
+        except ValueError as e:
+            raise invalido(e) from e
+        cambio(request, "thresholds", list(cambios))
+        recargar(False)  # la política se arma al construir el motor
+        return {"thresholds": filas, "task": servicio.tarea}
+
+    @router.get("/documents")
+    def listar_documentos():
+        return panel.documentos()
+
+    @router.post("/documents")
+    async def subir_documento(request: Request, name: str):
+        try:
+            resultado = panel.cargar_subido(name, await request.body())
+        except ValueError as e:
+            raise invalido(e) from e
+        if not resultado["rejected"] and not resultado["duplicate"]:
+            cambio(request, "document", [resultado["file"]])
+        return resultado
+
+    @router.post("/reindex")
+    def reindexar(request: Request):
+        if not recargar(True):
+            raise HTTPException(status_code=409, detail="a reload is already running")
+        cambio(request, "reindex", [])
+        return {"task": servicio.tarea}
+
+    @router.get("/task")
+    def tarea():
+        return {"ready": servicio.listo, "task": servicio.tarea}
 
 
 # --- panel gráfico (/admin/panel): archivos estáticos; los datos van por la API con token ---------

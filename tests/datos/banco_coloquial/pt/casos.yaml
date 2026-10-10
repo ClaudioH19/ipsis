@@ -1,0 +1,142 @@
+# Banco coloquial (fonte). Perguntas informais com vocabulário do dia a dia sobre os fatos
+# do banco de validação, escritas em 2026-10-10 antes de curar as equivalências coloquiais
+# dos pacotes e sem uso para desenhá-las. A categoria sai do id.
+
+- id: pt-parafrasis-001
+  documento: politica_equipamentos.md
+  capacidad: lista
+  pregunta: o que me dao pra trabalhar quando eu chego
+  respuesta: um notebook e um mouse sem fio
+- id: pt-parafrasis-002
+  documento: politica_equipamentos.md
+  capacidad: cantidad
+  pregunta: quantas letras a senha do pc tem que ter
+  respuesta: pelo menos 10 caracteres
+- id: pt-parafrasis-003
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: em quantos minutos a tela trava se eu sair de perto
+  respuesta: depois de 5 minutos de inatividade
+- id: pt-parafrasis-004
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: perdi o notebook, quanto tempo tenho pra avisar
+  respuesta: em até 24 horas
+- id: pt-parafrasis-005
+  documento: politica_equipamentos.md
+  capacidad: procedimiento
+  pregunta: roubaram meu notebook, que papel eu anexo
+  respuesta: o boletim de ocorrência
+- id: pt-parafrasis-006
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: quando eu sair da firma pra quem devolvo o notebook
+  respuesta: ao Responsável pelo Inventário
+- id: pt-parafrasis-007
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: que horas da pra almocar no refeitorio
+  respuesta: entre as 12:30 e as 15:00 horas
+- id: pt-parafrasis-008
+  documento: regulamento_refeitorio.md
+  capacidad: cantidad
+  pregunta: quanto sai o almoco
+  respuesta: 3.500 pesos
+- id: pt-parafrasis-009
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: quando sai o cardapio da semana
+  respuesta: toda sexta-feira na intranet
+- id: pt-parafrasis-010
+  documento: regulamento_refeitorio.md
+  capacidad: procedimiento
+  pregunta: posso pagar o almoco em dinheiro vivo?
+  respuesta: com o cartão institucional ou em dinheiro
+- id: pt-parafrasis-011
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: onde coloco credito no cartao
+  respuesta: no caixa do refeitório
+- id: pt-parafrasis-012
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: onde reclamo se a comida do refeitorio ta ruim
+  respuesta: no livro de sugestões
+- id: pt-parafrasis-013
+  documento: manual_projetor.md
+  capacidad: procedimiento
+  pregunta: com que cabo ligo o projetor no pc
+  respuesta: com um cabo HDMI
+- id: pt-parafrasis-014
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: quanto aguenta a lampada do projetor
+  respuesta: aproximadamente 4.000 horas
+- id: pt-parafrasis-015
+  documento: manual_projetor.md
+  capacidad: cantidad
+  pregunta: que pilha vai no controle do projetor
+  respuesta: duas pilhas AAA
+- id: pt-parafrasis-016
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: quem tem que liberar minha inscricao num curso
+  respuesta: a autorização da chefia imediata
+- id: pt-parafrasis-017
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: quanto eu tenho que ir nas aulas pra passar no curso
+  respuesta: uma frequência mínima de 75 %
+- id: pt-parafrasis-018
+  documento: regulamento_capacitacao.md
+  capacidad: duracion
+  pregunta: quando baixo o certificado do curso
+  respuesta: em até dez dias úteis após o término do curso
+- id: pt-parafrasis-019
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: quanto o seguro me devolve se eu for no medico
+  respuesta: 70 % das despesas médicas ambulatoriais
+- id: pt-parafrasis-020
+  documento: seguro_saude.md
+  capacidad: persona
+  pregunta: posso colocar minha esposa no seguro
+  respuesta: o cônjuge e os filhos menores de 24 anos
+- id: pt-parafrasis-021
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: o seguro paga oculos?
+  respuesta: tratamentos estéticos nem óculos
+- id: pt-parafrasis-022
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: ate que horas posso malhar na academia
+  respuesta: de segunda a sexta das 7:00 às 20:00 horas
+- id: pt-parafrasis-023
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: que papel pedem pra entrar na academia
+  respuesta: um atestado médico válido
+- id: pt-parafrasis-024
+  documento: regulamento_academia.md
+  capacidad: cantidad
+  pregunta: quantas pessoas cabem na ioga
+  respuesta: até 15 pessoas
+
+- id: pt-trampa-001
+  par: pt-parafrasis-008
+  pregunta: quanto sai o lanche da tarde no refeitorio
+- id: pt-trampa-002
+  par: pt-parafrasis-014
+  pregunta: quanto aguenta a bateria do controle do projetor
+- id: pt-trampa-003
+  par: pt-parafrasis-020
+  pregunta: posso colocar meus pais no seguro
+- id: pt-trampa-004
+  par: pt-parafrasis-022
+  pregunta: ate que horas posso nadar na piscina
+
+- id: pt-fuera-001
+  pregunta: qual a melhor pizzaria de sao paulo
+- id: pt-fuera-002
+  pregunta: como se joga truco

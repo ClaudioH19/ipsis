@@ -31,7 +31,8 @@ def _c(externa: str, hijos: dict | None = None, **kw) -> Clave:
 
 # --- vocabulario compartido ----------------------------------------------------------------------
 UMBRALES = {"oov_dominio": _c("oov_domain"), "oov_ok": _c("oov_ok"), "dominio": _c("domain"),
-            "relacionado": _c("related"), "foco": _c("focus"), "ok": _c("ok"), "cov": _c("cov")}
+            "relacionado": _c("related"), "foco": _c("focus"), "ok": _c("ok"), "cov": _c("cov"),
+            "ok_fuerte": _c("ok_strong"), "oov_ok_fuerte": _c("oov_ok_strong")}
 MODELOS = {"denso": _c("dense"), "reranker": _c("reranker"), "lector": _c("reader")}
 MODOS_RECUPERACION = {"vectorial": "dense", "hibrida": "hybrid", "dispersa": "sparse"}
 ETAPAS = {"conversacional": "conversational", "analisis": "analysis", "confianza": "confidence",
@@ -46,10 +47,11 @@ PERFIL = {
     "perfil": _c("profile"), "descripcion": _c("description"), "presupuesto_p95_ms": _c("p95_budget_ms"),
     "modelos": _c("models", MODELOS),
     "cascada": _c("cascade", {
-        "recuperar_n": _c("retrieve_n"), "rerank_k": _c("rerank_k"), "leer_m": _c("read_m"),
+        "recuperar_n": _c("retrieve_n"), "rerank_k": _c("rerank_k"),
+        "rerank_candidatos": _c("rerank_candidates"), "leer_m": _c("read_m"),
         "max_tokens_pasaje": _c("max_passage_tokens"), "stride": _c("stride"),
         "salida_temprana_sin_foco": _c("early_exit_without_focus"), "concordancia": _c("agreement_check"),
-        "max_caracteres_lectura": _c("max_reading_chars"),
+        "max_caracteres_lectura": _c("max_reading_chars"), "lectura_semantica": _c("semantic_reading"),
     }),
     "etapas": _c("stages", valores=ETAPAS),
     "lexico": _c("lexical", {"k1": _c("k1"), "b": _c("b"), "max_terminos_foco": _c("max_focus_terms")}),

@@ -74,7 +74,10 @@ def construir_motor(
 
     hash_lexico = huella_lexica(idioma)
     if not idioma.respaldo:
+        from ipsis.lenguaje.ortografia import raices_lexico
+
         indice_automatico(idioma.codigo.split("-")[0], idioma.stemmer)
+        raices_lexico(idioma.codigo.split("-")[0], idioma.stemmer)  # la primera errata no espera al léxico
     plantillas = cargar_plantillas(idioma, cfg_dominio)
     cfg_rec = config_recuperacion(cfg)
     cfg_red = config_redaccion(cfg)
@@ -185,6 +188,7 @@ class DiagnosticoConsulta:
     evidencias: list[dict[str, Any]]
     advertencias: list[str]
     salto_modelos: bool = False
+    nivel_confianza: str | None = None  # alta / media / baja (Motor.nivel_confianza)
     tono: str | None = None
     plantillas: list[str] = field(default_factory=list)  # <tono>.<situación>.<n>
     # Dónde se gana o se pierde cada fragmento: su lugar en el ranking denso, en
@@ -195,6 +199,7 @@ class DiagnosticoConsulta:
     # Comprensión de la pregunta: intención y relación, sinónimos, pregunta interpretada
     # (si heredó tema) y qué hizo el turno con la conversación (ADR 0005 y 0006).
     intencion: dict[str, Any] | None = None
+    ortografia: dict[str, str] = field(default_factory=dict)
     sinonimos: dict[str, list[str]] = field(default_factory=dict)
     pregunta_interpretada: str | None = None
     conversacion: dict[str, str] | None = None
@@ -239,6 +244,7 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         ausentes_del_corpus=list(lexicas.get("ausentes_del_corpus") or []),
         oracion_foco=d.get("oracion_foco"),
         tramo=contrato.get("respuesta_exacta"),
+        nivel_confianza=contrato.get("nivel_confianza"),
         evidencias=[{k: e.get(k) for k in ("doc_id", "chunk_id", "offset_inicio", "offset_fin", "texto")}
                     for e in d.get("evidencias") or []],
         advertencias=list(d.get("advertencias") or []),
@@ -248,6 +254,7 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         candidatos=candidatos,
         oraciones=oraciones,
         intencion=d.get("intencion"),
+        ortografia=dict(d.get("ortografia") or {}),
         sinonimos=dict(d.get("sinonimos") or {}),
         pregunta_interpretada=d.get("pregunta_interpretada"),
         conversacion=d.get("conversacion"),

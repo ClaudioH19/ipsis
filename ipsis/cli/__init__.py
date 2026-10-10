@@ -11,6 +11,7 @@ import argparse
 import sys
 
 from ipsis.cli.base import Comando, Grupo, registrar
+from ipsis.cli.comandos.chat import ComandoAyuda, ComandoChat
 from ipsis.cli.comandos.consulta import ComandoPreguntar, ComandoServir
 from ipsis.cli.comandos.corpus import ComandoCargar, ComandoIndexar
 from ipsis.cli.comandos.evaluacion import ComandoBenchmark, ComandoCalibrar, ComandoComparar, ComandoEvaluar
@@ -27,10 +28,10 @@ def registro_de_comandos() -> list[Comando | Grupo]:
     init, cargar, indexar = ComandoInit(), ComandoCargar(), ComandoIndexar()
     return [
         init, cargar, ComandoConfigurar(), grupo_perfil(), grupo_modelos(), grupo_personalidad(), indexar,
-        ComandoServir(init, cargar, indexar), ComandoPreguntar(),
+        ComandoServir(init, cargar, indexar), ComandoChat(), ComandoPreguntar(),
         ComandoDoctor(), ComandoAuditar(), ComandoSnapshotConfig(),
         ComandoEvaluar(), ComandoCalibrar(), ComandoComparar(), ComandoBenchmark(main),
-        grupo_golden(), grupo_widget(), grupo_desplegar(),
+        grupo_golden(), grupo_widget(), grupo_desplegar(), ComandoAyuda(),
     ]
 
 
@@ -67,6 +68,12 @@ def main(argv: list[str] | None = None) -> int:
     from ipsis.recursos.mensajes import t
 
     _asegurar_salida_no_crashea()
+    if not (sys.argv[1:] if argv is None else argv):
+        # «ipsis» solo: el menú agrupado por tarea, como la ayuda de Claude Code.
+        from ipsis.cli.menu import imprimir_menu
+
+        imprimir_menu()
+        return 0
     args = construir_parser().parse_args(argv)
     for cambio in migrar_proyecto_activo():
         print(t("cli.migration", change=cambio))

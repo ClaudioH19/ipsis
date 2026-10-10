@@ -11,6 +11,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from ipsis.evaluacion.banco import BancoEvaluacion, CasoEvaluacion
 from ipsis.nucleo.esquemas import ChunkRecord, EvidenceSpan
 
+CRITERIO_RESPUESTA = "respuesta_completa_v2"
+CRITERIO_LEGADO = "tramo_o_respuesta_v1"
+
 
 class SenalesObservadas(BaseModel):
     """Señales con que decidió la política (``diagnostico.senales_politica``).
@@ -73,6 +76,7 @@ class ResumenGrupo(BaseModel):
 
 class ReporteMetricas(BaseModel):
     schema_version: int = 1
+    criterio_respuesta: str = CRITERIO_LEGADO
     dataset_id: str
     dataset_version: str
     k: int
@@ -83,6 +87,7 @@ class ReporteMetricas(BaseModel):
     precision_abstencion: float
     exactitud_estado: float
     exactitud_literal: float
+    exactitud_tramo_qa: float | None = None
     exactitud_offsets: float
     tasa_respuestas_excesivas: float
     distribucion_estados: dict[str, int]
@@ -92,6 +97,7 @@ class ReporteMetricas(BaseModel):
     por_backend: dict[str, ResumenGrupo]
     por_categoria: dict[str, ResumenGrupo]
     guardia_falsos_ok: bool
+    guardia_respuestas: bool | None = None
     # Cobertura y riesgo por grupo, idioma y caso (P10.1). Opcional para leer
     # artefactos anteriores.
     cobertura: "ReporteCobertura | None" = None
@@ -174,11 +180,9 @@ def evaluar_observaciones(
     falsos_ok = sum(o.estado in ESTADOS_OK for _c, o in no_respondibles)
     abstenciones = [(c, o) for c, o in pares if o.estado in ESTADOS_ABSTENCION]
     abstenciones_correctas = sum(not c.respondible for c, _o in abstenciones)
-    literales = sum(
-        muestra_respuesta_literal(c, o)
-        and any(c.respuesta_literal in evidencia.texto for evidencia in o.evidencias)
-        for c, o in respondibles
-    )
+    literales = sum(o.estado in ESTADOS_OK and muestra_respuesta_literal(c, o) for c, o in respondibles)
+    tramos = [muestra_tramo_literal(c, o) for c, o in respondibles
+              if o.estado in ESTADOS_OK and o.respuesta_exacta is not None]
     evidencias = [e for _c, o in pares for e in o.evidencias]
     offsets_validos = sum(
         evidencia.doc_id in documentos
@@ -199,7 +203,10 @@ def evaluar_observaciones(
         grupos_categoria[caso.categoria.value].append((caso, observacion))
 
     tasa_falsos_ok = falsos_ok / len(no_respondibles) if no_respondibles else 0.0
+    cobertura = reporte_cobertura(pares)
     return ReporteMetricas(
+        schema_version=2,
+        criterio_respuesta=CRITERIO_RESPUESTA,
         dataset_id=banco.manifiesto.dataset_id,
         dataset_version=banco.manifiesto.dataset_version,
         k=k,
@@ -210,6 +217,7 @@ def evaluar_observaciones(
         precision_abstencion=(abstenciones_correctas / len(abstenciones) if abstenciones else 0.0),
         exactitud_estado=sum(c.estado_esperado == o.estado for c, o in pares) / len(pares),
         exactitud_literal=literales / len(respondibles) if respondibles else 0.0,
+        exactitud_tramo_qa=sum(tramos) / len(tramos) if tramos else None,
         exactitud_offsets=offsets_validos / len(evidencias) if evidencias else 1.0,
         tasa_respuestas_excesivas=excesivas / len(respuestas) if respuestas else 0.0,
         distribucion_estados=dict(sorted(Counter(o.estado for _c, o in pares).items())),
@@ -219,7 +227,8 @@ def evaluar_observaciones(
         por_backend={nombre: _resumen_grupo(grupo, k) for nombre, grupo in sorted(grupos_backend.items())},
         por_categoria={nombre: _resumen_grupo(grupo, k) for nombre, grupo in sorted(grupos_categoria.items())},
         guardia_falsos_ok=tasa_falsos_ok == 0.0,
-        cobertura=reporte_cobertura(pares),
+        guardia_respuestas=cobertura.riesgo_aceptadas.x == 0,
+        cobertura=cobertura,
     )
 
 
@@ -310,9 +319,27 @@ def es_no_respondible(caso: CasoEvaluacion) -> bool:
 
 
 def muestra_respuesta_literal(caso: CasoEvaluacion, observacion: ObservacionEvaluacion) -> bool:
-    """El tramo seleccionado contiene el literal; una cita amplia no basta."""
-    texto = observacion.respuesta_exacta if observacion.respuesta_exacta is not None else observacion.respuesta
-    return bool(caso.respuesta_literal) and caso.respuesta_literal in texto
+    """Mismo criterio en todos los perfiles: literal en la respuesta publicada
+    y en evidencia del documento/rango esperado. Una cita escondida no basta.
+
+    Es una comprobación literal del golden, no una prueba semántica general.
+    El resaltado QA se evalúa aparte mediante ``muestra_tramo_literal``.
+    """
+    return bool(caso.respuesta_literal) and caso.respuesta_literal in observacion.respuesta and any(
+        caso.respuesta_literal in evidencia.texto and any(
+            evidencia.doc_id == esperada.doc_id
+            and evidencia.offset_inicio < esperada.offset_fin
+            and evidencia.offset_fin > esperada.offset_inicio
+            for esperada in caso.evidencias
+        ) for evidencia in observacion.evidencias
+    )
+
+
+def muestra_tramo_literal(caso: CasoEvaluacion, observacion: ObservacionEvaluacion) -> bool | None:
+    """Cumplimiento del literal esperado en QA; None si no hay tramo QA."""
+    if observacion.respuesta_exacta is None:
+        return None
+    return bool(caso.respuesta_literal) and caso.respuesta_literal in observacion.respuesta_exacta
 
 
 class FilaCaso(BaseModel):
@@ -333,10 +360,12 @@ class FilaCaso(BaseModel):
     abstiene: bool
     falso_ok: bool
     directa_sin_literal: bool
+    tramo_qa_sin_literal: bool | None = None
     regla: str | None
     senales: SenalesObservadas | None
     respuesta_literal_esperada: str | None
     respuesta_exacta: str | None
+    respuesta_completa: str | None = None
     evidencia: str | None
 
 
@@ -352,8 +381,11 @@ def filas_de_casos(pares: list[tuple[CasoEvaluacion, ObservacionEvaluacion]]) ->
             abstiene=not directa and obs.estado not in {"relacionado", "conversacional"},
             falso_ok=directa and es_no_respondible(caso),
             directa_sin_literal=directa and caso.respondible and not muestra_respuesta_literal(caso, obs),
+            tramo_qa_sin_literal=(not muestra_tramo_literal(caso, obs)
+                                  if directa and caso.respondible and obs.respuesta_exacta is not None else None),
             regla=obs.regla, senales=obs.senales, respuesta_literal_esperada=caso.respuesta_literal,
             respuesta_exacta=obs.respuesta_exacta,
+            respuesta_completa=obs.respuesta,
             evidencia=obs.evidencias[0].texto if obs.evidencias else None,
         ))
     return filas
@@ -371,6 +403,11 @@ class ResumenCobertura(BaseModel):
     abstenciones: int
     falsos_ok: int
     directas_sin_literal: int
+    directas_con_literal: int | None = None
+    cobertura_literal: float | None = None
+    tramos_qa_evaluados: int | None = None
+    tramos_qa_sin_literal: int | None = None
+    exactitud_tramo_qa: float | None = None
     # directas / respondibles
     cobertura_directa: float | None
     # respondibles en «relacionado» (con evidencia, sin respuesta directa) / respondibles
@@ -391,11 +428,19 @@ def resumir_cobertura(filas: list[FilaCaso]) -> ResumenCobertura:
     directas_resp = sum(f.directa for f in respondibles)
     relacionadas_resp = sum(f.relacionado for f in respondibles)
     falsos = sum(f.falso_ok for f in filas)
+    sin_literal = sum(f.directa_sin_literal for f in filas)
+    con_literal = directas_resp - sin_literal
+    tramos = [f for f in filas if f.tramo_qa_sin_literal is not None]
+    errores_tramo = sum(f.tramo_qa_sin_literal for f in tramos)
     return ResumenCobertura(
         n=len(filas), respondibles=len(respondibles), no_respondibles=len(no_respondibles),
         directas=sum(f.directa for f in filas), relacionadas=sum(f.relacionado for f in filas),
         abstenciones=sum(f.abstiene for f in filas), falsos_ok=falsos,
-        directas_sin_literal=sum(f.directa_sin_literal for f in filas),
+        directas_sin_literal=sin_literal,
+        directas_con_literal=con_literal,
+        cobertura_literal=_tasa(con_literal, len(respondibles)),
+        tramos_qa_evaluados=len(tramos), tramos_qa_sin_literal=errores_tramo,
+        exactitud_tramo_qa=_tasa(len(tramos) - errores_tramo, len(tramos)),
         cobertura_directa=_tasa(directas_resp, len(respondibles)),
         cobertura_relacionada=_tasa(relacionadas_resp, len(respondibles)),
         recall_sin_respuesta=_tasa(len(no_respondibles) - falsos, len(no_respondibles)),
@@ -412,6 +457,7 @@ class RiesgoAceptadas(BaseModel):
     """
 
     n: int
+    criterio_respuesta: str = CRITERIO_LEGADO
     x: int
     falsos_ok: int
     directas_sin_literal: int
@@ -426,6 +472,7 @@ def riesgo_aceptadas(filas: list[FilaCaso], confianza: float = 0.95) -> RiesgoAc
     sin_literal = sum(f.directa_sin_literal for f in aceptadas)
     n, x = len(aceptadas), falsos + sin_literal
     return RiesgoAceptadas(
+        criterio_respuesta=CRITERIO_RESPUESTA,
         n=n, x=x, falsos_ok=falsos, directas_sin_literal=sin_literal, observado=_tasa(x, n),
         confianza=confianza, cota_superior=cota_superior_clopper_pearson(x, n, confianza) if n else None,
     )
@@ -435,6 +482,7 @@ class ReporteCobertura(BaseModel):
     """Cobertura y riesgo global, por grupo y por idioma, más la vista por caso."""
 
     total: ResumenCobertura
+    criterio_respuesta: str = CRITERIO_LEGADO
     por_grupo: dict[str, ResumenCobertura]
     por_idioma: dict[str, ResumenCobertura]
     por_idioma_y_grupo: dict[str, dict[str, ResumenCobertura]]
@@ -452,6 +500,7 @@ def reporte_cobertura(
                  for g in GRUPOS if any(f.grupo == g for f in filas)}
     idiomas = sorted({f.idioma for f in filas if f.idioma})
     return ReporteCobertura(
+        criterio_respuesta=CRITERIO_RESPUESTA,
         total=resumir_cobertura(filas),
         por_grupo=por_grupo,
         por_idioma={i: resumir_cobertura([f for f in filas if f.idioma == i]) for i in idiomas},
@@ -473,6 +522,6 @@ __all__ = [
     "ArtefactoEvaluacion", "FilaCaso", "GRUPOS", "ObservacionEvaluacion", "ReporteCobertura",
     "ReporteMetricas", "ResumenCobertura", "ResumenGrupo", "RiesgoAceptadas", "SenalesObservadas",
     "cota_superior_clopper_pearson", "es_no_respondible", "evaluar_observaciones",
-    "filas_de_casos", "grupo_de", "muestra_respuesta_literal", "n_minimo", "reporte_cobertura",
+    "filas_de_casos", "grupo_de", "muestra_respuesta_literal", "muestra_tramo_literal", "n_minimo", "reporte_cobertura",
     "resumir_cobertura", "riesgo_aceptadas",
 ]

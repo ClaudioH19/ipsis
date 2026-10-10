@@ -1,0 +1,601 @@
+# Banco de garantías (fuente). Mismas reglas que el banco universal: la categoría sale
+# del id y construir.py calcula evidencias y offsets. Seis documentos nuevos con unos
+# 12 hechos cada uno; los nueve del banco de consultas quedan como distractores.
+# Sirve para estrechar la cota de riesgo de las respuestas directas: no se usa para
+# diseñar reglas ni elegir umbrales.
+
+# --- estacionamiento -----------------------------------------------------------
+- id: es-exacta-001
+  documento: reglamento_estacionamiento.md
+  capacidad: fecha
+  pregunta: ¿En qué horario funciona el estacionamiento de lunes a viernes?
+  respuesta: entre las 7:00 y las 21:00 horas
+- id: es-parafrasis-001
+  documento: reglamento_estacionamiento.md
+  capacidad: fecha
+  pregunta: hasta q hora puedo dejar el auto en el estacionamiento un martes
+  respuesta: entre las 7:00 y las 21:00 horas
+- id: es-trampa-001
+  par: es-parafrasis-001
+  pregunta: ¿Hasta qué hora funciona el estacionamiento en feriados?
+- id: es-exacta-002
+  documento: reglamento_estacionamiento.md
+  capacidad: fecha
+  pregunta: ¿En qué horario abre el estacionamiento los sábados?
+  respuesta: Los sábados abre de 8:00 a 14:00 horas
+- id: es-exacta-003
+  documento: reglamento_estacionamiento.md
+  capacidad: condicion
+  pregunta: ¿El estacionamiento abre los domingos?
+  respuesta: los domingos permanece cerrado
+- id: es-parafrasis-002
+  documento: reglamento_estacionamiento.md
+  capacidad: persona
+  pregunta: ¿Quién emite el permiso para estacionar?
+  respuesta: Unidad de Servicios Generales
+- id: es-parafrasis-003
+  documento: reglamento_estacionamiento.md
+  capacidad: procedimiento
+  pregunta: ¿Qué documentos necesito para pedir el permiso de estacionamiento?
+  respuesta: el formulario de acceso vehicular y la copia del padrón del vehículo
+- id: es-exacta-004
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas patentes puede registrar cada funcionario?
+  respuesta: como máximo dos patentes
+- id: es-parafrasis-004
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: puedo inscribir 3 autos en el estacionamiento?
+  respuesta: como máximo dos patentes
+- id: es-exacta-005
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: ¿Cuánto cuesta el permiso anual de estacionamiento para funcionarios?
+  respuesta: 60.000 pesos
+- id: es-trampa-002
+  par: es-exacta-005
+  pregunta: ¿Cuánto cuesta el permiso mensual de estacionamiento para funcionarios?
+- id: es-exacta-006
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: ¿Cuánto pagan las visitas por hora de estacionamiento?
+  respuesta: 1.500 pesos por hora
+- id: es-parafrasis-005
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: cuanto le cobran a una visita por dejar el auto una hora
+  respuesta: 1.500 pesos por hora
+- id: es-exacta-007
+  documento: reglamento_estacionamiento.md
+  capacidad: cantidad
+  pregunta: ¿Cuál es el cobro máximo diario para las visitas en el estacionamiento?
+  respuesta: un máximo de 9.000 pesos por día
+- id: es-parafrasis-006
+  documento: reglamento_estacionamiento.md
+  capacidad: ubicacion
+  pregunta: ¿Dónde están los estacionamientos para personas con discapacidad?
+  respuesta: junto al ascensor del primer subterráneo
+- id: es-parafrasis-007
+  documento: reglamento_estacionamiento.md
+  capacidad: ubicacion
+  pregunta: donde cargo el auto electrico
+  respuesta: en los cuatro puntos de carga del segundo subterráneo
+- id: es-trampa-003
+  par: es-parafrasis-007
+  pregunta: ¿Dónde cargo la moto eléctrica?
+- id: es-exacta-008
+  documento: reglamento_estacionamiento.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si alguien estaciona sin permiso?
+  respuesta: recibe una amonestación escrita
+- id: es-exacta-009
+  documento: reglamento_estacionamiento.md
+  capacidad: condicion
+  pregunta: ¿Qué ocurre a la tercera amonestación?
+  respuesta: el permiso se suspende por tres meses
+- id: es-parafrasis-008
+  documento: reglamento_estacionamiento.md
+  capacidad: duracion
+  pregunta: si me llegan 3 amonestaciones cuanto tiempo me quitan el permiso
+  respuesta: el permiso se suspende por tres meses
+- id: es-parafrasis-009
+  documento: reglamento_estacionamiento.md
+  capacidad: persona
+  pregunta: ¿Ante quién se apela una amonestación del estacionamiento?
+  respuesta: ante el Jefe de Servicios Generales
+- id: es-exacta-010
+  documento: reglamento_estacionamiento.md
+  capacidad: duracion
+  pregunta: ¿Qué plazo hay para apelar una amonestación?
+  respuesta: dentro de diez días hábiles
+- id: es-trampa-004
+  par: es-exacta-010
+  pregunta: ¿Qué plazo hay para apelar una multa de tránsito?
+
+# --- impresora -----------------------------------------------------------------
+- id: es-exacta-011
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: ¿Qué espacio libre necesita la impresora Lumen P40 a cada lado?
+  respuesta: 10 centímetros libres a cada lado
+- id: es-parafrasis-010
+  documento: manual_impresora.md
+  capacidad: procedimiento
+  pregunta: ¿Cómo se conecta la impresora a la red?
+  respuesta: por cable o por Wi-Fi desde el panel de configuración
+- id: es-exacta-012
+  documento: manual_impresora.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas hojas admite la bandeja principal de la impresora?
+  respuesta: hasta 250 hojas
+- id: es-parafrasis-011
+  documento: manual_impresora.md
+  capacidad: cantidad
+  pregunta: cuantas hojas le caben a la impresora
+  respuesta: hasta 250 hojas
+- id: es-trampa-005
+  par: es-parafrasis-011
+  pregunta: ¿Cuántas hojas caben en la bandeja de salida de la impresora?
+- id: es-exacta-013
+  documento: manual_impresora.md
+  capacidad: cantidad
+  pregunta: ¿Qué gramaje de papel acepta la impresora Lumen P40?
+  respuesta: un gramaje entre 70 y 120 gramos
+- id: es-exacta-014
+  documento: manual_impresora.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas páginas rinde un cartucho de tóner?
+  respuesta: aproximadamente 3.000 páginas
+- id: es-parafrasis-012
+  documento: manual_impresora.md
+  capacidad: cantidad
+  pregunta: para cuantas paginas alcanza el toner
+  respuesta: aproximadamente 3.000 páginas
+- id: es-parafrasis-013
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: ¿Qué significa que parpadee la luz naranja de la impresora?
+  respuesta: queda menos del 10 % de tóner
+- id: es-trampa-006
+  par: es-parafrasis-013
+  pregunta: ¿Qué significa que parpadee la luz roja de la impresora?
+- id: es-exacta-015
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: ¿Qué indica el código E2 de la impresora?
+  respuesta: un atasco de papel en la bandeja trasera
+- id: es-parafrasis-014
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: me sale E2 en la impresora, que es
+  respuesta: un atasco de papel en la bandeja trasera
+- id: es-exacta-016
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: ¿Qué indica el código E5?
+  respuesta: la tapa frontal está abierta
+- id: es-exacta-017
+  documento: manual_impresora.md
+  capacidad: procedimiento
+  pregunta: ¿Qué hay que hacer si aparece el código E9?
+  respuesta: apagar la impresora y llamar al servicio técnico
+- id: es-trampa-007
+  par: es-exacta-017
+  pregunta: ¿Qué hay que hacer si aparece el código E7?
+- id: es-parafrasis-015
+  documento: manual_impresora.md
+  capacidad: duracion
+  pregunta: ¿Con qué frecuencia se limpia el rodillo de alimentación?
+  respuesta: cada tres meses
+- id: es-parafrasis-016
+  documento: manual_impresora.md
+  capacidad: procedimiento
+  pregunta: con que limpio el rodillo de la impresora
+  respuesta: con un paño seco
+- id: es-exacta-018
+  documento: manual_impresora.md
+  capacidad: duracion
+  pregunta: ¿Después de cuánto tiempo sin uso entra la impresora en ahorro de energía?
+  respuesta: después de 15 minutos sin uso
+- id: es-parafrasis-017
+  documento: manual_impresora.md
+  capacidad: duracion
+  pregunta: cuanto dura la garantia de la impresora
+  respuesta: una garantía de 18 meses
+- id: es-trampa-008
+  par: es-parafrasis-017
+  pregunta: ¿Cuánto dura la garantía del cartucho de tóner?
+- id: es-exacta-019
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: ¿Qué no cubre la garantía de la Lumen P40?
+  respuesta: el uso de cartuchos recargados
+- id: es-parafrasis-018
+  documento: manual_impresora.md
+  capacidad: condicion
+  pregunta: si uso un cartucho recargado pierdo la garantia?
+  respuesta: La garantía no cubre el uso de cartuchos recargados
+
+# --- vacaciones ----------------------------------------------------------------
+- id: es-exacta-020
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días de vacaciones tiene cada trabajador por año?
+  respuesta: 15 días hábiles de vacaciones por año
+- id: es-parafrasis-019
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: cuantos dias de vacaciones me tocan al año
+  respuesta: 15 días hábiles de vacaciones por año
+- id: es-exacta-021
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días adicionales reciben quienes tienen más de diez años de antigüedad?
+  respuesta: reciben tres días adicionales
+- id: es-exacta-022
+  documento: politica_vacaciones.md
+  capacidad: duracion
+  pregunta: ¿Con cuánta anticipación se solicitan las vacaciones?
+  respuesta: con al menos 20 días de anticipación
+- id: es-parafrasis-020
+  documento: politica_vacaciones.md
+  capacidad: duracion
+  pregunta: con cuanto tiempo antes tengo q pedir las vacaciones
+  respuesta: con al menos 20 días de anticipación
+- id: es-trampa-009
+  par: es-parafrasis-020
+  pregunta: ¿Con cuánta anticipación se solicita un permiso sin goce de sueldo?
+- id: es-parafrasis-021
+  documento: politica_vacaciones.md
+  capacidad: persona
+  pregunta: ¿Quién aprueba las vacaciones?
+  respuesta: La jefatura directa
+- id: es-exacta-023
+  documento: politica_vacaciones.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo responde la jefatura una solicitud de vacaciones?
+  respuesta: dentro de cinco días hábiles
+- id: es-parafrasis-022
+  documento: politica_vacaciones.md
+  capacidad: condicion
+  pregunta: que pasa si mi jefe no contesta la solicitud de vacaciones
+  respuesta: la solicitud se entiende aprobada
+- id: es-exacta-024
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos períodos de vacaciones se pueden acumular?
+  respuesta: como máximo dos períodos de vacaciones
+- id: es-parafrasis-023
+  documento: politica_vacaciones.md
+  capacidad: condicion
+  pregunta: que pasa con los dias de vacaciones que pasan el limite
+  respuesta: se pierden al cierre del año
+- id: es-exacta-025
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días de permiso se otorgan por matrimonio?
+  respuesta: cinco días hábiles de permiso pagado
+- id: es-parafrasis-024
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: me caso el proximo mes, cuantos dias libres me dan
+  respuesta: cinco días hábiles de permiso pagado
+- id: es-trampa-010
+  par: es-parafrasis-024
+  pregunta: ¿Cuántos días de permiso se otorgan por cambio de domicilio?
+- id: es-exacta-026
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días recibe el padre por el nacimiento de un hijo?
+  respuesta: el padre recibe cinco días hábiles
+- id: es-exacta-027
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos días se otorgan por fallecimiento de un familiar directo?
+  respuesta: se otorgan tres días hábiles
+- id: es-parafrasis-025
+  documento: politica_vacaciones.md
+  capacidad: cantidad
+  pregunta: si se muere un familiar directo cuantos dias tengo
+  respuesta: se otorgan tres días hábiles
+- id: es-exacta-028
+  documento: politica_vacaciones.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo se entrega la licencia médica a Recursos Humanos?
+  respuesta: dentro de dos días hábiles desde su emisión
+- id: es-parafrasis-026
+  documento: politica_vacaciones.md
+  capacidad: duracion
+  pregunta: cuantos dias tengo para entregar la licencia
+  respuesta: dentro de dos días hábiles desde su emisión
+- id: es-parafrasis-027
+  documento: politica_vacaciones.md
+  capacidad: persona
+  pregunta: ¿Quién tramita el subsidio de la licencia médica?
+  respuesta: Recursos Humanos tramita el subsidio
+
+# --- emergencias ---------------------------------------------------------------
+- id: es-exacta-029
+  documento: protocolo_emergencias.md
+  capacidad: procedimiento
+  pregunta: ¿Por dónde se evacúa al sonar la alarma continua?
+  respuesta: por la escalera más cercana
+- id: es-parafrasis-028
+  documento: protocolo_emergencias.md
+  capacidad: condicion
+  pregunta: se puede usar el ascensor si hay que evacuar?
+  respuesta: Los ascensores no se usan durante una evacuación
+- id: es-exacta-030
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: ¿Cuál es el punto de encuentro en una evacuación?
+  respuesta: la plaza frente al acceso principal
+- id: es-parafrasis-029
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: donde nos juntamos si evacuamos el edificio
+  respuesta: la plaza frente al acceso principal
+- id: es-trampa-011
+  par: es-parafrasis-029
+  pregunta: ¿Dónde nos juntamos si hay un corte de luz?
+- id: es-exacta-031
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: ¿Quién designa al líder de evacuación de cada piso?
+  respuesta: la Gerencia de Operaciones
+- id: es-parafrasis-030
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: ¿A quién reporta el líder de evacuación?
+  respuesta: reporta al Coordinador de Emergencias
+- id: es-exacta-032
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos simulacros de evacuación se hacen al año?
+  respuesta: dos simulacros de evacuación al año
+- id: es-parafrasis-031
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: en que meses son los simulacros
+  respuesta: uno en abril y otro en octubre
+- id: es-trampa-012
+  par: es-parafrasis-031
+  pregunta: ¿En qué meses son las capacitaciones de seguridad?
+- id: es-exacta-033
+  documento: protocolo_emergencias.md
+  capacidad: duracion
+  pregunta: ¿Cada cuánto se revisan los extintores?
+  respuesta: cada seis meses
+- id: es-parafrasis-032
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: ¿Dónde hay extintores?
+  respuesta: junto a cada salida de emergencia
+- id: es-exacta-034
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: ¿A qué anexo se llama ante un incendio?
+  respuesta: al anexo 2222
+- id: es-parafrasis-033
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: a que numero llamo si hay fuego
+  respuesta: al anexo 2222
+- id: es-trampa-013
+  par: es-parafrasis-033
+  pregunta: ¿A qué número llamo si hay una fuga de agua?
+- id: es-exacta-035
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: ¿En qué horario funciona la central de seguridad?
+  respuesta: funciona las 24 horas
+- id: es-exacta-036
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: ¿Dónde está el botiquín principal?
+  respuesta: en la recepción del primer piso
+- id: es-parafrasis-034
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: quien sabe primeros auxilios en el edificio
+  respuesta: El personal de recepción tiene capacitación en primeros auxilios
+
+# --- beca ----------------------------------------------------------------------
+- id: es-exacta-037
+  documento: bases_beca.md
+  capacidad: condicion
+  pregunta: ¿Quiénes pueden postular a la beca de perfeccionamiento?
+  respuesta: los funcionarios con contrato indefinido y al menos dos años de antigüedad
+- id: es-parafrasis-035
+  documento: bases_beca.md
+  capacidad: condicion
+  pregunta: puedo postular a la beca si tengo contrato indefinido y llevo 3 años
+  respuesta: los funcionarios con contrato indefinido y al menos dos años de antigüedad
+- id: es-exacta-038
+  documento: bases_beca.md
+  capacidad: condicion
+  pregunta: ¿Quiénes no pueden postular a la beca?
+  respuesta: quienes recibieron la beca en los últimos tres años
+- id: es-exacta-039
+  documento: bases_beca.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se reciben las postulaciones a la beca?
+  respuesta: entre el 1 y el 30 de junio
+- id: es-parafrasis-036
+  documento: bases_beca.md
+  capacidad: fecha
+  pregunta: hasta cuando puedo postular a la beca
+  respuesta: entre el 1 y el 30 de junio
+- id: es-trampa-014
+  par: es-parafrasis-036
+  pregunta: ¿Hasta cuándo puedo postular a la beca de idiomas?
+- id: es-parafrasis-037
+  documento: bases_beca.md
+  capacidad: procedimiento
+  pregunta: ¿Qué documentos se adjuntan para postular a la beca?
+  respuesta: el certificado de matrícula y una carta de la jefatura
+- id: es-exacta-040
+  documento: bases_beca.md
+  capacidad: cantidad
+  pregunta: ¿Qué porcentaje del arancel financia la beca?
+  respuesta: hasta el 80 % del arancel del programa
+- id: es-exacta-041
+  documento: bases_beca.md
+  capacidad: cantidad
+  pregunta: ¿Cuál es el monto máximo de la beca por año?
+  respuesta: 2.000.000 pesos por año
+- id: es-parafrasis-038
+  documento: bases_beca.md
+  capacidad: cantidad
+  pregunta: cuanta plata da la beca como maximo
+  respuesta: 2.000.000 pesos por año
+- id: es-trampa-015
+  par: es-parafrasis-038
+  pregunta: ¿Cuánto da la beca para gastos de alojamiento?
+- id: es-parafrasis-039
+  documento: bases_beca.md
+  capacidad: persona
+  pregunta: ¿Quién evalúa las postulaciones a la beca?
+  respuesta: Un comité formado por tres directivos
+- id: es-exacta-042
+  documento: bases_beca.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se publican los resultados de la beca?
+  respuesta: el 31 de julio
+- id: es-parafrasis-040
+  documento: bases_beca.md
+  capacidad: duracion
+  pregunta: cuanto tiempo tengo que quedarme en la institucion despues de la beca
+  respuesta: al menos dos años después de terminar el programa
+- id: es-exacta-043
+  documento: bases_beca.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si el becario abandona el programa?
+  respuesta: debe devolver el monto recibido
+
+# --- salas ---------------------------------------------------------------------
+- id: es-exacta-044
+  documento: arriendo_salas.md
+  capacidad: cantidad
+  pregunta: ¿Cuál es la capacidad de la sala Andes?
+  respuesta: capacidad para 40 personas
+- id: es-parafrasis-041
+  documento: arriendo_salas.md
+  capacidad: cantidad
+  pregunta: cuanta gente cabe en la sala andes
+  respuesta: capacidad para 40 personas
+- id: es-exacta-045
+  documento: arriendo_salas.md
+  capacidad: condicion
+  pregunta: ¿Qué sala cuenta con videoconferencia?
+  respuesta: La sala Pacífico tiene capacidad para 12 personas y cuenta con videoconferencia
+- id: es-exacta-046
+  documento: arriendo_salas.md
+  capacidad: duracion
+  pregunta: ¿Con cuánta anticipación se reservan las salas?
+  respuesta: con al menos 48 horas de anticipación
+- id: es-parafrasis-042
+  documento: arriendo_salas.md
+  capacidad: duracion
+  pregunta: con cuanto tiempo antes reservo una sala
+  respuesta: con al menos 48 horas de anticipación
+- id: es-exacta-047
+  documento: arriendo_salas.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura como máximo una reserva de sala?
+  respuesta: como máximo cuatro horas
+- id: es-exacta-048
+  documento: arriendo_salas.md
+  capacidad: cantidad
+  pregunta: ¿Cuánto cuesta la hora de la sala Andes?
+  respuesta: 25.000 pesos por hora
+- id: es-parafrasis-043
+  documento: arriendo_salas.md
+  capacidad: cantidad
+  pregunta: cuanto sale arrendar la sala pacifico una hora
+  respuesta: 10.000 pesos por hora
+- id: es-trampa-016
+  par: es-parafrasis-043
+  pregunta: ¿Cuánto sale arrendar el auditorio por una hora?
+- id: es-parafrasis-044
+  documento: arriendo_salas.md
+  capacidad: condicion
+  pregunta: las unidades internas pagan por usar las salas?
+  respuesta: Las unidades internas no pagan arriendo
+- id: es-exacta-049
+  documento: arriendo_salas.md
+  capacidad: condicion
+  pregunta: ¿Qué pasa si se cancela una reserva con menos de 24 horas de anticipación?
+  respuesta: se cobra completa
+- id: es-parafrasis-045
+  documento: arriendo_salas.md
+  capacidad: condicion
+  pregunta: si cancelo la sala el mismo dia me cobran?
+  respuesta: Una reserva cancelada con menos de 24 horas de anticipación se cobra completa
+- id: es-trampa-017
+  par: es-parafrasis-045
+  pregunta: ¿Me devuelven el dinero si cancelo la sala con una semana de anticipación?
+- id: es-exacta-050
+  documento: arriendo_salas.md
+  capacidad: procedimiento
+  pregunta: ¿Dónde se hacen las cancelaciones de las reservas?
+  respuesta: en el mismo sistema de reservas
+- id: es-exacta-051
+  documento: arriendo_salas.md
+  capacidad: lista
+  pregunta: ¿Qué equipamiento tienen las salas?
+  respuesta: proyector y pizarra
+- id: es-parafrasis-046
+  documento: arriendo_salas.md
+  capacidad: duracion
+  pregunta: con cuantos dias de anticipacion pido el cafe para la reunion
+  respuesta: con tres días de anticipación
+- id: es-trampa-018
+  par: es-parafrasis-046
+  pregunta: ¿Con cuántos días de anticipación pido el almuerzo para la reunión?
+- id: es-parafrasis-047
+  documento: arriendo_salas.md
+  capacidad: persona
+  pregunta: ¿A quién se le pide el servicio de café?
+  respuesta: a la Unidad de Eventos
+- id: es-trampa-019
+  par: es-parafrasis-047
+  pregunta: ¿A quién se le pide el servicio de traducción simultánea?
+- id: es-trampa-020
+  par: es-exacta-051
+  pregunta: ¿Las salas tienen equipos de sonido?
+
+# --- premisas falsas, fuera de dominio y ambiguas -----------------------------
+- id: es-premisa-001
+  pregunta: ¿Qué dice el artículo 9 del reglamento del estacionamiento?
+- id: es-premisa-002
+  pregunta: ¿Cuánto dura la garantía de 36 meses de la impresora?
+- id: es-premisa-003
+  pregunta: ¿Qué pasa con las vacaciones después de 30 días hábiles acumulados?
+- id: es-premisa-004
+  pregunta: ¿Qué hace el código E12 de la impresora?
+- id: es-premisa-005
+  pregunta: ¿Cuándo es el simulacro de diciembre?
+- id: es-premisa-006
+  pregunta: ¿Cuánto cuesta la sala Atacama por hora?
+- id: es-fuera-001
+  pregunta: ¿Cuál es la capital de Australia?
+- id: es-fuera-002
+  pregunta: ¿Cómo se prepara una paella?
+- id: es-fuera-003
+  pregunta: ¿Quién ganó la Copa América de 2015?
+- id: es-fuera-004
+  pregunta: ¿Cuál es la fórmula química del agua?
+- id: es-fuera-005
+  pregunta: recomiendame una pelicula para el fin de semana
+- id: es-fuera-006
+  pregunta: ¿Cuánto mide el monte Everest?
+- id: es-ambigua-001
+  pregunta: ¿Cuánto cuesta por hora?
+- id: es-ambigua-002
+  pregunta: ¿Quién lo aprueba?
+- id: es-ambigua-003
+  pregunta: ¿Cuántos días son?
+- id: es-ambigua-004
+  pregunta: ¿Y eso cuánto dura?

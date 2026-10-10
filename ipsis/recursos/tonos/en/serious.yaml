@@ -95,6 +95,15 @@ situations:
   - 'Without a direct answer. Nearest text:'
   - 'A direct answer was not found. Related:'
   - 'The direct answer is not recorded. Close content:'
+  related_check:
+  - "If the passage does not answer the question, rephrase it."
+  - "Verify that the text matches the query."
+  - "If another detail is needed, state it more precisely."
+  - "If this is not the required information, ask the question another way."
+  - "The search can be repeated with other terms."
+  - "If the content is not relevant, specify the query."
+  - "Confirm whether the passage answers the query."
+  - "For a different result, make the question more precise."
   missing_focus:
   - 'No information on «{term}». Closest content:'
   - 'No data on «{term}». Related:'
@@ -126,6 +135,15 @@ situations:
   - '"{entity}" is not listed.'
   - No references to "{entity}".
   - '"{entity}" was not found.'
+  needs_clarification:
+  - The question does not state a topic.
+  - The question has several possible readings. The topic is required.
+  - Without the topic, the answer cannot be searched.
+  - Several documents could apply. Indicate which one.
+  - More context is needed to answer.
+  - The query is incomplete. Specify the process or document.
+  - It is not possible to determine what the question refers to.
+  - State the topic to continue.
   alternatives_intro:
   - 'Similar options recorded in the documents:'
   - 'This is the closest content in the documents:'

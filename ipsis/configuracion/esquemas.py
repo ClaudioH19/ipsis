@@ -42,7 +42,7 @@ class AsistenteConfig(ConfiguracionEstricta):
     descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
     idioma: str = Field(default="es", min_length=2)
     # «bm25» es de diagnóstico (ipsis benchmark): ipsis init no lo ofrece.
-    perfil: Literal["light", "medium", "heavy", "bm25"] = "light"
+    perfil: Literal["light", "medium", "bm25"] = "light"
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
     registro: RegistroConfig = Field(default_factory=RegistroConfig)
@@ -212,6 +212,11 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             version = 5
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(t("core.no_migration", name=nombre, version=version))
+    if nombre == "asistente" and salida.get("perfil") == "heavy":
+        # El perfil heavy se retiró: no superó a medium en ningún banco (ADR 0003).
+        # Un proyecto que lo tenía se carga como medium; si su índice era de otro
+        # modelo denso, ``ipsis profile show`` pide reindexar.
+        salida["perfil"] = "medium"
     return salida
 
 

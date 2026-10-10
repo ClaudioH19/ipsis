@@ -125,7 +125,9 @@ Variables del modo y del panel `/admin`:
 | `IPSIS_LANG` | `es` para servir el `/admin/panel` en español |
 
 Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
-queda en `.ipsis/logs/admin.jsonl`: fecha, IP, acción y claves, nunca el
+queda en `.ipsis/logs/admin.jsonl` (el panel también cambia umbrales, sube documentos de hasta 20 MiB
+y reindexa: trata el token como una credencial de despliegue; mientras se recarga el motor `/ask`
+responde 503, así que reindexa fuera de horas de uso): fecha, IP, acción y claves, nunca el
 token. `ipsis doctor` revisa el modo: avisa en desarrollo y da error con un
 token corto.
 
@@ -141,18 +143,25 @@ Para rotar el token, cámbialo y reinicia el servicio.
 
 ## Antes de lanzar con un cliente
 
+Para cambios posteriores de perfil, lectura, umbrales, CORS o personalidad,
+consulta [configuración para despliegue](configuracion.md#cambiar-configuración-antes-o-después-de-desplegar).
+El `DEPLOY.md` generado incluye comandos de administración del contenedor,
+ejemplos de `profile_overrides` y el flujo de evaluación antes de aplicar cambios.
+
 Lista de verificación con el corpus real del cliente. La decide quien
 publica; ningún comando la marca solo.
 
 - [ ] **Golden real:** escrito y revisado por una persona, con al menos un
   30% de preguntas sin respuesta o con premisa falsa, y pares «mismo tema,
   dato ausente» (ver [golden.md](golden.md)).
-- [ ] **Calibración:** `ipsis calibrate --alpha 0.05` da `CALIBRADO` (en `test`,
-  la cota superior al 95% de falsos `ok` es ≤ 5%; con 0 errores exige al
+- [ ] **Calibración:** revisar por separado `dev` y `test`: `CALIBRADO` describe
+  la selección en `dev` y no basta si `test` falla. En `test`, la cota superior
+  al 95% del riesgo de respuestas directas incorrectas debe ser ≤ 5%; con 0 errores exige al
   menos 59 respuestas aceptadas en `test`). Si da `MUESTRA_INSUFICIENTE`, se
-  puede lanzar con los umbrales del perfil, sin afirmar el 5%.
+  puede lanzar con los umbrales del perfil, sin afirmar el 5%. Las calibraciones
+  v1 deben regenerarse: v2 mide respuesta completa y separa el tramo QA.
 - [ ] **Latencia:** `ipsis benchmark` cumple el presupuesto del perfil en la
-  máquina de producción (light ≤ 150 ms, medium ≤ 1 s y heavy ≤ 5 s de p95).
+  máquina de producción (light ≤ 150 ms y medium ≤ 1 s de p95).
 - [ ] **Pruebas en verde** sobre la versión que se despliega
   (`python -m pytest`).
 - [x] **Licencia:** AGPL-3.0-only.

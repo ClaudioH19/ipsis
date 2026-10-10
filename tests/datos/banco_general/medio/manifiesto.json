@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "dataset_id": "general_medio_es",
+  "dataset_version": "1.1.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "uso": "regresion",
+  "idioma": "es",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "rrhh.md",
+        "doc_id": "rrhh"
+      },
+      {
+        "ruta": "compras.pdf",
+        "doc_id": "compras"
+      },
+      {
+        "ruta": "tecnico.docx",
+        "doc_id": "tecnico"
+      },
+      {
+        "ruta": "logistica.txt",
+        "doc_id": "logistica"
+      }
+    ],
+    "sha256": "a2cd76243330fc4d7bb576573d7d35da7c4ea0acd9023e51dad9ba49c51d4bfd"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta",
+    "premisa_falsa",
+    "ambigua",
+    "conversacional"
+  ]
+}

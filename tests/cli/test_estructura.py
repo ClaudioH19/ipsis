@@ -16,7 +16,7 @@ COMANDOS_ACTUALES = {
     ("personality", "tone", "apply"), ("personality", "tone", "try"), ("personality", "avatar", "list"),
     ("personality", "avatar", "import"), ("personality", "avatar", "apply"), ("personality", "avatar", "events"),
     ("personality", "avatar", "assign"), ("personality", "avatar", "colors"),
-    ("serve",), ("ask",), ("doctor",), ("audit",),
+    ("serve",), ("chat",), ("ask",), ("help",), ("doctor",), ("audit",),
     ("snapshot-config",), ("evaluate",), ("calibrate",), ("compare",), ("benchmark",),
     ("golden", "template"), ("golden", "import"), ("golden", "validate"), ("golden", "export"),
     ("widget", "theme", "list"), ("widget", "theme", "apply"), ("widget", "theme", "preview"),

@@ -11,7 +11,7 @@ configuration file is described in [configuration.md](configuration.md).
 ## Workflow
 
 ```text
-ipsis init → ipsis models download → ipsis load → ipsis index → ipsis doctor → ipsis serve
+ipsis init → ipsis models download → ipsis load → ipsis index → ipsis doctor → ipsis chat / ipsis serve
                                          ↑                                │
                      new or changed documents                             ↓
                                                  ipsis ask / the widget on your site
@@ -32,12 +32,42 @@ Every answer has a status, and the widget renders each one differently:
 |---|---|
 | `ok` | It found the text that answers; it shows it literally, with the citation |
 | `related` | There is no direct answer; it shows the closest passage and says so |
-| `no_answer` | It is not in the documents |
+| `no_answer` | It is not in the documents. With `plan: clarification`, the question does not say what it is about ("Who approves it?" with no previous conversation) and the assistant asks for the topic |
 | `conversational` | A greeting, thanks, goodbye or "what can you do?" |
+
+Each answer also carries a confidence level (`confidence_level`): `high` for a
+direct answer read by the QA reader (medium), `medium` for a direct answer
+without a reader (light; the widget shows "Check the citation"), `low` for a
+related passage. The levels come from measured precision, not from a new
+threshold; see [informal paraphrases](../methodology/informal-paraphrases.md).
 
 The assistant never writes content: the text comes literally from your
 documents, and the citations (document, section and offsets) go underneath
 so anyone can check it.
+
+## The terminal: menu and interactive mode
+
+`ipsis` with no arguments prints every command grouped by task (Start,
+Documents, Ask, Customize, Measure and calibrate, Deploy and operate) with
+examples; `ipsis help <command>` prints the options of one command, the same
+as `ipsis <command> --help`.
+
+`ipsis chat` opens the interactive mode, in the style of Claude Code or
+Codex. What you type is a question; what starts with `/` is a command:
+
+| In `ipsis chat` | What it does |
+|---|---|
+| any text | Asks the engine of the project in this folder; follow-up questions keep the topic |
+| `/help` | Lists the commands of the interactive mode |
+| `/diagnostics on\|off` | Shows, for every answer, the stages, signals, the deciding rule and the exact span (what `ipsis ask --diagnostics` prints) |
+| `/reload` | Reloads the engine after changing configuration or documents |
+| `/<command> …` | Any ipsis command: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/calibrate --help` |
+| `/exit`, `/quit`, Ctrl+D | Leaves |
+
+The models load once, with the first question. Before running a command the
+engine is closed (the local index admits one client) and it reloads with the
+next question. Like `ipsis ask --diagnostics`, it needs `ipsis serve` stopped
+when the index is local.
 
 ## Command reference
 
@@ -45,7 +75,7 @@ so anyone can check it.
 
 | Command | What it does |
 |---|---|
-| `ipsis init [--profile light\|medium\|heavy] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Creates `config/` and `documents/`. The language defaults to `en` (or `es` with `IPSIS_LANG=es`). Without `--force` it never overwrites an existing project |
+| `ipsis init [--profile light\|medium] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Creates `config/` and `documents/`. The language defaults to `en` (or `es` with `IPSIS_LANG=es`). Without `--force` it never overwrites an existing project |
 | `ipsis configure key=value …` | Edits `assistant.yaml`: `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys` (lists separated by commas) and `query_log.enabled` (true or false) |
 | `ipsis profile show` | Active profile, models, p95 budget and whether the index and the calibration fit it |
 | `ipsis profile set <profile>` | Changes the profile. It tells you when to reindex; the previous calibration stops applying |
@@ -72,6 +102,7 @@ so anyone can check it.
 | Command | What it does |
 |---|---|
 | `ipsis serve [folder] [--host H] [--port P] [--reindex] [--mode production\|development]` | Starts the API and the widget. Given a folder of documents, it creates and prepares a private project in `.ipsis-project/`. `--mode`: see [deployment.md](deployment.md#run-modes-development-and-production); in development, without `IPSIS_ADMIN_TOKEN`, it prints a temporary token |
+| `ipsis chat [--diagnostics]` | Interactive mode: questions and `/commands` (see above) |
 | `ipsis ask "<question>" [--url URL] [--timeout S]` | Asks the running service |
 | `ipsis ask "<question>" --diagnostics` | Runs the engine locally, without the service, and shows each stage with its latency, the signals, focus terms, the deciding rule, the exact span, the tone and the templates used. With local Qdrant, stop `ipsis serve` first |
 

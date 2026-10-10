@@ -11,6 +11,9 @@ regla, las señales y si fue:
 - **errónea:** falso ok (directa en un caso sin respuesta) o directa sin el
   literal esperado.
 
+El criterio v2 mide la respuesta completa con evidencia esperada. QA se
+registra aparte; no se comparan automáticamente resultados v1 y v2.
+
 Para medir otro árbol de código (un worktree de un commit anterior, para
 comparar), ``IPSIS_CODIGO=<carpeta del worktree>``: se importa ``ipsis`` de
 ahí en vez del paquete instalado. ``--comparar`` imprime, por perfil e
@@ -74,11 +77,15 @@ def medir(idioma: str, perfil: str, banco: str = "banco_consultas") -> dict:
     casos = {
         f.caso_id: {"pregunta": f.pregunta, "estado": f.estado, "regla": f.regla, "directa": f.directa,
                     "falso_ok": f.falso_ok, "sin_literal": f.directa_sin_literal,
+                    "tramo_qa_sin_literal": f.tramo_qa_sin_literal,
                     "senales": f.senales if isinstance(f.senales, dict) else getattr(f.senales, "__dict__", None)}
         for f in artefacto.reporte.cobertura.casos
     }
     reporte = artefacto.reporte
     return {"casos": casos, "correctas": sum(map(correcta, casos.values())),
+            "criterio_respuesta": reporte.criterio_respuesta,
+            "tramos_qa_evaluados": reporte.cobertura.total.tramos_qa_evaluados,
+            "tramos_qa_sin_literal": reporte.cobertura.total.tramos_qa_sin_literal,
             "erroneas": sum(map(erronea, casos.values())),
             "media_ms": round(reporte.latencia_media_ms, 1), "p95_ms": reporte.latencia_p95_ms}
 
@@ -90,6 +97,8 @@ def comparar(antes: dict, despues: dict) -> list[str]:
             a = antes.get(perfil, {}).get(idioma)
             if a is None:
                 continue
+            if a.get("criterio_respuesta", "tramo_o_respuesta_v1") != d.get("criterio_respuesta", "tramo_o_respuesta_v1"):
+                raise ValueError("Los reportes usan distintos criterios; vuelve a medir ambas versiones.")
             lineas.append(f"{perfil} {idioma}: correctas {a['correctas']} → {d['correctas']}, "
                           f"erróneas {a['erroneas']} → {d['erroneas']}, media {a['media_ms']} → {d['media_ms']} ms")
             for caso_id, c in d["casos"].items():

@@ -80,14 +80,113 @@ never exaggerates.
 - At rest it glances to the sides and now and then rereads the page; it
   greets and says goodbye with a wink.
 - Colors: paper `#f5f1e8` and ink `#1e293b`; change them with
-  `ipsis personality avatar colors`. The widget adds the outline and the
-  tone of the fold and the lines (`--rw-folio-borde`, `--rw-folio-pliegue`).
+  `ipsis personality avatar colors`. The engine draws the logo silhouette,
+  beige outline, fold, and gray and blue lines. Themes can change these
+  details with `--rw-folio-borde`, `--rw-folio-pliegue`,
+  `--rw-folio-renglon` and `--rw-folio-resalte`.
 
-To review all its animations, from the repository root:
-`python -m http.server 8765` and open
-`http://127.0.0.1:8765/herramientas/avatar/muestra.html`.
+Folio includes **23 animations**: `idle`, `wave`, `attentive`, `listening`,
+`nod`, `thinking`, `thinking-long`, `happy`, `unsure`, `sorry`, `kind`,
+`goodbye`, `worried`, `sleepy`, `wake-up`, `spin`, `flip`, `bounce`, `sway`,
+`dance`, `float`, `paper-plane-out` and `paper-plane-in`.
+
+Assign these whole-page movements to any event through the panel or CLI:
+
+| Animation | Movement | Playback |
+|---|---|---|
+| `spin` | One complete 360° turn | Once |
+| `flip` | Turns around the vertical axis, showing the back | Once |
+| `bounce` | Two jumps with gentle squash and stretch | Once |
+| `sway` | Rocks from side to side | Loop |
+| `dance` | Sideways steps, small jumps and rocking | Loop |
+| `float` | Floats gently up and down | Loop |
+| `paper-plane-out` | Folds corners, body and wings, then flies away as a paper plane | Once |
+| `paper-plane-in` | Flies in, lands and unfolds into the page | Once |
+
+Their duration comes from the animation steps in the `.avatar.json`.
+Pausing and resuming preserves motion progress. With the system's reduced
+motion preference, the page does not rotate or move.
+Flights last 3.2 seconds, with gentle folds and acceleration; the eyes follow
+the transformation and remain on the wing during flight.
+Wing outlines and folds are rounded. Each flight can depart or arrive from
+either side, with a gentle curve and scale change. The trail animates small
+gusts that drift and fade; pausing preserves the direction and gust progress.
+They also respect this preference: Folio stays a page. Interrupting a
+flight immediately restores the page.
+
+It also includes **18 expressions**: `neutral`, `attentive`, `reading`,
+`happy`, `kind`, `unsure`, `sorry`, `thinking`, `thinking-side`, `sleepy`,
+`eyes-closed`, `surprised`, `worried`, `nod-down`, `look-left`, `look-right`,
+`curious` and `wink`. An expression is a pose; an animation combines poses,
+transitions and, when enabled, blinking.
+
+This catalog belongs to Folio: you can import an `.avatar.json` with other
+animations and expressions. The CLI checks that an assigned key exists
+in the active avatar; the panel lists that avatar's keys in its selectors.
+
+Permanent configuration lives in **`/admin/panel` → Avatar**: choose the
+avatar, colors, size, placement, pointer tracking and the animation or
+expression for each event, with a preview. Changes are saved in
+`config/personality.yaml`. From the terminal:
+
+```bash
+ipsis personality avatar list
+ipsis personality avatar events
+ipsis personality avatar assign greeting wave
+ipsis personality avatar assign thinking thinking-long
+ipsis personality avatar assign answer_ok happy
+ipsis personality avatar assign greeting spin
+ipsis personality avatar assign answer_ok bounce
+ipsis personality avatar assign sent paper-plane-out
+ipsis personality avatar assign answer_ok paper-plane-in
+ipsis personality avatar colors --body "#f5f1e8" --eyes "#1e293b"
+ipsis personality validate
+```
+
+To try gestures and situations in the visualizer, from the repository root:
+`python herramientas/avatar/visualizador.py` and open <http://127.0.0.1:8765/>.
+The `herramientas/avatar/muestra.html` grid remains available with a static server.
 
 ### How the avatar reacts
+
+With `events: {}`, Folio uses this default sequence. The panel and
+`ipsis personality avatar events` show the same assignments; custom
+assignments in `personality.yaml` take priority. Imported avatars keep
+the standard map and its fallbacks.
+
+| Situation | Folio animation |
+|---|---|
+| Closed widget and launcher | `float`: gentle floating |
+| Every opening | `wake-up`: wakes up, then becomes attentive |
+| Open, waiting | `attentive`: attentive eyes with continuous floating |
+| Typing | `listening` |
+| Sending a question | `paper-plane-out`: folds and departs with the question, then searches |
+| Searching / more than 3 seconds | `thinking` / `thinking-long` |
+| Answer found | `paper-plane-in`: returns with the citation and unfolds |
+| Related answer | `unsure` |
+| No answer in the documents | `sorry` |
+| Conversation | `kind` |
+| Network or service error | `worried` |
+| Closing | `goodbye`, followed by floating |
+| Inactivity | `sleepy`; the next activity plays `wake-up` |
+
+In the chat sequence, the paper plane represents sending the question and returning with evidence.
+Searching keeps `thinking`; opening and closing retain their greetings.
+If an answer arrives during takeoff, it takes priority and starts landing
+without delaying the response or waiting for the flight to finish.
+
+While idle or attentive, Folio also reacts spontaneously: it looks around,
+gets curious, reads or winks with a gentle sway. Gentle floating continues
+between reactions and while tracking the pointer, preserving attentive eyes
+and the motion's phase. It also uses the catalog's
+greeting, nodding, listening, swaying, bouncing and floating sequences.
+Occasionally it dances, spins, flips or departs and returns as a paper plane.
+Loops play for one cycle; showier gestures are at least 45 seconds apart.
+There are 16 reactions. Pauses between gestures vary
+from 1.8 to 3.6 seconds, without repeating the same gesture consecutively.
+Typing, searching, responses and pointer tracking take priority. Reactions
+are suspended in hidden tabs and omitted with reduced motion; they do not
+change the chat state or generate messages.
 
 | Event | When | Kind |
 |---|---|---|
@@ -96,7 +195,7 @@ To review all its animations, from the repository root:
 | `typing` | while typing; back to `attentive` 1.2 s later | persistent |
 | `thinking` · `thinking_long` | waiting for the answer; "long" after 3 s | persistent |
 | `sleepy` | no activity for `avatar.idle_minutes` minutes | persistent |
-| `greeting` · `farewell` | first opening · on closing | transient |
+| `greeting` · `farewell` | every opening · on closing | transient |
 | `sent` | when the question is sent | transient |
 | `answer_ok` · `answer_related` · `no_answer` · `conversational` | depending on the answer status | transient |
 | `error` | network or service failure | transient |
@@ -111,6 +210,17 @@ To review all its animations, from the repository root:
   movement. With the system's "reduce motion" it does not follow the
   pointer.
 - A hidden tab pauses the animation.
+- **Hover and typing (Folio):** hovering over it prompts a friendly gesture.
+  It listens while you type and looks back at the draft after a 1.2-second
+  pause. It locally recognizes question and exclamation marks, greetings,
+  affection, joy, sadness, worry, sleepiness, doubt, agreement and reading.
+  Vocabulary lives in `herramientas/avatar/reacciones-texto.json`, grouped
+  by expression with word, phrase and emoticon lists. Add entries to the
+  dictionary and rebuild the engine to extend it. Matching ignores case and
+  accents, uses the latest signal and skips simple negations such as
+  “no estoy triste”. Searches, responses and errors take
+  priority. The visualizer includes a text field for trying this without
+  sending queries; reduced motion omits these gestures.
 - On a phone the avatar is 40 px and hides while the keyboard is open.
 
 ## Included tones
@@ -140,9 +250,11 @@ in the widget ones and 8 in the rest. That is 162 per tone and language,
 | `opening` | before the document text | — |
 | `addition`, `condition`, `exception` | between document fragments | — |
 | `related_intro` | a related, not direct, answer | — |
+| `related_check` | closes a related answer: asks whether the passage is what the user wanted and invites rephrasing | — |
 | `missing_focus` | related, the main term is missing | `{term}` (required) |
 | `no_answer` | it is not in the documents | — |
 | `premise_not_found` | the question asked about something that does not exist | `{entity}` (required) |
+| `needs_clarification` | the question does not say what it is about ("¿Cuánto es?", "Who approves it?" with no conversation) | — |
 | `alternatives_intro` | after `no_answer` or `premise_not_found`, before the similar passages of the proactive posture ([configuration](configuration.md#when-the-answer-is-not-there-posture)) | — |
 | `welcome`, `waiting`, `citations_hint`, `network_error`, `rate_limit_error`, `service_error` | widget texts | `welcome`: `{assistant_name}` |
 
@@ -209,6 +321,10 @@ files.
 | `GET /admin/styles` · `PUT /admin/styles` | Widget theme and placement (`styles.yaml`), with the same validation as the terminal |
 | `GET /admin/styles/flat` · `POST /admin/styles/set` | Every `section.key` value, or `{"assignments": ["colors.accent=#0ea5e9"]}` |
 | `GET /admin/styles/presets` · `POST /admin/styles/preset` | Lists the visual presets, or applies one: `{"name": "editorial"}` (`classic`, `minimal`, `editorial`, `contrast`) |
+| `GET /admin/status` | Profile, index, calibration, the thresholds in force with their source (`profile`, `project` or `calibration`), the documents and the `ipsis doctor` checks |
+| `PUT /admin/thresholds` | `{"thresholds": {"ok": 0.85, "related": null}}`: writes `config/engine.yaml::profile_overrides.default_thresholds` (`null` goes back to the profile value) and reloads the engine. Names and the [0, 1] range are validated |
+| `GET /admin/documents` · `POST /admin/documents?name=FILE` | Lists the catalog, or uploads one document as the raw body (PDF, DOCX, MD or TXT, up to 20 MiB; only the base name is kept). Like `ipsis load`: it does not reindex |
+| `POST /admin/reindex` · `GET /admin/task` | Reindexes in the background (409 if a reload is already running); `task` reports `running`, `done` or `error`. Meanwhile `/ask` answers 503 |
 
 Changes, over HTTP or from the terminal, show without restarting:
 
@@ -230,6 +346,12 @@ service.
 | **Tone** | Chooses the tone and the variety. Per situation, it shows the variants with the project variables and lets you write your own texts. If a text fails the linter, it shows the errors and saves nothing |
 | **Avatar** | Imports an `.avatar.json` (validated before saving), chooses the avatar, its colors, placement and size, and assigns each event to an animation. The ▶ button triggers the event in the preview |
 | **Widget** | Applies a preset and changes the accent color, position, size, launcher and how citations show. "Full style" edits every value of `styles.yaml`: light and dark colors, typography, shapes, shadows and animations |
+| **Status** | Profile, index, calibration and readiness; the thresholds in force with their profile and project values and their source, editable (empty = the profile's); and the `ipsis doctor` checks. Saving reloads the engine for a few seconds |
+| **Documents** | The catalog; uploads PDF, DOCX, Markdown or TXT files (up to 20 MiB each) and reindexes in the background, showing the progress |
+
+Tone, avatar and widget change only the presentation. **Status** and
+**Documents** change what the assistant answers: a threshold changes when it
+answers directly, and new documents become answerable after reindexing.
 
 - **Preview:** the real widget, served by your service. It reloads by
   itself after each saved change.

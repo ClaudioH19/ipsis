@@ -8,6 +8,19 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Six pinned multilingual CPU/ONNX alternative models: Granite 311M/97M R2,
+  Harrier-270M, EmbeddingGemma 2 (text only), Horizon base/small. Runtime
+  supports model-specific pooling, padding, named embeddings and external
+  weights. They are selected through `profile_overrides` on top of medium;
+  none added a correct answer over medium in the measured Spanish bank.
+- Frozen general regression bank: four topics/formats, three formatting
+  qualities, 84 cases, full-answer/source verification, per-case guards,
+  latency reports, model revisions and effective configuration. Run
+  `python herramientas/evaluacion/general.py --download`; automatic CI and
+  model-backed pytest integration accompany the reference.
+- Project model overrides now drive indexing as well as querying; prepared
+  Docker images read those overrides when downloading model weights.
+
 - **Larger alternatives bank and round-5 weights:** 128 cases per language
   (from 58: an office catalog, a delivery and warranty policy, premises on
   measures and hard negatives in dev and test) and a new held-out validation
@@ -176,7 +189,144 @@ a minor change may break compatibility and is marked as such.
   hyphenation in the assistant's language; `/config` now also returns
   `text_align` and `language`.
 
+- **Related answers close with a question:** after the passages, a
+  `related_check` tone message (21 packs) asks whether that is what the user
+  wanted and invites rephrasing. Most colloquial questions end as `related`
+  with the right passage; the reply no longer stops at "not a direct answer".
+- **Clarification:** a question that does not say what it is about
+  ("¿Cuánto es?", "Who approves it?", "¿Cuánto dura?" with several documents)
+  gets the `necesita_aclaracion` state and a `needs_clarification` tone message
+  (21 packs) instead of an answer; over HTTP it is `no_answer` with the new
+  `plan` value `clarification`. Packs declare `pronombres_anaforicos`.
+  Detects the 30 ambiguous questions of every bank and fires on no answerable one.
+- **Same head, another modifier:** "gastos de electricidad" is no longer
+  answered with "gastos de conexión" (`preposiciones_modificador`,
+  `modificador_antepuesto` in the packs; diagnostic `modificador_distinto`).
+- **Semantic reading** (`cascade.semantic_reading`, on in medium; `false` in
+  `profile_overrides` restores the lexical window): the reader reads the sentences ranked first by a fusion of
+  cross-encoder, dense cosine and `s_lex` instead of a word-overlap window.
+  Medium 68 → 72 correct on the query bank and 10 → 16 on the informal bank;
+  with clarification and the modifier rule, one extra accepted error and
+  +0.8 s at p50 on a 2-thread CPU; see
+  [informal paraphrases](docs/methodology/informal-paraphrases.md).
+- **Faster medium:** the reranker scores only the first 5 fused candidates
+  (`cascade.rerank_candidates`; all of them before). Same answers on 678
+  questions (308 correct, 11 errors), p50 5.3 s → 2.5 s and p95 7.3 s → 4.2 s
+  on a 2-thread CPU with a realistic corpus; see [reranker](docs/methodology/reranker.md).
+- **Confidence level** (`confidence_level` in `/ask`: `high`, `medium`,
+  `low`): high for a direct answer read by the QA reader (medium, 96.6 %
+  correct on 319 direct answers, guaranteed ≥ 94.4 %), medium without a
+  reader (light, 85.1 %; the widget shows "Check the citation"), low for a
+  related passage. Derived from state and profile; `ipsis ask --diagnostics`
+  shows it.
+- **Guarantee bank** (`tests/datos/banco_garantias`, 134 questions × es/en/pt
+  over six new documents) to narrow the risk bound of direct answers: medium
+  96.6 % correct on 319 direct answers across banks, guaranteed ≥ 94.4 % at
+  95 %; see [informal paraphrases](docs/methodology/informal-paraphrases.md).
+- **Validation bank and fourth round** (`tests/datos/banco_validacion`, 99
+  questions × es/en/pt over six more documents, written before the fixes):
+  semantic reading skips the introduction of a document with sections;
+  `modificador_distinto` also checks the section titles ("beca de idiomas" vs
+  "Beca de Perfeccionamiento"); "someone"/"alguien"/"alguém" are generic; a
+  strong reader tier (`ok_strong` 0.99, `oov_ok_strong` 0.67 in medium, kept
+  by calibration, removed by deleting both) answers informal questions with
+  colloquial words when the reader is nearly sure. Medium, measured once on
+  the validation bank: errors 9 → 4 with the same 146 correct, 97.3 %
+  precision, guaranteed ≥ 94.0 % (was ≥ 90.1 %); design banks 308 → 322
+  correct, 11 → 7 errors, informal bank 16 → 21 of 60. See
+  [informal paraphrases](docs/methodology/informal-paraphrases.md).
+- **Personal pronouns in the packs:** Portuguese had no first- or
+  second-person pronoun among its stopwords ("eu", "minha", "você", "numa");
+  they are added, with "te", "usted", "conmigo"… in Spanish and "myself",
+  "yours"… in English, and the forms of ir/vir/ter/dar/estar ("vou", "tiver",
+  "der", "viene") become generic. Design banks: +2 correct (Portuguese
+  informal questions), no new error.
+- **Terminal menu and interactive mode:** `ipsis` with no arguments (or
+  `ipsis help`) prints the commands grouped by task, with examples;
+  `ipsis help <command>` prints one command's options. `ipsis chat` is an
+  interactive mode in the style of Claude Code: questions go to the project
+  engine, loaded once, keeping the conversation topic; `/help`,
+  `/diagnostics on|off`, `/reload`, `/exit` and any ipsis command as
+  `/command` (`/doctor`, `/index`, `/load ./docs`).
+- **`/admin` panel: Status and Documents tabs.** `GET /admin/status` (profile,
+  index, calibration, thresholds in force with their source, documents and
+  the `ipsis doctor` checks), `PUT /admin/thresholds` (writes
+  `profile_overrides.default_thresholds` and reloads the engine),
+  `GET`/`POST /admin/documents?name=` (upload up to 20 MiB, same path as
+  `ipsis load`), `POST /admin/reindex` and `GET /admin/task` (background
+  reload; `/ask` answers 503 meanwhile). Same token, HTTPS and lockout rules.
+- **README rewritten as the manual:** what ipsis is (package + CLI + HTTP
+  service; Docker only to deploy; no Python library API), every command, the
+  project files, the current flow and layers with their techniques, the web
+  interfaces, examples of loading documents, customizing and changing
+  thresholds, and what calibrating with your corpus is for.
+- **Typo normalization layer** (`ipsis/lenguaje/ortografia.py`): a
+  SymSpell-style symmetric-delete index over the corpus forms and stems
+  replaces the pass over the whole vocabulary, and the corrector now also
+  compares stems ("covran" → "cobra" when the corpus has "cobra" but not
+  "cobran"), corrects 4-letter words, splits joined words ("abreel" → "abre
+  el") and joins split ones ("estacio namiento"). It never touches real words,
+  proper nouns, acronyms or words of the synonym groups. New typo bank
+  (`tests/datos/banco_erratas`, generated from existing questions): robustness
+  (correct answers kept with typos) 81 → 90 % on design and 91 → 97 % on the
+  held-out set, new errors from typos 5 → 3; clean questions unchanged. See
+  [lexical](docs/methodology/lexical.md#typos).
+- **Typo context from word pairs:** the index stores the pairs of
+  neighbouring content words (`pares` in `.stats.json`, as presence, never
+  frequency, and from the chunk text without the prepended title, so repeated
+  titles or footers gain no weight). A real word absent from the corpus is
+  corrected only if the pair exists with both neighbours ("paring permit" →
+  "parking permit"); a non-word, with one. A self-test at indexing enables it
+  (`contexto_erratas`) only if it recovers typos in the corpus's own
+  sentences. Measured: no change on any bank (robustness 89.6 % / 96.6 %,
+  clean banks identical); older indexes work without it until rebuilt.
+- **Everyday equivalences in the packs** (`sinonimos`: plata ↔ dinero ↔
+  monto, demora ↔ tarda, refri ↔ refrigerador, clave ↔ contraseña, fridge ↔
+  refrigerator, boss ↔ manager, avião ↔ aéreo, gente ↔ pessoas…): they act only
+  when the question's word is missing from the corpus. Groups that cost answers
+  or turned a trap into an answer on the design banks were removed (biblio,
+  software, deposita, mean, dinheiro, buy). Design banks +5 correct, no new
+  error; the new held-out colloquial bank (`tests/datos/banco_coloquial`, 30
+  questions × es/en/pt) did not move: 18 of 72 informal questions answered
+  directly, 38 more shown as `related` with the right passage.
+- **Informal questions:** a held-out informal bank
+  (`tests/datos/banco_informal`, 32 questions × es/en/pt with typos,
+  abbreviations and slang over the query bank's corpus). Typos are corrected
+  against the corpus vocabulary before analysis ("pasword" → "password"),
+  never into a real word of the language lexicon; `ipsis ask --diagnostics`
+  shows them. A `frecuencia` intention ("¿cada cuánto…?", "how often…?",
+  "a cada quanto…?") requires a period in the answer (`exige_pista`), and a
+  `costo` intention ("¿cuánto cuesta…?") requires an amount (`entidades_pista:
+  [monto]` or a currency word). See
+  [informal paraphrases](docs/methodology/informal-paraphrases.md).
+
+### Removed
+
+- **Breaking: the `heavy` profile is removed** ([ADR 0003](docs/decisions/0003-onnx-and-profiles.md)).
+  Installable profiles are now `light` and `medium`. Neither the original
+  heavy (e5-base + BGE, 30/8/4: 21/34 correct, two accepted errors, p95 17 s)
+  nor any of six newer candidates beat medium (25/34, zero errors): every
+  variant got the same 25 answers, because with `retrieve_n=20` the reranker
+  already sees the same passages whatever the embedding. A project whose
+  `assistant.yaml` says `heavy` loads as `medium`; `ipsis profile show` asks
+  for `ipsis index` if its index used another dense model. `ipsis init
+  --profile heavy`, `profile set heavy` and `models download --profile heavy`
+  are rejected. The model variants of `herramientas/evaluacion/general.py`
+  are now `medium+<variant>`, and the general regression reference drops its
+  heavy rows (six jobs instead of nine).
+
 ### Changed
+
+- **Focus and language packs for paraphrases** (ADR 0005): the reader's
+  evidence names the subsection of its sentence (it carried the chunk's
+  top-level section, so a FAQ heading never counted for the focus); the
+  previous sentence of the paragraph counts for the focus; question
+  quantifiers ("quantos", "often", "long") and "tiempo/tempo" are generic
+  words; informal abbreviations ("q", "pa", "pra", "vc", "u", "ur") and
+  English contraction pieces ("don", "t") are stopwords. Medium: 56 → 68
+  correct answers on the query bank (es/en/pt), 6 → 10 on the informal bank,
+  no new accepted error. Light: 27 → 33 and 2 → 3. The lexical fingerprint
+  changes: existing calibrations must be regenerated (`ipsis calibrate`).
 
 - **A direct answer needs every focus term in its sentence** (`focus`
   threshold 0.5 → 1.0 in every profile). "¿Quién aprueba el pago… en
@@ -262,6 +412,11 @@ a minor change may break compatibility and is marked as such.
   parity.
 
 ### Fixed
+
+- A `related` reply named the first focus term as missing even when the
+  passage contained it ("Sobre «extranjero» no hay una respuesta directa…"
+  over a sentence about trips abroad); it now names a focus term absent from
+  the answering sentence ("viaje").
 
 - **Concurrent requests:** `terminos()` shared one snowballstemmer instance
   across service threads; concurrent `/ask` calls could fail with an

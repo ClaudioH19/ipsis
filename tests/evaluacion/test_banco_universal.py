@@ -141,7 +141,10 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
     assert set(cobertura.por_idioma) == {idioma}
     for fila in cobertura.casos:
         if fila.grupo != "conversacional":
-            assert fila.regla and fila.senales is not None, fila.caso_id
+            assert fila.regla, fila.caso_id
+            if fila.regla == "aclaracion":  # se decide antes de la política, sin sus señales
+                continue
+            assert fila.senales is not None, fila.caso_id
             assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
     # La calibración re-decide con la misma regla que producción: con los
     # umbrales del perfil reproduce exactamente cada estado observado.

@@ -129,7 +129,10 @@ Variables of the mode and the `/admin` panel:
 
 After 5 wrong tokens, the IP is blocked for 15 minutes. Every change is
 logged in `.ipsis/logs/admin.jsonl`: date, IP, action and keys, never the
-token. `ipsis doctor` checks the mode: it warns in development and fails
+token. The panel can also change thresholds and upload documents (up to
+20 MiB each, PDF, DOCX, MD or TXT) and reindex: treat the token like a
+deployment credential. A reload replaces the engine in the background and
+`/ask` answers 503 meanwhile, so reindex outside busy hours. `ipsis doctor` checks the mode: it warns in development and fails
 with a short token.
 
 On a server with Caddy in front:
@@ -150,12 +153,16 @@ command ticks it automatically.
 - [ ] **Real golden set:** written and reviewed by a person, with at least
   30% of questions without an answer or with a false premise, and "same
   topic, missing fact" pairs (see [golden.md](golden.md)).
-- [ ] **Calibration:** `ipsis calibrate --alpha 0.05` gives `CALIBRATED` (in
-  `test`, the 95% upper bound of false `ok` answers is ≤ 5%; with 0 errors it
+- [ ] **Calibration:** inspect `dev` and `test` separately: `CALIBRATED` describes
+  selection on `dev` and is insufficient if `test` fails. In `test`, the 95%
+  upper bound of incorrect direct-answer risk should be ≤ 5%; with 0 errors it
   needs at least 59 accepted answers in `test`). If it gives
   `INSUFFICIENT_SAMPLE`, you can launch with the profile thresholds, without
-  claiming the 5%.
+  claiming the 5%. Regenerate v1 calibrations: v2 measures full answers and
+  separates QA span quality. For command/file adjustments and restart/indexing
+  requirements, see [deployment configuration](configuration.md#changing-configuration-for-deployment).
+  Generated `DEPLOY.md` includes configuration and container CLI instructions.
 - [ ] **Latency:** `ipsis benchmark` meets the profile budget on the
-  production machine (light ≤ 150 ms, medium ≤ 1 s and heavy ≤ 5 s at p95).
+  production machine (light ≤ 150 ms and medium ≤ 1 s at p95).
 - [ ] **Tests green** on the version being deployed (`python -m pytest`).
 - [x] **License:** AGPL-3.0-only.

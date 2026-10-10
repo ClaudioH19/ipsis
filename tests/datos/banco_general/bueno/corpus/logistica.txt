@@ -1,0 +1,15 @@
+Conservación y despacho de paquetes refrigerados
+
+Material ficticio para pruebas de software. No describe normas ni productos reales.
+
+Procedimiento
+
+Los paquetes refrigerados se conservan entre 2 y 6 grados Celsius.
+
+Responsabilidades y condiciones
+
+El despacho de paquetes refrigerados se confirma después de verificar el embalaje.
+
+Control documental
+
+Las etiquetas internas se revisan cada 8 días.

@@ -17,7 +17,7 @@ from apoyo import leer_proyecto
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
 MMARCO, BGE = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "onnx-community/bge-reranker-v2-m3-ONNX"
 LECTOR = "dewdev/mdeberta-v3-base-squad2-onnx"
-MEDIUM, HEAVY = [E5_SMALL, MMARCO, LECTOR], [E5_BASE, BGE, LECTOR]
+MEDIUM = [E5_SMALL, MMARCO, LECTOR]
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def hub(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """Hub falso: descarga «escribe» los archivos pedidos; registra cada llamada."""
     llamadas: list[dict] = []
 
-    def snapshot_download(repo_id, allow_patterns, cache_dir, local_files_only):
+    def snapshot_download(repo_id, allow_patterns, cache_dir, local_files_only, revision=None):
         llamadas.append({"repo_id": repo_id, "allow_patterns": list(allow_patterns),
                          "cache_dir": cache_dir, "local_files_only": local_files_only})
         carpeta = Path(cache_dir) / repo_id.replace("/", "--")
@@ -118,10 +118,9 @@ def test_descargar_usa_el_perfil_activo_y_la_frontera_de_cache(hub, capsys, tmp_
 def test_descargar_otro_perfil_no_cambia_el_activo_y_reutiliza_lo_compartido(hub, capsys):
     _proyecto("light")
     assert main(["models", "download"]) == 0
-    assert main(["models", "download", "--profile", "heavy"]) == 0
     assert main(["models", "download", "--profile", "medium"]) == 0
-    # e5-small (light y medium) y el lector (medium y heavy) bajan una sola vez.
-    assert _descargas(hub) == [E5_SMALL, *HEAVY, MMARCO]
+    # e5-small (light y medium) baja una sola vez.
+    assert _descargas(hub) == [E5_SMALL, MMARCO, LECTOR]
     assert _perfil_activo() == "light"
 
 
@@ -137,7 +136,7 @@ def test_perfil_no_instalable_falla_sin_descargar(hub, capsys, perfil, mensaje):
     capsys.readouterr()
     assert main(["models", "download", "--profile", perfil]) == 1
     salida = capsys.readouterr().out
-    assert mensaje in salida and "light, medium, heavy" in salida
+    assert mensaje in salida and "light, medium" in salida
     assert hub == [] and _perfil_activo() == "light"
 
 

@@ -1,0 +1,142 @@
+# Colloquial bank (source). Informal questions with everyday vocabulary about the facts of
+# the validation bank, written on 2026-10-10 before the packs' colloquial equivalences were
+# curated and not used to design them. The category comes from the id.
+
+- id: en-parafrasis-001
+  documento: equipment_policy.md
+  capacidad: lista
+  pregunta: what stuff do i get to work with when i start
+  respuesta: a laptop and a wireless mouse
+- id: en-parafrasis-002
+  documento: equipment_policy.md
+  capacidad: cantidad
+  pregunta: how long does my pc password have to be
+  respuesta: at least 10 characters
+- id: en-parafrasis-003
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: how long till my screen locks if i walk away
+  respuesta: after 5 minutes of inactivity
+- id: en-parafrasis-004
+  documento: equipment_policy.md
+  capacidad: duracion
+  pregunta: lost my laptop, how fast do i have to tell someone
+  respuesta: within 24 hours
+- id: en-parafrasis-005
+  documento: equipment_policy.md
+  capacidad: procedimiento
+  pregunta: my laptop got stolen, what paperwork do i attach
+  respuesta: the police report
+- id: en-parafrasis-006
+  documento: equipment_policy.md
+  capacidad: persona
+  pregunta: when i quit who do i hand my laptop back to
+  respuesta: to the Inventory Officer
+- id: en-parafrasis-007
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: what time can i grab lunch at the canteen
+  respuesta: between 12:30 and 15:00
+- id: en-parafrasis-008
+  documento: canteen_rules.md
+  capacidad: cantidad
+  pregunta: how much is lunch
+  respuesta: 3,500 pesos
+- id: en-parafrasis-009
+  documento: canteen_rules.md
+  capacidad: fecha
+  pregunta: when do they put up the weekly menu
+  respuesta: every Friday on the intranet
+- id: en-parafrasis-010
+  documento: canteen_rules.md
+  capacidad: procedimiento
+  pregunta: can i pay for lunch with cash
+  respuesta: with the staff card or in cash
+- id: en-parafrasis-011
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: where do i top up my staff card
+  respuesta: at the canteen till
+- id: en-parafrasis-012
+  documento: canteen_rules.md
+  capacidad: ubicacion
+  pregunta: where do i complain if the canteen food is bad
+  respuesta: in the suggestions book
+- id: en-parafrasis-013
+  documento: projector_manual.md
+  capacidad: procedimiento
+  pregunta: what cable do i plug the projector in with
+  respuesta: with an HDMI cable
+- id: en-parafrasis-014
+  documento: projector_manual.md
+  capacidad: duracion
+  pregunta: how long does the projector bulb last
+  respuesta: approximately 4,000 hours
+- id: en-parafrasis-015
+  documento: projector_manual.md
+  capacidad: cantidad
+  pregunta: what batteries does the projector remote take
+  respuesta: two AAA batteries
+- id: en-parafrasis-016
+  documento: training_rules.md
+  capacidad: persona
+  pregunta: who has to ok me signing up for a course
+  respuesta: the authorisation of the direct manager
+- id: en-parafrasis-017
+  documento: training_rules.md
+  capacidad: cantidad
+  pregunta: how many classes do i have to show up to to pass
+  respuesta: A minimum attendance of 75 %
+- id: en-parafrasis-018
+  documento: training_rules.md
+  capacidad: duracion
+  pregunta: when can i grab my course certificate
+  respuesta: within ten working days after the course ends
+- id: en-parafrasis-019
+  documento: health_insurance.md
+  capacidad: cantidad
+  pregunta: how much do i get back if i see a doctor
+  respuesta: 70 % of outpatient medical expenses
+- id: en-parafrasis-020
+  documento: health_insurance.md
+  capacidad: persona
+  pregunta: can i put my wife on the insurance
+  respuesta: The spouse and children under 24
+- id: en-parafrasis-021
+  documento: health_insurance.md
+  capacidad: condicion
+  pregunta: does the insurance pay for glasses
+  respuesta: cosmetic treatments or glasses
+- id: en-parafrasis-022
+  documento: gym_rules.md
+  capacidad: fecha
+  pregunta: till when can i work out at the gym
+  respuesta: Monday to Friday from 7:00 to 20:00
+- id: en-parafrasis-023
+  documento: gym_rules.md
+  capacidad: condicion
+  pregunta: what do i need to show to use the gym
+  respuesta: A valid medical certificate
+- id: en-parafrasis-024
+  documento: gym_rules.md
+  capacidad: cantidad
+  pregunta: how many people fit in a yoga class
+  respuesta: up to 15 people
+
+- id: en-trampa-001
+  par: en-parafrasis-008
+  pregunta: how much is afternoon tea at the canteen
+- id: en-trampa-002
+  par: en-parafrasis-014
+  pregunta: how long does the battery in the projector remote last
+- id: en-trampa-003
+  par: en-parafrasis-020
+  pregunta: can i put my parents on the insurance
+- id: en-trampa-004
+  par: en-parafrasis-022
+  pregunta: till when can i swim in the pool
+
+- id: en-fuera-001
+  pregunta: whats the best pizza place in london
+- id: en-fuera-002
+  pregunta: how do you play poker
