@@ -533,7 +533,7 @@ pronombres_anaforicos: [isso, isto, aquilo, ele, ela, eles, elas, lo, la, los, l
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, da, do, das, dos, para]
 genericas_memoria: [tempo]
-genericas: [quanto, quanta, quantos, quantas, tempo, fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos, alguém, algo, qualquer, vou, vai, vão, vamos, vem, vêm, venho, tiver, tiverem, tenha, der, derem, estou, está, estão]
+genericas: [quanto, quanta, quantos, quantas, tempo, fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos, alguém, algo, qualquer, vou, vai, vão, vamos, vem, vêm, venho, tiver, tiverem, tenha, der, derem, estou, está, estão, cumprir, cumpro, cumpre, cumprem, quero, queria, querer, gostaria, saber]
 # Sufixos de substantivos derivados que o stemmer mantém: «assinatura» conta como «assina».
 sufijos_derivados: [atur, ament, ment, aca, ica]
 conversacional:

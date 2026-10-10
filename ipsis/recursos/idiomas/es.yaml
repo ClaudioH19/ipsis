@@ -570,7 +570,7 @@ pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, del, para]
 genericas_memoria: [tiempo]
-genericas: [tiempo, hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos, alguien, algo, cualquiera, voy, va, van, vamos, viene, vienen, vengo, tenga, tuviera, estoy, estan]
+genericas: [tiempo, hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos, alguien, algo, cualquiera, voy, va, van, vamos, viene, vienen, vengo, tenga, tuviera, estoy, estan, cumplir, cumplo, cumple, cumplen, quiero, quisiera, querer, quería, gustaría, saber]
 # Sufijos de sustantivos derivados que el stemmer deja (ipsis.lenguaje.consultas.equivalentes).
 # El de español ya lleva «aprobación» y «firma» a la raíz del verbo.
 sufijos_derivados: []

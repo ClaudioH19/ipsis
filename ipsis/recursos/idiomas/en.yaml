@@ -534,7 +534,7 @@ modificador_antepuesto: true
 # Words that are never focus terms (ipsis.consulta.etapas.filtros): support verbs, units and
 # question quantifiers («how often»: the question form, not its topic). They still count for
 # s_oov and s_cov: without a reader, light has no other sign that «how often» asks for a period.
-genericas: [often, much, many, long, far, do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, take, takes, took, taking, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes, someone, somebody, anyone, anybody, everyone, everybody, something, anything]
+genericas: [often, much, many, long, far, do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, take, takes, took, taking, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes, someone, somebody, anyone, anybody, everyone, everybody, something, anything, meet, meets, fulfil, fulfill, fulfils, fulfills, like, know, want, wants]
 # Derived-noun suffixes the stemmer keeps: «signature» counts as «sign» for the focus terms.
 sufijos_derivados: [atur, ment]
 conversacional:

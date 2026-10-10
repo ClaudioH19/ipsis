@@ -322,3 +322,21 @@ def test_las_formas_de_ir_tener_y_dar_son_genericas(idioma, forma):
 
     paquete = cargar_paquete(idioma)
     assert terminos(forma, paquete)[0] in terminos_genericos(paquete)
+
+
+@pytest.mark.parametrize(("idioma", "pregunta", "apoyo"), [
+    ("es", "¿Qué requisitos debo cumplir para inscribir la práctica?", "cumplir"),
+    ("es", "Quisiera saber cuándo se inscribe la práctica", "saber"),
+    ("en", "What requirements do I have to meet to enrol in the internship?", "meet"),
+    ("en", "I would like to know when the internship opens", "know"),
+    ("pt", "Que requisitos devo cumprir para me inscrever no estágio?", "cumprir"),
+    ("pt", "Gostaria de saber quando abre a inscrição", "gostaria"),
+])
+def test_los_verbos_de_apoyo_no_son_tema(idioma, pregunta, apoyo):
+    """«¿Qué requisitos debo cumplir…?» habla de la inscripción, no de cumplir: si «cumplir»
+    fuera tema, la oración que responde (sin ese verbo) fallaría el foco."""
+    from ipsis.lenguaje.consultas import terminos_genericos
+    from ipsis.lenguaje.texto import terminos
+
+    paquete = cargar_paquete(idioma)
+    assert terminos(apoyo, paquete)[0] in terminos_genericos(paquete)
