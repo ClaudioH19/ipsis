@@ -22,8 +22,23 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 
 ## Instalar el paquete
 
-Conviene un entorno virtual por servidor o por máquina. El paquete instala
-el comando `ipsis`.
+**Como comando global (recomendado).** `uv tool` o `pipx` instalan ipsis en un
+entorno aislado propio y dejan `ipsis` en tu `PATH`: funciona en cualquier
+terminal, sin activar nada.
+
+```bash
+uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"   # o
+pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+ipsis --version
+uv tool upgrade ipsis        # después, para actualizar (pipx upgrade ipsis)
+```
+
+En Windows, instala `uv` con `winget install astral-sh.uv` (o `pipx` con
+`py -m pip install --user pipx` y `py -m pipx ensurepath`) y abre una terminal
+nueva.
+
+**En un entorno virtual**, uno por servidor o por máquina, si prefieres
+manejarlo tú:
 
 **Linux y macOS**
 

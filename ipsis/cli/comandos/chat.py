@@ -51,11 +51,19 @@ class ComandoChat(Comando):
     nombre = "chat"
     ayuda = "chat.help"
 
-    def __init__(self, entrada=input, construir_motor=None) -> None:
-        self.entrada = entrada  # se inyecta en las pruebas
+    def __init__(self, entrada=None, construir_motor=None) -> None:
+        self.entrada = entrada  # se inyecta en las pruebas; si no, la terminal o input()
         self.construir_motor = construir_motor
         self.motor = None
-        self.diagnostico = False
+        self.estado = {"diagnostico": False}  # lo lee la barra inferior de la terminal
+
+    @property
+    def diagnostico(self) -> bool:
+        return self.estado["diagnostico"]
+
+    @diagnostico.setter
+    def diagnostico(self, valor: bool) -> None:
+        self.estado["diagnostico"] = bool(valor)
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--diagnostics", dest="diagnostico", action="store_true", help=t("chat.opt_diagnostics"))
@@ -83,11 +91,21 @@ class ComandoChat(Comando):
     # --- bucle ---------------------------------------------------------------------------
     def ejecutar(self, args: argparse.Namespace) -> int:
         self.diagnostico = bool(getattr(args, "diagnostico", False))
-        print(t("chat.welcome"))
+        entrada = self.entrada
+        if entrada is None:
+            from ipsis.cli.terminal import crear_entrada, imprimir_banner
+
+            entrada = crear_entrada(self.estado)
+            if entrada is not None:
+                imprimir_banner()  # Folio, el proyecto y cómo pedir ayuda
+            else:
+                entrada = input
+        if entrada is input or self.entrada is not None:
+            print(t("chat.welcome"))
         try:
             while True:
                 try:
-                    linea = self.entrada("> ").strip()
+                    linea = entrada("> ").strip()
                 except (EOFError, KeyboardInterrupt):
                     print()
                     break

@@ -241,6 +241,14 @@ a minor change may break compatibility and is marked as such.
   "yours"… in English, and the forms of ir/vir/ter/dar/estar ("vou", "tiver",
   "der", "viene") become generic. Design banks: +2 correct (Portuguese
   informal questions), no new error.
+- **Interactive terminal in the style of Claude Code:** `ipsis` alone (in a
+  real terminal) opens it, with Folio and the project of the folder; typing
+  `/` unfolds every command with its description, `Tab` shows subcommands and
+  options with their help and completes paths after `/load`, with history and
+  a bottom bar. Built from the CLI parser (a new command appears by itself),
+  on `prompt_toolkit` (new dependency, BSD); without a terminal `ipsis`
+  prints the menu. The README documents `uv tool install` / `pipx install` to
+  use `ipsis` without activating a Python environment.
 - **Terminal menu and interactive mode:** `ipsis` with no arguments (or
   `ipsis help`) prints the commands grouped by task, with examples;
   `ipsis help <command>` prints one command's options. `ipsis chat` is an

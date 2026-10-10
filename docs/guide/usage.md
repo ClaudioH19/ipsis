@@ -52,8 +52,12 @@ Documents, Ask, Customize, Measure and calibrate, Deploy and operate) with
 examples; `ipsis help <command>` prints the options of one command, the same
 as `ipsis <command> --help`.
 
-`ipsis chat` opens the interactive mode, in the style of Claude Code or
-Codex. What you type is a question; what starts with `/` is a command:
+`ipsis` alone (or `ipsis chat`) opens the interactive mode, in the style of
+Claude Code or Codex, with Folio and the project of the folder. Typing `/`
+unfolds a menu of commands with their description; `Tab` shows subcommands
+and options with their help and completes paths after `/load`; arrow up
+recalls history (`~/.ipsis_history`). What you type is a question; what
+starts with `/` is a command:
 
 | In `ipsis chat` | What it does |
 |---|---|

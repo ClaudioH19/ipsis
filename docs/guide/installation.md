@@ -23,8 +23,23 @@ your first project. Everyday use and the command reference are in
 
 ## Install the package
 
-Use one virtual environment per server or machine. The package installs the
-`ipsis` command.
+**As a global command (recommended).** `uv tool` or `pipx` install ipsis in an
+isolated environment of its own and put `ipsis` on your `PATH`: it works in
+any terminal, without activating anything.
+
+```bash
+uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"   # or
+pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+ipsis --version
+uv tool upgrade ipsis        # later, to update (pipx upgrade ipsis)
+```
+
+On Windows, install `uv` with `winget install astral-sh.uv` (or `pipx` with
+`py -m pip install --user pipx` and `py -m pipx ensurepath`) and open a new
+terminal.
+
+**In a virtual environment**, one per server or machine, when you prefer to
+manage it yourself:
 
 **Linux and macOS**
 

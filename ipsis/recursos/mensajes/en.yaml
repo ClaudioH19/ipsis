@@ -1014,3 +1014,15 @@ chat:
   reloaded: The engine will be reloaded with the next question.
   unknown: "Unknown command: /{command}. Type /help."
   bye: Bye.
+terminal:
+  project: "profile {profile} · {n} document(s)"
+  no_project: "No project in this folder: /init --language en to create one"
+  tips: "/ commands with Tab · type a question · /exit to leave"
+  toolbar: " ipsis · diagnostics {diagnostics} · /help · Ctrl+D to leave"
+  'on': 'on'
+  'off': 'off'
+  own_help: Commands of the interactive mode
+  own_diagnostics: Stages, signals, rule and span of each answer (on|off)
+  own_reload: Reload the engine after changing configuration or documents
+  own_exit: Leave the interactive mode
+  own_quit: Leave the interactive mode
