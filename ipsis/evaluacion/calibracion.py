@@ -21,7 +21,13 @@ from ipsis.configuracion.calibracion import (
     ProcedenciaCalibracion,
     normalizar_umbrales,
 )
-from ipsis.consulta.etapas.politica import RESULTADO_DE_REGLA, SenalesPolitica, lector_seguro, regla_cascada
+from ipsis.consulta.etapas.politica import (
+    RESULTADO_DE_REGLA,
+    SenalesPolitica,
+    foco_exigido,
+    lector_seguro,
+    regla_cascada,
+)
 from ipsis.evaluacion.banco import BancoEvaluacion, CasoEvaluacion, exigir_calibrable
 from ipsis.recursos.mensajes import t
 from ipsis.evaluacion.metricas import (
@@ -51,7 +57,8 @@ def _senales(obs: ObservacionEvaluacion) -> SenalesPolitica | None:
     s = obs.senales
     if s is None or None in (s.s_ret, s.s_oov, s.s_foco, s.s_cov):
         return None
-    return SenalesPolitica(s_ret=s.s_ret, s_oov=s.s_oov, s_foco=s.s_foco, s_cov=s.s_cov, s_rr=s.s_rr, s_qa=s.s_qa)
+    return SenalesPolitica(s_ret=s.s_ret, s_oov=s.s_oov, s_foco=s.s_foco, s_cov=s.s_cov, s_rr=s.s_rr, s_qa=s.s_qa,
+                           coloquial=bool(s.coloquial))
 
 
 def redecidir(obs: ObservacionEvaluacion, umbrales: dict[str, float]) -> ObservacionEvaluacion:
@@ -178,7 +185,7 @@ def _barrer_ok(pares: list[Par], umbrales: dict[str, float],
         if s.s_oov >= umbrales["oov_dominio"] and s.dominio < umbrales["dominio"]:
             continue
         seguro = lector_seguro(s, umbrales)
-        if not seguro and not (s.s_foco >= umbrales["foco"] and s.s_oov < umbrales["oov_ok"]):
+        if not seguro and not (s.s_foco >= foco_exigido(s, umbrales) and s.s_oov < umbrales["oov_ok"]):
             continue
         # El tramo fuerte (``lector_seguro``) no depende de ``ok``: entra con cualquier corte.
         puntaje = float("inf") if seguro else _puntaje(s, umbrales)

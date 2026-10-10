@@ -11,6 +11,12 @@ class EtapaAnalisis(_Etapa):
         m = self.motor
         resolutor = getattr(m, "seguimiento", None)
         obtener = getattr(getattr(m, "retriever", None), "estadisticas_lexico", None)
+        from ipsis.lenguaje.estilo import es_coloquial
+
+        # Sobre lo que escribió el usuario, antes de corregir: la forma, no las palabras.
+        ctx.coloquial = es_coloquial(ctx.pregunta, getattr(m, "idioma", None))
+        if ctx.coloquial:
+            ctx.diagnostico["estilo_coloquial"] = True
         if callable(obtener):
             # «pasword» → «password»: una errata no es una palabra ausente del corpus.
             from ipsis.lenguaje.ortografia import correcciones, corregir

@@ -22,6 +22,7 @@ class ContextoConsulta:
     pregunta: str
     id_sesion: str
     pregunta_usuario: str = ""  # la que escribió, si ``pregunta`` es la interpretada (seguimiento)
+    coloquial: bool = False  # escrita de manera coloquial (ipsis.lenguaje.estilo)
     turno_memoria: int | None = None
     inicio: float = field(default_factory=time.perf_counter)
     diagnostico: dict[str, Any] = field(default_factory=dict)

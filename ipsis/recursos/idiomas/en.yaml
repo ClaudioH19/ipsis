@@ -528,6 +528,8 @@ sinonimos:
 - [broken, damaged]
 # Anaphoric pronouns: «Who approves it?» without an antecedent asks for clarification.
 pronombres_anaforicos: [it, this, that, these, those, them, they]
+# Abbreviations of a hurried writer: the question is colloquial (ipsis.lenguaje.estilo).
+abreviaturas_informales: [u, ur, pls, plz, thx, gotta, gonna, wanna, kinda, ya]
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [of, for]
 modificador_antepuesto: true
