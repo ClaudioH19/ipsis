@@ -69,7 +69,14 @@ def main(argv: list[str] | None = None) -> int:
 
     _asegurar_salida_no_crashea()
     if not (sys.argv[1:] if argv is None else argv):
-        # «ipsis» solo: el menú agrupado por tarea, como la ayuda de Claude Code.
+        # «ipsis» solo, como «claude»: en una terminal real abre el modo interactivo
+        # (Folio, autocompletado y menú de opciones); en un script imprime el menú.
+        from ipsis.cli.terminal import terminal_real
+
+        if terminal_real():
+            from ipsis.cli.comandos.chat import ComandoChat
+
+            return ComandoChat().ejecutar(argparse.Namespace(diagnostico=False))
         from ipsis.cli.menu import imprimir_menu
 
         imprimir_menu()

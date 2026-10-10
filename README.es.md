@@ -107,9 +107,18 @@ umbrales y documentos, y `ipsis deploy prepare` con Docker y HTTPS (Caddy).
 
 Requiere Python 3.11 o 3.12. No necesita GPU.
 
-```bash
-pip install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+Instálalo como comando global, para que `ipsis` funcione en cualquier
+terminal sin activar un entorno de Python (cada herramienta crea el suyo,
+aislado):
 
+```bash
+uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"    # o:
+pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+```
+
+Después, en cualquier carpeta:
+
+```bash
 mkdir mi-asistente && cd mi-asistente
 export IPSIS_LANG=es                        # la terminal en español
 ipsis init --profile medium --language es   # configuración del proyecto
@@ -121,8 +130,9 @@ ipsis chat                                  # preguntar desde la terminal (/help
 ipsis serve                                 # API, widget y /admin en http://127.0.0.1:8000
 ```
 
-`ipsis` sin argumentos muestra todos los comandos agrupados por tarea. En modo
-local el índice admite un proceso a la vez: detén `ipsis serve` antes de
+`ipsis` sin argumentos abre la terminal interactiva (abajo). Si desarrollas
+ipsis, `pip install -e .` en un entorno virtual también sirve. En modo local
+el índice admite un proceso a la vez: detén `ipsis serve` antes de
 `ipsis chat` o `ipsis ask --diagnostics`. En PowerShell, la variable se fija
 con `$env:IPSIS_LANG = "es"`.
 
@@ -164,9 +174,27 @@ Ver la [guía de despliegue](docs/es/guia/despliegue.md).
 
 ### La terminal
 
-`ipsis` solo imprime un menú agrupado por tarea, como la ayuda de Claude Code
-o Codex; `ipsis help <comando>` (o `ipsis <comando> --help`) explica un
-comando.
+`ipsis` solo abre la terminal interactiva, como `claude` o `codex`: Folio, el
+avatar de ipsis, muestra el proyecto de esta carpeta, y al escribir `/` se
+despliega un menú con todos los comandos y su descripción. Tras un comando,
+`Tab` muestra sus subcomandos y opciones con su ayuda (`/calibrate --` →
+`--alpha`, `--apply`), y tras `/load` completa rutas. La flecha arriba
+recupera líneas anteriores; la barra inferior indica si el diagnóstico está
+activo.
+
+```text
+  ╭──────╮   ipsis 0.9.0
+  │ ◕  ◕ │   perfil medium · es · 3 documento(s)
+  │  ‿   │   / comandos con Tab · escribe una pregunta · /exit para salir
+  │ ──── │
+  ╰──────╯
+› /cal
+   /calibrate   Elige umbrales con el golden set importado, bajo control de riesgo.
+```
+
+`ipsis help` imprime todos los comandos agrupados por tarea (también es lo
+que imprime `ipsis` cuando su salida no es una terminal, en scripts);
+`ipsis help <comando>` (o `ipsis <comando> --help`) explica un comando.
 
 ```text
 $ ipsis
@@ -186,8 +214,8 @@ $ ipsis
  ...
 ```
 
-`ipsis chat` es el modo interactivo: lo que escribes es una pregunta, y lo que
-empieza con `/` es un comando. Los modelos se cargan una vez y las preguntas
+En la terminal interactiva (`ipsis`, o `ipsis chat`) lo que escribes es una
+pregunta, y lo que empieza con `/` es un comando. Los modelos se cargan una vez y las preguntas
 de seguimiento («¿y con 90?») conservan el tema de la conversación.
 
 ```text

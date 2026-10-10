@@ -79,3 +79,45 @@ def test_chat_despacha_un_comando_de_la_cli_y_sigue(monkeypatch, tmp_path, capsy
     salida = capsys.readouterr().out
     assert "No ipsis project found in this folder." in salida and "--alpha" in salida
     assert "Unknown command: /chat" in salida
+
+
+# --- terminal: autocompletado desde el parser y banner con Folio ------------------------------
+def _nombres(texto):
+    from ipsis.cli import construir_parser
+    from ipsis.cli.terminal import candidatos
+
+    return [c for c, _, _ in candidatos(texto, construir_parser())]
+
+
+def test_la_barra_despliega_los_comandos_con_su_descripcion():
+    from ipsis.cli import construir_parser
+    from ipsis.cli.terminal import candidatos
+
+    todos = candidatos("/", construir_parser())
+    nombres = {c for c, _, _ in todos}
+    assert {"/doctor", "/index", "/calibrate", "/help", "/diagnostics", "/exit"} <= nombres
+    assert "/chat" not in nombres and all(d for c, d, _ in todos if c != "/quit")
+    assert _nombres("/cal") == ["/calibrate"]
+
+
+def test_tras_el_comando_aparecen_sus_opciones_y_subcomandos():
+    assert set(_nombres("/calibrate --")) == {"--alpha", "--apply"}
+    assert set(_nombres("/calibrate ")) == {"--alpha", "--apply"}
+    assert {"show", "set"} == set(_nombres("/profile "))
+    assert _nombres("/widget theme ap") == ["apply"]
+    assert _nombres("hola") == []  # una pregunta no se autocompleta
+
+
+def test_el_banner_muestra_a_folio_y_el_proyecto(tmp_path, monkeypatch):
+    from ipsis.cli.terminal import FOLIO, lineas_banner
+
+    monkeypatch.chdir(tmp_path)
+    sin_proyecto = "\n".join(lineas_banner())
+    assert FOLIO[1] in sin_proyecto and "/init" in sin_proyecto
+    assert main(["init", "--profile", "light"]) == 0
+    assert "light" in "\n".join(lineas_banner())
+
+
+def test_ipsis_solo_fuera_de_una_terminal_imprime_el_menu(capsys):
+    assert main([]) == 0  # en pytest la salida no es una terminal
+    assert "Measure and calibrate" in capsys.readouterr().out

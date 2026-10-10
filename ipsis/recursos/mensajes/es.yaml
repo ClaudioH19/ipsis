@@ -1014,3 +1014,15 @@ chat:
   reloaded: El motor se recargará con la próxima pregunta.
   unknown: "Comando desconocido: /{command}. Escribe /help."
   bye: Hasta luego.
+terminal:
+  project: "perfil {profile} · {n} documento(s)"
+  no_project: "No hay proyecto en esta carpeta: /init --language es para crear uno"
+  tips: "/ comandos con Tab · escribe una pregunta · /exit para salir"
+  toolbar: " ipsis · diagnóstico {diagnostics} · /help · Ctrl+D para salir"
+  'on': 'activo'
+  'off': 'apagado'
+  own_help: Comandos del modo interactivo
+  own_diagnostics: Etapas, señales, regla y tramo de cada respuesta (on|off)
+  own_reload: Recarga el motor tras cambiar configuración o documentos
+  own_exit: Salir del modo interactivo
+  own_quit: Salir del modo interactivo
