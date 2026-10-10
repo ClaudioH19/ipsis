@@ -1,0 +1,97 @@
+{
+ "pesos": {
+  "familia": 1.0,
+  "medida": 0.0,
+  "terminos": 2.0,
+  "seccion": 0.0,
+  "keywords": 0.0,
+  "categoria": 0.0,
+  "similitud": 0.0
+ },
+ "mejor_cobertura": {
+  "light": 132.0,
+  "medium": 132.0
+ },
+ "perfiles": {
+  "light": {
+   "umbral": 0.5,
+   "tramo": [
+    0.34,
+    0.66
+   ],
+   "desarrollo": {
+    "alternativas": 202,
+    "correctas": 198,
+    "precision": 0.9802,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9485,
+    "vecinos_en_abstencion": 136,
+    "vecinos_cubiertos": 129,
+    "vecino_visible": "183/198",
+    "casos_con_alternativas": 129
+   },
+   "dev": {
+    "alternativas": 111,
+    "correctas": 107,
+    "precision": 0.964,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9706,
+    "vecinos_en_abstencion": 68,
+    "vecinos_cubiertos": 66,
+    "vecino_visible": "92/99",
+    "casos_con_alternativas": 66
+   },
+   "test": {
+    "alternativas": 91,
+    "correctas": 91,
+    "precision": 1.0,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9265,
+    "vecinos_en_abstencion": 68,
+    "vecinos_cubiertos": 63,
+    "vecino_visible": "91/99",
+    "casos_con_alternativas": 63
+   }
+  },
+  "medium": {
+   "umbral": 0.5,
+   "tramo": [
+    0.34,
+    0.66
+   ],
+   "desarrollo": {
+    "alternativas": 200,
+    "correctas": 196,
+    "precision": 0.98,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9485,
+    "vecinos_en_abstencion": 136,
+    "vecinos_cubiertos": 129,
+    "vecino_visible": "168/198",
+    "casos_con_alternativas": 129
+   },
+   "dev": {
+    "alternativas": 111,
+    "correctas": 107,
+    "precision": 0.964,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9706,
+    "vecinos_en_abstencion": 68,
+    "vecinos_cubiertos": 66,
+    "vecino_visible": "83/99",
+    "casos_con_alternativas": 66
+   },
+   "test": {
+    "alternativas": 89,
+    "correctas": 89,
+    "precision": 1.0,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9265,
+    "vecinos_en_abstencion": 68,
+    "vecinos_cubiertos": 63,
+    "vecino_visible": "85/99",
+    "casos_con_alternativas": 63
+   }
+  }
+ }
+}

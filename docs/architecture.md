@@ -97,7 +97,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `archivos.py` | Reads and writes project YAML through the glossary (atomic writes) |
 | `carga.py` | Loads and validates the configuration; copies the templates on `ipsis init` |
 | `migraciones.py` | Migrates older projects (folders, files and Spanish keys) |
-| `perfiles.py` | Profiles `light`, `medium`, `heavy` and `bm25`; merge profile ← `engine.yaml` ← calibration |
+| `perfiles.py` | Profiles `light`, `medium` and `bm25`; merge profile ← `engine.yaml` ← calibration |
 | `calibracion.py` | `calibration.yaml` and when it applies (provenance) |
 | `personalidad.py` | `personality.yaml`: tone, avatar and the event catalog |
 | `rutas.py` | Relative paths of a project |
@@ -109,6 +109,10 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `paquete.py` | Language packs (`es`, `en`, `pt`) and the universal fallback |
 | `texto.py` | `terminos()` (the only path from text to terms) and `dividir_oraciones()` |
 | `lexico.py` | BM25, TF-IDF, MMR and the signals `s_oov`, focus, `s_foco`, `s_cov`, `s_lex` |
+| `consultas.py` | Query understanding: intention and relation words, cues, synonyms, generic words, derived nouns |
+| `intenciones.py` | Similarity fallback: cached examples, cosine and margin between intentions |
+| `respuestas.py` | Literal QA boundary completion: quantities with units and limits, actors with their current action |
+| `sinonimos.py` | Packaged WordNet stem index, OOV expansion for BM25, project phrase equivalences and lexical provenance hash |
 | `entidades.py` | Universal and pack entities (dates, amounts, deadlines, references) |
 | `dominio.py` | Your own domain rules (`domain.yaml`) |
 | `tonos.py` | Answer tones, their linter and neutrality |
@@ -118,7 +122,8 @@ Rules, checked by `tests/test_arquitectura.py`:
 | Module | What it does |
 |---|---|
 | `catalogo.py` | `documents/catalog.yaml`: what is loaded and active |
-| `parsear.py` | PDF with text, DOCX, Markdown and TXT to text with structure and offsets |
+| `parsear.py` | PDF, DOCX, Markdown and TXT to text with structure and offsets |
+| `ocr.py` | Optional OCR of PDF pages without text (Tesseract), with cache and confidence per page |
 | `chunking.py` | Fragments that never cross sections (`CH-F256` by default) |
 | `metadata.py` | Entities, TF-IDF keywords and a deterministic category |
 | `ingesta.py` | The full `ipsis index` sequence |
@@ -148,6 +153,8 @@ Rules, checked by `tests/test_arquitectura.py`:
 |---|---|
 | `motor.py` | Runs the profile's stages, times each one and builds the result |
 | `contexto.py` | `ContextoConsulta`: what each stage reads and fills in |
+| `seguimiento.py` | Conversation memory: topics per session, follow-ups, expiry ([ADR 0006](decisions/0006-conversation-memory.md)) |
+| `alternativas.py` | Proactive posture: similar literal paragraphs after a `no_answer`, chosen by the family of a missing declared entity ("TP-400" for "TP-500") or by nearly all the question words ([ADR 0008](decisions/0008-proactive-posture-and-metadata-similarity.md)) |
 | `admision.py` | Limit of concurrent queries (503 when saturated) |
 | `variantes.py` | Picks the tone variant by session and turn |
 | `etapas/` | One file per stage (see §4) |
@@ -176,8 +183,9 @@ production), `despliegue` and `publico` (public ↔ internal names).
 | Module | What it does |
 |---|---|
 | `cli/base.py`, `cli/comandos/*` | One command per class (Command pattern), grouped as in `ipsis --help`; texts from the message catalog |
+| `cli/menu.py`, `cli/comandos/chat.py` | `ipsis` alone (or `ipsis help`): the commands grouped by task with examples; `ipsis chat`: the interactive mode, questions to one engine loaded once and `/commands` dispatched to the same CLI |
 | `servicio/api.py` | FastAPI: `/ask`, `/config`, `/ready`, static files, CORS, cache and errors; translates the engine contract to the public one |
-| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel` |
+| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel`: personality and styles, and also status, thresholds, document upload and reindexing (`aplicacion/panel.py`); a reload replaces the engine in the background (`servicio/api.py::recargar_motor`) |
 | `servicio/seguridad.py` | Rate limit and widget keys |
 | `servicio/estaticos/` | `widget.js`, `avatar.js` (the bundled avatar engine) and the panel |
 
@@ -193,40 +201,115 @@ and `despliegue/` (templates of `ipsis deploy prepare`).
 flowchart TD
     P([Question]) --> C{conversational}
     C -- "hello, thanks…" --> RF([Fixed answer from the tone])
-    C -- no --> A[analysis<br/>terms, entities]
+    C -- no --> A["analysis<br/>follow-up? → inherit the topic<br/>intention and relation words<br/>synonyms of missing words"]
+    MEM[("conversation memory<br/>current and earlier topics")] -.->|"“and with 90?”"| A
+    WN[("filtered local WordNet<br/>source + sense + POS")] -.->|"OOV, one sense only"| A
     A --> CF[confidence<br/>dense cosine → s_ret]
-    CF --> F[filters<br/>focus terms, s_oov]
-    F --> R[retrieval<br/>e5 + BM25 with RRF<br/>+ entity-directed]
+    CF --> IF["unknown intention + corpus topic?<br/>reuse vector → example similarity"]
+    IF --> F["filters<br/>focus terms (not relation<br/>nor generic words), s_oov"]
+    F --> R[retrieval<br/>original e5 vector + expanded BM25<br/>RRF + entity-directed]
     R --> T{any candidate<br/>with a focus term?}
     T -- no --> E
     T -- yes --> RR[reranking<br/>cross-encoder → s_rr]
-    RR --> L[reading<br/>QA reader → span, s_qa]
-    L --> E[evidence<br/>anchor sentence → s_foco, s_cov]
+    RR --> L["reading<br/>QA reader → span, s_qa<br/>+ the candidate with a cue"]
+    L --> E["evidence<br/>anchor sentence, cue bonus<br/>→ s_foco, s_cov"]
     E --> PO{policy<br/>cascade_v1}
     PO -- ok --> RD[rendering<br/>tone + citation]
     PO -- related --> RD
-    PO -- no_answer --> RD
+    PO -- no_answer --> ALT["alternatives (proactive posture)<br/>premise or no answer only<br/>declared-entity family or<br/>nearly all question words<br/>→ literal paragraphs, verified"]
+    ALT --> RD
     RD --> V[verification<br/>text == corpus start:end]
+    V -.->|"first cited source passage<br/>same topic and turn only"| MEM
     V --> S([Answer + citations + diagnostics])
 ```
 
-| Stage | light | medium | heavy |
-|---|:-:|:-:|:-:|
-| conversational, analysis, confidence, filters, retrieval | ✓ | ✓ | ✓ |
-| reranking | — | ✓ (mmarco, k=4) | ✓ (bge-m3, k=8) |
-| reading | — | ✓ (2 passages) | ✓ (4 passages + agreement) |
-| evidence, policy, rendering, verification | ✓ | ✓ | ✓ |
-| measured p95 (universal bank) | 85 ms | 815 ms | 2,130 ms |
+| Stage | light | medium |
+|---|:-:|:-:|
+| conversational, analysis (typo correction), confidence, filters, retrieval | ✓ | ✓ |
+| clarification (inside retrieval: no topic → `necesita_aclaracion`) | ✓ | ✓ |
+| reranking | — | ✓ (mmarco, k=4) |
+| reading | — | ✓ (semantic reading: top 3 sentences by RRF of cross-encoder, e5, lexical) |
+| evidence, policy, rendering, verification | ✓ | ✓ |
+| historical p95 (universal bank) | 85 ms | 815 ms |
+
+The former `heavy` profile was removed on 2026-10-08 (ADR 0003). See
+[general regression](../herramientas/evaluacion/README.md) for reproducible
+measurements and alternative-model comparisons.
 
 Each stage receives the `ContextoConsulta`, fills it in and may close the
-query. If no candidate contains a focus term, the reranker and the reader
+query. A `no_answer` from a false premise or without an answer may carry
+alternatives: similar paragraphs that are in the documents, never an answer
+and never part of the conversation memory
+([configuration](guide/configuration.md#when-the-answer-is-not-there-posture)). If no candidate contains a focus term, the reranker and the reader
 are skipped (early exit). The rules in detail: [policy](methodology/policy.md).
+
+### Understanding the question
+
+The analysis stage reads the question with the language pack's rules
+(`ipsis/recursos/idiomas/<language>.yaml`), without any model: patterns,
+word lists and the corpus statistics. Nothing is generated and the question
+the user wrote is the one that is answered. Three things come out of it:
+
+After dense confidence, an unrecognized intention can use example similarity
+with a cached query vector. Examples are encoded at startup. In a follow-up,
+both pattern recognition and similarity use the current user's question;
+inherited words supply retrieval context, not a different relation. This
+fallback needs a corpus topic, measured model/language settings, minimum
+cosine, a margin against the second intention and language-declared compatible
+question forms. The extra check rejects amount/actor questions that resemble
+deadline/procedure examples. It supplies answer cues;
+it removes no query terms and changes no acceptance thresholds. BM25 skips it.
+Shipped E5-small settings enable only categories with correct dev fallback
+cases: end/procedure in Spanish, end in English and procedure in Portuguese.
+
+The QA reader receives the current follow-up when it expresses a recognized
+relation or multiple content terms. A bare qualifier ("and in summer?")
+retains the interpreted question so the topic and preceding relation remain
+available. Intent recognition still uses the current turn. For actor
+questions, it reads the sentence selected for that action, excluding other
+roles elsewhere in the passage. Selected quantity spans can include their
+adjacent unit, limit and reference point; selected actor spans can include
+the matching action clause. This completion is literal, retains exact
+offsets and records the raw model span in diagnostics. It does not replace
+the selected actor or number with another one, and answer thresholds remain
+unchanged.
+
+| | What it looks for | Example | What changes afterwards |
+|---|---|---|---|
+| **Follow-up** | Whether the question follows the conversation's current topic, returns to an earlier one or opens a new one, by its topic terms and a follow-up marker ("and", "y", "e") | "¿y con 90?" after "¿Qué pasa si el proveedor rechaza la orden?" | Retrieval uses "¿y con 90? proveedor rechaza orden"; the selection weighs the user's own words fully and the inherited ones half |
+| **Intention** | Which relation is asked for: start, end, threshold, consequence, person in charge, requirement, procedure | "cuando empieza la compra?" → start; relation words "cuando", "empieza" | Relation words are not topic (not focus, not scored in the selection); a sentence with one of the intention's cues ("Una vez…", "después de…") weighs ×2, and the reader also reads the candidate with the best cued sentence |
+| **Synonyms** | A question word missing from the corpus whose synonym is in it | "necesita" → "requieren" | The synonym is searched and measured instead of the missing word |
+
+The conversation memory keeps, per `session_id`, the current topic (its
+core terms, the last follow-up and the vocabulary of the passages that
+answered it) and up to four earlier ones, so a question can return to them.
+An out-of-domain question in the middle does not change the topic; a
+deliberate change of topic never inherits, even if it starts with "and". A
+conversation is forgotten after `conversation.expiry_minutes` without
+questions (30 by default, in `engine.yaml`), and the widget starts a new one
+on every page load. The rationale and the measurements are in
+[ADR 0005](decisions/0005-deterministic-query-understanding.md) and
+[ADR 0006](decisions/0006-conversation-memory.md); the signals in
+[lexical](methodology/lexical.md).
+
+Vocabulary enters memory only after final verification, from the source
+passage containing the first displayed citation. That context lets the next
+question refer to a neighboring step; other candidates are excluded. An
+out-of-domain turn cannot replace the vocabulary. Turn tokens reject stale
+concurrent replies, and compaction also removes obsolete surface forms.
+
+`genericas_memoria` is separate from the answer's generic-word list:
+`tiempo/tempo` do not open or contaminate a topic, but keep their original
+weight in focus and answer selection. Topic compaction must not change
+how an independent question is answered.
 
 ## 5. Ingestion
 
 ```mermaid
 flowchart LR
     D["documents/<br/>PDF · DOCX · MD · TXT"] --> PA[parse<br/>text + sections + offsets]
+    D -.->|"PDF page without text"| OCR["OCR (optional)<br/>Tesseract, confidence per page"]
+    OCR -.-> PA
     PA --> CH[chunking<br/>never across sections]
     CH --> ME[metadata<br/>entities, keywords]
     ME --> EM[e5 encoder<br/>passage: …]
@@ -267,7 +350,7 @@ sequenceDiagram
 | `GET /config` | What the widget needs: language texts, tone microcopy, styles, placement and avatar |
 | `GET /widget.js`, `/avatar.js`, `/styles.css`, `/avatars/*.avatar.json` | Static files (long cache in production) |
 | `GET /health` · `GET /ready` | Alive · ready, with the project diagnosis (503 when something blocks) |
-| `/admin/*`, `/admin/panel` | Personality and styles over HTTP, with a token and HTTPS |
+| `/admin/*`, `/admin/panel` | Personality, styles, status, thresholds, documents and reindexing over HTTP, with a token and HTTPS |
 | `GET /source` | Source code (AGPL §13) |
 
 ## 7. Deployment

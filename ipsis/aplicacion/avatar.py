@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from ipsis.configuracion import rutas
-from ipsis.configuracion.personalidad import CLAVE_SEMANTICA, EVENTOS
+from ipsis.configuracion.personalidad import CLAVE_SEMANTICA, EVENTOS, claves_sugeridas_avatar
 from ipsis.recursos.mensajes import t
 
 LIMITE_BYTES = 256 * 1024  # el mismo límite que parseAvatarDefinition
@@ -156,12 +156,13 @@ def importar_avatar(archivo: str | Path, nombre: str | None = None) -> Avatar:
 def mapa_eventos(avatar: Avatar | None, sobrescrituras: dict[str, str]) -> MapaEventos:
     """Clave efectiva de cada evento: la sobrescrita, la sugerida o su respaldo en cadena."""
     disponibles = set(avatar.expresiones + avatar.animaciones) if avatar is not None else set()
+    sugeridas = claves_sugeridas_avatar(avatar.nombre if avatar else None, disponibles)
     claves: dict[str, str] = {}
     respaldos: dict[str, str] = {}
 
     def resolver(evento: str, vistos: frozenset[str] = frozenset()) -> str:
-        sugerida, respaldo = EVENTOS[evento]
-        pedida = sobrescrituras.get(evento, sugerida)
+        _, respaldo = EVENTOS[evento]
+        pedida = sobrescrituras.get(evento, sugeridas[evento])
         if pedida in disponibles:
             return pedida
         if respaldo in EVENTOS and respaldo not in vistos:
@@ -170,7 +171,7 @@ def mapa_eventos(avatar: Avatar | None, sobrescrituras: dict[str, str]) -> MapaE
 
     for evento in EVENTOS:
         claves[evento] = resolver(evento)
-        pedida = sobrescrituras.get(evento, EVENTOS[evento][0])
+        pedida = sobrescrituras.get(evento, sugeridas[evento])
         if claves[evento] != pedida:
             respaldos[evento] = pedida
     return MapaEventos(claves, respaldos)

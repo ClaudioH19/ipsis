@@ -34,11 +34,11 @@
       {
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
         "offset_start": 463,
         "offset_end": 510,
         "text": "El filtro de sedimentos se cambia cada 6 meses.",
-        "score": 0.99999
+        "score": 1.0
       }
     ]
   },
@@ -46,7 +46,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nArtículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nArtículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEl documento agrega, en otra sección: Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).\n\nPuede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras.",
     "confidence": {
       "top1": 0.8699,
       "margin": 0.08424
@@ -55,11 +55,20 @@
       {
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
         "offset_start": 395,
-        "offset_end": 536,
-        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.",
-        "score": 0.74883
+        "offset_end": 662,
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "score": 1.0
+      },
+      {
+        "chunk_id": "manual-purificador__c0000",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 290,
+        "offset_end": 367,
+        "text": "Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.66667
       }
     ]
   },
@@ -76,11 +85,11 @@
       {
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
         "offset_start": 537,
         "offset_end": 662,
         "text": "Artículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
-        "score": 0.99999
+        "score": 1.0
       }
     ]
   },
@@ -88,29 +97,20 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nTe sumo también esto: Reglamento ficticio creado para las pruebas de caracterización. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nProduce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\n¿Coincide con lo que necesitabas? Con otro detalle puedo afinar la búsqueda.",
     "confidence": {
-      "top1": 0.86356,
-      "margin": 0.04167
+      "top1": 0.88395,
+      "margin": 0.04861
     },
     "fragments": [
       {
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 105,
-        "offset_end": 141,
-        "text": "El purificador Aqualis P3 no existe.",
-        "score": 1.0
-      },
-      {
-        "chunk_id": "reglamento-servicio__c0000",
-        "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 40,
-        "offset_end": 103,
-        "text": "Reglamento ficticio creado para las pruebas de caracterización.",
-        "score": 0.66667
+        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
+        "offset_start": 989,
+        "offset_end": 1041,
+        "text": "Produce hasta 190 litros de agua purificada por día.",
+        "score": 0.25453
       }
     ]
   },
@@ -118,20 +118,20 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "La respuesta directa no aparece. Te comparto lo que más se relaciona:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "La respuesta directa no aparece. Te comparto lo que más se relaciona:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).\n\n¿Responde esto a lo que preguntaste? Si no, indícame qué parte te falta.",
     "confidence": {
-      "top1": 0.82167,
-      "margin": 0.05341
+      "top1": 0.86534,
+      "margin": 0.08885
     },
     "fragments": [
       {
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
         "offset_start": 260,
         "offset_end": 383,
         "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.9979
+        "score": 0.99875
       }
     ]
   },
@@ -139,19 +139,19 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No tengo una respuesta directa, pero esto se relaciona con tu pregunta:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\nEn relación con lo anterior, dice: Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "answer": "Sobre «equipo» no hay una respuesta directa. Esto es lo relacionado:\n\nEl filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. (Fuente: Manual del purificador de agua Aqualis P3).\n\nEn relación con lo anterior, dice: Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nPuede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras.",
     "confidence": {
-      "top1": 0.84284,
-      "margin": 0.01171
+      "top1": 0.88733,
+      "margin": 0.05573
     },
     "fragments": [
       {
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
-        "offset_start": 902,
-        "offset_end": 1041,
-        "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día.",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 511,
+        "offset_end": 665,
+        "text": "El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
         "score": 1.0
       },
       {
@@ -166,15 +166,34 @@
     ]
   },
   "¿Atienden los domingos?": {
-    "status": "no_answer",
+    "status": "related",
     "service_level": "normal",
-    "plan": "no_answer",
-    "answer": "Lamentablemente, no encontré respuesta en los documentos.",
+    "plan": "gray_zone",
+    "answer": "No hay una respuesta exacta, aunque los documentos dicen esto sobre el tema:\n\nLos sábados solo se atienden emergencias por filtraciones. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEl documento también señala: Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nRevisa si este texto responde tu duda; si no, reformula la pregunta y lo intento de nuevo.",
     "confidence": {
-      "top1": 0.77943,
-      "margin": 0.0331
+      "top1": 0.85329,
+      "margin": 0.08236
     },
-    "fragments": []
+    "fragments": [
+      {
+        "chunk_id": "reglamento-servicio__c0000",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Horario de atención",
+        "offset_start": 759,
+        "offset_end": 817,
+        "text": "Los sábados solo se atienden emergencias por filtraciones.",
+        "score": 1.0
+      },
+      {
+        "chunk_id": "manual-purificador__c0000",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3",
+        "offset_start": 42,
+        "offset_end": 141,
+        "text": "Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe.",
+        "score": 0.33333
+      }
+    ]
   },
   "¿Qué recargo se cobra según el artículo 4?": {
     "status": "ok",
@@ -189,11 +208,11 @@
       {
         "chunk_id": "reglamento-servicio__c0000",
         "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
         "offset_start": 260,
         "offset_end": 383,
         "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.99929
+        "score": 1.0
       }
     ]
   },
@@ -210,19 +229,19 @@
       {
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
         "offset_start": 290,
         "offset_end": 367,
         "text": "Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
-        "score": 0.99989
+        "score": 0.99999
       }
     ]
   },
   "¿El equipo rechaza el 12,5% del agua?": {
-    "status": "related",
+    "status": "ok",
     "service_level": "normal",
-    "plan": "gray_zone",
-    "answer": "No hay una respuesta directa en los documentos, pero esto es lo más relacionado:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "plan": "extractive",
+    "answer": "El documento lo plantea así:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
       "top1": 0.82504,
       "margin": 0.03083
@@ -231,11 +250,11 @@
       {
         "chunk_id": "manual-purificador__c0000",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
         "offset_start": 902,
         "offset_end": 988,
         "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal.",
-        "score": 0.49809
+        "score": 0.98997
       }
     ]
   },
@@ -245,8 +264,8 @@
     "plan": "no_answer",
     "answer": "No hay rastro de \"artículo 99\" en los documentos disponibles.",
     "confidence": {
-      "top1": 0.77978,
-      "margin": 0.01788
+      "top1": 0.82813,
+      "margin": 0.0552
     },
     "fragments": []
   },
@@ -254,10 +273,10 @@
     "status": "no_answer",
     "service_level": "normal",
     "plan": "no_answer",
-    "answer": "No hay información sobre \"5%\" en tus documentos; puede que no forme parte de ellos.",
+    "answer": "No hay información sobre \"5%\" en tus documentos; puede que no forme parte de ellos.\n\nLo más parecido que tengo es esto:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
-      "top1": 0.81754,
-      "margin": 0.02593
+      "top1": 0.84075,
+      "margin": 0.01515
     },
     "fragments": []
   },

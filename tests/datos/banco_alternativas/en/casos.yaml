@@ -1,0 +1,695 @@
+# Alternatives bank (ADR 0008). Corpus: the catalog and stock in ./corpus plus
+# the documents in ../../banco_consultas/en/corpus, with the
+# config/domain.yaml in ./dominio.yaml. Same fields as ../es/casos.yaml.
+
+# --- catalog: products that exist ---------------------------------------------
+- id: en-alt-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: How much is the TP-400 drill?
+  aceptables: [TP-400]
+- id: en-alt-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: How many steps does the ET-7 ladder have?
+  aceptables: [ET-7]
+- id: en-alt-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: What blade does the SC-235 circular saw use?
+  aceptables: [SC-235]
+- id: en-alt-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: How many units of the LB-900 sander are in the North Warehouse?
+  aceptables: [LB-900]
+- id: en-alt-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: How much weight does the ET-5 ladder hold?
+  aceptables: [ET-5]
+- id: en-alt-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: What battery does the TI-18 drill use?
+  aceptables: [TI-18]
+- id: en-alt-exacta-007
+  tipo: exacta
+  particion: dev
+  pregunta: When is restocking ordered for a tool?
+  aceptables: [restocking]
+- id: en-alt-exacta-008
+  tipo: exacta
+  particion: test
+  pregunta: What materials does the SK-65 jigsaw cut?
+  aceptables: [SK-65]
+
+# --- catalog: absent code with a family ----------------------------------------
+- id: en-alt-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the TP-500 drill?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: en-alt-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: How much is the SC-200 saw?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: en-alt-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Is the ET-6 ladder in stock?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: en-alt-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell the LO-350 sander?
+  aceptables: [LO-300, LB-900]
+- id: en-alt-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the TI-20 cordless drill?
+  aceptables: [TI-18, TP-400, TP-600]
+- id: en-alt-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: What is the price of the EX-14 ladder?
+  aceptables: [EX-12, ET-5, ET-7]
+- id: en-alt-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the SK-80 jigsaw?
+  aceptables: [SK-65, SC-185, SC-235]
+- id: en-alt-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: How many units of the TP-800 are left?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: en-alt-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: How powerful is the LB-700 sander?
+  aceptables: [LB-900, LO-300]
+- id: en-alt-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: Are there units of the SC-210 saw in the Central Warehouse?
+  aceptables: [SC-185, SC-235, SK-65]
+
+# --- catalog: absent product described, with similar ones ----------------------
+- id: en-alt-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a band saw?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: en-alt-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell a drill press?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: en-alt-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a telescopic ladder?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: en-alt-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell a random orbit sander?
+  aceptables: [LO-300, LB-900]
+- id: en-alt-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a ladder with ten steps?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: en-alt-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell a reciprocating saw?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: en-alt-descrito-007
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a magnetic drill?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: en-alt-descrito-008
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell a drywall sander?
+  aceptables: [LO-300, LB-900]
+
+# --- catalog: absent and nothing similar -----------------------------------------
+- id: en-alt-sinvecino-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell latex paint?
+- id: en-alt-sinvecino-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have bathroom faucets?
+- id: en-alt-sinvecino-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell electrical cables?
+- id: en-alt-sinvecino-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have drywall screws?
+- id: en-alt-sinvecino-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell floor tiles?
+- id: en-alt-sinvecino-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have garden hoses?
+- id: en-alt-sinvecino-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell security padlocks?
+- id: en-alt-sinvecino-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have work gloves?
+
+# --- documents: absent topic with a neighboring section -------------------------
+- id: en-alt-doc-001
+  tipo: vecino
+  particion: dev
+  pregunta: What happens if I lose the trip receipts?
+  aceptables: [original receipts]
+- id: en-alt-doc-002
+  tipo: vecino
+  particion: test
+  pregunta: Can I fly first class?
+  aceptables: [business class]
+- id: en-alt-doc-003
+  tipo: vecino
+  particion: dev
+  pregunta: Can I work remotely four days per week?
+  aceptables: [up to three days per week]
+- id: en-alt-doc-004
+  tipo: vecino
+  particion: test
+  pregunta: Does the password expire every 60 days?
+  aceptables: [The password expires every 90 days]
+- id: en-alt-doc-005
+  tipo: vecino
+  particion: dev
+  pregunta: How long are urine samples kept?
+  aceptables: [Blood samples]
+- id: en-alt-doc-006
+  tipo: vecino
+  particion: test
+  pregunta: Does the irrigation run in winter?
+  aceptables: [Drip irrigation, third watering]
+- id: en-alt-doc-007
+  tipo: vecino
+  particion: dev
+  pregunta: Can I return a used product?
+  aceptables: [return]
+- id: en-alt-doc-008
+  tipo: vecino
+  particion: test
+  pregunta: Does the library open on public holidays?
+  aceptables: [The library opens]
+- id: en-alt-doc-009
+  tipo: vecino
+  particion: dev
+  pregunta: Does the coffee maker warranty cover moisture damage?
+  aceptables: [The warranty does not cover, It covers defects]
+- id: en-alt-doc-010
+  tipo: vecino
+  particion: test
+  pregunta: How many books can I borrow at once?
+  aceptables: [Book loans]
+- id: en-alt-doc-011
+  tipo: vecino
+  particion: dev
+  pregunta: Do book loans last 21 days?
+  aceptables: [Book loans last 14 days]
+- id: en-alt-doc-012
+  tipo: vecino
+  particion: test
+  pregunta: Is the remote work allowance 30,000 pesos?
+  aceptables: [monthly allowance of 20,000 pesos]
+
+# --- documents: absent topic without a neighbor ---------------------------------
+- id: en-alt-docsin-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: What are the cafeteria hours?
+- id: en-alt-docsin-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: How much does parking cost?
+- id: en-alt-docsin-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Who is the human resources director?
+- id: en-alt-docsin-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Is there a daycare for staff children?
+- id: en-alt-docsin-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: How many vacation days do I get?
+- id: en-alt-docsin-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Can I bring pets to the office?
+
+# --- out of domain -----------------------------------------------------------------
+- id: en-alt-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: What is the capital of Mongolia?
+- id: en-alt-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Who won the 2010 football World Cup?
+- id: en-alt-fuera-003
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: How do you bake sourdough bread?
+- id: en-alt-fuera-004
+  tipo: fuera_dominio
+  particion: test
+  pregunta: How far away is the Moon?
+- id: en-alt-fuera-005
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: How does the knight move in chess?
+- id: en-alt-fuera-006
+  tipo: fuera_dominio
+  particion: test
+  pregunta: What will the weather be like tomorrow in Valparaíso?
+
+# --- ronda 5: la validación de la ronda 3 (ya vista, ahora desarrollo) ---------
+- id: en-val-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the ET-9 ladder?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: en-val-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: What does the LO-200 sander cost?
+  aceptables:
+  - LO-300
+  - LB-900
+- id: en-val-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Is the TI-24 drill in stock?
+  aceptables:
+  - TI-18
+  - TP-400
+  - TP-600
+- id: en-val-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell the SK-50 jigsaw?
+  aceptables:
+  - SK-65
+  - SC-185
+  - SC-235
+- id: en-val-plazo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Can I request a refund up to 45 days after receiving the order?
+  aceptables:
+  - up to 30 days after receiving the order
+- id: en-val-plazo-002
+  tipo: vecino
+  particion: test
+  pregunta: Does the manager reply to a remote work application within fifteen business days?
+  aceptables:
+  - replies within five business days
+- id: en-val-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: How far away is the airport?
+- id: en-val-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: How much is the industrial safety course?
+- id: en-val-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: How much does a 27-inch monitor weigh?
+- id: en-val-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: What are the gym opening hours?
+- id: en-val-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell spare parts for a car water pump?
+- id: en-val-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have a music library?
+- id: en-val-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Who wrote Don Quixote?
+- id: en-val-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: How many planets are in the solar system?
+- id: en-val-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: How many units of the TP-600 drill are in the Central Warehouse?
+  aceptables:
+  - TP-600
+- id: en-val-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: How high does the EX-12 ladder reach?
+  aceptables:
+  - EX-12
+
+# --- ronda 5: catálogo de oficina, despacho y garantías, medidas y negativos difíciles ---
+- id: en-alt-ofi-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: How much is the PA-90 ream?
+  aceptables:
+  - PA-90
+- id: en-alt-ofi-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: How many pages per minute does the IM-200 print?
+  aceptables:
+  - IM-200
+- id: en-alt-ofi-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: How wide is the ES-160 desk?
+  aceptables:
+  - ES-160
+- id: en-alt-ofi-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: How long does delivery to the regions take?
+  aceptables:
+  - 5 business days
+- id: en-alt-ofi-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: What warranty do the chairs have?
+  aceptables:
+  - 24 months
+- id: en-alt-ofi-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: What discount do companies get?
+  aceptables:
+  - 15 %
+- id: en-alt-ofi-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the PA-80 ream?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: en-alt-ofi-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: How much is the PF-150 photo paper?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: en-alt-ofi-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Do you sell the IM-250 printer?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Is the IM-400 printer in stock?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have the IT-20 inkjet printer?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: What does the SO-15 chair cost?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: en-alt-ofi-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: Do you sell the SE-30 executive chair?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: en-alt-ofi-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: Do you have the ES-140 desk?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: en-alt-ofi-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: How wide is the ES-180 desk?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: en-alt-ofi-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell the PA-60 ream?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: en-alt-ofi-codigo-011
+  tipo: vecino
+  particion: dev
+  pregunta: Does the IM-300 printer print in colour?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-codigo-012
+  tipo: vecino
+  particion: test
+  pregunta: Do you have the SE-25 chair in black?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: en-alt-ofi-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a dot matrix printer?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell legal size paper?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: en-alt-ofi-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a gaming chair?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: en-alt-ofi-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell an L-shaped desk?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: en-alt-ofi-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: Do you have a laser multifunction printer?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: en-alt-ofi-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: Do you sell kraft paper?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: en-alt-med-001
+  tipo: vecino
+  particion: dev
+  pregunta: Does delivery to the regions take 3 business days?
+  aceptables:
+  - Delivery to the regions takes 5 business days
+- id: en-alt-med-002
+  tipo: vecino
+  particion: test
+  pregunta: Does delivery within Santiago take 4 business days?
+  aceptables:
+  - Santiago takes 2 business days
+- id: en-alt-med-003
+  tipo: vecino
+  particion: dev
+  pregunta: Is the printer warranty 3 months?
+  aceptables:
+  - Printers have a warranty of 6 months
+- id: en-alt-med-004
+  tipo: vecino
+  particion: test
+  pregunta: Do the tools have an 18 months warranty?
+  aceptables:
+  - Power tools have a warranty of 12 months
+- id: en-alt-med-005
+  tipo: vecino
+  particion: dev
+  pregunta: Is the desk warranty 36 months?
+  aceptables:
+  - desks have a warranty of 24 months
+- id: en-alt-med-006
+  tipo: vecino
+  particion: test
+  pregunta: Can I return a product within 20 days?
+  aceptables:
+  - return an unused product within 10 days
+- id: en-alt-med-007
+  tipo: vecino
+  particion: dev
+  pregunta: Is the company discount 10 %?
+  aceptables:
+  - discount of 15 %
+- id: en-alt-med-008
+  tipo: vecino
+  particion: test
+  pregunta: Is 50% of the allowance paid if the trip lasts less than twelve hours?
+  aceptables:
+  - 40% of the daily allowance
+- id: en-alt-med-009
+  tipo: vecino
+  particion: dev
+  pregunta: Does the irrigation pump shut off below 10 %?
+  aceptables:
+  - below 20 %
+- id: en-alt-med-010
+  tipo: vecino
+  particion: test
+  pregunta: Is the remote work agreement reviewed every 3 months?
+  aceptables:
+  - reviewed every six months
+- id: en-alt-med-011
+  tipo: vecino
+  particion: dev
+  pregunta: Does restocking arrive within 15 business days?
+  aceptables:
+  - Restocking arrives within ten business days
+- id: en-alt-med-012
+  tipo: vecino
+  particion: test
+  pregunta: Does the coffee maker warranty last 18 months?
+  aceptables:
+  - lasts 24 months
+- id: en-alt-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell toilet paper?
+- id: en-alt-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have wheelchairs?
+- id: en-alt-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell vinyl records?
+- id: en-alt-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: What is the warranty of a new car?
+- id: en-alt-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: What are the pharmacy opening hours?
+- id: en-alt-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have escalators?
+- id: en-alt-dificil-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: How much does a law office charge?
+- id: en-alt-dificil-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you sell tattoo ink?
+- id: en-alt-dificil-009
+  tipo: sin_vecino
+  particion: dev
+  pregunta: What distance is a marathon?
+- id: en-alt-dificil-010
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you sell heart rate monitors?
+- id: en-alt-dificil-011
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you have desk lamps?
+- id: en-alt-dificil-012
+  tipo: sin_vecino
+  particion: test
+  pregunta: How much does it cost to send a letter to Europe?
+- id: en-alt-sinvecino-ofi-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Do you sell rugs?
+- id: en-alt-sinvecino-ofi-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Do you have fans?
+- id: en-alt-fuera-101
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Who painted the Mona Lisa?
+- id: en-alt-fuera-102
+  tipo: fuera_dominio
+  particion: test
+  pregunta: What is the longest river in the world?
+- id: en-alt-fuera-103
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: How do you say cat in Spanish?
+- id: en-alt-fuera-104
+  tipo: fuera_dominio
+  particion: test
+  pregunta: In what year did man land on the Moon?

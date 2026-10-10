@@ -48,7 +48,76 @@ implantação.
 
 Em produção o `/admin` exige HTTPS. Sem token, o painel não existe.
 
+## Alterar a configuração
+
+Execute na pasta do projeto original antes de preparar a implantação:
+
+```bash
+ipsis configure cors_origins=https://www.seu-site.com query_log.enabled=true
+ipsis configure posture.mode=strict
+ipsis profile set medium
+ipsis models download
+ipsis profile show
+ipsis snapshot-config --output reports/config-review.yaml
+```
+
+`configure` altera `config/assistant.yaml`. Leitura e limiares usam
+`config/engine.yaml`; combine este bloco com os ajustes existentes:
+
+```yaml
+profile_overrides:
+  cascade:
+    read_m: 2
+    max_reading_chars: 600
+  default_thresholds:
+    ok: 0.80
+    focus: 1.0
+```
+
+São valores de `medium`, não uma garantia de precisão. A precedência é perfil,
+ajustes e calibração vigente. Antes de medir mudanças de leitura ou limiares,
+renomeie e guarde `config/calibration.yaml`: essas mudanças não invalidam
+automaticamente todas as calibrações. A versão 1 é ignorada pelo novo critério.
+
+Avalie no projeto original, que contém o golden (não é copiado para esta pasta):
+
+```bash
+ipsis golden validate
+ipsis evaluate --output reports/evaluation.json
+ipsis benchmark --bank golden/bank/manifest.json --profiles light,medium --output reports/profiles
+ipsis calibrate                    # verificar dev e test antes de --apply
+ipsis doctor
+```
+
+A resposta completa usa o mesmo critério em todos os perfis; o trecho QA é medido
+separadamente e não se aplica sem leitor. `evaluate` falha com respostas diretas
+sem o dado esperado ou falsos `ok`. Um resultado `test` inválido não bloqueia
+automaticamente `--apply`. `doctor` e `/ready` verificam funcionamento, não precisão.
+
+Após implantar, edite `config/` e execute `docker compose restart asistente`.
+Para usar comandos no contêiner com Qdrant local:
+
+```bash
+docker compose stop asistente
+docker compose run --rm --no-deps asistente ipsis configure posture.mode=strict
+docker compose run --rm --no-deps asistente ipsis doctor
+docker compose --profile https up -d
+```
+
+Mudanças de corpus, fragmentação ou modelo denso exigem indexar, validar o golden
+e recalibrar. Tom/avatar usam
+`ipsis personality` ou `config/personality.yaml`; estilos usam `ipsis widget style`
+ou `config/styles.yaml`.
+
 ## Atualização
+
+Medium usa e5-small + mMiniLM + mDeBERTa e cascata 20/4/2. Escolha
+alternativas em `config/engine.yaml::profile_overrides.models` (`dense`,
+`reranker`, `reader`), mantendo `retrieval.model: null`. A imagem lê esses
+ajustes ao baixar modelos. Após alterações, indexe e reconstrua com
+`docker compose build --no-cache asistente`. No repositório fonte,
+`python herramientas/evaluacion/general.py --download` executa a regressão
+documental; o golden real do projeto continua necessário para avaliar respostas.
 
 - **Documentos ou configuração:** no seu computador, execute `ipsis load`,
   `ipsis index` e `ipsis deploy prepare` de novo; copie a pasta e execute

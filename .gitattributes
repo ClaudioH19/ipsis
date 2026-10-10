@@ -4,9 +4,21 @@ tests/datos/corpus/** text eol=lf
 tests/datos/caracterizacion/*.json text eol=lf
 tests/datos/banco_universal/** text eol=lf
 tests/datos/banco_consultas/** text eol=lf
+tests/datos/banco_informal/** text eol=lf
+tests/datos/banco_garantias/** text eol=lf
+tests/datos/banco_validacion/** text eol=lf
+tests/datos/banco_coloquial/** text eol=lf
+tests/datos/banco_erratas/** text eol=lf
 # Generados por herramientas/avatar: se comparan byte a byte (sha256).
 ipsis/servicio/estaticos/avatar.js -text
 ipsis/servicio/estaticos/avatar.js.LICENSE.txt -text
 ipsis/servicio/estaticos/avatar.js.sha256 -text
 # Plantillas de despliegue e imagen: se usan en Linux (CRLF rompe RUN con \ y valores de .env).
 ipsis/recursos/despliegue/** text eol=lf
+tests/datos/banco_conversaciones/** text eol=lf
+# Banco congelado mixto (PDF/DOCX y texto): conservar bytes de sus hashes en
+# Windows y Linux, sin normalizar los archivos al hacer checkout.
+tests/datos/banco_general/** -text
+# Fuentes y derivados léxicos: hashes y avisos originales byte a byte.
+herramientas/sinonimos/datos/** -text
+ipsis/recursos/sinonimos/** -text

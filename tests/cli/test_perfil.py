@@ -40,12 +40,16 @@ def _indice(modelo: str, dimension: int | None = None) -> Path:
 
 def _calibracion(perfil: str) -> Path:
     from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.lenguaje.paquete import cargar_paquete
+    from ipsis.lenguaje.sinonimos import huella_lexica
 
     ruta = Path("config/calibration.yaml")
     ruta.write_text(yaml.safe_dump({
+        "version": 2,
         "estado": "calibrado", "alfa": 0.05, "confianza": 0.95,
         "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
-                        "hash_corpus": HASH, "banco": "golden@1.0.0", "hash_banco": "x"},
+                        "hash_corpus": HASH, "banco": "golden@1.0.0", "hash_banco": "x",
+                        "hash_lexico": huella_lexica(cargar_paquete("es", proyecto=Path.cwd()))},
         "umbrales": {"ok": 0.9},
     }), encoding="utf-8")
     return ruta
@@ -71,12 +75,12 @@ def test_mostrar_lee_modelos_y_presupuesto_del_perfil(proyecto, capsys):
 
 
 def test_mostrar_indice_compatible_e_incompatible(proyecto, capsys):
-    proyecto("heavy")
-    _indice(E5_SMALL)  # el proyecto se editó a mano: heavy con un índice de e5-small
+    proyecto("medium")
+    _indice(E5_BASE)  # índice construido con otro modelo denso
     assert main(["profile", "show"]) == 0
     salida = capsys.readouterr().out
-    assert "incompatible" in salida and E5_SMALL in salida and E5_BASE in salida and "ipsis index" in salida
-    _indice(E5_BASE)  # después de reindexar para heavy
+    assert "incompatible" in salida and E5_BASE in salida and E5_SMALL in salida and "ipsis index" in salida
+    _indice(E5_SMALL)  # después de reindexar para medium
     assert main(["profile", "show"]) == 0
     assert "Índice: compatible" in capsys.readouterr().out
 
@@ -111,8 +115,7 @@ def test_mostrar_calibracion_vigente_y_obsoleta_con_la_regla_del_motor(proyecto,
 @pytest.mark.parametrize(("origen", "destino", "indice", "reindexar"), [
     ("light", "medium", E5_SMALL, False),
     ("medium", "light", E5_SMALL, False),
-    ("medium", "heavy", E5_SMALL, True),
-    ("heavy", "medium", E5_BASE, True),
+    ("light", "medium", E5_BASE, True),  # índice de otro modelo denso
 ])
 def test_transiciones_segun_el_manifiesto(proyecto, capsys, origen, destino, indice, reindexar):
     proyecto(origen)
@@ -126,18 +129,9 @@ def test_transiciones_segun_el_manifiesto(proyecto, capsys, origen, destino, ind
     assert manifiesto.is_file()  # el índice no se borra
 
 
-def test_volver_al_perfil_anterior_reutiliza_su_indice(proyecto, capsys):
-    proyecto("medium")
-    _indice(E5_SMALL)
-    assert main(["profile", "set", "heavy"]) == 0
-    assert "Acción: ipsis index" in capsys.readouterr().out
-    assert main(["profile", "set", "medium"]) == 0  # sin reindexar entre medio
-    assert "sigue siendo compatible" in capsys.readouterr().out
-
-
 def test_cambio_sin_indice_no_habla_de_incompatibilidad(proyecto, capsys):
     proyecto("light")
-    assert main(["profile", "set", "heavy"]) == 0
+    assert main(["profile", "set", "medium"]) == 0
     salida = capsys.readouterr().out
     assert "Todavía no hay índice" in salida and "incompatible" not in salida and "Acción" not in salida
 
@@ -156,13 +150,14 @@ def test_mismo_perfil_es_idempotente_y_no_toca_la_calibracion(proyecto, capsys):
     assert "Calibración: vigente" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize(("perfil", "mensaje"), [("bm25", "diagnóstico"), ("turbo", "desconocido")])
+@pytest.mark.parametrize(("perfil", "mensaje"), [("bm25", "diagnóstico"), ("turbo", "desconocido"),
+                                                ("heavy", "desconocido")])
 def test_perfiles_no_instalables_se_rechazan_sin_tocar_el_proyecto(proyecto, capsys, perfil, mensaje):
     proyecto("light")
     antes = Path("config/assistant.yaml").read_bytes()
     assert main(["profile", "set", perfil]) == 1
     salida = capsys.readouterr().out
-    assert mensaje in salida and "light, medium, heavy" in salida and "Traceback" not in salida
+    assert mensaje in salida and "light, medium" in salida and "Traceback" not in salida
     assert Path("config/assistant.yaml").read_bytes() == antes
 
 
@@ -178,6 +173,6 @@ def test_conserva_ajustes_perfil_y_rechaza_los_invalidos(proyecto, capsys):
     datos["ajustes_perfil"] = {"cascada": {"rerank_k": -3}}  # inválido para cualquier perfil
     escribir_proyecto(motor, datos)
     capsys.readouterr()
-    assert main(["profile", "set", "heavy"]) == 1
+    assert main(["profile", "set", "light"]) == 1
     assert "profile_overrides" in capsys.readouterr().out
     assert _perfil_activo() == "medium"  # no quedó a medio cambiar

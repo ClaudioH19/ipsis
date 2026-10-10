@@ -7,11 +7,11 @@ de arquitectura (ADR) y la arquitectura están en inglés, en
 | Guía | Contenido |
 |---|---|
 | [Instalación](guia/instalacion.md) | Requisitos, perfiles, modelos, caché y Qdrant |
-| [Uso](guia/uso.md) | Ciclo de trabajo y referencia de todos los comandos |
-| [Configuración](guia/configuracion.md) | Cada archivo del proyecto |
+| [Uso](guia/uso.md) | Ciclo de trabajo, menú de la terminal, modo interactivo (`ipsis chat`) y todos los comandos |
+| [Configuración](guia/configuracion.md) | Cada archivo del proyecto, umbrales y precedencia |
 | [Golden set](guia/golden.md) | Preguntas de prueba, evaluación y calibración |
 | [Web](guia/web.md) | Widget, ubicación, API JavaScript, CSP y avatar |
-| [Personalidad](guia/personalidad.md) | Tonos, Folio y panel `/admin` |
+| [Personalidad](guia/personalidad.md) | Tonos, Folio y panel `/admin` (también estado, umbrales y documentos) |
 | [Despliegue](guia/despliegue.md) | Servidor con HTTPS, Docker, modos y lista antes de lanzar |
 
 Los comandos, archivos, claves y la API están en inglés en todos los

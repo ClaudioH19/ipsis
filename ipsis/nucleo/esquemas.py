@@ -212,16 +212,29 @@ class QueryDiagnostic(EsquemaEstricto):
     senales_lexicas: dict[str, Any] | None = None
     puntajes_rerank: list[float] | None = None
     rerank: list[dict[str, Any]] | None = None  # chunk_id y puntaje, en el orden del reranker
-    lectura_por_pista: str | None = None
+    lectura_por_pista: str | None = None  # chunk que el lector leyó por la pista de la intención
     pregunta_interpretada: str | None = None  # la de seguimiento, con el tema heredado
-    sinonimos: dict[str, list[str]] | None = None  # palabra ausente del corpus → sinónimos presentes  # chunk que el lector leyó por la pista de la intención
+    pregunta_lectura: str | None = None  # relación del turno actual, sin verbos heredados
+    tramo_completado: dict[str, Any] | None = None  # span QA original antes de completar bordes literales
+    intencion: dict[str, Any] | None = None  # origen, relación o similitud/margen del respaldo
+    conversacion: dict[str, str] | None = None  # qué hizo el turno (hereda, retoma, tema_nuevo) y el tema en curso
+    ortografia: dict[str, str] | None = None  # errata de la pregunta → forma del corpus que la corrige
+    sinonimos: dict[str, list[str]] | None = None  # palabra ausente del corpus → sinónimos presentes
+    recursos_lexicos: list[dict[str, Any]] | None = None  # fuente/sentido/POS de la expansión automática
+    pregunta_recuperacion: str | None = None  # texto expandido solo para BM25
     lecturas: list[dict[str, Any]] | None = None
+    lectura_semantica: list[dict[str, Any]] | None = None  # oraciones que leyó el lector, por fusión semántica
     regla: str | None = None
     senales_politica: dict[str, Any] | None = None
     oracion_foco: str | None = None
+    oracion_previa_foco: str | None = None  # contexto del foco: la oración anterior del párrafo
+    forma_ausente: bool = False
+    aclaracion: str | None = None
+    modificador_distinto: str | None = None  # «electricidad≠conexión»: mismo núcleo, otro modificador  # por qué la pregunta necesita aclaración (ipsis.lenguaje.aclaracion)  # la oración no tiene la forma de respuesta que la intención exige
     salto_modelos: bool = False
     tono: str | None = None
     plantillas: list[str] = Field(default_factory=list)  # <tono>.<situación>.<n> usadas en la respuesta
+    alternativas: dict[str, Any] | None = None  # ofrecidas y descartadas, con sus señales (ADR 0008)
 
 
 class AssistantResult(EsquemaEstricto):

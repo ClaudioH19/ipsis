@@ -7,6 +7,7 @@ diagnóstico y el servicio usen el mismo.
 """
 from __future__ import annotations
 
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Literal
 
@@ -95,6 +96,19 @@ EVENTOS: dict[str, tuple[str, str]] = {
 # Eventos que no se asignan a una clave: los resuelve el widget.
 EVENTOS_DEL_WIDGET = ("viewing_citations", "follow_pointer", "hidden", "reduced_motion")
 
+# Folio incorpora movimientos de la hoja completa. Los demás avatares siguen
+# usando el mapa estándar; las asignaciones del proyecto siempre tienen prioridad.
+EVENTOS_FOLIO = {"idle": "float", "launcher": "float", "greeting": "wake-up",
+                 "sent": "paper-plane-out", "answer_ok": "paper-plane-in"}
+
+
+def claves_sugeridas_avatar(nombre: str | None, disponibles: Iterable[str]) -> dict[str, str]:
+    claves = {evento: sugerida for evento, (sugerida, _) in EVENTOS.items()}
+    if nombre == "folio":
+        disponibles = set(disponibles)
+        claves.update({evento: clave for evento, clave in EVENTOS_FOLIO.items() if clave in disponibles})
+    return claves
+
 
 class _Estricto(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -179,4 +193,5 @@ def guardar_personalidad(config: PersonalidadConfig, proyecto: str | Path | None
 __all__ = [
     "AvatarConfig", "CLAVE_SEMANTICA", "ColoresAvatar", "EVENTOS", "EVENTOS_DEL_WIDGET", "HEX", "MiradaConfig",
     "PersonalidadConfig", "TONOS", "TonoConfig", "cargar_personalidad", "guardar_personalidad", "ruta_personalidad",
+    "EVENTOS_FOLIO", "claves_sugeridas_avatar",
 ]

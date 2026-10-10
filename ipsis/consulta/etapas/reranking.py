@@ -21,14 +21,19 @@ class EtapaReranking(_Etapa):
         m = self.motor
         if m.reranker is None or not ctx.candidatos:
             return
+        perfil = getattr(m, "perfil_instalacion", None)
+        limite = getattr(perfil.cascada, "rerank_candidatos", None) if perfil is not None else None
+        # Los que la fusión dejó más abajo no se puntúan: van detrás, en su orden.
+        resto = ctx.candidatos[limite:] if limite else []
+        if limite:
+            ctx.candidatos = ctx.candidatos[:limite]
         puntajes = m.reranker.puntuar(ctx.pregunta, [c.chunk.texto_fuente for c in ctx.candidatos])
         orden = sorted(
             range(len(ctx.candidatos)),
             key=lambda i: (-puntajes[i], ctx.candidatos[i].chunk.chunk_id),
         )
-        perfil = getattr(m, "perfil_instalacion", None)
         k = perfil.cascada.rerank_k if perfil is not None and perfil.cascada.rerank_k else len(orden)
-        ctx.descartados_rerank = [ctx.candidatos[i] for i in orden[k:]]
+        ctx.descartados_rerank = [ctx.candidatos[i] for i in orden[k:]] + list(resto)
         orden = orden[:k]
         ctx.candidatos = [ctx.candidatos[i] for i in orden]
         ctx.puntajes_rerank = [puntajes[i] for i in orden]

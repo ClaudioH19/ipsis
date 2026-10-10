@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-06",
+  "metric": "selected_reader_span_v2",
+  "profiles": [
+    "light",
+    "medium"
+  ],
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "before": "snapshot of the existing working tree before F2 runtime integration, with the corrected literal metric",
+  "before_code": "sha256:8e39343de7076fa6e1edd9bbdfad80dbe96238c9984bd8ce1af418d64ebeddcc",
+  "after_code": "sha256:a15ee9a6b00ca87ce8a362db97a38729be30c2b986de7be5c0af334154c75b94",
+  "banks": {
+    "queries": 60,
+    "universal": 30,
+    "conversations": 58
+  },
+  "policy_thresholds_changed": false,
+  "data_downloads": false,
+  "runtime_resources": {
+    "es.tsv": "5a3a88f408f097e3f0dee754b8913b2f6cda8853888b3fd02d5c201c2c4e6258",
+    "es.lexicon.tsv": "feb88ed2f7fdb5e4aa2a4230130f8f5c40ad748244719b941866603cbd978457",
+    "en.tsv": "fbf845c229ba35fbeb29cde491fc023ae10e3828171eb75b98660a3a1f9509f0",
+    "en.lexicon.tsv": "1797fee96c41ea7d448229a8930650ea0149f438ddd7785486ae36f4d80f357c",
+    "pt.tsv": "1fce782bd81048a68dbf47a41f25797668908eaa2aae9d1b9880c11e0d2b1b36",
+    "pt.lexicon.tsv": "3616be7a7d393f8745720848099c65476233bf8631119059e068ec8ff58328fa"
+  }
+}

@@ -76,6 +76,10 @@ lost; one more exact answer in `light`/en; latency within noise.
 
 ## Follow-up questions
 
+> Partly superseded by [ADR 0006](0006-conversation-memory.md): the memory now
+> keeps the whole conversation as topics, with expiry; the rules below
+> describe the first version (one turn per session).
+
 "and with 90?" after "what happens above 100 UTM?" carries almost no topic.
 `ipsis/consulta/seguimiento.py` remembers, per session and in memory, the
 last effective question and the words of the passage that answered it. A
@@ -192,7 +196,111 @@ Resolución de compra?" and "Quem assina a Resolução de compra?" (another
 sentence on the same topic, with every focus term), and "Quando se começa a
 comprar?", whose answering chunk does not reach `light`'s three candidates.
 
-## Not done yet
+## Similarity fallback (plan V4, F3)
+
+Patterns remain authoritative. For an unknown intention, a question with a
+nongeneric corpus topic can compare its existing dense query vector with
+ten natural examples per intention and language, encoded once at startup
+using query prefixes on both sides. Each intention scores with its maximum
+example cosine; the margin is against the second **intention**, not another
+example of the winning intention.
+
+Both thresholds must be exceeded. Settings are keyed by dense model in the
+language pack. No encoder, BM25, or no measured setting means no fallback;
+E5 base remains inactive until separately measured. Diagnostics record
+pattern/similarity origin, candidate, cosine, margin, nearest example and
+acceptance, including rejected attempts.
+
+The inferred intention supplies only cues for selection and the reader
+window, including the extra candidate by cue. It cannot locate relation
+words: all query terms remain in focus, coverage and OOV checks. No text is
+generated, no answer threshold changes and no model weights are trained.
+
+Dev selects thresholds on a fixed grid with zero incorrect fallback
+intentions: maximize correct coverage, then minimize margin and cosine.
+Only categories actually accepted correctly on dev are enabled; the margin
+still compares all seven categories. Other categories keep their patterns.
+Test never enters threshold search. Iterations and their test errors are
+retained; this small bank is a regression check, not an untouched statistical
+certification set. Prepared queries use runtime manual synonym expansion;
+automatic WordNet expansion remains BM25-only.
+
+| Language | E5-small minimum cosine | Minimum margin (strict) | Enabled fallback |
+|---|---|---|---|
+| es | 0.850 | > 0.000 | end, procedure |
+| en | 0.870 | > 0.000 | end |
+| pt | 0.895 | > 0.000 | procedure |
+
+Intent examples, enabled categories and thresholds participate in lexical
+calibration provenance. Rebuild the motor and regenerate stale calibrations
+after changing them.
+
+Follow-up intent recognition uses the current user's question, not its
+inherited topic words. Compatibility forms (`respaldo_patrones`) add a
+necessary condition for the measured end/procedure fallback: a similar
+amount or actor question cannot become a deadline or a procedure solely
+because its topic resembles an example. These forms do not recognize an
+intent independently and remove no words. Thresholds remain unchanged;
+the [correction measurements](../methodology/mediciones/v4-correcciones/README.md)
+repeat dev/test and the response banks after this change.
+
+The [V4 evaluation](../methodology/v4-results.md) records actual fallback
+activation: eight additional correctly labelled intentions per profile in
+the natural-query bank, without a change in answer correctness or wrong
+answers. Recognition coverage is small and does not establish a general
+answer-quality improvement.
+
+## Informal questions (2026-10-08)
+
+Users paraphrase, abbreviate and misspell. A held-out informal bank (32
+questions per language over the query bank's corpus) showed that retrieval
+copes (the right passage reaches the user in 14–16 of 20 questions in
+medium) but the focus and absent-word gates block most direct answers.
+
+Decision, all deterministic and language-pack driven:
+
+- the focus also looks at the innermost section of the answering sentence
+  (now with the reader too) and at the previous sentence of its paragraph;
+- question quantifiers are generic words; informal abbreviations ("q",
+  "pra", "ur") and English contraction pieces are stopwords;
+- typos are corrected against the corpus vocabulary, never into a word the
+  language lexicon knows; since 2026-10-10 with a SymSpell-style index that
+  also compares stems and joins or splits words (robustness to typos 91 → 97 %
+  on a held-out typo bank);
+- a `frecuencia` intention requires its cue in the answer (`exige_pista`).
+
+Relaxing the focus or `s_oov` with model scores was measured and rejected:
+the reader and the reranker score a paraphrase and a same-topic trap alike.
+Measurements and the rejected options:
+[informal paraphrases](../methodology/informal-paraphrases.md). Medium went
+from 56 to 68 correct answers on the query bank and from 6 to 10 on the
+informal bank, with the same accepted errors as before.
+
+### Clarification and modifiers (2026-10-08, later)
+
+A question without topic ("¿Cuánto es?", "Who approves it?", "¿Cuánto
+dura?") now asks for it (`necesita_aclaracion`) instead of reading; the rule
+uses the content words left and how many retrieved documents contain the
+only one. A question word absent from the corpus that modifies a head the
+sentence gives another modifier ("gastos de electricidad" vs "gastos de
+conexión") caps the focus. Both close the errors that kept
+`semantic_reading` off; with it, medium reaches 72/102 and 16/60 with one
+extra accepted error, and it is now on in medium. Small instruction-tuned judges (Qwen2.5 0.5B, AUC 0.74)
+and an NLI model (AUC 0.78) were measured and rejected.
+
+### Held-out validation (2026-10-09)
+
+A validation bank written before the fixes measured them once: the
+introduction of a sectioned document is not read, `modificador_distinto`
+also looks at the section titles, indefinite pronouns are generic, and a
+strong reader tier (`s_qa ≥ 0.99` tolerates `s_oov < 0.67`) lets informal
+wording through. Medium on the validation bank: 146 correct either way,
+errors 9 → 4, guaranteed precision 90.1 % → 94.0 %. Adjacency without a
+preposition was rejected: it cannot tell a trap from a synonym. Informal
+paraphrases on that bank stay at 23/69 direct; see
+[informal paraphrases](../methodology/informal-paraphrases.md).
+
+## Remaining proposal
 
 From the proposal that motivated this: parent/neighbor expansion. It should
 come with a failing case and a measurement, like these.

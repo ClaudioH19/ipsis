@@ -96,6 +96,15 @@ situations:
   - 'La respuesta directa no aparece. Te comparto lo que más se relaciona:'
   - 'No encontré justo eso, pero los documentos tratan el tema así:'
   - 'Sin una respuesta directa a mano, esto es lo más pertinente:'
+  related_check:
+  - "¿Es esto lo que buscabas? Si no, cuéntame con otras palabras qué necesitas."
+  - "¿Te sirve este pasaje? Si buscabas otra cosa, escríbela de otra forma y vuelvo a buscar."
+  - "Si esto responde tu pregunta, perfecto. Si no, dime un poco más y busco de nuevo."
+  - "¿Era esto lo que querías saber? Puedo buscar otra vez si me das más detalles."
+  - "Revisa si este texto responde tu duda; si no, reformula la pregunta y lo intento de nuevo."
+  - "¿Responde esto a lo que preguntaste? Si no, indícame qué parte te falta."
+  - "Puede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras."
+  - "¿Coincide con lo que necesitabas? Con otro detalle puedo afinar la búsqueda."
   missing_focus:
   - 'No encontré información específica sobre «{term}». Esto es lo más cercano:'
   - 'Los documentos no hablan específicamente de «{term}». Esto es lo más parecido:'
@@ -127,6 +136,24 @@ situations:
   - No hay rastro de "{entity}" en los documentos disponibles.
   - '"{entity}" no figura en los documentos. Quizás esté fuera de su alcance.'
   - Revisé los documentos y no encontré "{entity}".
+  needs_clarification:
+  - ¿Sobre qué tema me preguntas? Dime un poco más y lo busco en los documentos.
+  - Necesito saber a qué te refieres para buscar la respuesta. ¿Puedes darme más detalles?
+  - Tu pregunta puede referirse a varias cosas de los documentos. ¿Me indicas cuál?
+  - Para responderte bien, cuéntame de qué trámite o documento se trata.
+  - Varios documentos podrían responder a eso. ¿A cuál te refieres?
+  - Me falta saber el tema. ¿Puedes escribir la pregunta con un poco más de contexto?
+  - Eso puede tener más de una respuesta según el tema. ¿De qué se trata?
+  - Con un dato más lo encuentro. ¿Sobre qué procedimiento o documento es tu pregunta?
+  alternatives_intro:
+  - 'Te muestro lo más parecido que sí aparece en los documentos:'
+  - 'Esto es lo más cercano a lo que buscas:'
+  - 'Quizá te sirva alguna de estas opciones, que sí están en los documentos:'
+  - 'Encontré algunas opciones parecidas:'
+  - 'Esto es lo que más se acerca a tu consulta:'
+  - 'Por si te sirve, esto es lo más similar que encontré:'
+  - 'Estas opciones de los documentos se parecen a lo que pides:'
+  - 'Lo más parecido que tengo es esto:'
   welcome:
   - Hola, ¿en qué puedo ayudarte?
   - ¡Hola! Pregúntame lo que necesites sobre los documentos.

@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-06",
+  "approved_on": "2026-10-06",
+  "max_lexicon_bytes": 16777216,
+  "filters": {
+    "max_members": 8,
+    "max_senses": 3,
+    "max_output_bytes": 2097152
+  },
+  "sources": {
+    "es": {
+      "id": "mcr-omw-es",
+      "label": "Multilingual Central Repository (Spanish), OMW distribution",
+      "version": "MCR 3.0 / omw-data 406bf83b3c507a3d1f26e88252d5d66893fd36bf",
+      "homepage": "https://github.com/omwn/omw-data/tree/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr",
+      "license": "CC-BY-3.0 (Spanish lexical data)",
+      "attribution": "Aitor Gonzalez-Agirre, Egoitz Laparra and German Rigau (2012), Multilingual Central Repository version 3.0; distributed by OMW, Francis Bond and Ryan Foster (2013). See original citation.bib and LICENSE.",
+      "format": "omw-tab",
+      "lemma_tag": "spa:lemma",
+      "data": {
+        "filename": "es.tab",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/wn-data-spa.tab",
+        "sha256": "0ec37ce94ee2acc63ad6b120e1051f9841d172778cc24adc0023fb8dccf0a7cd",
+        "bytes": 5995146
+      },
+      "notices": [
+        {
+          "filename": "es.LICENSE",
+          "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/LICENSE",
+          "sha256": "ccbb7b96a812b37a88a9cb8dfda92dc251e61c5fca5225ff23f5fc3d33b32a70",
+          "bytes": 907
+        },
+        {
+          "filename": "es.citation.bib",
+          "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/citation.bib",
+          "sha256": "566ecd207408493ec0dadb1808290971bac8c84587daa12703a30817a553c862",
+          "bytes": 787
+        }
+      ]
+    },
+    "en": {
+      "id": "oewn",
+      "label": "Open English Wordnet 2025",
+      "version": "2025",
+      "homepage": "https://en-word.net/downloads",
+      "license": "CC-BY-4.0; underlying Princeton WordNet notice retained",
+      "attribution": "The Open English Wordnet Team (2019-present); derived from Princeton University WordNet. Both attributions and original license notices are retained.",
+      "format": "wn-lmf-gzip",
+      "data": {
+        "filename": "en.xml.gz",
+        "url": "https://en-word.net/static/english-wordnet-2025.xml.gz",
+        "sha256": "9ca6d1dcb75f822fdd66617f7d9da48142ace38dd544d6ad5e2feca1674ad3fe",
+        "bytes": 11363503
+      },
+      "notices": [
+        {
+          "filename": "en.LICENSE",
+          "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/LICENSE.md",
+          "sha256": "672cc8b5663e8dc74c4b07a9dcf477193853575b119908fd3dc0aeeb60a9dbbb",
+          "bytes": 19863
+        },
+        {
+          "filename": "en.WNDB_License.txt",
+          "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/WNDB_License.txt",
+          "sha256": "df30ec18fbabcdaf031b79ea026d3e6b959010cffe6dd7be9ac137822175b904",
+          "bytes": 1740
+        }
+      ]
+    },
+    "pt": {
+      "id": "openwn-pt-omw",
+      "label": "OpenWN-PT, OMW distribution",
+      "version": "omw-data 406bf83b3c507a3d1f26e88252d5d66893fd36bf",
+      "homepage": "https://github.com/omwn/omw-data/tree/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por",
+      "license": "CC-BY-SA-3.0; original WordNet/Wiktionary provenance notice retained",
+      "attribution": "Valeria de Paiva and Alexandre Rademaker (2012), Revisiting a Brazilian WordNet; distributed by OMW, Francis Bond and Ryan Foster (2013). See original citation.bib and LICENSE, including WordNet and Wiktionary notices.",
+      "format": "omw-tab",
+      "lemma_tag": "lemma",
+      "data": {
+        "filename": "pt.tab",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/wn-data-por.tab",
+        "sha256": "0ba180e2d2a5317e61b4ebe94a7e969e68eea2d9e60705e1e9053c6e2ac5e684",
+        "bytes": 2105745
+      },
+      "notices": [
+        {
+          "filename": "pt.LICENSE",
+          "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/LICENSE",
+          "sha256": "4c7824c3cf3ca7d5fc68ee0473e16741361a67e242557c0661a0d6bd926ea297",
+          "bytes": 1450
+        },
+        {
+          "filename": "pt.citation.bib",
+          "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/citation.bib",
+          "sha256": "0054a97ec38646188a082d492c1b6b81c8489526625e58929a4fa695f89236bf",
+          "bytes": 300
+        }
+      ]
+    }
+  },
+  "supplements": {
+    "es": [
+      {
+        "id": "es-thes",
+        "label": "OpenThesaurus Espa?ol (LibreOffice)",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es",
+        "license": "LGPL-2.1",
+        "attribution": "Marcelo Garrone, OpenThesaurus Espa?ol; snapshot 2012-01-11; distribuci?n LibreOffice.",
+        "format": "mythes",
+        "prepared_on": "2026-10-06",
+        "data": {
+          "filename": "es-thes.dat",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/th_es_v2.dat",
+          "bytes": 2876858,
+          "sha256": "ee0b7ad7dfede636aa5d5509cbbcbab59bef4cb8cbdff01f9528b15bd139b889"
+        },
+        "notices": [
+          {
+            "filename": "es-thes.README_th_es.txt",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/README_th_es.txt",
+            "bytes": 677,
+            "sha256": "874580e808ffd19bd28b9b6bddc3c1c1b691fd092287cc26bacf29060a0faa83"
+          },
+          {
+            "filename": "es-thes.LGPLv2.1.txt",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LGPLv2.1.txt",
+            "bytes": 26530,
+            "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+          },
+          {
+            "filename": "es-thes.LICENSE.md",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LICENSE.md",
+            "bytes": 991,
+            "sha256": "2b70fd5cb8d3b34cc6ae322c969557a2270b99017594addb2531ef5ffd9e1b17"
+          }
+        ]
+      }
+    ],
+    "en": [
+      {
+        "id": "en-thes",
+        "label": "WordNet 2.1 MyThes (LibreOffice)",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en",
+        "license": "Princeton WordNet 2.1 license",
+        "attribution": "Princeton University, WordNet 2.1 (2005); conversi?n wn2ooo por Daniel Naber; distribuci?n LibreOffice.",
+        "format": "mythes",
+        "prepared_on": "2026-10-06",
+        "data": {
+          "filename": "en-thes.dat",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/th_en_US_v2.dat",
+          "bytes": 18553257,
+          "sha256": "8a3e4637450b7277428da248f0a604b5c92942bc30507220c051181462340f39"
+        },
+        "notices": [
+          {
+            "filename": "en-thes.WordNet_license.txt",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/WordNet_license.txt",
+            "bytes": 1625,
+            "sha256": "23dbc4f3ea771304e5ab3e5709843813d2619f3c0cfc81229b53fcdb9985f29a"
+          }
+        ]
+      }
+    ],
+    "pt": [
+      {
+        "id": "pt-pt-thes",
+        "label": "Tesauro portugu?s europeo (LibreOffice)",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT",
+        "license": "GPL-2.0-or-later (base); CC-BY-3.0 (Onto.PT); conservar procedencia PAPEL",
+        "attribution": "Daniel Naber, OpenThesaurus (base); Tiago F. Santos (compilaci?n 2016); Onto.PT, Hugo Gon?alo Oliveira y Paulo Gomes; PAPEL, Linguateca. Ver README original.",
+        "format": "mythes",
+        "prepared_on": "2026-10-06",
+        "data": {
+          "filename": "pt-pt-thes.dat",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/th_pt_PT.dat",
+          "bytes": 3052378,
+          "sha256": "daa89fee61347f401f005f3efd17fa8878eeeabd903ff4e684ab4bc1a53df2fd"
+        },
+        "notices": [
+          {
+            "filename": "pt-pt-thes.README_th_pt_PT.txt",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/README_th_pt_PT.txt",
+            "bytes": 26537,
+            "sha256": "4a7ae3ba634478c8af6f3fbdc5cd27aa150d0bb653e4bb0b2c226d6068175771"
+          },
+          {
+            "filename": "pt-pt-thes.LICENSES.txt",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/LICENSES.txt",
+            "bytes": 1830,
+            "sha256": "d2c1cfe2e2dd81c651aec3fda5d1b4b4e7679b9e04f8cdc37586e521837384d1"
+          }
+        ]
+      },
+      {
+        "id": "pt-br-thes",
+        "label": "Tesauro portugu?s brasile?o (LibreOffice)",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR",
+        "license": "Aviso permisivo de Kevin B. Hendricks y colaboradores; ver original",
+        "attribution": "Kevin B. Hendricks y colaboradores (2003); distribuci?n LibreOffice.",
+        "format": "mythes",
+        "prepared_on": "2026-10-06",
+        "data": {
+          "filename": "pt-br-thes.dat",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/th_pt_BR.dat",
+          "bytes": 15193736,
+          "sha256": "0dae83c0b75e53837ef220431da049c716fa954f99fb77578eebf4e93d261af0"
+        },
+        "notices": [
+          {
+            "filename": "pt-br-thes.license-thes.readme",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/license-thes.readme",
+            "bytes": 1707,
+            "sha256": "253031afa265c7bec5d2e195c659129a7ff254f9d57c57a08eba4a9051868840"
+          }
+        ]
+      }
+    ]
+  },
+  "max_supplement_bytes": 67108864,
+  "dictionary_manifest": "diccionarios.json"
+}

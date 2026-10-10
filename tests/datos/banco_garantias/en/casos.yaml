@@ -1,0 +1,600 @@
+# Guarantee bank (source). Same rules as the universal bank: the category comes from the
+# id and construir.py computes evidence and offsets. Six new documents with about 12
+# facts each; the nine query-bank documents stay as distractors. It narrows the risk
+# bound of direct answers: it is not used to design rules or choose thresholds.
+
+# --- parking -------------------------------------------------------------------
+- id: en-exacta-001
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: What are the car park opening hours from Monday to Friday?
+  respuesta: between 7:00 and 21:00
+- id: en-parafrasis-001
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: till what time can i leave my car in the car park on a tuesday
+  respuesta: between 7:00 and 21:00
+- id: en-trampa-001
+  par: en-parafrasis-001
+  pregunta: Until what time is the car park open on public holidays?
+- id: en-exacta-002
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: What are the car park opening hours on Saturdays?
+  respuesta: On Saturdays it opens from 8:00 to 14:00
+- id: en-exacta-003
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: Is the car park open on Sundays?
+  respuesta: on Sundays it is closed
+- id: en-parafrasis-002
+  documento: parking_regulation.md
+  capacidad: persona
+  pregunta: Who issues the parking permit?
+  respuesta: General Services Unit
+- id: en-parafrasis-003
+  documento: parking_regulation.md
+  capacidad: procedimiento
+  pregunta: What documents do I need to request a parking permit?
+  respuesta: the vehicle access form and a copy of the vehicle registration
+- id: en-exacta-004
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: How many licence plates can each employee register?
+  respuesta: at most two licence plates
+- id: en-parafrasis-004
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: can i register 3 cars for the car park?
+  respuesta: at most two licence plates
+- id: en-exacta-005
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: How much does the annual parking permit cost for employees?
+  respuesta: 60,000 pesos
+- id: en-trampa-002
+  par: en-exacta-005
+  pregunta: How much does the monthly parking permit cost for employees?
+- id: en-exacta-006
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: How much do visitors pay per hour of parking?
+  respuesta: 1,500 pesos per hour
+- id: en-parafrasis-005
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: how much does a visitor get charged to park for an hour
+  respuesta: 1,500 pesos per hour
+- id: en-exacta-007
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: What is the maximum daily charge for visitors in the car park?
+  respuesta: a maximum of 9,000 pesos per day
+- id: en-parafrasis-006
+  documento: parking_regulation.md
+  capacidad: ubicacion
+  pregunta: Where are the parking spaces for people with disabilities?
+  respuesta: next to the lift on the first basement level
+- id: en-parafrasis-007
+  documento: parking_regulation.md
+  capacidad: ubicacion
+  pregunta: where do i charge my electric car
+  respuesta: at the four charging points on the second basement level
+- id: en-trampa-003
+  par: en-parafrasis-007
+  pregunta: Where do I charge my electric scooter?
+- id: en-exacta-008
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: What happens if someone parks without a permit?
+  respuesta: receives a written warning
+- id: en-exacta-009
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: What happens on the third warning?
+  respuesta: the permit is suspended for three months
+- id: en-parafrasis-008
+  documento: parking_regulation.md
+  capacidad: duracion
+  pregunta: if i get 3 warnings how long do they take my permit away
+  respuesta: the permit is suspended for three months
+- id: en-parafrasis-009
+  documento: parking_regulation.md
+  capacidad: persona
+  pregunta: Who do I appeal a parking warning to?
+  respuesta: with the Head of General Services
+- id: en-exacta-010
+  documento: parking_regulation.md
+  capacidad: duracion
+  pregunta: What is the deadline to appeal a warning?
+  respuesta: within ten business days
+- id: en-trampa-004
+  par: en-exacta-010
+  pregunta: What is the deadline to appeal a traffic fine?
+
+# --- printer -------------------------------------------------------------------
+- id: en-exacta-011
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: How much free space does the Lumen P40 printer need on each side?
+  respuesta: 10 centimetres of free space on each side
+- id: en-parafrasis-010
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: How does the printer connect to the network?
+  respuesta: by cable or by Wi-Fi from the settings panel
+- id: en-exacta-012
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: How many sheets does the main tray of the printer hold?
+  respuesta: up to 250 sheets
+- id: en-parafrasis-011
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: how many sheets fit in the printer
+  respuesta: up to 250 sheets
+- id: en-trampa-005
+  par: en-parafrasis-011
+  pregunta: How many sheets fit in the printer's output tray?
+- id: en-exacta-013
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: What paper weight does the Lumen P40 printer accept?
+  respuesta: between 70 and 120 grams
+- id: en-exacta-014
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: How many pages does a toner cartridge yield?
+  respuesta: approximately 3,000 pages
+- id: en-parafrasis-012
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: how many pages does the toner last for
+  respuesta: approximately 3,000 pages
+- id: en-parafrasis-013
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does it mean when the printer's orange light blinks?
+  respuesta: less than 10 % of the toner is left
+- id: en-trampa-006
+  par: en-parafrasis-013
+  pregunta: What does it mean when the printer's red light blinks?
+- id: en-exacta-015
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does printer code E2 indicate?
+  respuesta: a paper jam in the rear tray
+- id: en-parafrasis-014
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: the printer shows E2, what is that
+  respuesta: a paper jam in the rear tray
+- id: en-exacta-016
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does code E5 indicate?
+  respuesta: the front cover is open
+- id: en-exacta-017
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: What should be done if code E9 appears?
+  respuesta: turn off the printer and call technical service
+- id: en-trampa-007
+  par: en-exacta-017
+  pregunta: What should be done if code E7 appears?
+- id: en-parafrasis-015
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: How often is the feed roller cleaned?
+  respuesta: every three months
+- id: en-parafrasis-016
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: what do i clean the printer roller with
+  respuesta: with a dry cloth
+- id: en-exacta-018
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: After how long without use does the printer enter energy-saving mode?
+  respuesta: after 15 minutes without use
+- id: en-parafrasis-017
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: how long is the printer warranty
+  respuesta: an 18-month warranty
+- id: en-trampa-008
+  par: en-parafrasis-017
+  pregunta: How long is the toner cartridge warranty?
+- id: en-exacta-019
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does the Lumen P40 warranty not cover?
+  respuesta: the use of refilled cartridges
+- id: en-parafrasis-018
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: do i lose the warranty if i use a refilled cartridge?
+  respuesta: The warranty does not cover the use of refilled cartridges
+
+# --- leave ---------------------------------------------------------------------
+- id: en-exacta-020
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days of holiday does each employee have per year?
+  respuesta: 15 working days of holiday per year
+- id: en-parafrasis-019
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: how many vacation days do i get a year
+  respuesta: 15 working days of holiday per year
+- id: en-exacta-021
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many additional days do those with more than ten years of service receive?
+  respuesta: receive three additional days
+- id: en-exacta-022
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: How far in advance are holidays requested?
+  respuesta: at least 20 days in advance
+- id: en-parafrasis-020
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: how early do i have to ask for my holidays
+  respuesta: at least 20 days in advance
+- id: en-trampa-009
+  par: en-parafrasis-020
+  pregunta: How far in advance is unpaid leave requested?
+- id: en-parafrasis-021
+  documento: leave_policy.md
+  capacidad: persona
+  pregunta: Who approves holidays?
+  respuesta: The direct manager
+- id: en-exacta-023
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: Within what period does the manager reply to a holiday request?
+  respuesta: within five working days
+- id: en-parafrasis-022
+  documento: leave_policy.md
+  capacidad: condicion
+  pregunta: what happens if my boss doesn't answer my holiday request
+  respuesta: the request is deemed approved
+- id: en-exacta-024
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many holiday periods can be carried over?
+  respuesta: At most two holiday periods
+- id: en-parafrasis-023
+  documento: leave_policy.md
+  capacidad: condicion
+  pregunta: what happens to holiday days over the limit
+  respuesta: are lost at the end of the year
+- id: en-exacta-025
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days of leave are granted for marriage?
+  respuesta: Five working days of paid leave
+- id: en-parafrasis-024
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: im getting married next month, how many days off do i get
+  respuesta: Five working days of paid leave
+- id: en-trampa-010
+  par: en-parafrasis-024
+  pregunta: How many days of leave are granted for moving house?
+- id: en-exacta-026
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days does the father receive for the birth of a child?
+  respuesta: the father receives five working days
+- id: en-exacta-027
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days are granted for the death of an immediate family member?
+  respuesta: Three working days are granted
+- id: en-parafrasis-025
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: if a close family member dies how many days do i get
+  respuesta: Three working days are granted
+- id: en-exacta-028
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: Within what period is the medical certificate delivered to Human Resources?
+  respuesta: within two working days of being issued
+- id: en-parafrasis-026
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: how many days do i have to hand in my sick note
+  respuesta: within two working days of being issued
+- id: en-parafrasis-027
+  documento: leave_policy.md
+  capacidad: persona
+  pregunta: Who processes the sick leave benefit?
+  respuesta: Human Resources processes the benefit
+
+# --- emergencies ---------------------------------------------------------------
+- id: en-exacta-029
+  documento: emergency_protocol.md
+  capacidad: procedimiento
+  pregunta: How do people evacuate when the continuous alarm sounds?
+  respuesta: by the nearest staircase
+- id: en-parafrasis-028
+  documento: emergency_protocol.md
+  capacidad: condicion
+  pregunta: can we use the lift if we have to evacuate?
+  respuesta: Lifts are not used during an evacuation
+- id: en-exacta-030
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: What is the assembly point in an evacuation?
+  respuesta: the square in front of the main entrance
+- id: en-parafrasis-029
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: where do we meet if we evacuate the building
+  respuesta: the square in front of the main entrance
+- id: en-trampa-011
+  par: en-parafrasis-029
+  pregunta: Where do we meet during a power cut?
+- id: en-exacta-031
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: Who appoints the evacuation leader of each floor?
+  respuesta: the Operations Management
+- id: en-parafrasis-030
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: Who does the evacuation leader report to?
+  respuesta: reports to the Emergency Coordinator
+- id: en-exacta-032
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: How many evacuation drills are held each year?
+  respuesta: Two evacuation drills are held each year
+- id: en-parafrasis-031
+  documento: emergency_protocol.md
+  capacidad: fecha
+  pregunta: which months are the drills in
+  respuesta: one in April and one in October
+- id: en-trampa-012
+  par: en-parafrasis-031
+  pregunta: Which months are the safety trainings in?
+- id: en-exacta-033
+  documento: emergency_protocol.md
+  capacidad: duracion
+  pregunta: How often are the fire extinguishers inspected?
+  respuesta: every six months
+- id: en-parafrasis-032
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: Where are the fire extinguishers?
+  respuesta: next to each emergency exit
+- id: en-exacta-034
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: What extension do you call in case of fire?
+  respuesta: on extension 2222
+- id: en-parafrasis-033
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: what number do i call if theres a fire
+  respuesta: on extension 2222
+- id: en-trampa-013
+  par: en-parafrasis-033
+  pregunta: What number do I call if there is a water leak?
+- id: en-exacta-035
+  documento: emergency_protocol.md
+  capacidad: fecha
+  pregunta: What are the security desk's hours?
+  respuesta: operates 24 hours a day
+- id: en-exacta-036
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: Where is the main first-aid kit?
+  respuesta: at the ground-floor reception
+- id: en-parafrasis-034
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: who knows first aid in the building
+  respuesta: The reception staff are trained in first aid
+
+# --- scholarship ---------------------------------------------------------------
+- id: en-exacta-037
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: Who may apply for the professional development scholarship?
+  respuesta: Staff with a permanent contract and at least two years of service
+- id: en-parafrasis-035
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: can i apply for the scholarship with a permanent contract and 3 years here
+  respuesta: Staff with a permanent contract and at least two years of service
+- id: en-exacta-038
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: Who may not apply for the scholarship?
+  respuesta: Those who received the scholarship in the last three years
+- id: en-exacta-039
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: When are scholarship applications accepted?
+  respuesta: between 1 and 30 June
+- id: en-parafrasis-036
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: until when can i apply for the scholarship
+  respuesta: between 1 and 30 June
+- id: en-trampa-014
+  par: en-parafrasis-036
+  pregunta: Until when can I apply for the language scholarship?
+- id: en-parafrasis-037
+  documento: scholarship_rules.md
+  capacidad: procedimiento
+  pregunta: What documents are attached to apply for the scholarship?
+  respuesta: the enrolment certificate and a letter from the manager
+- id: en-exacta-040
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: What percentage of the fees does the scholarship cover?
+  respuesta: up to 80 % of the programme fees
+- id: en-exacta-041
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: What is the maximum scholarship amount per year?
+  respuesta: 2,000,000 pesos per year
+- id: en-parafrasis-038
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: whats the most money the scholarship gives
+  respuesta: 2,000,000 pesos per year
+- id: en-trampa-015
+  par: en-parafrasis-038
+  pregunta: How much does the scholarship give for accommodation costs?
+- id: en-parafrasis-039
+  documento: scholarship_rules.md
+  capacidad: persona
+  pregunta: Who evaluates the scholarship applications?
+  respuesta: A committee of three directors
+- id: en-exacta-042
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: When are the scholarship results published?
+  respuesta: on 31 July
+- id: en-parafrasis-040
+  documento: scholarship_rules.md
+  capacidad: duracion
+  pregunta: how long do i have to stay at the institution after the scholarship
+  respuesta: at least two years after completing the programme
+- id: en-exacta-043
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: What happens if the scholar drops out of the programme?
+  respuesta: must repay the amount received
+
+# --- rooms ---------------------------------------------------------------------
+- id: en-exacta-044
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: What is the capacity of the Andes room?
+  respuesta: The Andes room holds 40 people
+- id: en-parafrasis-041
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: how many people fit in the andes room
+  respuesta: The Andes room holds 40 people
+- id: en-exacta-045
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: Which room has videoconferencing?
+  respuesta: The Pacific room holds 12 people and has videoconferencing
+- id: en-exacta-046
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: How far in advance are rooms booked?
+  respuesta: at least 48 hours in advance
+- id: en-parafrasis-042
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: how early do i book a room
+  respuesta: at least 48 hours in advance
+- id: en-exacta-047
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: What is the maximum length of a room booking?
+  respuesta: at most four hours
+- id: en-exacta-048
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: How much does the Andes room cost per hour?
+  respuesta: 25,000 pesos per hour
+- id: en-parafrasis-043
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: how much is it to rent the pacific room for an hour
+  respuesta: 10,000 pesos per hour
+- id: en-trampa-016
+  par: en-parafrasis-043
+  pregunta: How much is it to rent the auditorium for an hour?
+- id: en-parafrasis-044
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: do internal units pay to use the rooms?
+  respuesta: Internal units do not pay rent
+- id: en-exacta-049
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: What happens if a booking is cancelled less than 24 hours in advance?
+  respuesta: is charged in full
+- id: en-parafrasis-045
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: if i cancel the room on the same day do they charge me?
+  respuesta: A booking cancelled less than 24 hours in advance is charged in full
+- id: en-trampa-017
+  par: en-parafrasis-045
+  pregunta: Do I get my money back if I cancel the room a week in advance?
+- id: en-exacta-050
+  documento: room_rental.md
+  capacidad: procedimiento
+  pregunta: Where are bookings cancelled?
+  respuesta: in the same booking system
+- id: en-exacta-051
+  documento: room_rental.md
+  capacidad: lista
+  pregunta: What equipment do the rooms have?
+  respuesta: a projector and a whiteboard
+- id: en-parafrasis-046
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: how many days ahead do i order coffee for the meeting
+  respuesta: three days in advance
+- id: en-trampa-018
+  par: en-parafrasis-046
+  pregunta: How many days ahead do I order lunch for the meeting?
+- id: en-parafrasis-047
+  documento: room_rental.md
+  capacidad: persona
+  pregunta: Who is coffee service requested from?
+  respuesta: from the Events Unit
+- id: en-trampa-019
+  par: en-parafrasis-047
+  pregunta: Who is simultaneous interpretation requested from?
+- id: en-trampa-020
+  par: en-exacta-051
+  pregunta: Do the rooms have sound systems?
+
+# --- false premises, out of domain and ambiguous ------------------------------
+- id: en-premisa-001
+  pregunta: What does article 9 of the parking regulation say?
+- id: en-premisa-002
+  pregunta: How long is the 36-month warranty of the printer?
+- id: en-premisa-003
+  pregunta: What happens to holidays after 30 working days carried over?
+- id: en-premisa-004
+  pregunta: What does printer code E12 do?
+- id: en-premisa-005
+  pregunta: When is the December drill?
+- id: en-premisa-006
+  pregunta: How much does the Atacama room cost per hour?
+- id: en-fuera-001
+  pregunta: What is the capital of Australia?
+- id: en-fuera-002
+  pregunta: How do you cook a paella?
+- id: en-fuera-003
+  pregunta: Who won the 2015 Copa America?
+- id: en-fuera-004
+  pregunta: What is the chemical formula of water?
+- id: en-fuera-005
+  pregunta: recommend me a movie for the weekend
+- id: en-fuera-006
+  pregunta: How tall is Mount Everest?
+- id: en-ambigua-001
+  pregunta: How much is it per hour?
+- id: en-ambigua-002
+  pregunta: Who approves it?
+- id: en-ambigua-003
+  pregunta: How many days is it?
+- id: en-ambigua-004
+  pregunta: And how long does that last?

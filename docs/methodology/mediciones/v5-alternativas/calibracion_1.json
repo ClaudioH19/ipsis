@@ -1,0 +1,84 @@
+{
+ "pesos": {
+  "familia": 1.0,
+  "terminos": 2.0,
+  "seccion": 0.0,
+  "keywords": 0.0,
+  "categoria": 2.0,
+  "similitud": 0.0
+ },
+ "perfiles": {
+  "light": {
+   "umbral": 0.4,
+   "dev": {
+    "alternativas": 52,
+    "correctas": 48,
+    "precision": 0.9231,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 1.0,
+    "vecinos_en_abstencion": 22,
+    "vecinos_cubiertos": 22,
+    "vecino_visible": "40/45",
+    "casos_con_alternativas": 22
+   },
+   "test": {
+    "alternativas": 43,
+    "correctas": 37,
+    "precision": 0.8605,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.8182,
+    "vecinos_en_abstencion": 22,
+    "vecinos_cubiertos": 18,
+    "vecino_visible": "40/45",
+    "casos_con_alternativas": 20
+   },
+   "todo": {
+    "alternativas": 95,
+    "correctas": 85,
+    "precision": 0.8947,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9091,
+    "vecinos_en_abstencion": 44,
+    "vecinos_cubiertos": 40,
+    "vecino_visible": "80/90",
+    "casos_con_alternativas": 42
+   }
+  },
+  "medium": {
+   "umbral": 0.4,
+   "dev": {
+    "alternativas": 49,
+    "correctas": 45,
+    "precision": 0.9184,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 1.0,
+    "vecinos_en_abstencion": 22,
+    "vecinos_cubiertos": 22,
+    "vecino_visible": "40/45",
+    "casos_con_alternativas": 22
+   },
+   "test": {
+    "alternativas": 35,
+    "correctas": 35,
+    "precision": 1.0,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.8182,
+    "vecinos_en_abstencion": 22,
+    "vecinos_cubiertos": 18,
+    "vecino_visible": "36/45",
+    "casos_con_alternativas": 18
+   },
+   "todo": {
+    "alternativas": 84,
+    "correctas": 80,
+    "precision": 0.9524,
+    "fuera_dominio_con_alternativas": 0,
+    "cobertura": 0.9091,
+    "vecinos_en_abstencion": 44,
+    "vecinos_cubiertos": 40,
+    "vecino_visible": "76/90",
+    "casos_con_alternativas": 40
+   }
+  }
+ }
+}

@@ -1,0 +1,53 @@
+{
+ "en_proceso": {
+  "preguntas": 188,
+  "rondas": 3,
+  "proactiva": {
+   "n": 564,
+   "media": 50.7,
+   "p50": 49.1,
+   "p95": 80.4,
+   "max": 96.9
+  },
+  "estricta": {
+   "n": 564,
+   "media": 49.8,
+   "p50": 47.6,
+   "p95": 81.8,
+   "max": 136.3
+  },
+  "politica_ms": {
+   "proactiva": {
+    "n": 564,
+    "media": 1.7,
+    "p50": 0.0,
+    "p95": 9.0,
+    "max": 21.0
+   },
+   "estricta": {
+    "n": 564,
+    "media": 0.5,
+    "p50": 0.0,
+    "p95": 3.0,
+    "max": 4.0
+   }
+  },
+  "con_alternativas": {
+   "preguntas": 25,
+   "proactiva": {
+    "n": 75,
+    "media": 59.4,
+    "p50": 56.3,
+    "p95": 85.4,
+    "max": 91.4
+   },
+   "estricta_mismas_preguntas": {
+    "n": 75,
+    "media": 55.5,
+    "p50": 51.4,
+    "p95": 80.6,
+    "max": 93.7
+   }
+  }
+ }
+}

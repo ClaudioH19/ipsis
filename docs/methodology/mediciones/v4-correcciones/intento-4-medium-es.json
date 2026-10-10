@@ -1,0 +1,4892 @@
+{
+  "turnos": [
+    {
+      "conversacion": "es-conv-004",
+      "turno": 1,
+      "pregunta": "¿Cómo cambio mi contraseña?",
+      "estado": "relacionado",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "Ingrese al portal de autoservicio",
+      "correcta": false,
+      "directa": false,
+      "mensaje": "Sobre «cambio» los documentos no dicen nada directo. Mira lo más cercano:\n\nLa contraseña vence cada 90 días. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+      "tramo_lector": null,
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "cambio contrasena"
+      }
+    },
+    {
+      "conversacion": "es-conv-004",
+      "turno": 2,
+      "pregunta": "¿cada cuánto vence?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿cada cuánto vence? cambio contrasena",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "La contraseña vence cada 90 días",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Esto es lo que aparece en el documento:\n\nLa contraseña vence cada 90 días. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+      "tramo_lector": "cada 90 días",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "cambio contrasena"
+      }
+    },
+    {
+      "conversacion": "es-conv-004",
+      "turno": 3,
+      "pregunta": "¿y cuántos caracteres debe tener?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y cuántos caracteres debe tener? cambio contrasena vence",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "al menos 12 caracteres",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "Aquí está lo que encontré:\n\nLa nueva contraseña debe tener al menos 12 caracteres e incluir un número. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+      "tramo_lector": "al menos 12 caracteres",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "cambio contrasena"
+      }
+    },
+    {
+      "conversacion": "es-conv-004",
+      "turno": 4,
+      "pregunta": "¿Quién compra los pasajes aéreos?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": false,
+      "directa_esperada": null,
+      "respuesta": "Los pasajes aéreos los compra la Unidad de Viajes",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Esta es la parte del documento que responde:\n\nLos pasajes aéreos los compra la Unidad de Viajes. (Fuente: Política de Viáticos).",
+      "tramo_lector": "Unidad de Viajes",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "pasajes aereos compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-007",
+      "turno": 1,
+      "pregunta": "¿Quién firma la Resolución de compra?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "Director de Administración para su firma",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Aquí está lo que encontré:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+      "tramo_lector": "Director de Administración",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "resolucion firma compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-007",
+      "turno": 2,
+      "pregunta": "¿Cuál es la capital de Mongolia?",
+      "estado": "sin_respuesta",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": false,
+      "directa_esperada": false,
+      "respuesta": null,
+      "correcta": false,
+      "directa": false,
+      "mensaje": "No hay datos sobre eso en los documentos cargados.",
+      "tramo_lector": null,
+      "conversacion_diagnostico": {
+        "accion": "sin_cambio",
+        "tema": "resolucion firma compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-007",
+      "turno": 3,
+      "pregunta": "¿y quién la redacta?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y quién la redacta? firma resolucion compra",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "El Operador de Compras redacta la Resolución de compra",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "Esta es la parte del documento que responde:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+      "tramo_lector": "El Operador de Compras redacta la Resolución de compra",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "resolucion firma compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-010",
+      "turno": 1,
+      "pregunta": "cuando empieza la compra?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "Una vez aprobado el Formulario de Requerimiento",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "Te muestro lo que indica el documento:\n\nUna vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto. (Fuente: Manual de Procedimientos de Adquisiciones).",
+      "tramo_lector": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-010",
+      "turno": 2,
+      "pregunta": "¿y quién registra el requerimiento?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y quién registra el requerimiento? compra",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "El Operador de Compras registra el requerimiento en el sistema",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "El documento responde así:\n\nEl Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso. (Fuente: Manual de Procedimientos de Adquisiciones).",
+      "tramo_lector": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-010",
+      "turno": 3,
+      "pregunta": "¿y en cuántos días se emite la orden?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Esto es lo que dice el documento:\n\nEl Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).",
+      "tramo_lector": "diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "compra"
+      }
+    },
+    {
+      "conversacion": "es-conv-013",
+      "turno": 1,
+      "pregunta": "¿Hasta cuándo puedo pedir el reembolso?",
+      "estado": "respuesta_directa",
+      "heredo": false,
+      "interpretada": null,
+      "hereda": null,
+      "directa_esperada": null,
+      "respuesta": "hasta 30 días después de recibir el pedido",
+      "correcta": false,
+      "directa": true,
+      "mensaje": "Según el texto cargado:\n\nEl cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. (Fuente: Política de reembolsos).",
+      "tramo_lector": "30 días después de recibir el pedido",
+      "conversacion_diagnostico": {
+        "accion": "tema_nuevo",
+        "tema": "pedir reembolso"
+      }
+    },
+    {
+      "conversacion": "es-conv-013",
+      "turno": 2,
+      "pregunta": "¿y en cuántos días lo pagan?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y en cuántos días lo pagan? pedir reembolso",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "dentro de 10 días hábiles",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "Aquí está lo que encontré:\n\nEl reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).",
+      "tramo_lector": "dentro de 10 días hábiles desde que se aprueba la solicitud",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "pedir reembolso"
+      }
+    },
+    {
+      "conversacion": "es-conv-013",
+      "turno": 3,
+      "pregunta": "¿y si el producto llega dañado?",
+      "estado": "respuesta_directa",
+      "heredo": true,
+      "interpretada": "¿y si el producto llega dañado? pedir reembolso pagan",
+      "hereda": true,
+      "directa_esperada": null,
+      "respuesta": "el envío de la devolución es gratuito",
+      "correcta": true,
+      "directa": true,
+      "mensaje": "El documento responde así:\n\nSi el producto llega dañado, el envío de la devolución es gratuito. (Fuente: Política de reembolsos).",
+      "tramo_lector": "el envío de la devolución es gratuito",
+      "conversacion_diagnostico": {
+        "accion": "hereda",
+        "tema": "pedir reembolso"
+      }
+    }
+  ],
+  "resumen": {
+    "herencia_correcta": 9,
+    "con_hereda": 9,
+    "herencia_indebida": 0,
+    "herencia_perdida": 0,
+    "respuestas_correctas": 6,
+    "con_respuesta": 12,
+    "directas_indebidas": 0,
+    "sin_directa": 1
+  },
+  "diagnosticos": [
+    {
+      "pregunta": "¿Cómo cambio mi contraseña?",
+      "sesion": "conversacion:es-conv-004",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 1,
+          "analisis_ms": 20,
+          "confianza_ms": 11,
+          "filtros_ms": 0,
+          "recuperacion_ms": 42,
+          "reranking_ms": 3831,
+          "lectura_ms": 5143,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 9
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.4583333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4583333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.3333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3333333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.25,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.2,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.16666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.16666666666666666,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.14285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.14285714285714285,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.1111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.1111111111111111,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.1,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.1,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.09090909090909091,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.09090909090909091,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8790221412134491,
+          "margen_top1_top2": 0.07042217771452008,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "relacionado",
+          "motivo": "foco_ausente",
+          "entidad_texto": "cambio",
+          "capa_decisora": "relacionado",
+          "confianza_utilizada": 0.981229582576544,
+          "candidato_id": "preguntas-frecuentes-ti__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "preguntas-frecuentes-ti",
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "La contraseña vence cada 90 días.",
+            "offset_inicio": 344,
+            "offset_fin": 377,
+            "seccion_path": [
+              "Preguntas frecuentes de la Mesa de Ayuda"
+            ],
+            "score": 0.9999838640847838
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "cambio",
+            "contraseña"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 0.5,
+          "s_foco": 0.5,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "cambio": 1.9924,
+            "contraseña": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "contraseña"
+          ],
+          "foco_ausentes": [
+            "cambio"
+          ]
+        },
+        "puntajes_rerank": [
+          3.9565,
+          -4.302,
+          -4.4067,
+          -4.8407
+        ],
+        "rerank": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 3.9565
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -4.302
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -4.4067
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -4.8407
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "¿Cómo cambio mi contraseña?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9050199389457703,
+          "margen": 0.06226879358291626,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": true,
+          "compatible": true
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "cambio contrasena"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "cada 90 días",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "Devoluciones",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "relacionado",
+        "senales_politica": {
+          "s_ret": 0.5967404707114972,
+          "s_oov": 0.0,
+          "s_foco": 0.5,
+          "s_cov": 0.5,
+          "s_rr": 0.981229582576544,
+          "s_qa": 0.9999838640847838,
+          "dominio": 0.981229582576544
+        },
+        "oracion_foco": "La contraseña vence cada 90 días.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.missing_focus.8"
+        ],
+        "contrato_http": {
+          "estado": "relacionado",
+          "nivel_servicio": "normal",
+          "respuesta": "Sobre «cambio» los documentos no dicen nada directo. Mira lo más cercano:\n\nLa contraseña vence cada 90 días. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Sobre «cambio» los documentos no dicen nada directo. Mira lo más cercano:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "La contraseña vence cada 90 días.",
+              "conector": null,
+              "cita": "(Fuente: Preguntas frecuentes de la Mesa de Ayuda)",
+              "chunk_id": "preguntas-frecuentes-ti__c0000"
+            }
+          ],
+          "plan": "zona_gris",
+          "fragmentos": [
+            {
+              "chunk_id": "preguntas-frecuentes-ti__c0000",
+              "doc_titulo": "Preguntas frecuentes de la Mesa de Ayuda",
+              "seccion": "Preguntas frecuentes de la Mesa de Ayuda",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 344,
+              "offset_fin": 377,
+              "texto": "La contraseña vence cada 90 días.",
+              "score": 0.9999838640847838
+            }
+          ],
+          "confianza": {
+            "top1": 0.8790221412134491,
+            "margen": 0.07042217771452008,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 9059
+        }
+      }
+    },
+    {
+      "pregunta": "¿cada cuánto vence?",
+      "sesion": "conversacion:es-conv-004",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 20,
+          "filtros_ms": 0,
+          "recuperacion_ms": 48,
+          "reranking_ms": 2370,
+          "lectura_ms": 641,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 6
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.4444444444444444,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4444444444444444,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.3333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3333333333333333,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.325,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.325,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.25,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.2,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.16666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.16666666666666666,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.1,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.1,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.09090909090909091,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.09090909090909091,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8514202702294269,
+          "margen_top1_top2": 0.029304798509538377,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.5047342340980897,
+          "candidato_id": "preguntas-frecuentes-ti__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "preguntas-frecuentes-ti",
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "La contraseña vence cada 90 días.",
+            "offset_inicio": 344,
+            "offset_fin": 377,
+            "seccion_path": [
+              "Preguntas frecuentes de la Mesa de Ayuda"
+            ],
+            "score": 0.999825141176389
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "vence"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "vence": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "vence"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -4.4729,
+          -4.851,
+          -5.2047,
+          -5.4053
+        ],
+        "rerank": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": -4.4729
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -4.851
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -5.2047
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -5.4053
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿cada cuánto vence? cambio contrasena",
+        "pregunta_lectura": "¿cada cuánto vence?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8861451148986816,
+          "margen": 0.05232810974121094,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "cambio contrasena"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "cada 90 días",
+            "prob_respuesta": 0.9999,
+            "s_qa": 0.9998
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "texto": "40% del viático diario",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5047342340980897,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.01128497170303846,
+          "s_qa": 0.999825141176389,
+          "dominio": 0.5047342340980897
+        },
+        "oracion_foco": "La contraseña vence cada 90 días.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.8"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Esto es lo que aparece en el documento:\n\nLa contraseña vence cada 90 días. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Esto es lo que aparece en el documento:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "La contraseña vence cada 90 días.",
+              "conector": null,
+              "cita": "(Fuente: Preguntas frecuentes de la Mesa de Ayuda)",
+              "chunk_id": "preguntas-frecuentes-ti__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "preguntas-frecuentes-ti__c0000",
+              "doc_titulo": "Preguntas frecuentes de la Mesa de Ayuda",
+              "seccion": "Preguntas frecuentes de la Mesa de Ayuda",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 344,
+              "offset_fin": 377,
+              "texto": "La contraseña vence cada 90 días.",
+              "score": 0.999825141176389
+            }
+          ],
+          "confianza": {
+            "top1": 0.8514202702294269,
+            "margen": 0.029304798509538377,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3089,
+          "respuesta_exacta": {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "cada 90 días",
+            "offset_inicio": 364,
+            "offset_fin": 376
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿y cuántos caracteres debe tener?",
+      "sesion": "conversacion:es-conv-004",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 2,
+          "confianza_ms": 21,
+          "filtros_ms": 0,
+          "recuperacion_ms": 49,
+          "reranking_ms": 2457,
+          "lectura_ms": 599,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 5
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.5333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.375,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.375,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.3333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3333333333333333,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.2909090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2909090909090909,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.2857142857142857,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2857142857142857,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.2111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2111111111111111,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.16666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.16666666666666666,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.859708785113108,
+          "margen_top1_top2": 0.04365264005247671,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.5323626170436934,
+          "candidato_id": "preguntas-frecuentes-ti__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "preguntas-frecuentes-ti",
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "La nueva contraseña debe tener al menos 12 caracteres e incluir un número.",
+            "offset_inicio": 235,
+            "offset_fin": 309,
+            "seccion_path": [
+              "Preguntas frecuentes de la Mesa de Ayuda"
+            ],
+            "score": 0.9538880671591667
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "caracteres"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "caracteres": 1.9924,
+            "tener": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "caracteres"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -3.5269,
+          -7.5407,
+          -7.7489,
+          -8.0549
+        ],
+        "rerank": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": -3.5269
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -7.5407
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -7.7489
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": -8.0549
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿y cuántos caracteres debe tener? cambio contrasena vence",
+        "pregunta_lectura": "¿y cuántos caracteres debe tener?",
+        "tramo_completado": {
+          "original": "12",
+          "inicio_original": 234,
+          "fin_original": 236
+        },
+        "intencion": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "requisito",
+          "similitud": 0.8810616731643677,
+          "margen": 0.020338237285614014,
+          "ejemplo": "¿Cuántas páginas como mínimo debe tener el informe?",
+          "aceptada": false,
+          "compatible": true
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "cambio contrasena"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "12",
+            "prob_respuesta": 0.9769,
+            "s_qa": 0.9539
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "texto": "tres",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5323626170436934,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.028555842621133302,
+          "s_qa": 0.9538880671591667,
+          "dominio": 0.5323626170436934
+        },
+        "oracion_foco": "La nueva contraseña debe tener al menos 12 caracteres e incluir un número.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.5"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Aquí está lo que encontré:\n\nLa nueva contraseña debe tener al menos 12 caracteres e incluir un número. (Fuente: Preguntas frecuentes de la Mesa de Ayuda).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Aquí está lo que encontré:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "La nueva contraseña debe tener al menos 12 caracteres e incluir un número.",
+              "conector": null,
+              "cita": "(Fuente: Preguntas frecuentes de la Mesa de Ayuda)",
+              "chunk_id": "preguntas-frecuentes-ti__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "preguntas-frecuentes-ti__c0000",
+              "doc_titulo": "Preguntas frecuentes de la Mesa de Ayuda",
+              "seccion": "Preguntas frecuentes de la Mesa de Ayuda",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 235,
+              "offset_fin": 309,
+              "texto": "La nueva contraseña debe tener al menos 12 caracteres e incluir un número.",
+              "score": 0.9538880671591667
+            }
+          ],
+          "confianza": {
+            "top1": 0.859708785113108,
+            "margen": 0.04365264005247671,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3138,
+          "respuesta_exacta": {
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "texto": "al menos 12 caracteres",
+            "offset_inicio": 266,
+            "offset_fin": 288
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿Quién compra los pasajes aéreos?",
+      "sesion": "conversacion:es-conv-004",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 10,
+          "filtros_ms": 0,
+          "recuperacion_ms": 44,
+          "reranking_ms": 2344,
+          "lectura_ms": 487,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 5
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.5833333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5833333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.5833333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5833333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.325,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.325,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.3111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3111111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.2857142857142857,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2857142857142857,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.26666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26666666666666666,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.2159090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2159090909090909,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.16666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.16666666666666666,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.1111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.1111111111111111,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8195217597889561,
+          "margen_top1_top2": 0.03122752120395289,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.3984058659631872,
+          "candidato_id": "politica-viaticos__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "politica-viaticos",
+            "chunk_id": "politica-viaticos__c0000",
+            "texto": "Los pasajes aéreos los compra la Unidad de Viajes.",
+            "offset_inicio": 734,
+            "offset_fin": 784,
+            "seccion_path": [
+              "Política de Viáticos"
+            ],
+            "score": 0.9999784995109782
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "aéreos",
+            "pasajes"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "compra": 0.8938,
+            "pasajes": 1.9924,
+            "aéreos": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "aéreos",
+            "pasajes"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -1.1295,
+          -5.7493,
+          -5.9223,
+          -5.9562
+        ],
+        "rerank": [
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -1.1295
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -5.7493
+          },
+          {
+            "chunk_id": "laboratorio__c0000",
+            "score": -5.9223
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -5.9562
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "¿Quién compra los pasajes aéreos?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "quien"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "pasajes aereos compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "texto": "Unidad de Viajes",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "El cliente",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.3984058659631872,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.24425965168703576,
+          "s_qa": 0.9999784995109782,
+          "dominio": 0.3984058659631872
+        },
+        "oracion_foco": "Los pasajes aéreos los compra la Unidad de Viajes.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.12"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Esta es la parte del documento que responde:\n\nLos pasajes aéreos los compra la Unidad de Viajes. (Fuente: Política de Viáticos).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Esta es la parte del documento que responde:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "Los pasajes aéreos los compra la Unidad de Viajes.",
+              "conector": null,
+              "cita": "(Fuente: Política de Viáticos)",
+              "chunk_id": "politica-viaticos__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "politica-viaticos__c0000",
+              "doc_titulo": "Política de Viáticos",
+              "seccion": "Política de Viáticos",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 734,
+              "offset_fin": 784,
+              "texto": "Los pasajes aéreos los compra la Unidad de Viajes.",
+              "score": 0.9999784995109782
+            }
+          ],
+          "confianza": {
+            "top1": 0.8195217597889561,
+            "margen": 0.03122752120395289,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2896,
+          "respuesta_exacta": {
+            "chunk_id": "politica-viaticos__c0000",
+            "texto": "Unidad de Viajes",
+            "offset_inicio": 767,
+            "offset_fin": 783
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿Quién firma la Resolución de compra?",
+      "sesion": "conversacion:es-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 12,
+          "filtros_ms": 0,
+          "recuperacion_ms": 48,
+          "reranking_ms": 2337,
+          "lectura_ms": 613,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 11
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.41666666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.41666666666666663,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.4,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.30952380952380953,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.30952380952380953,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.25396825396825395,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25396825396825395,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.18181818181818182,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.18181818181818182,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8589377625687074,
+          "margen_top1_top2": 0.013186111987185223,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.6949298444332881,
+          "candidato_id": "manual-adquisiciones__c0001"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "manual-adquisiciones",
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+            "offset_inicio": 1542,
+            "offset_fin": 1652,
+            "seccion_path": [
+              "Manual de Procedimientos de Adquisiciones"
+            ],
+            "score": 0.9999740922519196
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "resolución",
+            "firma"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "firma": 1.4816,
+            "resolución": 1.9924,
+            "compra": 0.8938
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "resolución",
+            "firma"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          0.8233,
+          0.3298,
+          -5.5233,
+          -5.6741
+        ],
+        "rerank": [
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.8233
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.3298
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -5.5233
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -5.6741
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "¿Quién firma la Resolución de compra?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "quien"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "resolucion firma compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "La unidad requirente",
+            "prob_respuesta": 0.3484,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Director de Administración",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5297925418956912,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.6949298444332881,
+          "s_qa": 0.9999740922519196,
+          "dominio": 0.6949298444332881
+        },
+        "oracion_foco": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.5"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Aquí está lo que encontré:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Aquí está lo que encontré:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+              "conector": null,
+              "cita": "(Fuente: Manual de Procedimientos de Adquisiciones)",
+              "chunk_id": "manual-adquisiciones__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "manual-adquisiciones__c0000",
+              "doc_titulo": "Manual de Procedimientos de Adquisiciones",
+              "seccion": "Manual de Procedimientos de Adquisiciones",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 1542,
+              "offset_fin": 1652,
+              "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+              "score": 0.9999740922519196
+            }
+          ],
+          "confianza": {
+            "top1": 0.8589377625687074,
+            "margen": 0.013186111987185223,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3027,
+          "respuesta_exacta": {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Director de Administración",
+            "offset_inicio": 1611,
+            "offset_fin": 1637
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿Cuál es la capital de Mongolia?",
+      "sesion": "conversacion:es-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 11,
+          "filtros_ms": 0,
+          "recuperacion_ms": 3,
+          "reranking_ms": 2380,
+          "lectura_ms": 304,
+          "evidencia_ms": 15,
+          "politica_ms": 0
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.75,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.75,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.6,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.43333333333333335,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.43333333333333335,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.4242424242424242,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4242424242424242,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.4,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.26785714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26785714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.25757575757575757,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25757575757575757,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.2222222222222222,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2222222222222222,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.7443958682045473,
+          "margen_top1_top2": 0.000384043315143745,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "abstiene",
+          "motivo": "fuera_dominio",
+          "entidad_texto": null,
+          "capa_decisora": "fuera_dominio",
+          "confianza_utilizada": 0.14798622734849107,
+          "candidato_id": "biblioteca__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "biblioteca",
+            "chunk_id": "biblioteca__c0000",
+            "texto": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y los domingos permanece cerrada.",
+            "offset_inicio": 45,
+            "offset_fin": 167,
+            "seccion_path": [
+              "Horarios de la biblioteca municipal",
+              "Atención"
+            ],
+            "score": 0.43333333333333335
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "riego-invernadero",
+            "chunk_id": "riego-invernadero__c0000",
+            "texto": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entrega 4 litros por hora.",
+            "offset_inicio": 45,
+            "offset_fin": 155,
+            "seccion_path": [
+              "Manual de riego del invernadero",
+              "Programación"
+            ],
+            "score": 0.25757575757575757
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "reglamento-teletrabajo",
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "texto": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios de la institución.\nArtículo 1. Este reglamento establece las condiciones para que los funcionarios realicen parte de su jornada en modalidad de teletrabajo.\nArtículo 2. Podrán solicitar teletrabajo los funcionarios con al menos seis meses de antigüedad en la institución.\nArtículo 3. La solicitud se presenta a la jefatura directa mediante el formulario de teletrabajo.",
+            "offset_inicio": 26,
+            "offset_fin": 485,
+            "seccion_path": [
+              "Reglamento de Teletrabajo"
+            ],
+            "score": 0.26785714285714285
+          },
+          {
+            "schema_version": 1,
+            "doc_id": "laboratorio",
+            "chunk_id": "laboratorio__c0000",
+            "texto": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas.",
+            "offset_inicio": 51,
+            "offset_fin": 118,
+            "seccion_path": [
+              "Protocolo de muestras del laboratorio",
+              "Conservación"
+            ],
+            "score": 0.4242424242424242
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [],
+          "s_oov": 1.0,
+          "s_cov": 0.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "capital": 3.091,
+            "mongoli": 3.091
+          },
+          "ausentes_del_corpus": [
+            "capital",
+            "mongoli"
+          ],
+          "foco_encontrados": [],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -5.282,
+          -8.3277,
+          -8.4334,
+          -8.7907
+        ],
+        "rerank": [
+          {
+            "chunk_id": "biblioteca__c0000",
+            "score": -5.282
+          },
+          {
+            "chunk_id": "riego-invernadero__c0000",
+            "score": -8.3277
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -8.4334
+          },
+          {
+            "chunk_id": "laboratorio__c0000",
+            "score": -8.7907
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "¿Cuál es la capital de Mongolia?",
+        "tramo_completado": null,
+        "intencion": null,
+        "conversacion": {
+          "accion": "sin_cambio",
+          "tema": "resolucion firma compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "biblioteca__c0000",
+            "texto": "segundo piso del edificio B",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "riego-invernadero__c0000",
+            "texto": "°",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "fuera_dominio",
+        "senales_politica": {
+          "s_ret": 0.14798622734849107,
+          "s_oov": 1.0,
+          "s_foco": 1.0,
+          "s_cov": 0.0,
+          "s_rr": 0.005056657820655225,
+          "s_qa": 0.0,
+          "dominio": 0.14798622734849107
+        },
+        "oracion_foco": "La biblioteca abre de lunes a viernes de 8:30 a 20:00.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.no_answer.11"
+        ],
+        "contrato_http": {
+          "estado": "sin_respuesta",
+          "nivel_servicio": "normal",
+          "respuesta": "No hay datos sobre eso en los documentos cargados.",
+          "bloques": [
+            {
+              "tipo": "mensaje",
+              "texto": "No hay datos sobre eso en los documentos cargados."
+            }
+          ],
+          "plan": "sin_respuesta",
+          "fragmentos": [],
+          "confianza": {
+            "top1": 0.7443958682045473,
+            "margen": 0.000384043315143745,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2716
+        }
+      }
+    },
+    {
+      "pregunta": "¿y quién la redacta?",
+      "sesion": "conversacion:es-conv-007",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 2,
+          "confianza_ms": 13,
+          "filtros_ms": 1,
+          "recuperacion_ms": 49,
+          "reranking_ms": 2405,
+          "lectura_ms": 248,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 10
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.4,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.375,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.375,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.2777777777777778,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2777777777777778,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.26666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26666666666666666,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.23376623376623376,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.23376623376623376,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.2159090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2159090909090909,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.852790548900408,
+          "margen_top1_top2": 0.004557682477072111,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.6241051437248969,
+          "candidato_id": "manual-adquisiciones__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "manual-adquisiciones",
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+            "offset_inicio": 1542,
+            "offset_fin": 1652,
+            "seccion_path": [
+              "Manual de Procedimientos de Adquisiciones"
+            ],
+            "score": 0.9995847304390009
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "redacta"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "redacta": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "redacta"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          0.507,
+          -1.0522,
+          -5.4454,
+          -5.6261
+        ],
+        "rerank": [
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.507
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -1.0522
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -5.4454
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -5.6261
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿y quién la redacta? firma resolucion compra",
+        "pregunta_lectura": "¿y quién la redacta?",
+        "tramo_completado": {
+          "original": "El Operador de Compras",
+          "inicio_original": 1500,
+          "fin_original": 1522
+        },
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "quien"
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "resolucion firma compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras",
+            "prob_respuesta": 0.9998,
+            "s_qa": 0.9996
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "La unidad requirente",
+            "prob_respuesta": 0.9448,
+            "s_qa": 0.8897
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5093018296680266,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.6241051437248969,
+          "s_qa": 0.9995847304390009,
+          "dominio": 0.6241051437248969
+        },
+        "oracion_foco": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.12"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Esta es la parte del documento que responde:\n\nEl Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma. (Fuente: Manual de Procedimientos de Adquisiciones).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Esta es la parte del documento que responde:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+              "conector": null,
+              "cita": "(Fuente: Manual de Procedimientos de Adquisiciones)",
+              "chunk_id": "manual-adquisiciones__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "manual-adquisiciones__c0000",
+              "doc_titulo": "Manual de Procedimientos de Adquisiciones",
+              "seccion": "Manual de Procedimientos de Adquisiciones",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 1542,
+              "offset_fin": 1652,
+              "texto": "El Operador de Compras redacta la Resolución de compra y la envía al Director de Administración para su firma.",
+              "score": 0.9995847304390009
+            }
+          ],
+          "confianza": {
+            "top1": 0.852790548900408,
+            "margen": 0.004557682477072111,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2732,
+          "respuesta_exacta": {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras redacta la Resolución de compra",
+            "offset_inicio": 1542,
+            "offset_fin": 1596
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "cuando empieza la compra?",
+      "sesion": "conversacion:es-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 10,
+          "filtros_ms": 0,
+          "recuperacion_ms": 44,
+          "reranking_ms": 2353,
+          "lectura_ms": 757,
+          "evidencia_ms": 2,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 11
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.75,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.75,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.6,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.5833333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5833333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.43333333333333335,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.43333333333333335,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.4,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.30952380952380953,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.30952380952380953,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.25396825396825395,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25396825396825395,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.2159090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2159090909090909,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.20202020202020202,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.20202020202020202,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8651452072816983,
+          "margen_top1_top2": 0.016704882493564277,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.5504840242723278,
+          "candidato_id": "biblioteca__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "manual-adquisiciones",
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto.",
+            "offset_inicio": 855,
+            "offset_fin": 1048,
+            "seccion_path": [
+              "Manual de Procedimientos de Adquisiciones"
+            ],
+            "score": 0.9913644025288528
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "compra"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "compra": 0.8938
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "compra"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          -2.6755,
+          -3.2909,
+          -3.6648,
+          -4.6449
+        ],
+        "rerank": [
+          {
+            "chunk_id": "biblioteca__c0000",
+            "score": -2.6755
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -3.2909
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": -3.6648
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -4.6449
+          }
+        ],
+        "lectura_por_pista": "manual-adquisiciones__c0000",
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "cuando empieza la compra?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "inicio",
+          "origen": "patron",
+          "relacion": "cuando empieza"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "biblioteca__c0000",
+            "texto": "préstamo de libros dura 14 días",
+            "prob_respuesta": 0.0,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "Operador de Compras inicia una nueva compra con otro proveedor",
+            "prob_respuesta": 0.0196,
+            "s_qa": 0.0
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras",
+            "prob_respuesta": 0.9957,
+            "s_qa": 0.9914
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5504840242723278,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.06443744000789207,
+          "s_qa": 0.9913644025288528,
+          "dominio": 0.5504840242723278
+        },
+        "oracion_foco": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.6"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Te muestro lo que indica el documento:\n\nUna vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto. (Fuente: Manual de Procedimientos de Adquisiciones).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Te muestro lo que indica el documento:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto.",
+              "conector": null,
+              "cita": "(Fuente: Manual de Procedimientos de Adquisiciones)",
+              "chunk_id": "manual-adquisiciones__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "manual-adquisiciones__c0000",
+              "doc_titulo": "Manual de Procedimientos de Adquisiciones",
+              "seccion": "Manual de Procedimientos de Adquisiciones",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 855,
+              "offset_fin": 1048,
+              "texto": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras, se realizará la compra del producto y/o servicio solicitado según la modalidad que corresponda al monto.",
+              "score": 0.9913644025288528
+            }
+          ],
+          "confianza": {
+            "top1": 0.8651452072816983,
+            "margen": 0.016704882493564277,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3181,
+          "respuesta_exacta": {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Una vez aprobado el Formulario de Requerimiento por el Jefe del Departamento de Compras",
+            "offset_inicio": 855,
+            "offset_fin": 942
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿y quién registra el requerimiento?",
+      "sesion": "conversacion:es-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 3,
+          "confianza_ms": 10,
+          "filtros_ms": 0,
+          "recuperacion_ms": 44,
+          "reranking_ms": 2391,
+          "lectura_ms": 325,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 14
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.6666666666666666,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.6666666666666666,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.39285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.39285714285714285,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.3611111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3611111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.325,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.325,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.25757575757575757,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25757575757575757,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.2159090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2159090909090909,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.2111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2111111111111111,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8684877590172236,
+          "margen_top1_top2": 0.0032958127875182264,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.8443045117265977,
+          "candidato_id": "manual-adquisiciones__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "manual-adquisiciones",
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso.",
+            "offset_inicio": 1049,
+            "offset_fin": 1142,
+            "seccion_path": [
+              "Manual de Procedimientos de Adquisiciones"
+            ],
+            "score": 0.9999952045856169
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "registro",
+            "requerimiento"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "registro": 1.4816,
+            "requerimiento": 1.4816
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "registro",
+            "requerimiento"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          1.6906,
+          -1.3448,
+          -4.1953,
+          -5.8604
+        ],
+        "rerank": [
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 1.6906
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -1.3448
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -4.1953
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -5.8604
+          }
+        ],
+        "lectura_por_pista": "laboratorio__c0000",
+        "pregunta_interpretada": "¿y quién registra el requerimiento? compra",
+        "pregunta_lectura": "¿y quién registra el requerimiento?",
+        "tramo_completado": {
+          "original": "El Operador de Compras",
+          "inicio_original": 1007,
+          "fin_original": 1029
+        },
+        "intencion": {
+          "nombre": "responsable",
+          "origen": "patron",
+          "relacion": "quien"
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "El Departamento de Compras",
+            "prob_respuesta": 0.6056,
+            "s_qa": 0.2112
+          },
+          {
+            "chunk_id": "laboratorio__c0000",
+            "texto": "Marta Rojas",
+            "prob_respuesta": 0.9966,
+            "s_qa": 0.9931
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.5616258633907455,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.8443045117265977,
+          "s_qa": 0.9999952045856169,
+          "dominio": 0.8443045117265977
+        },
+        "oracion_foco": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.10"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "El documento responde así:\n\nEl Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso. (Fuente: Manual de Procedimientos de Adquisiciones).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "El documento responde así:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso.",
+              "conector": null,
+              "cita": "(Fuente: Manual de Procedimientos de Adquisiciones)",
+              "chunk_id": "manual-adquisiciones__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "manual-adquisiciones__c0000",
+              "doc_titulo": "Manual de Procedimientos de Adquisiciones",
+              "seccion": "Manual de Procedimientos de Adquisiciones",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 1049,
+              "offset_fin": 1142,
+              "texto": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso.",
+              "score": 0.9999952045856169
+            }
+          ],
+          "confianza": {
+            "top1": 0.8684877590172236,
+            "margen": 0.0032958127875182264,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2790,
+          "respuesta_exacta": {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "El Operador de Compras registra el requerimiento en el sistema y asigna un número de proceso",
+            "offset_inicio": 1049,
+            "offset_fin": 1141
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿y en cuántos días se emite la orden?",
+      "sesion": "conversacion:es-conv-010",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 4,
+          "confianza_ms": 26,
+          "filtros_ms": 1,
+          "recuperacion_ms": 48,
+          "reranking_ms": 2417,
+          "lectura_ms": 558,
+          "evidencia_ms": 2,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 7
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.8333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.8333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.41666666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.41666666666666663,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.3666666666666667,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3666666666666667,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 0.34090909090909094,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34090909090909094,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.3111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3111111111111111,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.26785714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26785714285714285,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.2361111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2361111111111111,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.19090909090909092,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.19090909090909092,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.8984817363068186,
+          "margen_top1_top2": 0.01913047019005487,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.8628484107588635,
+          "candidato_id": "manual-adquisiciones__c0001"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "manual-adquisiciones",
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "El Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra.",
+            "offset_inicio": 2270,
+            "offset_fin": 2416,
+            "seccion_path": [
+              "Manual de Procedimientos de Adquisiciones",
+              "6.3 Procedimiento de Compra",
+              "6.3.3 Envío de Orden de Compra al proveedor"
+            ],
+            "score": 0.9673533269692944
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "emitir",
+            "orden"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "días": 0.383,
+            "emitir": 1.4816,
+            "orden": 1.4816
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "emitir",
+            "orden"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          1.8392,
+          -0.512,
+          -4.1573,
+          -4.8346
+        ],
+        "rerank": [
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 1.8392
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": -0.512
+          },
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": -4.1573
+          },
+          {
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": -4.8346
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+        "pregunta_lectura": "¿y en cuántos días se emite la orden?",
+        "tramo_completado": {
+          "original": "diez días hábiles",
+          "inicio_original": 560,
+          "fin_original": 577
+        },
+        "intencion": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8650580048561096,
+          "margen": 0.010897457599639893,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "compra"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "diez días hábiles",
+            "prob_respuesta": 0.9837,
+            "s_qa": 0.9674
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "texto": "Las compras superiores a 100 UTM",
+            "prob_respuesta": 0.0001,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6616057876893954,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.8628484107588635,
+          "s_qa": 0.9673533269692944,
+          "dominio": 0.8628484107588635
+        },
+        "oracion_foco": "El Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.1"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Esto es lo que dice el documento:\n\nEl Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra. (Fuente: Manual de Procedimientos de Adquisiciones).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Esto es lo que dice el documento:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra.",
+              "conector": null,
+              "cita": "(Fuente: Manual de Procedimientos de Adquisiciones)",
+              "chunk_id": "manual-adquisiciones__c0001"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "manual-adquisiciones__c0001",
+              "doc_titulo": "Manual de Procedimientos de Adquisiciones",
+              "seccion": "Manual de Procedimientos de Adquisiciones > 6.3 Procedimiento de Compra > 6.3.3 Envío de Orden de Compra al proveedor",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 2270,
+              "offset_fin": 2416,
+              "texto": "El Departamento de Compras tiene un plazo de diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra.",
+              "score": 0.9673533269692944
+            }
+          ],
+          "confianza": {
+            "top1": 0.8984817363068186,
+            "margen": 0.01913047019005487,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3067,
+          "respuesta_exacta": {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "diez días hábiles desde la aprobación del Formulario de Requerimiento para emitir la Orden de Compra",
+            "offset_inicio": 2315,
+            "offset_fin": 2415
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿Hasta cuándo puedo pedir el reembolso?",
+      "sesion": "conversacion:es-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 1,
+          "confianza_ms": 11,
+          "filtros_ms": 0,
+          "recuperacion_ms": 49,
+          "reranking_ms": 2419,
+          "lectura_ms": 378,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.47619047619047616,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.47619047619047616,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.4444444444444444,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.4444444444444444,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.41666666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.41666666666666663,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.35,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.35,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.34285714285714286,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.34285714285714286,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.2909090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2909090909090909,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.25757575757575757,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25757575757575757,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.25,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.25,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.2111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2111111111111111,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.9002677803004786,
+          "margen_top1_top2": 0.05828489888023991,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.9812063565331484,
+          "candidato_id": "reembolsos__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "reembolsos",
+            "chunk_id": "reembolsos__c0000",
+            "texto": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido.",
+            "offset_inicio": 30,
+            "offset_fin": 109,
+            "seccion_path": [
+              "Política de reembolsos",
+              "Plazos"
+            ],
+            "score": 0.9999880441892965
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "pedir",
+            "reembolso"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "pedir": 1.9924,
+            "reembolso": 1.9924
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "pedir",
+            "reembolso"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          3.9553,
+          -3.7174,
+          -4.0349,
+          -4.0815
+        ],
+        "rerank": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": 3.9553
+          },
+          {
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": -3.7174
+          },
+          {
+            "chunk_id": "biblioteca__c0000",
+            "score": -4.0349
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -4.0815
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": null,
+        "pregunta_lectura": "¿Hasta cuándo puedo pedir el reembolso?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "fin",
+          "origen": "patron",
+          "relacion": "hasta cuando"
+        },
+        "conversacion": {
+          "accion": "tema_nuevo",
+          "tema": "pedir reembolso"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "30 días después de recibir el pedido",
+            "prob_respuesta": 1.0,
+            "s_qa": 1.0
+          },
+          {
+            "chunk_id": "garantia-cafetera__c0000",
+            "texto": "24 meses",
+            "prob_respuesta": 0.933,
+            "s_qa": 0.8661
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.667559267668262,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.9812063565331484,
+          "s_qa": 0.9999880441892965,
+          "dominio": 0.9812063565331484
+        },
+        "oracion_foco": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.4"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Según el texto cargado:\n\nEl cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. (Fuente: Política de reembolsos).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Según el texto cargado:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido.",
+              "conector": null,
+              "cita": "(Fuente: Política de reembolsos)",
+              "chunk_id": "reembolsos__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "reembolsos__c0000",
+              "doc_titulo": "Política de reembolsos",
+              "seccion": "Política de reembolsos > Plazos",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 30,
+              "offset_fin": 109,
+              "texto": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido.",
+              "score": 0.9999880441892965
+            }
+          ],
+          "confianza": {
+            "top1": 0.9002677803004786,
+            "margen": 0.05828489888023991,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2864,
+          "respuesta_exacta": {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "30 días después de recibir el pedido",
+            "offset_inicio": 72,
+            "offset_fin": 108
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿y en cuántos días lo pagan?",
+      "sesion": "conversacion:es-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 2,
+          "confianza_ms": 23,
+          "filtros_ms": 0,
+          "recuperacion_ms": 50,
+          "reranking_ms": 2403,
+          "lectura_ms": 424,
+          "evidencia_ms": 1,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.5333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5333333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.5,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.5,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.30000000000000004,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.30000000000000004,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.29166666666666663,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.29166666666666663,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.26785714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.26785714285714285,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.24285714285714285,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.24285714285714285,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.2222222222222222,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2222222222222222,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.09090909090909091,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.09090909090909091,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.9003354109648536,
+          "margen_top1_top2": 0.035477735010528644,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.9457103672469784,
+          "candidato_id": "reembolsos__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "reembolsos",
+            "chunk_id": "reembolsos__c0000",
+            "texto": "El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud.",
+            "offset_inicio": 110,
+            "offset_fin": 191,
+            "seccion_path": [
+              "Política de reembolsos",
+              "Plazos"
+            ],
+            "score": 0.9999423848583271
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "paga"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "días": 0.383,
+            "paga": 1.1451
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "paga"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          2.8576,
+          -3.7644,
+          -4.0376,
+          -4.1411
+        ],
+        "rerank": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": 2.8576
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -3.7644
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -4.0376
+          },
+          {
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": -4.1411
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿y en cuántos días lo pagan? pedir reembolso",
+        "pregunta_lectura": "¿y en cuántos días lo pagan?",
+        "tramo_completado": {
+          "original": "10 días hábiles",
+          "inicio_original": 111,
+          "fin_original": 126
+        },
+        "intencion": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8656737804412842,
+          "margen": 0.013558626174926758,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "pedir reembolso"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "10 días hábiles",
+            "prob_respuesta": 1.0,
+            "s_qa": 0.9999
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "texto": "Si el viaje dura menos de doce horas, se paga el 40% del viático diario",
+            "prob_respuesta": 0.2553,
+            "s_qa": 0.0
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6677847032161787,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.9457103672469784,
+          "s_qa": 0.9999423848583271,
+          "dominio": 0.9457103672469784
+        },
+        "oracion_foco": "El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.5"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "Aquí está lo que encontré:\n\nEl reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud. (Fuente: Política de reembolsos).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "Aquí está lo que encontré:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud.",
+              "conector": null,
+              "cita": "(Fuente: Política de reembolsos)",
+              "chunk_id": "reembolsos__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "reembolsos__c0000",
+              "doc_titulo": "Política de reembolsos",
+              "seccion": "Política de reembolsos > Plazos",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 110,
+              "offset_fin": 191,
+              "texto": "El reembolso se paga dentro de 10 días hábiles desde que se aprueba la solicitud.",
+              "score": 0.9999423848583271
+            }
+          ],
+          "confianza": {
+            "top1": 0.9003354109648536,
+            "margen": 0.035477735010528644,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 2911,
+          "respuesta_exacta": {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "dentro de 10 días hábiles desde que se aprueba la solicitud",
+            "offset_inicio": 131,
+            "offset_fin": 190
+          }
+        }
+      }
+    },
+    {
+      "pregunta": "¿y si el producto llega dañado?",
+      "sesion": "conversacion:es-conv-013",
+      "diagnostico": {
+        "schema_version": 2,
+        "backend": "qdrant",
+        "perfil": "medium",
+        "etapas": {
+          "conversacional_ms": 0,
+          "analisis_ms": 4,
+          "confianza_ms": 14,
+          "filtros_ms": 1,
+          "recuperacion_ms": 55,
+          "reranking_ms": 2435,
+          "lectura_ms": 487,
+          "evidencia_ms": 0,
+          "politica_ms": 0,
+          "redaccion_ms": 0,
+          "verificacion_ms": 3
+        },
+        "candidatos": [
+          {
+            "schema_version": 1,
+            "chunk_id": "reembolsos__c0000",
+            "score": 1.0,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 1.0,
+              "fusion_rank": 1,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El cliente puede pedir el reembolso hasta 30 días después de recibir el pedido. El reembol"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "garantia-cafetera__c0000",
+            "score": 0.5833333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5833333333333333,
+              "fusion_rank": 2,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La garantía de la cafetera Brío C2 dura 24 meses desde la fecha de compra. Cubre defectos "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": 0.5833333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.5833333333333333,
+              "fusion_rank": 3,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El Supervisor de Compras revisa la Orden de Compra y la envía al proveedor a través del po"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": 0.3333333333333333,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3333333333333333,
+              "fusion_rank": 4,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Describe cómo la institución adquiere bienes y ser"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "preguntas-frecuentes-ti__c0000",
+            "score": 0.3111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3111111111111111,
+              "fusion_rank": 5,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Reúne las consultas más comunes sobre cuentas y eq"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "laboratorio__c0000",
+            "score": 0.3111111111111111,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.3111111111111111,
+              "fusion_rank": 6,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Las muestras de sangre se guardan a 4 °C por un máximo de 72 horas. Registro La responsabl"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "politica-viaticos__c0000",
+            "score": 0.2857142857142857,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2857142857142857,
+              "fusion_rank": 7,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula los viáticos y pasajes de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "reglamento-teletrabajo__c0000",
+            "score": 0.225,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.225,
+              "fusion_rank": 8,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "Documento ficticio creado para pruebas. Regula el trabajo a distancia de los funcionarios "
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "riego-invernadero__c0000",
+            "score": 0.2159090909090909,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.2159090909090909,
+              "fusion_rank": 9,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "El riego por goteo funciona dos veces al día, a las 7:00 y a las 19:00. Cada gotero entreg"
+          },
+          {
+            "schema_version": 1,
+            "chunk_id": "biblioteca__c0000",
+            "score": 0.19090909090909092,
+            "signals": {
+              "dense_score": null,
+              "dense_rank": null,
+              "sparse_score": null,
+              "sparse_rank": null,
+              "fusion_score": 0.19090909090909092,
+              "fusion_rank": 10,
+              "reranker_score": null,
+              "reranker_rank": null
+            },
+            "inicio": "La biblioteca abre de lunes a viernes de 8:30 a 20:00. Los sábados abre de 10:00 a 14:00 y"
+          }
+        ],
+        "senales": {
+          "schema_version": 1,
+          "confianza_top1": 0.899307178105872,
+          "margen_top1_top2": 0.05589714037599414,
+          "metodo_confianza": "cosine_top1_v1",
+          "estado_calibracion": "sin_calibrar",
+          "terminos_encontrados": [],
+          "terminos_ausentes": []
+        },
+        "decision": {
+          "resultado": "responde",
+          "motivo": "lector",
+          "entidad_texto": null,
+          "capa_decisora": "ok_lector",
+          "confianza_utilizada": 0.9969328484478579,
+          "candidato_id": "reembolsos__c0000"
+        },
+        "evidencias": [
+          {
+            "schema_version": 1,
+            "doc_id": "reembolsos",
+            "chunk_id": "reembolsos__c0000",
+            "texto": "Si el producto llega dañado, el envío de la devolución es gratuito.",
+            "offset_inicio": 205,
+            "offset_fin": 272,
+            "seccion_path": [
+              "Política de reembolsos",
+              "Plazos"
+            ],
+            "score": 0.991732109951361
+          }
+        ],
+        "advertencias": [],
+        "senales_lexicas": {
+          "schema_version": 1,
+          "terminos_foco": [
+            "llega",
+            "productos"
+          ],
+          "s_oov": 0.0,
+          "s_cov": 1.0,
+          "s_foco": 1.0,
+          "s_lex": null,
+          "acuerdo": null,
+          "terminos": {
+            "productos": 1.1451,
+            "llega": 1.4816,
+            "daños": 1.4816
+          },
+          "ausentes_del_corpus": [],
+          "foco_encontrados": [
+            "llega",
+            "productos"
+          ],
+          "foco_ausentes": []
+        },
+        "puntajes_rerank": [
+          5.7839,
+          -5.1807,
+          -5.7874,
+          -6.3542
+        ],
+        "rerank": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "score": 5.7839
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "score": -5.1807
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0000",
+            "score": -5.7874
+          },
+          {
+            "chunk_id": "politica-viaticos__c0000",
+            "score": -6.3542
+          }
+        ],
+        "lectura_por_pista": null,
+        "pregunta_interpretada": "¿y si el producto llega dañado? pedir reembolso pagan",
+        "pregunta_lectura": "¿y si el producto llega dañado?",
+        "tramo_completado": null,
+        "intencion": {
+          "nombre": "consecuencia",
+          "origen": "patron",
+          "relacion": "y si"
+        },
+        "conversacion": {
+          "accion": "hereda",
+          "tema": "pedir reembolso"
+        },
+        "sinonimos": null,
+        "recursos_lexicos": null,
+        "pregunta_recuperacion": null,
+        "lecturas": [
+          {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "el envío de la devolución es gratuito",
+            "prob_respuesta": 0.9959,
+            "s_qa": 0.9917
+          },
+          {
+            "chunk_id": "manual-adquisiciones__c0001",
+            "texto": "el Supervisor de Compras anula la orden",
+            "prob_respuesta": 0.6036,
+            "s_qa": 0.2072
+          }
+        ],
+        "regla": "ok_lector",
+        "senales_politica": {
+          "s_ret": 0.6643572603529068,
+          "s_oov": 0.0,
+          "s_foco": 1.0,
+          "s_cov": 1.0,
+          "s_rr": 0.9969328484478579,
+          "s_qa": 0.991732109951361,
+          "dominio": 0.9969328484478579
+        },
+        "oracion_foco": "Si el producto llega dañado, el envío de la devolución es gratuito.",
+        "salto_modelos": false,
+        "tono": "cordial",
+        "plantillas": [
+          "cordial.opening.10"
+        ],
+        "contrato_http": {
+          "estado": "ok",
+          "nivel_servicio": "normal",
+          "respuesta": "El documento responde así:\n\nSi el producto llega dañado, el envío de la devolución es gratuito. (Fuente: Política de reembolsos).",
+          "bloques": [
+            {
+              "tipo": "encabezado",
+              "texto": "El documento responde así:"
+            },
+            {
+              "tipo": "pasaje",
+              "texto": "Si el producto llega dañado, el envío de la devolución es gratuito.",
+              "conector": null,
+              "cita": "(Fuente: Política de reembolsos)",
+              "chunk_id": "reembolsos__c0000"
+            }
+          ],
+          "plan": "extractivo",
+          "fragmentos": [
+            {
+              "chunk_id": "reembolsos__c0000",
+              "doc_titulo": "Política de reembolsos",
+              "seccion": "Política de reembolsos > Plazos",
+              "version": "1",
+              "pagina": null,
+              "offset_inicio": 205,
+              "offset_fin": 272,
+              "texto": "Si el producto llega dañado, el envío de la devolución es gratuito.",
+              "score": 0.991732109951361
+            }
+          ],
+          "confianza": {
+            "top1": 0.899307178105872,
+            "margen": 0.05589714037599414,
+            "acuerdo_bm25": null
+          },
+          "latencia_ms": 3002,
+          "respuesta_exacta": {
+            "chunk_id": "reembolsos__c0000",
+            "texto": "el envío de la devolución es gratuito",
+            "offset_inicio": 234,
+            "offset_fin": 271
+          }
+        }
+      }
+    }
+  ]
+}

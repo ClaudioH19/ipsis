@@ -25,19 +25,33 @@
         "doc_id": "manual-adquisiciones"
       },
       {
+        "ruta": "politica_viaticos.md",
+        "doc_id": "politica-viaticos"
+      },
+      {
+        "ruta": "preguntas_frecuentes_ti.md",
+        "doc_id": "preguntas-frecuentes-ti"
+      },
+      {
         "ruta": "reembolsos.md",
         "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "reglamento_teletrabajo.md",
+        "doc_id": "reglamento-teletrabajo"
       },
       {
         "ruta": "riego_invernadero.md",
         "doc_id": "riego-invernadero"
       }
     ],
-    "sha256": "aebbac0138b44a62379719189f3bae65f9327e682795c537421fca1921b6fdff"
+    "sha256": "540590d1b9e22c130be222f767da6b4822f2c0138ec485ca5dd241ff0bfa4c36"
   },
   "categorias_requeridas": [
+    "ambigua",
     "exacta",
     "parafrasis",
+    "premisa_falsa",
     "sin_respuesta"
   ],
   "uso": "regresion",

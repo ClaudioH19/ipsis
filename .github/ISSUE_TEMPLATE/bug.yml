@@ -44,7 +44,7 @@ body:
     id: profile
     attributes:
       label: Profile
-      options: [light, medium, heavy]
+      options: [light, medium]
   - type: input
     id: environment
     attributes:

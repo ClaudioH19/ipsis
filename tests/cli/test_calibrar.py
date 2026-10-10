@@ -51,6 +51,7 @@ def _motor_falso(qa_respondibles: float, qa_trampas: float):
     """Sustituye la evaluación real: observaciones con señales controladas."""
     from ipsis.evaluacion.banco import cargar_banco
     from ipsis.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas
+    from ipsis.nucleo.esquemas import EvidenceSpan
 
     def evaluar(ruta_manifiesto: str) -> ArtefactoEvaluacion:
         banco = cargar_banco(ruta_manifiesto)
@@ -63,6 +64,9 @@ def _motor_falso(qa_respondibles: float, qa_trampas: float):
             senales = SenalesObservadas(s_ret=0.9, s_oov=0.0, s_foco=1.0, s_cov=1.0, s_qa=qa, dominio=0.9)
             observaciones.append(ObservacionEvaluacion(
                 caso_id=caso.id, backend="falso", estado="relacionado", regla="relacionado", senales=senales,
+                evidencias=[EvidenceSpan(doc_id=e.doc_id, chunk_id=f"c-{caso.id}", texto=e.texto,
+                                        offset_inicio=e.offset_inicio, offset_fin=e.offset_fin)
+                            for e in caso.evidencias],
                 respuesta=f"Esto dice el documento: {caso.respuesta_literal or 'otra cosa'}."))
         return ArtefactoEvaluacion.model_construct(observaciones=observaciones)
 

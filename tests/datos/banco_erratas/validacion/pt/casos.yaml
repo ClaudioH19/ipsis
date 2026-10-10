@@ -1,0 +1,685 @@
+# Banco de erratas (validacion), generado por generar.py desde banco_validacion. No editar a mano.
+- id: pt-exacta-001
+  documento: politica_equipamentos.md
+  capacidad: lista
+  pregunta: Que equipamentos cada zervidor recbe?
+  respuesta: um notebook e um mouse sem fio
+  original: Que equipamentos cada servidor recebe?
+  erratas:
+  - omision
+  - fonetica
+- id: pt-parafrasis-001
+  documento: politica_equipamentos.md
+  capacidad: lista
+  pregunta: o que me dao pra trabalhhar quando eu entro
+  respuesta: um notebook e um mouse sem fio
+  original: o que me dao pra trabalhar quando eu entro
+  erratas:
+  - duplicacion
+- id: pt-trampa-001
+  par: pt-exacta-001
+  pregunta: Que selular cada servidor recebe?
+  original: Que celular cada servidor recebe?
+  erratas:
+  - fonetica
+- id: pt-exacta-002
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: quem assina o termo de entrega do equipame nto junto com o servidor?
+  respuesta: o Responsável pelo Inventário
+  original: Quem assina o termo de entrega do equipamento junto com o servidor?
+  erratas:
+  - separada
+- id: pt-exacta-003
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: Para que se pode uwar o equipamento?
+  respuesta: apenas para atividades institucionais
+  original: Para que se pode usar o equipamento?
+  erratas:
+  - vecina
+- id: pt-parafrasis-002
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: posso instalarjogos no computador do trabalho?
+  respuesta: É proibido instalar jogos ou programas de compartilhamento de arquivos
+  original: posso instalar jogos no computador do trabalho?
+  erratas:
+  - pegadas
+- id: pt-exacta-004
+  documento: politica_equipamentos.md
+  capacidad: cantidad
+  pregunta: quantos caract eres a senha do equipamento deve ter?
+  respuesta: pelo menos 10 caracteres
+  original: Quantos caracteres a senha do equipamento deve ter?
+  erratas:
+  - separada
+- id: pt-trampa-002
+  par: pt-exacta-004
+  pregunta: Quantos csracteres a senha do e-mail dece ter?
+  original: Quantos caracteres a senha do e-mail deve ter?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-exacta-005
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: Depois de quanto tempo a twla do equipamento é blokeada?
+  respuesta: depois de 5 minutos de inatividade
+  original: Depois de quanto tempo a tela do equipamento é bloqueada?
+  erratas:
+  - fonetica
+  - vecina
+- id: pt-parafrasis-003
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: em quanto tepmo a tela bloqueia se eu nao usar
+  respuesta: depois de 5 minutos de inatividade
+  original: em quanto tempo a tela bloqueia se eu nao usar
+  erratas:
+  - transposicion
+- id: pt-exacta-006
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: Em que prazo a peerda do equipamento é informmada?
+  respuesta: em até 24 horas
+  original: Em que prazo a perda do equipamento é informada?
+  erratas:
+  - duplicacion
+  - duplicacion
+- id: pt-parafrasis-004
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: pra quem eu aviso se rouabrem meu notebook
+  respuesta: à Central de Atendimento
+  original: pra quem eu aviso se roubarem meu notebook
+  erratas:
+  - transposicion
+- id: pt-trampa-003
+  par: pt-parafrasis-004
+  pregunta: Para quem eu aiso se roubarem meu celular pessoal?
+  original: Para quem eu aviso se roubarem meu celular pessoal?
+  erratas:
+  - omision
+- id: pt-exacta-007
+  documento: politica_equipamentos.md
+  capacidad: procedimiento
+  pregunta: O que se anexa em caso de roubo do ekipamento?
+  respuesta: o boletim de ocorrência
+  original: O que se anexa em caso de roubo do equipamento?
+  erratas:
+  - fonetica
+- id: pt-exacta-008
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: a quem se devolve o equipamento ao termianr o contrato?
+  respuesta: ao Responsável pelo Inventário
+  original: A quem se devolve o equipamento ao terminar o contrato?
+  erratas:
+  - transposicion
+- id: pt-exacta-009
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: O que é feitocom o equipamento antes de atribuí-lo a outra pessoa?
+  respuesta: é formatado
+  original: O que é feito com o equipamento antes de atribuí-lo a outra pessoa?
+  erratas:
+  - pegadas
+- id: pt-trampa-004
+  par: pt-exacta-009
+  pregunta: Quem paaga o conserto do equipamento danificado?
+  original: Quem paga o conserto do equipamento danificado?
+  erratas:
+  - duplicacion
+- id: pt-exacta-010
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: em que horario o ref eitorio serve almoco?
+  respuesta: entre as 12:30 e as 15:00 horas
+  original: Em que horário o refeitório serve almoço?
+  erratas:
+  - separada
+- id: pt-parafrasis-005
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: ate que horaz posso almocar no refeitorio
+  respuesta: entre as 12:30 e as 15:00 horas
+  original: ate que horas posso almocar no refeitorio
+  erratas:
+  - fonetica
+- id: pt-trampa-005
+  par: pt-parafrasis-005
+  pregunta: ate que horas o jantar e servido no refitorio?
+  original: Até que horas o jantar é servido no refeitório?
+  erratas:
+  - omision
+- id: pt-exacta-011
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: em que hofario e servido o caafe da manha?
+  respuesta: das 8:00 às 9:30 horas
+  original: Em que horário é servido o café da manhã?
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-exacta-012
+  documento: regulamento_refeitorio.md
+  capacidad: cantidad
+  pregunta: quanto custa o aloco para servidores?
+  respuesta: 3.500 pesos
+  original: Quanto custa o almoço para servidores?
+  erratas:
+  - omision
+- id: pt-parafrasis-006
+  documento: regulamento_refeitorio.md
+  capacidad: cantidad
+  pregunta: quanto os estagiarioos pagam pelo almoco
+  respuesta: Os estagiários pagam a metade do preço
+  original: quanto os estagiarios pagam pelo almoco
+  erratas:
+  - duplicacion
+- id: pt-trampa-006
+  par: pt-parafrasis-006
+  pregunta: Quanto os visitantes pagam pepo almoço no refeittório?
+  original: Quanto os visitantes pagam pelo almoço no refeitório?
+  erratas:
+  - vecina
+  - duplicacion
+- id: pt-exacta-013
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: quando o cardapio semanal e pubpicado?
+  respuesta: toda sexta-feira na intranet
+  original: Quando o cardápio semanal é publicado?
+  erratas:
+  - vecina
+- id: pt-parafrasis-007
+  documento: regulamento_refeitorio.md
+  capacidad: condicion
+  pregunta: tem comiida vegetatiana no refeitorio?
+  respuesta: Todos os dias há uma opção vegetariana
+  original: tem comida vegetariana no refeitorio?
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-trampa-007
+  par: pt-parafrasis-007
+  pregunta: Tem coida sem glúten no refeitório?
+  original: Tem comida sem glúten no refeitório?
+  erratas:
+  - omision
+- id: pt-exacta-014
+  documento: regulamento_refeitorio.md
+  capacidad: procedimiento
+  pregunta: como se pzga o almoco?
+  respuesta: com o cartão institucional ou em dinheiro
+  original: Como se paga o almoço?
+  erratas:
+  - vecina
+- id: pt-exacta-015
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: onde o cartao inztitucional e recarregado?
+  respuesta: no caixa do refeitório
+  original: Onde o cartão institucional é recarregado?
+  erratas:
+  - fonetica
+- id: pt-exacta-016
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: Onde são deixaads as reclamações sobre o serviço do refeitório?
+  respuesta: no livro de sugestões
+  original: Onde são deixadas as reclamações sobre o serviço do refeitório?
+  erratas:
+  - transposicion
+- id: pt-exacta-017
+  documento: regulamento_refeitorio.md
+  capacidad: persona
+  pregunta: Quem responde as reclamações do rfeeitório?
+  respuesta: A Unidade de Bem-Estar
+  original: Quem responde as reclamações do refeitório?
+  erratas:
+  - transposicion
+- id: pt-parafrasis-008
+  documento: regulamento_refeitorio.md
+  capacidad: duracion
+  pregunta: em quanto tempo respondem uma rec lamacao do refeitorio
+  respuesta: em até cinco dias úteis
+  original: em quanto tempo respondem uma reclamacao do refeitorio
+  erratas:
+  - separada
+- id: pt-exacta-018
+  documento: manual_projetor.md
+  capacidad: cantidad
+  pregunta: A que distância da tela o projetor Vista X2 é intsalado?
+  respuesta: entre 2 e 5 metros da tela
+  original: A que distância da tela o projetor Vista X2 é instalado?
+  erratas:
+  - transposicion
+- id: pt-exacta-019
+  documento: manual_projetor.md
+  capacidad: procedimiento
+  pregunta: com que cabbo o projetor se conecta ao commputador?
+  respuesta: com um cabo HDMI
+  original: Com que cabo o projetor se conecta ao computador?
+  erratas:
+  - duplicacion
+  - duplicacion
+- id: pt-parafrasis-009
+  documento: manual_projetor.md
+  capacidad: procedimiento
+  pregunta: como ligo o proj etor no notebook
+  respuesta: Ele se conecta ao computador com um cabo HDMI
+  original: como ligo o projetor no notebook
+  erratas:
+  - separada
+- id: pt-exacta-020
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: Quanto dura a lâmpada do projrtor?
+  respuesta: aproximadamente 4.000 horas
+  original: Quanto dura a lâmpada do projetor?
+  erratas:
+  - vecina
+- id: pt-parafrasis-010
+  documento: manual_projetor.md
+  capacidad: condicion
+  pregunta: a luz da lampsda ta vermelha, o que eu faco
+  respuesta: é preciso substituí-la
+  original: a luz da lampada ta vermelha, o que eu faco
+  erratas:
+  - vecina
+- id: pt-trampa-008
+  par: pt-parafrasis-010
+  pregunta: o que faso se a luz de energia piscar em vere?
+  original: O que faço se a luz de energia piscar em verde?
+  erratas:
+  - omision
+  - fonetica
+- id: pt-exacta-021
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: a cada quanto tmepo o filtro de ar do projetor e lijpo?
+  respuesta: a cada 200 horas de uso
+  original: A cada quanto tempo o filtro de ar do projetor é limpo?
+  erratas:
+  - vecina
+  - transposicion
+- id: pt-exacta-022
+  documento: manual_projetor.md
+  capacidad: cantidad
+  pregunta: que pilhas o controle remoto do proje tor usa?
+  respuesta: duas pilhas AAA
+  original: Que pilhas o controle remoto do projetor usa?
+  erratas:
+  - separada
+- id: pt-parafrasis-011
+  documento: manual_projetor.md
+  capacidad: condicion
+  pregunta: pra que zerve o botao Freeze
+  respuesta: congela a imagem na tela
+  original: pra que serve o botao Freeze
+  erratas:
+  - fonetica
+- id: pt-exacta-023
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: Quanto dura a garantka do projetor?
+  respuesta: uma garantia de dois anos
+  original: Quanto dura a garantia do projetor?
+  erratas:
+  - vecina
+- id: pt-exacta-024
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: quanto dura a graantia da lmapada?
+  respuesta: uma garantia de seis meses
+  original: Quanto dura a garantia da lâmpada?
+  erratas:
+  - transposicion
+  - transposicion
+- id: pt-trampa-009
+  par: pt-exacta-024
+  pregunta: quanto dira a garantia do contfole remoto?
+  original: Quanto dura a garantia do controle remoto?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-exacta-025
+  documento: regulamento_capacitacao.md
+  capacidad: fecha
+  pregunta: Quando o plano anual de capacittação é aprovdo?
+  respuesta: é aprovado em março
+  original: Quando o plano anual de capacitação é aprovado?
+  erratas:
+  - duplicacion
+  - omision
+- id: pt-exacta-026
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: Quem elaborao plano anual de capacitação?
+  respuesta: pelo Comitê Paritário de Capacitação
+  original: Quem elabora o plano anual de capacitação?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-012
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: quem motna o pano de cursos do ano
+  respuesta: pelo Comitê Paritário de Capacitação
+  original: quem monta o plano de cursos do ano
+  erratas:
+  - omision
+  - transposicion
+- id: pt-exacta-027
+  documento: regulamento_capacitacao.md
+  capacidad: procedimiento
+  pregunta: onde os servidores se inzcrevem nos cursos?
+  respuesta: pelo portal de capacitação
+  original: Onde os servidores se inscrevem nos cursos?
+  erratas:
+  - fonetica
+- id: pt-exacta-028
+  documento: regulamento_capacitacao.md
+  capacidad: condicion
+  pregunta: Que autorização a insc rição em um curso exige?
+  respuesta: a autorização da chefia imediata
+  original: Que autorização a inscrição em um curso exige?
+  erratas:
+  - separada
+- id: pt-parafrasis-013
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: quem tem que autorizar minha inscriaco num curzo
+  respuesta: a autorização da chefia imediata
+  original: quem tem que autorizar minha inscricao num curso
+  erratas:
+  - fonetica
+  - transposicion
+- id: pt-trampa-010
+  par: pt-parafrasis-013
+  pregunta: Quem autorisa os cursos no etxerior?
+  original: Quem autoriza os cursos no exterior?
+  erratas:
+  - fonetica
+  - transposicion
+- id: pt-exacta-029
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: Que frequência mínima é exigida para ser aprovado em um crso?
+  respuesta: uma frequência mínima de 75 %
+  original: Que frequência mínima é exigida para ser aprovado em um curso?
+  erratas:
+  - omision
+- id: pt-parafrasis-014
+  documento: regulamento_capacitacao.md
+  capacidad: condicion
+  pregunta: o que acontece se eu nao termiinar um curso sem justificativa
+  respuesta: não pode se inscrever em outro curso durante seis meses
+  original: o que acontece se eu nao terminar um curso sem justificativa
+  erratas:
+  - duplicacion
+- id: pt-exacta-030
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: quantas horas de capacitacao por ano cada zervidor pode usar?
+  respuesta: até 40 horas de capacitação por ano
+  original: Quantas horas de capacitação por ano cada servidor pode usar?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-015
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: quantas horasde curso eu tenho por ano
+  respuesta: até 40 horas de capacitação por ano
+  original: quantas horas de curso eu tenho por ano
+  erratas:
+  - pegadas
+- id: pt-trampa-011
+  par: pt-parafrasis-015
+  pregunta: quantas horas de cursos on-line pdoem ser feitas fora da jornada?
+  original: Quantas horas de cursos on-line podem ser feitas fora da jornada?
+  erratas:
+  - transposicion
+- id: pt-exacta-031
+  documento: regulamento_capacitacao.md
+  capacidad: duracion
+  pregunta: em que prazo os certiricados dos cursos sao bixados?
+  respuesta: em até dez dias úteis após o término do curso
+  original: Em que prazo os certificados dos cursos são baixados?
+  erratas:
+  - vecina
+  - omision
+- id: pt-trampa-012
+  par: pt-exacta-031
+  pregunta: quem pode ministrar os curzos de capacitasao?
+  original: Quem pode ministrar os cursos de capacitação?
+  erratas:
+  - fonetica
+  - fonetica
+- id: pt-exacta-032
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: Que porcentagem das despesas ambulatoriais o seguroreembolsa?
+  respuesta: 70 % das despesas médicas ambulatoriais
+  original: Que porcentagem das despesas ambulatoriais o seguro reembolsa?
+  erratas:
+  - pegadas
+- id: pt-exacta-033
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: Em que porsentagem as despesas hospitalares são reembolsadas?
+  respuesta: são reembolsadas em 90 %
+  original: Em que porcentagem as despesas hospitalares são reembolsadas?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-016
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: quanto o seguro me deolve se eu for intenrado
+  respuesta: As despesas hospitalares são reembolsadas em 90 %
+  original: quanto o seguro me devolve se eu for internado
+  erratas:
+  - omision
+  - transposicion
+- id: pt-trampa-013
+  par: pt-parafrasis-016
+  pregunta: quanto o seguro devlove em dezpesas odontologicas?
+  original: Quanto o seguro devolve em despesas odontológicas?
+  erratas:
+  - transposicion
+  - fonetica
+- id: pt-exacta-034
+  documento: seguro_saude.md
+  capacidad: persona
+  pregunta: Quem pode ser incluído como depnedente do sdguro?
+  respuesta: o cônjuge e os filhos menores de 24 anos
+  original: Quem pode ser incluído como dependente do seguro?
+  erratas:
+  - vecina
+  - transposicion
+- id: pt-parafrasis-017
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: posso colocar meu filho de 20 anis no seguro?
+  respuesta: Podem ser incluídos como dependentes o cônjuge e os filhos menores de 24 anos
+  original: posso colocar meu filho de 20 anos no seguro?
+  erratas:
+  - vecina
+- id: pt-trampa-014
+  par: pt-parafrasis-017
+  pregunta: posso incluir meus paiz como dependentez do seguro?
+  original: Posso incluir meus pais como dependentes do seguro?
+  erratas:
+  - fonetica
+  - fonetica
+- id: pt-exacta-035
+  documento: seguro_saude.md
+  capacidad: duracion
+  pregunta: Em que prazo os reembolsos do zeguro são solicitados?
+  respuesta: em até 60 dias após o atendimento médico
+  original: Em que prazo os reembolsos do seguro são solicitados?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-018
+  documento: seguro_saude.md
+  capacidad: procedimiento
+  pregunta: que papeis eu preiso pra pedir o reembolso do seguro
+  respuesta: o recibo e o pedido médico
+  original: que papeis eu preciso pra pedir o reembolso do seguro
+  erratas:
+  - omision
+- id: pt-exacta-036
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: o que o seguro complementarnao cobre?
+  respuesta: tratamentos estéticos nem óculos
+  original: O que o seguro complementar não cobre?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-019
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: o segurocobre oculos?
+  respuesta: O seguro não cobre tratamentos estéticos nem óculos
+  original: o seguro cobre oculos?
+  erratas:
+  - pegadas
+- id: pt-exacta-037
+  documento: seguro_saude.md
+  capacidad: persona
+  pregunta: para quem sao enviadaz as duvidas sobre o seguo?
+  respuesta: à Unidade de Bem-Estar
+  original: Para quem são enviadas as dúvidas sobre o seguro?
+  erratas:
+  - fonetica
+  - omision
+- id: pt-exacta-038
+  documento: seguro_saude.md
+  capacidad: duracion
+  pregunta: Em que prazo a seguradora pagaos reembolsos?
+  respuesta: em um prazo de dez dias úteis
+  original: Em que prazo a seguradora paga os reembolsos?
+  erratas:
+  - pegadas
+- id: pt-trampa-015
+  par: pt-exacta-038
+  pregunta: quem contrata o segufo complementar?
+  original: Quem contrata o seguro complementar?
+  erratas:
+  - vecina
+- id: pt-exacta-039
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: Em que horário a acadmeia avre?
+  respuesta: de segunda a sexta das 7:00 às 20:00 horas
+  original: Em que horário a academia abre?
+  erratas:
+  - vecina
+  - transposicion
+- id: pt-parafrasis-020
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: que horas a acade mia fecha
+  respuesta: de segunda a sexta das 7:00 às 20:00 horas
+  original: que horas a academia fecha
+  erratas:
+  - separada
+- id: pt-trampa-016
+  par: pt-parafrasis-020
+  pregunta: Que hoars a piscina fecha?
+  original: Que horas a piscina fecha?
+  erratas:
+  - transposicion
+- id: pt-exacta-040
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: o que e necessario para ussar a academia?
+  respuesta: um atestado médico válido
+  original: O que é necessário para usar a academia?
+  erratas:
+  - duplicacion
+- id: pt-exacta-041
+  documento: regulamento_academia.md
+  capacidad: persona
+  pregunta: Com quem é feitaa inscrição na academia?
+  respuesta: com a Unidade de Bem-Estar
+  original: Com quem é feita a inscrição na academia?
+  erratas:
+  - pegadas
+- id: pt-exacta-042
+  documento: regulamento_academia.md
+  capacidad: duracion
+  pregunta: Quanto dura no máximmo uma sessão quando há pessoas esperando?
+  respuesta: no máximo uma hora
+  original: Quanto dura no máximo uma sessão quando há pessoas esperando?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-021
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: preciso lebar toalha na acadeima?
+  respuesta: É obrigatório usar toalha nos aparelhos
+  original: preciso levar toalha na academia?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-exacta-043
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: Quando são as aulas de ioha?
+  respuesta: às terças e quintas às 18:00 horas
+  original: Quando são as aulas de ioga?
+  erratas:
+  - vecina
+- id: pt-parafrasis-022
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: que dizs tem ioga
+  respuesta: às terças e quintas às 18:00 horas
+  original: que dias tem ioga
+  erratas:
+  - vecina
+- id: pt-trampa-017
+  par: pt-parafrasis-022
+  pregunta: Que dias têm aulaz de pilates?
+  original: Que dias têm aulas de pilates?
+  erratas:
+  - fonetica
+- id: pt-exacta-044
+  documento: regulamento_academia.md
+  capacidad: cantidad
+  pregunta: quantas pessoas cada aula de ioga admitte?
+  respuesta: até 15 pessoas
+  original: Quantas pessoas cada aula de ioga admite?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-023
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: o que acontece com as coisas que dexio no armariio a noite
+  respuesta: são retirados e guardados na recepção
+  original: o que acontece com as coisas que deixo no armario a noite
+  erratas:
+  - duplicacion
+  - transposicion
+- id: pt-trampa-018
+  par: pt-parafrasis-023
+  pregunta: quanto cuzta alugar um arjario?
+  original: Quanto custa alugar um armário?
+  erratas:
+  - fonetica
+  - vecina
+- id: pt-trampa-019
+  par: pt-exacta-040
+  pregunta: Quem pode usar a academia nos finns de seamna?
+  original: Quem pode usar a academia nos fins de semana?
+  erratas:
+  - transposicion
+  - duplicacion
+- id: pt-trampa-020
+  par: pt-exacta-044
+  pregunta: quantas pessoas cada aula de spinning admote?
+  original: Quantas pessoas cada aula de spinning admite?
+  erratas:
+  - vecina

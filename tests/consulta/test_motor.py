@@ -332,3 +332,41 @@ def test_answer_blocks_traduce_los_bloques_y_cubre_contratos_sin_ellos():
     # Un contrato anterior (o un estado sin redacción) trae el texto como un solo mensaje.
     assert respuesta_publica(base)["answer_blocks"] == [
         {"type": "message", "text": base["respuesta"], "connector": None, "citation": None, "chunk_id": None}]
+
+
+def test_la_aclaracion_es_no_answer_con_plan_clarification():
+    """Compatible con los clientes que validan ``status``: el plan dice que se pide el tema."""
+    from ipsis.servicio.api import RespuestaConsulta, respuesta_publica
+
+    contrato = {"estado": "sin_respuesta", "nivel_servicio": "normal", "plan": "aclaracion", "fragmentos": [],
+                "confianza": {"top1": 0.4, "margen": 0.1}, "latencia_ms": 1,
+                "respuesta": "¿Sobre qué tema me preguntas?"}
+    publica = respuesta_publica(contrato)
+    assert publica["status"] == "no_answer" and publica["plan"] == "clarification"
+    RespuestaConsulta.model_validate(publica)
+
+
+def test_nivel_de_confianza_sale_del_estado_y_del_perfil():
+    """alta: directa con lector; media: directa sin lector; baja: relacionado; nada si no responde."""
+    from types import SimpleNamespace
+
+    from ipsis.consulta.motor import Motor
+    from ipsis.nucleo.esquemas import AssistantState
+
+    con_lector, sin_lector = SimpleNamespace(lector=object()), SimpleNamespace(lector=None)
+    nivel = Motor.nivel_confianza
+    assert nivel(con_lector, AssistantState.RESPUESTA_DIRECTA) == "alta"
+    assert nivel(sin_lector, AssistantState.RESPUESTA_DIRECTA) == "media"
+    assert nivel(con_lector, AssistantState.RELACIONADO) == "baja"
+    for estado in (AssistantState.SIN_RESPUESTA, AssistantState.NECESITA_ACLARACION, AssistantState.CONVERSACIONAL):
+        assert nivel(con_lector, estado) is None
+
+
+def test_el_nivel_de_confianza_llega_a_la_api():
+    from ipsis.servicio.api import RespuestaConsulta, respuesta_publica
+
+    base = {"estado": "ok", "nivel_servicio": "normal", "plan": "extractivo", "fragmentos": [],
+            "confianza": {"top1": 0.8, "margen": 0.1}, "latencia_ms": 1, "respuesta": "x"}
+    assert respuesta_publica({**base, "nivel_confianza": "media"})["confidence_level"] == "medium"
+    assert "confidence_level" not in respuesta_publica(base)  # sin respuesta que medir
+    RespuestaConsulta.model_validate(respuesta_publica({**base, "nivel_confianza": "alta"}))

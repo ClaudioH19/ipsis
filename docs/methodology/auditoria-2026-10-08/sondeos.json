@@ -1,0 +1,39 @@
+{
+  "alcance": "funciones reales con entradas sintéticas; no reproduce una respuesta del motor",
+  "premisa_sin_asociacion": {
+    "pregunta": "¿La garantía dura 12 meses?",
+    "fuentes": [
+      "La garantía dura 6 meses.",
+      "El mantenimiento se realiza cada 12 meses."
+    ],
+    "premisa_valida": true
+  },
+  "fidelidad_sin_asociacion": {
+    "respuesta_sintetica": "La garantía dura 12 meses.",
+    "fiel": true
+  },
+  "qa_alta_cobertura_cero": {
+    "s_qa": 0.99,
+    "s_cov": 0.0,
+    "regla": "ok_lector"
+  },
+  "negacion_no_detectada_por_concordancia": {
+    "tramos": [
+      "El cliente paga el envío.",
+      "El cliente no paga el envío."
+    ],
+    "discordancia": false
+  },
+  "calibracion_test_excede": {
+    "estado": "calibrado",
+    "verificacion_test": "excede",
+    "aceptadas_test": 60,
+    "erroneas_test": 60,
+    "umbrales_aplicables": true
+  },
+  "calibracion_tras_cambio_cascada": {
+    "leer_m": 1,
+    "max_caracteres_lectura": 100,
+    "origen_umbrales": "calibracion"
+  }
+}

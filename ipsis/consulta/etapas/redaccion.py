@@ -52,8 +52,11 @@ def cargar_plantillas(paquete, dominio: dict | None = None, tono=None) -> dict:
         "abstencion": {
             "generico": tono.variantes("no_answer"),
             "premisa_no_encontrada": tono.variantes("premise_not_found"),
+            "aclaracion": tono.variantes("needs_clarification"),
             "zona_gris_intro": tono.variantes("related_intro"),
+            "zona_gris_cierre": tono.variantes("related_check"),
             "foco_ausente": tono.variantes("missing_focus"),
+            "alternativas_intro": tono.variantes("alternatives_intro"),
         },
         "citas": {
             "breve": paquete.mensajes.cita_breve,
@@ -285,9 +288,43 @@ def redactar_zona_gris_bloques(
     # Sin apertura: este estado ya trae su propio encabezado fijo, y apilar
     # los dos producia "No encontre una respuesta directa. Esto es lo que
     # dicen los documentos sobre el tema: Encontre esto en el documento:".
-    return [{"tipo": "encabezado", "texto": intro},
-            *_bloques_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas,
-                                           cfg_redaccion=cfg_redaccion)]
+    bloques = [{"tipo": "encabezado", "texto": intro},
+               *_bloques_fragmentos_con_citas(fragmentos, con_apertura=False, plantillas=plantillas,
+                                              cfg_redaccion=cfg_redaccion)]
+    # Un usuario que escribe informal suele recibir el pasaje correcto como «relacionado»:
+    # se le pregunta si es lo que buscaba y cómo seguir, en vez de cerrar ahí.
+    cierre = elegir("related_check", _lista(plantillas["abstencion"].get("zona_gris_cierre") or []), semilla)
+    if cierre:
+        bloques.append({"tipo": "mensaje", "texto": cierre})
+    return bloques
+
+
+def bloques_alternativas(
+    evidencias: list,
+    chunks: list,
+    *,
+    plantillas: dict | None = None,
+    cfg_redaccion: dict | None = None,
+) -> list[dict]:
+    """Las alternativas de una abstención (ADR 0008): un encabezado fijo del tono
+    (``alternatives_intro``, que dice que no es lo pedido) y cada párrafo
+    literal con su cita, sin conectores: cada uno es una opción, no la
+    continuación del anterior."""
+    from ipsis.configuracion.carga import config_redaccion
+    from ipsis.indice.payload import payload_desde_evidencia
+
+    plantillas = plantillas or _cargar_plantillas()
+    cfg = cfg_redaccion or config_redaccion()
+    citas = _textos_de_cita(plantillas)
+    estilo_cita = str(cfg.get("cita_en_texto", "completa"))
+    semilla = evidencias[0].chunk_id if evidencias else ""
+    intro = elegir("alternatives_intro", _lista(plantillas["abstencion"]["alternativas_intro"]), semilla)
+    bloques = [{"tipo": "encabezado", "texto": intro}]
+    for evidencia, chunk in zip(evidencias, chunks):
+        frag = payload_desde_evidencia(evidencia, chunk)
+        bloques.append({"tipo": "pasaje", "texto": frag["texto"].strip(), "conector": None,
+                        "cita": _formatear_cita(frag, estilo_cita, citas) or None, "chunk_id": chunk.chunk_id})
+    return bloques
 
 
 def redactar_zona_gris(fragmentos: list[dict], **kwargs) -> str:

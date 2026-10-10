@@ -21,7 +21,7 @@ from ipsis.configuracion.calibracion import (
     ProcedenciaCalibracion,
     normalizar_umbrales,
 )
-from ipsis.consulta.etapas.politica import RESULTADO_DE_REGLA, SenalesPolitica, regla_cascada
+from ipsis.consulta.etapas.politica import RESULTADO_DE_REGLA, SenalesPolitica, lector_seguro, regla_cascada
 from ipsis.evaluacion.banco import BancoEvaluacion, CasoEvaluacion, exigir_calibrable
 from ipsis.recursos.mensajes import t
 from ipsis.evaluacion.metricas import (
@@ -60,7 +60,7 @@ def redecidir(obs: ObservacionEvaluacion, umbrales: dict[str, float]) -> Observa
     - Sin señales (la política no decidió: conversacional, sin fragmentos…) el
       caso queda igual.
     - Una premisa que falló sigue fallando: no depende de umbrales.
-    - «concordancia» (heavy) baja un ok a relacionado, como en producción.
+    - «concordancia» (si ajustes_perfil la activa) baja un ok a relacionado, como en producción.
     - Las evidencias son las mismas: la etapa de evidencia corre antes de la
       política. Si la política se abstuvo, no se guardaron evidencias y un ok
       simulado sin la respuesta literal cuenta como error (conservador).
@@ -177,9 +177,11 @@ def _barrer_ok(pares: list[Par], umbrales: dict[str, float],
             continue
         if s.s_oov >= umbrales["oov_dominio"] and s.dominio < umbrales["dominio"]:
             continue
-        if not (s.s_foco >= umbrales["foco"] and s.s_oov < umbrales["oov_ok"]):
+        seguro = lector_seguro(s, umbrales)
+        if not seguro and not (s.s_foco >= umbrales["foco"] and s.s_oov < umbrales["oov_ok"]):
             continue
-        puntaje = _puntaje(s, umbrales)
+        # El tramo fuerte (``lector_seguro``) no depende de ``ok``: entra con cualquier corte.
+        puntaje = float("inf") if seguro else _puntaje(s, umbrales)
         if puntaje is None:
             continue
         error = es_no_respondible(caso) or (caso.respondible and not muestra_respuesta_literal(caso, obs))
@@ -334,7 +336,8 @@ def escribir_calibracion(resultado: ResultadoCalibracion, procedencia: Procedenc
     return ruta
 
 
-def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_corpus: str | None):
+def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_corpus: str | None,
+                       hash_lexico: str | None = None):
     """``(archivo, motivo)``: el archivo leído y por qué no se aplicaría
     (``None`` si se aplica). ``(None, None)`` si no hay calibración."""
     from ipsis.configuracion.calibracion import leer_calibracion, motivo_no_aplicable
@@ -342,7 +345,8 @@ def cargar_calibracion(ruta: str | Path, *, perfil: str, modelos: dict, hash_cor
     archivo = leer_calibracion(ruta)
     if archivo is None:
         return None, None
-    return archivo, motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus)
+    return archivo, motivo_no_aplicable(archivo, perfil=perfil, modelos=modelos, hash_corpus=hash_corpus,
+                                       hash_lexico=hash_lexico)
 
 
 __all__ = [

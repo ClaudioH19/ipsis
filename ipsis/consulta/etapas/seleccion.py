@@ -93,7 +93,7 @@ def _unidades_con_entidad(unidades: list[Unidad], valores_norm_entidad: set[str]
     return indices
 
 
-def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[float]:
+def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None, comprension=None) -> list[float]:
     """``s_lex`` de cada unidad frente a la pregunta, en [0, 1]; si la pregunta
     tiene una intención (``ipsis.lenguaje.consultas``), la unidad que ya comparte
     tema con ella y contiene una de sus pistas sube (``peso_pista``)."""
@@ -106,7 +106,10 @@ def _puntuar(pregunta: str, unidades: list[Unidad], estadisticas=None) -> list[f
         return []
     paquete = idioma_activo()
     est = estadisticas or EstadisticasLexicas.construir([u.texto for u in unidades], paquete)
-    comprension = comprender(pregunta, paquete)
+    reconocida = comprender(pregunta, paquete)
+    # Lo que el usuario escribió conserva sus patrones propios. El respaldo
+    # no aplica la relación de la pregunta interpretada a otra pregunta.
+    comprension = comprension or reconocida
     # La relación la representan las pistas, no sus palabras: «…the Purchasing Officer
     # starts a new purchase» no dice cuándo empieza la compra aunque tenga «starts».
     # (En la cobertura se quedan si están en el corpus: ver terminos_de_contenido.)
@@ -125,7 +128,7 @@ PESO_HEREDADO = 0.5
 
 
 def _puntuar_turno(pregunta: str, unidades: list[Unidad], estadisticas=None,
-                   pregunta_usuario: str | None = None) -> list[float]:
+                   pregunta_usuario: str | None = None, comprension=None) -> list[float]:
     """``_puntuar`` para un turno de seguimiento: si lo que el usuario escribió
     ahora («¿y qué cubre?») aparece en alguna unidad, eso pesa entero y la
     pregunta interpretada (con lo heredado, «garantía cafetera») la mitad:
@@ -133,11 +136,11 @@ def _puntuar_turno(pregunta: str, unidades: list[Unidad], estadisticas=None,
     distintos decide el contexto («pagan» en el reembolso, no en las facturas).
     Si lo propio no aparece («¿y con 90?»), se usa la interpretada."""
     if pregunta_usuario:
-        propios = _puntuar(pregunta_usuario, unidades, estadisticas)
+        propios = _puntuar(pregunta_usuario, unidades, estadisticas, comprension)
         if any(propios):
-            interpretada = _puntuar(pregunta, unidades, estadisticas)
+            interpretada = _puntuar(pregunta, unidades, estadisticas, comprension)
             return [p + PESO_HEREDADO * i for p, i in zip(propios, interpretada)]
-    return _puntuar(pregunta, unidades, estadisticas)
+    return _puntuar(pregunta, unidades, estadisticas, comprension)
 
 
 def _es_salvedad(texto: str) -> bool:
@@ -172,7 +175,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
                                    entidades_pregunta: list[dict] | None = None,
                                    centrada: bool = False,
                                    secciones: list[tuple[int, int, list[str]]] | None = None,
-                                   pregunta_usuario: str | None = None) -> ResultadoSeleccion:
+                                   pregunta_usuario: str | None = None, comprension=None) -> ResultadoSeleccion:
     """Elige el tramo CONTIGUO más pertinente dentro de ``texto_chunk``
     (oraciones o filas de tabla completas, nunca cortadas a la mitad),
     hasta ``limite_caracteres``. ``score_ancla`` (máximo de sus unidades)
@@ -199,7 +202,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
     sección, el tramo no sale de la sección de la oración ancla y
     ``seccion_path`` la nombra, para que la cita sea la correcta."""
     unidades_completas = dividir_en_unidades(texto_chunk)
-    scores_completos = _puntuar_turno(pregunta, unidades_completas, estadisticas, pregunta_usuario)
+    scores_completos = _puntuar_turno(pregunta, unidades_completas, estadisticas, pregunta_usuario, comprension)
     score_ancla_global = max(scores_completos) if scores_completos else 0.0
 
     valores_norm_entidad = {e["valor_norm"] for e in entidades_pregunta} if entidades_pregunta else set()
@@ -271,7 +274,7 @@ def seleccionar_texto_pertinente(pregunta: str, texto_chunk: str, offset_chunk_i
 def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_caracteres: int,
                                           estadisticas=None,
                                           entidades_pregunta: list[dict] | None = None,
-                                          pregunta_usuario: str | None = None) -> dict:
+                                          pregunta_usuario: str | None = None, comprension=None) -> dict:
     """Devuelve una COPIA del payload de un chunk con ``texto``,
     ``offset_inicio`` y ``offset_fin`` reemplazados por el tramo pertinente
     seleccionado -- el resto de los campos (``doc_titulo``, ``seccion_path``,
@@ -288,6 +291,7 @@ def recortar_payload_a_texto_pertinente(payload: dict, pregunta: str, limite_car
         pregunta, payload["texto"], base, limite_caracteres,
         estadisticas=estadisticas, entidades_pregunta=entidades_pregunta, secciones=secciones or None,
         pregunta_usuario=pregunta_usuario,
+        comprension=comprension,
     )
     nuevo = dict(payload)
     if resultado.seccion_path is not None:
@@ -357,13 +361,111 @@ def ordenar_por_pertinencia_global(payloads_recortados: list[dict], scores_recup
     return payloads_ordenados, scores_ordenados
 
 
-def oracion_ancla(pregunta: str, texto: str, estadisticas=None, pregunta_usuario: str | None = None) -> str:
+def oracion_ancla(pregunta: str, texto: str, estadisticas=None, pregunta_usuario: str | None = None,
+                  comprension=None) -> str:
     """Oración (o fila) de ``texto`` con mayor ``s_lex`` frente a la pregunta."""
     unidades = dividir_en_unidades(texto)
     if not unidades:
         return texto
-    scores = _puntuar_turno(pregunta, unidades, estadisticas, pregunta_usuario)
+    scores = _puntuar_turno(pregunta, unidades, estadisticas, pregunta_usuario, comprension)
     return unidades[max(range(len(unidades)), key=lambda i: scores[i])].texto
+
+
+def oracion_previa(ctx, evidencia, oracion: str) -> str:
+    """La oración anterior a ``oracion`` en su párrafo del chunk, o ``""``.
+
+    No cruza un salto de línea: un título u otro ítem de un FAQ no es contexto."""
+    from ipsis.lenguaje.texto import dividir_oraciones
+
+    chunk = next((c.chunk for c in ctx.candidatos or [] if c.chunk.chunk_id == evidencia.chunk_id), None)
+    if chunk is None:
+        return ""
+    desplazamiento = evidencia.texto.find(oracion)
+    relativo = evidencia.offset_inicio + max(desplazamiento, 0) - chunk.offset_inicio
+    texto = chunk.texto_fuente
+    if not 0 <= relativo <= len(texto):
+        return ""
+    parrafo = texto[texto.rfind("\n", 0, relativo) + 1:relativo].strip()
+    rangos = dividir_oraciones(parrafo) if parrafo else []
+    return parrafo[rangos[-1][0]:rangos[-1][1]] if rangos else ""
+
+
+def modificador_distinto(paquete, pregunta: str, oracion: str, estadisticas,
+                         marco: tuple[str, ...] | list[str] = ()) -> str | None:
+    """«gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
+
+    Una palabra de la pregunta que no existe en el corpus y modifica un núcleo que la
+    oración sí tiene («gastos», con una preposición de enlace del paquete, o antepuesta
+    en inglés: «electricity costs»), mientras en la oración ese núcleo lleva otro
+    modificador de contenido que no está en la pregunta: la oración habla de otra cosa.
+    El núcleo se busca en la oración y en su ``marco`` (los títulos de su sección):
+    «beca de idiomas» frente al título «Beca de Perfeccionamiento». La simple vecindad
+    sin preposición («moto elétrica» frente a «veículos elétricos») se midió y se
+    descartó: no separa una trampa de un sinónimo («carro elétrico») ni de un verbo.
+    Devuelve «pregunta≠oración» o ``None``. No cuentan las genéricas («how many
+    days») ni los números («12 caracteres»): un número es el dato, no otra cosa."""
+    enlaces = {p for p in getattr(paquete, "preposiciones_modificador", ()) or ()}
+    antepuesto = bool(getattr(paquete, "modificador_antepuesto", False))
+    df = getattr(estadisticas, "df", None)
+    if paquete is None or df is None or not (enlaces or antepuesto):
+        return None
+    from ipsis.lenguaje.consultas import plano, terminos_genericos
+    from ipsis.lenguaje.lexico import terminos_pregunta
+
+    genericos = terminos_genericos(paquete)
+
+    def raices(texto):
+        palabras = plano(texto).split()
+        salida = []
+        for p in palabras:
+            rs = terminos_pregunta(p, paquete)
+            contenido = len(rs) == 1 and rs[0] not in genericos and not any(c.isdigit() for c in p)
+            salida.append(rs[0] if contenido else None)
+        return palabras, salida
+
+    pq, rq = raices(pregunta)
+    propias = {r for r in rq if r}
+    textos = [raices(t) for t in (oracion, *marco) if t]
+
+    def otro(r):
+        # El acompañante de la oración es otra cosa si no es ninguna palabra de la pregunta.
+        return r is not None and r not in propias
+
+    for i, w in enumerate(rq):
+        if w is None or df.get(w, 0) > 0:
+            continue
+        nucleos = []
+        if i >= 2 and pq[i - 1] in enlaces and rq[i - 2]:
+            nucleos.append(("enlace", rq[i - 2]))
+        if antepuesto and i + 1 < len(rq) and rq[i + 1]:
+            nucleos.append(("antepuesto", rq[i + 1]))
+        for tipo, nucleo in nucleos:
+            for ps, rs in textos:
+                for j, x in enumerate(rs):
+                    if x != nucleo:
+                        continue
+                    if tipo == "enlace" and j + 2 < len(rs) and ps[j + 1] in enlaces and otro(rs[j + 2]):
+                        return f"{pq[i]}≠{ps[j + 2]}"
+                    if tipo == "antepuesto" and j >= 1 and otro(rs[j - 1]):
+                        return f"{pq[i]}≠{ps[j - 1]}"
+    return None
+
+
+def forma_ausente(paquete, pregunta: str, oracion: str) -> bool:
+    """La pregunta tiene una intención que exige una pista y la oración no la tiene."""
+    from ipsis.lenguaje.consultas import comprender, tiene_pista
+
+    comprension = comprender(pregunta, paquete)
+    intencion = (getattr(paquete, "intenciones", None) or {}).get(comprension.intencion)
+    if intencion is None or not intencion.exige_pista or tiene_pista(oracion, comprension):
+        return False
+    if intencion.entidades_pista:
+        from ipsis.lenguaje.entidades import extraer_entidades, usar_idioma
+
+        with usar_idioma(paquete):
+            if any(e["tipo"] in intencion.entidades_pista for e in extraer_entidades(oracion)):
+                return False
+    return True
 
 
 def _proximidad_del_foco(motor, ctx) -> None:
@@ -385,17 +487,26 @@ def _proximidad_del_foco(motor, ctx) -> None:
         return
     oracion = ctx.evidencias[0].texto
     if ctx.evidencia_lector is None:
-        oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None)
+        from ipsis.lenguaje.consultas import comprender_consulta
+
+        comprension = comprender_consulta(ctx.consulta, motor.idioma) if ctx.consulta is not None else None
+        oracion = oracion_ancla(ctx.pregunta, oracion, est, ctx.pregunta_usuario or None, comprension)
     ctx.diagnostico["oracion_foco"] = oracion
     terminos_oracion = terminos(oracion, motor.idioma)
     # El título de la sección enmarca la oración: en «¿Qué recargo se cobra según el
     # artículo 4?», «artículo» está en el título «Artículo 4», no en «…se cobra un
     # recargo del 15%». Cuenta para el foco, no para la cobertura.
     seccion = " ".join(ctx.evidencias[0].seccion_path or [])
+    # La oración anterior del mismo párrafo también la enmarca: «Si no rinde a
+    # tiempo, el monto se descuenta…» habla de los gastos que nombra la oración
+    # previa. Tampoco cuenta para la cobertura.
+    previa = oracion_previa(ctx, ctx.evidencias[0], oracion)
+    if previa:
+        ctx.diagnostico["oracion_previa_foco"] = previa
     from ipsis.lenguaje.consultas import equivalentes
 
-    terminos_foco_oracion = equivalentes(
-        terminos_oracion + (terminos(seccion, motor.idioma) if seccion else []), motor.idioma)
+    marco = (terminos(seccion, motor.idioma) if seccion else []) + (terminos(previa, motor.idioma) if previa else [])
+    terminos_foco_oracion = equivalentes(terminos_oracion + marco, motor.idioma)
     # Una palabra de la relación suma a la cobertura si está en la oración («até» en
     # «…reembolso até 30 dias»), pero no resta si falta: «when does the purchase start?»
     # se responde con «Once the form is approved…», sin «start».
@@ -404,8 +515,19 @@ def _proximidad_del_foco(motor, ctx) -> None:
     relacion = comprender(ctx.pregunta_usuario or ctx.pregunta, motor.idioma).terminos_relacion
     presentes_oracion = set(terminos_oracion)
     tq_cov = [t for t in ctx.terminos_pregunta if t not in relacion or t in presentes_oracion] or ctx.terminos_pregunta
+    foco = s_foco(ctx.terminos_foco, terminos_foco_oracion)
+    if forma_ausente(motor.idioma, ctx.pregunta_usuario or ctx.pregunta, oracion):
+        # La oración tiene el tema pero no la forma de respuesta que la pregunta pide.
+        ctx.diagnostico["forma_ausente"] = True
+        foco = min(foco, 0.5)
+    distinto = modificador_distinto(motor.idioma, ctx.pregunta_usuario or ctx.pregunta, oracion, est,
+                                    list(ctx.evidencias[0].seccion_path or []))
+    if distinto:
+        # «gastos de electricidad» y la oración dice «gastos de conexión»: habla de otra cosa.
+        ctx.diagnostico["modificador_distinto"] = distinto
+        foco = min(foco, 0.5)
     ctx.lexicas = ctx.lexicas.model_copy(update={
-        "s_foco": s_foco(ctx.terminos_foco, terminos_foco_oracion),
+        "s_foco": foco,
         "s_cov": s_cov(tq_cov, terminos_oracion, est),
     })
     if isinstance(ctx.diagnostico.get("senales_lexicas"), dict):
@@ -443,10 +565,3 @@ class EtapaEvidencia(_Etapa):
         _proximidad_del_foco(m, ctx)
         por_chunk = {c.chunk.chunk_id: c for c in ctx.candidatos}
         ctx.payloads = [payload_desde_evidencia(e, por_chunk[e.chunk_id].chunk) for e in evidencias]
-        resolutor = getattr(m, "seguimiento", None)
-        if resolutor is not None:
-            # El turno siguiente puede seguir hablando de lo que mostraron estos fragmentos.
-            raices = set()
-            for e in evidencias[:1]:  # el que respondió, no los relacionados de otros temas
-                raices.update(terminos(por_chunk[e.chunk_id].chunk.texto_fuente, m.idioma))
-            resolutor.recordar_evidencia(ctx.id_sesion, raices)

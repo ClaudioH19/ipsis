@@ -95,11 +95,16 @@ quedó el ícono, y `{state: "event", event, key}` en cada reacción.
 
 ## API HTTP
 
+El `session_id` se crea en cada carga de página, sin `localStorage`.
+Recargar o navegar empieza una conversación nueva; cerrar y reabrir el panel
+la conserva. El servidor olvida la conversación tras el periodo configurado
+de inactividad (30 minutos por defecto). La memoria pertenece a cada worker.
+
 El widget usa tres endpoints públicos; también puedes llamarlos tú:
 
 | Endpoint | Qué devuelve |
 |---|---|
-| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, y `conversational_category` |
+| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` cuando la pregunta no tiene tema: el asistente lo pide), `confidence_level` (`high`: respuesta directa leída por el lector QA, 96,6 % correcta en los bancos medidos; `medium`: respuesta directa sin lector, 85 %; `low`: pasaje relacionado; ausente si no hay respuesta), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, `alternatives` (solo en `no_answer` con la postura proactiva: pasajes literales parecidos, con los campos de `fragments`; no responden la pregunta) y `conversational_category` |
 | `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `placement` y `avatar` |
 | `GET /health`, `GET /ready` | Vida y preparación (con el mismo diagnóstico que `ipsis doctor` en `project`) |
 

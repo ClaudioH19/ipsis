@@ -63,3 +63,27 @@ def test_descarga_usa_la_cache_global(hub_falso, tmp_path):
 def test_sin_cache_el_error_dice_que_comando_ejecutar(hub_falso):
     with pytest.raises(FileNotFoundError, match="ipsis models download"):
         descarga.ruta_local(obtener("dewdev/mdeberta-v3-base-squad2-onnx"))
+
+
+def test_revision_fija_y_datos_externos_son_obligatorios(tmp_path, monkeypatch):
+    import huggingface_hub
+
+    spec = obtener("onnx-community/harrier-oss-v1-270m-ONNX")
+    llamadas = []
+
+    def snapshot_download(**kw):
+        llamadas.append(kw)
+        return str(tmp_path)
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", snapshot_download)
+    for archivo in (spec.archivo_onnx(), *spec.archivos_extra):
+        p = tmp_path / archivo
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(b"x")
+    with pytest.raises(descarga.ErrorDescarga, match="model_quantized.onnx_data"):
+        descarga.descargar(spec)
+    assert llamadas[0]["revision"] == spec.revision
+    assert spec.datos_onnx()[0] in llamadas[0]["allow_patterns"]
+    (tmp_path / spec.datos_onnx()[0]).write_bytes(b"xx")
+    assert descarga.descargar(spec) == tmp_path
+    assert descarga.tamano_en_disco(spec, tmp_path) == 5

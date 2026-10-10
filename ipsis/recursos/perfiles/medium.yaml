@@ -11,11 +11,17 @@ models:
 cascade:
   retrieve_n: 20
   rerank_k: 4
+  # The reranker scores only the first 5 fused candidates: with semantic reading the fine
+  # ordering is per sentence, and scoring 20 long chunks cost 4 s for the same answers.
+  rerank_candidates: 5
   read_m: 2
   max_passage_tokens: 384
   stride: 128
   early_exit_without_focus: true
   max_reading_chars: 600
+  # The reader reads the 3 sentences ranked first by a fusion of cross-encoder, dense
+  # cosine and s_lex (docs/methodology/informal-paraphrases.md), not a word-overlap window.
+  semantic_reading: true
 stages:
 - conversational
 - analysis
@@ -40,3 +46,21 @@ default_thresholds:
   focus: 1.0  # la oración que responde tiene todos los términos foco (ADR 0005)
   ok: 0.8
   cov: 0.6
+  # Second ok tier: with the reader nearly sure, an informal question may carry more
+  # words the corpus lacks ("quien anota las muestras"). See docs/methodology/policy.md.
+  ok_strong: 0.99
+  oov_ok_strong: 0.67
+# Alternatives of the proactive posture (ADR 0008): affinity = weighted mean
+# of the signals; offered when it reaches the threshold. Calibrated with
+# tests/datos/banco_alternativas (precision >= 0.9, widest margin): the family
+# of a missing declared entity, or a line with nearly all the question words.
+alternatives:
+  threshold: 0.5
+  weights:
+    family: 1.0
+    measure: 0.0
+    terms: 2.0
+    section: 0.0
+    keywords: 0.0
+    category: 0.0
+    similarity: 0.0

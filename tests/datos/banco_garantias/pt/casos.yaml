@@ -1,0 +1,600 @@
+# Banco de garantias (fonte). Mesmas regras do banco universal: a categoria sai do id e
+# construir.py calcula evidências e offsets. Seis documentos novos com cerca de 12 fatos
+# cada; os nove do banco de consultas ficam como distratores. Serve para estreitar a cota
+# de risco das respostas diretas: não é usado para desenhar regras nem escolher limiares.
+
+# --- estacionamento ------------------------------------------------------------
+- id: pt-exacta-001
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: Qual é o horário do estacionamento de segunda a sexta?
+  respuesta: entre as 7:00 e as 21:00 horas
+- id: pt-parafrasis-001
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: ate que horas posso deixar o carro no estacionamento numa terca
+  respuesta: entre as 7:00 e as 21:00 horas
+- id: pt-trampa-001
+  par: pt-parafrasis-001
+  pregunta: Até que horas o estacionamento funciona nos feriados?
+- id: pt-exacta-002
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: Qual é o horário do estacionamento aos sábados?
+  respuesta: Aos sábados abre das 8:00 às 14:00 horas
+- id: pt-exacta-003
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: O estacionamento abre aos domingos?
+  respuesta: aos domingos permanece fechado
+- id: pt-parafrasis-002
+  documento: regulamento_estacionamento.md
+  capacidad: persona
+  pregunta: Quem emite a autorização para estacionar?
+  respuesta: Unidade de Serviços Gerais
+- id: pt-parafrasis-003
+  documento: regulamento_estacionamento.md
+  capacidad: procedimiento
+  pregunta: Que documentos preciso para pedir a autorização de estacionamento?
+  respuesta: o formulário de acesso veicular e a cópia do documento do veículo
+- id: pt-exacta-004
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Quantas placas cada servidor pode cadastrar?
+  respuesta: no máximo duas placas
+- id: pt-parafrasis-004
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: posso cadastrar 3 carros no estacionamento?
+  respuesta: no máximo duas placas
+- id: pt-exacta-005
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Quanto custa a autorização anual de estacionamento para servidores?
+  respuesta: 60.000 pesos
+- id: pt-trampa-002
+  par: pt-exacta-005
+  pregunta: Quanto custa a autorização mensal de estacionamento para servidores?
+- id: pt-exacta-006
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Quanto os visitantes pagam por hora de estacionamento?
+  respuesta: 1.500 pesos por hora
+- id: pt-parafrasis-005
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: quanto cobram de um visitante pra deixar o carro uma hora
+  respuesta: 1.500 pesos por hora
+- id: pt-exacta-007
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Qual é a cobrança máxima diária para visitantes no estacionamento?
+  respuesta: um máximo de 9.000 pesos por dia
+- id: pt-parafrasis-006
+  documento: regulamento_estacionamento.md
+  capacidad: ubicacion
+  pregunta: Onde ficam as vagas para pessoas com deficiência?
+  respuesta: junto ao elevador do primeiro subsolo
+- id: pt-parafrasis-007
+  documento: regulamento_estacionamento.md
+  capacidad: ubicacion
+  pregunta: onde carrego o carro eletrico
+  respuesta: nos quatro pontos de recarga do segundo subsolo
+- id: pt-trampa-003
+  par: pt-parafrasis-007
+  pregunta: Onde carrego a moto elétrica?
+- id: pt-exacta-008
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: O que acontece se alguém estacionar sem autorização?
+  respuesta: recebe uma advertência por escrito
+- id: pt-exacta-009
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: O que acontece na terceira advertência?
+  respuesta: a autorização é suspensa por três meses
+- id: pt-parafrasis-008
+  documento: regulamento_estacionamento.md
+  capacidad: duracion
+  pregunta: se eu levar 3 advertencias por quanto tempo tiram minha autorizacao
+  respuesta: a autorização é suspensa por três meses
+- id: pt-parafrasis-009
+  documento: regulamento_estacionamento.md
+  capacidad: persona
+  pregunta: A quem se apresenta recurso contra uma advertência do estacionamento?
+  respuesta: ao Chefe de Serviços Gerais
+- id: pt-exacta-010
+  documento: regulamento_estacionamento.md
+  capacidad: duracion
+  pregunta: Qual é o prazo para recorrer de uma advertência?
+  respuesta: em até dez dias úteis
+- id: pt-trampa-004
+  par: pt-exacta-010
+  pregunta: Qual é o prazo para recorrer de uma multa de trânsito?
+
+# --- impressora ----------------------------------------------------------------
+- id: pt-exacta-011
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: Quanto espaço livre a impressora Lumen P40 precisa de cada lado?
+  respuesta: 10 centímetros livres de cada lado
+- id: pt-parafrasis-010
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: Como a impressora se conecta à rede?
+  respuesta: por cabo ou por Wi-Fi no painel de configuração
+- id: pt-exacta-012
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: Quantas folhas a bandeja principal da impressora comporta?
+  respuesta: até 250 folhas
+- id: pt-parafrasis-011
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: quantas folhas cabem na impressora
+  respuesta: até 250 folhas
+- id: pt-trampa-005
+  par: pt-parafrasis-011
+  pregunta: Quantas folhas cabem na bandeja de saída da impressora?
+- id: pt-exacta-013
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: Que gramatura de papel a impressora Lumen P40 aceita?
+  respuesta: uma gramatura entre 70 e 120 gramas
+- id: pt-exacta-014
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: Quantas páginas rende um cartucho de toner?
+  respuesta: aproximadamente 3.000 páginas
+- id: pt-parafrasis-012
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: pra quantas paginas da o toner
+  respuesta: aproximadamente 3.000 páginas
+- id: pt-parafrasis-013
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que significa quando a luz laranja da impressora pisca?
+  respuesta: resta menos de 10 % de toner
+- id: pt-trampa-006
+  par: pt-parafrasis-013
+  pregunta: O que significa quando a luz vermelha da impressora pisca?
+- id: pt-exacta-015
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que indica o código E2 da impressora?
+  respuesta: um atolamento de papel na bandeja traseira
+- id: pt-parafrasis-014
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: apareceu E2 na impressora, o que e
+  respuesta: um atolamento de papel na bandeja traseira
+- id: pt-exacta-016
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que indica o código E5?
+  respuesta: a tampa frontal está aberta
+- id: pt-exacta-017
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: O que fazer se aparecer o código E9?
+  respuesta: desligue a impressora e chame a assistência técnica
+- id: pt-trampa-007
+  par: pt-exacta-017
+  pregunta: O que fazer se aparecer o código E7?
+- id: pt-parafrasis-015
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: Com que frequência o rolo de alimentação é limpo?
+  respuesta: a cada três meses
+- id: pt-parafrasis-016
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: com o que eu limpo o rolo da impressora
+  respuesta: com um pano seco
+- id: pt-exacta-018
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: Depois de quanto tempo sem uso a impressora entra em economia de energia?
+  respuesta: depois de 15 minutos sem uso
+- id: pt-parafrasis-017
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: quanto tempo dura a garantia da impressora
+  respuesta: uma garantia de 18 meses
+- id: pt-trampa-008
+  par: pt-parafrasis-017
+  pregunta: Quanto tempo dura a garantia do cartucho de toner?
+- id: pt-exacta-019
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que a garantia da Lumen P40 não cobre?
+  respuesta: o uso de cartuchos recarregados
+- id: pt-parafrasis-018
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: se eu usar cartucho recarregado perco a garantia?
+  respuesta: A garantia não cobre o uso de cartuchos recarregados
+
+# --- férias --------------------------------------------------------------------
+- id: pt-exacta-020
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias de férias cada servidor tem por ano?
+  respuesta: 15 dias úteis de férias por ano
+- id: pt-parafrasis-019
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: quantos dias de ferias eu tenho por ano
+  respuesta: 15 dias úteis de férias por ano
+- id: pt-exacta-021
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias adicionais recebe quem tem mais de dez anos de casa?
+  respuesta: recebe três dias adicionais
+- id: pt-exacta-022
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: Com quanta antecedência as férias são solicitadas?
+  respuesta: com pelo menos 20 dias de antecedência
+- id: pt-parafrasis-020
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: com quanto tempo antes eu tenho q pedir as ferias
+  respuesta: com pelo menos 20 dias de antecedência
+- id: pt-trampa-009
+  par: pt-parafrasis-020
+  pregunta: Com quanta antecedência se solicita uma licença sem vencimentos?
+- id: pt-parafrasis-021
+  documento: politica_ferias.md
+  capacidad: persona
+  pregunta: Quem aprova as férias?
+  respuesta: A chefia imediata
+- id: pt-exacta-023
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: Em que prazo a chefia responde um pedido de férias?
+  respuesta: em até cinco dias úteis
+- id: pt-parafrasis-022
+  documento: politica_ferias.md
+  capacidad: condicion
+  pregunta: o que acontece se meu chefe nao responder o pedido de ferias
+  respuesta: o pedido é considerado aprovado
+- id: pt-exacta-024
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos períodos de férias podem ser acumulados?
+  respuesta: no máximo dois períodos de férias
+- id: pt-parafrasis-023
+  documento: politica_ferias.md
+  capacidad: condicion
+  pregunta: o que acontece com os dias de ferias que passam do limite
+  respuesta: são perdidos no fechamento do ano
+- id: pt-exacta-025
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias de licença são concedidos por casamento?
+  respuesta: cinco dias úteis de licença remunerada
+- id: pt-parafrasis-024
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: vou casar mes que vem, quantos dias de folga eu ganho
+  respuesta: cinco dias úteis de licença remunerada
+- id: pt-trampa-010
+  par: pt-parafrasis-024
+  pregunta: Quantos dias de licença são concedidos por mudança de residência?
+- id: pt-exacta-026
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias o pai recebe pelo nascimento de um filho?
+  respuesta: o pai recebe cinco dias úteis
+- id: pt-exacta-027
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias são concedidos pelo falecimento de um familiar direto?
+  respuesta: são concedidos três dias úteis
+- id: pt-parafrasis-025
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: se morrer um familiar direto quantos dias eu tenho
+  respuesta: são concedidos três dias úteis
+- id: pt-exacta-028
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: Em que prazo o atestado médico é entregue aos Recursos Humanos?
+  respuesta: em até dois dias úteis após a emissão
+- id: pt-parafrasis-026
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: quantos dias eu tenho pra entregar o atestado
+  respuesta: em até dois dias úteis após a emissão
+- id: pt-parafrasis-027
+  documento: politica_ferias.md
+  capacidad: persona
+  pregunta: Quem tramita o benefício do atestado médico?
+  respuesta: Os Recursos Humanos tramitam o benefício
+
+# --- emergências ---------------------------------------------------------------
+- id: pt-exacta-029
+  documento: protocolo_emergencias.md
+  capacidad: procedimiento
+  pregunta: Por onde se evacua quando soa o alarme contínuo?
+  respuesta: pela escada mais próxima
+- id: pt-parafrasis-028
+  documento: protocolo_emergencias.md
+  capacidad: condicion
+  pregunta: da pra usar o elevador se tiver que evacuar?
+  respuesta: Os elevadores não são usados durante uma evacuação
+- id: pt-exacta-030
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: Qual é o ponto de encontro em uma evacuação?
+  respuesta: a praça em frente à entrada principal
+- id: pt-parafrasis-029
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: onde a gente se encontra se evacuar o predio
+  respuesta: a praça em frente à entrada principal
+- id: pt-trampa-011
+  par: pt-parafrasis-029
+  pregunta: Onde nos encontramos se faltar energia?
+- id: pt-exacta-031
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: Quem designa o líder de evacuação de cada andar?
+  respuesta: a Gerência de Operações
+- id: pt-parafrasis-030
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: A quem o líder de evacuação informa?
+  respuesta: informa o Coordenador de Emergências
+- id: pt-exacta-032
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: Quantos simulados de evacuação são feitos por ano?
+  respuesta: dois simulados de evacuação por ano
+- id: pt-parafrasis-031
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: em que meses sao os simulados
+  respuesta: um em abril e outro em outubro
+- id: pt-trampa-012
+  par: pt-parafrasis-031
+  pregunta: Em que meses são os treinamentos de segurança?
+- id: pt-exacta-033
+  documento: protocolo_emergencias.md
+  capacidad: duracion
+  pregunta: A cada quanto tempo os extintores são revisados?
+  respuesta: a cada seis meses
+- id: pt-parafrasis-032
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: Onde há extintores?
+  respuesta: junto a cada saída de emergência
+- id: pt-exacta-034
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: Para qual ramal se liga em caso de incêndio?
+  respuesta: no ramal 2222
+- id: pt-parafrasis-033
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: pra que numero eu ligo se pegar fogo
+  respuesta: no ramal 2222
+- id: pt-trampa-013
+  par: pt-parafrasis-033
+  pregunta: Para que número eu ligo se houver um vazamento de água?
+- id: pt-exacta-035
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: Qual é o horário da central de segurança?
+  respuesta: funciona 24 horas
+- id: pt-exacta-036
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: Onde fica o kit de primeiros socorros principal?
+  respuesta: na recepção do térreo
+- id: pt-parafrasis-034
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: quem sabe primeiros socorros no predio
+  respuesta: A equipe da recepção tem treinamento em primeiros socorros
+
+# --- bolsa ---------------------------------------------------------------------
+- id: pt-exacta-037
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: Quem pode se candidatar à bolsa de aperfeiçoamento?
+  respuesta: os servidores com contrato por tempo indeterminado e pelo menos dois anos de casa
+- id: pt-parafrasis-035
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: posso me candidatar a bolsa com contrato indeterminado e 3 anos de casa
+  respuesta: os servidores com contrato por tempo indeterminado e pelo menos dois anos de casa
+- id: pt-exacta-038
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: Quem não pode se candidatar à bolsa?
+  respuesta: os que receberam a bolsa nos últimos três anos
+- id: pt-exacta-039
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: Quando são recebidas as inscrições para a bolsa?
+  respuesta: entre 1 e 30 de junho
+- id: pt-parafrasis-036
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: ate quando posso me inscrever na bolsa
+  respuesta: entre 1 e 30 de junho
+- id: pt-trampa-014
+  par: pt-parafrasis-036
+  pregunta: Até quando posso me inscrever na bolsa de idiomas?
+- id: pt-parafrasis-037
+  documento: edital_bolsa.md
+  capacidad: procedimiento
+  pregunta: Que documentos são anexados na inscrição da bolsa?
+  respuesta: o comprovante de matrícula e uma carta da chefia
+- id: pt-exacta-040
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: Que porcentagem da mensalidade a bolsa financia?
+  respuesta: até 80 % da mensalidade do programa
+- id: pt-exacta-041
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: Qual é o valor máximo da bolsa por ano?
+  respuesta: 2.000.000 pesos por ano
+- id: pt-parafrasis-038
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: quanto dinheiro a bolsa da no maximo
+  respuesta: 2.000.000 pesos por ano
+- id: pt-trampa-015
+  par: pt-parafrasis-038
+  pregunta: Quanto a bolsa dá para despesas de hospedagem?
+- id: pt-parafrasis-039
+  documento: edital_bolsa.md
+  capacidad: persona
+  pregunta: Quem avalia as inscrições da bolsa?
+  respuesta: Um comitê formado por três diretores
+- id: pt-exacta-042
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: Quando são publicados os resultados da bolsa?
+  respuesta: em 31 de julho
+- id: pt-parafrasis-040
+  documento: edital_bolsa.md
+  capacidad: duracion
+  pregunta: quanto tempo eu tenho que ficar na instituicao depois da bolsa
+  respuesta: pelo menos dois anos depois de concluir o programa
+- id: pt-exacta-043
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: O que acontece se o bolsista abandonar o programa?
+  respuesta: deve devolver o valor recebido
+
+# --- salas ---------------------------------------------------------------------
+- id: pt-exacta-044
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: Qual é a capacidade da sala Andes?
+  respuesta: capacidade para 40 pessoas
+- id: pt-parafrasis-041
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: quanta gente cabe na sala andes
+  respuesta: capacidade para 40 pessoas
+- id: pt-exacta-045
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: Qual sala conta com videoconferência?
+  respuesta: A sala Pacífico tem capacidade para 12 pessoas e conta com videoconferência
+- id: pt-exacta-046
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: Com quanta antecedência as salas são reservadas?
+  respuesta: com pelo menos 48 horas de antecedência
+- id: pt-parafrasis-042
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: com quanto tempo antes eu reservo uma sala
+  respuesta: com pelo menos 48 horas de antecedência
+- id: pt-exacta-047
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: Quanto dura no máximo uma reserva de sala?
+  respuesta: no máximo quatro horas
+- id: pt-exacta-048
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: Quanto custa a hora da sala Andes?
+  respuesta: 25.000 pesos por hora
+- id: pt-parafrasis-043
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: quanto sai alugar a sala pacifico por uma hora
+  respuesta: 10.000 pesos por hora
+- id: pt-trampa-016
+  par: pt-parafrasis-043
+  pregunta: Quanto sai alugar o auditório por uma hora?
+- id: pt-parafrasis-044
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: as unidades internas pagam pra usar as salas?
+  respuesta: As unidades internas não pagam aluguel
+- id: pt-exacta-049
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: O que acontece se uma reserva for cancelada com menos de 24 horas de antecedência?
+  respuesta: é cobrada integralmente
+- id: pt-parafrasis-045
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: se eu cancelar a sala no mesmo dia eles cobram?
+  respuesta: Uma reserva cancelada com menos de 24 horas de antecedência é cobrada integralmente
+- id: pt-trampa-017
+  par: pt-parafrasis-045
+  pregunta: Devolvem o dinheiro se eu cancelar a sala com uma semana de antecedência?
+- id: pt-exacta-050
+  documento: aluguel_salas.md
+  capacidad: procedimiento
+  pregunta: Onde são feitos os cancelamentos das reservas?
+  respuesta: no mesmo sistema de reservas
+- id: pt-exacta-051
+  documento: aluguel_salas.md
+  capacidad: lista
+  pregunta: Que equipamentos as salas têm?
+  respuesta: projetor e quadro branco
+- id: pt-parafrasis-046
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: com quantos dias de antecedencia peco o cafe pra reuniao
+  respuesta: com três dias de antecedência
+- id: pt-trampa-018
+  par: pt-parafrasis-046
+  pregunta: Com quantos dias de antecedência peço o almoço para a reunião?
+- id: pt-parafrasis-047
+  documento: aluguel_salas.md
+  capacidad: persona
+  pregunta: A quem se solicita o serviço de café?
+  respuesta: à Unidade de Eventos
+- id: pt-trampa-019
+  par: pt-parafrasis-047
+  pregunta: A quem se solicita o serviço de tradução simultânea?
+- id: pt-trampa-020
+  par: pt-exacta-051
+  pregunta: As salas têm equipamento de som?
+
+# --- premissas falsas, fora do domínio e ambíguas -----------------------------
+- id: pt-premisa-001
+  pregunta: O que diz o artigo 9 do regulamento do estacionamento?
+- id: pt-premisa-002
+  pregunta: Quanto dura a garantia de 36 meses da impressora?
+- id: pt-premisa-003
+  pregunta: O que acontece com as férias depois de 30 dias úteis acumulados?
+- id: pt-premisa-004
+  pregunta: O que faz o código E12 da impressora?
+- id: pt-premisa-005
+  pregunta: Quando é o simulado de dezembro?
+- id: pt-premisa-006
+  pregunta: Quanto custa a sala Atacama por hora?
+- id: pt-fuera-001
+  pregunta: Qual é a capital da Austrália?
+- id: pt-fuera-002
+  pregunta: Como se prepara uma paella?
+- id: pt-fuera-003
+  pregunta: Quem ganhou a Copa América de 2015?
+- id: pt-fuera-004
+  pregunta: Qual é a fórmula química da água?
+- id: pt-fuera-005
+  pregunta: me indica um filme pro fim de semana
+- id: pt-fuera-006
+  pregunta: Qual é a altura do monte Everest?
+- id: pt-ambigua-001
+  pregunta: Quanto custa por hora?
+- id: pt-ambigua-002
+  pregunta: Quem aprova?
+- id: pt-ambigua-003
+  pregunta: Quantos dias são?
+- id: pt-ambigua-004
+  pregunta: E isso dura quanto tempo?

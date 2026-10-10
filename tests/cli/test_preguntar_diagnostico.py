@@ -83,6 +83,27 @@ def test_cli_sin_tramo_ni_foco_muestra_guiones(monkeypatch, capsys):
     assert "Tramo exacto: -" in salida and "encontrados: -; ausentes: -" in salida
 
 
+def test_cli_expansion_automatica_muestra_procedencia(monkeypatch, capsys):
+    diagnostico = {**DIAGNOSTICO, "recursos_lexicos": [{"palabra": "vehiculo", "formas": ["automóvil"],
+                   "fuente": "mcr-omw-es", "sentido": "uno-n", "pos": "n"}]}
+    monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
+    assert main(["ask", "--diagnostics", "vehículo"]) == 0
+    assert "vehiculo → automóvil (mcr-omw-es, sentido uno-n, POS n)" in capsys.readouterr().out
+
+
+def test_ranking_diagnostico_distingue_consulta_densa_y_bm25():
+    from types import SimpleNamespace
+    from ipsis.aplicacion.consulta import _ranking_diagnostico
+
+    llamadas = []
+    def rankings(pregunta, *, pregunta_bm25):
+        llamadas.append((pregunta, pregunta_bm25))
+        return {}
+    motor = SimpleNamespace(retriever=SimpleNamespace(rankings_diagnostico=rankings))
+    _ranking_diagnostico(motor, "vehículo", {"pregunta_recuperacion": "vehículo automóvil"})
+    assert llamadas == [("vehículo", "vehículo automóvil")]
+
+
 def test_cli_motor_que_no_se_puede_construir_pide_rag_doctor(monkeypatch, capsys):
     def roto():
         raise FileNotFoundError("el modelo intfloat/multilingual-e5-small no está en la caché")

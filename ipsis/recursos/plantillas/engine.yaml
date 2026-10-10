@@ -33,6 +33,12 @@ qdrant:
 service:
   max_concurrency: 4
 
+# Memory of each conversation (follow-up questions): forgotten after this
+# many minutes without questions; at most max_sessions at a time.
+conversation:
+  expiry_minutes: 30
+  max_sessions: 1024
+
 security:
   rate_limit:
     capacity: 100

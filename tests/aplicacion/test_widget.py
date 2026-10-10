@@ -211,3 +211,28 @@ def test_alineacion_justificada_es_opcional_y_se_valida():
     validar_tema({"presentacion": {"alineacion": "justificada"}})
     with pytest.raises(ValueError, match="text_align"):
         validar_tema({"presentacion": {"alineacion": "centrada"}})
+
+
+def test_el_widget_empieza_una_conversacion_nueva_en_cada_carga_de_pagina():
+    """El servidor recuerda la conversación por session_id; el widget no guarda el
+    historial visible, así que tampoco debe reusar la sesión entre cargas."""
+    from pathlib import Path
+
+    import ipsis.servicio
+
+    js = (Path(ipsis.servicio.__file__).parent / "estaticos" / "widget.js").read_text(encoding="utf-8")
+    assert "var ID_SESION = generarIdSesion();" in js
+    assert "localStorage" not in js and "sessionStorage" not in js
+
+
+def test_el_widget_muestra_las_alternativas_de_una_respuesta_sin_respuesta():
+    """Postura proactiva (ADR 0008): ``alternatives`` de la API se pinta con sus
+    citas, en una burbuja propia, sin la etiqueta de un estado relacionado."""
+    from pathlib import Path
+
+    import ipsis.servicio
+
+    js = (Path(ipsis.servicio.__file__).parent / "estaticos" / "widget.js").read_text(encoding="utf-8")
+    assert "alternativas: (r.alternatives || []).map(fragmentoInterno)" in js
+    assert ".rw-msg-alternativas{" in js
+    assert 'estadoResp === "sin_respuesta" ? (respuesta.alternativas || [])' in js

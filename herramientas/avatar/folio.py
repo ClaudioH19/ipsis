@@ -8,9 +8,9 @@ movimiento ambiental. Encarna el proyecto: lee, mira la cita antes de afirmar
 y no exagera (``happy`` se alegra recién después de leer, y en ``unsure`` o
 ``sorry`` nunca hay gesto de éxito).
 
-La librería pinta todo el cuerpo de un solo color; el widget le pone el
-contorno y el tono del pliegue y los renglones (``.rw-avatar-lienzo`` en
-``widget.js``), como en el logo.
+El renderer ``herramientas/avatar/folio.js`` dibuja la silueta y las piezas
+del logo en SVG; la librería controla las transiciones y el parpadeo. Los
+avatares importados conservan el renderer procedural de la librería.
 
     python herramientas/avatar/folio.py           # escribe el JSON
     node herramientas/avatar/validar.mjs          # lo valida con la librería
@@ -37,11 +37,11 @@ INCLINACION = -5
 ANCHO, ALTO, GROSOR = 196, 232, 20
 
 
-def ojo(ancho=25, alto=56, x=0, y=-24, angulo=0):
+def ojo(ancho=9 * ANCHO / 78, alto=20 * ANCHO / 78, x=0, y=-10 * ANCHO / 78, angulo=0):
     return {"width": ancho, "height": alto, "x": x, "y": y, "angle": angulo}
 
 
-def expresion(cabeza=(0, 0, INCLINACION), izq=None, der=None, separacion=50, ojos="none", cuerpo="none"):
+def expresion(cabeza=(0, 0, INCLINACION), izq=None, der=None, separacion=21 * ANCHO / 78, ojos="none", cuerpo="none"):
     izq = izq or ojo()
     return {
         "head": {"x": cabeza[0], "y": cabeza[1], "z": cabeza[2]},
@@ -153,6 +153,24 @@ ANIMACIONES = {
     "wake-up": animacion("once", [paso("eyes-closed", 260, 100), paso("surprised", 600, 180, "spring"),
                                   paso("attentive", 400, 240)],
                          SIN_PARPADEO, etiqueta="wake-up"),
+    # Movimientos de la hoja completa: la trayectoria vive en movimiento-folio.js.
+    # Se ofrecen para configurar eventos; el mapa por defecto conserva sus gestos.
+    "spin": animacion("once", [paso("neutral", 1800, 0)], SIN_PARPADEO,
+                      etiqueta="spin", descripcion="One complete 360-degree turn."),
+    "flip": animacion("once", [paso("neutral", 2000, 0)], SIN_PARPADEO,
+                      etiqueta="flip", descripcion="Turns around its vertical axis, showing the back of the page."),
+    "bounce": animacion("once", [paso("neutral", 1500, 0)], SIN_PARPADEO,
+                        etiqueta="bounce", descripcion="Two small jumps with a soft squash and stretch."),
+    "sway": animacion("loop", [paso("neutral", 2600, 0)],
+                      etiqueta="sway", descripcion="Rocks from side to side."),
+    "dance": animacion("loop", [paso("happy", 2100, 300)],
+                       etiqueta="dance", descripcion="Steps sideways, bobs and rocks with happy eyes."),
+    "float": animacion("loop", [paso("neutral", 4000, 0)],
+                       etiqueta="float", descripcion="Floats gently up and down."),
+    "paper-plane-out": animacion("once", [paso("neutral", 3200, 0)], SIN_PARPADEO,
+                                 etiqueta="paper-plane-out", descripcion="Folds into a paper plane and flies away with the question."),
+    "paper-plane-in": animacion("once", [paso("neutral", 3200, 0)], SIN_PARPADEO,
+                                etiqueta="paper-plane-in", descripcion="Flies in with a citation, lands and unfolds into Folio."),
 }
 
 

@@ -37,11 +37,14 @@ config_version: 5
 assistant_name: "Asistente de soporte"
 domain_description: "los manuales del producto"
 language: es              # código ISO 639: es, en, pt, pt-br...
-profile: medium           # light | medium | heavy
+profile: medium           # light | medium
 cors_origins: []          # orígenes que pueden insertar el widget
 widget_keys: []           # claves públicas opcionales del widget
 query_log:
   enabled: false          # .ipsis/logs/queries.jsonl, para `ipsis audit`
+posture:
+  mode: proactive         # proactive | strict: ver «Cuando la respuesta no está»
+  max_alternatives: 3     # de 1 a 5
 ```
 
 ## Versionado
@@ -127,8 +130,8 @@ indexar cuando cambia la representación persistida.
 
 ## Perfil de instalación
 
-El perfil activo está en `config/assistant.yaml::profile` (`light`,
-`medium` o `heavy`). `bm25` es solo un perfil de diagnóstico de
+El perfil activo está en `config/assistant.yaml::profile` (`light` o
+`medium`). `bm25` es solo un perfil de diagnóstico de
 `ipsis benchmark`, no se instala.
 
 ```
@@ -143,9 +146,10 @@ destino. Repetir el perfil activo no hace nada.
 
 - **light ↔ medium:** usan el mismo modelo denso (e5-small, 384), así que el
   índice sirve para ambos.
-- **heavy:** usa e5-base (768) y necesita su propio índice (`ipsis index`).
-  Cada modelo denso vive en su colección: el índice anterior se conserva, y
-  volver al perfil anterior lo hace compatible otra vez sin reindexar.
+- **Proyectos con `heavy`:** ese perfil se retiró. Un `assistant.yaml` que lo
+  tenga se carga como `medium`; si su índice se construyó con otro modelo
+  denso, `ipsis profile show` lo marca incompatible y pide `ipsis index`.
+  Cada modelo denso vive en su colección: el índice anterior se conserva.
 - **Compatibilidad del índice:** se decide por el manifiesto
   (`.ipsis/index/<coleccion>.manifest.json`), con el modelo denso, la
   dimensión y la versión del payload. No se decide por el nombre del perfil.
@@ -154,7 +158,140 @@ destino. Repetir el perfil activo no hace nada.
   los umbrales del perfil. El archivo se conserva para auditoría. Para
   recuperarla: `ipsis calibrate --apply`.
 
+## Cambiar configuración antes o después de desplegar
+
+Ejecuta los comandos desde la carpeta que contiene `config/` y `documents/`.
+Con Qdrant local, detén `ipsis serve` antes de abrir el índice desde otro proceso.
+En el servidor, usa la carpeta del proyecto desplegado.
+
+| Qué cambiar | Comando o archivo | Qué hacer después |
+|---|---|---|
+| Perfil | `ipsis profile set medium` | `ipsis models download`, `ipsis profile show`; evaluar y recalibrar |
+| Identidad y CORS | `ipsis configure assistant_name="Soporte" cors_origins=https://www.tu-sitio.com` | Reiniciar el servicio |
+| Registro de consultas | `ipsis configure query_log.enabled=true` | Reiniciar; después `ipsis audit` comprueba las citas registradas |
+| Alternativas en abstenciones | `ipsis configure posture.mode=strict` o `posture.mode=proactive` | Reiniciar; el modo no cambia una abstención por un `ok` |
+| Lectura, recuperación y umbrales | `config/engine.yaml`, sección `profile_overrides` | Apartar la calibración anterior, reiniciar, evaluar y recalibrar |
+| Fragmentación, modelo denso o representación del índice | `config/engine.yaml`, sección `retrieval` | Reindexar, validar el golden, evaluar y recalibrar |
+| Documentos vigentes | `documents/catalog.yaml`, `active` | Reindexar, validar el golden y recalibrar |
+| Sinónimos | `config/domain.yaml`, `synonyms` | Reiniciar, evaluar y recalibrar |
+| Tono y avatar | `ipsis personality` o `config/personality.yaml` | Se recargan en el servicio; ver [personalidad](personalidad.md) |
+| Tema y posición del widget | `ipsis widget style` o `config/styles.yaml` | Ver [web](web.md) |
+
+`ipsis configure` edita las claves de `assistant.yaml` que aparecen en esta
+guía; los ajustes del motor se cambian por archivo. No edites los perfiles
+incluidos en el paquete. Añade o combina este bloque en `config/engine.yaml`:
+
+```yaml
+profile_overrides:
+  cascade:
+    retrieve_n: 20
+    rerank_k: 4
+    read_m: 2
+    max_reading_chars: 600
+    early_exit_without_focus: true
+  default_thresholds:
+    ok: 0.80
+    focus: 1.0
+    oov_ok: 0.60
+    cov: 0.60
+    ok_strong: 0.99
+    oov_ok_strong: 0.67
+```
+
+La pestaña **Estado** de `/admin` y `PUT /admin/thresholds` escriben los mismos
+`default_thresholds` de este archivo y recargan el motor. Estos valores reproducen los ajustes de `medium`; un perfil sin lector no usa
+`read_m`. `ok` exige QA con lector y similitud sin él; `cov` se exige para el
+`ok` sin lector. `ok_strong` y `oov_ok_strong` son un segundo tramo del lector:
+cuando está casi seguro, una pregunta informal puede traer algo más de palabras
+que los documentos no tienen. Quita ambos para desactivarlo. Subir `ok` suele reducir respuestas directas. Más candidatos
+o ventanas mayores aumentan el trabajo, sin garantizar más exactitud.
+
+La precedencia es **perfil → `profile_overrides` → calibración vigente**.
+Para probar umbrales manuales, renombra `config/calibration.yaml` y conserva
+el archivo fuera de ese nombre. Los cambios de parámetros de lectura no
+invalidan automáticamente la calibración: también debes apartarla antes de
+medir. No reutilices umbrales obtenidos con otra configuración.
+Las calibraciones de versión 1 se ignoran desde el criterio de respuesta v2;
+deben regenerarse.
+
+Flujo de revisión antes de preparar el despliegue:
+
+```bash
+ipsis profile show
+ipsis snapshot-config --output reports/config-review.yaml
+ipsis golden validate
+ipsis evaluate --output reports/evaluation.json
+ipsis calibrate                    # revisar dev y test antes de aplicar
+ipsis doctor
+ipsis deploy prepare --domain asistente.tu-dominio.com
+```
+
+El snapshot conserva configuración validada y valores por defecto; el reporte
+de evaluación conserva las señales y la configuración del flujo usado. Evalúa
+la respuesta completa y el tramo QA por separado ([golden](golden.md)). Si
+decides aplicar los umbrales, ejecuta `ipsis calibrate --apply` y vuelve a
+evaluar. `test=excede` no bloquea automáticamente `--apply`: revisa ese resultado
+y no lo trates como una validación aprobada. `doctor` y `/ready` comprueban
+que el servicio pueda funcionar, no la exactitud de sus respuestas.
+
+En Docker, edita `config/` de la carpeta desplegada y reinicia con
+`docker compose restart asistente`. Para cambios de perfil con otros modelos,
+prepara de nuevo la imagen y el índice. El `DEPLOY.md` generado incluye
+estas instrucciones; consulta [despliegue](despliegue.md).
+
 ## Modelos
+
+### Modelos alternativos
+
+Hasta octubre de 2026 existía un perfil `heavy` con modelos mayores. Se
+retiró porque ninguna variante superó a medium: con Granite-311M R2,
+Granite-97M R2, Harrier-270M o EmbeddingGemma 2 como recuperador, y con
+Horizon base/small como reranker, el banco de consultas dio exactamente los
+mismos 25 aciertos que medium, y los Horizon añadieron un error aceptado. El
+antiguo e5-base/BGE con cascada 30/8/4 tenía menos aciertos y más errores.
+Ver [ADR 0003](../../decisions/0003-onnx-and-profiles.md).
+
+Los modelos siguen en el catálogo para probarlos sobre medium con el corpus
+de un despliegue. Combina este bloque con `config/engine.yaml` (claves en
+inglés):
+
+```yaml
+retrieval:
+  model: null
+profile_overrides:
+  models:
+    dense: ibm-granite/granite-embedding-311m-multilingual-r2
+```
+
+| Rol | Repositorio soportado |
+|---|---|
+| Denso | `ibm-granite/granite-embedding-311m-multilingual-r2` |
+| Denso | `ibm-granite/granite-embedding-97m-multilingual-r2` |
+| Denso | `onnx-community/harrier-oss-v1-270m-ONNX` |
+| Denso | `onnx-community/embeddinggemma-2-ONNX` (solo texto) |
+| Denso | `intfloat/multilingual-e5-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-base` |
+| Reranker | `Horizon-Labs/multilingual-reranker-small` |
+| Reranker | `onnx-community/bge-reranker-v2-m3-ONNX` |
+
+Usan revisiones fijas del catálogo. El runtime respeta sus prefijos,
+pooling, relleno, salidas y datos externos; EmbeddingGemma 2 recibe entradas
+vacías para las modalidades que no se usan. Los umbrales del perfil están
+medidos con e5-small y **no se trasladan**: Granite, por ejemplo, da cosenos
+entre 0,73 y 0,94 también a preguntas ajenas al corpus, de modo que el umbral
+`domain` de 0,33 deja de filtrar. Calibra con el golden del despliegue antes
+de usar otro recuperador. Los modelos nuevos no activan el respaldo de
+intención exclusivo de e5-small.
+
+Con el servicio detenido: `ipsis models download`, `ipsis models verify`,
+`ipsis index`, `ipsis profile show`, `ipsis golden validate`, `ipsis evaluate`.
+Cualquier cambio de recuperador exige reindexar, aunque la dimensión sea la
+misma. Aparta la calibración anterior y vuelve a medir antes de recalibrar.
+Los ajustes se conservan al cambiar de perfil: quítalos para usar sus valores
+predeterminados. La [regresión general](../../../herramientas/evaluacion/README.md)
+permite comparar variantes sin modificar un proyecto existente. La imagen
+Docker preparada lee estos ajustes al descargar; hay que reconstruirla si
+cambian modelos (`docker compose build --no-cache asistente`).
 
 Los modelos ONNX viven en una caché global por usuario, compartida por todos
 los proyectos. Por defecto es `~/.cache/ipsis/models`, y se cambia con
@@ -164,7 +301,7 @@ dentro del proyecto. Con `HF_HUB_OFFLINE=1` nunca se usa la red.
 ```
 ipsis models list                     # modelos del perfil activo
 ipsis models download                 # descarga los que falten del perfil activo
-ipsis models download --profile heavy # prepara otro perfil sin activarlo
+ipsis models download --profile medium # prepara otro perfil sin activarlo
 ipsis models verify                   # archivos completos e inferencia de prueba
 ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
 ```
@@ -176,10 +313,9 @@ ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
   - si está en la caché, y cuánto ocupa.
 
   Todo sale del catálogo (`ipsis/modelos/catalogo.py`). light usa solo el
-  denso; medium y heavy usan denso, reranker y lector.
+  denso; medium usa denso, reranker y lector.
 - **`download`** baja solo lo que falta. Un modelo compartido entre perfiles,
-  como e5-small (light y medium) o el lector (medium y heavy), se descarga una
-  sola vez.
+  como e5-small (light y medium), se descarga una sola vez.
   - Con `--profile` no cambia el perfil activo, y funciona fuera de un
     proyecto.
   - Sin `--profile` necesita el proyecto (`ipsis init`).
@@ -210,6 +346,16 @@ ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
 números, fechas, conectores, mensajes e interfaz. Una variante regional
 (`pt-br`, `es-cl`) usa el paquete de su idioma.
 
+Las preguntas casi nunca se escriben como los documentos. Cada paquete trata
+las abreviaturas informales y los restos de contracciones como palabras
+funcionales («q», «pa», «pra», «vc», «u», «ur», la «t» de «don't»), y el
+análisis corrige erratas con el vocabulario del corpus («pasword» →
+«password», «covran» → «cobra», «abreel» → «abre el», «estacio namiento» →
+«estacionamiento»; nunca una palabra real que el corpus no trae, como
+«feriados», ni un nombre propio).
+`ipsis ask --diagnostics` muestra cada corrección. Ver
+[paráfrasis informales](../../methodology/informal-paraphrases.md) (en inglés).
+
 Otro código funciona con un respaldo:
 
 - solo las reglas universales (fechas numéricas, montos, artículos);
@@ -224,6 +370,55 @@ El idioma de los documentos es independiente del idioma de la línea de
 comandos (`IPSIS_LANG`): un proyecto en portugués se puede administrar con
 mensajes en inglés o en español.
 
+## Sinónimos locales
+
+### Respaldo de intenciones
+
+El paquete contiene `intenciones.<nombre>.ejemplos` y ajustes por modelo en
+`respaldo_intencion`. Se sobrescriben en `config/language.yaml`:
+
+```yaml
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.85
+    margen: 0.0
+    habilitadas: [fin, procedimiento]
+```
+
+Son los valores medidos para español. Inglés usa 0.87 y `[fin]`; portugués,
+0.895 y `[procedimiento]`, ambos con margen estrictamente positivo. Los
+patrones mantienen prioridad. BM25 y modelos sin ajustes medidos no usan
+el respaldo; E5 base no tiene ajustes predeterminados. Cambiar los ejemplos
+o valores exige reconstruir el motor y regenerar la calibración. Antes de
+activar categorías nuevas, mídalas en dev. Estos valores no son los umbrales
+de la política que decide si puede responder.
+
+### Grupos de sinónimos
+
+Español, inglés y portugués usan las tablas filtradas de WordNet incluidas
+en el paquete para ampliar la recuperación BM25, reutilizando el vector
+denso original. Solo se expande una palabra
+ausente del corpus, con un único sentido después del stemming; las palabras
+de la relación y las correcciones manuales tienen prioridad. Los grupos
+automáticos no cambian la validación del foco ni los umbrales de aceptación.
+Los diccionarios completos y los índices morfológicos quedan como recursos
+de desarrollo, sin descargas al instalar.
+
+Declare equivalencias propias en `config/domain.yaml`:
+
+```yaml
+synonyms:
+  - [OC, orden de compra]
+```
+
+Los grupos del proyecto reemplazan los del idioma que se superponen. Las
+frases coinciden completas y todos los términos de contenido de un reemplazo
+deben existir en el corpus. Reinicie el servicio después de cambiar la
+configuración léxica. Un motor nuevo empieza con memoria de conversación y
+cachés de consultas vacías. La procedencia de calibración incluye
+`lexical_hash`: una huella ausente o diferente invalida la calibración
+anterior. `ipsis doctor` lo informa; recalibre con el golden del proyecto.
+
 ## Tono de las respuestas
 
 Lo que el asistente dice alrededor del texto del documento viene de un
@@ -231,11 +426,11 @@ Lo que el asistente dice alrededor del texto del documento viene de un
 defecto), `formal`, `serious`, `upbeat`, `friendly`, `empathetic` y
 `direct`. Ver [personalidad.md](personalidad.md).
 
-Cada tono tiene 18 situaciones, con 7 a 12 variantes cada una:
+Cada tono tiene 19 situaciones, con 7 a 12 variantes cada una:
 
 - motor: `greeting`, `thanks`, `farewell`, `capability`, `opening`,
   `addition`, `condition`, `exception`, `related_intro`, `missing_focus`,
-  `no_answer` y `premise_not_found`;
+  `alternatives_intro`, `no_answer` y `premise_not_found`;
 - widget: `welcome`, `waiting`, `citations_hint`, `network_error`,
   `rate_limit_error` y `service_error`.
 
@@ -361,6 +556,96 @@ calienta los modelos, para que las latencias sean las de operación. Muestra:
 
 En modo Qdrant local hay que detener `ipsis serve` antes, porque Qdrant
 bloquea la carpeta del índice.
+
+## Memoria de la conversación
+
+Las preguntas de seguimiento («¿y en el extranjero?») heredan el tema de la
+conversación (ver la [arquitectura](../../architecture.md#understanding-the-question),
+en inglés). El motor guarda cada conversación en memoria, por `session_id`, y
+la olvida tras un tiempo sin preguntas:
+
+```yaml
+# engine.yaml
+conversation:
+  expiry_minutes: 30     # se olvida tras 30 minutos sin preguntas
+  max_sessions: 1024     # a lo sumo estas conversaciones a la vez
+```
+
+Los paquetes distinguen `genericas` (verbos de apoyo, unidades y
+cuantificadores de la pregunta como `tiempo/tempo/time`, `often`, `quantos`:
+nunca son foco y no cuentan al seleccionar la respuesta) de
+`genericas_memoria` (solo se ignoran en la memoria de temas). Ambas listas se
+pueden sobrescribir en `config/language.yaml`.
+
+La memoria vive en el proceso del servicio (cada worker tiene la suya),
+guarda términos de las preguntas y de los pasajes que las respondieron, nunca
+las respuestas, y se pierde al reiniciar. El widget empieza una conversación
+nueva en cada carga de página.
+
+## Cuando la respuesta no está (postura)
+
+Cuando los documentos no tienen lo pedido, el asistente lo dice. Con la
+postura **proactiva** (la de fábrica) además ofrece hasta `max_alternatives`
+pasajes parecidos que sí están en los documentos, bajo una frase fija del
+tono que dice que no son lo pedido:
+
+```
+No encontré "TP-500" en los documentos disponibles.
+
+Te muestro lo más parecido que sí aparece en los documentos:
+
+El taladro percutor TP-600 tiene un motor de 800 W … (Fuente: Catálogo …).
+El taladro percutor TP-400 tiene un motor de 600 W … (Fuente: Catálogo …).
+```
+
+```
+ipsis configure posture.mode=strict          # solo «no está»
+ipsis configure posture.max_alternatives=2
+```
+
+- **Cuándo:** solo tras una premisa falsa (una entidad de la pregunta no está
+  en los documentos) o una pregunta sin respuesta. Las preguntas fuera de
+  dominio, las respuestas relacionadas y los turnos conversacionales nunca
+  traen alternativas.
+- **Qué se muestra:** cada alternativa es un párrafo literal de los
+  documentos con su cita, verificado como la evidencia de una respuesta. No
+  se genera nada. El estado sigue siendo `no_answer`: las alternativas viajan
+  en su propio campo `alternatives` de `/ask` y nunca cuentan como respuesta.
+- **Cómo se eligen:** con los metadatos que el índice ya guarda de cada
+  fragmento, sin otro modelo. Cada párrafo candidato recibe una afinidad,
+  la media ponderada de siete señales; los pesos y el umbral son parte del
+  perfil de instalación
+  ([ADR 0008](../../decisions/0008-proactive-posture-and-metadata-similarity.md)):
+
+  | Señal | Valor para el párrafo | Peso incluido |
+  |---|---|---|
+  | `family` | 1 si tiene una entidad de la familia de la ausente: mismo tipo y forma («TP-400» para «TP-500»), para los tipos que declara `domain.yaml` | 1 |
+  | `measure` | lo mismo para una medida del núcleo ausente («90 días» para «60 días», «20 %»), solo si además comparte una palabra de la pregunta | 0 |
+  | `terms` | parte de las palabras de la pregunta que tiene (sobre todas, también las ausentes; las de la propia entidad no cuentan) | 2 |
+  | `section`, `keywords` | la misma parte sobre su título de documento y sección, o sus palabras clave | 0 |
+  | `category` | 1 si es de la categoría de la pregunta en la taxonomía del proyecto | 0 |
+  | `similarity` | coseno denso con la pregunta, desde el piso del modelo | 0 |
+
+  Con umbral 0,5 eso significa: la familia de un código ausente o, sin
+  familia, un párrafo con al menos tres cuartos de las palabras de la
+  pregunta («¿El despacho a regiones tarda 3 días hábiles?» → «El despacho a
+  regiones tarda 5 días hábiles.»). Los pesos se eligieron con el banco de
+  alternativas para una precisión de al menos 0,9 y el margen de umbrales
+  más ancho; una validación apartada, medida una sola vez, dio 1,0. Si la
+  entidad ausente tiene familia, solo se ofrecen párrafos de esa familia.
+  El punto débil son las preguntas cortas: con una sola palabra de
+  contenido, cualquier párrafo que la tenga cubre la pregunta entera. Las
+  alternativas no alimentan la memoria de la conversación.
+- **Tus códigos:** un código de producto es una entidad solo si
+  `domain.yaml` lo declara (`regex_extractors`, por ejemplo
+  `'\b(?P<pre>[A-Z]{2})-(?P<num>\d{1,3})\b'` con `transform: {pre:
+  minusculas}`). Sin eso, un código ausente no tiene familia y solo se
+  ofrecen párrafos con casi todas las palabras de la pregunta. La señal de
+  categoría necesita al menos dos categorías propias en `taxonomy`.
+- **Ajuste:** `profile_overrides.alternatives.threshold` y
+  `profile_overrides.alternatives.weights` en `engine.yaml`. `ipsis ask
+  --diagnostics` muestra cada alternativa ofrecida o descartada, con su
+  afinidad y sus señales.
 
 ## Registro de consultas y auditoría (`ipsis audit`)
 

@@ -4,7 +4,72 @@
 codigo: en
 nombre: English
 stemmer: english
+bordes_respuesta:
+  unidades_cantidad: [character, characters, page, pages]
+  prefijos_cantidad: [at least, at most, up to, within, in, for, a maximum of, a minimum of]
+  referencias_cantidad: [from, after, following]
+  limites_actor: ['\s+and\s+(?:(?:it|they|he|she|then)\s+)?(?:sends?|forwards?|submits?|signs?|approves?|authorises?)\b', ',\s*(?:who|which)\b']
 stopwords:
+# Reflexive and possessive pronouns («myself», «yours»).
+- myself
+- yourself
+- yourselves
+- ourselves
+- mine
+- yours
+# Contraction pieces («don't» is tokenized as «don» + «t») and informal spellings of
+# function words («u», «ur», «pls»). Without them they counted in s_oov.
+- while
+- t
+- s
+- d
+- ll
+- re
+- ve
+- m
+- don
+- doesn
+- didn
+- isn
+- aren
+- wasn
+- weren
+- won
+- wouldn
+- couldn
+- shouldn
+- haven
+- hasn
+- hadn
+- dont
+- doesnt
+- didnt
+- isnt
+- arent
+- wasnt
+- cant
+- wont
+- im
+- ive
+- youre
+- whats
+- hows
+- whens
+- wheres
+- whos
+- thats
+- theres
+- u
+- r
+- ur
+- pls
+- plz
+- thx
+- gotta
+- gonna
+- wanna
+- kinda
+- ya
 - a
 - about
 - all
@@ -198,8 +263,24 @@ marcadores:
 # in the question and their words do not count as topic; the cues usually sit in
 # the sentence that answers and raise it in the selection. Lowercase, without
 # accents; the first intention that matches wins.
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.87
+    margen: 0.0
+    habilitadas: [fin]
 intenciones:
   umbral:
+    ejemplos:
+    - "What is the maximum number of tickets I can book?"
+    - "What is the minimum attendance needed to open the workshop?"
+    - "Above what income must that tax be paid?"
+    - "Below which temperature does the device stop?"
+    - "From what value is a declaration required?"
+    - "At what age can someone enter the museum?"
+    - "What is the luggage weight limit?"
+    - "What minimum amount qualifies for the discount?"
+    - "How many people are needed to count as a group?"
+    - "What is the maximum temperature the oven can withstand?"
     patrones:
     - (from|above|over) what (amount|value|quantity|number|age)
     - what (amount|value|threshold|limit|minimum|maximum)
@@ -218,6 +299,17 @@ intenciones:
     - exceeding
     - exceed
   inicio:
+    ejemplos:
+    - "Which date marks the start of the campaign?"
+    - "When will my subscription be activated?"
+    - "When is access to the pool enabled?"
+    - "From which moment does the coverage apply?"
+    - "At which point do classes commence?"
+    - "What needs to happen before enrolment can start?"
+    - "When does the fishing season begin?"
+    - "From when does the rule take effect?"
+    - "At what point can I start using the pass?"
+    - "What triggers the start of the registration period?"
     patrones:
     - when (does|do|did|will|can) (\w+ ){0,6}(start|starts|begin|begins|commence|commences|take place|happen)
     - when (is|are) (\w+ ){0,6}(made|done|carried out|started|initiated|placed)
@@ -235,6 +327,19 @@ intenciones:
     - before
     - when
   fin:
+    respaldo_patrones:
+    - expir\w*|renew\w*|valid\w*|end\w*|finish\w*|deadline|until|last (day|date)
+    ejemplos:
+    - "How often does the visitor pass expire?"
+    - "How frequently does the driving permit expire?"
+    - "When must I renew the licence because it expires?"
+    - "On which date does the card stop working?"
+    - "When does the season ticket cease to be valid?"
+    - "On what date does the promotion end?"
+    - "Until when is the permit valid?"
+    - "When does the coupon stop being valid?"
+    - "At what point does the call for applications close?"
+    - "What is the last day to sign up?"
     patrones:
     - when (does|do|will) (\w+ ){0,6}(end|ends|finish|finishes|expire|expires|terminate|terminates)
     - until when
@@ -244,6 +349,17 @@ intenciones:
     - expires
     - ends
   consecuencia:
+    ejemplos:
+    - "What happens to me for failing to complete registration?"
+    - "What is the outcome of rejecting the invitation?"
+    - "What are the effects of not submitting the declaration?"
+    - "What measures are taken when a key is lost?"
+    - "How does a missing document affect the application?"
+    - "What happens if I arrive late for the show?"
+    - "What occurs when the supply is interrupted?"
+    - "What happens if the parcel arrives damaged?"
+    - "What is the effect of cancelling the booking?"
+    - "And if the form has no signature?"
     patrones:
     - what (happens|occurs) (if|when)
     - what if
@@ -255,6 +371,17 @@ intenciones:
     - shall
     - must
   responsable:
+    ejemplos:
+    - "Whose job is it to review the inventory?"
+    - "Who has the task of opening the room?"
+    - "Which organisation handles collecting tuition?"
+    - "Who keeps track of visits?"
+    - "Whose responsibility is booking the accommodation?"
+    - "Which person reviews the hotel bookings?"
+    - "Who is in charge of maintaining the lift?"
+    - "Which office is responsible for issuing the certificate?"
+    - "Who authorises access to the laboratory?"
+    - "Whose responsibility is it to update the register?"
     patrones:
     - who( is responsible| must| has to| should)?
     - to whom
@@ -264,6 +391,17 @@ intenciones:
     - in charge
     - corresponds to
   requisito:
+    ejemplos:
+    - "What is demanded for registration to be accepted?"
+    - "What supporting information is necessary to apply?"
+    - "What characteristics must a valid photo have?"
+    - "How many pages at minimum must the report contain?"
+    - "What conditions apply to receiving the permit?"
+    - "What documents must I bring to renew the permit?"
+    - "What conditions must I meet to obtain a scholarship?"
+    - "What is needed to enrol in the workshop?"
+    - "What are the requirements for adopting an animal?"
+    - "What must I provide to prove my residence?"
     patrones:
     - what (is|are) (needed|required)
     - what (do i|must i|should i) (need|submit|provide|bring)
@@ -276,6 +414,19 @@ intenciones:
     - needs
     - requirement
   procedimiento:
+    respaldo_patrones:
+    - how|what (do|should) (i|we)|what steps|in what (way|manner)|procedure|process
+    ejemplos:
+    - "I forgot my access code, how do I recover it?"
+    - "I cannot find my membership card, what do I do to recover it?"
+    - "My booking was cancelled, what do I do now?"
+    - "I need to change my details, how is that arranged?"
+    - "In what way can I obtain a duplicate credential?"
+    - "How do I arrange a return at the shop?"
+    - "What steps should I follow to book a room?"
+    - "In what way is a visitor registered?"
+    - "What is the procedure for changing an appointment?"
+    - "I lost my membership card, how do I get another one?"
     patrones:
     - how (do|can|should) (i|we|you)
     - what (steps|is the procedure|is the process)
@@ -284,6 +435,58 @@ intenciones:
     - then
     - next
     - step
+  # «How much does it cost to change the filter?» asks for an amount: «every 45 days»
+  # is about the filter but does not answer it.
+  costo:
+    exige_pista: true
+    entidades_pista: [monto]
+    ejemplos:
+    - "How much does it cost to renew a passport?"
+    - "How much is a museum ticket?"
+    - "What is the price of the English course?"
+    - "How much do they charge for parking?"
+    - "What are the enrollment fees?"
+    - "How much does fixing the washing machine cost?"
+    patrones:
+    - how much (does|do|is|are|will) (\w+ ){0,6}(cost|costs|charge|charged)
+    - how much (is|are) (the )?(price|fee|fees|cost|charge)
+    - how much do (they|you|we|i) (charge|pay)
+    - what (is|are) the (price|cost|fee|fees|charge|charges)
+    pistas:
+    - dollars
+    - pesos
+    - euros
+    - price
+    - cost
+    - fee
+    - charge
+    - free
+    - free of charge
+  # «How often does the password expire?» asks for a period: the answering sentence says
+  # «every 90 days», not how to change it.
+  frecuencia:
+    exige_pista: true
+    ejemplos:
+    - "How often is the driving licence renewed?"
+    - "How frequently should the air filter be cleaned?"
+    - "How many times a year is the extinguisher inspected?"
+    - "How often is the server backed up?"
+    - "How often are the membership fees paid?"
+    - "How often does the garbage truck come?"
+    patrones:
+    - how (often|frequently)
+    - how many times (a|per|each) (day|week|month|year)
+    pistas:
+    - every
+    - each
+    - times a
+    - times per
+    - twice
+    - daily
+    - weekly
+    - monthly
+    - yearly
+    - annually
 # How a follow-up question starts (ipsis.consulta.seguimiento), lowercase and without accents.
 seguimiento:
 - and
@@ -309,8 +512,29 @@ sinonimos:
 - [approve, approves, approved, authorize, authorizes, authorized]
 - [fix, fixes, repair, repairs, repaired]
 - [cost, costs, price]
-# Words that are never focus terms (ipsis.consulta.etapas.filtros): support verbs and units.
-genericas: [do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes]
+# Everyday equivalences valid in any office document: they only act when the question's
+# word is missing from the corpus and a member of the group is present.
+- [money, amount, sum]
+- [fridge, refrigerator]
+- [log, logs, logged, register, registers, registered, registration]
+- [plane, planes, air, flight, flights]
+- [boss, manager, supervisor]
+- [answer, answers, answered, reply, replies, replied, respond, responds]
+- [vacation, vacations, holiday, holidays]
+- [married, marriage, wedding]
+- [die, dies, died, death]
+- [fit, fits, hold, holds, capacity]
+- [early, ahead, advance]
+- [broken, damaged]
+# Anaphoric pronouns: «Who approves it?» without an antecedent asks for clarification.
+pronombres_anaforicos: [it, this, that, these, those, them, they]
+# «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
+preposiciones_modificador: [of, for]
+modificador_antepuesto: true
+# Words that are never focus terms (ipsis.consulta.etapas.filtros): support verbs, units and
+# question quantifiers («how often»: the question form, not its topic). They still count for
+# s_oov and s_cov: without a reader, light has no other sign that «how often» asks for a period.
+genericas: [often, much, many, long, far, do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, take, takes, took, taking, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes, someone, somebody, anyone, anybody, everyone, everybody, something, anything]
 # Derived-noun suffixes the stemmer keeps: «signature» counts as «sign» for the focus terms.
 sufijos_derivados: [atur, ment]
 conversacional:
@@ -363,6 +587,7 @@ interfaz:
   placeholder: Type your question...
   send: Send question
   not_direct: Not a direct answer
+  check_citation: Check the citation
   origin_error: This site is not authorized to use the assistant.
   http_error: The service could not answer (HTTP {status}).
   source_code: Source code

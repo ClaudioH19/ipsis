@@ -70,6 +70,14 @@ def construir_motor(
                                error=exc)) from exc
     perfil = cargar_perfil()
     idioma = cargar_paquete(cfg_dominio.get("idioma", "es"), proyecto=Path.cwd())
+    from ipsis.lenguaje.sinonimos import huella_lexica, indice_automatico
+
+    hash_lexico = huella_lexica(idioma)
+    if not idioma.respaldo:
+        from ipsis.lenguaje.ortografia import raices_lexico
+
+        indice_automatico(idioma.codigo.split("-")[0], idioma.stemmer)
+        raices_lexico(idioma.codigo.split("-")[0], idioma.stemmer)  # la primera errata no espera al léxico
     plantillas = cargar_plantillas(idioma, cfg_dominio)
     cfg_rec = config_recuperacion(cfg)
     cfg_red = config_redaccion(cfg)
@@ -87,7 +95,7 @@ def construir_motor(
     hash_corpus = _hash_corpus_indexado(retriever)
     if hash_corpus is not None:
         perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
-                                             hash_corpus=hash_corpus)
+                                             hash_corpus=hash_corpus, hash_lexico=hash_lexico)
     politica = registro.crear(
         "abstention_policy",
         componentes["abstention_policy"],
@@ -125,6 +133,21 @@ def construir_motor(
         abstencion_calibrada=perfil_instalacion.origen_umbrales == "calibracion",
     )
     motor.perfil_instalacion = perfil_instalacion
+    from ipsis.consulta.alternativas import ConfigAlternativas
+    from ipsis.ingesta.metadata import cargar_taxonomia
+
+    postura = cfg_dominio.get("postura") or {}
+    motor.alternativas = ConfigAlternativas(
+        modo=postura.get("modo", "proactiva"), max_alternativas=int(postura.get("max_alternativas", 3)),
+        umbral=perfil_instalacion.alternativas.umbral, pesos=dict(perfil_instalacion.alternativas.pesos))
+    motor.taxonomia = cargar_taxonomia()
+    from ipsis.consulta.seguimiento import MemoriaConversacion
+
+    cfg_conv = cfg.get("conversacion") or {}
+    motor.seguimiento = MemoriaConversacion(
+        max_sesiones=int(cfg_conv.get("max_sesiones", 1024)),
+        vencimiento_s=float(cfg_conv.get("vencimiento_minutos", 30)) * 60,
+    )
     if perfil_instalacion.modelos.reranker and "reranking" in perfil_instalacion.etapas:
         motor.reranker = registro.crear("reranker", "onnx", modelo=perfil_instalacion.modelos.reranker)
     if perfil_instalacion.modelos.lector and "lectura" in perfil_instalacion.etapas:
@@ -165,6 +188,7 @@ class DiagnosticoConsulta:
     evidencias: list[dict[str, Any]]
     advertencias: list[str]
     salto_modelos: bool = False
+    nivel_confianza: str | None = None  # alta / media / baja (Motor.nivel_confianza)
     tono: str | None = None
     plantillas: list[str] = field(default_factory=list)  # <tono>.<situación>.<n>
     # Dónde se gana o se pierde cada fragmento: su lugar en el ranking denso, en
@@ -172,6 +196,16 @@ class DiagnosticoConsulta:
     candidatos: list[dict[str, Any]] = field(default_factory=list)
     # Las oraciones mejor puntuadas de los candidatos, con el puntaje que usa la selección.
     oraciones: list[dict[str, Any]] = field(default_factory=list)
+    # Comprensión de la pregunta: intención y relación, sinónimos, pregunta interpretada
+    # (si heredó tema) y qué hizo el turno con la conversación (ADR 0005 y 0006).
+    intencion: dict[str, Any] | None = None
+    ortografia: dict[str, str] = field(default_factory=dict)
+    sinonimos: dict[str, list[str]] = field(default_factory=dict)
+    pregunta_interpretada: str | None = None
+    conversacion: dict[str, str] | None = None
+    recursos_lexicos: list[dict[str, Any]] = field(default_factory=list)
+    # Postura proactiva (ADR 0008): alternativas ofrecidas y descartadas, con sus señales.
+    alternativas: dict[str, Any] | None = None
 
     @property
     def total_ms(self) -> int:
@@ -210,6 +244,7 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         ausentes_del_corpus=list(lexicas.get("ausentes_del_corpus") or []),
         oracion_foco=d.get("oracion_foco"),
         tramo=contrato.get("respuesta_exacta"),
+        nivel_confianza=contrato.get("nivel_confianza"),
         evidencias=[{k: e.get(k) for k in ("doc_id", "chunk_id", "offset_inicio", "offset_fin", "texto")}
                     for e in d.get("evidencias") or []],
         advertencias=list(d.get("advertencias") or []),
@@ -218,6 +253,13 @@ def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> Diagnost
         plantillas=list(d.get("plantillas") or []),
         candidatos=candidatos,
         oraciones=oraciones,
+        intencion=d.get("intencion"),
+        ortografia=dict(d.get("ortografia") or {}),
+        sinonimos=dict(d.get("sinonimos") or {}),
+        pregunta_interpretada=d.get("pregunta_interpretada"),
+        conversacion=d.get("conversacion"),
+        recursos_lexicos=list(d.get("recursos_lexicos") or []),
+        alternativas=d.get("alternativas"),
     )
 
 
@@ -229,9 +271,15 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
     deja la tabla con lo que haya."""
     retriever = getattr(motor, "retriever", None)
     rankings = {}
+    efectiva = d.get("pregunta_interpretada") or pregunta
+    manuales = d.get("sinonimos") or {}
+    if manuales:
+        efectiva = f"{efectiva.rstrip()} {' '.join(f for fs in manuales.values() for f in fs)}"
     if retriever is not None and hasattr(retriever, "rankings_diagnostico"):
         try:
-            rankings = retriever.rankings_diagnostico(pregunta)
+            automatica = d.get("pregunta_recuperacion")
+            rankings = (retriever.rankings_diagnostico(efectiva, pregunta_bm25=automatica) if automatica
+                        else retriever.rankings_diagnostico(efectiva))
         except Exception:  # noqa: BLE001 -- el diagnóstico nunca rompe la consulta
             rankings = {}
     rerank = {r["chunk_id"]: (i, r["score"]) for i, r in enumerate(d.get("rerank") or [], start=1)}
@@ -252,8 +300,10 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
     if retriever is not None and hasattr(retriever, "textos_diagnostico") and candidatos:
         from contextlib import nullcontext
 
-        from ipsis.consulta.etapas.seleccion import _puntuar, dividir_en_unidades
+        from ipsis.consulta.etapas.seleccion import _puntuar_turno, dividir_en_unidades
         from ipsis.lenguaje.entidades import usar_idioma
+        from ipsis.lenguaje.consultas import comprender_consulta
+        from ipsis.nucleo.esquemas import QueryAnalysis
 
         try:
             textos = retriever.textos_diagnostico([c["chunk_id"] for c in candidatos[:3]])
@@ -261,10 +311,15 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
             textos = {}
         vistas = set()
         idioma = getattr(motor, "idioma", None)
+        consulta = QueryAnalysis(pregunta_original=efectiva, pregunta_normalizada=efectiva,
+                                intencion=(d.get("intencion") or {}).get("nombre", "desconocida"))
+        comprension = comprender_consulta(consulta, idioma)
         for cid, texto in textos.items():
             unidades = dividir_en_unidades(texto)
             with usar_idioma(idioma) if idioma is not None else nullcontext():  # como en la consulta
-                scores = _puntuar(pregunta, unidades, getattr(retriever, "estadisticas_lexico", lambda: None)())
+                scores = _puntuar_turno(efectiva, unidades,
+                    getattr(retriever, "estadisticas_lexico", lambda: None)(),
+                    pregunta if d.get("pregunta_interpretada") else None, comprension)
             for unidad, score in zip(unidades, scores, strict=True):
                 if unidad.texto not in vistas:
                     vistas.add(unidad.texto)

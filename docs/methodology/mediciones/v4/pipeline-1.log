@@ -1,0 +1,9 @@
+MEDIR f1 conversaciones
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-continuacion\f1\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es {"herencia_correcta": 26, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 12, "respuestas_correctas": 29, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}
+light en {"herencia_correcta": 25, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 13, "respuestas_correctas": 19, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}
+light pt {"herencia_correcta": 21, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 17, "respuestas_correctas": 20, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}
+medium es {"herencia_correcta": 29, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 9, "respuestas_correctas": 6, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}
+medium en {"herencia_correcta": 26, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 12, "respuestas_correctas": 8, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}
+medium pt {"herencia_correcta": 21, "con_hereda": 38, "herencia_indebida": 0, "herencia_perdida": 17, "respuestas_correctas": 8, "con_respuesta": 54, "directas_indebidas": 0, "sin_directa": 4}

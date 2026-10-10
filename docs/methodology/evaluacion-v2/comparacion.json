@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "criterio_respuesta": "respuesta_completa_v2",
+  "dataset_id": "consultas_es",
+  "dataset_version": "1.0.0",
+  "dataset_sha256": "369f704ac6d01b339fd61a040bcbf7372b90d41a94628f4130b3c0917fb9f413",
+  "k": 3,
+  "filas": [
+    {
+      "backend": "light:qdrant_hibrida",
+      "configuracion_sha256": "37a2b6017fcd47dcdede4dee0cf0acb8f225712c4dfa6abea981921045a33849",
+      "indice": {
+        "coleccion": "asistente_documental_intfloat-multilingual-e5-small_v1",
+        "modelo": null,
+        "modo": "hibrida",
+        "version_coleccion": 1
+      },
+      "recall_at_k": 0.9411764705882353,
+      "mrr": 0.8676470588235294,
+      "tasa_falsos_ok": 0.038461538461538464,
+      "exactitud_estado": 0.31666666666666665,
+      "exactitud_literal": 0.4117647058823529,
+      "exactitud_tramo_qa": null,
+      "directas_con_literal": 14,
+      "tramos_qa_evaluados": 0,
+      "tramos_qa_sin_literal": 0,
+      "exactitud_offsets": 1.0,
+      "latencia_media_ms": 44.71666666666667,
+      "latencia_p95_ms": 69.0
+    },
+    {
+      "backend": "medium:qdrant_hibrida",
+      "configuracion_sha256": "37a2b6017fcd47dcdede4dee0cf0acb8f225712c4dfa6abea981921045a33849",
+      "indice": {
+        "coleccion": "asistente_documental_intfloat-multilingual-e5-small_v1",
+        "modelo": null,
+        "modo": "hibrida",
+        "version_coleccion": 1
+      },
+      "recall_at_k": 0.9411764705882353,
+      "mrr": 0.8676470588235294,
+      "tasa_falsos_ok": 0.0,
+      "exactitud_estado": 0.4666666666666667,
+      "exactitud_literal": 0.7352941176470589,
+      "exactitud_tramo_qa": 0.32,
+      "directas_con_literal": 25,
+      "tramos_qa_evaluados": 25,
+      "tramos_qa_sin_literal": 17,
+      "exactitud_offsets": 1.0,
+      "latencia_media_ms": 2806.116666666667,
+      "latencia_p95_ms": 3099.0
+    },
+    {
+      "backend": "heavy:qdrant_hibrida",
+      "configuracion_sha256": "37a2b6017fcd47dcdede4dee0cf0acb8f225712c4dfa6abea981921045a33849",
+      "indice": {
+        "coleccion": "asistente_documental_intfloat-multilingual-e5-base_v1",
+        "modelo": null,
+        "modo": "hibrida",
+        "version_coleccion": 1
+      },
+      "recall_at_k": 1.0,
+      "mrr": 0.9362745098039216,
+      "tasa_falsos_ok": 0.07692307692307693,
+      "exactitud_estado": 0.48333333333333334,
+      "exactitud_literal": 0.6176470588235294,
+      "exactitud_tramo_qa": 0.2857142857142857,
+      "directas_con_literal": 21,
+      "tramos_qa_evaluados": 21,
+      "tramos_qa_sin_literal": 15,
+      "exactitud_offsets": 1.0,
+      "latencia_media_ms": 15586.333333333334,
+      "latencia_p95_ms": 17080.0
+    }
+  ],
+  "decisiones": []
+}

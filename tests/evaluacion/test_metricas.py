@@ -121,6 +121,29 @@ def test_respuesta_larga_se_mide_sin_cambiar_otras_metricas():
     assert reporte.recall_at_k == 1.0
 
 
+def test_guardia_bloquea_respuesta_equivocada_aunque_no_haya_falsos_ok():
+    banco, observaciones = _observaciones_perfectas()
+    objetivo = next(o for o in observaciones if o.estado == "respuesta_directa")
+    objetivo.respuesta = "La fuente habla de otro asunto."
+    reporte = evaluar_observaciones(banco, observaciones, _documentos())
+    assert reporte.guardia_falsos_ok is True
+    assert reporte.guardia_respuestas is False
+    assert reporte.cobertura.riesgo_aceptadas.x == 1
+
+
+def test_metrica_principal_no_depende_de_tener_lector():
+    banco, observaciones = _observaciones_perfectas()
+    light = evaluar_observaciones(banco, observaciones, _documentos())
+    for o in observaciones:
+        if o.estado == "respuesta_directa":
+            o.respuesta_exacta = "tramo incompleto"
+    medium = evaluar_observaciones(banco, observaciones, _documentos())
+    assert light.exactitud_literal == medium.exactitud_literal == 1
+    assert light.cobertura.riesgo_aceptadas == medium.cobertura.riesgo_aceptadas
+    assert light.exactitud_tramo_qa is None
+    assert medium.exactitud_tramo_qa == 0
+
+
 def test_rechaza_observaciones_incompletas():
     banco, observaciones = _observaciones_perfectas()
 

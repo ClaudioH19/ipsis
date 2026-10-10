@@ -5,6 +5,7 @@
 ## How it was tested
 
 - [ ] `python -m pytest -m "not slow and not browser"`
+- [ ] `python herramientas/evaluacion/general.py --download` (all profiles and formatting qualities; reports reviewed)
 - [ ] `python -m pytest -m browser` (if it touches the widget or the panel)
 - [ ] New or updated tests
 

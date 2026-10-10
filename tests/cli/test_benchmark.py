@@ -11,11 +11,12 @@ from ipsis.cli import main
 from ipsis.evaluacion.banco import cargar_banco
 from ipsis.evaluacion.benchmark import ReporteBenchmark, codigo_salida, latencia_de, markdown, percentil
 from ipsis.evaluacion.metricas import ArtefactoEvaluacion, ObservacionEvaluacion, SenalesObservadas, evaluar_observaciones
+from ipsis.nucleo.esquemas import EvidenceSpan
 
 UNIVERSAL_ES = Path(__file__).resolve().parents[1] / "datos" / "banco_universal" / "es" / "manifiesto.json"
 SINTETICO = Path(__file__).resolve().parents[1] / "datos" / "banco" / "manifiesto.json"
-# Latencia por consulta de cada perfil falso (ms). heavy excede su presupuesto (4000).
-LATENCIA = {"bm25": 20, "light": 60, "medium": 700, "heavy": 4500}
+# Latencia por consulta de cada perfil falso (ms); todos cumplen su presupuesto.
+LATENCIA = {"bm25": 20, "light": 60, "medium": 700}
 
 
 def _artefacto(banco, perfil: str, *, trampa_qa: float = 0.82) -> ArtefactoEvaluacion:
@@ -37,6 +38,9 @@ def _artefacto(banco, perfil: str, *, trampa_qa: float = 0.82) -> ArtefactoEvalu
         senales = SenalesObservadas(s_ret=0.9, s_oov=0.0, s_foco=1.0, s_cov=1.0, s_qa=qa, dominio=0.9)
         observaciones.append(ObservacionEvaluacion(
             caso_id=caso.id, backend="falso", estado=estado, regla=regla, senales=senales, respuesta=texto,
+            evidencias=[EvidenceSpan(doc_id=e.doc_id, chunk_id=f"c-{caso.id}", texto=e.texto,
+                                    offset_inicio=e.offset_inicio, offset_fin=e.offset_fin)
+                        for e in caso.evidencias],
             latencia_ms=LATENCIA[perfil], etapas_ms=etapas, idioma=banco.manifiesto.idioma))
     reporte = evaluar_observaciones(banco, observaciones, {})
     return ArtefactoEvaluacion(backend="falso", dataset_id=banco.manifiesto.dataset_id,
@@ -74,14 +78,15 @@ def test_latencia_p50_p95_y_por_etapa():
 
 
 # --- orquestación ----------------------------------------------------------------------
-def test_mismos_casos_orden_estable_y_presupuesto(tmp_path):
-    reporte = _benchmark(tmp_path, ["heavy", "bm25", "light", "medium"])
-    assert [p.nombre for p in reporte.perfiles] == ["heavy", "bm25", "light", "medium"]  # el orden pedido
+def test_mismos_casos_orden_estable_y_presupuesto(tmp_path, monkeypatch):
+    monkeypatch.setitem(LATENCIA, "medium", 1500)  # medium excede su presupuesto (1000)
+    reporte = _benchmark(tmp_path, ["medium", "bm25", "light"])
+    assert [p.nombre for p in reporte.perfiles] == ["medium", "bm25", "light"]  # el orden pedido
     ids = {p.nombre: {f.caso_id for f in p.cobertura.casos} for p in reporte.perfiles}
     assert len({frozenset(v) for v in ids.values()}) == 1  # todos midieron los mismos casos
     cumple = {p.nombre: p.cumple_presupuesto for p in reporte.perfiles}
-    assert cumple == {"heavy": False, "bm25": True, "light": True, "medium": True}
-    assert codigo_salida(reporte) == 1  # heavy excede
+    assert cumple == {"medium": False, "bm25": True, "light": True}
+    assert codigo_salida(reporte) == 1  # medium excede
 
 
 def test_un_perfil_que_omite_casos_falla(tmp_path):
@@ -164,7 +169,8 @@ def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, ca
     assert (salida / "benchmark-profiles.json").is_file() and (salida / "benchmark-profiles.md").is_file()
     datos = json.loads((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     assert [p["nombre"] for p in datos["perfiles"]] == ["bm25", "light", "medium"]
-    assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "heavy", "--output", str(salida)]) == 1
+    monkeypatch.setitem(LATENCIA, "medium", 1500)
+    assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "medium", "--output", str(salida)]) == 1
     assert "EXCEDE" in capsys.readouterr().out
 
 

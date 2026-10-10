@@ -1,0 +1,8 @@
+C:\Users\claud\OneDrive\Escritorio\rag-extractivo\.cache\v4-correcciones\final\ipsis\indice\qdrant.py:268: UserWarning: Payload indexes have no effect in the local Qdrant. Please use server Qdrant if you need payload indexes.
+  client.create_payload_index(nombre_col, campo, tipo)
+light es correctas=8/30 erróneas=1 media=38.2 ms
+light en correctas=6/30 erróneas=0 media=33.4 ms
+light pt correctas=9/30 erróneas=0 media=42.1 ms
+medium es correctas=2/30 erróneas=11 media=897.4 ms
+medium en correctas=3/30 erróneas=9 media=895.2 ms
+medium pt correctas=2/30 erróneas=8 media=997.9 ms

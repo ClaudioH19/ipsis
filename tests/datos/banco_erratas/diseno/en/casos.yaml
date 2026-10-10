@@ -1,0 +1,927 @@
+# Banco de erratas (diseno), generado por generar.py desde banco_garantias. No editar a mano.
+- id: en-exacta-001
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: what are the car park opening horus from monday to friday?
+  respuesta: between 7:00 and 21:00
+  original: What are the car park opening hours from Monday to Friday?
+  erratas:
+  - transposicion
+- id: en-parafrasis-001
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: till what time can i leave my car in the car park on a tuedsay
+  respuesta: between 7:00 and 21:00
+  original: till what time can i leave my car in the car park on a tuesday
+  erratas:
+  - transposicion
+- id: en-trampa-001
+  par: en-parafrasis-001
+  pregunta: Until what tiime is the car park open on public holidays?
+  original: Until what time is the car park open on public holidays?
+  erratas:
+  - duplicacion
+- id: en-exacta-002
+  documento: parking_regulation.md
+  capacidad: fecha
+  pregunta: what are the car park opening hors on saturdays?
+  respuesta: On Saturdays it opens from 8:00 to 14:00
+  original: What are the car park opening hours on Saturdays?
+  erratas:
+  - omision
+- id: en-exacta-003
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: is the car parrk open on sundays?
+  respuesta: on Sundays it is closed
+  original: Is the car park open on Sundays?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-002
+  documento: parking_regulation.md
+  capacidad: persona
+  pregunta: Who issues the paring permit?
+  respuesta: General Services Unit
+  original: Who issues the parking permit?
+  erratas:
+  - omision
+- id: en-parafrasis-003
+  documento: parking_regulation.md
+  capacidad: procedimiento
+  pregunta: What doucments do I need to request a parking permit?
+  respuesta: the vehicle access form and a copy of the vehicle registration
+  original: What documents do I need to request a parking permit?
+  erratas:
+  - transposicion
+- id: en-exacta-004
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: How many licence plates can each employeee register?
+  respuesta: at most two licence plates
+  original: How many licence plates can each employee register?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-004
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: can i register3 cars for the car park?
+  respuesta: at most two licence plates
+  original: can i register 3 cars for the car park?
+  erratas:
+  - pegadas
+- id: en-exacta-005
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: How much does the annjal parknig permit cost for employees?
+  respuesta: 60,000 pesos
+  original: How much does the annual parking permit cost for employees?
+  erratas:
+  - transposicion
+  - vecina
+- id: en-trampa-002
+  par: en-exacta-005
+  pregunta: how much does the monthly patking permit cost for employees?
+  original: How much does the monthly parking permit cost for employees?
+  erratas:
+  - vecina
+- id: en-exacta-006
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: how much do visitors pay per hourof parking?
+  respuesta: 1,500 pesos per hour
+  original: How much do visitors pay per hour of parking?
+  erratas:
+  - pegadas
+- id: en-parafrasis-005
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: how much does a visitr get charged to park for an hour
+  respuesta: 1,500 pesos per hour
+  original: how much does a visitor get charged to park for an hour
+  erratas:
+  - omision
+- id: en-exacta-007
+  documento: parking_regulation.md
+  capacidad: cantidad
+  pregunta: what is the maximum daily charge for visitrs in the car park?
+  respuesta: a maximum of 9,000 pesos per day
+  original: What is the maximum daily charge for visitors in the car park?
+  erratas:
+  - omision
+- id: en-parafrasis-006
+  documento: parking_regulation.md
+  capacidad: ubicacion
+  pregunta: Where are the parking spaces for people with disabiliteis?
+  respuesta: next to the lift on the first basement level
+  original: Where are the parking spaces for people with disabilities?
+  erratas:
+  - fonetica
+- id: en-parafrasis-007
+  documento: parking_regulation.md
+  capacidad: ubicacion
+  pregunta: where do i charge my ele ctric car
+  respuesta: at the four charging points on the second basement level
+  original: where do i charge my electric car
+  erratas:
+  - separada
+- id: en-trampa-003
+  par: en-parafrasis-007
+  pregunta: Where do I charge my electricscooter?
+  original: Where do I charge my electric scooter?
+  erratas:
+  - pegadas
+- id: en-exacta-008
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: what happens if someone parkswithout a permit?
+  respuesta: receives a written warning
+  original: What happens if someone parks without a permit?
+  erratas:
+  - pegadas
+- id: en-exacta-009
+  documento: parking_regulation.md
+  capacidad: condicion
+  pregunta: what hpapens on the thitd warning?
+  respuesta: the permit is suspended for three months
+  original: What happens on the third warning?
+  erratas:
+  - vecina
+  - transposicion
+- id: en-parafrasis-008
+  documento: parking_regulation.md
+  capacidad: duracion
+  pregunta: if i get 3 war nings how long do they take my permit away
+  respuesta: the permit is suspended for three months
+  original: if i get 3 warnings how long do they take my permit away
+  erratas:
+  - separada
+- id: en-parafrasis-009
+  documento: parking_regulation.md
+  capacidad: persona
+  pregunta: who do i appael a parking warnong to?
+  respuesta: with the Head of General Services
+  original: Who do I appeal a parking warning to?
+  erratas:
+  - transposicion
+  - vecina
+- id: en-exacta-010
+  documento: parking_regulation.md
+  capacidad: duracion
+  pregunta: What is the deaddline to appeal a warning?
+  respuesta: within ten business days
+  original: What is the deadline to appeal a warning?
+  erratas:
+  - duplicacion
+- id: en-trampa-004
+  par: en-exacta-010
+  pregunta: what is the deadline to appeql a traffic fine?
+  original: What is the deadline to appeal a traffic fine?
+  erratas:
+  - vecina
+- id: en-exacta-011
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: How much frree space does the Lumen P40 printr need on each side?
+  respuesta: 10 centimetres of free space on each side
+  original: How much free space does the Lumen P40 printer need on each side?
+  erratas:
+  - duplicacion
+  - omision
+- id: en-parafrasis-010
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: How does the printer conncet to the network?
+  respuesta: by cable or by Wi-Fi from the settings panel
+  original: How does the printer connect to the network?
+  erratas:
+  - transposicion
+- id: en-exacta-012
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: how many sheets does the main tray of the printer hlld?
+  respuesta: up to 250 sheets
+  original: How many sheets does the main tray of the printer hold?
+  erratas:
+  - vecina
+- id: en-parafrasis-011
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: how many sheets fit in the pronter
+  respuesta: up to 250 sheets
+  original: how many sheets fit in the printer
+  erratas:
+  - vecina
+- id: en-trampa-005
+  par: en-parafrasis-011
+  pregunta: how many sheets fit in the printer's outpuut teay?
+  original: How many sheets fit in the printer's output tray?
+  erratas:
+  - vecina
+  - duplicacion
+- id: en-exacta-013
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: what paper wright does the lumen p40 printer accept?
+  respuesta: between 70 and 120 grams
+  original: What paper weight does the Lumen P40 printer accept?
+  erratas:
+  - vecina
+- id: en-exacta-014
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: How many pages does a toner cartridge yeild?
+  respuesta: approximately 3,000 pages
+  original: How many pages does a toner cartridge yield?
+  erratas:
+  - fonetica
+- id: en-parafrasis-012
+  documento: printer_manual.md
+  capacidad: cantidad
+  pregunta: how many pages does the tonwr last for
+  respuesta: approximately 3,000 pages
+  original: how many pages does the toner last for
+  erratas:
+  - vecina
+- id: en-parafrasis-013
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does it mean when the printer's orange lught blinks?
+  respuesta: less than 10 % of the toner is left
+  original: What does it mean when the printer's orange light blinks?
+  erratas:
+  - vecina
+- id: en-trampa-006
+  par: en-parafrasis-013
+  pregunta: what does it mean when the printer's red light bilnks?
+  original: What does it mean when the printer's red light blinks?
+  erratas:
+  - transposicion
+- id: en-exacta-015
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: what does printer code e2 indiccate?
+  respuesta: a paper jam in the rear tray
+  original: What does printer code E2 indicate?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-014
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: the printer shhows e2, what is that
+  respuesta: a paper jam in the rear tray
+  original: the printer shows E2, what is that
+  erratas:
+  - duplicacion
+- id: en-exacta-016
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: What does codeE5 indicate?
+  respuesta: the front cover is open
+  original: What does code E5 indicate?
+  erratas:
+  - pegadas
+- id: en-exacta-017
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: What should be done if codde E9 appears?
+  respuesta: turn off the printer and call technical service
+  original: What should be done if code E9 appears?
+  erratas:
+  - duplicacion
+- id: en-trampa-007
+  par: en-exacta-017
+  pregunta: what should be done if code e7 apears?
+  original: What should be done if code E7 appears?
+  erratas:
+  - omision
+- id: en-parafrasis-015
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: how offten is the feed rolelr cleaned?
+  respuesta: every three months
+  original: How often is the feed roller cleaned?
+  erratas:
+  - transposicion
+  - duplicacion
+- id: en-parafrasis-016
+  documento: printer_manual.md
+  capacidad: procedimiento
+  pregunta: what do i clean the printerroller with
+  respuesta: with a dry cloth
+  original: what do i clean the printer roller with
+  erratas:
+  - pegadas
+- id: en-exacta-018
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: After how long without use does the printer ennter energy-saving mode?
+  respuesta: after 15 minutes without use
+  original: After how long without use does the printer enter energy-saving mode?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-017
+  documento: printer_manual.md
+  capacidad: duracion
+  pregunta: how long is the printer wsrranty
+  respuesta: an 18-month warranty
+  original: how long is the printer warranty
+  erratas:
+  - vecina
+- id: en-trampa-008
+  par: en-parafrasis-017
+  pregunta: how long is the toner czrtridge warranty?
+  original: How long is the toner cartridge warranty?
+  erratas:
+  - vecina
+- id: en-exacta-019
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: what does the lumen p40 warrantynot cover?
+  respuesta: the use of refilled cartridges
+  original: What does the Lumen P40 warranty not cover?
+  erratas:
+  - pegadas
+- id: en-parafrasis-018
+  documento: printer_manual.md
+  capacidad: condicion
+  pregunta: do i lose the warrantyif i use a refilled cartridge?
+  respuesta: The warranty does not cover the use of refilled cartridges
+  original: do i lose the warranty if i use a refilled cartridge?
+  erratas:
+  - pegadas
+- id: en-exacta-020
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days of holiday does eadh employee have per year?
+  respuesta: 15 working days of holiday per year
+  original: How many days of holiday does each employee have per year?
+  erratas:
+  - vecina
+- id: en-parafrasis-019
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: how many vacasion days do i get a yeear
+  respuesta: 15 working days of holiday per year
+  original: how many vacation days do i get a year
+  erratas:
+  - duplicacion
+  - fonetica
+- id: en-exacta-021
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many additional days do those with mote than ten years of service receive?
+  respuesta: receive three additional days
+  original: How many additional days do those with more than ten years of service receive?
+  erratas:
+  - vecina
+- id: en-exacta-022
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: How far in advance are holidayys requested?
+  respuesta: at least 20 days in advance
+  original: How far in advance are holidays requested?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-020
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: how early do i have to ask for my hloidays
+  respuesta: at least 20 days in advance
+  original: how early do i have to ask for my holidays
+  erratas:
+  - transposicion
+- id: en-trampa-009
+  par: en-parafrasis-020
+  pregunta: How far in advance is unpaid leave req uested?
+  original: How far in advance is unpaid leave requested?
+  erratas:
+  - separada
+- id: en-parafrasis-021
+  documento: leave_policy.md
+  capacidad: persona
+  pregunta: Who appro ves holidays?
+  respuesta: The direct manager
+  original: Who approves holidays?
+  erratas:
+  - separada
+- id: en-exacta-023
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: Within what period does the manager reply to a holiday reqeust?
+  respuesta: within five working days
+  original: Within what period does the manager reply to a holiday request?
+  erratas:
+  - transposicion
+- id: en-parafrasis-022
+  documento: leave_policy.md
+  capacidad: condicion
+  pregunta: what happens if my bos doesn't answer my holiday request
+  respuesta: the request is deemed approved
+  original: what happens if my boss doesn't answer my holiday request
+  erratas:
+  - fonetica
+- id: en-exacta-024
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: how many holiday periodds can be carried over?
+  respuesta: At most two holiday periods
+  original: How many holiday periods can be carried over?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-023
+  documento: leave_policy.md
+  capacidad: condicion
+  pregunta: what happens to hloiday days over the limit
+  respuesta: are lost at the end of the year
+  original: what happens to holiday days over the limit
+  erratas:
+  - transposicion
+- id: en-exacta-025
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many daays of leave are graned for marriage?
+  respuesta: Five working days of paid leave
+  original: How many days of leave are granted for marriage?
+  erratas:
+  - omision
+  - duplicacion
+- id: en-parafrasis-024
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: im gettting married next month, how many days off do i get
+  respuesta: Five working days of paid leave
+  original: im getting married next month, how many days off do i get
+  erratas:
+  - duplicacion
+- id: en-trampa-010
+  par: en-parafrasis-024
+  pregunta: How many days of leaave are granted for moving house?
+  original: How many days of leave are granted for moving house?
+  erratas:
+  - duplicacion
+- id: en-exacta-026
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: How many days does the father receive for the birth of a chold?
+  respuesta: the father receives five working days
+  original: How many days does the father receive for the birth of a child?
+  erratas:
+  - vecina
+- id: en-exacta-027
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: how many days are granted for the deathof an immediate family member?
+  respuesta: Three working days are granted
+  original: How many days are granted for the death of an immediate family member?
+  erratas:
+  - pegadas
+- id: en-parafrasis-025
+  documento: leave_policy.md
+  capacidad: cantidad
+  pregunta: if a clse family member dies how many days do i get
+  respuesta: Three working days are granted
+  original: if a close family member dies how many days do i get
+  erratas:
+  - omision
+- id: en-exacta-028
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: Within what periiod is the medical certtificate delivered to Human Resources?
+  respuesta: within two working days of being issued
+  original: Within what period is the medical certificate delivered to Human Resources?
+  erratas:
+  - duplicacion
+  - duplicacion
+- id: en-parafrasis-026
+  documento: leave_policy.md
+  capacidad: duracion
+  pregunta: how many days do i have to hand in my sixk noote
+  respuesta: within two working days of being issued
+  original: how many days do i have to hand in my sick note
+  erratas:
+  - duplicacion
+  - vecina
+- id: en-parafrasis-027
+  documento: leave_policy.md
+  capacidad: persona
+  pregunta: who ptocesses the sick leave benefit?
+  respuesta: Human Resources processes the benefit
+  original: Who processes the sick leave benefit?
+  erratas:
+  - vecina
+- id: en-exacta-029
+  documento: emergency_protocol.md
+  capacidad: procedimiento
+  pregunta: how do people evacaute when the continuous alarm sounds?
+  respuesta: by the nearest staircase
+  original: How do people evacuate when the continuous alarm sounds?
+  erratas:
+  - transposicion
+- id: en-parafrasis-028
+  documento: emergency_protocol.md
+  capacidad: condicion
+  pregunta: can we use the lifft if we have to evacuate?
+  respuesta: Lifts are not used during an evacuation
+  original: can we use the lift if we have to evacuate?
+  erratas:
+  - duplicacion
+- id: en-exacta-030
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: what is the asesmbly point in an evacuatiion?
+  respuesta: the square in front of the main entrance
+  original: What is the assembly point in an evacuation?
+  erratas:
+  - transposicion
+  - duplicacion
+- id: en-parafrasis-029
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: where do we meeet if we evacute the building
+  respuesta: the square in front of the main entrance
+  original: where do we meet if we evacuate the building
+  erratas:
+  - omision
+  - duplicacion
+- id: en-trampa-011
+  par: en-parafrasis-029
+  pregunta: where do we mret during a power cut?
+  original: Where do we meet during a power cut?
+  erratas:
+  - vecina
+- id: en-exacta-031
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: Who appoints the evacuasion leader of each floor?
+  respuesta: the Operations Management
+  original: Who appoints the evacuation leader of each floor?
+  erratas:
+  - fonetica
+- id: en-parafrasis-030
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: who does the evac uation leader report to?
+  respuesta: reports to the Emergency Coordinator
+  original: Who does the evacuation leader report to?
+  erratas:
+  - separada
+- id: en-exacta-032
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: How many evacuation drills are heeld each year?
+  respuesta: Two evacuation drills are held each year
+  original: How many evacuation drills are held each year?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-031
+  documento: emergency_protocol.md
+  capacidad: fecha
+  pregunta: which months are the dirlls in
+  respuesta: one in April and one in October
+  original: which months are the drills in
+  erratas:
+  - transposicion
+- id: en-trampa-012
+  par: en-parafrasis-031
+  pregunta: Which monthhs are the safety trainings in?
+  original: Which months are the safety trainings in?
+  erratas:
+  - duplicacion
+- id: en-exacta-033
+  documento: emergency_protocol.md
+  capacidad: duracion
+  pregunta: How often are the fire extingui shers inspected?
+  respuesta: every six months
+  original: How often are the fire extinguishers inspected?
+  erratas:
+  - separada
+- id: en-parafrasis-032
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: Where are the fire extinguisehrs?
+  respuesta: next to each emergency exit
+  original: Where are the fire extinguishers?
+  erratas:
+  - transposicion
+- id: en-exacta-034
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: What extendion do you call in case of fire?
+  respuesta: on extension 2222
+  original: What extension do you call in case of fire?
+  erratas:
+  - vecina
+- id: en-parafrasis-033
+  documento: emergency_protocol.md
+  capacidad: cantidad
+  pregunta: what nmber do i call if theres a fire
+  respuesta: on extension 2222
+  original: what number do i call if theres a fire
+  erratas:
+  - omision
+- id: en-trampa-013
+  par: en-parafrasis-033
+  pregunta: what numbeer do i call if there is a water leak?
+  original: What number do I call if there is a water leak?
+  erratas:
+  - duplicacion
+- id: en-exacta-035
+  documento: emergency_protocol.md
+  capacidad: fecha
+  pregunta: What are the security desk's hous?
+  respuesta: operates 24 hours a day
+  original: What are the security desk's hours?
+  erratas:
+  - omision
+- id: en-exacta-036
+  documento: emergency_protocol.md
+  capacidad: ubicacion
+  pregunta: where is the maiin first-aid kit?
+  respuesta: at the ground-floor reception
+  original: Where is the main first-aid kit?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-034
+  documento: emergency_protocol.md
+  capacidad: persona
+  pregunta: who knlws first aid in the building
+  respuesta: The reception staff are trained in first aid
+  original: who knows first aid in the building
+  erratas:
+  - vecina
+- id: en-exacta-037
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: who may apply for the profesional development scholarship?
+  respuesta: Staff with a permanent contract and at least two years of service
+  original: Who may apply for the professional development scholarship?
+  erratas:
+  - fonetica
+- id: en-parafrasis-035
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: can i apply for the scholarship with a permanent contract and 3 yearshere
+  respuesta: Staff with a permanent contract and at least two years of service
+  original: can i apply for the scholarship with a permanent contract and 3 years here
+  erratas:
+  - pegadas
+- id: en-exacta-038
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: Who may not appply for the scholarship?
+  respuesta: Those who received the scholarship in the last three years
+  original: Who may not apply for the scholarship?
+  erratas:
+  - duplicacion
+- id: en-exacta-039
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: When are scholarship applications accepetd?
+  respuesta: between 1 and 30 June
+  original: When are scholarship applications accepted?
+  erratas:
+  - transposicion
+- id: en-parafrasis-036
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: until when can i appply for the schlarship
+  respuesta: between 1 and 30 June
+  original: until when can i apply for the scholarship
+  erratas:
+  - omision
+  - duplicacion
+- id: en-trampa-014
+  par: en-parafrasis-036
+  pregunta: Until when can I apply for the language schola rship?
+  original: Until when can I apply for the language scholarship?
+  erratas:
+  - separada
+- id: en-parafrasis-037
+  documento: scholarship_rules.md
+  capacidad: procedimiento
+  pregunta: What documents are attached to aplpy for the scholarship?
+  respuesta: the enrolment certificate and a letter from the manager
+  original: What documents are attached to apply for the scholarship?
+  erratas:
+  - transposicion
+- id: en-exacta-040
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: What pecrentage of the fees does the scholarship coer?
+  respuesta: up to 80 % of the programme fees
+  original: What percentage of the fees does the scholarship cover?
+  erratas:
+  - transposicion
+  - omision
+- id: en-exacta-041
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: What is the maixmum schlarship amount per year?
+  respuesta: 2,000,000 pesos per year
+  original: What is the maximum scholarship amount per year?
+  erratas:
+  - transposicion
+  - omision
+- id: en-parafrasis-038
+  documento: scholarship_rules.md
+  capacidad: cantidad
+  pregunta: whats the most money the schholarship gives
+  respuesta: 2,000,000 pesos per year
+  original: whats the most money the scholarship gives
+  erratas:
+  - duplicacion
+- id: en-trampa-015
+  par: en-parafrasis-038
+  pregunta: how much does the scholarship give for accommodation coss?
+  original: How much does the scholarship give for accommodation costs?
+  erratas:
+  - omision
+- id: en-parafrasis-039
+  documento: scholarship_rules.md
+  capacidad: persona
+  pregunta: who evluates the scohlarship applications?
+  respuesta: A committee of three directors
+  original: Who evaluates the scholarship applications?
+  erratas:
+  - omision
+  - transposicion
+- id: en-exacta-042
+  documento: scholarship_rules.md
+  capacidad: fecha
+  pregunta: When are the scholaarship resluts published?
+  respuesta: on 31 July
+  original: When are the scholarship results published?
+  erratas:
+  - transposicion
+  - duplicacion
+- id: en-parafrasis-040
+  documento: scholarship_rules.md
+  capacidad: duracion
+  pregunta: how long do i have to stay at the innstitution after the scholarship
+  respuesta: at least two years after completing the programme
+  original: how long do i have to stay at the institution after the scholarship
+  erratas:
+  - duplicacion
+- id: en-exacta-043
+  documento: scholarship_rules.md
+  capacidad: condicion
+  pregunta: What happens if the scholar dros out of the programme?
+  respuesta: must repay the amount received
+  original: What happens if the scholar drops out of the programme?
+  erratas:
+  - omision
+- id: en-exacta-044
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: what is the capcaity of the andes room?
+  respuesta: The Andes room holds 40 people
+  original: What is the capacity of the Andes room?
+  erratas:
+  - transposicion
+- id: en-parafrasis-041
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: how many people fit in the andees room
+  respuesta: The Andes room holds 40 people
+  original: how many people fit in the andes room
+  erratas:
+  - duplicacion
+- id: en-exacta-045
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: Which rpom has videoconferencing?
+  respuesta: The Pacific room holds 12 people and has videoconferencing
+  original: Which room has videoconferencing?
+  erratas:
+  - vecina
+- id: en-exacta-046
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: how far in advanceare rooms booked?
+  respuesta: at least 48 hours in advance
+  original: How far in advance are rooms booked?
+  erratas:
+  - pegadas
+- id: en-parafrasis-042
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: how early do i blok a rolm
+  respuesta: at least 48 hours in advance
+  original: how early do i book a room
+  erratas:
+  - vecina
+  - vecina
+- id: en-exacta-047
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: what is the maximum lengrh of a room booking?
+  respuesta: at most four hours
+  original: What is the maximum length of a room booking?
+  erratas:
+  - vecina
+- id: en-exacta-048
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: How much does the Andes rooom cost per hour?
+  respuesta: 25,000 pesos per hour
+  original: How much does the Andes room cost per hour?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-043
+  documento: room_rental.md
+  capacidad: cantidad
+  pregunta: how much is it to rent the pacific room for an hoour
+  respuesta: 10,000 pesos per hour
+  original: how much is it to rent the pacific room for an hour
+  erratas:
+  - duplicacion
+- id: en-trampa-016
+  par: en-parafrasis-043
+  pregunta: how much is it to rent the audiotrium for an hour?
+  original: How much is it to rent the auditorium for an hour?
+  erratas:
+  - transposicion
+- id: en-parafrasis-044
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: do internal unitspay to use the rooms?
+  respuesta: Internal units do not pay rent
+  original: do internal units pay to use the rooms?
+  erratas:
+  - pegadas
+- id: en-exacta-049
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: What happens if a booking is cancelled les than 24 hours in advance?
+  respuesta: is charged in full
+  original: What happens if a booking is cancelled less than 24 hours in advance?
+  erratas:
+  - fonetica
+- id: en-parafrasis-045
+  documento: room_rental.md
+  capacidad: condicion
+  pregunta: if i csncel the room on the same day do they charge me?
+  respuesta: A booking cancelled less than 24 hours in advance is charged in full
+  original: if i cancel the room on the same day do they charge me?
+  erratas:
+  - vecina
+- id: en-trampa-017
+  par: en-parafrasis-045
+  pregunta: Do I get my money badk if I cencel the room a week in advance?
+  original: Do I get my money back if I cancel the room a week in advance?
+  erratas:
+  - fonetica
+  - vecina
+- id: en-exacta-050
+  documento: room_rental.md
+  capacidad: procedimiento
+  pregunta: Where are bookigs cancelled?
+  respuesta: in the same booking system
+  original: Where are bookings cancelled?
+  erratas:
+  - omision
+- id: en-exacta-051
+  documento: room_rental.md
+  capacidad: lista
+  pregunta: What equuipment do the rooms have?
+  respuesta: a projector and a whiteboard
+  original: What equipment do the rooms have?
+  erratas:
+  - duplicacion
+- id: en-parafrasis-046
+  documento: room_rental.md
+  capacidad: duracion
+  pregunta: how many days ahead do i order cofffee for the meting
+  respuesta: three days in advance
+  original: how many days ahead do i order coffee for the meeting
+  erratas:
+  - omision
+  - duplicacion
+- id: en-trampa-018
+  par: en-parafrasis-046
+  pregunta: how many daays ahead do i order luhch for the meeting?
+  original: How many days ahead do I order lunch for the meeting?
+  erratas:
+  - vecina
+  - duplicacion
+- id: en-parafrasis-047
+  documento: room_rental.md
+  capacidad: persona
+  pregunta: who is coffee service reqeusted from?
+  respuesta: from the Events Unit
+  original: Who is coffee service requested from?
+  erratas:
+  - transposicion
+- id: en-trampa-019
+  par: en-parafrasis-047
+  pregunta: who is simultaneous interpretasion requessted from?
+  original: Who is simultaneous interpretation requested from?
+  erratas:
+  - fonetica
+  - duplicacion
+- id: en-trampa-020
+  par: en-exacta-051
+  pregunta: do the rioms have sound systems?
+  original: Do the rooms have sound systems?
+  erratas:
+  - vecina

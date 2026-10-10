@@ -1,0 +1,942 @@
+# Banco de erratas (diseno), generado por generar.py desde banco_garantias. No editar a mano.
+- id: pt-exacta-001
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: qual e o horrio do eztacionamento de segunda a sexta?
+  respuesta: entre as 7:00 e as 21:00 horas
+  original: Qual é o horário do estacionamento de segunda a sexta?
+  erratas:
+  - fonetica
+  - omision
+- id: pt-parafrasis-001
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: ate que horas posso deichar o carro no estacionamento numa terca
+  respuesta: entre as 7:00 e as 21:00 horas
+  original: ate que horas posso deixar o carro no estacionamento numa terca
+  erratas:
+  - fonetica
+- id: pt-trampa-001
+  par: pt-parafrasis-001
+  pregunta: Até que horas o estacionamemto funciona nos feriados?
+  original: Até que horas o estacionamento funciona nos feriados?
+  erratas:
+  - vecina
+- id: pt-exacta-002
+  documento: regulamento_estacionamento.md
+  capacidad: fecha
+  pregunta: Qual é o hrário do estacionamento aos sábaados?
+  respuesta: Aos sábados abre das 8:00 às 14:00 horas
+  original: Qual é o horário do estacionamento aos sábados?
+  erratas:
+  - omision
+  - duplicacion
+- id: pt-exacta-003
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: O estacionamento avre aos domingos?
+  respuesta: aos domingos permanece fechado
+  original: O estacionamento abre aos domingos?
+  erratas:
+  - vecina
+- id: pt-parafrasis-002
+  documento: regulamento_estacionamento.md
+  capacidad: persona
+  pregunta: Quem emitea autorização para estacionar?
+  respuesta: Unidade de Serviços Gerais
+  original: Quem emite a autorização para estacionar?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-003
+  documento: regulamento_estacionamento.md
+  capacidad: procedimiento
+  pregunta: Que documentos preciso para pedor a auotrização de estacionamento?
+  respuesta: o formulário de acesso veicular e a cópia do documento do veículo
+  original: Que documentos preciso para pedir a autorização de estacionamento?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-exacta-004
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Quantas placaas cada servidor pode cadastrar?
+  respuesta: no máximo duas placas
+  original: Quantas placas cada servidor pode cadastrar?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-004
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: posso cadastrar 3 carroos no estacionamento?
+  respuesta: no máximo duas placas
+  original: posso cadastrar 3 carros no estacionamento?
+  erratas:
+  - duplicacion
+- id: pt-exacta-005
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: quanto custa a autoriacao anual de estacionamento para servidores?
+  respuesta: 60.000 pesos
+  original: Quanto custa a autorização anual de estacionamento para servidores?
+  erratas:
+  - omision
+- id: pt-trampa-002
+  par: pt-exacta-005
+  pregunta: quanto cutsa a autorizacao mensal de estacioanmento para servidores?
+  original: Quanto custa a autorização mensal de estacionamento para servidores?
+  erratas:
+  - transposicion
+  - transposicion
+- id: pt-exacta-006
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: quanto os visita ntes pagam por hora de estacionamento?
+  respuesta: 1.500 pesos por hora
+  original: Quanto os visitantes pagam por hora de estacionamento?
+  erratas:
+  - separada
+- id: pt-parafrasis-005
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: quanto cobram de um visitante pra deixar o carro uma horra
+  respuesta: 1.500 pesos por hora
+  original: quanto cobram de um visitante pra deixar o carro uma hora
+  erratas:
+  - duplicacion
+- id: pt-exacta-007
+  documento: regulamento_estacionamento.md
+  capacidad: cantidad
+  pregunta: Qual é a cobrança máxmia diária para visitantes no eztacionamento?
+  respuesta: um máximo de 9.000 pesos por dia
+  original: Qual é a cobrança máxima diária para visitantes no estacionamento?
+  erratas:
+  - transposicion
+  - fonetica
+- id: pt-parafrasis-006
+  documento: regulamento_estacionamento.md
+  capacidad: ubicacion
+  pregunta: Onde ficam as vagas para pessoas com defiiência?
+  respuesta: junto ao elevador do primeiro subsolo
+  original: Onde ficam as vagas para pessoas com deficiência?
+  erratas:
+  - omision
+- id: pt-parafrasis-007
+  documento: regulamento_estacionamento.md
+  capacidad: ubicacion
+  pregunta: onde carrego o careo elerico
+  respuesta: nos quatro pontos de recarga do segundo subsolo
+  original: onde carrego o carro eletrico
+  erratas:
+  - vecina
+  - omision
+- id: pt-trampa-003
+  par: pt-parafrasis-007
+  pregunta: onde cqrrego a moto eletrica?
+  original: Onde carrego a moto elétrica?
+  erratas:
+  - vecina
+- id: pt-exacta-008
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: o que aocntece se alguem etacionar sem autorizacao?
+  respuesta: recebe uma advertência por escrito
+  original: O que acontece se alguém estacionar sem autorização?
+  erratas:
+  - transposicion
+  - omision
+- id: pt-exacta-009
+  documento: regulamento_estacionamento.md
+  capacidad: condicion
+  pregunta: O que acontese na terseira advertência?
+  respuesta: a autorização é suspensa por três meses
+  original: O que acontece na terceira advertência?
+  erratas:
+  - fonetica
+  - fonetica
+- id: pt-parafrasis-008
+  documento: regulamento_estacionamento.md
+  capacidad: duracion
+  pregunta: se eu levar 3 advertencias por quanto tempo tiram mimha autorizacao
+  respuesta: a autorização é suspensa por três meses
+  original: se eu levar 3 advertencias por quanto tempo tiram minha autorizacao
+  erratas:
+  - vecina
+- id: pt-parafrasis-009
+  documento: regulamento_estacionamento.md
+  capacidad: persona
+  pregunta: A quem se apresenta recurso conyra uma advertência do esstacionamento?
+  respuesta: ao Chefe de Serviços Gerais
+  original: A quem se apresenta recurso contra uma advertência do estacionamento?
+  erratas:
+  - vecina
+  - duplicacion
+- id: pt-exacta-010
+  documento: regulamento_estacionamento.md
+  capacidad: duracion
+  pregunta: Qual é o prszo para recrorer de uma advertência?
+  respuesta: em até dez dias úteis
+  original: Qual é o prazo para recorrer de uma advertência?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-trampa-004
+  par: pt-exacta-010
+  pregunta: Qual é o prazo para rceorrer de uma multa de trânsito?
+  original: Qual é o prazo para recorrer de uma multa de trânsito?
+  erratas:
+  - transposicion
+- id: pt-exacta-011
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: Quanto espaço livre a impressora Lumen P40 prceisa de cada lado?
+  respuesta: 10 centímetros livres de cada lado
+  original: Quanto espaço livre a impressora Lumen P40 precisa de cada lado?
+  erratas:
+  - transposicion
+- id: pt-parafrasis-010
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: Como a impressora se cinecta à reede?
+  respuesta: por cabo ou por Wi-Fi no painel de configuração
+  original: Como a impressora se conecta à rede?
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-exacta-012
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: quantas folhas a bandeja pincipal da impresora comporta?
+  respuesta: até 250 folhas
+  original: Quantas folhas a bandeja principal da impressora comporta?
+  erratas:
+  - fonetica
+  - omision
+- id: pt-parafrasis-011
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: quantas folias cabm na impressora
+  respuesta: até 250 folhas
+  original: quantas folhas cabem na impressora
+  erratas:
+  - omision
+  - fonetica
+- id: pt-trampa-005
+  par: pt-parafrasis-011
+  pregunta: quantas folhhas cbem na bandeja de saida da impressora?
+  original: Quantas folhas cabem na bandeja de saída da impressora?
+  erratas:
+  - omision
+  - duplicacion
+- id: pt-exacta-013
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: Que gramatura de ppel a impresora Lumen P40 aceita?
+  respuesta: uma gramatura entre 70 e 120 gramas
+  original: Que gramatura de papel a impressora Lumen P40 aceita?
+  erratas:
+  - omision
+  - fonetica
+- id: pt-exacta-014
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: Quantas páginas rende um cartuchode toner?
+  respuesta: aproximadamente 3.000 páginas
+  original: Quantas páginas rende um cartucho de toner?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-012
+  documento: manual_impressora.md
+  capacidad: cantidad
+  pregunta: pra quantas psginas da o toner
+  respuesta: aproximadamente 3.000 páginas
+  original: pra quantas paginas da o toner
+  erratas:
+  - vecina
+- id: pt-parafrasis-013
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que sinifica quando a luz laranja da impressora pisca?
+  respuesta: resta menos de 10 % de toner
+  original: O que significa quando a luz laranja da impressora pisca?
+  erratas:
+  - omision
+- id: pt-trampa-006
+  par: pt-parafrasis-013
+  pregunta: o que significa quando a luz vermelhada impressora pisca?
+  original: O que significa quando a luz vermelha da impressora pisca?
+  erratas:
+  - pegadas
+- id: pt-exacta-015
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que indica o código E2 da impres sora?
+  respuesta: um atolamento de papel na bandeja traseira
+  original: O que indica o código E2 da impressora?
+  erratas:
+  - separada
+- id: pt-parafrasis-014
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: apareceu e2 na imperssora, o que e
+  respuesta: um atolamento de papel na bandeja traseira
+  original: apareceu E2 na impressora, o que e
+  erratas:
+  - transposicion
+- id: pt-exacta-016
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: o que indica o codio e5?
+  respuesta: a tampa frontal está aberta
+  original: O que indica o código E5?
+  erratas:
+  - omision
+- id: pt-exacta-017
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: O que faezr se aoarecer o código E9?
+  respuesta: desligue a impressora e chame a assistência técnica
+  original: O que fazer se aparecer o código E9?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-trampa-007
+  par: pt-exacta-017
+  pregunta: O que fazerse aparecer o código E7?
+  original: O que fazer se aparecer o código E7?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-015
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: com que frequecnia o rolo de alimentacao e lompo?
+  respuesta: a cada três meses
+  original: Com que frequência o rolo de alimentação é limpo?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-parafrasis-016
+  documento: manual_impressora.md
+  capacidad: procedimiento
+  pregunta: com o que eu lipmo o rolo da imprezsora
+  respuesta: com um pano seco
+  original: com o que eu limpo o rolo da impressora
+  erratas:
+  - transposicion
+  - fonetica
+- id: pt-exacta-018
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: Depois de quanto tempo sem uso a impressora entra em economiade energia?
+  respuesta: depois de 15 minutos sem uso
+  original: Depois de quanto tempo sem uso a impressora entra em economia de energia?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-017
+  documento: manual_impressora.md
+  capacidad: duracion
+  pregunta: quanto tempo dura a garatnia da impressora
+  respuesta: uma garantia de 18 meses
+  original: quanto tempo dura a garantia da impressora
+  erratas:
+  - transposicion
+- id: pt-trampa-008
+  par: pt-parafrasis-017
+  pregunta: Quanto tempo dura a garantia do cartuchode toner?
+  original: Quanto tempo dura a garantia do cartucho de toner?
+  erratas:
+  - pegadas
+- id: pt-exacta-019
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: O que a grantia da Lumen P40 não cobre?
+  respuesta: o uso de cartuchos recarregados
+  original: O que a garantia da Lumen P40 não cobre?
+  erratas:
+  - omision
+- id: pt-parafrasis-018
+  documento: manual_impressora.md
+  capacidad: condicion
+  pregunta: se eu usar cartucho recarregado perco a gzrantia?
+  respuesta: A garantia não cobre o uso de cartuchos recarregados
+  original: se eu usar cartucho recarregado perco a garantia?
+  erratas:
+  - vecina
+- id: pt-exacta-020
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: quantos diqs de ferias cada setvidor tem por ano?
+  respuesta: 15 dias úteis de férias por ano
+  original: Quantos dias de férias cada servidor tem por ano?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-parafrasis-019
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: quantos diaz de ferias eu tenho por ano
+  respuesta: 15 dias úteis de férias por ano
+  original: quantos dias de ferias eu tenho por ano
+  erratas:
+  - fonetica
+- id: pt-exacta-021
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias adicionais redebe quem tem mais de dez anos de caaa?
+  respuesta: recebe três dias adicionais
+  original: Quantos dias adicionais recebe quem tem mais de dez anos de casa?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-exacta-022
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: Com quanta antecedência as féias são solicitadas?
+  respuesta: com pelo menos 20 dias de antecedência
+  original: Com quanta antecedência as férias são solicitadas?
+  erratas:
+  - omision
+- id: pt-parafrasis-020
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: com quanto tepmo antes eu tenho q pedir as freias
+  respuesta: com pelo menos 20 dias de antecedência
+  original: com quanto tempo antes eu tenho q pedir as ferias
+  erratas:
+  - transposicion
+  - transposicion
+- id: pt-trampa-009
+  par: pt-parafrasis-020
+  pregunta: Com quanta anteceência se solicita uma licença sem vencimentos?
+  original: Com quanta antecedência se solicita uma licença sem vencimentos?
+  erratas:
+  - omision
+- id: pt-parafrasis-021
+  documento: politica_ferias.md
+  capacidad: persona
+  pregunta: quem aprvoa as ferias?
+  respuesta: A chefia imediata
+  original: Quem aprova as férias?
+  erratas:
+  - transposicion
+- id: pt-exacta-023
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: Em que prazo a cyefia responde um pedido de fétias?
+  respuesta: em até cinco dias úteis
+  original: Em que prazo a chefia responde um pedido de férias?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-parafrasis-022
+  documento: politica_ferias.md
+  capacidad: condicion
+  pregunta: o que acontece se meu chefe nao responder o peedido de ferias
+  respuesta: o pedido é considerado aprovado
+  original: o que acontece se meu chefe nao responder o pedido de ferias
+  erratas:
+  - duplicacion
+- id: pt-exacta-024
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: quantos periodos de ferias podem ser acuumlados?
+  respuesta: no máximo dois períodos de férias
+  original: Quantos períodos de férias podem ser acumulados?
+  erratas:
+  - transposicion
+- id: pt-parafrasis-023
+  documento: politica_ferias.md
+  capacidad: condicion
+  pregunta: o que acontece com os dias de feriss que passam do limtie
+  respuesta: são perdidos no fechamento do ano
+  original: o que acontece com os dias de ferias que passam do limite
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-exacta-025
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias de licença são concedidoz por casamento?
+  respuesta: cinco dias úteis de licença remunerada
+  original: Quantos dias de licença são concedidos por casamento?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-024
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: vou casar mes que vem, quantos dias de folga eu ganio
+  respuesta: cinco dias úteis de licença remunerada
+  original: vou casar mes que vem, quantos dias de folga eu ganho
+  erratas:
+  - fonetica
+- id: pt-trampa-010
+  par: pt-parafrasis-024
+  pregunta: quantos dias de liceenca sao concedidos por mudanca de residencia?
+  original: Quantos dias de licença são concedidos por mudança de residência?
+  erratas:
+  - duplicacion
+- id: pt-exacta-026
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: quantos dias o pai recebe peko nascimento de um filho?
+  respuesta: o pai recebe cinco dias úteis
+  original: Quantos dias o pai recebe pelo nascimento de um filho?
+  erratas:
+  - vecina
+- id: pt-exacta-027
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: Quantos dias são concedidos peelo falecimento de um familiar direto?
+  respuesta: são concedidos três dias úteis
+  original: Quantos dias são concedidos pelo falecimento de um familiar direto?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-025
+  documento: politica_ferias.md
+  capacidad: cantidad
+  pregunta: se morrer um familiar drieto quantos dias eu tenho
+  respuesta: são concedidos três dias úteis
+  original: se morrer um familiar direto quantos dias eu tenho
+  erratas:
+  - transposicion
+- id: pt-exacta-028
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: em que prazoo atestado medico e entregue aos recursos humanos?
+  respuesta: em até dois dias úteis após a emissão
+  original: Em que prazo o atestado médico é entregue aos Recursos Humanos?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-026
+  documento: politica_ferias.md
+  capacidad: duracion
+  pregunta: quantos dias eu tenho pra entregar o ateztado
+  respuesta: em até dois dias úteis após a emissão
+  original: quantos dias eu tenho pra entregar o atestado
+  erratas:
+  - fonetica
+- id: pt-parafrasis-027
+  documento: politica_ferias.md
+  capacidad: persona
+  pregunta: Quem tramita o benefício do atstado médico?
+  respuesta: Os Recursos Humanos tramitam o benefício
+  original: Quem tramita o benefício do atestado médico?
+  erratas:
+  - omision
+- id: pt-exacta-029
+  documento: protocolo_emergencias.md
+  capacidad: procedimiento
+  pregunta: por onde se evacua quando soa o alarme contnuo?
+  respuesta: pela escada mais próxima
+  original: Por onde se evacua quando soa o alarme contínuo?
+  erratas:
+  - omision
+- id: pt-parafrasis-028
+  documento: protocolo_emergencias.md
+  capacidad: condicion
+  pregunta: da pra usar o elevador se tiver que evacaur?
+  respuesta: Os elevadores não são usados durante uma evacuação
+  original: da pra usar o elevador se tiver que evacuar?
+  erratas:
+  - transposicion
+- id: pt-exacta-030
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: qual e o pnto de encontro em uma evacucao?
+  respuesta: a praça em frente à entrada principal
+  original: Qual é o ponto de encontro em uma evacuação?
+  erratas:
+  - omision
+  - omision
+- id: pt-parafrasis-029
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: onde a gente se enconrta se evacuar o predio
+  respuesta: a praça em frente à entrada principal
+  original: onde a gente se encontra se evacuar o predio
+  erratas:
+  - transposicion
+- id: pt-trampa-011
+  par: pt-parafrasis-029
+  pregunta: onde nos enxontramos se faltar energa?
+  original: Onde nos encontramos se faltar energia?
+  erratas:
+  - omision
+  - vecina
+- id: pt-exacta-031
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: quem designa o lider de eva cuacao de cada andar?
+  respuesta: a Gerência de Operações
+  original: Quem designa o líder de evacuação de cada andar?
+  erratas:
+  - separada
+- id: pt-parafrasis-030
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: a quem o liser de evacuacao informa?
+  respuesta: informa o Coordenador de Emergências
+  original: A quem o líder de evacuação informa?
+  erratas:
+  - vecina
+- id: pt-exacta-032
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: Quantos zimulados de evacuação são feitos por ano?
+  respuesta: dois simulados de evacuação por ano
+  original: Quantos simulados de evacuação são feitos por ano?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-031
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: em que mezes sao os simulados
+  respuesta: um em abril e outro em outubro
+  original: em que meses sao os simulados
+  erratas:
+  - fonetica
+- id: pt-trampa-012
+  par: pt-parafrasis-031
+  pregunta: Em que meses são os treinamentosde segurança?
+  original: Em que meses são os treinamentos de segurança?
+  erratas:
+  - pegadas
+- id: pt-exacta-033
+  documento: protocolo_emergencias.md
+  capacidad: duracion
+  pregunta: a cada quanto temppo os extintores sao revisados?
+  respuesta: a cada seis meses
+  original: A cada quanto tempo os extintores são revisados?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-032
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: onde ha extitnores?
+  respuesta: junto a cada saída de emergência
+  original: Onde há extintores?
+  erratas:
+  - transposicion
+- id: pt-exacta-034
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: para qual ramal se liga em caso de inc endio?
+  respuesta: no ramal 2222
+  original: Para qual ramal se liga em caso de incêndio?
+  erratas:
+  - separada
+- id: pt-parafrasis-033
+  documento: protocolo_emergencias.md
+  capacidad: cantidad
+  pregunta: pra que numero eu liggo se pegar fogo
+  respuesta: no ramal 2222
+  original: pra que numero eu ligo se pegar fogo
+  erratas:
+  - duplicacion
+- id: pt-trampa-013
+  par: pt-parafrasis-033
+  pregunta: para que nuemro eu ligo se houver um vazamento de agua?
+  original: Para que número eu ligo se houver um vazamento de água?
+  erratas:
+  - transposicion
+- id: pt-exacta-035
+  documento: protocolo_emergencias.md
+  capacidad: fecha
+  pregunta: qual e o horario da cetnral de seguuranca?
+  respuesta: funciona 24 horas
+  original: Qual é o horário da central de segurança?
+  erratas:
+  - duplicacion
+  - transposicion
+- id: pt-exacta-036
+  documento: protocolo_emergencias.md
+  capacidad: ubicacion
+  pregunta: onde fiva o kit de primeiros socorros principal?
+  respuesta: na recepção do térreo
+  original: Onde fica o kit de primeiros socorros principal?
+  erratas:
+  - vecina
+- id: pt-parafrasis-034
+  documento: protocolo_emergencias.md
+  capacidad: persona
+  pregunta: quem sabe primeiros socorros no prredio
+  respuesta: A equipe da recepção tem treinamento em primeiros socorros
+  original: quem sabe primeiros socorros no predio
+  erratas:
+  - duplicacion
+- id: pt-exacta-037
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: Quem pode se candidatar à bolza de aperfeiçoamento?
+  respuesta: os servidores com contrato por tempo indeterminado e pelo menos dois anos de casa
+  original: Quem pode se candidatar à bolsa de aperfeiçoamento?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-035
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: posso me candidatar a bolsa com contrato indeterminado e 3 anoos de casa
+  respuesta: os servidores com contrato por tempo indeterminado e pelo menos dois anos de casa
+  original: posso me candidatar a bolsa com contrato indeterminado e 3 anos de casa
+  erratas:
+  - duplicacion
+- id: pt-exacta-038
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: quem nao pode se cndidatar a bolsa?
+  respuesta: os que receberam a bolsa nos últimos três anos
+  original: Quem não pode se candidatar à bolsa?
+  erratas:
+  - omision
+- id: pt-exacta-039
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: Quando são recebidas as inscrisões para a bolsa?
+  respuesta: entre 1 e 30 de junho
+  original: Quando são recebidas as inscrições para a bolsa?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-036
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: ate quando posso me inzcrever na bolsa
+  respuesta: entre 1 e 30 de junho
+  original: ate quando posso me inscrever na bolsa
+  erratas:
+  - fonetica
+- id: pt-trampa-014
+  par: pt-parafrasis-036
+  pregunta: ate quando posso me inscreverna bolsa de idiomas?
+  original: Até quando posso me inscrever na bolsa de idiomas?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-037
+  documento: edital_bolsa.md
+  capacidad: procedimiento
+  pregunta: que documentoz sao anexxados na inscricao da bolsa?
+  respuesta: o comprovante de matrícula e uma carta da chefia
+  original: Que documentos são anexados na inscrição da bolsa?
+  erratas:
+  - duplicacion
+  - fonetica
+- id: pt-exacta-040
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: Que porrcentagem da mensalidade a bolza financia?
+  respuesta: até 80 % da mensalidade do programa
+  original: Que porcentagem da mensalidade a bolsa financia?
+  erratas:
+  - duplicacion
+  - fonetica
+- id: pt-exacta-041
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: Qual é o valir mááximo da bolsa por ano?
+  respuesta: 2.000.000 pesos por ano
+  original: Qual é o valor máximo da bolsa por ano?
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-parafrasis-038
+  documento: edital_bolsa.md
+  capacidad: cantidad
+  pregunta: quanto dinieiro a bolsa da no mazimo
+  respuesta: 2.000.000 pesos por ano
+  original: quanto dinheiro a bolsa da no maximo
+  erratas:
+  - fonetica
+  - vecina
+- id: pt-trampa-015
+  par: pt-parafrasis-038
+  pregunta: Quanto a bolsa dá para dezpesas de hospedagem?
+  original: Quanto a bolsa dá para despesas de hospedagem?
+  erratas:
+  - fonetica
+- id: pt-parafrasis-039
+  documento: edital_bolsa.md
+  capacidad: persona
+  pregunta: Quem avalia as inscrições da bolxa?
+  respuesta: Um comitê formado por três diretores
+  original: Quem avalia as inscrições da bolsa?
+  erratas:
+  - vecina
+- id: pt-exacta-042
+  documento: edital_bolsa.md
+  capacidad: fecha
+  pregunta: quando sao publicados os resulltados da bolsa?
+  respuesta: em 31 de julho
+  original: Quando são publicados os resultados da bolsa?
+  erratas:
+  - duplicacion
+- id: pt-parafrasis-040
+  documento: edital_bolsa.md
+  capacidad: duracion
+  pregunta: quanto tempo eu tenho que fivar na instituiccao depois da bolsa
+  respuesta: pelo menos dois anos depois de concluir o programa
+  original: quanto tempo eu tenho que ficar na instituicao depois da bolsa
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-exacta-043
+  documento: edital_bolsa.md
+  capacidad: condicion
+  pregunta: O que acontece se o bolzista abandonar o programa?
+  respuesta: deve devolver o valor recebido
+  original: O que acontece se o bolsista abandonar o programa?
+  erratas:
+  - fonetica
+- id: pt-exacta-044
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: qual e a capac idade da sala andes?
+  respuesta: capacidade para 40 pessoas
+  original: Qual é a capacidade da sala Andes?
+  erratas:
+  - separada
+- id: pt-parafrasis-041
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: quanta gente caabe na sala ahdes
+  respuesta: capacidade para 40 pessoas
+  original: quanta gente cabe na sala andes
+  erratas:
+  - duplicacion
+  - vecina
+- id: pt-exacta-045
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: qual saka conta com videoconferencia?
+  respuesta: A sala Pacífico tem capacidade para 12 pessoas e conta com videoconferência
+  original: Qual sala conta com videoconferência?
+  erratas:
+  - vecina
+- id: pt-exacta-046
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: Com quanta anecedência as salas são reservadas?
+  respuesta: com pelo menos 48 horas de antecedência
+  original: Com quanta antecedência as salas são reservadas?
+  erratas:
+  - omision
+- id: pt-parafrasis-042
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: com quanto tempo antes eu reservo uma zala
+  respuesta: com pelo menos 48 horas de antecedência
+  original: com quanto tempo antes eu reservo uma sala
+  erratas:
+  - fonetica
+- id: pt-exacta-047
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: quanto dira no maximo uma reesrva de sala?
+  respuesta: no máximo quatro horas
+  original: Quanto dura no máximo uma reserva de sala?
+  erratas:
+  - vecina
+  - transposicion
+- id: pt-exacta-048
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: Quanto custa a hota da ssla Andes?
+  respuesta: 25.000 pesos por hora
+  original: Quanto custa a hora da sala Andes?
+  erratas:
+  - vecina
+  - vecina
+- id: pt-parafrasis-043
+  documento: aluguel_salas.md
+  capacidad: cantidad
+  pregunta: quanto sai allugar a sala pacifico por uma hora
+  respuesta: 10.000 pesos por hora
+  original: quanto sai alugar a sala pacifico por uma hora
+  erratas:
+  - duplicacion
+- id: pt-trampa-016
+  par: pt-parafrasis-043
+  pregunta: quanto sai alugar o audit orio por uma hora?
+  original: Quanto sai alugar o auditório por uma hora?
+  erratas:
+  - separada
+- id: pt-parafrasis-044
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: as unidades internas paagm pra uwar as salas?
+  respuesta: As unidades internas não pagam aluguel
+  original: as unidades internas pagam pra usar as salas?
+  erratas:
+  - transposicion
+  - vecina
+- id: pt-exacta-049
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: o que acontece se uma reserva for cancelada com menos de 24 horasde antecedencia?
+  respuesta: é cobrada integralmente
+  original: O que acontece se uma reserva for cancelada com menos de 24 horas de antecedência?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-045
+  documento: aluguel_salas.md
+  capacidad: condicion
+  pregunta: se eu cancelar a sala no mesmodia eles cobram?
+  respuesta: Uma reserva cancelada com menos de 24 horas de antecedência é cobrada integralmente
+  original: se eu cancelar a sala no mesmo dia eles cobram?
+  erratas:
+  - pegadas
+- id: pt-trampa-017
+  par: pt-parafrasis-045
+  pregunta: Devolvem o dinheiro se eu cancelar a sala com uma semsna de antecedência?
+  original: Devolvem o dinheiro se eu cancelar a sala com uma semana de antecedência?
+  erratas:
+  - vecina
+- id: pt-exacta-050
+  documento: aluguel_salas.md
+  capacidad: procedimiento
+  pregunta: Onde são feitos os cancelamenttos das reservas?
+  respuesta: no mesmo sistema de reservas
+  original: Onde são feitos os cancelamentos das reservas?
+  erratas:
+  - duplicacion
+- id: pt-exacta-051
+  documento: aluguel_salas.md
+  capacidad: lista
+  pregunta: que equipamentos as salastem?
+  respuesta: projetor e quadro branco
+  original: Que equipamentos as salas têm?
+  erratas:
+  - pegadas
+- id: pt-parafrasis-046
+  documento: aluguel_salas.md
+  capacidad: duracion
+  pregunta: com quantos dias de antecedenciapeco o cafe pra reuniao
+  respuesta: com três dias de antecedência
+  original: com quantos dias de antecedencia peco o cafe pra reuniao
+  erratas:
+  - pegadas
+- id: pt-trampa-018
+  par: pt-parafrasis-046
+  pregunta: Com quantos diaz de antesedência peço o almoço para a reunião?
+  original: Com quantos dias de antecedência peço o almoço para a reunião?
+  erratas:
+  - fonetica
+  - fonetica
+- id: pt-parafrasis-047
+  documento: aluguel_salas.md
+  capacidad: persona
+  pregunta: A quem se zolicita o serviço de café?
+  respuesta: à Unidade de Eventos
+  original: A quem se solicita o serviço de café?
+  erratas:
+  - fonetica
+- id: pt-trampa-019
+  par: pt-parafrasis-047
+  pregunta: a quem se zolicita o servico de traduao simultanea?
+  original: A quem se solicita o serviço de tradução simultânea?
+  erratas:
+  - fonetica
+  - omision
+- id: pt-trampa-020
+  par: pt-exacta-051
+  pregunta: As zalas têm equipamento de som?
+  original: As salas têm equipamento de som?
+  erratas:
+  - fonetica

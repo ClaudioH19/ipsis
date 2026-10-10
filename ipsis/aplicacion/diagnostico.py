@@ -88,7 +88,7 @@ class ProyectoNoEncontrado(RuntimeError):
 
 ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
          "personalidad", "modo")
-_PERFIL_CAMBIAR = "ipsis profile set light|medium|heavy"
+_PERFIL_CAMBIAR = "ipsis profile set light|medium"
 
 
 def _chequeo(clave: str, nivel: Estado, mensaje: str, acciones=(), detalles=(), **datos) -> ChequeoDoctor:
@@ -171,8 +171,10 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
     else:
         try:
             motor = cargar_proyecto()
-            config_recuperacion(motor, perfil="light")  # la sección recuperacion: existe
+            # Conservar el YAML validado para que el chequeo de perfil pueda
+            # identificar ajustes inválidos, aunque falle resolver recuperación.
             ctx.motor = motor
+            config_recuperacion(motor, perfil="light")
         except Exception as e:  # noqa: BLE001
             problemas.append(f"{rutas.MOTOR}: {_breve(e, 'motor')}")
             acciones.append(t("check.fix_file", path=rutas.MOTOR))
@@ -371,12 +373,12 @@ def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
         return _no_evaluado("calibracion", t("check.dep_profile_index"))
     try:
         leer_calibracion(rutas.CALIBRACION)
+        estado = estado_calibracion(ctx.instalacion, ctx.indice)
     except Exception as e:  # noqa: BLE001 -- el motor tampoco podría leerla
         return _chequeo("calibracion", Estado.ERROR,
                         t("check.calibration_invalid", path=rutas.CALIBRACION, error=_breve(e, "calibracion")),
                         [t("check.calibration_rewrite"), t("check.calibration_delete", path=rutas.CALIBRACION)],
                         estado="ilegible")
-    estado = estado_calibracion(ctx.instalacion, ctx.indice)
     if estado.estado == "sin_calibracion":
         return _chequeo("calibracion", Estado.AVISO, t("check.calibration_none"), estado="sin_calibracion")
     if estado.estado == "vigente":

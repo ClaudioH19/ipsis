@@ -58,18 +58,22 @@ anything.
 
 ## 7. Parameters and defaults
 
-| Parameter | light | medium | heavy |
-|---|---|---|---|
-| Dense model | e5-small (384) | e5-small (384) | e5-base (768) |
-| `retrieve_n` | 10 | 20 | 30 |
-| BM25 `k1`, `b` | 1.2 / 0.75 | 1.2 / 0.75 | 1.2 / 0.75 |
+| Parameter | light | medium |
+|---|---|---|
+| Dense model | e5-small (384) | e5-small (384) |
+| `retrieve_n` | 10 | 20 |
+| BM25 `k1`, `b` | 1.2 / 0.75 | 1.2 / 0.75 |
 
 They are tuned in `config/engine.yaml::profile_overrides`.
 
 ## 8. Complexity and resources
 
 Encoding the question and querying Qdrant takes 20–60 ms with e5-small and
-50–150 ms with e5-base on CPU. Model disk: 470 MB (small) and 1.1 GB (base).
+50–150 ms with the previous e5-base on CPU (historical). Model disk: 470 MB
+(e5-small), 1.1 GB (e5-base) and 313 MB (Granite R2 x86 AVX2). Granite uses CLS
+pooling without e5 prefixes or its cosine floor. Other supported candidates
+declare their own contracts in the catalog; the deployment corpus needs
+calibration. See [general regression](../../herramientas/evaluacion/README.md).
 
 ## 9. Failures and fallback
 

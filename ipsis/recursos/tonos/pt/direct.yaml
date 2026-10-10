@@ -96,6 +96,15 @@ situations:
   - 'Falta resposta direta. Veja:'
   - 'Não exato. O mais próximo:'
   - 'Resposta direta: nenhuma. Próximo:'
+  related_check:
+  - "É isto? Se não, pergunte de outro jeito."
+  - "Serve? Se não, reformule."
+  - "Se não for isto, dê detalhes."
+  - "Responde sua dúvida? Se não, especifique."
+  - "Veja o trecho. Se não servir, pergunte diferente."
+  - "Era isto? Se não, diga o que falta."
+  - "Se queria outra coisa, especifique."
+  - "Corresponde? Se não, mude a pergunta."
   missing_focus:
   - '«{term}» não está. O mais próximo:'
   - 'Nada sobre «{term}». Relacionado:'
@@ -127,6 +136,24 @@ situations:
   - '"{entity}": sem dados.'
   - Não acho "{entity}".
   - Nenhuma menção a "{entity}".
+  needs_clarification:
+  - Qual tema? Diga e eu procuro.
+  - Falta o tema. Seja mais específico.
+  - Pode ser mais de uma coisa. Qual?
+  - Indique o documento ou processo.
+  - Pergunta incompleta. Do que se trata?
+  - Há várias opções possíveis. Especifique o tema.
+  - Preciso do tema para buscar.
+  - Diga do que fala e eu respondo.
+  alternatives_intro:
+  - 'Parecido:'
+  - 'O mais próximo:'
+  - 'Alternativas:'
+  - 'Opções semelhantes:'
+  - 'Disponível no lugar:'
+  - 'Opções mais próximas:'
+  - 'Isto se parece:'
+  - 'Disponível e semelhante:'
   welcome:
   - Pergunte.
   - Escreva sua pergunta.

@@ -1,0 +1,677 @@
+# Banco de erratas (validacion), generado por generar.py desde banco_validacion. No editar a mano.
+- id: es-exacta-001
+  documento: politica_equipos.md
+  capacidad: lista
+  pregunta: ¿Qué equipos recibe cada funsionario?
+  respuesta: un computador portátil y un mouse inalámbrico
+  original: ¿Qué equipos recibe cada funcionario?
+  erratas:
+  - fonetica
+- id: es-parafrasis-001
+  documento: politica_equipos.md
+  capacidad: lista
+  pregunta: que me pasan para traba jar cuando entro
+  respuesta: un computador portátil y un mouse inalámbrico
+  original: que me pasan para trabajar cuando entro
+  erratas:
+  - separada
+- id: es-trampa-001
+  par: es-exacta-001
+  pregunta: ¿Qué teléfono celular recibe cada fumcionario?
+  original: ¿Qué teléfono celular recibe cada funcionario?
+  erratas:
+  - vecina
+- id: es-exacta-002
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: ¿Quién firma el acta de entrega del ekipo junto al funcionario?
+  respuesta: el Encargado de Inventario
+  original: ¿Quién firma el acta de entrega del equipo junto al funcionario?
+  erratas:
+  - fonetica
+- id: es-exacta-003
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: ¿Para qué se puede usar el equupo?
+  respuesta: solo para labores institucionales
+  original: ¿Para qué se puede usar el equipo?
+  erratas:
+  - vecina
+- id: es-parafrasis-002
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: puedo instalar juegos en el computadordel trabajo?
+  respuesta: Está prohibido instalar juegos o programas de descarga de archivos
+  original: puedo instalar juegos en el computador del trabajo?
+  erratas:
+  - pegadas
+- id: es-exacta-004
+  documento: politica_equipos.md
+  capacidad: cantidad
+  pregunta: cuantos caracteres debe tener la contrasena del equioo?
+  respuesta: al menos 10 caracteres
+  original: ¿Cuántos caracteres debe tener la contraseña del equipo?
+  erratas:
+  - vecina
+- id: es-trampa-002
+  par: es-exacta-004
+  pregunta: cuantos caracteres debe twner la contrasena del correo?
+  original: ¿Cuántos caracteres debe tener la contraseña del correo?
+  erratas:
+  - vecina
+- id: es-exacta-005
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: despues de cuanto tiemoo se bloquea la pantalla del equipo?
+  respuesta: después de 5 minutos de inactividad
+  original: ¿Después de cuánto tiempo se bloquea la pantalla del equipo?
+  erratas:
+  - vecina
+- id: es-parafrasis-003
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: en cuanto rato se bloqueala pantalla si no la uso
+  respuesta: después de 5 minutos de inactividad
+  original: en cuanto rato se bloquea la pantalla si no la uso
+  erratas:
+  - pegadas
+- id: es-exacta-006
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: en que plazo se infora la perdida del equippo?
+  respuesta: dentro de 24 horas
+  original: ¿En qué plazo se informa la pérdida del equipo?
+  erratas:
+  - duplicacion
+  - omision
+- id: es-parafrasis-004
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: a quien avisso si me roban el notbook
+  respuesta: a la Mesa de Ayuda
+  original: a quien aviso si me roban el notebook
+  erratas:
+  - omision
+  - duplicacion
+- id: es-trampa-003
+  par: es-parafrasis-004
+  pregunta: a quien aviso si me rovan el celular personal?
+  original: ¿A quién aviso si me roban el celular personal?
+  erratas:
+  - fonetica
+- id: es-exacta-007
+  documento: politica_equipos.md
+  capacidad: procedimiento
+  pregunta: ¿Qué se adjunta en caso de robo del eqquipo?
+  respuesta: la denuncia de Carabineros
+  original: ¿Qué se adjunta en caso de robo del equipo?
+  erratas:
+  - duplicacion
+- id: es-exacta-008
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: ¿A quién se devuelve el equipo al terminar el conteato?
+  respuesta: al Encargado de Inventario
+  original: ¿A quién se devuelve el equipo al terminar el contrato?
+  erratas:
+  - vecina
+- id: es-exacta-009
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: ¿Qué se hace con el equipo antez de asignarlo a otra persona?
+  respuesta: se formatea
+  original: ¿Qué se hace con el equipo antes de asignarlo a otra persona?
+  erratas:
+  - fonetica
+- id: es-trampa-004
+  par: es-exacta-009
+  pregunta: quien paga la reparacion del equuipo danado?
+  original: ¿Quién paga la reparación del equipo dañado?
+  erratas:
+  - duplicacion
+- id: es-exacta-010
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: en que horrario sirve almuerzo el casimo?
+  respuesta: entre las 12:30 y las 15:00 horas
+  original: ¿En qué horario sirve almuerzo el casino?
+  erratas:
+  - duplicacion
+  - vecina
+- id: es-parafrasis-005
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: hasta q horra puedo almorzar en el casino
+  respuesta: entre las 12:30 y las 15:00 horas
+  original: hasta q hora puedo almorzar en el casino
+  erratas:
+  - duplicacion
+- id: es-trampa-005
+  par: es-parafrasis-005
+  pregunta: hasta que hpra se sirve la sena en el casino?
+  original: ¿Hasta qué hora se sirve la cena en el casino?
+  erratas:
+  - fonetica
+  - vecina
+- id: es-exacta-011
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: ¿En qué horario se sirve el desay uno?
+  respuesta: de 8:00 a 9:30 horas
+  original: ¿En qué horario se sirve el desayuno?
+  erratas:
+  - separada
+- id: es-exacta-012
+  documento: reglamento_casino.md
+  capacidad: cantidad
+  pregunta: ¿Cuánto cuesta el almuerzo para fun cionarios?
+  respuesta: 3.500 pesos
+  original: ¿Cuánto cuesta el almuerzo para funcionarios?
+  erratas:
+  - separada
+- id: es-parafrasis-006
+  documento: reglamento_casino.md
+  capacidad: cantidad
+  pregunta: cuanto pagan los practicantes por almirzar
+  respuesta: Los practicantes pagan la mitad del precio
+  original: cuanto pagan los practicantes por almorzar
+  erratas:
+  - vecina
+- id: es-trampa-006
+  par: es-parafrasis-006
+  pregunta: cuanto paagan las visitas por almorsar en el casino?
+  original: ¿Cuánto pagan las visitas por almorzar en el casino?
+  erratas:
+  - duplicacion
+  - fonetica
+- id: es-exacta-013
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se publica el meenú semanal?
+  respuesta: cada viernes en la intranet
+  original: ¿Cuándo se publica el menú semanal?
+  erratas:
+  - duplicacion
+- id: es-parafrasis-007
+  documento: reglamento_casino.md
+  capacidad: condicion
+  pregunta: hay comida vegetariana en el casiino?
+  respuesta: Todos los días hay una opción vegetariana
+  original: hay comida vegetariana en el casino?
+  erratas:
+  - duplicacion
+- id: es-trampa-007
+  par: es-parafrasis-007
+  pregunta: hay commida sin gluten en el cazino?
+  original: ¿Hay comida sin gluten en el casino?
+  erratas:
+  - fonetica
+  - duplicacion
+- id: es-exacta-014
+  documento: reglamento_casino.md
+  capacidad: procedimiento
+  pregunta: ¿Cómmo se paga el almuerzo?
+  respuesta: con la tarjeta institucional o en efectivo
+  original: ¿Cómo se paga el almuerzo?
+  erratas:
+  - duplicacion
+- id: es-exacta-015
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: donde se recarga la tarjeta inst itucional?
+  respuesta: en la caja del casino
+  original: ¿Dónde se recarga la tarjeta institucional?
+  erratas:
+  - separada
+- id: es-exacta-016
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: donde se dejan los reclamos sobre el srevicio del casino?
+  respuesta: en el libro de sugerencias
+  original: ¿Dónde se dejan los reclamos sobre el servicio del casino?
+  erratas:
+  - transposicion
+- id: es-exacta-017
+  documento: reglamento_casino.md
+  capacidad: persona
+  pregunta: ¿Quién reaponde los reclamos del csaino?
+  respuesta: La Unidad de Bienestar
+  original: ¿Quién responde los reclamos del casino?
+  erratas:
+  - vecina
+  - transposicion
+- id: es-parafrasis-008
+  documento: reglamento_casino.md
+  capacidad: duracion
+  pregunta: en cuanto tiempo me contestan un reeclamo del casino
+  respuesta: dentro de cinco días hábiles
+  original: en cuanto tiempo me contestan un reclamo del casino
+  erratas:
+  - duplicacion
+- id: es-exacta-018
+  documento: manual_proyector.md
+  capacidad: cantidad
+  pregunta: a que distancia de la panttalla se instala el proyector vista x2?
+  respuesta: entre 2 y 5 metros de la pantalla
+  original: ¿A qué distancia de la pantalla se instala el proyector Vista X2?
+  erratas:
+  - duplicacion
+- id: es-exacta-019
+  documento: manual_proyector.md
+  capacidad: procedimiento
+  pregunta: con que cable se conecta el proyector al computdaor?
+  respuesta: con un cable HDMI
+  original: ¿Con qué cable se conecta el proyector al computador?
+  erratas:
+  - transposicion
+- id: es-parafrasis-009
+  documento: manual_proyector.md
+  capacidad: procedimiento
+  pregunta: como coecto el proyector al notevook
+  respuesta: Se conecta al computador con un cable HDMI
+  original: como conecto el proyector al notebook
+  erratas:
+  - fonetica
+  - omision
+- id: es-exacta-020
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cuánto durra la lámpara del proyector?
+  respuesta: aproximadamente 4.000 horas
+  original: ¿Cuánto dura la lámpara del proyector?
+  erratas:
+  - duplicacion
+- id: es-parafrasis-010
+  documento: manual_proyector.md
+  capacidad: condicion
+  pregunta: la luz de la lampara ezta rojja, que hago
+  respuesta: hay que reemplazarla
+  original: la luz de la lampara esta roja, que hago
+  erratas:
+  - duplicacion
+  - fonetica
+- id: es-trampa-008
+  par: es-parafrasis-010
+  pregunta: ¿Qué hago si la luz de encendiso parpadea en verde?
+  original: ¿Qué hago si la luz de encendido parpadea en verde?
+  erratas:
+  - vecina
+- id: es-exacta-021
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: cada cuanto se limpia el filtro de aire del proyec tor?
+  respuesta: cada 200 horas de uso
+  original: ¿Cada cuánto se limpia el filtro de aire del proyector?
+  erratas:
+  - separada
+- id: es-exacta-022
+  documento: manual_proyector.md
+  capacidad: cantidad
+  pregunta: ¿Qué pilas usa el control rejoto del proyector?
+  respuesta: dos pilas AAA
+  original: ¿Qué pilas usa el control remoto del proyector?
+  erratas:
+  - vecina
+- id: es-parafrasis-011
+  documento: manual_proyector.md
+  capacidad: condicion
+  pregunta: para que sirve el bpton freeze
+  respuesta: congela la imagen en pantalla
+  original: para que sirve el boton Freeze
+  erratas:
+  - vecina
+- id: es-exacta-023
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: cuanto dura la garantia del prollector?
+  respuesta: una garantía de dos años
+  original: ¿Cuánto dura la garantía del proyector?
+  erratas:
+  - fonetica
+- id: es-exacta-024
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cuánto duea la garrantía de la lámpara?
+  respuesta: una garantía de seis meses
+  original: ¿Cuánto dura la garantía de la lámpara?
+  erratas:
+  - vecina
+  - duplicacion
+- id: es-trampa-009
+  par: es-exacta-024
+  pregunta: ¿Cuánto dura la gara ntía del control remoto?
+  original: ¿Cuánto dura la garantía del control remoto?
+  erratas:
+  - separada
+- id: es-exacta-025
+  documento: reglamento_capacitacion.md
+  capacidad: fecha
+  pregunta: cuando se apreuba el plan anual de capacitacion?
+  respuesta: se aprueba en marzo
+  original: ¿Cuándo se aprueba el plan anual de capacitación?
+  erratas:
+  - transposicion
+- id: es-exacta-026
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien elavora el plan anuual de capacitacion?
+  respuesta: el Comité Bipartito de Capacitación
+  original: ¿Quién elabora el plan anual de capacitación?
+  erratas:
+  - fonetica
+  - duplicacion
+- id: es-parafrasis-012
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien arma el plan de curss del ano
+  respuesta: el Comité Bipartito de Capacitación
+  original: quien arma el plan de cursos del año
+  erratas:
+  - omision
+- id: es-exacta-027
+  documento: reglamento_capacitacion.md
+  capacidad: procedimiento
+  pregunta: donde se isncriben los funcionarios en los cursos?
+  respuesta: a través del portal de capacitación
+  original: ¿Dónde se inscriben los funcionarios en los cursos?
+  erratas:
+  - transposicion
+- id: es-exacta-028
+  documento: reglamento_capacitacion.md
+  capacidad: condicion
+  pregunta: que autorizacion requiere la inzcripcion en un curso?
+  respuesta: la autorización de la jefatura directa
+  original: ¿Qué autorización requiere la inscripción en un curso?
+  erratas:
+  - fonetica
+- id: es-parafrasis-013
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien tiene que autorizar que me insc riba en un curso
+  respuesta: la autorización de la jefatura directa
+  original: quien tiene que autorizar que me inscriba en un curso
+  erratas:
+  - separada
+- id: es-trampa-010
+  par: es-parafrasis-013
+  pregunta: quien autoriza los cyrsos en el extramjero?
+  original: ¿Quién autoriza los cursos en el extranjero?
+  erratas:
+  - vecina
+  - vecina
+- id: es-exacta-029
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: ¿Qué asistencia mínima se esige para aprobar un curzo?
+  respuesta: una asistencia mínima del 75 %
+  original: ¿Qué asistencia mínima se exige para aprobar un curso?
+  erratas:
+  - fonetica
+  - fonetica
+- id: es-parafrasis-014
+  documento: reglamento_capacitacion.md
+  capacidad: condicion
+  pregunta: que pasa si no temrino un curso sin justificar
+  respuesta: no puede inscribirse en otro curso durante seis meses
+  original: que pasa si no termino un curso sin justificar
+  erratas:
+  - transposicion
+- id: es-exacta-030
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas horaz de capacitación al año puede udar cada funcionario?
+  respuesta: hasta 40 horas de capacitación al año
+  original: ¿Cuántas horas de capacitación al año puede usar cada funcionario?
+  erratas:
+  - fonetica
+  - vecina
+- id: es-parafrasis-015
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: cuantas hroas de cursos me dan al año
+  respuesta: hasta 40 horas de capacitación al año
+  original: cuantas horas de cursos me dan al año
+  erratas:
+  - transposicion
+- id: es-trampa-011
+  par: es-parafrasis-015
+  pregunta: ¿Cuántas horas de cursos onpine se pueden hacer fuera de la jornada?
+  original: ¿Cuántas horas de cursos online se pueden hacer fuera de la jornada?
+  erratas:
+  - vecina
+- id: es-exacta-031
+  documento: reglamento_capacitacion.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo se descargan los cer tificados de los cursos?
+  respuesta: dentro de diez días hábiles después de terminar el curso
+  original: ¿En qué plazo se descargan los certificados de los cursos?
+  erratas:
+  - separada
+- id: es-trampa-012
+  par: es-exacta-031
+  pregunta: ¿Quiénez pueden dictar los cursos de capacigación?
+  original: ¿Quiénes pueden dictar los cursos de capacitación?
+  erratas:
+  - fonetica
+  - vecina
+- id: es-exacta-032
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: que porcentaje reembolsa el zeguro en gastos ambulatorios?
+  respuesta: el 70 % de los gastos médicos ambulatorios
+  original: ¿Qué porcentaje reembolsa el seguro en gastos ambulatorios?
+  erratas:
+  - fonetica
+- id: es-exacta-033
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: a que porcentaje se reembolsan los gastos hospitalaios?
+  respuesta: se reembolsan al 90 %
+  original: ¿A qué porcentaje se reembolsan los gastos hospitalarios?
+  erratas:
+  - omision
+- id: es-parafrasis-016
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: cuanto me develve el seguro si me hospitalizan
+  respuesta: Los gastos hospitalarios se reembolsan al 90 %
+  original: cuanto me devuelve el seguro si me hospitalizan
+  erratas:
+  - omision
+- id: es-trampa-013
+  par: es-parafrasis-016
+  pregunta: ¿Cuánto devuelve el sgeuro en gastos dentalez?
+  original: ¿Cuánto devuelve el seguro en gastos dentales?
+  erratas:
+  - fonetica
+  - transposicion
+- id: es-exacta-034
+  documento: seguro_salud.md
+  capacidad: persona
+  pregunta: ¿Quiénes pueden incorporarse como cargaz del zeguro?
+  respuesta: el cónyuge y los hijos menores de 24 años
+  original: ¿Quiénes pueden incorporarse como cargas del seguro?
+  erratas:
+  - fonetica
+  - fonetica
+- id: es-parafrasis-017
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: puedo mter a mi hiko de 20 años al seguro?
+  respuesta: Pueden incorporarse como cargas el cónyuge y los hijos menores de 24 años
+  original: puedo meter a mi hijo de 20 años al seguro?
+  erratas:
+  - omision
+  - vecina
+- id: es-trampa-014
+  par: es-parafrasis-017
+  pregunta: puedo imcorporar a mis paddres como cargas del seguro?
+  original: ¿Puedo incorporar a mis padres como cargas del seguro?
+  erratas:
+  - vecina
+  - duplicacion
+- id: es-exacta-035
+  documento: seguro_salud.md
+  capacidad: duracion
+  pregunta: en que plazo se solicitan los reemoblsos del seguro?
+  respuesta: dentro de 60 días desde la atención médica
+  original: ¿En qué plazo se solicitan los reembolsos del seguro?
+  erratas:
+  - transposicion
+- id: es-parafrasis-018
+  documento: seguro_salud.md
+  capacidad: procedimiento
+  pregunta: que papeles necesito para pedir el reembolsodel seguro
+  respuesta: la boleta y la orden médica
+  original: que papeles necesito para pedir el reembolso del seguro
+  erratas:
+  - pegadas
+- id: es-exacta-036
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: que no cubbre el seguro complementario?
+  respuesta: tratamientos estéticos ni lentes ópticos
+  original: ¿Qué no cubre el seguro complementario?
+  erratas:
+  - duplicacion
+- id: es-parafrasis-019
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: el seguro cube lentes?
+  respuesta: El seguro no cubre tratamientos estéticos ni lentes ópticos
+  original: el seguro cubre lentes?
+  erratas:
+  - omision
+- id: es-exacta-037
+  documento: seguro_salud.md
+  capacidad: persona
+  pregunta: a quien se envian las consultas sobre el segguro?
+  respuesta: a la Unidad de Bienestar
+  original: ¿A quién se envían las consultas sobre el seguro?
+  erratas:
+  - duplicacion
+- id: es-exacta-038
+  documento: seguro_salud.md
+  capacidad: duracion
+  pregunta: en que plazo paga la aseguradora los reenbolsos?
+  respuesta: en un plazo de diez días hábiles
+  original: ¿En qué plazo paga la aseguradora los reembolsos?
+  erratas:
+  - vecina
+- id: es-trampa-015
+  par: es-exacta-038
+  pregunta: quien contrata el seguro complmentario?
+  original: ¿Quién contrata el seguro complementario?
+  erratas:
+  - omision
+- id: es-exacta-039
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: ¿En qué horrario abre el gimnasio?
+  respuesta: de lunes a viernes de 7:00 a 20:00 horas
+  original: ¿En qué horario abre el gimnasio?
+  erratas:
+  - duplicacion
+- id: es-parafrasis-020
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: a q hora ciera el gym
+  respuesta: de lunes a viernes de 7:00 a 20:00 horas
+  original: a q hora cierra el gym
+  erratas:
+  - omision
+- id: es-trampa-016
+  par: es-parafrasis-020
+  pregunta: a que hora sierra la piscina?
+  original: ¿A qué hora cierra la piscina?
+  erratas:
+  - fonetica
+- id: es-exacta-040
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: ¿Qué se requiere para uaar el gimnasio?
+  respuesta: un certificado médico vigente
+  original: ¿Qué se requiere para usar el gimnasio?
+  erratas:
+  - vecina
+- id: es-exacta-041
+  documento: reglamento_gimnasio.md
+  capacidad: persona
+  pregunta: ¿Con quién se hace la inscripción al jimnasio?
+  respuesta: con la Unidad de Bienestar
+  original: ¿Con quién se hace la inscripción al gimnasio?
+  erratas:
+  - fonetica
+- id: es-exacta-042
+  documento: reglamento_gimnasio.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura como máximo una sesión cuando hay personas esp erando?
+  respuesta: como máximo una hora
+  original: ¿Cuánto dura como máximo una sesión cuando hay personas esperando?
+  erratas:
+  - separada
+- id: es-parafrasis-021
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: tengo que llevar tooalla al gym?
+  respuesta: Es obligatorio usar toalla en las máquinas
+  original: tengo que llevar toalla al gym?
+  erratas:
+  - duplicacion
+- id: es-exacta-043
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: cuando son las class de yoga?
+  respuesta: los martes y jueves a las 18:00 horas
+  original: ¿Cuándo son las clases de yoga?
+  erratas:
+  - omision
+- id: es-parafrasis-022
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: q dizs hay yoga
+  respuesta: los martes y jueves a las 18:00 horas
+  original: q dias hay yoga
+  erratas:
+  - vecina
+- id: es-trampa-017
+  par: es-parafrasis-022
+  pregunta: que diias hay clases de pilates?
+  original: ¿Qué días hay clases de pilates?
+  erratas:
+  - duplicacion
+- id: es-exacta-044
+  documento: reglamento_gimnasio.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas personas admite cada calse de yoga?
+  respuesta: hasta 15 personas
+  original: ¿Cuántas personas admite cada clase de yoga?
+  erratas:
+  - transposicion
+- id: es-parafrasis-023
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: que pasa con las cosas que dejjo en el casillero en la noche
+  respuesta: se retiran y se guardan en la recepción
+  original: que pasa con las cosas que dejo en el casillero en la noche
+  erratas:
+  - duplicacion
+- id: es-trampa-018
+  par: es-parafrasis-023
+  pregunta: cuanto cuesta arendar un casillero?
+  original: ¿Cuánto cuesta arrendar un casillero?
+  erratas:
+  - omision
+- id: es-trampa-019
+  par: es-exacta-040
+  pregunta: ¿Quiénes puedenusar el gimnasio los fines de semana?
+  original: ¿Quiénes pueden usar el gimnasio los fines de semana?
+  erratas:
+  - pegadas
+- id: es-trampa-020
+  par: es-exacta-044
+  pregunta: cuantas persons admite cada clase de sinning?
+  original: ¿Cuántas personas admite cada clase de spinning?
+  erratas:
+  - omision
+  - omision

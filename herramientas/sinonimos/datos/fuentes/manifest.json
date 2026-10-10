@@ -1,0 +1,105 @@
+{
+  "files": {
+    "en.LICENSE": {
+      "bytes": 19863,
+      "language": "en",
+      "original": {
+        "bytes": 19863,
+        "filename": "en.LICENSE",
+        "sha256": "672cc8b5663e8dc74c4b07a9dcf477193853575b119908fd3dc0aeeb60a9dbbb",
+        "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/LICENSE.md"
+      },
+      "sha256": "672cc8b5663e8dc74c4b07a9dcf477193853575b119908fd3dc0aeeb60a9dbbb"
+    },
+    "en.WNDB_License.txt": {
+      "bytes": 1740,
+      "language": "en",
+      "original": {
+        "bytes": 1740,
+        "filename": "en.WNDB_License.txt",
+        "sha256": "df30ec18fbabcdaf031b79ea026d3e6b959010cffe6dd7be9ac137822175b904",
+        "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/WNDB_License.txt"
+      },
+      "sha256": "df30ec18fbabcdaf031b79ea026d3e6b959010cffe6dd7be9ac137822175b904"
+    },
+    "en.xml.gz": {
+      "bytes": 11363503,
+      "language": "en",
+      "original": {
+        "bytes": 11363503,
+        "filename": "en.xml.gz",
+        "sha256": "9ca6d1dcb75f822fdd66617f7d9da48142ace38dd544d6ad5e2feca1674ad3fe",
+        "url": "https://en-word.net/static/english-wordnet-2025.xml.gz"
+      },
+      "sha256": "9ca6d1dcb75f822fdd66617f7d9da48142ace38dd544d6ad5e2feca1674ad3fe"
+    },
+    "es.LICENSE": {
+      "bytes": 907,
+      "language": "es",
+      "original": {
+        "bytes": 907,
+        "filename": "es.LICENSE",
+        "sha256": "ccbb7b96a812b37a88a9cb8dfda92dc251e61c5fca5225ff23f5fc3d33b32a70",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/LICENSE"
+      },
+      "sha256": "ccbb7b96a812b37a88a9cb8dfda92dc251e61c5fca5225ff23f5fc3d33b32a70"
+    },
+    "es.citation.bib": {
+      "bytes": 787,
+      "language": "es",
+      "original": {
+        "bytes": 787,
+        "filename": "es.citation.bib",
+        "sha256": "566ecd207408493ec0dadb1808290971bac8c84587daa12703a30817a553c862",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/citation.bib"
+      },
+      "sha256": "566ecd207408493ec0dadb1808290971bac8c84587daa12703a30817a553c862"
+    },
+    "es.tab.gz": {
+      "bytes": 1477821,
+      "language": "es",
+      "original": {
+        "bytes": 5995146,
+        "filename": "es.tab",
+        "sha256": "0ec37ce94ee2acc63ad6b120e1051f9841d172778cc24adc0023fb8dccf0a7cd",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/mcr/wn-data-spa.tab"
+      },
+      "sha256": "7d88c613c1243fc55225ee694787418928471b51e749a244327b7ed040d66bd9"
+    },
+    "pt.LICENSE": {
+      "bytes": 1450,
+      "language": "pt",
+      "original": {
+        "bytes": 1450,
+        "filename": "pt.LICENSE",
+        "sha256": "4c7824c3cf3ca7d5fc68ee0473e16741361a67e242557c0661a0d6bd926ea297",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/LICENSE"
+      },
+      "sha256": "4c7824c3cf3ca7d5fc68ee0473e16741361a67e242557c0661a0d6bd926ea297"
+    },
+    "pt.citation.bib": {
+      "bytes": 300,
+      "language": "pt",
+      "original": {
+        "bytes": 300,
+        "filename": "pt.citation.bib",
+        "sha256": "0054a97ec38646188a082d492c1b6b81c8489526625e58929a4fa695f89236bf",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/citation.bib"
+      },
+      "sha256": "0054a97ec38646188a082d492c1b6b81c8489526625e58929a4fa695f89236bf"
+    },
+    "pt.tab.gz": {
+      "bytes": 567889,
+      "language": "pt",
+      "original": {
+        "bytes": 2105745,
+        "filename": "pt.tab",
+        "sha256": "0ba180e2d2a5317e61b4ebe94a7e969e68eea2d9e60705e1e9053c6e2ac5e684",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/wn-data-por.tab"
+      },
+      "sha256": "e26d2d851802e1f1052c57878c7d3b9db3eb82889445c016ab8f903865cd1719"
+    }
+  },
+  "reviewed_on": "2026-10-06",
+  "schema_version": 1
+}

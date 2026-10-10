@@ -1,0 +1,121 @@
+# Validação separada da rodada 5 (ADR 0008): escrita antes de calibrar e medida
+# uma única vez com a regra congelada. A anterior foi para casos.yaml.
+- id: pt-val2-codigo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês têm a resma PA-100?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-val2-codigo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: Quanto custa a impressora IM-500?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-val2-codigo-003
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês vendem a cadeira SO-20?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-val2-codigo-004
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês têm a escrivaninha ES-200?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: pt-val2-codigo-005
+  tipo: vecino
+  particion: validacion
+  pregunta: Tem estoque da impressora IT-10?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-val2-codigo-006
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês têm a escada ET-8?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: pt-val2-descrito-001
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês vendem papel sulfite?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-val2-descrito-002
+  tipo: vecino
+  particion: validacion
+  pregunta: Vocês têm cadeira ergonômica?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-val2-medida-001
+  tipo: vecino
+  particion: validacion
+  pregunta: A entrega para as regiões leva 7 dias úteis?
+  aceptables:
+  - entrega para as regiões leva 5 dias úteis
+- id: pt-val2-medida-002
+  tipo: vecino
+  particion: validacion
+  pregunta: A garantia das cadeiras é de 30 meses?
+  aceptables:
+  - cadeiras e as escrivaninhas têm garantia de 24 meses
+- id: pt-val2-medida-003
+  tipo: vecino
+  particion: validacion
+  pregunta: O desconto para empresas é de 25 %?
+  aceptables:
+  - desconto de 15 %
+- id: pt-val2-medida-004
+  tipo: vecino
+  particion: validacion
+  pregunta: A senha expira a cada 45 dias?
+  aceptables:
+  - A senha expira a cada 90 dias
+- id: pt-val2-medida-005
+  tipo: vecino
+  particion: validacion
+  pregunta: O empréstimo de livros dura 7 dias?
+  aceptables:
+  - empréstimo de livros dura 14 dias
+- id: pt-val2-dificil-001
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Vocês vendem papel de parede?
+- id: pt-val2-dificil-002
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Vocês têm cadeirinhas para bebê?
+- id: pt-val2-dificil-003
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Qual é a garantia de um celular?
+- id: pt-val2-dificil-004
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Qual é o horário do banco?
+- id: pt-val2-dificil-005
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: Vocês têm nanquim para caligrafia?
+- id: pt-val2-fuera-001
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: Qual é a montanha mais alta do mundo?
+- id: pt-val2-fuera-002
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: Quantos ossos tem o corpo humano?

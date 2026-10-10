@@ -1,0 +1,138 @@
+{
+  "files": {
+    "en-thes.WordNet_license.txt": {
+      "bytes": 1625,
+      "language": "en",
+      "original": {
+        "bytes": 1625,
+        "filename": "en-thes.WordNet_license.txt",
+        "sha256": "23dbc4f3ea771304e5ab3e5709843813d2619f3c0cfc81229b53fcdb9985f29a",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/WordNet_license.txt"
+      },
+      "sha256": "23dbc4f3ea771304e5ab3e5709843813d2619f3c0cfc81229b53fcdb9985f29a",
+      "source_id": "en-thes"
+    },
+    "en-thes.dat.gz": {
+      "bytes": 3984278,
+      "language": "en",
+      "original": {
+        "bytes": 18553257,
+        "filename": "en-thes.dat",
+        "sha256": "8a3e4637450b7277428da248f0a604b5c92942bc30507220c051181462340f39",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/th_en_US_v2.dat"
+      },
+      "sha256": "fe8510a198798a5dbd61f408fbcf9f55aea93e1c49f3f4707366d685e7ef2e1e",
+      "source_id": "en-thes"
+    },
+    "es-thes.LGPLv2.1.txt": {
+      "bytes": 26530,
+      "language": "es",
+      "original": {
+        "bytes": 26530,
+        "filename": "es-thes.LGPLv2.1.txt",
+        "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LGPLv2.1.txt"
+      },
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+      "source_id": "es-thes"
+    },
+    "es-thes.LICENSE.md": {
+      "bytes": 991,
+      "language": "es",
+      "original": {
+        "bytes": 991,
+        "filename": "es-thes.LICENSE.md",
+        "sha256": "2b70fd5cb8d3b34cc6ae322c969557a2270b99017594addb2531ef5ffd9e1b17",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/LICENSE.md"
+      },
+      "sha256": "2b70fd5cb8d3b34cc6ae322c969557a2270b99017594addb2531ef5ffd9e1b17",
+      "source_id": "es-thes"
+    },
+    "es-thes.README_th_es.txt": {
+      "bytes": 677,
+      "language": "es",
+      "original": {
+        "bytes": 677,
+        "filename": "es-thes.README_th_es.txt",
+        "sha256": "874580e808ffd19bd28b9b6bddc3c1c1b691fd092287cc26bacf29060a0faa83",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/README_th_es.txt"
+      },
+      "sha256": "874580e808ffd19bd28b9b6bddc3c1c1b691fd092287cc26bacf29060a0faa83",
+      "source_id": "es-thes"
+    },
+    "es-thes.dat.gz": {
+      "bytes": 978940,
+      "language": "es",
+      "original": {
+        "bytes": 2876858,
+        "filename": "es-thes.dat",
+        "sha256": "ee0b7ad7dfede636aa5d5509cbbcbab59bef4cb8cbdff01f9528b15bd139b889",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/es/th_es_v2.dat"
+      },
+      "sha256": "62d99b0a35dfeb5c6e2a630ab5f8f674339d7a5c96ebb53c0e709343b6ebaf15",
+      "source_id": "es-thes"
+    },
+    "pt-br-thes.dat.gz": {
+      "bytes": 4247036,
+      "language": "pt",
+      "original": {
+        "bytes": 15193736,
+        "filename": "pt-br-thes.dat",
+        "sha256": "0dae83c0b75e53837ef220431da049c716fa954f99fb77578eebf4e93d261af0",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/th_pt_BR.dat"
+      },
+      "sha256": "67d71fd8c7983ad40516839a33f9426d502a41b5737db8188ef03c22f1de9985",
+      "source_id": "pt-br-thes"
+    },
+    "pt-br-thes.license-thes.readme": {
+      "bytes": 1707,
+      "language": "pt",
+      "original": {
+        "bytes": 1707,
+        "filename": "pt-br-thes.license-thes.readme",
+        "sha256": "253031afa265c7bec5d2e195c659129a7ff254f9d57c57a08eba4a9051868840",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/license-thes.readme"
+      },
+      "sha256": "253031afa265c7bec5d2e195c659129a7ff254f9d57c57a08eba4a9051868840",
+      "source_id": "pt-br-thes"
+    },
+    "pt-pt-thes.LICENSES.txt": {
+      "bytes": 1830,
+      "language": "pt",
+      "original": {
+        "bytes": 1830,
+        "filename": "pt-pt-thes.LICENSES.txt",
+        "sha256": "d2c1cfe2e2dd81c651aec3fda5d1b4b4e7679b9e04f8cdc37586e521837384d1",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/LICENSES.txt"
+      },
+      "sha256": "d2c1cfe2e2dd81c651aec3fda5d1b4b4e7679b9e04f8cdc37586e521837384d1",
+      "source_id": "pt-pt-thes"
+    },
+    "pt-pt-thes.README_th_pt_PT.txt": {
+      "bytes": 26537,
+      "language": "pt",
+      "original": {
+        "bytes": 26537,
+        "filename": "pt-pt-thes.README_th_pt_PT.txt",
+        "sha256": "4a7ae3ba634478c8af6f3fbdc5cd27aa150d0bb653e4bb0b2c226d6068175771",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/README_th_pt_PT.txt"
+      },
+      "sha256": "4a7ae3ba634478c8af6f3fbdc5cd27aa150d0bb653e4bb0b2c226d6068175771",
+      "source_id": "pt-pt-thes"
+    },
+    "pt-pt-thes.dat.gz": {
+      "bytes": 966187,
+      "language": "pt",
+      "original": {
+        "bytes": 3052378,
+        "filename": "pt-pt-thes.dat",
+        "sha256": "daa89fee61347f401f005f3efd17fa8878eeeabd903ff4e684ab4bc1a53df2fd",
+        "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/th_pt_PT.dat"
+      },
+      "sha256": "d6b13a6365c6cd1ecf0818ed6a5c49c3dabb1c039a1d6dea8754a0c32000e3f7",
+      "source_id": "pt-pt-thes"
+    }
+  },
+  "reviewed_on": "2026-10-06",
+  "schema_version": 1
+}

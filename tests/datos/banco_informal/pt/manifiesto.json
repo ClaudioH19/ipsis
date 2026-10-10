@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "dataset_id": "informal_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafeteira.md",
+        "doc_id": "garantia-cafeteira"
+      },
+      {
+        "ruta": "irrigacao_estufa.md",
+        "doc_id": "irrigacao-estufa"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_aquisicoes.md",
+        "doc_id": "manual-aquisicoes"
+      },
+      {
+        "ruta": "perguntas_frequentes_ti.md",
+        "doc_id": "perguntas-frequentes-ti"
+      },
+      {
+        "ruta": "politica_diarias.md",
+        "doc_id": "politica-diarias"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "regulamento_teletrabalho.md",
+        "doc_id": "regulamento-teletrabalho"
+      }
+    ],
+    "sha256": "665dcd7697f1fe8e841e4043c35c898db4e791674b19e9820a9f70c847932246"
+  },
+  "categorias_requeridas": [
+    "parafrasis",
+    "premisa_falsa",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}

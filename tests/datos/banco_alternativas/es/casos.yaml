@@ -1,0 +1,706 @@
+# Banco de alternativas (ADR 0008). Corpus: el catálogo y el inventario de
+# ./corpus más los documentos de ../../banco_consultas/es/corpus, con el
+# config/domain.yaml de ./dominio.yaml.
+#
+# tipo:
+# - exacta: la respuesta está en el corpus; no debe ofrecer alternativas
+#   ajenas (si las ofrece, solo cuentan como correctas las de «aceptables»).
+# - vecino: lo pedido no está, pero hay algo parecido; «aceptables» son
+#   textos literales de los pasajes que valen como alternativa (basta uno).
+# - sin_vecino: lo pedido no está y nada se le parece: toda alternativa es
+#   errónea.
+# - fuera_dominio: nada que ver con el corpus: toda alternativa es errónea y
+#   nunca debe haber alguna (meta dura).
+# particion: dev calibra pesos y umbral; test solo informa.
+
+# --- catálogo: productos que existen ----------------------------------------
+- id: es-alt-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuánto cuesta el taladro TP-400?
+  aceptables: [TP-400]
+- id: es-alt-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: ¿Cuántos peldaños tiene la escalera ET-7?
+  aceptables: [ET-7]
+- id: es-alt-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Qué disco usa la sierra circular SC-235?
+  aceptables: [SC-235]
+- id: es-alt-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: ¿Cuántas unidades hay de la lijadora LB-900 en la Bodega Norte?
+  aceptables: [LB-900]
+- id: es-alt-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuánto peso soporta la escalera ET-5?
+  aceptables: [ET-5]
+- id: es-alt-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: ¿Qué batería usa el taladro TI-18?
+  aceptables: [TI-18]
+- id: es-alt-exacta-007
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuándo se pide la reposición de una herramienta?
+  aceptables: [reposición]
+- id: es-alt-exacta-008
+  tipo: exacta
+  particion: test
+  pregunta: ¿Qué materiales corta la sierra caladora SK-65?
+  aceptables: [SK-65]
+
+# --- catálogo: código ausente con familia -----------------------------------
+- id: es-alt-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen el taladro TP-500?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: es-alt-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Cuánto cuesta la sierra SC-200?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: es-alt-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Hay stock de la escalera ET-6?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: es-alt-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden la lijadora LO-350?
+  aceptables: [LO-300, LB-900]
+- id: es-alt-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen el taladro inalámbrico TI-20?
+  aceptables: [TI-18, TP-400, TP-600]
+- id: es-alt-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿Cuál es el precio de la escalera EX-14?
+  aceptables: [EX-12, ET-5, ET-7]
+- id: es-alt-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen la sierra caladora SK-80?
+  aceptables: [SK-65, SC-185, SC-235]
+- id: es-alt-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: ¿Cuántas unidades quedan del TP-800?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: es-alt-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Qué potencia tiene la lijadora LB-700?
+  aceptables: [LB-900, LO-300]
+- id: es-alt-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: ¿Hay unidades de la sierra SC-210 en la Bodega Central?
+  aceptables: [SC-185, SC-235, SK-65]
+
+# --- catálogo: producto ausente descrito, con parecidos ---------------------
+- id: es-alt-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen sierra de cinta?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: es-alt-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden taladro de banco?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: es-alt-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen escalera telescópica?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: es-alt-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden lijadora excéntrica?
+  aceptables: [LO-300, LB-900]
+- id: es-alt-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen una escalera de diez peldaños?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: es-alt-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden sierra sable?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: es-alt-descrito-007
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen taladro magnético?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: es-alt-descrito-008
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden lijadora de pared?
+  aceptables: [LO-300, LB-900]
+
+# --- catálogo: ausente y sin parecidos ---------------------------------------
+- id: es-alt-sinvecino-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden pintura látex?
+- id: es-alt-sinvecino-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen grifería para baño?
+- id: es-alt-sinvecino-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden cables eléctricos?
+- id: es-alt-sinvecino-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen tornillos para volcanita?
+- id: es-alt-sinvecino-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden cerámica para piso?
+- id: es-alt-sinvecino-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen mangueras de jardín?
+- id: es-alt-sinvecino-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden candados de seguridad?
+- id: es-alt-sinvecino-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen guantes de trabajo?
+
+# --- documentos: tema ausente con una sección vecina ------------------------
+- id: es-alt-doc-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Qué pasa si pierdo las boletas del viaje?
+  aceptables: [boletas originales]
+- id: es-alt-doc-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Puedo viajar en primera clase?
+  aceptables: [clase ejecutiva]
+- id: es-alt-doc-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Puedo teletrabajar cuatro días por semana?
+  aceptables: [hasta tres días por semana]
+- id: es-alt-doc-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿La contraseña vence cada 60 días?
+  aceptables: [La contraseña vence cada 90 días]
+- id: es-alt-doc-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Cuánto tiempo se guardan las muestras de orina?
+  aceptables: [muestras de sangre]
+- id: es-alt-doc-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿El riego funciona en invierno?
+  aceptables: [riego por goteo, tercer riego]
+- id: es-alt-doc-007
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Puedo devolver un producto usado?
+  aceptables: [devolución]
+- id: es-alt-doc-008
+  tipo: vecino
+  particion: test
+  pregunta: ¿La biblioteca abre los feriados?
+  aceptables: [La biblioteca abre]
+- id: es-alt-doc-009
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La garantía de la cafetera cubre el daño por humedad?
+  aceptables: [La garantía no cubre, Cubre defectos]
+- id: es-alt-doc-010
+  tipo: vecino
+  particion: test
+  pregunta: ¿Cuántos libros puedo pedir prestados a la vez?
+  aceptables: [préstamo de libros]
+- id: es-alt-doc-011
+  tipo: vecino
+  particion: dev
+  pregunta: ¿El préstamo de libros dura 21 días?
+  aceptables: [préstamo de libros dura 14 días]
+- id: es-alt-doc-012
+  tipo: vecino
+  particion: test
+  pregunta: ¿La asignación de teletrabajo es de 30.000 pesos?
+  aceptables: [asignación mensual de 20.000 pesos]
+
+# --- documentos: tema ausente sin vecino --------------------------------------
+- id: es-alt-docsin-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Cuál es el horario del casino?
+- id: es-alt-docsin-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Cuánto cuesta el estacionamiento?
+- id: es-alt-docsin-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Quién es el director de recursos humanos?
+- id: es-alt-docsin-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Hay sala cuna para los hijos de los funcionarios?
+- id: es-alt-docsin-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Cuántos días de vacaciones me corresponden?
+- id: es-alt-docsin-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Se pueden llevar mascotas a la oficina?
+
+# --- fuera de dominio ------------------------------------------------------------
+- id: es-alt-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Cuál es la capital de Mongolia?
+- id: es-alt-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿Quién ganó el mundial de fútbol de 2010?
+- id: es-alt-fuera-003
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Cómo se prepara el pan amasado?
+- id: es-alt-fuera-004
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿A qué distancia está la Luna?
+- id: es-alt-fuera-005
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Cómo se mueve el caballo en el ajedrez?
+- id: es-alt-fuera-006
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿Qué tiempo hará mañana en Valparaíso?
+
+# --- ronda 5: la validación de la ronda 3 (ya vista, ahora desarrollo) ---------
+- id: es-val-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen la escalera ET-9?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: es-val-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Qué precio tiene la lijadora LO-200?
+  aceptables:
+  - LO-300
+  - LB-900
+- id: es-val-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Hay stock del taladro TI-24?
+  aceptables:
+  - TI-18
+  - TP-400
+  - TP-600
+- id: es-val-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden la sierra caladora SK-50?
+  aceptables:
+  - SK-65
+  - SC-185
+  - SC-235
+- id: es-val-plazo-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Puedo pedir el reembolso hasta 45 días después de recibir el pedido?
+  aceptables:
+  - hasta 30 días después de recibir el pedido
+- id: es-val-plazo-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿La jefatura responde la solicitud de teletrabajo en quince días hábiles?
+  aceptables:
+  - responde dentro de cinco días hábiles
+- id: es-val-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿A qué distancia queda el aeropuerto?
+- id: es-val-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Cuánto cuesta el curso de seguridad industrial?
+- id: es-val-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Cuánto pesa un monitor de 27 pulgadas?
+- id: es-val-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Qué horario tiene el gimnasio?
+- id: es-val-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden repuestos para la bomba de agua del auto?
+- id: es-val-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen una biblioteca de música?
+- id: es-val-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Quién escribió El Quijote?
+- id: es-val-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿Cuántos planetas tiene el sistema solar?
+- id: es-val-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuántas unidades del taladro TP-600 hay en la Bodega Central?
+  aceptables:
+  - TP-600
+- id: es-val-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: ¿Hasta qué altura llega la escalera EX-12?
+  aceptables:
+  - EX-12
+
+# --- ronda 5: catálogo de oficina, despacho y garantías, medidas y negativos difíciles ---
+- id: es-alt-ofi-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuánto cuesta la resma PA-90?
+  aceptables:
+  - PA-90
+- id: es-alt-ofi-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: ¿Cuántas páginas por minuto imprime la IM-200?
+  aceptables:
+  - IM-200
+- id: es-alt-ofi-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Cuánto mide el escritorio ES-160?
+  aceptables:
+  - ES-160
+- id: es-alt-ofi-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: ¿Cuánto tarda el despacho a regiones?
+  aceptables:
+  - 5 días hábiles
+- id: es-alt-ofi-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: ¿Qué garantía tienen las sillas?
+  aceptables:
+  - 24 meses
+- id: es-alt-ofi-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: ¿Qué descuento reciben las empresas?
+  aceptables:
+  - 15 %
+- id: es-alt-ofi-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen la resma PA-80?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-alt-ofi-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Cuánto cuesta el papel fotográfico PF-150?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-alt-ofi-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Venden la impresora IM-250?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Hay stock de la impresora IM-400?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen la impresora de tinta IT-20?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿Qué precio tiene la silla SO-15?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-alt-ofi-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Venden la silla ejecutiva SE-30?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-alt-ofi-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: ¿Tienen el escritorio ES-140?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: es-alt-ofi-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Cuánto mide el escritorio ES-180?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: es-alt-ofi-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden la resma PA-60?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-alt-ofi-codigo-011
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La impresora IM-300 imprime a color?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-codigo-012
+  tipo: vecino
+  particion: test
+  pregunta: ¿Tienen la silla SE-25 en negro?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-alt-ofi-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen impresora matricial?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden papel oficio?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-alt-ofi-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen silla gamer?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-alt-ofi-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden escritorio en L?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: es-alt-ofi-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿Tienen multifuncional láser?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-alt-ofi-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿Venden papel kraft?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-alt-med-001
+  tipo: vecino
+  particion: dev
+  pregunta: ¿El despacho a regiones tarda 3 días hábiles?
+  aceptables:
+  - despacho a regiones tarda 5 días hábiles
+- id: es-alt-med-002
+  tipo: vecino
+  particion: test
+  pregunta: ¿El despacho dentro de Santiago tarda 4 días hábiles?
+  aceptables:
+  - Santiago tarda 2 días hábiles
+- id: es-alt-med-003
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La garantía de las impresoras es de 3 meses?
+  aceptables:
+  - impresoras tienen una garantía de 6 meses
+- id: es-alt-med-004
+  tipo: vecino
+  particion: test
+  pregunta: ¿Las herramientas tienen garantía de 18 meses?
+  aceptables:
+  - herramientas eléctricas tienen una garantía de 12 meses
+- id: es-alt-med-005
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La garantía de los escritorios es de 36 meses?
+  aceptables:
+  - escritorios tienen una garantía de 24 meses
+- id: es-alt-med-006
+  tipo: vecino
+  particion: test
+  pregunta: ¿Puedo devolver un producto dentro de 20 días?
+  aceptables:
+  - devolver un producto sin uso dentro de 10 días
+- id: es-alt-med-007
+  tipo: vecino
+  particion: dev
+  pregunta: ¿El descuento para empresas es de 10 %?
+  aceptables:
+  - descuento de 15 %
+- id: es-alt-med-008
+  tipo: vecino
+  particion: test
+  pregunta: ¿Se paga el 50% del viático si el viaje dura menos de doce horas?
+  aceptables:
+  - 40% del viático
+- id: es-alt-med-009
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La bomba del riego se apaga bajo el 10 %?
+  aceptables:
+  - baja del 20 %
+- id: es-alt-med-010
+  tipo: vecino
+  particion: test
+  pregunta: ¿El acuerdo de teletrabajo se revisa cada 3 meses?
+  aceptables:
+  - se revisa cada seis meses
+- id: es-alt-med-011
+  tipo: vecino
+  particion: dev
+  pregunta: ¿La reposición llega dentro de 15 días hábiles?
+  aceptables:
+  - reposición llega dentro de diez días hábiles
+- id: es-alt-med-012
+  tipo: vecino
+  particion: test
+  pregunta: ¿La garantía de la cafetera dura 18 meses?
+  aceptables:
+  - dura 24 meses
+- id: es-alt-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden papel higiénico?
+- id: es-alt-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen sillas de ruedas?
+- id: es-alt-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden discos de vinilo?
+- id: es-alt-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Cuál es la garantía de un auto nuevo?
+- id: es-alt-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Qué horario tiene la farmacia?
+- id: es-alt-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen escaleras mecánicas?
+- id: es-alt-dificil-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Cuánto cobra un despacho de abogados?
+- id: es-alt-dificil-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Venden tinta para tatuajes?
+- id: es-alt-dificil-009
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Qué distancia tiene un maratón?
+- id: es-alt-dificil-010
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Venden monitores cardíacos?
+- id: es-alt-dificil-011
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Tienen lámparas de escritorio?
+- id: es-alt-dificil-012
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Cuánto cuesta el despacho de una carta a Europa?
+- id: es-alt-sinvecino-ofi-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: ¿Venden alfombras?
+- id: es-alt-sinvecino-ofi-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: ¿Tienen ventiladores?
+- id: es-alt-fuera-101
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Quién pintó la Mona Lisa?
+- id: es-alt-fuera-102
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿Cuál es el río más largo del mundo?
+- id: es-alt-fuera-103
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: ¿Cómo se dice gato en inglés?
+- id: es-alt-fuera-104
+  tipo: fuera_dominio
+  particion: test
+  pregunta: ¿En qué año llegó el hombre a la Luna?

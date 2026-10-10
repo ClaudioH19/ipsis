@@ -1,0 +1,43 @@
+{
+  "codigo_vigente": "elipsis-code.zip",
+  "diferencias_codigo": [
+    "ipsis/consulta/etapas/lectura.py"
+  ],
+  "diff": [
+    "--- final\n",
+    "+++ elipsis\n",
+    "@@ -128,7 +128,16 @@\n",
+    "         # El contexto recuperado resuelve el tema; la relación que responde el",
+    "         # lector es la del turno actual. Un verbo heredado («firma») no debe",
+    "         # competir con el que acaba de preguntar el usuario («redacta»).",
+    "-        pregunta_lectura = ctx.pregunta_usuario or ctx.pregunta",
+    "+        pregunta_lectura = ctx.pregunta",
+    "+        if ctx.pregunta_usuario:",
+    "+            from ipsis.lenguaje.consultas import terminos_de_contenido",
+    "+",
+    "+            propios = terminos_de_contenido(ctx.pregunta_usuario, getattr(m, \"idioma\", None))",
+    "+            # «¿y en verano?» solo aporta un calificativo: necesita la relación",
+    "+            # heredada. «¿quién redacta?» trae una relación nueva y «¿si llega",
+    "+            # dañado?» varios términos propios; sus verbos previos no mandan.",
+    "+            if getattr(comprension, \"intencion\", None) or len(propios) > 1:",
+    "+                pregunta_lectura = ctx.pregunta_usuario",
+    "         ctx.diagnostico[\"pregunta_lectura\"] = pregunta_lectura",
+    "         lecturas = m.lector.leer(pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(",
+    "             (c.chunk.texto_fuente for c in candidatos), ventanas)])"
+  ],
+  "bancos": {
+    "consultas": {
+      "ronda": "final",
+      "consultas_auditadas": 360
+    },
+    "universal": {
+      "ronda": "final",
+      "consultas_auditadas": 180
+    },
+    "conversaciones": {
+      "ronda": "elipsis",
+      "consultas_auditadas": 348
+    }
+  },
+  "alcance": "La única diferencia actúa cuando pregunta_usuario no está vacía. Los bancos independientes usan una sesión nueva por caso; se reutilizan sus resultados sin esa rama."
+}

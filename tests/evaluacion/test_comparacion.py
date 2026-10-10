@@ -61,6 +61,19 @@ def test_rechaza_comparar_corpus_distintos():
         ])
 
 
+def test_rechaza_mezclar_criterios_antiguo_y_nuevo():
+    primero, segundo = _artefacto("light"), _artefacto("medium")
+    segundo.reporte.criterio_respuesta = "respuesta_completa_v2"
+    with pytest.raises(ValueError, match="distintos criterios"):
+        comparar_artefactos([primero, segundo])
+
+
+def test_artefactos_antiguos_se_leen_sin_inventar_metricas_qa():
+    artefacto = ArtefactoEvaluacion.model_validate_json(_artefacto("legacy").model_dump_json())
+    assert artefacto.reporte.criterio_respuesta == "tramo_o_respuesta_v1"
+    assert artefacto.reporte.exactitud_tramo_qa is None
+
+
 def test_cli_comparar_escribe_informe(tmp_path):
     from ipsis.cli import main
 

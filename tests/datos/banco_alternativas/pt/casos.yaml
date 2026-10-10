@@ -1,0 +1,695 @@
+# Banco de alternativas (ADR 0008). Corpus: o catálogo e o estoque de ./corpus
+# mais os documentos de ../../banco_consultas/pt/corpus, com o
+# config/domain.yaml de ./dominio.yaml. Mesmos campos de ../es/casos.yaml.
+
+# --- catálogo: produtos que existem ------------------------------------------
+- id: pt-alt-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: Quanto custa a furadeira TP-400?
+  aceptables: [TP-400]
+- id: pt-alt-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: Quantos degraus tem a escada ET-7?
+  aceptables: [ET-7]
+- id: pt-alt-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: Que disco usa a serra circular SC-235?
+  aceptables: [SC-235]
+- id: pt-alt-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: Quantas unidades da lixadeira LB-900 há no Depósito Norte?
+  aceptables: [LB-900]
+- id: pt-alt-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: Quanto peso suporta a escada ET-5?
+  aceptables: [ET-5]
+- id: pt-alt-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: Que bateria usa a furadeira TI-18?
+  aceptables: [TI-18]
+- id: pt-alt-exacta-007
+  tipo: exacta
+  particion: dev
+  pregunta: Quando se pede a reposição de uma ferramenta?
+  aceptables: [reposição]
+- id: pt-alt-exacta-008
+  tipo: exacta
+  particion: test
+  pregunta: Que materiais a serra tico-tico SK-65 corta?
+  aceptables: [SK-65]
+
+# --- catálogo: código ausente com família --------------------------------------
+- id: pt-alt-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a furadeira TP-500?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: pt-alt-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: Quanto custa a serra SC-200?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: pt-alt-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Tem estoque da escada ET-6?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: pt-alt-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem a lixadeira LO-350?
+  aceptables: [LO-300, LB-900]
+- id: pt-alt-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a furadeira sem fio TI-20?
+  aceptables: [TI-18, TP-400, TP-600]
+- id: pt-alt-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: Qual é o preço da escada EX-14?
+  aceptables: [EX-12, ET-5, ET-7]
+- id: pt-alt-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a serra tico-tico SK-80?
+  aceptables: [SK-65, SC-185, SC-235]
+- id: pt-alt-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: Quantas unidades restam da TP-800?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: pt-alt-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: Qual é a potência da lixadeira LB-700?
+  aceptables: [LB-900, LO-300]
+- id: pt-alt-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: Há unidades da serra SC-210 no Depósito Central?
+  aceptables: [SC-185, SC-235, SK-65]
+
+# --- catálogo: produto ausente descrito, com parecidos ------------------------
+- id: pt-alt-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm serra de fita?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: pt-alt-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem furadeira de bancada?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: pt-alt-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm escada telescópica?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: pt-alt-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem lixadeira roto-orbital?
+  aceptables: [LO-300, LB-900]
+- id: pt-alt-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm uma escada de dez degraus?
+  aceptables: [ET-5, ET-7, EX-12]
+- id: pt-alt-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem serra sabre?
+  aceptables: [SC-185, SC-235, SK-65]
+- id: pt-alt-descrito-007
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm furadeira magnética?
+  aceptables: [TP-400, TP-600, TI-18]
+- id: pt-alt-descrito-008
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem lixadeira de parede?
+  aceptables: [LO-300, LB-900]
+
+# --- catálogo: ausente e sem parecidos ------------------------------------------
+- id: pt-alt-sinvecino-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem tinta látex?
+- id: pt-alt-sinvecino-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm torneiras para banheiro?
+- id: pt-alt-sinvecino-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem cabos elétricos?
+- id: pt-alt-sinvecino-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm parafusos para drywall?
+- id: pt-alt-sinvecino-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem piso cerâmico?
+- id: pt-alt-sinvecino-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm mangueiras de jardim?
+- id: pt-alt-sinvecino-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem cadeados de segurança?
+- id: pt-alt-sinvecino-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm luvas de trabalho?
+
+# --- documentos: tema ausente com uma seção vizinha ---------------------------
+- id: pt-alt-doc-001
+  tipo: vecino
+  particion: dev
+  pregunta: O que acontece se eu perder os recibos da viagem?
+  aceptables: [recibos originais]
+- id: pt-alt-doc-002
+  tipo: vecino
+  particion: test
+  pregunta: Posso viajar de primeira classe?
+  aceptables: [classe executiva]
+- id: pt-alt-doc-003
+  tipo: vecino
+  particion: dev
+  pregunta: Posso fazer teletrabalho quatro dias por semana?
+  aceptables: [até três dias por semana]
+- id: pt-alt-doc-004
+  tipo: vecino
+  particion: test
+  pregunta: A senha expira a cada 60 dias?
+  aceptables: [A senha expira a cada 90 dias]
+- id: pt-alt-doc-005
+  tipo: vecino
+  particion: dev
+  pregunta: Por quanto tempo são guardadas as amostras de urina?
+  aceptables: [amostras de sangue]
+- id: pt-alt-doc-006
+  tipo: vecino
+  particion: test
+  pregunta: A irrigação funciona no inverno?
+  aceptables: [irrigação por gotejamento, terceira irrigação]
+- id: pt-alt-doc-007
+  tipo: vecino
+  particion: dev
+  pregunta: Posso devolver um produto usado?
+  aceptables: [devolução]
+- id: pt-alt-doc-008
+  tipo: vecino
+  particion: test
+  pregunta: A biblioteca abre nos feriados?
+  aceptables: [A biblioteca abre]
+- id: pt-alt-doc-009
+  tipo: vecino
+  particion: dev
+  pregunta: A garantia da cafeteira cobre danos por umidade?
+  aceptables: [A garantia não cobre, Cobre defeitos]
+- id: pt-alt-doc-010
+  tipo: vecino
+  particion: test
+  pregunta: Quantos livros posso pegar emprestados de uma vez?
+  aceptables: [empréstimo de livros]
+- id: pt-alt-doc-011
+  tipo: vecino
+  particion: dev
+  pregunta: O empréstimo de livros dura 21 dias?
+  aceptables: [empréstimo de livros dura 14 dias]
+- id: pt-alt-doc-012
+  tipo: vecino
+  particion: test
+  pregunta: O auxílio de teletrabalho é de 30.000 pesos?
+  aceptables: [auxílio mensal de 20.000 pesos]
+
+# --- documentos: tema ausente sem vizinho ---------------------------------------
+- id: pt-alt-docsin-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Qual é o horário do refeitório?
+- id: pt-alt-docsin-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Quanto custa o estacionamento?
+- id: pt-alt-docsin-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Quem é o diretor de recursos humanos?
+- id: pt-alt-docsin-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Há creche para os filhos dos servidores?
+- id: pt-alt-docsin-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Quantos dias de férias eu tenho?
+- id: pt-alt-docsin-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Posso levar animais de estimação ao escritório?
+
+# --- fora do domínio ---------------------------------------------------------------
+- id: pt-alt-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Qual é a capital da Mongólia?
+- id: pt-alt-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Quem ganhou a Copa do Mundo de futebol de 2010?
+- id: pt-alt-fuera-003
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Como se faz pão de fermentação natural?
+- id: pt-alt-fuera-004
+  tipo: fuera_dominio
+  particion: test
+  pregunta: A que distância fica a Lua?
+- id: pt-alt-fuera-005
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Como o cavalo se move no xadrez?
+- id: pt-alt-fuera-006
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Como vai estar o tempo amanhã em Valparaíso?
+
+# --- ronda 5: la validación de la ronda 3 (ya vista, ahora desarrollo) ---------
+- id: pt-val-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a escada ET-9?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: pt-val-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: Qual é o preço da lixadeira LO-200?
+  aceptables:
+  - LO-300
+  - LB-900
+- id: pt-val-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Tem estoque da furadeira TI-24?
+  aceptables:
+  - TI-18
+  - TP-400
+  - TP-600
+- id: pt-val-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem a serra tico-tico SK-50?
+  aceptables:
+  - SK-65
+  - SC-185
+  - SC-235
+- id: pt-val-plazo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Posso pedir o reembolso até 45 dias depois de receber o pedido?
+  aceptables:
+  - até 30 dias depois de receber o pedido
+- id: pt-val-plazo-002
+  tipo: vecino
+  particion: test
+  pregunta: A chefia responde a solicitação de teletrabalho em quinze dias úteis?
+  aceptables:
+  - responde em até cinco dias úteis
+- id: pt-val-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: A que distância fica o aeroporto?
+- id: pt-val-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Quanto custa o curso de segurança industrial?
+- id: pt-val-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Quanto pesa um monitor de 27 polegadas?
+- id: pt-val-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Qual é o horário da academia de ginástica?
+- id: pt-val-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem peças para a bomba d'água do carro?
+- id: pt-val-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm uma biblioteca de música?
+- id: pt-val-fuera-001
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Quem escreveu Dom Quixote?
+- id: pt-val-fuera-002
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Quantos planetas tem o sistema solar?
+- id: pt-val-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: Quantas unidades da furadeira TP-600 há no Depósito Central?
+  aceptables:
+  - TP-600
+- id: pt-val-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: Até que altura chega a escada EX-12?
+  aceptables:
+  - EX-12
+
+# --- ronda 5: catálogo de oficina, despacho y garantías, medidas y negativos difíciles ---
+- id: pt-alt-ofi-exacta-001
+  tipo: exacta
+  particion: dev
+  pregunta: Quanto custa a resma PA-90?
+  aceptables:
+  - PA-90
+- id: pt-alt-ofi-exacta-002
+  tipo: exacta
+  particion: test
+  pregunta: Quantas páginas por minuto a IM-200 imprime?
+  aceptables:
+  - IM-200
+- id: pt-alt-ofi-exacta-003
+  tipo: exacta
+  particion: dev
+  pregunta: Qual é a largura da escrivaninha ES-160?
+  aceptables:
+  - ES-160
+- id: pt-alt-ofi-exacta-004
+  tipo: exacta
+  particion: test
+  pregunta: Quanto tempo leva a entrega para as regiões?
+  aceptables:
+  - 5 dias úteis
+- id: pt-alt-ofi-exacta-005
+  tipo: exacta
+  particion: dev
+  pregunta: Que garantia têm as cadeiras?
+  aceptables:
+  - 24 meses
+- id: pt-alt-ofi-exacta-006
+  tipo: exacta
+  particion: test
+  pregunta: Que desconto as empresas recebem?
+  aceptables:
+  - 15 %
+- id: pt-alt-ofi-codigo-001
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a resma PA-80?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-alt-ofi-codigo-002
+  tipo: vecino
+  particion: test
+  pregunta: Quanto custa o papel fotográfico PF-150?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-alt-ofi-codigo-003
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês vendem a impressora IM-250?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-codigo-004
+  tipo: vecino
+  particion: test
+  pregunta: Tem estoque da impressora IM-400?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-codigo-005
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm a impressora jato de tinta IT-20?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-codigo-006
+  tipo: vecino
+  particion: test
+  pregunta: Qual é o preço da cadeira SO-15?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-alt-ofi-codigo-007
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês vendem a cadeira executiva SE-30?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-alt-ofi-codigo-008
+  tipo: vecino
+  particion: test
+  pregunta: Vocês têm a escrivaninha ES-140?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: pt-alt-ofi-codigo-009
+  tipo: vecino
+  particion: dev
+  pregunta: Qual é a largura da escrivaninha ES-180?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: pt-alt-ofi-codigo-010
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem a resma PA-60?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-alt-ofi-codigo-011
+  tipo: vecino
+  particion: dev
+  pregunta: A impressora IM-300 imprime em cores?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-codigo-012
+  tipo: vecino
+  particion: test
+  pregunta: Vocês têm a cadeira SE-25 em preto?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-alt-ofi-descrito-001
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm impressora matricial?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-descrito-002
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem papel ofício?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-alt-ofi-descrito-003
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm cadeira gamer?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: pt-alt-ofi-descrito-004
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem escrivaninha em L?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: pt-alt-ofi-descrito-005
+  tipo: vecino
+  particion: dev
+  pregunta: Vocês têm multifuncional a laser?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: pt-alt-ofi-descrito-006
+  tipo: vecino
+  particion: test
+  pregunta: Vocês vendem papel kraft?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: pt-alt-med-001
+  tipo: vecino
+  particion: dev
+  pregunta: A entrega para as regiões leva 3 dias úteis?
+  aceptables:
+  - entrega para as regiões leva 5 dias úteis
+- id: pt-alt-med-002
+  tipo: vecino
+  particion: test
+  pregunta: A entrega dentro de Santiago leva 4 dias úteis?
+  aceptables:
+  - Santiago leva 2 dias úteis
+- id: pt-alt-med-003
+  tipo: vecino
+  particion: dev
+  pregunta: A garantia das impressoras é de 3 meses?
+  aceptables:
+  - impressoras têm garantia de 6 meses
+- id: pt-alt-med-004
+  tipo: vecino
+  particion: test
+  pregunta: As ferramentas têm garantia de 18 meses?
+  aceptables:
+  - ferramentas elétricas têm garantia de 12 meses
+- id: pt-alt-med-005
+  tipo: vecino
+  particion: dev
+  pregunta: A garantia das escrivaninhas é de 36 meses?
+  aceptables:
+  - escrivaninhas têm garantia de 24 meses
+- id: pt-alt-med-006
+  tipo: vecino
+  particion: test
+  pregunta: Posso devolver um produto em até 20 dias?
+  aceptables:
+  - devolver um produto sem uso em até 10 dias
+- id: pt-alt-med-007
+  tipo: vecino
+  particion: dev
+  pregunta: O desconto para empresas é de 10 %?
+  aceptables:
+  - desconto de 15 %
+- id: pt-alt-med-008
+  tipo: vecino
+  particion: test
+  pregunta: É paga 50% da diária se a viagem durar menos de doze horas?
+  aceptables:
+  - 40% da diária
+- id: pt-alt-med-009
+  tipo: vecino
+  particion: dev
+  pregunta: A bomba da irrigação desliga abaixo de 10 %?
+  aceptables:
+  - abaixo de 20 %
+- id: pt-alt-med-010
+  tipo: vecino
+  particion: test
+  pregunta: O acordo de teletrabalho é revisado a cada 3 meses?
+  aceptables:
+  - revisado a cada seis meses
+- id: pt-alt-med-011
+  tipo: vecino
+  particion: dev
+  pregunta: A reposição chega em até 15 dias úteis?
+  aceptables:
+  - reposição chega em até dez dias úteis
+- id: pt-alt-med-012
+  tipo: vecino
+  particion: test
+  pregunta: A garantia da cafeteira dura 18 meses?
+  aceptables:
+  - dura 24 meses
+- id: pt-alt-dificil-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem papel higiênico?
+- id: pt-alt-dificil-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm cadeiras de rodas?
+- id: pt-alt-dificil-003
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem discos de vinil?
+- id: pt-alt-dificil-004
+  tipo: sin_vecino
+  particion: test
+  pregunta: Qual é a garantia de um carro novo?
+- id: pt-alt-dificil-005
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Qual é o horário da farmácia?
+- id: pt-alt-dificil-006
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm escadas rolantes?
+- id: pt-alt-dificil-007
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Quanto cobra um escritório de advocacia?
+- id: pt-alt-dificil-008
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês vendem tinta para tatuagem?
+- id: pt-alt-dificil-009
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Qual é a distância de uma maratona?
+- id: pt-alt-dificil-010
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês vendem monitores cardíacos?
+- id: pt-alt-dificil-011
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês têm luminárias de escrivaninha?
+- id: pt-alt-dificil-012
+  tipo: sin_vecino
+  particion: test
+  pregunta: Quanto custa enviar uma carta para a Europa?
+- id: pt-alt-sinvecino-ofi-001
+  tipo: sin_vecino
+  particion: dev
+  pregunta: Vocês vendem tapetes?
+- id: pt-alt-sinvecino-ofi-002
+  tipo: sin_vecino
+  particion: test
+  pregunta: Vocês têm ventiladores?
+- id: pt-alt-fuera-101
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Quem pintou a Mona Lisa?
+- id: pt-alt-fuera-102
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Qual é o rio mais longo do mundo?
+- id: pt-alt-fuera-103
+  tipo: fuera_dominio
+  particion: dev
+  pregunta: Como se diz gato em inglês?
+- id: pt-alt-fuera-104
+  tipo: fuera_dominio
+  particion: test
+  pregunta: Em que ano o homem chegou à Lua?

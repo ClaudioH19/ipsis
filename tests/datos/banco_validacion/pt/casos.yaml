@@ -1,0 +1,436 @@
+# Banco de validação (fonte). Documentos e perguntas novos, escritos antes das correções
+# de 2026-10-09 e sem uso para desenhá-las: mede uma única vez se generalizam. Mesmas
+# regras do banco universal (a categoria sai do id).
+
+# --- equipamentos --------------------------------------------------------------
+- id: pt-exacta-001
+  documento: politica_equipamentos.md
+  capacidad: lista
+  pregunta: Que equipamentos cada servidor recebe?
+  respuesta: um notebook e um mouse sem fio
+- id: pt-parafrasis-001
+  documento: politica_equipamentos.md
+  capacidad: lista
+  pregunta: o que me dao pra trabalhar quando eu entro
+  respuesta: um notebook e um mouse sem fio
+- id: pt-trampa-001
+  par: pt-exacta-001
+  pregunta: Que celular cada servidor recebe?
+- id: pt-exacta-002
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: Quem assina o termo de entrega do equipamento junto com o servidor?
+  respuesta: o Responsável pelo Inventário
+- id: pt-exacta-003
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: Para que se pode usar o equipamento?
+  respuesta: apenas para atividades institucionais
+- id: pt-parafrasis-002
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: posso instalar jogos no computador do trabalho?
+  respuesta: É proibido instalar jogos ou programas de compartilhamento de arquivos
+- id: pt-exacta-004
+  documento: politica_equipamentos.md
+  capacidad: cantidad
+  pregunta: Quantos caracteres a senha do equipamento deve ter?
+  respuesta: pelo menos 10 caracteres
+- id: pt-trampa-002
+  par: pt-exacta-004
+  pregunta: Quantos caracteres a senha do e-mail deve ter?
+- id: pt-exacta-005
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: Depois de quanto tempo a tela do equipamento é bloqueada?
+  respuesta: depois de 5 minutos de inatividade
+- id: pt-parafrasis-003
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: em quanto tempo a tela bloqueia se eu nao usar
+  respuesta: depois de 5 minutos de inatividade
+- id: pt-exacta-006
+  documento: politica_equipamentos.md
+  capacidad: duracion
+  pregunta: Em que prazo a perda do equipamento é informada?
+  respuesta: em até 24 horas
+- id: pt-parafrasis-004
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: pra quem eu aviso se roubarem meu notebook
+  respuesta: à Central de Atendimento
+- id: pt-trampa-003
+  par: pt-parafrasis-004
+  pregunta: Para quem eu aviso se roubarem meu celular pessoal?
+- id: pt-exacta-007
+  documento: politica_equipamentos.md
+  capacidad: procedimiento
+  pregunta: O que se anexa em caso de roubo do equipamento?
+  respuesta: o boletim de ocorrência
+- id: pt-exacta-008
+  documento: politica_equipamentos.md
+  capacidad: persona
+  pregunta: A quem se devolve o equipamento ao terminar o contrato?
+  respuesta: ao Responsável pelo Inventário
+- id: pt-exacta-009
+  documento: politica_equipamentos.md
+  capacidad: condicion
+  pregunta: O que é feito com o equipamento antes de atribuí-lo a outra pessoa?
+  respuesta: é formatado
+- id: pt-trampa-004
+  par: pt-exacta-009
+  pregunta: Quem paga o conserto do equipamento danificado?
+
+# --- refeitório ----------------------------------------------------------------
+- id: pt-exacta-010
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: Em que horário o refeitório serve almoço?
+  respuesta: entre as 12:30 e as 15:00 horas
+- id: pt-parafrasis-005
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: ate que horas posso almocar no refeitorio
+  respuesta: entre as 12:30 e as 15:00 horas
+- id: pt-trampa-005
+  par: pt-parafrasis-005
+  pregunta: Até que horas o jantar é servido no refeitório?
+- id: pt-exacta-011
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: Em que horário é servido o café da manhã?
+  respuesta: das 8:00 às 9:30 horas
+- id: pt-exacta-012
+  documento: regulamento_refeitorio.md
+  capacidad: cantidad
+  pregunta: Quanto custa o almoço para servidores?
+  respuesta: 3.500 pesos
+- id: pt-parafrasis-006
+  documento: regulamento_refeitorio.md
+  capacidad: cantidad
+  pregunta: quanto os estagiarios pagam pelo almoco
+  respuesta: Os estagiários pagam a metade do preço
+- id: pt-trampa-006
+  par: pt-parafrasis-006
+  pregunta: Quanto os visitantes pagam pelo almoço no refeitório?
+- id: pt-exacta-013
+  documento: regulamento_refeitorio.md
+  capacidad: fecha
+  pregunta: Quando o cardápio semanal é publicado?
+  respuesta: toda sexta-feira na intranet
+- id: pt-parafrasis-007
+  documento: regulamento_refeitorio.md
+  capacidad: condicion
+  pregunta: tem comida vegetariana no refeitorio?
+  respuesta: Todos os dias há uma opção vegetariana
+- id: pt-trampa-007
+  par: pt-parafrasis-007
+  pregunta: Tem comida sem glúten no refeitório?
+- id: pt-exacta-014
+  documento: regulamento_refeitorio.md
+  capacidad: procedimiento
+  pregunta: Como se paga o almoço?
+  respuesta: com o cartão institucional ou em dinheiro
+- id: pt-exacta-015
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: Onde o cartão institucional é recarregado?
+  respuesta: no caixa do refeitório
+- id: pt-exacta-016
+  documento: regulamento_refeitorio.md
+  capacidad: ubicacion
+  pregunta: Onde são deixadas as reclamações sobre o serviço do refeitório?
+  respuesta: no livro de sugestões
+- id: pt-exacta-017
+  documento: regulamento_refeitorio.md
+  capacidad: persona
+  pregunta: Quem responde as reclamações do refeitório?
+  respuesta: A Unidade de Bem-Estar
+- id: pt-parafrasis-008
+  documento: regulamento_refeitorio.md
+  capacidad: duracion
+  pregunta: em quanto tempo respondem uma reclamacao do refeitorio
+  respuesta: em até cinco dias úteis
+
+# --- projetor ------------------------------------------------------------------
+- id: pt-exacta-018
+  documento: manual_projetor.md
+  capacidad: cantidad
+  pregunta: A que distância da tela o projetor Vista X2 é instalado?
+  respuesta: entre 2 e 5 metros da tela
+- id: pt-exacta-019
+  documento: manual_projetor.md
+  capacidad: procedimiento
+  pregunta: Com que cabo o projetor se conecta ao computador?
+  respuesta: com um cabo HDMI
+- id: pt-parafrasis-009
+  documento: manual_projetor.md
+  capacidad: procedimiento
+  pregunta: como ligo o projetor no notebook
+  respuesta: Ele se conecta ao computador com um cabo HDMI
+- id: pt-exacta-020
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: Quanto dura a lâmpada do projetor?
+  respuesta: aproximadamente 4.000 horas
+- id: pt-parafrasis-010
+  documento: manual_projetor.md
+  capacidad: condicion
+  pregunta: a luz da lampada ta vermelha, o que eu faco
+  respuesta: é preciso substituí-la
+- id: pt-trampa-008
+  par: pt-parafrasis-010
+  pregunta: O que faço se a luz de energia piscar em verde?
+- id: pt-exacta-021
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: A cada quanto tempo o filtro de ar do projetor é limpo?
+  respuesta: a cada 200 horas de uso
+- id: pt-exacta-022
+  documento: manual_projetor.md
+  capacidad: cantidad
+  pregunta: Que pilhas o controle remoto do projetor usa?
+  respuesta: duas pilhas AAA
+- id: pt-parafrasis-011
+  documento: manual_projetor.md
+  capacidad: condicion
+  pregunta: pra que serve o botao Freeze
+  respuesta: congela a imagem na tela
+- id: pt-exacta-023
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: Quanto dura a garantia do projetor?
+  respuesta: uma garantia de dois anos
+- id: pt-exacta-024
+  documento: manual_projetor.md
+  capacidad: duracion
+  pregunta: Quanto dura a garantia da lâmpada?
+  respuesta: uma garantia de seis meses
+- id: pt-trampa-009
+  par: pt-exacta-024
+  pregunta: Quanto dura a garantia do controle remoto?
+
+# --- capacitação ---------------------------------------------------------------
+- id: pt-exacta-025
+  documento: regulamento_capacitacao.md
+  capacidad: fecha
+  pregunta: Quando o plano anual de capacitação é aprovado?
+  respuesta: é aprovado em março
+- id: pt-exacta-026
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: Quem elabora o plano anual de capacitação?
+  respuesta: pelo Comitê Paritário de Capacitação
+- id: pt-parafrasis-012
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: quem monta o plano de cursos do ano
+  respuesta: pelo Comitê Paritário de Capacitação
+- id: pt-exacta-027
+  documento: regulamento_capacitacao.md
+  capacidad: procedimiento
+  pregunta: Onde os servidores se inscrevem nos cursos?
+  respuesta: pelo portal de capacitação
+- id: pt-exacta-028
+  documento: regulamento_capacitacao.md
+  capacidad: condicion
+  pregunta: Que autorização a inscrição em um curso exige?
+  respuesta: a autorização da chefia imediata
+- id: pt-parafrasis-013
+  documento: regulamento_capacitacao.md
+  capacidad: persona
+  pregunta: quem tem que autorizar minha inscricao num curso
+  respuesta: a autorização da chefia imediata
+- id: pt-trampa-010
+  par: pt-parafrasis-013
+  pregunta: Quem autoriza os cursos no exterior?
+- id: pt-exacta-029
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: Que frequência mínima é exigida para ser aprovado em um curso?
+  respuesta: uma frequência mínima de 75 %
+- id: pt-parafrasis-014
+  documento: regulamento_capacitacao.md
+  capacidad: condicion
+  pregunta: o que acontece se eu nao terminar um curso sem justificativa
+  respuesta: não pode se inscrever em outro curso durante seis meses
+- id: pt-exacta-030
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: Quantas horas de capacitação por ano cada servidor pode usar?
+  respuesta: até 40 horas de capacitação por ano
+- id: pt-parafrasis-015
+  documento: regulamento_capacitacao.md
+  capacidad: cantidad
+  pregunta: quantas horas de curso eu tenho por ano
+  respuesta: até 40 horas de capacitação por ano
+- id: pt-trampa-011
+  par: pt-parafrasis-015
+  pregunta: Quantas horas de cursos on-line podem ser feitas fora da jornada?
+- id: pt-exacta-031
+  documento: regulamento_capacitacao.md
+  capacidad: duracion
+  pregunta: Em que prazo os certificados dos cursos são baixados?
+  respuesta: em até dez dias úteis após o término do curso
+- id: pt-trampa-012
+  par: pt-exacta-031
+  pregunta: Quem pode ministrar os cursos de capacitação?
+
+# --- seguro --------------------------------------------------------------------
+- id: pt-exacta-032
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: Que porcentagem das despesas ambulatoriais o seguro reembolsa?
+  respuesta: 70 % das despesas médicas ambulatoriais
+- id: pt-exacta-033
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: Em que porcentagem as despesas hospitalares são reembolsadas?
+  respuesta: são reembolsadas em 90 %
+- id: pt-parafrasis-016
+  documento: seguro_saude.md
+  capacidad: cantidad
+  pregunta: quanto o seguro me devolve se eu for internado
+  respuesta: As despesas hospitalares são reembolsadas em 90 %
+- id: pt-trampa-013
+  par: pt-parafrasis-016
+  pregunta: Quanto o seguro devolve em despesas odontológicas?
+- id: pt-exacta-034
+  documento: seguro_saude.md
+  capacidad: persona
+  pregunta: Quem pode ser incluído como dependente do seguro?
+  respuesta: o cônjuge e os filhos menores de 24 anos
+- id: pt-parafrasis-017
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: posso colocar meu filho de 20 anos no seguro?
+  respuesta: Podem ser incluídos como dependentes o cônjuge e os filhos menores de 24 anos
+- id: pt-trampa-014
+  par: pt-parafrasis-017
+  pregunta: Posso incluir meus pais como dependentes do seguro?
+- id: pt-exacta-035
+  documento: seguro_saude.md
+  capacidad: duracion
+  pregunta: Em que prazo os reembolsos do seguro são solicitados?
+  respuesta: em até 60 dias após o atendimento médico
+- id: pt-parafrasis-018
+  documento: seguro_saude.md
+  capacidad: procedimiento
+  pregunta: que papeis eu preciso pra pedir o reembolso do seguro
+  respuesta: o recibo e o pedido médico
+- id: pt-exacta-036
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: O que o seguro complementar não cobre?
+  respuesta: tratamentos estéticos nem óculos
+- id: pt-parafrasis-019
+  documento: seguro_saude.md
+  capacidad: condicion
+  pregunta: o seguro cobre oculos?
+  respuesta: O seguro não cobre tratamentos estéticos nem óculos
+- id: pt-exacta-037
+  documento: seguro_saude.md
+  capacidad: persona
+  pregunta: Para quem são enviadas as dúvidas sobre o seguro?
+  respuesta: à Unidade de Bem-Estar
+- id: pt-exacta-038
+  documento: seguro_saude.md
+  capacidad: duracion
+  pregunta: Em que prazo a seguradora paga os reembolsos?
+  respuesta: em um prazo de dez dias úteis
+- id: pt-trampa-015
+  par: pt-exacta-038
+  pregunta: Quem contrata o seguro complementar?
+
+# --- academia ------------------------------------------------------------------
+- id: pt-exacta-039
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: Em que horário a academia abre?
+  respuesta: de segunda a sexta das 7:00 às 20:00 horas
+- id: pt-parafrasis-020
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: que horas a academia fecha
+  respuesta: de segunda a sexta das 7:00 às 20:00 horas
+- id: pt-trampa-016
+  par: pt-parafrasis-020
+  pregunta: Que horas a piscina fecha?
+- id: pt-exacta-040
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: O que é necessário para usar a academia?
+  respuesta: um atestado médico válido
+- id: pt-exacta-041
+  documento: regulamento_academia.md
+  capacidad: persona
+  pregunta: Com quem é feita a inscrição na academia?
+  respuesta: com a Unidade de Bem-Estar
+- id: pt-exacta-042
+  documento: regulamento_academia.md
+  capacidad: duracion
+  pregunta: Quanto dura no máximo uma sessão quando há pessoas esperando?
+  respuesta: no máximo uma hora
+- id: pt-parafrasis-021
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: preciso levar toalha na academia?
+  respuesta: É obrigatório usar toalha nos aparelhos
+- id: pt-exacta-043
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: Quando são as aulas de ioga?
+  respuesta: às terças e quintas às 18:00 horas
+- id: pt-parafrasis-022
+  documento: regulamento_academia.md
+  capacidad: fecha
+  pregunta: que dias tem ioga
+  respuesta: às terças e quintas às 18:00 horas
+- id: pt-trampa-017
+  par: pt-parafrasis-022
+  pregunta: Que dias têm aulas de pilates?
+- id: pt-exacta-044
+  documento: regulamento_academia.md
+  capacidad: cantidad
+  pregunta: Quantas pessoas cada aula de ioga admite?
+  respuesta: até 15 pessoas
+- id: pt-parafrasis-023
+  documento: regulamento_academia.md
+  capacidad: condicion
+  pregunta: o que acontece com as coisas que deixo no armario a noite
+  respuesta: são retirados e guardados na recepção
+- id: pt-trampa-018
+  par: pt-parafrasis-023
+  pregunta: Quanto custa alugar um armário?
+- id: pt-trampa-019
+  par: pt-exacta-040
+  pregunta: Quem pode usar a academia nos fins de semana?
+- id: pt-trampa-020
+  par: pt-exacta-044
+  pregunta: Quantas pessoas cada aula de spinning admite?
+
+# --- premissas falsas, fora do domínio e ambíguas -----------------------------
+- id: pt-premisa-001
+  pregunta: O que diz o artigo 15 do regulamento da academia?
+- id: pt-premisa-002
+  pregunta: Quanto custa o almoço de 5.000 pesos?
+- id: pt-premisa-003
+  pregunta: Quando é a aula de ioga de sábado?
+- id: pt-premisa-004
+  pregunta: O que cobre a garantia de cinco anos do projetor?
+- id: pt-fuera-001
+  pregunta: Qual é o rio mais longo do mundo?
+- id: pt-fuera-002
+  pregunta: Como se faz pão de fermentação natural?
+- id: pt-fuera-003
+  pregunta: Quem escreveu Cem anos de solidão?
+- id: pt-fuera-004
+  pregunta: me da ideias de presente de aniversario
+- id: pt-ambigua-001
+  pregunta: Quanto custa?
+- id: pt-ambigua-002
+  pregunta: Quem assina?
+- id: pt-ambigua-003
+  pregunta: Quantas horas são?
+- id: pt-ambigua-004
+  pregunta: E isso é feito onde?

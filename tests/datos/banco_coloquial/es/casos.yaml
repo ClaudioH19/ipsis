@@ -1,0 +1,142 @@
+# Banco coloquial (fuente). Preguntas informales con vocabulario cotidiano sobre los hechos
+# del banco de validación, escritas el 2026-10-10 antes de curar las equivalencias
+# coloquiales de los paquetes y sin uso para diseñarlas. La categoría sale del id.
+
+- id: es-parafrasis-001
+  documento: politica_equipos.md
+  capacidad: lista
+  pregunta: que cosas me pasan pa trabajar cuando entro
+  respuesta: un computador portátil y un mouse inalámbrico
+- id: es-parafrasis-002
+  documento: politica_equipos.md
+  capacidad: cantidad
+  pregunta: de cuantas letras tiene q ser la clave del compu
+  respuesta: al menos 10 caracteres
+- id: es-parafrasis-003
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: a los cuantos minutos se bloquea el compu si no lo toco
+  respuesta: después de 5 minutos de inactividad
+- id: es-parafrasis-004
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: si pierdo el notebook cuanto tiempo tengo pa avisar
+  respuesta: dentro de 24 horas
+- id: es-parafrasis-005
+  documento: politica_equipos.md
+  capacidad: procedimiento
+  pregunta: me robaron el notebook, que papel tengo q adjuntar
+  respuesta: la denuncia de Carabineros
+- id: es-parafrasis-006
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: cuando me voy de la pega a quien le entrego el compu
+  respuesta: al Encargado de Inventario
+- id: es-parafrasis-007
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: a q hora se puede almorzar en el casino
+  respuesta: entre las 12:30 y las 15:00 horas
+- id: es-parafrasis-008
+  documento: reglamento_casino.md
+  capacidad: cantidad
+  pregunta: cuanta plata sale el almuerzo
+  respuesta: 3.500 pesos
+- id: es-parafrasis-009
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: cuando suben el menu de la semana
+  respuesta: cada viernes en la intranet
+- id: es-parafrasis-010
+  documento: reglamento_casino.md
+  capacidad: procedimiento
+  pregunta: puedo pagar la colacion con efectivo?
+  respuesta: con la tarjeta institucional o en efectivo
+- id: es-parafrasis-011
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: donde le cargo saldo a la tarjeta
+  respuesta: en la caja del casino
+- id: es-parafrasis-012
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: donde reclamo si la comida del casino esta mala
+  respuesta: en el libro de sugerencias
+- id: es-parafrasis-013
+  documento: manual_proyector.md
+  capacidad: procedimiento
+  pregunta: con que cable enchufo el proyector al compu
+  respuesta: con un cable HDMI
+- id: es-parafrasis-014
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: cuanto aguanta la ampolleta del proyector
+  respuesta: aproximadamente 4.000 horas
+- id: es-parafrasis-015
+  documento: manual_proyector.md
+  capacidad: cantidad
+  pregunta: que pilas lleva el control del proyector
+  respuesta: dos pilas AAA
+- id: es-parafrasis-016
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien me tiene q dar permiso pa inscribirme en un curso
+  respuesta: la autorización de la jefatura directa
+- id: es-parafrasis-017
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: cuanto tengo q ir a clases pa pasar el curso
+  respuesta: una asistencia mínima del 75 %
+- id: es-parafrasis-018
+  documento: reglamento_capacitacion.md
+  capacidad: duracion
+  pregunta: cuando bajo el diploma del curso
+  respuesta: dentro de diez días hábiles después de terminar el curso
+- id: es-parafrasis-019
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: cuanto me devuelve el seguro si voy al doctor
+  respuesta: el 70 % de los gastos médicos ambulatorios
+- id: es-parafrasis-020
+  documento: seguro_salud.md
+  capacidad: persona
+  pregunta: puedo meter a mi señora al seguro
+  respuesta: el cónyuge y los hijos menores de 24 años
+- id: es-parafrasis-021
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: el seguro me paga los lentes?
+  respuesta: tratamientos estéticos ni lentes ópticos
+- id: es-parafrasis-022
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: hasta q hora puedo entrenar en el gym
+  respuesta: de lunes a viernes de 7:00 a 20:00 horas
+- id: es-parafrasis-023
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: que papel me piden pa entrar al gym
+  respuesta: un certificado médico vigente
+- id: es-parafrasis-024
+  documento: reglamento_gimnasio.md
+  capacidad: cantidad
+  pregunta: cuanta gente cabe en yoga
+  respuesta: hasta 15 personas
+
+- id: es-trampa-001
+  par: es-parafrasis-008
+  pregunta: cuanta plata sale la once en el casino
+- id: es-trampa-002
+  par: es-parafrasis-014
+  pregunta: cuanto aguanta la bateria del control del proyector
+- id: es-trampa-003
+  par: es-parafrasis-020
+  pregunta: puedo meter a mis papas al seguro
+- id: es-trampa-004
+  par: es-parafrasis-022
+  pregunta: hasta q hora puedo nadar en la piscina
+
+- id: es-fuera-001
+  pregunta: cual es la mejor pizzeria de santiago
+- id: es-fuera-002
+  pregunta: como se juega al truco

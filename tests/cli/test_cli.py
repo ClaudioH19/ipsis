@@ -220,6 +220,18 @@ def test_configurar_claves_widget_como_lista(proyecto_temporal: Path):
     assert dominio["claves_widget"] == ["clave-sitio-a", "clave-sitio-b"]
 
 
+def test_la_postura_es_proactiva_por_defecto_y_se_configura(proyecto_temporal: Path):
+    """ADR 0008: ``posture`` en assistant.yaml, en inglés en el disco."""
+    main(["init"])
+    ruta = proyecto_temporal / "config" / "assistant.yaml"
+    assert leer_proyecto(ruta)["postura"] == {"modo": "proactiva", "max_alternativas": 3}
+    assert main(["configure", "posture.mode=strict", "posture.max_alternatives=2"]) == 0
+    assert leer_proyecto(ruta)["postura"] == {"modo": "estricta", "max_alternativas": 2}
+    assert "mode: strict" in ruta.read_text(encoding="utf-8")
+    assert main(["configure", "posture.mode=agresiva"]) == 1
+    assert main(["configure", "posture.max_alternatives=9"]) == 1
+
+
 def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path, capsys):
     main(["init"])
     main(["load", str(_doc_prueba_md(proyecto_temporal))])

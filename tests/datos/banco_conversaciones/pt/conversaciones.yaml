@@ -1,0 +1,217 @@
+# Banco de conversaciones en portugués (fuente). Las mismas conversaciones
+# que es/, escritas como las diría alguien en portugués, sobre el corpus de
+# ../../banco_consultas/pt/corpus. Las claves por turno, en ../es/.
+
+- id: pt-conv-001  # seguimiento y luego cambio de tema sin marcador
+  turnos:
+  - pregunta: O que acontece se o fornecedor recusar a ordem?
+    respuesta: o Supervisor de Compras cancela a ordem
+  - pregunta: e quantos dias ele tem para aceitar?
+    hereda: true
+    respuesta: dois dias úteis para aceitar a Ordem de Compra
+  - pregunta: Qual é o horário da Central de Atendimento?
+    hereda: false
+    respuesta: de segunda a sexta das 8:00 às 18:00 horas
+
+- id: pt-conv-002  # cuatro turnos sobre el mismo tema
+  turnos:
+  - pregunta: Quem pode pedir teletrabalho?
+    respuesta: pelo menos seis meses de exercício na instituição
+  - pregunta: e quantos dias por semana?
+    hereda: true
+    respuesta: até três dias por semana
+  - pregunta: e que equipamentos eu recebo?
+    hereda: true
+    respuesta: A instituição fornece um notebook e um monitor
+  - pregunta: e o auxílio?
+    hereda: true
+    respuesta: auxílio mensal de 20.000 pesos
+
+- id: pt-conv-003
+  turnos:
+  - pregunta: Qual é o valor da diária dentro do país?
+    respuesta: 45.000 pesos dentro do país
+  - pregunta: e no exterior?
+    hereda: true
+    respuesta: 150 dólares no exterior
+  - pregunta: com quanta antecedência eu peço?
+    hereda: true
+    respuesta: pelo menos sete dias antes da viagem
+  - pregunta: e se eu não prestar contas no prazo?
+    hereda: true
+    respuesta: o valor é descontado da remuneração seguinte
+
+- id: pt-conv-004  # seguimiento y luego cambio de tema completo
+  turnos:
+  - pregunta: Como troco minha senha?
+    respuesta: Acesse o portal de autoatendimento
+  - pregunta: a cada quanto tempo expira?
+    hereda: true
+    respuesta: A senha expira a cada 90 dias
+  - pregunta: e quantos caracteres deve ter?
+    hereda: true
+    respuesta: pelo menos 12 caracteres
+  - pregunta: Quem compra as passagens aéreas?
+    hereda: false
+    respuesta: As passagens aéreas são compradas pela Unidade de Viagens
+
+- id: pt-conv-005  # cambio de tema y vuelta con un seguimiento del tema nuevo
+  turnos:
+  - pregunta: Quanto dura a garantia da cafeteira Brío C2?
+    respuesta: 24 meses a partir da data de compra
+  - pregunta: e o que ela não cobre?
+    hereda: true
+    respuesta: não cobre danos por quedas
+  - pregunta: Qual é o horário da biblioteca?
+    hereda: false
+    respuesta: de segunda a sexta das 8:30 às 20:00
+  - pregunta: e aos sábados?
+    hereda: true
+    respuesta: Aos sábados abre das 10:00 às 14:00
+
+- id: pt-conv-006  # cambio de tema deliberado aunque empiece con «e»
+  turnos:
+  - pregunta: Quanto tempo demora para chegar um computador novo?
+    respuesta: entrega o equipamento em até dez dias úteis
+  - pregunta: e quanto é a diária no exterior?
+    hereda: false
+    respuesta: 150 dólares no exterior
+
+- id: pt-conv-007  # una pregunta fuera de dominio en medio; luego vuelve (memoria de más de un turno)
+  turnos:
+  - pregunta: Quem assina a Resolução de compra?
+    respuesta: Diretor de Administração para assinatura
+  - pregunta: Qual é a capital da Mongólia?
+    hereda: false
+    directa: false
+  - pregunta: e quem a redige?
+    hereda: true
+    respuesta: O Operador de Compras redige a Resolução de compra
+
+- id: pt-conv-008
+  turnos:
+  - pregunta: O que acontece se eu não cumprir minhas metas no teletrabalho?
+    respuesta: pode suspender o teletrabalho
+  - pregunta: com quanta antecedência me avisam?
+    hereda: true
+    respuesta: com dez dias de antecedência
+  - pregunta: e a cada quanto tempo o acordo é revisado?
+    hereda: true
+    respuesta: revisado a cada seis meses
+
+- id: pt-conv-009  # trampa dentro de un seguimiento
+  turnos:
+  - pregunta: Quantos dias o fornecedor tem para aceitar a Ordem de Compra?
+    respuesta: dois dias úteis para aceitar a Ordem de Compra
+  - pregunta: e para entregar os produtos?
+    hereda: true
+    directa: false
+
+- id: pt-conv-010
+  turnos:
+  - pregunta: quando começa a compra?
+    respuesta: Uma vez aprovado o Formulário de Requisição
+  - pregunta: e quem registra a requisição?
+    hereda: true
+    respuesta: O Operador de Compras registra a requisição no sistema
+  - pregunta: e em quantos dias a ordem é emitida?
+    hereda: true
+    respuesta: prazo de dez dias úteis a partir da aprovação do Formulário de Requisição
+
+- id: pt-conv-011
+  turnos:
+  - pregunta: Quantas vezes por dia funciona a irrigação?
+    respuesta: duas vezes por dia
+  - pregunta: e no verão?
+    hereda: true
+    respuesta: é adicionada uma terceira irrigação
+  - pregunta: quando a bomba desliga?
+    hereda: true
+    respuesta: quando o tanque fica abaixo de 20 %
+
+- id: pt-conv-012  # trampa dentro de un seguimiento de varios turnos
+  turnos:
+  - pregunta: A que temperatura as amostras de sangue são guardadas?
+    respuesta: a 4 °C
+  - pregunta: por quanto tempo?
+    hereda: true
+    respuesta: por no máximo 72 horas
+  - pregunta: e as de urina?
+    hereda: true
+    directa: false
+
+- id: pt-conv-013
+  turnos:
+  - pregunta: Até quando posso pedir o reembolso?
+    respuesta: até 30 dias depois de receber o pedido
+  - pregunta: e em quantos dias ele é pago?
+    hereda: true
+    respuesta: em até 10 dias úteis
+  - pregunta: e se o produto chegar danificado?
+    hereda: true
+    respuesta: o frete da devolução é grátis
+
+- id: pt-conv-014  # tres temas seguidos, ninguno hereda
+  turnos:
+  - pregunta: Quanto dura o empréstimo de livros?
+    respuesta: dura 14 dias
+  - pregunta: Quem compra as passagens aéreas?
+    hereda: false
+    respuesta: As passagens aéreas são compradas pela Unidade de Viagens
+  - pregunta: A cada quanto tempo a senha expira?
+    hereda: false
+    respuesta: A senha expira a cada 90 dias
+
+- id: pt-conv-015  # vuelve a un tema de dos turnos atrás (memoria de la conversación)
+  turnos:
+  - pregunta: Qual é o valor da diária dentro do país?
+    respuesta: 45.000 pesos dentro do país
+  - pregunta: Qual é o horário da Central de Atendimento?
+    hereda: false
+    respuesta: de segunda a sexta das 8:00 às 18:00 horas
+  - pregunta: voltando à diária, e no exterior?
+    hereda: true
+    respuesta: 150 dólares no exterior
+
+- id: pt-conv-016
+  turnos:
+  - pregunta: bloquearam minha conta, o que eu faço?
+    respuesta: ligue para a Central de Atendimento no ramal 4500
+  - pregunta: e fora do horário?
+    hereda: true
+    respuesta: as urgências são informadas no ramal 4501
+
+- id: pt-conv-017  # seguimiento muy corto tras una respuesta con cifra
+  turnos:
+  - pregunta: A partir de que valor se precisa de uma Resolução?
+    respuesta: As compras superiores a 100 UTM exigem uma Resolução
+  - pregunta: e quem assina?
+    hereda: true
+    respuesta: Diretor de Administração para assinatura
+
+- id: pt-conv-018  # premisa falsa dentro de un seguimiento
+  turnos:
+  - pregunta: Qual auxílio mensal é concedido para despesas de conexão?
+    respuesta: auxílio mensal de 20.000 pesos
+  - pregunta: e o de 35.000 pesos, o que cobre?
+    hereda: true
+    directa: false
+
+- id: pt-conv-019
+  turnos:
+  - pregunta: Quem é a responsável pelo registro de amostras?
+    respuesta: a técnica Marta Rojas
+  - pregunta: e quando uma amostra é rejeitada?
+    hereda: true
+    respuesta: se o tubo chegar sem etiqueta
+  - pregunta: O que a garantia da cafeteira cobre?
+    hereda: false
+    respuesta: Cobre defeitos do motor, da bomba e do aquecedor
+
+- id: pt-conv-020  # el tema nuevo comparte una palabra con el anterior («dias»)
+  turnos:
+  - pregunta: Em quantos dias a chefia responde o pedido de teletrabalho?
+    respuesta: A chefia responde em até cinco dias úteis
+  - pregunta: Em quantos dias a Central de Atendimento entrega um equipamento novo?
+    hereda: false
+    respuesta: entrega o equipamento em até dez dias úteis

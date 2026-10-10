@@ -109,6 +109,10 @@ class SentenceSelectorExtractor:
         )
 
         entidades = extraer_entidades(consulta.pregunta_original)
+        from ipsis.lenguaje.consultas import comprender_consulta
+        from ipsis.lenguaje.entidades import idioma_activo
+
+        comprension = comprender_consulta(consulta, idioma_activo())
         payloads = [
             recortar_payload_a_texto_pertinente(
                 payload_desde_chunk(candidato.chunk),
@@ -117,6 +121,7 @@ class SentenceSelectorExtractor:
                 estadisticas=self.estadisticas,
                 entidades_pregunta=entidades,
                 pregunta_usuario=consulta.contexto.get("pregunta_usuario"),
+                comprension=comprension,
             )
             for candidato in candidatos
         ]

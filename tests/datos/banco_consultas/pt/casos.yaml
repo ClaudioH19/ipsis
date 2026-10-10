@@ -81,3 +81,172 @@
   respuesta: em até trinta dias corridos a partir do recebimento
 - id: pt-fuera-001
   pregunta: Qual é a capital da Mongólia?
+
+# --- ampliación a 60 casos: reglamento, preguntas frecuentes y política ------
+# Los mismos casos que es/, escritos como los diría alguien en portugués, con
+# palabras que el documento no usa («login», «computador», «software»).
+- id: pt-exacta-005
+  documento: regulamento_teletrabalho.md
+  capacidad: cantidad
+  pregunta: Quantos dias por semana posso fazer teletrabalho?
+  respuesta: até três dias por semana
+- id: pt-trampa-007
+  par: pt-exacta-005
+  pregunta: Quantos dias de férias tem um servidor em teletrabalho?
+- id: pt-exacta-006
+  documento: regulamento_teletrabalho.md
+  capacidad: cantidad
+  pregunta: Qual auxílio mensal é concedido para despesas de conexão?
+  respuesta: auxílio mensal de 20.000 pesos
+- id: pt-trampa-008
+  par: pt-exacta-006
+  pregunta: Qual auxílio mensal é concedido para despesas de energia elétrica?
+- id: pt-exacta-007
+  documento: perguntas_frequentes_ti.md
+  capacidad: duracion
+  pregunta: A cada quanto tempo a senha expira?
+  respuesta: A senha expira a cada 90 dias
+- id: pt-trampa-009
+  par: pt-exacta-007
+  pregunta: A cada quanto tempo o crachá de acesso expira?
+- id: pt-exacta-008
+  documento: perguntas_frequentes_ti.md
+  capacidad: cantidad
+  pregunta: Depois de quantas tentativas falhas a conta é bloqueada?
+  respuesta: após cinco tentativas falhas
+- id: pt-exacta-009
+  documento: politica_diarias.md
+  capacidad: cantidad
+  pregunta: Qual é o valor da diária dentro do país?
+  respuesta: 45.000 pesos dentro do país
+- id: pt-trampa-010
+  par: pt-exacta-009
+  pregunta: Quanto se paga por quilômetro se eu viajar de carro próprio?
+- id: pt-exacta-010
+  documento: politica_diarias.md
+  capacidad: persona
+  pregunta: Quem compra as passagens aéreas?
+  respuesta: As passagens aéreas são compradas pela Unidade de Viagens
+- id: pt-trampa-011
+  par: pt-exacta-010
+  pregunta: Quem compra as passagens de ônibus?
+- id: pt-exacta-011
+  documento: perguntas_frequentes_ti.md
+  capacidad: cantidad
+  pregunta: Quantos caracteres a nova senha deve ter?
+  respuesta: pelo menos 12 caracteres
+- id: pt-exacta-012
+  documento: regulamento_teletrabalho.md
+  capacidad: duracion
+  pregunta: Com quanta antecedência a suspensão do teletrabalho é comunicada?
+  respuesta: com dez dias de antecedência
+- id: pt-exacta-013
+  documento: regulamento_teletrabalho.md
+  capacidad: duracion
+  pregunta: A cada quanto tempo o acordo de teletrabalho é revisado?
+  respuesta: revisado a cada seis meses
+- id: pt-trampa-012
+  par: pt-exacta-013
+  pregunta: A cada quanto tempo o plano de metas do servidor é revisado?
+- id: pt-exacta-014
+  documento: perguntas_frequentes_ti.md
+  capacidad: fecha
+  pregunta: Qual é o horário da Central de Atendimento?
+  respuesta: de segunda a sexta das 8:00 às 18:00 horas
+
+- id: pt-parafrasis-008
+  documento: regulamento_teletrabalho.md
+  capacidad: condicion
+  pregunta: quem pode pedir teletrabalho
+  respuesta: pelo menos seis meses de exercício na instituição
+- id: pt-parafrasis-009
+  documento: regulamento_teletrabalho.md
+  capacidad: duracion
+  pregunta: Quanto tempo a chefia demora para responder o pedido de teletrabalho?
+  respuesta: A chefia responde em até cinco dias úteis
+- id: pt-parafrasis-010
+  documento: regulamento_teletrabalho.md
+  capacidad: lista
+  pregunta: Que equipamentos recebo para trabalhar de casa?
+  respuesta: A instituição fornece um notebook e um monitor
+- id: pt-trampa-013
+  par: pt-parafrasis-010
+  pregunta: Que móveis recebo para trabalhar de casa?
+- id: pt-parafrasis-011
+  documento: regulamento_teletrabalho.md
+  capacidad: fecha
+  pregunta: Em que horário tenho que estar conectado no teletrabalho?
+  respuesta: entre as 9:00 e as 17:00 horas
+- id: pt-parafrasis-012
+  documento: regulamento_teletrabalho.md
+  capacidad: condicion
+  pregunta: O que acontece se eu não cumprir minhas metas no teletrabalho?
+  respuesta: pode suspender o teletrabalho
+- id: pt-trampa-014
+  par: pt-parafrasis-012
+  pregunta: O que acontece se eu ficar doente durante o teletrabalho?
+- id: pt-parafrasis-013
+  documento: perguntas_frequentes_ti.md
+  capacidad: procedimiento
+  pregunta: esqueci a senha do login, como troco?
+  respuesta: Acesse o portal de autoatendimento
+- id: pt-parafrasis-014
+  documento: perguntas_frequentes_ti.md
+  capacidad: procedimiento
+  pregunta: bloquearam minha conta, o que eu faço?
+  respuesta: ligue para a Central de Atendimento no ramal 4500
+- id: pt-parafrasis-015
+  documento: perguntas_frequentes_ti.md
+  capacidad: duracion
+  pregunta: Quanto tempo demora para chegar um computador novo?
+  respuesta: entrega o equipamento em até dez dias úteis
+- id: pt-parafrasis-016
+  documento: perguntas_frequentes_ti.md
+  capacidad: persona
+  pregunta: Quem autoriza instalar software?
+  respuesta: aprovados pelo Responsável de Segurança
+- id: pt-trampa-015
+  par: pt-parafrasis-016
+  pregunta: Quem autoriza comprar licenças de software?
+- id: pt-parafrasis-017
+  documento: politica_diarias.md
+  capacidad: cantidad
+  pregunta: Quanto dinheiro recebo por dia se viajar para o exterior?
+  respuesta: 150 dólares no exterior
+- id: pt-parafrasis-018
+  documento: politica_diarias.md
+  capacidad: duracion
+  pregunta: Com quantos dias de antecedência peço a diária?
+  respuesta: pelo menos sete dias antes da viagem
+- id: pt-parafrasis-019
+  documento: politica_diarias.md
+  capacidad: condicion
+  pregunta: O que acontece se eu não prestar contas no prazo?
+  respuesta: o valor é descontado da remuneração seguinte
+- id: pt-trampa-016
+  par: pt-parafrasis-019
+  pregunta: O que acontece se eu perder os recibos originais?
+- id: pt-parafrasis-020
+  documento: politica_diarias.md
+  capacidad: fecha
+  pregunta: Quando a diária é depositada?
+  respuesta: o Financeiro transfere a diária dois dias antes da partida
+
+- id: pt-premisa-001
+  pregunta: O que diz o artigo 12 do regulamento de teletrabalho?
+- id: pt-premisa-002
+  pregunta: O que cobre o auxílio de 35.000 pesos do teletrabalho?
+- id: pt-premisa-003
+  pregunta: O que acontece se a diária passar de 100.000 pesos?
+- id: pt-ambigua-001
+  pregunta: Quantos dias são?
+- id: pt-ambigua-002
+  pregunta: Quem aprova?
+- id: pt-ambigua-003
+  pregunta: Quanto é?
+- id: pt-fuera-002
+  pregunta: Quem ganhou a Copa do Mundo de futebol de 2014?
+- id: pt-fuera-003
+  pregunta: Como se prepara uma caipirinha?
+- id: pt-fuera-004
+  pregunta: Qual é a distância da Lua até a Terra?

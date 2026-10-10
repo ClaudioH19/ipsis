@@ -1,0 +1,121 @@
+# Validación apartada de la ronda 5 (ADR 0008): escrita antes de calibrar y medida
+# una sola vez con la regla congelada. La anterior pasó a casos.yaml.
+- id: es-val2-codigo-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen la resma PA-100?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-val2-codigo-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Cuánto cuesta la impresora IM-500?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-val2-codigo-003
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Venden la silla SO-20?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-val2-codigo-004
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen el escritorio ES-200?
+  aceptables:
+  - ES-120
+  - ES-160
+- id: es-val2-codigo-005
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Hay stock de la impresora IT-10?
+  aceptables:
+  - IM-200
+  - IM-350
+  - IT-15
+- id: es-val2-codigo-006
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen la escalera ET-8?
+  aceptables:
+  - ET-5
+  - ET-7
+  - EX-12
+- id: es-val2-descrito-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Venden papel bond?
+  aceptables:
+  - PA-75
+  - PA-90
+  - PF-120
+- id: es-val2-descrito-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿Tienen silla ergonómica?
+  aceptables:
+  - SO-10
+  - SE-20
+- id: es-val2-medida-001
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El despacho a regiones tarda 7 días hábiles?
+  aceptables:
+  - despacho a regiones tarda 5 días hábiles
+- id: es-val2-medida-002
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿La garantía de las sillas es de 30 meses?
+  aceptables:
+  - sillas y los escritorios tienen una garantía de 24 meses
+- id: es-val2-medida-003
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El descuento para empresas es de 25 %?
+  aceptables:
+  - descuento de 15 %
+- id: es-val2-medida-004
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿La contraseña vence cada 45 días?
+  aceptables:
+  - La contraseña vence cada 90 días
+- id: es-val2-medida-005
+  tipo: vecino
+  particion: validacion
+  pregunta: ¿El préstamo de libros dura 7 días?
+  aceptables:
+  - préstamo de libros dura 14 días
+- id: es-val2-dificil-001
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Venden papel tapiz?
+- id: es-val2-dificil-002
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Tienen sillas para bebé?
+- id: es-val2-dificil-003
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Cuál es la garantía de un celular?
+- id: es-val2-dificil-004
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Qué horario tiene el banco?
+- id: es-val2-dificil-005
+  tipo: sin_vecino
+  particion: validacion
+  pregunta: ¿Tienen tinta china para caligrafía?
+- id: es-val2-fuera-001
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: ¿Cuál es la montaña más alta del mundo?
+- id: es-val2-fuera-002
+  tipo: fuera_dominio
+  particion: validacion
+  pregunta: ¿Cuántos huesos tiene el cuerpo humano?

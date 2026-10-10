@@ -95,6 +95,15 @@ situations:
   - 'Sem resposta direta. Texto próximo:'
   - 'Não se achou resposta direta. Relacionado:'
   - 'A resposta direta não consta. Conteúdo vizinho:'
+  related_check:
+  - "Se o trecho não responde a pergunta, reformule-a."
+  - "Verifique se o texto corresponde ao consultado."
+  - "Se procura outro dado, indique-o com mais precisão."
+  - "Se não é a informação necessária, faça a pergunta de outra forma."
+  - "É possível repetir a busca com outros termos."
+  - "Se o conteúdo não é pertinente, especifique a consulta."
+  - "Confirme se o trecho responde ao consultado."
+  - "Para outro resultado, torne a pergunta mais precisa."
   missing_focus:
   - 'Não há informação sobre «{term}». O mais próximo:'
   - 'Sem dados sobre «{term}». Relacionado:'
@@ -126,6 +135,24 @@ situations:
   - '"{entity}" não figura.'
   - Sem referências a "{entity}".
   - Não se achou "{entity}".
+  needs_clarification:
+  - A pergunta não indica o tema.
+  - A pergunta admite várias leituras. O tema é necessário.
+  - Sem o tema não é possível buscar a resposta.
+  - Vários documentos poderiam corresponder. Indique qual.
+  - É necessário mais contexto para responder.
+  - A consulta está incompleta. Especifique o processo ou documento.
+  - Não é possível determinar a que a pergunta se refere.
+  - Indique o tema para continuar.
+  alternatives_intro:
+  - 'Opções semelhantes que constam nos documentos:'
+  - 'Este é o conteúdo mais próximo nos documentos:'
+  - 'Alternativas disponíveis nos documentos:'
+  - 'Conteúdo semelhante que está registrado:'
+  - 'O mais próximo do consultado é o seguinte:'
+  - 'Constam estas opções parecidas:'
+  - 'Referências semelhantes disponíveis:'
+  - 'Os documentos registram estas alternativas:'
   welcome:
   - Escreva sua pergunta.
   - Consultas sobre o documento.

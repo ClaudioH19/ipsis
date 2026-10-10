@@ -54,13 +54,19 @@ class ComandoEvaluar(Comando):
                 literal=r.exactitud_literal, offsets=r.exactitud_offsets))
         print(t("evaluate.line3", excessive=r.tasa_respuestas_excesivas, mean=r.latencia_media_ms,
                 p95=r.latencia_p95_ms))
+        c = r.cobertura.total
+        riesgo = r.cobertura.riesgo_aceptadas
+        print(t("evaluate.answers", correct=c.directas_con_literal, direct=c.directas,
+                coverage=_porcentaje(c.cobertura_literal), errors=riesgo.x, criterion=r.criterio_respuesta))
+        print(t("evaluate.qa", n=c.tramos_qa_evaluados, incomplete=c.tramos_qa_sin_literal,
+                accuracy=_porcentaje(c.exactitud_tramo_qa)))
         if args.salida:
             salida = Path(args.salida)
             salida.parent.mkdir(parents=True, exist_ok=True)
             salida.write_text(artefacto.model_dump_json(indent=2), encoding="utf-8")
             print(t("evaluate.written", path=salida))
-        print(t("evaluate.guard", verdict=t("evaluate.pass" if r.guardia_falsos_ok else "evaluate.blocked")))
-        return 0 if r.guardia_falsos_ok else 1
+        print(t("evaluate.guard", verdict=t("evaluate.pass" if r.guardia_respuestas else "evaluate.blocked")))
+        return 0 if r.guardia_respuestas else 1
 
 
 # Estado de la calibración → clave de su nombre en el catálogo.
@@ -140,6 +146,8 @@ class ComandoComparar(Comando):
         for fila in informe.filas:
             print(t("compare.row", backend=fila.backend, recall=fila.recall_at_k, mrr=fila.mrr,
                     false_ok=fila.tasa_falsos_ok, status=fila.exactitud_estado, p95=fila.latencia_p95_ms))
+            print(t("compare.answer_quality", literal=_porcentaje(fila.exactitud_literal),
+                    qa=_porcentaje(fila.exactitud_tramo_qa), criterion=informe.criterio_respuesta))
         print(t("compare.written", path=salida))
         return 0
 
@@ -194,6 +202,11 @@ class ComandoBenchmark(Comando):
             print(t("benchmark.profile_row", name=p.nombre, coverage=c.cobertura_directa or 0, false_ok=c.falsos_ok,
                     unanswerable=c.no_respondibles, p50=p.latencia.p50, p95=p.latencia.p95,
                     budget=p.presupuesto_p95_ms, mark=marca))
+            print(t("evaluate.answers", correct=c.directas_con_literal, direct=c.directas,
+                    coverage=_porcentaje(c.cobertura_literal), errors=p.cobertura.riesgo_aceptadas.x,
+                    criterion=p.cobertura.criterio_respuesta))
+            print(t("evaluate.qa", n=c.tramos_qa_evaluados, incomplete=c.tramos_qa_sin_literal,
+                    accuracy=_porcentaje(c.exactitud_tramo_qa)))
         print(t("benchmark.reports", md=ruta_md, json=ruta_json, folder=salida))
         return codigo
 

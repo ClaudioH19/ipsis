@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "dataset_id": "erratas_validacion_es",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafetera.md",
+        "doc_id": "garantia-cafetera"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_adquisiciones.md",
+        "doc_id": "manual-adquisiciones"
+      },
+      {
+        "ruta": "manual_proyector.md",
+        "doc_id": "manual-proyector"
+      },
+      {
+        "ruta": "politica_equipos.md",
+        "doc_id": "politica-equipos"
+      },
+      {
+        "ruta": "politica_viaticos.md",
+        "doc_id": "politica-viaticos"
+      },
+      {
+        "ruta": "preguntas_frecuentes_ti.md",
+        "doc_id": "preguntas-frecuentes-ti"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "reglamento_capacitacion.md",
+        "doc_id": "reglamento-capacitacion"
+      },
+      {
+        "ruta": "reglamento_casino.md",
+        "doc_id": "reglamento-casino"
+      },
+      {
+        "ruta": "reglamento_gimnasio.md",
+        "doc_id": "reglamento-gimnasio"
+      },
+      {
+        "ruta": "reglamento_teletrabajo.md",
+        "doc_id": "reglamento-teletrabajo"
+      },
+      {
+        "ruta": "riego_invernadero.md",
+        "doc_id": "riego-invernadero"
+      },
+      {
+        "ruta": "seguro_salud.md",
+        "doc_id": "seguro-salud"
+      }
+    ],
+    "sha256": "df813de4de54a9959ef9dfda9c28a8f1a7f3ef28a660fe7f08d40b8e37596f02"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "es"
+}

@@ -1,0 +1,268 @@
+{
+  "approved_on": "2026-10-06",
+  "converter_version": 4,
+  "dictionary": {
+    "manifest": "diccionarios/pt.manifest.json",
+    "source": {
+      "attribution": "English Wiktionary contributors; Kaikki/Wiktextract, Tatu Ylonen (2022), Wiktionary as Machine-Readable Structured Data, LREC 2022. Original pages and notices retained.",
+      "data": {
+        "bytes": 56809380,
+        "sha256": "026e1bd88b2652fb2ae8a5ade030a4273d74bdf3522f9caadea68558a788cb1d",
+        "url": "https://kaikki.org/dictionary/Portuguese/kaikki.org-dictionary-Portuguese.jsonl.gz"
+      },
+      "homepage": "https://kaikki.org/dictionary/Portuguese/index.html",
+      "http_headers": {
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "max-age=600",
+        "Connection": "close",
+        "Content-Length": "56809380",
+        "Content-Type": "application/octet-stream",
+        "Date": "Tue, 06 Oct 2026 19:16:59 GMT",
+        "ETag": "\"6ac0dbe8-362d7a4\"",
+        "Expires": "Tue, 06 Oct 2026 19:26:59 GMT",
+        "Last-Modified": "Sat, 03 Oct 2026 10:41:44 GMT",
+        "Server": "nginx/1.24.0 (Ubuntu)"
+      },
+      "id": "kaikki-enwiktionary-pt",
+      "label": "Wiktionary Portuguese / Kaikki",
+      "lexical_parts": [
+        {
+          "bytes": 2550161,
+          "filename": "pt.lexical.0001.jsonl.gz",
+          "sha256": "75e42a802caab41ad481c260a622918e65a54a6fb05a2b5be8009fa565d906bf"
+        },
+        {
+          "bytes": 2890375,
+          "filename": "pt.lexical.0002.jsonl.gz",
+          "sha256": "9451e8e74878ea21e5de1774b27e4599d9bd35568747e710c379b50cd93f04d4"
+        },
+        {
+          "bytes": 2711593,
+          "filename": "pt.lexical.0003.jsonl.gz",
+          "sha256": "3f9112d59d5d01aa263dbc335d8dc5220360f7a504716535d648dcab6715c380"
+        },
+        {
+          "bytes": 2615635,
+          "filename": "pt.lexical.0004.jsonl.gz",
+          "sha256": "d63694c26d7e7fc401b5370cdfb18b952c50e83a4130d6baec3347448ad11c16"
+        },
+        {
+          "bytes": 2738427,
+          "filename": "pt.lexical.0005.jsonl.gz",
+          "sha256": "934a935d62cc90dc79da3cb2750730a41528aae95f86ce6fa3546224f5b90258"
+        },
+        {
+          "bytes": 2783676,
+          "filename": "pt.lexical.0006.jsonl.gz",
+          "sha256": "ebd0d8080be66f8cce9b5c55ec6616d8e2e2de88e21071c9c3443e3bd5f11883"
+        },
+        {
+          "bytes": 2418048,
+          "filename": "pt.lexical.0007.jsonl.gz",
+          "sha256": "2426c05a36f7a4edd409ae83cc57d0e5201f2e3d2e38296e1540594a72bd2693"
+        },
+        {
+          "bytes": 2045861,
+          "filename": "pt.lexical.0008.jsonl.gz",
+          "sha256": "dbd42e42c6e64f53126bec4a589fee3f3904f91c9b8c85982629d214fb1efc1c"
+        }
+      ],
+      "lexical_schema_version": 1,
+      "license": "CC-BY-SA-4.0 (Wiktionary data; dual GFDL availability declared by distributor)",
+      "notices": [
+        {
+          "bytes": 44855,
+          "filename": "CC-BY-SA-4.0.html",
+          "sha256": "d48546c6161cd2698445d184a859363a2436a6a3bcda655564730e3861e74a9e",
+          "url": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/by-sa_4.0.html"
+        },
+        {
+          "bytes": 17152,
+          "filename": "pt.kaikki-source.html",
+          "sha256": "18ec899c0f368da9a07726489057b8834ec90e5b2751ff7c64348dd7f340e7c6",
+          "url": "https://kaikki.org/dictionary/Portuguese/index.html"
+        }
+      ],
+      "parts": [
+        {
+          "bytes": 25165824,
+          "filename": "pt.jsonl.gz.0001.part",
+          "sha256": "de355ab2337cdfe4a7f1e06ac79f12a817f19725dc585667b608a2a8e3d5c511"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "pt.jsonl.gz.0002.part",
+          "sha256": "6a7c8dff6a5c74b2a66a17bc5a6e0510ccef26575a412d43e7056f8402b906cc"
+        },
+        {
+          "bytes": 6477732,
+          "filename": "pt.jsonl.gz.0003.part",
+          "sha256": "c7f887acbf3f2b3f8a2d9f4f07490f67b782acc6b606e83664deeee234aaf477"
+        }
+      ],
+      "prepared_on": "2026-10-06",
+      "version": "enwiktionary 2026-09-02; Kaikki extraction 2026-10-03"
+    },
+    "statistics": {
+      "additional_forms": 474991,
+      "additional_single_lowercase_forms": 385426,
+      "combined_unique_forms": 569099,
+      "dictionary_lemma_forms": 73068,
+      "entries": 446043,
+      "excluded_nonlexical_forms": 6623,
+      "form_records": 657089,
+      "inflected_or_alternative_forms": 458886,
+      "legacy_unique_forms": 94108,
+      "proper_name_entries": 11005,
+      "single_lowercase_forms": 448590,
+      "synonym_records": 62643
+    }
+  },
+  "filters": {
+    "max_members": 8,
+    "max_output_bytes": 2097152,
+    "max_senses": 3
+  },
+  "language": "pt",
+  "lexicon": {
+    "bytes": 1418291,
+    "filename": "pt.lexicon.tsv",
+    "groups": 43895,
+    "sha256": "3616be7a7d393f8745720848099c65476233bf8631119059e068ec8ff58328fa",
+    "unique_lemmas": 54071
+  },
+  "output": {
+    "bytes": 200752,
+    "filename": "pt.tsv",
+    "sha256": "1fce782bd81048a68dbf47a41f25797668908eaa2aae9d1b9880c11e0d2b1b36"
+  },
+  "reviewed_on": "2026-10-06",
+  "schema_version": 1,
+  "source": {
+    "attribution": "Valeria de Paiva and Alexandre Rademaker (2012), Revisiting a Brazilian WordNet; distributed by OMW, Francis Bond and Ryan Foster (2013). See original citation.bib and LICENSE, including WordNet and Wiktionary notices.",
+    "data": {
+      "bytes": 2105745,
+      "filename": "pt.tab",
+      "sha256": "0ba180e2d2a5317e61b4ebe94a7e969e68eea2d9e60705e1e9053c6e2ac5e684",
+      "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/wn-data-por.tab"
+    },
+    "format": "omw-tab",
+    "homepage": "https://github.com/omwn/omw-data/tree/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por",
+    "id": "openwn-pt-omw",
+    "label": "OpenWN-PT, OMW distribution",
+    "lemma_tag": "lemma",
+    "license": "CC-BY-SA-3.0; original WordNet/Wiktionary provenance notice retained",
+    "notices": [
+      {
+        "bytes": 1450,
+        "filename": "pt.LICENSE",
+        "sha256": "4c7824c3cf3ca7d5fc68ee0473e16741361a67e242557c0661a0d6bd926ea297",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/LICENSE"
+      },
+      {
+        "bytes": 300,
+        "filename": "pt.citation.bib",
+        "sha256": "0054a97ec38646188a082d492c1b6b81c8489526625e58929a4fa695f89236bf",
+        "url": "https://raw.githubusercontent.com/omwn/omw-data/406bf83b3c507a3d1f26e88252d5d66893fd36bf/wns/por/citation.bib"
+      }
+    ],
+    "version": "omw-data 406bf83b3c507a3d1f26e88252d5d66893fd36bf"
+  },
+  "statistics": {
+    "discarded_groups": {
+      "fewer_than_two": 38260,
+      "oversized": 23
+    },
+    "excluded_non_single_lowercase_memberships": 30024,
+    "excluded_polysemous_lemmas": 2225,
+    "input_groups": 43895,
+    "input_lemma_memberships": 74012,
+    "output_groups": 5612,
+    "output_unique_lemmas": 11405
+  },
+  "supplements": [
+    {
+      "additional_forms": 34745,
+      "records": 52155,
+      "source": {
+        "attribution": "Daniel Naber, OpenThesaurus (base); Tiago F. Santos (compilaci?n 2016); Onto.PT, Hugo Gon?alo Oliveira y Paulo Gomes; PAPEL, Linguateca. Ver README original.",
+        "data": {
+          "bytes": 3052378,
+          "filename": "pt-pt-thes.dat",
+          "sha256": "daa89fee61347f401f005f3efd17fa8878eeeabd903ff4e684ab4bc1a53df2fd",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/th_pt_PT.dat"
+        },
+        "format": "mythes",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT",
+        "id": "pt-pt-thes",
+        "label": "Tesauro portugu?s europeo (LibreOffice)",
+        "license": "GPL-2.0-or-later (base); CC-BY-3.0 (Onto.PT); conservar procedencia PAPEL",
+        "notices": [
+          {
+            "bytes": 26537,
+            "filename": "pt-pt-thes.README_th_pt_PT.txt",
+            "sha256": "4a7ae3ba634478c8af6f3fbdc5cd27aa150d0bb653e4bb0b2c226d6068175771",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/README_th_pt_PT.txt"
+          },
+          {
+            "bytes": 1830,
+            "filename": "pt-pt-thes.LICENSES.txt",
+            "sha256": "d2c1cfe2e2dd81c651aec3fda5d1b4b4e7679b9e04f8cdc37586e521837384d1",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_PT/LICENSES.txt"
+          }
+        ],
+        "prepared_on": "2026-10-06",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+      },
+      "unique_forms": 50864
+    },
+    {
+      "additional_forms": 5292,
+      "records": 123430,
+      "source": {
+        "attribution": "Kevin B. Hendricks y colaboradores (2003); distribuci?n LibreOffice.",
+        "data": {
+          "bytes": 15193736,
+          "filename": "pt-br-thes.dat",
+          "sha256": "0dae83c0b75e53837ef220431da049c716fa954f99fb77578eebf4e93d261af0",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/th_pt_BR.dat"
+        },
+        "format": "mythes",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR",
+        "id": "pt-br-thes",
+        "label": "Tesauro portugu?s brasile?o (LibreOffice)",
+        "license": "Aviso permisivo de Kevin B. Hendricks y colaboradores; ver original",
+        "notices": [
+          {
+            "bytes": 1707,
+            "filename": "pt-br-thes.license-thes.readme",
+            "sha256": "253031afa265c7bec5d2e195c659129a7ff254f9d57c57a08eba4a9051868840",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pt_BR/license-thes.readme"
+          }
+        ],
+        "prepared_on": "2026-10-06",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+      },
+      "unique_forms": 26171
+    }
+  ],
+  "vocabulary": {
+    "additional_forms": 40037,
+    "additional_single_lowercase_forms": 38159,
+    "base_forms": 54071,
+    "files": [
+      {
+        "bytes": 22373204,
+        "filename": "pt.thesaurus.tsv",
+        "sha256": "727d7d3403c806e0b1a7e95251f970ef5517818c1b4c28d3dc56baf23f2ec7c9"
+      },
+      {
+        "bytes": 2688457,
+        "filename": "pt.vocabulary.tsv",
+        "sha256": "ff760f2a76c40b7987512f4cf82d02e23df7f4c33b38a64545dcc5e4cfb7e820"
+      }
+    ],
+    "single_lowercase_forms": 63164,
+    "unique_forms": 94108
+  }
+}

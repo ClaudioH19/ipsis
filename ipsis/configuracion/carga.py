@@ -111,11 +111,12 @@ def guardar_snapshot_configuracion(
 def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perfil: str | None = None) -> dict:
     """Recuperación efectiva: si ``modelo`` falta, se usa el modelo denso del
     perfil; si el perfil fija un modo de recuperación (``bm25``), manda ese."""
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.configuracion.perfiles import perfil_efectivo
 
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     recuperacion = dict(cfg["recuperacion"])
-    instalacion = cargar_perfil_instalacion(perfil or cargar_dominio().get("perfil", "light"))
+    instalacion = perfil_efectivo(perfil or cargar_dominio().get("perfil", "light"),
+                                cfg.get("ajustes_perfil"), ruta_calibracion=None)
     if not recuperacion.get("modelo"):
         recuperacion["modelo"] = instalacion.modelos.denso
     if instalacion.recuperacion_modo:
@@ -158,6 +159,7 @@ CLAVES_DOMINIO = {
     "assistant_name": "nombre_asistente", "domain_description": "descripcion_dominio", "language": "idioma",
     "profile": "perfil", "cors_origins": "cors_origenes", "widget_keys": "claves_widget",
     "query_log.enabled": "registro.activo",
+    "posture.mode": "postura.modo", "posture.max_alternatives": "postura.max_alternativas",
 }
 CLAVES_DOMINIO_VALIDAS = set(CLAVES_DOMINIO)
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}

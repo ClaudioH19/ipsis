@@ -122,12 +122,26 @@ def forma_en_pregunta(pregunta: str, termino: str, paquete=None) -> str:
     return termino
 
 
-# Regla → resultado de la decisión. «concordancia» la agrega EtapaPolitica (heavy)
+# Regla → resultado de la decisión. «concordancia» la agrega EtapaPolitica (si se activa)
 # cuando dos tramos se contradicen: baja un ok a relacionado.
 RESULTADO_DE_REGLA = {
     "premisa": "abstiene", "fuera_dominio": "abstiene", "ok_lector": "responde", "ok_lexico": "responde",
     "relacionado": "relacionado", "sin_respuesta": "abstiene", "concordancia": "relacionado",
 }
+
+
+def lector_seguro(s: SenalesPolitica, u) -> bool:
+    """Segundo tramo de ``ok`` con lector: foco completo, ``s_qa ≥ τ_ok_fuerte`` y
+    ``s_oov < τ_oov_ok_fuerte`` (más permisivo que ``τ_oov_ok``).
+
+    Una pregunta informal trae palabras que el corpus no tiene («quien anota las
+    muestras», «cuanta plata da la beca») y su ``s_oov`` pasa de 0.6 aunque la oración
+    que responde tenga todos los términos foco. Con el lector casi seguro, se tolera
+    algo más de vocabulario ausente. Sin los dos umbrales (calibraciones o perfiles
+    anteriores) el tramo no existe."""
+    if u.get("ok_fuerte") is None or u.get("oov_ok_fuerte") is None or s.s_qa is None:
+        return False
+    return s.s_foco >= u["foco"] and s.s_qa >= u["ok_fuerte"] and s.s_oov < u["oov_ok_fuerte"]
 
 
 def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
@@ -143,6 +157,8 @@ def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
         return "fuera_dominio"
     respaldo = s.s_foco >= u["foco"] and s.s_oov < u["oov_ok"]
     if respaldo and s.s_qa is not None and s.s_qa >= u["ok"]:
+        return "ok_lector"
+    if lector_seguro(s, u):
         return "ok_lector"
     if respaldo and s.s_qa is None and s.s_ret >= u["ok"] and s.s_cov >= u["cov"]:
         return "ok_lexico"
@@ -160,7 +176,9 @@ class CascadaV1:
     2. ``s_oov ≥ τ_oov_dominio`` y dominio < ``τ_dominio`` → fuera_dominio
        (dominio = max(s_ret, s_rr); ver ``SenalesPolitica.dominio``).
     3. ``s_foco ≥ τ_foco``, ``s_oov < τ_oov_ok`` y (con lector: ``s_qa ≥ τ_ok``;
-       sin lector: ``s_ret ≥ τ_ok`` y ``s_cov ≥ τ_cov``) → ok.
+       sin lector: ``s_ret ≥ τ_ok`` y ``s_cov ≥ τ_cov``) → ok. Con lector hay un
+       segundo tramo opcional (``lector_seguro``): ``s_qa ≥ τ_ok_fuerte`` tolera
+       ``s_oov < τ_oov_ok_fuerte``.
        ``s_oov < τ_oov_ok``: si casi todo el vocabulario de la pregunta falta en el
        corpus, el corpus no puede respaldar una afirmación literal. El lector da
        el mismo tramo a «¿Cuándo vence la garantía?» y a «¿Qué incluye la
@@ -207,8 +225,16 @@ class CascadaV1:
         if regla == "ok_lexico":
             return decision("responde", "lexico", "ok_lexico")
         if regla == "relacionado":
-            if s.s_foco < u["foco"] and ctx.terminos_foco:
-                termino = forma_en_pregunta(ctx.pregunta, ctx.terminos_foco[0], self.paquete)
+            distinto = ctx.diagnostico.get("modificador_distinto")
+            if s.s_foco < u["foco"] and distinto:
+                # «electricidad≠conexión»: lo que falta es la palabra de la pregunta.
+                return decision("relacionado", "foco_ausente", "relacionado", distinto.split("≠")[0])
+            if s.s_foco < u["foco"] and ctx.terminos_foco and not ctx.diagnostico.get("forma_ausente"):
+                # El que falta en la oración, no el primero: «viaje», no «extranjero», si la
+                # oración ya habla del extranjero.
+                ausentes = (ctx.diagnostico.get("senales_lexicas") or {}).get("foco_ausentes") or []
+                termino = ausentes[0] if ausentes else forma_en_pregunta(
+                    ctx.pregunta, ctx.terminos_foco[0], self.paquete)
                 return decision("relacionado", "foco_ausente", "relacionado", termino)
             return decision("relacionado", "relacionado", "relacionado")
         return decision("abstiene", "generico", "sin_respuesta")
@@ -231,10 +257,35 @@ class EtapaPolitica(_Etapa):
         ctx.diagnostico["regla"] = decision.capa_decisora or decision.motivo
         if decision.abstiene:
             motivo = decision.motivo if decision.motivo in {"premisa", "fuera_dominio"} else "generico"
+            alternativas = _alternativas(m, ctx, motivo)
             ctx.resultado = m._abstener(
                 motivo, ctx.confianza, ctx.latencia_ms(),
-                entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico,
+                entidad_texto=decision.entidad_texto, diagnostico=ctx.diagnostico, alternativas=alternativas,
             )
+
+
+def _alternativas(motor, ctx, motivo: str):
+    """Con la postura proactiva, lo más parecido a lo pedido (ADR 0008).
+
+    Solo tras ``premisa`` o ``sin_respuesta``: fuera de dominio nunca se
+    ofrece nada. Las alternativas no tocan la decisión ni la memoria de la
+    conversación (no pasan por la verificación, que es quien la alimenta)."""
+    from ipsis.consulta.alternativas import MOTIVOS_CON_ALTERNATIVAS, buscar_alternativas
+
+    config = getattr(motor, "alternativas", None)
+    if config is None or not config.activa or motivo not in MOTIVOS_CON_ALTERNATIVAS or ctx.consulta is None:
+        return None
+    ausentes = verificar_premisa_candidatos(ctx.consulta, ctx.candidatos).entidades_ausentes if motivo == "premisa" else []
+    resultado = buscar_alternativas(motor, ctx, entidades_ausentes=ausentes, config=config,
+                                    guardar_todas=bool(getattr(motor, "registrar_alternativas", False)))
+    # La misma guardia que la evidencia de una respuesta: texto y offsets literales del chunk.
+    if motor.verificador is not None and resultado.ofrecidas:
+        from ipsis.nucleo.esquemas import RetrievalCandidate
+
+        resultado.ofrecidas = [a for a in resultado.ofrecidas if motor.verificador.verificar(
+            [a.evidencia], [RetrievalCandidate(chunk=a.chunk)])[0]]
+    ctx.diagnostico["alternativas"] = resultado.diagnostico()
+    return resultado
 
 
 __all__ = [

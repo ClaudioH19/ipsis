@@ -1,0 +1,42 @@
+{
+  "criterio_respuesta": "respuesta_completa_v2",
+  "banco": [
+    {
+      "dataset_id": "consultas_es",
+      "dataset_version": "1.0.0",
+      "uso": "regresion",
+      "idioma": "es",
+      "n_casos": 60
+    }
+  ],
+  "modo": "Modelos locales, HF_HUB_OFFLINE=1, TRANSFORMERS_OFFLINE=1, IPSIS_ONNX_THREADS=2; una ronda por perfil sin otras suites de inferencia concurrentes.",
+  "codigo_salida_benchmark": 1,
+  "motivo": "medium y heavy exceden el presupuesto p95; no es un error de ejecucion ni un fallo pytest.",
+  "configuracion_documentada": "Los ejemplos YAML de las guias y los tres DEPLOY se validaron contra el esquema y perfil medium; configure y snapshot-config se comprobaron en un proyecto aislado.",
+  "vista_temporal_eliminada": true,
+  "componentes_evaluacion_sha256": {
+    "ipsis/evaluacion/metricas.py": "bb07f613a6726db55a43a421b4433348a5a996f35520eb092a9b735f03f487d6",
+    "ipsis/evaluacion/comparacion.py": "3789cf145034d2bf40b118ba11862cce64bdc947627dfddddf5f634fb6fc86ed",
+    "ipsis/evaluacion/calibracion.py": "9be21d55b8809f02f379416196792a0939cae0d460a836f4898b797a4bd39157",
+    "ipsis/configuracion/calibracion.py": "6f409f773a43f0282ea509adb5f386b6347d1ad497e0f0d1d971da7c5a313a4a"
+  },
+  "pruebas": {
+    "ejecuciones": [
+      {
+        "alcance": "Evaluacion, configuracion, CLI, diagnostico, despliegue, documentacion y arquitectura",
+        "tests": 251,
+        "fallos": 0,
+        "errores": 0,
+        "segundos": 168.52
+      },
+      {
+        "alcance": "CLI de calibracion y enlaces de documentacion",
+        "tests": 13,
+        "fallos": 0,
+        "errores": 0,
+        "segundos": 31.38
+      }
+    ],
+    "casos_distintos_aprobados": 261
+  }
+}

@@ -15,9 +15,9 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
   |---|---|---|---|
   | `light` | denso e5-small | 0,5 GB | 150 ms |
   | `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s |
-  | `heavy` | e5-base + reranker bge-m3 + lector mDeBERTa | 2,8 GB | 5 s |
 
   `bm25` es solo de diagnóstico para `ipsis benchmark`: no se instala.
+  `medium` es la opción recomendada y el valor por defecto de `ipsis init`.
 - Red solo para descargar los modelos. Después el servicio funciona sin red.
 
 ## Instalar el paquete
@@ -90,9 +90,9 @@ En otra terminal:
 ipsis ask "¿Cada cuánto se cambia el filtro?"
 ```
 
-- **Perfil:** `light`, `medium` o `heavy` (ver la tabla de requisitos). Se
+- **Perfil:** `light` o `medium` (ver la tabla de requisitos). Se
   cambia después con `ipsis profile set <perfil>`. Entre `light` y `medium`
-  se reutiliza el índice; `heavy` necesita reindexar.
+  se reutiliza el índice.
 - **Idioma:** `es`, `en` y `pt` tienen paquete propio. Una variante regional
   (`pt-br`) usa el de su idioma. Cualquier otro código ISO funciona con
   reglas universales y textos en inglés. Sin `--language`, `ipsis init`

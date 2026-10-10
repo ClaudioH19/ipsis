@@ -1,0 +1,377 @@
+{
+  "approved_on": "2026-10-06",
+  "converter_version": 4,
+  "dictionary": {
+    "manifest": "diccionarios/en.manifest.json",
+    "source": {
+      "attribution": "English Wiktionary contributors; Kaikki/Wiktextract, Tatu Ylonen (2022), Wiktionary as Machine-Readable Structured Data, LREC 2022. Original pages and notices retained.",
+      "data": {
+        "bytes": 523331798,
+        "sha256": "6d40e0067718aeb3321db30297761ca803838390627111a29a5426fee4557faf",
+        "url": "https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz?download=1"
+      },
+      "homepage": "https://kaikki.org/dictionary/English/index.html",
+      "http_headers": {
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "max-age=600",
+        "Connection": "close",
+        "Content-Length": "523331798",
+        "Content-Type": "application/octet-stream",
+        "Date": "Tue, 06 Oct 2026 19:31:35 GMT",
+        "ETag": "\"6ac0e279-1f3168d6\"",
+        "Expires": "Tue, 06 Oct 2026 19:41:35 GMT",
+        "Last-Modified": "Sat, 03 Oct 2026 11:09:45 GMT",
+        "Server": "nginx/1.24.0 (Ubuntu)"
+      },
+      "id": "kaikki-enwiktionary-en",
+      "label": "Wiktionary English / Kaikki",
+      "lexical_parts": [
+        {
+          "bytes": 5107064,
+          "filename": "en.lexical.0001.jsonl.gz",
+          "sha256": "d2317ed223f3cab57fe0720d6f6dd0fefd9a9adaf8baa013eb17b5f5200112a6"
+        },
+        {
+          "bytes": 5261088,
+          "filename": "en.lexical.0002.jsonl.gz",
+          "sha256": "7184fc57f8d445fb86d11a3871b4e74b1aeb626d1dcd727833806e525ab5c863"
+        },
+        {
+          "bytes": 5325468,
+          "filename": "en.lexical.0003.jsonl.gz",
+          "sha256": "fd3870181ebb23ab24edc24cf58ddc89e538f88984911a83d3ddf782c83257d2"
+        },
+        {
+          "bytes": 5040485,
+          "filename": "en.lexical.0004.jsonl.gz",
+          "sha256": "e765d21cdf7a7b94efc3e618d6a42151cd19402af9ff8d502fb38f4c76a7b5b4"
+        },
+        {
+          "bytes": 4882318,
+          "filename": "en.lexical.0005.jsonl.gz",
+          "sha256": "dd364a345df4e8112b9ee55d9f868edb4edab884321c4b3ff8215021d7e68580"
+        },
+        {
+          "bytes": 4811857,
+          "filename": "en.lexical.0006.jsonl.gz",
+          "sha256": "8f1f602a82b29332f6b873f3b4d5d46f11633f29f11d8f380d098cab8c799fee"
+        },
+        {
+          "bytes": 4948674,
+          "filename": "en.lexical.0007.jsonl.gz",
+          "sha256": "d906aa87255fbd39e91e976093a71bb1ff50bd8b5377864a7bb4f09d02f563ac"
+        },
+        {
+          "bytes": 4766260,
+          "filename": "en.lexical.0008.jsonl.gz",
+          "sha256": "077ef838ceb61de2c348e2c75abc2973774c6dfe5d4b45f557f18d211abf96fe"
+        },
+        {
+          "bytes": 4724712,
+          "filename": "en.lexical.0009.jsonl.gz",
+          "sha256": "ef3c8f3f5378b873ab5ec688e44b77a61aeff07e30ef7803d30e0fab11ed7550"
+        },
+        {
+          "bytes": 4819997,
+          "filename": "en.lexical.0010.jsonl.gz",
+          "sha256": "48a985e1b29f2abe5622d09a0b37b7149b7cd04870f0265880ed82385f892b1a"
+        },
+        {
+          "bytes": 4466404,
+          "filename": "en.lexical.0011.jsonl.gz",
+          "sha256": "1b39a8318e06755e94c9c69b65a086309dd1b87a4b28c556d359dd213b32d634"
+        },
+        {
+          "bytes": 4362813,
+          "filename": "en.lexical.0012.jsonl.gz",
+          "sha256": "23322f6cf4e4e094ed5a1eecefe4d60a7a4e1b0ed1560638e963aa7987c5e9c2"
+        },
+        {
+          "bytes": 4833312,
+          "filename": "en.lexical.0013.jsonl.gz",
+          "sha256": "cfad3030c5d48a4d5bfcd3541318a7bcdb6644f543ecdda5e4a330a914dc538b"
+        },
+        {
+          "bytes": 4804414,
+          "filename": "en.lexical.0014.jsonl.gz",
+          "sha256": "2b52a4824ed499bdc192812c75bb1ed546e306efdbe9340eb8c67bd8a45f48df"
+        },
+        {
+          "bytes": 4597782,
+          "filename": "en.lexical.0015.jsonl.gz",
+          "sha256": "2a392df2414df5222bbdaae4a469b398f892e728f63c0b6b85e4de3891d462ef"
+        },
+        {
+          "bytes": 4604280,
+          "filename": "en.lexical.0016.jsonl.gz",
+          "sha256": "f3ce45009b11d9431b4a7c55fa3cc4de0a37f8140ea843bf35284a9913742709"
+        },
+        {
+          "bytes": 4622339,
+          "filename": "en.lexical.0017.jsonl.gz",
+          "sha256": "cfee94bea5706cdf6caa0058ef85fca4bc6b071e3113ef65b78432d056740e5f"
+        },
+        {
+          "bytes": 4389096,
+          "filename": "en.lexical.0018.jsonl.gz",
+          "sha256": "26b018ab262e422f3be51612151e97407c92f9b4f38bffba315a2ad614fdda22"
+        },
+        {
+          "bytes": 2422630,
+          "filename": "en.lexical.0019.jsonl.gz",
+          "sha256": "e52a4fb8de13ba9dfd7147aa406b8e4f3bca2d0a078f8c74449b07713c8ca4de"
+        }
+      ],
+      "lexical_schema_version": 1,
+      "license": "CC-BY-SA-4.0 (Wiktionary data; dual GFDL availability declared by distributor)",
+      "notices": [
+        {
+          "bytes": 44855,
+          "filename": "CC-BY-SA-4.0.html",
+          "sha256": "d48546c6161cd2698445d184a859363a2436a6a3bcda655564730e3861e74a9e",
+          "url": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/by-sa_4.0.html"
+        },
+        {
+          "bytes": 17608,
+          "filename": "en.kaikki-source.html",
+          "sha256": "6c34001597ea97fde66663b2a55e6d4c0590d1b744eda1cbd6aa4492316b5cec",
+          "url": "https://kaikki.org/dictionary/English/index.html"
+        }
+      ],
+      "parts": [
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0001.part",
+          "sha256": "dfb1805ccbe0891bab68374729713ab4d73fc36ef519b42d76af9a8332bdb013"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0002.part",
+          "sha256": "c5e400442ed8c71bbdcd4afe66e5856bb2a175ada5033e11e149e5b1da49b16a"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0003.part",
+          "sha256": "7538ddc2fcf42cbb2be0788f230d20d5b0dc7bfa37fab855bbaa79385044982c"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0004.part",
+          "sha256": "bf76a2387d15c6c73e93958b2db76de2fdc8e4e5a3c42d2b4160e50d305e52e4"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0005.part",
+          "sha256": "4c452dd8175d7ec29466ec246234a17e5bd4ee86419ccfecc9bde58a4df7dea4"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0006.part",
+          "sha256": "58bda11585b089a1cbe2eee360a1b76cea5d20017aa53c6e51649ee78cf2b717"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0007.part",
+          "sha256": "a88f6ffe6908dd3133f90416b2b1e2f60f6921c675296c56b2bb3553cbbc46ad"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0008.part",
+          "sha256": "41d0d87c29b88766f15ce28867a5fac2b5acd5a23013954fc051d15bfd134aae"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0009.part",
+          "sha256": "e537410220968ff3d69e6f42d596db9ce5f5f6c2a4307f99ef21b1ee08d3f9be"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0010.part",
+          "sha256": "32b60468526764cbdb1bbb201a3b945a8d1af8a7a3f6c77abf8c146e17f000ef"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0011.part",
+          "sha256": "8ba3d74a0644786b7c8eebc5b302a3d89ffb66f0550bb1cb821f662ee00bc49c"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0012.part",
+          "sha256": "da4be8e9108feec3cdbfa8af8677c11860c295da0247670868076dfb7782fff9"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0013.part",
+          "sha256": "7c41271a6d83a3fe42c8d3189d7388520f7a3f638e616b9a53db85850c7cb5a3"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0014.part",
+          "sha256": "7f69d01ed20cece6de1c018f72764bf428abd3054bb25d97d370b0985daabef7"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0015.part",
+          "sha256": "8951ae22bed21a00e5dde034c0ca55b67fd9e46972368f7efbf7d22338a0dc70"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0016.part",
+          "sha256": "53949b057874880b04d368db94b58a1b57ec59889694b8a40daec668bb1278db"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0017.part",
+          "sha256": "aeec9a2813109ea91e6c0fe4c0a36a233dd4839dbd6d4f56685f33ef27d4da92"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0018.part",
+          "sha256": "8ae3f64a48edb5fbdda67bb1818a578b0899c541233e441c03604f2e1d0ee370"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0019.part",
+          "sha256": "2431e07a7862a9fda9f2640ff16006cece16843da901a54cf65d4e3e0a05a596"
+        },
+        {
+          "bytes": 25165824,
+          "filename": "en.jsonl.gz.0020.part",
+          "sha256": "65af85257be3ff59b619bbdadc0aaeca57f5c3244f80bb465279929bbb250523"
+        },
+        {
+          "bytes": 20015318,
+          "filename": "en.jsonl.gz.0021.part",
+          "sha256": "5947d1d8c381a70d7e79e2115da1887d2686e7c4a489c3958b3d6471c0dca561"
+        }
+      ],
+      "prepared_on": "2026-10-06",
+      "version": "enwiktionary 2026-09-02; Kaikki extraction 2026-10-03"
+    },
+    "statistics": {
+      "additional_forms": 1547615,
+      "additional_single_lowercase_forms": 741798,
+      "combined_unique_forms": 1740739,
+      "dictionary_lemma_forms": 758100,
+      "entries": 1492836,
+      "excluded_nonlexical_forms": 798,
+      "form_records": 987246,
+      "inflected_or_alternative_forms": 921742,
+      "legacy_unique_forms": 193124,
+      "proper_name_entries": 200625,
+      "single_lowercase_forms": 820858,
+      "synonym_records": 725169
+    }
+  },
+  "filters": {
+    "max_members": 8,
+    "max_output_bytes": 2097152,
+    "max_senses": 3
+  },
+  "language": "en",
+  "lexicon": {
+    "bytes": 3969199,
+    "filename": "en.lexicon.tsv",
+    "groups": 107519,
+    "sha256": "1797fee96c41ea7d448229a8930650ea0149f438ddd7785486ae36f4d80f357c",
+    "unique_lemmas": 128009
+  },
+  "output": {
+    "bytes": 643532,
+    "filename": "en.tsv",
+    "sha256": "fbf845c229ba35fbeb29cde491fc023ae10e3828171eb75b98660a3a1f9509f0"
+  },
+  "reviewed_on": "2026-10-06",
+  "schema_version": 1,
+  "source": {
+    "attribution": "The Open English Wordnet Team (2019-present); derived from Princeton University WordNet. Both attributions and original license notices are retained.",
+    "data": {
+      "bytes": 11363503,
+      "filename": "en.xml.gz",
+      "sha256": "9ca6d1dcb75f822fdd66617f7d9da48142ace38dd544d6ad5e2feca1674ad3fe",
+      "url": "https://en-word.net/static/english-wordnet-2025.xml.gz"
+    },
+    "format": "wn-lmf-gzip",
+    "homepage": "https://en-word.net/downloads",
+    "id": "oewn",
+    "label": "Open English Wordnet 2025",
+    "license": "CC-BY-4.0; underlying Princeton WordNet notice retained",
+    "notices": [
+      {
+        "bytes": 19863,
+        "filename": "en.LICENSE",
+        "sha256": "672cc8b5663e8dc74c4b07a9dcf477193853575b119908fd3dc0aeeb60a9dbbb",
+        "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/LICENSE.md"
+      },
+      {
+        "bytes": 1740,
+        "filename": "en.WNDB_License.txt",
+        "sha256": "df30ec18fbabcdaf031b79ea026d3e6b959010cffe6dd7be9ac137822175b904",
+        "url": "https://raw.githubusercontent.com/globalwordnet/english-wordnet/2025-edition/WNDB_License.txt"
+      }
+    ],
+    "version": "2025"
+  },
+  "statistics": {
+    "discarded_groups": {
+      "fewer_than_two": 92170,
+      "oversized": 135
+    },
+    "excluded_non_single_lowercase_memberships": 68925,
+    "excluded_polysemous_lemmas": 5478,
+    "input_groups": 107519,
+    "input_lemma_memberships": 185129,
+    "output_groups": 15214,
+    "output_unique_lemmas": 31671
+  },
+  "supplements": [
+    {
+      "additional_forms": 65115,
+      "records": 203947,
+      "source": {
+        "attribution": "Princeton University, WordNet 2.1 (2005); conversi?n wn2ooo por Daniel Naber; distribuci?n LibreOffice.",
+        "data": {
+          "bytes": 18553257,
+          "filename": "en-thes.dat",
+          "sha256": "8a3e4637450b7277428da248f0a604b5c92942bc30507220c051181462340f39",
+          "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/th_en_US_v2.dat"
+        },
+        "format": "mythes",
+        "homepage": "https://github.com/LibreOffice/dictionaries/tree/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en",
+        "id": "en-thes",
+        "label": "WordNet 2.1 MyThes (LibreOffice)",
+        "license": "Princeton WordNet 2.1 license",
+        "notices": [
+          {
+            "bytes": 1625,
+            "filename": "en-thes.WordNet_license.txt",
+            "sha256": "23dbc4f3ea771304e5ab3e5709843813d2619f3c0cfc81229b53fcdb9985f29a",
+            "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/en/WordNet_license.txt"
+          }
+        ],
+        "prepared_on": "2026-10-06",
+        "version": "LibreOffice dictionaries 32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+      },
+      "unique_forms": 186414
+    }
+  ],
+  "vocabulary": {
+    "additional_forms": 65115,
+    "additional_single_lowercase_forms": 14171,
+    "base_forms": 128009,
+    "files": [
+      {
+        "bytes": 22140601,
+        "filename": "en.thesaurus.tsv",
+        "sha256": "bc619269b188e57645d9bcb1018cf54296d32af0e4fc208bf68b2101b43a068b"
+      },
+      {
+        "bytes": 4627846,
+        "filename": "en.vocabulary.tsv",
+        "sha256": "73018785465416e9da4d4b24788d79aecdfbfcda04db093b54e35d2bcf3f11f8"
+      }
+    ],
+    "single_lowercase_forms": 79060,
+    "unique_forms": 193124
+  }
+}

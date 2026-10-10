@@ -132,16 +132,19 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
     actual = linea_base.resumir(artefacto)
     nuevos = sorted(set(actual["falsos_ok"]) - set(referencia["falsos_ok"]))
     assert not nuevos, f"falsos ok nuevos respecto de la línea base: {nuevos}"
-    # La evidencia mostrada en cada ok respondible sigue siendo literal.
-    for nombre in ("exacta", "parafrasis"):
-        grupo = actual["grupos"][nombre]
-        assert grupo["ok_literal"] == grupo["ok"], (nombre, grupo)
+    # Un literal en la cita amplia no vuelve correcto al tramo equivocado del
+    # lector. La referencia corregida registra esos errores previos por ID.
+    nuevas_sin_literal = sorted(set(actual["directas_sin_literal"]) - set(referencia["directas_sin_literal"]))
+    assert not nuevas_sin_literal, f"tramos equivocados nuevos respecto de la línea base: {nuevas_sin_literal}"
     # Las observaciones guardan la decisión auditable de cada caso…
     cobertura = artefacto.reporte.cobertura
     assert set(cobertura.por_idioma) == {idioma}
     for fila in cobertura.casos:
         if fila.grupo != "conversacional":
-            assert fila.regla and fila.senales is not None, fila.caso_id
+            assert fila.regla, fila.caso_id
+            if fila.regla == "aclaracion":  # se decide antes de la política, sin sus señales
+                continue
+            assert fila.senales is not None, fila.caso_id
             assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
     # La calibración re-decide con la misma regla que producción: con los
     # umbrales del perfil reproduce exactamente cada estado observado.

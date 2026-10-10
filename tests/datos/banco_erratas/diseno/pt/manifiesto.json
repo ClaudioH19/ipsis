@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "dataset_id": "erratas_diseno_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "aluguel_salas.md",
+        "doc_id": "aluguel-salas"
+      },
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "edital_bolsa.md",
+        "doc_id": "edital-bolsa"
+      },
+      {
+        "ruta": "garantia_cafeteira.md",
+        "doc_id": "garantia-cafeteira"
+      },
+      {
+        "ruta": "irrigacao_estufa.md",
+        "doc_id": "irrigacao-estufa"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_aquisicoes.md",
+        "doc_id": "manual-aquisicoes"
+      },
+      {
+        "ruta": "manual_impressora.md",
+        "doc_id": "manual-impressora"
+      },
+      {
+        "ruta": "perguntas_frequentes_ti.md",
+        "doc_id": "perguntas-frequentes-ti"
+      },
+      {
+        "ruta": "politica_diarias.md",
+        "doc_id": "politica-diarias"
+      },
+      {
+        "ruta": "politica_ferias.md",
+        "doc_id": "politica-ferias"
+      },
+      {
+        "ruta": "protocolo_emergencias.md",
+        "doc_id": "protocolo-emergencias"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "regulamento_estacionamento.md",
+        "doc_id": "regulamento-estacionamento"
+      },
+      {
+        "ruta": "regulamento_teletrabalho.md",
+        "doc_id": "regulamento-teletrabalho"
+      }
+    ],
+    "sha256": "3b49cf44bd89ac1d7402d2a4e99a9387457d076dc28e7e96eee48512d21508af"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}

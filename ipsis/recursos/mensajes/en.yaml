@@ -18,7 +18,7 @@ init:
   opt_name: 'Visible name of the assistant (default: ''Document assistant'', or its translation).'
   opt_description: 'Short description of the domain, e.g. ''my team''s handbook'' (default: ''the loaded documents'').'
   opt_language: 'Language code of the documents (default: en, or es with IPSIS_LANG=es). es, en and pt have their own pack; any other code uses the universal rules, no stemming and English texts.'
-  opt_profile: 'Installation profile: light (no extra models), medium or heavy (default: medium).'
+  opt_profile: 'Installation profile: light (no extra models) or medium (default: medium).'
   opt_force: Reset config/assistant.yaml if it already exists.
   exists: '{path} already exists -- use ''ipsis configure key=value'' to change it, or ''ipsis init --force'' to reset it to the defaults.'
   styles_created: 'config/styles.yaml created: the whole widget design lives there (colors, typography, shapes, shadows and animations), no code needed.'
@@ -40,10 +40,10 @@ configure:
   done: 'config/assistant.yaml updated:'
   value: '  {key} = {value!r}'
 profile:
-  help: Show or change the installation profile (light, medium or heavy).
+  help: Show or change the installation profile (light or medium).
   show_help: Show the active profile, its models and budget, and whether the index and calibration fit it.
   set_help: Change the active profile and tell whether to reindex or recalibrate (runs nothing expensive).
-  arg_profile: 'Target installation profile: light, medium or heavy.'
+  arg_profile: 'Target installation profile: light or medium.'
   index_compatible: 'Index: compatible (built with {model}).'
   index_missing: 'Index: does not exist yet; the next ''ipsis index'' will build it for {profile} ({model}).'
   index_incompatible: 'Index: incompatible: it was built with {built} and the {profile} profile needs {needed}.'
@@ -140,6 +140,21 @@ ask:
   stages: 'Stages (ms):'
   early_exit: '   (early exit: no models)'
   signals: 'Signals:'
+  intention: 'Intention: {name} (recognized in “{relation}”)'
+  intention_similarity: 'Intention: {name} (similarity: {score}, margin: {margin})'
+  spelling: 'Typos corrected against the corpus: {values}'
+  confidence_level: 'Confidence: {level}'
+  confidence_alta: high (direct answer read by the QA reader)
+  confidence_media: medium (direct answer without a reader; check the citation)
+  confidence_baja: low (closest passage, not a direct answer)
+  synonyms: 'Synonyms used: {values}'
+  lexical_source: 'BM25 expansion: {word} → {forms} ({source}, sense {sense}, POS {pos})'
+  conversation: 'Conversation: {action}; topic: {topic}'
+  conversation_hereda: follows the topic
+  conversation_retoma: returns to an earlier topic
+  conversation_tema_nuevo: new topic
+  conversation_sin_cambio: no topic change
+  interpreted: 'Interpreted question: "{question}"'
   focus: 'Focus terms: found: {found}; missing: {missing}'
   absent: 'Terms not in the corpus: {terms}'
   sentence: 'Evaluated sentence: «{sentence}»'
@@ -150,6 +165,9 @@ ask:
   candidate: '  {chunk_id}: dense {dense}, bm25 {bm25}, fusion {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
   sentences: 'Best scored sentences (s_lex, what the selection uses):'
   scored_sentence: '  {score:.3f} «{text}»'
+  alternatives: 'Alternatives (posture): {offered} offered, {discarded} discarded'
+  alternative_offered: '  offered    {affinity:.2f}  {signals}  {text}'
+  alternative_discarded: '  discarded  {affinity:.2f}  {signals}  {text}'
   tone: 'Tone: {tone}; templates: {templates}'
   warning: 'Warning: {warning}'
 doctor:
@@ -215,7 +233,7 @@ models:
   cached: '  Cache:      available ({size})'
   missing: '  Cache:      missing'
   download_help: Download the missing models of the active profile (or of --profile) to the global cache.
-  opt_profile: 'Profile whose models to download (light, medium or heavy); it does not change the active profile. Default: the project''s active profile.'
+  opt_profile: 'Profile whose models to download (light or medium); it does not change the active profile. Default: the project''s active profile.'
   downloading: 'Downloading {role}: {model} ...'
   downloaded: '{role}: {model} -- downloaded'
   available: '{role}: {model} -- already available'
@@ -311,10 +329,12 @@ evaluate:
   running: Evaluating the active backend against {path}...
   failed: 'Could not evaluate: {error}'
   line1: N={n} Recall@{k}={recall:.3f} MRR={mrr:.3f} status_accuracy={status:.3f}
-  line2: false_ok={false_ok:.3f} abstention_precision={abstention:.3f} literalness={literal:.3f} offsets={offsets:.3f}
+  line2: false_ok={false_ok:.3f} abstention_precision={abstention:.3f} full_answer_coverage={literal:.3f} offsets={offsets:.3f}
+  answers: 'Full answers with expected literal: {correct}/{direct}; answerable coverage {coverage}; accepted errors {errors}. Criterion: {criterion}.'
+  qa: 'QA spans: {n} evaluated, {incomplete} missing the complete expected literal; accuracy {accuracy}. No reader: not applicable.'
   line3: excessive_answers={excessive:.3f} mean_latency={mean:.1f}ms p95={p95:.1f}ms
   written: Report written to {path}
-  guard: 'False-ok guard (must be 0): {verdict}'
+  guard: 'Wrong direct answers in this bank (must be 0): {verdict}'
   pass: PASS
   blocked: BLOCKED
 calibrate:
@@ -349,12 +369,13 @@ compare:
   failed: 'Could not compare: {error}'
   dataset: Dataset {id}@{version}, k={k}
   row: '{backend}: Recall={recall:.3f} MRR={mrr:.3f} false_ok={false_ok:.3f} status={status:.3f} p95_latency={p95:.1f}ms'
+  answer_quality: '  full-answer coverage {literal}; QA span accuracy {qa}; criterion {criterion}'
   written: Comparison report written to {path}
 benchmark:
   help: Compare profiles (quality, safety, latency and cost), retrieval modes or latency only.
   opt_bank: Versioned manifest to evaluate; repeatable (e.g. one bank per language).
   opt_latency_only: Measure p50/p95 per stage of each profile against its budget.
-  opt_profiles: Profiles to compare (bm25,light,medium,heavy). With --latency-only, default light,medium.
+  opt_profiles: Profiles to compare (bm25,light,medium). With --latency-only, default light,medium.
   opt_experiments: Add experimental variants (medium with τ_ok 0.85; light with agreement).
   opt_repetitions: 'Times each question is repeated with --latency-only (default: 20).'
   opt_output: 'Output folder (default: golden/reports with --profiles, otherwise reports/benchmark).'
@@ -470,7 +491,14 @@ app:
   avatar_missing: 'there is no avatar {name!r}; available: {available}'
   avatar_name_rules: 'invalid name {name!r}: use lowercase letters, digits and hyphens (e.g. «my-avatar»)'
   expects_boolean: '{key} expects true or false, not {value!r}'
+  posture_alternatives_range: 'posture.max_alternatives expects a whole number from 1 to 5, not {value!r}'
+  unknown_posture: 'unknown posture {value!r}: use one of {available}'
   unknown_configure_keys: 'unknown key(s) for ''ipsis configure'': {keys}. Valid: {valid}'
+  unknown_threshold: 'unknown threshold {key!r}. Valid: {valid}'
+  threshold_range: 'threshold {key!r} must be a number between 0 and 1 (got {value!r})'
+  upload_type: '{name!r} is not a supported document. Valid extensions: {valid}'
+  upload_empty: '{name!r} is empty'
+  upload_size: '{name!r} is larger than {mb} MiB'
   unknown_profile: 'unknown profile {name!r} (available: {available})'
   bm25_not_installable: 'bm25 is a diagnostic profile of ''ipsis benchmark'', not an installable profile. Available profiles: {available}'
   unknown_profile_long: 'unknown profile {name!r}. Available profiles: {available}'
@@ -708,6 +736,8 @@ evaluation:
   calibration_profile: it was calibrated with the profile {calibrated!r} and the project uses {profile!r}
   calibration_models: it was calibrated with other models
   calibration_corpus: the indexed corpus changed since the calibration (or there is no index)
+  calibration_lexical: the lexical rules or sources changed since calibration (or its lexical hash is missing)
+  calibration_criterion: the answer evaluation criterion changed; run 'ipsis calibrate' again before applying thresholds
   offsets_mismatch: the evidence offsets do not match the literal text
   answerable_needs_evidence: an answerable question needs a literal answer and evidence
   literal_in_evidence: the literal answer must be contained in a piece of evidence
@@ -725,8 +755,9 @@ evaluation:
   compare_two: at least two runs are needed to compare
   compare_labels: each run needs a different backend label
   compare_identity: the runs do not use the same dataset, corpus and k
+  compare_criterion: the reports use different answer evaluation criteria; re-evaluate both runs
   note_regression: 'Regression bank: it compares profiles on the same cases. Its risk bounds certify no client; ''ipsis calibrate'' does that with the client''s golden set.'
-  note_evaluation: 'Client evaluation bank: the false ok guard (as in ''ipsis evaluate'') requires 0 in the profiles; the bounds are only certified with ''ipsis calibrate''.'
+  note_evaluation: 'Client evaluation bank: incorrect direct answers (as in ''ipsis evaluate'') must be 0; QA span quality is separate and risk bounds require reviewing calibration.'
   variant_medium_ok: 'medium with τ_ok = {value} (profile: {profile_value}). It re-decides the medium observations with the production rule; a threshold does not change the cost, so the latency is medium''s.'
   variant_light_agreement: light requiring agreement ≥ 0.5 (dense top-1 in the BM25 top-3 and vice versa) for a lexical ok. It adds two searches per question; the latency adds their measured cost to each light query.
   extra_p50: extra searches p50 ms
@@ -735,6 +766,8 @@ evaluation:
   report_bank: '- Bank `{bank}` ({language}, use {use}, {cases} cases)'
   report_project_language: project language
   report_quality: '## Quality, safety and latency'
+  report_answer_quality: '## Full answers and QA spans (separate metrics)'
+  report_answer_quality_header: '| Profile | Full answers with expected literal / direct | Answerable coverage | QA with complete literal / evaluated | QA missing literal |'
   report_quality_header: '| Profile | Direct coverage | Exact | Paraphrase | False ok | Traps with false ok | Accepted risk x/n | p50 ms | p95 ms | p95 budget | Meets |'
   report_yes: 'yes'
   report_no: 'NO'
@@ -777,7 +810,6 @@ lint:
 panel:
   lang: en
   title: Assistant panel
-  note: 'Presentation only: nothing here changes what the assistant answers.'
   access: Access
   token: Admin token
   enter: Sign in
@@ -844,6 +876,46 @@ panel:
   session_ended: The session ended or the token changed. Sign in again.
   network_error: Could not connect to the service.
   no_changes: There are no style changes to save.
+  note: "Tone, avatar and widget change only the presentation. Thresholds and documents (Status and Documents tabs) change what the assistant answers."
+  tab_status: "Status"
+  tab_documents: "Documents"
+  status_title: "Project status"
+  thresholds_title: "Thresholds"
+  thresholds_note: "Leave a value empty to use the profile's. A calibration in force (config/calibration.yaml) takes precedence over ok, oov_ok and focus. Saving reloads the engine for a few seconds."
+  threshold: "Threshold"
+  effective: "In force"
+  profile_value: "Profile"
+  project_value: "Project"
+  source: "Source"
+  save_thresholds: "Save thresholds"
+  doctor_title: "Diagnosis (ipsis doctor)"
+  refresh: "Refresh"
+  documents_title: "Documents"
+  documents_note: "PDF with text, DOCX, Markdown or TXT, up to 20 MiB each. Upload adds them to the corpus; Reindex makes them answerable (the assistant pauses meanwhile)."
+  choose_files: "Files to upload"
+  upload: "Upload"
+  doc_title: "Title"
+  doc_file: "File"
+  doc_active: "Indexed"
+  reindex: "Reindex"
+  ready: "Ready"
+  not_ready: "Not ready"
+  profile_label: "Profile"
+  index_label: "Index"
+  calibration_label: "Calibration"
+  chunks: "chunks"
+  task_running: "Reloading the engine..."
+  task_done: "Engine reloaded."
+  task_error: "The reload failed:"
+  uploaded: "added to the corpus"
+  duplicate: "already in the corpus"
+  rejected: "rejected:"
+  reindex_hint: "Uploaded. Press Reindex to make the new documents answerable."
+  'yes': "yes"
+  'no': "no"
+  source_calibration: "calibration"
+  source_project: "project (engine.yaml)"
+  source_profile: "profile"
 presets:
   classic: Neutral blue, comfortable, the same as the factory design.
   minimal: Compact interface, subtle radii and soft shadows.
@@ -908,3 +980,37 @@ styles:
   unknown_key: 'unknown key {key!r}; in {section}: {valid}'
   key_error: '{key}: {error}'
   no_changes: 'give at least one change: section.key=value'
+menu:
+  group_start: Start
+  group_documents: Documents
+  group_ask: Ask
+  group_customize: Customize
+  group_quality: Measure and calibrate
+  group_operate: Deploy and operate
+  group_other: Other
+  examples: Examples
+  example_new: New project in Spanish with the reader (medium profile)
+  example_load: Add a folder of documents and build the index
+  example_chat: Ask and run commands interactively (/help inside)
+  example_serve: API, widget and /admin panel on http://127.0.0.1:8000
+  example_threshold: Choose thresholds with your golden set at 5 % risk
+  footer: "Options of a command: ipsis <command> --help  ·  interactive mode: ipsis chat"
+help:
+  help: Show the commands grouped by task, or the help of one command.
+  arg_command: Command to explain (e.g. calibrate).
+chat:
+  help: 'Interactive mode: type questions, and /commands (/help, /doctor, /index...).'
+  opt_diagnostics: Start with diagnostics on (stages, signals, rule and span of each answer).
+  welcome: "ipsis chat -- type a question, or /help for commands. /exit to leave."
+  loading: Loading the engine (only once)...
+  commands: 'Commands:'
+  cmd_help: Show this list.
+  cmd_diagnostics: 'Turn diagnostics on or off (/diagnostics on|off).'
+  cmd_reload: Reload the engine after changing configuration or documents.
+  cmd_exit: Leave (also /quit or Ctrl+D).
+  cmd_any: 'Any ipsis command, e.g. /doctor, /load ./docs, /index, /profile show.'
+  diagnostics_on: Diagnostics on.
+  diagnostics_off: Diagnostics off.
+  reloaded: The engine will be reloaded with the next question.
+  unknown: "Unknown command: /{command}. Type /help."
+  bye: Bye.

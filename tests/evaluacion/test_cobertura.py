@@ -105,6 +105,48 @@ def test_por_idioma_no_mezcla_casos():
     assert set(reporte.por_idioma_y_grupo["en"]) == {"exacta"}
 
 
+@pytest.mark.parametrize("exacta", [None, "el motor"])
+def test_cita_amplia_no_oculta_respuesta_equivocada(exacta):
+    obs = _obs("r1", "respuesta_directa").model_copy(update={
+        "respuesta": "La garantía cubre el motor.", "respuesta_exacta": exacta,
+    })
+    assert reporte_cobertura([(_respondible("r1"), obs)]).total.directas_sin_literal == 1
+
+
+def test_respuesta_completa_y_tramo_qa_se_miden_por_separado():
+    obs = _obs("r1", "respuesta_directa").model_copy(update={"respuesta_exacta": "el motor"})
+    reporte = reporte_cobertura([(_respondible("r1"), obs)])
+    assert reporte.total.directas_sin_literal == 0
+    assert reporte.total.directas_con_literal == 1
+    assert reporte.riesgo_aceptadas.x == 0
+    assert reporte.total.tramos_qa_sin_literal == 1
+    assert reporte.total.exactitud_tramo_qa == 0
+
+
+def test_sin_lector_qa_no_aplica_y_no_suma_aciertos():
+    reporte = reporte_cobertura([(_respondible("r1"), _obs("r1", "respuesta_directa"))])
+    assert reporte.total.tramos_qa_evaluados == 0
+    assert reporte.total.exactitud_tramo_qa is None
+    assert reporte.casos[0].tramo_qa_sin_literal is None
+
+
+@pytest.mark.parametrize("cambio", [{"doc_id": "otro"}, {"offset_inicio": 100, "offset_fin": 125}])
+def test_literal_de_otro_documento_o_rango_no_respalda_respuesta(cambio):
+    obs = _obs("r1", "respuesta_directa")
+    obs.evidencias = [obs.evidencias[0].model_copy(update=cambio)]
+    reporte = reporte_cobertura([(_respondible("r1"), obs)])
+    assert reporte.total.directas_sin_literal == 1
+    assert reporte.riesgo_aceptadas.x == 1
+
+
+def test_related_no_cuenta_como_acierto_directo_ni_qa():
+    obs = _obs("r1", "relacionado").model_copy(update={"respuesta_exacta": "24 meses"})
+    reporte = reporte_cobertura([(_respondible("r1"), obs)])
+    assert reporte.total.directas_con_literal == 0
+    assert reporte.total.cobertura_literal == 0
+    assert reporte.total.tramos_qa_evaluados == 0
+
+
 def test_las_senales_no_disponibles_quedan_en_none():
     senales = SenalesObservadas.desde_diagnostico({
         "senales_politica": {"s_ret": 0.5, "s_oov": 0.1, "s_foco": 1.0, "s_cov": 1.0, "acuerdo": None,

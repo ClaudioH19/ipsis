@@ -1,0 +1,4066 @@
+{
+  "consultas": {
+    "aceptadas": [
+      {
+        "sesion": "evaluacion:es-exacta-007",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8878806829452515,
+          "margen": 0.048098087310791016,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-009",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8843004703521729,
+          "margen": 0.027689456939697266,
+          "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-013",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8945013284683228,
+          "margen": 0.04917609691619873,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-014",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9040016531944275,
+          "margen": 0.06777042150497437,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-007",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How often does the password expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.9011116027832031,
+          "margen": 0.05385380983352661,
+          "ejemplo": "How often does the visitor pass expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-009",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How often does the access card expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8793419599533081,
+          "margen": 0.04062134027481079,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-013",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "esqueci a senha do login, como troco?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8993871212005615,
+          "margen": 0.010230660438537598,
+          "ejemplo": "Esqueci meu código de acesso, como faço para recuperá-lo?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-014",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9022531509399414,
+          "margen": 0.02493363618850708,
+          "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-007",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8878806829452515,
+          "margen": 0.048098087310791016,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-009",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cada cuánto vence la tarjeta de acceso?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8843004703521729,
+          "margen": 0.027689456939697266,
+          "ejemplo": "¿Cuándo tengo que renovar la licencia porque vence?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-013",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "olvidé la clave, cómo la cambio?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8945013284683228,
+          "margen": 0.04917609691619873,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-014",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9040016531944275,
+          "margen": 0.06777042150497437,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-007",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How often does the password expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.9011116027832031,
+          "margen": 0.05385380983352661,
+          "ejemplo": "How often does the visitor pass expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-009",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How often does the access card expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8793419599533081,
+          "margen": 0.04062134027481079,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-013",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "esqueci a senha do login, como troco?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8993871212005615,
+          "margen": 0.010230660438537598,
+          "ejemplo": "Esqueci meu código de acesso, como faço para recuperá-lo?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-014",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9022531509399414,
+          "margen": 0.02493363618850708,
+          "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      }
+    ],
+    "incompatibles": [
+      {
+        "sesion": "evaluacion:es-exacta-002",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.848649263381958,
+          "margen": 0.011050820350646973,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para entregar los productos?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8388400077819824,
+          "margen": 0.0012339353561401367,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-004",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿En cuántos días paga Finanzas las facturas?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8449485301971436,
+          "margen": 0.007472217082977295,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos días a la semana se puede teletrabajar?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8402426242828369,
+          "margen": 0.017902255058288574,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-009",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-011",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos caracteres debe tener la nueva contraseña?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8476883172988892,
+          "margen": 0.0028964877128601074,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-012",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cada cuánto se revisa el plan de metas del funcionario?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8423922061920166,
+          "margen": 0.0070209503173828125,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-009",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8276408910751343,
+          "margen": 0.00029164552688598633,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-013",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Qué muebles me pasan para trabajar desde la casa?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8228861093521118,
+          "margen": 0.011223018169403076,
+          "ejemplo": "¿Qué pasos debo seguir para reservar una sala?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-017",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuánta plata me dan por día si viajo al extranjero?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8422180414199829,
+          "margen": 0.003881692886352539,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-018",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Con cuántos días de anticipación pido el viático? pedir solicita solicitan solicitar",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8469020128250122,
+          "margen": 0.006066501140594482,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-020",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuándo me depositan el viático?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8373454213142395,
+          "margen": 0.0016631484031677246,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-002",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8393930196762085,
+          "margen": 0.010049939155578613,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-004",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "Within how many days does Finance pay invoices?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8186823129653931,
+          "margen": 0.01677030324935913,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-007",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many vacation days does a remote employee get?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8279002904891968,
+          "margen": 0.008922100067138672,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-009",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-010",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "What equipment do I get to work from home?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.851098358631134,
+          "margen": 0.024399161338806152,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-013",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "What furniture do I get to work from home?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8509848117828369,
+          "margen": 0.02224874496459961,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-014",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "my account got locked, what now?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8907467126846313,
+          "margen": 0.036963582038879395,
+          "ejemplo": "My booking was cancelled, what do I do now?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-002",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8731101751327515,
+          "margen": 0.01204061508178711,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-005",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para entregar os produtos?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.869756817817688,
+          "margen": 0.00427699089050293,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-004",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Em quantos dias o Financeiro paga as faturas?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548087477684021,
+          "margen": 0.0011889338493347168,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-005",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias por semana posso fazer teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8666886687278748,
+          "margen": 0.01717609167098999,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-007",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias de férias tem um servidor em teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548418879508972,
+          "margen": 0.0011259913444519043,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-008",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Depois de quantas tentativas falhas a conta é bloqueada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8625994920730591,
+          "margen": 0.015444934368133545,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-012",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Com quanta antecedência a suspensão do teletrabalho é comunicada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8578863739967346,
+          "margen": 0.0038980841636657715,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-013",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "A cada quanto tempo o acordo de teletrabalho é revisado?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8664129376411438,
+          "margen": 0.009900569915771484,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-012",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "A cada quanto tempo o plano de metas do servidor é revisado?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8781203627586365,
+          "margen": 0.014498412609100342,
+          "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-014",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-009",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quanto tempo a chefia demora para responder o pedido de teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.854750394821167,
+          "margen": 0.012785255908966064,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-018",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Com quantos dias de antecedência peço a diária?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8728159666061401,
+          "margen": 0.0015552639961242676,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-020",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quando a diária é depositada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8666281700134277,
+          "margen": 0.006861448287963867,
+          "ejemplo": "Em que data o cartão deixa de funcionar?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-ambigua-001",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias são?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8885141611099243,
+          "margen": 0.012106716632843018,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-002",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.848649263381958,
+          "margen": 0.011050820350646973,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para entregar los productos?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8388400077819824,
+          "margen": 0.0012339353561401367,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-004",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿En cuántos días paga Finanzas las facturas?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8449485301971436,
+          "margen": 0.007472217082977295,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos días a la semana se puede teletrabajar?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8402426242828369,
+          "margen": 0.017902255058288574,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-009",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-011",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos caracteres debe tener la nueva contraseña?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8476883172988892,
+          "margen": 0.0028964877128601074,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-012",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cada cuánto se revisa el plan de metas del funcionario?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8423922061920166,
+          "margen": 0.0070209503173828125,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-009",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuánto se demora la jefatura en contestar la solicitud de teletrabajo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8276408910751343,
+          "margen": 0.00029164552688598633,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-013",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Qué muebles me pasan para trabajar desde la casa?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8228861093521118,
+          "margen": 0.011223018169403076,
+          "ejemplo": "¿Qué pasos debo seguir para reservar una sala?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-017",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuánta plata me dan por día si viajo al extranjero?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8422180414199829,
+          "margen": 0.003881692886352539,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-018",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Con cuántos días de anticipación pido el viático? pedir solicita solicitan solicitar",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8469020128250122,
+          "margen": 0.006066501140594482,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-020",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuándo me depositan el viático?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8373454213142395,
+          "margen": 0.0016631484031677246,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-002",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8393930196762085,
+          "margen": 0.010049939155578613,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-004",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "Within how many days does Finance pay invoices?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8186823129653931,
+          "margen": 0.01677030324935913,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-007",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many vacation days does a remote employee get?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8279002904891968,
+          "margen": 0.008922100067138672,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-009",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-010",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "What equipment do I get to work from home?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.851098358631134,
+          "margen": 0.024399161338806152,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-013",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "What furniture do I get to work from home?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8509848117828369,
+          "margen": 0.02224874496459961,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-014",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "my account got locked, what now?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8907467126846313,
+          "margen": 0.036963582038879395,
+          "ejemplo": "My booking was cancelled, what do I do now?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-002",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8731101751327515,
+          "margen": 0.01204061508178711,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-005",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para entregar os produtos?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.869756817817688,
+          "margen": 0.00427699089050293,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-004",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Em quantos dias o Financeiro paga as faturas?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548087477684021,
+          "margen": 0.0011889338493347168,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-005",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias por semana posso fazer teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8666886687278748,
+          "margen": 0.01717609167098999,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-007",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias de férias tem um servidor em teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548418879508972,
+          "margen": 0.0011259913444519043,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-008",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Depois de quantas tentativas falhas a conta é bloqueada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8625994920730591,
+          "margen": 0.015444934368133545,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-012",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Com quanta antecedência a suspensão do teletrabalho é comunicada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8578863739967346,
+          "margen": 0.0038980841636657715,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-013",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "A cada quanto tempo o acordo de teletrabalho é revisado?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8664129376411438,
+          "margen": 0.009900569915771484,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-012",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "A cada quanto tempo o plano de metas do servidor é revisado?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8781203627586365,
+          "margen": 0.014498412609100342,
+          "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-014",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-009",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quanto tempo a chefia demora para responder o pedido de teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.854750394821167,
+          "margen": 0.012785255908966064,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-018",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Com quantos dias de antecedência peço a diária?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8728159666061401,
+          "margen": 0.0015552639961242676,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-020",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quando a diária é depositada?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8666281700134277,
+          "margen": 0.006861448287963867,
+          "ejemplo": "Em que data o cartão deixa de funcionar?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-ambigua-001",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias são?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8885141611099243,
+          "margen": 0.012106716632843018,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      }
+    ]
+  },
+  "universal": {
+    "aceptadas": [
+      {
+        "sesion": "evaluacion:es-parafrasis-001",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8586478233337402,
+          "margen": 0.012680113315582275,
+          "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-001",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Qué tengo que hacer si mi cafetera se descompone?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8586478233337402,
+          "margen": 0.012680113315582275,
+          "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+          "aceptada": true,
+          "compatible": true
+        }
+      }
+    ],
+    "incompatibles": [
+      {
+        "sesion": "evaluacion:es-trampa-001",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8281275033950806,
+          "margen": 0.006086170673370361,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-003",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8389448523521423,
+          "margen": 0.00742572546005249,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8709890842437744,
+          "margen": 0.030670523643493652,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8772735595703125,
+          "margen": 0.0469592809677124,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-003",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8539042472839355,
+          "margen": 0.025885581970214844,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8310630917549133,
+          "margen": 0.0008870959281921387,
+          "ejemplo": "¿Hasta cuándo sigue vigente el permiso?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-001",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8338724970817566,
+          "margen": 0.010019838809967041,
+          "ejemplo": "When does the coupon stop being valid?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-003",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8175427317619324,
+          "margen": 0.005039989948272705,
+          "ejemplo": "On which date does the card stop working?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-002",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8539541959762573,
+          "margen": 0.023966073989868164,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-004",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "Within how many business days is the refund paid?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8378063440322876,
+          "margen": 0.010987341403961182,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-005",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "When is return shipping free?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8546823859214783,
+          "margen": 0.01603466272354126,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-005",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "Which carrier picks up the return?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.848060131072998,
+          "margen": 0.02746570110321045,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-003",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "Why can't toothbrushes be returned?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8671712875366211,
+          "margen": 0.03689086437225342,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-006",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8000999689102173,
+          "margen": 0.0016716718673706055,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-006",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many drippers does the greenhouse have?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.7797116637229919,
+          "margen": 0.0037139058113098145,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-ambigua-001",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How long does it last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8551569581031799,
+          "margen": 0.001538097858428955,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-001",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8846879005432129,
+          "margen": 0.024056434631347656,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-003",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8632948398590088,
+          "margen": 0.003900766372680664,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-002",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.863090455532074,
+          "margen": 0.005486667156219482,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-005",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8966479301452637,
+          "margen": 0.012849628925323486,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-005",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Qual transportadora retira a devolução?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8796859979629517,
+          "margen": 0.027665019035339355,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-003",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8852246999740601,
+          "margen": 0.015964031219482422,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-007",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8441722393035889,
+          "margen": 0.007487773895263672,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-ambigua-001",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quanto tempo dura?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8787474036216736,
+          "margen": 0.0021725893020629883,
+          "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-001",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8281275033950806,
+          "margen": 0.006086170673370361,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-003",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8389448523521423,
+          "margen": 0.00742572546005249,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-exacta-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuándo es gratuito el envío de la devolución?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8709890842437744,
+          "margen": 0.030670523643493652,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-trampa-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Qué empresa de transporte retira la devolución?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8772735595703125,
+          "margen": 0.0469592809677124,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-003",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Por qué no se pueden devolver los cepillos de dientes? reembolsar reembolsa",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8539042472839355,
+          "margen": 0.025885581970214844,
+          "ejemplo": "¿Cómo tramito una devolución en la tienda?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:es-parafrasis-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8310630917549133,
+          "margen": 0.0008870959281921387,
+          "ejemplo": "¿Hasta cuándo sigue vigente el permiso?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-001",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How long does the warranty for the Brio C2 coffee maker last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8338724970817566,
+          "margen": 0.010019838809967041,
+          "ejemplo": "When does the coupon stop being valid?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-003",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many days does the store take to repair the coffee maker?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8175427317619324,
+          "margen": 0.005039989948272705,
+          "ejemplo": "On which date does the card stop working?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-002",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "Am I covered if I drop the coffee maker on the floor?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8539541959762573,
+          "margen": 0.023966073989868164,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-004",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "Within how many business days is the refund paid?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8378063440322876,
+          "margen": 0.010987341403961182,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-005",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "When is return shipping free?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8546823859214783,
+          "margen": 0.01603466272354126,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-005",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "Which carrier picks up the return?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.848060131072998,
+          "margen": 0.02746570110321045,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-parafrasis-003",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "Why can't toothbrushes be returned?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8671712875366211,
+          "margen": 0.03689086437225342,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-exacta-006",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many liters per hour does each dripper deliver?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8000999689102173,
+          "margen": 0.0016716718673706055,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-trampa-006",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many drippers does the greenhouse have?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.7797116637229919,
+          "margen": 0.0037139058113098145,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:en-ambigua-001",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How long does it last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8551569581031799,
+          "margen": 0.001538097858428955,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-001",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "O que devo fazer se minha cafeteira quebrar?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8846879005432129,
+          "margen": 0.024056434631347656,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-003",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias a loja demora para consertar a cafeteira?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8632948398590088,
+          "margen": 0.003900766372680664,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-002",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Estou coberto se a cafeteira cair no chão?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.863090455532074,
+          "margen": 0.005486667156219482,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-005",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quando o frete da devolução é grátis?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8966479301452637,
+          "margen": 0.012849628925323486,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-trampa-005",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Qual transportadora retira a devolução?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8796859979629517,
+          "margen": 0.027665019035339355,
+          "ejemplo": "Como solicito uma devolução na loja?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-parafrasis-003",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Por que não é possível devolver escovas de dentes?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8852246999740601,
+          "margen": 0.015964031219482422,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-exacta-007",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "A que horas funciona a irrigação por gotejamento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8441722393035889,
+          "margen": 0.007487773895263672,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "evaluacion:pt-ambigua-001",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quanto tempo dura?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8787474036216736,
+          "margen": 0.0021725893020629883,
+          "ejemplo": "A cada quanto tempo vence o passe de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      }
+    ]
+  },
+  "conversaciones": {
+    "aceptadas": [
+      {
+        "sesion": "conversacion:es-conv-004",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cómo cambio mi contraseña?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9050199389457703,
+          "margen": 0.06226879358291626,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-004",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿cada cuánto vence? cambio contrasena",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8861451148986816,
+          "margen": 0.05232810974121094,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-014",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8878806829452515,
+          "margen": 0.048098087310791016,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-016",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9040016531944275,
+          "margen": 0.06777042150497437,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-004",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "how often does it expire? change password",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8936944007873535,
+          "margen": 0.04520821571350098,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-013",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and how many days until it's paid? request refund",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8728499412536621,
+          "margen": 0.01374351978302002,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-014",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How often does the password expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.9011116027832031,
+          "margen": 0.05385380983352661,
+          "ejemplo": "How often does the visitor pass expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-016",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9022531509399414,
+          "margen": 0.02493363618850708,
+          "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-004",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cómo cambio mi contraseña?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9050199389457703,
+          "margen": 0.06226879358291626,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-004",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿cada cuánto vence? cambio contrasena",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8861451148986816,
+          "margen": 0.05232810974121094,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-014",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cada cuánto vence la contraseña?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8878806829452515,
+          "margen": 0.048098087310791016,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-016",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "me bloquearon la cuenta, qué hago?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9040016531944275,
+          "margen": 0.06777042150497437,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-004",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "how often does it expire? change password",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8936944007873535,
+          "margen": 0.04520821571350098,
+          "ejemplo": "How frequently does the driving permit expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-013",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and how many days until it's paid? request refund",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8728499412536621,
+          "margen": 0.01374351978302002,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-014",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How often does the password expire?",
+        "intencion": "fin",
+        "diagnostico": {
+          "nombre": "fin",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.9011116027832031,
+          "margen": 0.05385380983352661,
+          "ejemplo": "How often does the visitor pass expire?",
+          "aceptada": true,
+          "compatible": true
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-016",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "bloquearam minha conta, o que eu faço?",
+        "intencion": "procedimiento",
+        "diagnostico": {
+          "nombre": "procedimiento",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.9022531509399414,
+          "margen": 0.02493363618850708,
+          "ejemplo": "Cancelaram minha reserva, o que faço agora?",
+          "aceptada": true,
+          "compatible": true
+        }
+      }
+    ],
+    "incompatibles": [
+      {
+        "sesion": "conversacion:es-conv-002",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y qué equipos me pasan? pedir teletrabajo dias semana",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8386722803115845,
+          "margen": 0.009834468364715576,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-003",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-003",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿con cuánta anticipación lo pido? pedir solicita solicitan solicitar",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8687312006950378,
+          "margen": 0.011316835880279541,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y qué no cubre? dura garantia cafetera brio c2",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8676167130470276,
+          "margen": 0.016330063343048096,
+          "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-005",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y los sábados? horario biblioteca",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8281385898590088,
+          "margen": 0.0017126202583312988,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-006",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y cuánto es el viático en el extranjero?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.852733850479126,
+          "margen": 0.020242035388946533,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-008",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿con cuánta anticipación me avisan?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8586710691452026,
+          "margen": 0.005002260208129883,
+          "ejemplo": "Olvidé mi código de acceso, ¿cómo lo recupero?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-009",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.848649263381958,
+          "margen": 0.011050820350646973,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-010",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8650580048561096,
+          "margen": 0.010897457599639893,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-011",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuántas veces al día funciona el riego?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8196470141410828,
+          "margen": 0.006596505641937256,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-011",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿cuándo se apaga la bomba? funciona riego verano",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548167943954468,
+          "margen": 0.004285693168640137,
+          "ejemplo": "¿Cuándo finaliza la vigencia del abono?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-013",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿y en cuántos días lo pagan? pedir reembolso",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8656737804412842,
+          "margen": 0.013558626174926758,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-014",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuánto dura el préstamo de libros?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8291223049163818,
+          "margen": 0.005362987518310547,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-015",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-015",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "volviendo al viático, ¿y en el extranjero? diario dentro pais",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8518285751342773,
+          "margen": 0.006296038627624512,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-020",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿En cuántos días responde la jefatura la solicitud de teletrabajo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8357290625572205,
+          "margen": 0.013656079769134521,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-020",
+        "idioma": "es",
+        "perfil": "light",
+        "pregunta_efectiva": "¿En cuántos días entrega la Mesa de Ayuda un equipo nuevo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8284274339675903,
+          "margen": 0.0028455257415771484,
+          "ejemplo": "¿En qué fecha deja de funcionar la tarjeta?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-001",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and how many days do they have to accept it? supplier rejects order",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8712950348854065,
+          "margen": 0.00563889741897583,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-002",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and what equipment do I get? apply remote work many",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8563220500946045,
+          "margen": 0.017719507217407227,
+          "ejemplo": "I lost my membership card, how do I get another one?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-002",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and the allowance? apply remote work equipment",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8541531562805176,
+          "margen": 0.008380651473999023,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-003",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-005",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How long does the Brio C2 coffee maker warranty last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8326195478439331,
+          "margen": 0.008780360221862793,
+          "ejemplo": "When does the coupon stop being valid?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-009",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8393930196762085,
+          "margen": 0.010049939155578613,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-009",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and to deliver the products? supplier accept purchase order",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8492976427078247,
+          "margen": 0.011102139949798584,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-010",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and in how many days is the order issued? purchase start registers request",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8709404468536377,
+          "margen": 0.011292874813079834,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-011",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "How many times a day does the irrigation run?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8124372959136963,
+          "margen": 0.01482081413269043,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-012",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "and urine samples? temperature blood long",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8456669449806213,
+          "margen": 0.011532127857208252,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-015",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-015",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "back to the allowance, and abroad? daily within country",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8689166307449341,
+          "margen": 0.02342677116394043,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-016",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "my account got locked, what now?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8907467126846313,
+          "margen": 0.036963582038879395,
+          "ejemplo": "My booking was cancelled, what do I do now?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-020",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "In how many days does the manager answer a remote work application?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.831611692905426,
+          "margen": 0.019055068492889404,
+          "ejemplo": "At what point does the call for applications close?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-020",
+        "idioma": "en",
+        "perfil": "light",
+        "pregunta_efectiva": "In how many days does the Help Desk deliver new equipment?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8155462145805359,
+          "margen": 0.01386493444442749,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-001",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-002",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "e quantos dias por semana? pedir teletrabalho",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8724608421325684,
+          "margen": 0.005270779132843018,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-005",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "e o que ela não cobre? quanto dura garantia cafeteira brio c2",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8806535005569458,
+          "margen": 0.00463181734085083,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-008",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "e a cada quanto tempo o acordo é revisado?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8911148309707642,
+          "margen": 0.006312727928161621,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-009",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8731101751327515,
+          "margen": 0.01204061508178711,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-011",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quantas vezes por dia funciona a irrigação?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8520196676254272,
+          "margen": 0.014870882034301758,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-011",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "quando a bomba desliga? quantas funciona irrigacao verao",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8403000831604004,
+          "margen": 0.007856488227844238,
+          "ejemplo": "Em que data o cartão deixa de funcionar?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-013",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "e em quantos dias ele é pago? ate pedir reembolso",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8786355257034302,
+          "margen": 0.0025984644889831543,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-014",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Quanto dura o empréstimo de livros?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8665831089019775,
+          "margen": 0.005781054496765137,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-015",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-015",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "voltando à diária, e no exterior? valor dentro pais",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8665552735328674,
+          "margen": 0.005563557147979736,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-020",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Em quantos dias a chefia responde o pedido de teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8477610349655151,
+          "margen": 0.0021952390670776367,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-020",
+        "idioma": "pt",
+        "perfil": "light",
+        "pregunta_efectiva": "Em quantos dias a Central de Atendimento entrega um equipamento novo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8675730228424072,
+          "margen": 0.0028888583183288574,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-002",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y qué equipos me pasan? pedir teletrabajo dias semana",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8386722803115845,
+          "margen": 0.009834468364715576,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-003",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-003",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿con cuánta anticipación lo pido? pedir solicita solicitan solicitar",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8687312006950378,
+          "margen": 0.011316835880279541,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y qué no cubre? dura garantia cafetera brio c2",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8676167130470276,
+          "margen": 0.016330063343048096,
+          "ejemplo": "No encuentro mi carné, ¿qué hago para recuperarlo?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-005",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y los sábados? horario biblioteca",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8281385898590088,
+          "margen": 0.0017126202583312988,
+          "ejemplo": "Me cancelaron la reserva, ¿qué hago ahora?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-006",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y cuánto es el viático en el extranjero?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.852733850479126,
+          "margen": 0.020242035388946533,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-008",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿con cuánta anticipación me avisan?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8586710691452026,
+          "margen": 0.005002260208129883,
+          "ejemplo": "Olvidé mi código de acceso, ¿cómo lo recupero?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-009",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántos días tiene el proveedor para aceptar la Orden de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.848649263381958,
+          "margen": 0.011050820350646973,
+          "ejemplo": "¿En qué fecha se acaba la promoción?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-010",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y en cuántos días se emite la orden? compra registra requerimiento",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8650580048561096,
+          "margen": 0.010897457599639893,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-011",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuántas veces al día funciona el riego?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8196470141410828,
+          "margen": 0.006596505641937256,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-011",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿cuándo se apaga la bomba? funciona riego verano",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8548167943954468,
+          "margen": 0.004285693168640137,
+          "ejemplo": "¿Cuándo finaliza la vigencia del abono?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-013",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿y en cuántos días lo pagan? pedir reembolso",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8656737804412842,
+          "margen": 0.013558626174926758,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-014",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuánto dura el préstamo de libros?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8291223049163818,
+          "margen": 0.005362987518310547,
+          "ejemplo": "¿Cada cuánto caduca el pase de visitante?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-015",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿Cuál es el viático diario dentro del país?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.82561194896698,
+          "margen": 0.013011574745178223,
+          "ejemplo": "¿Con qué frecuencia vence el permiso de conducir?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-015",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "volviendo al viático, ¿y en el extranjero? diario dentro pais",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8518285751342773,
+          "margen": 0.006296038627624512,
+          "ejemplo": "Necesito cambiar mis datos, ¿cómo lo tramito?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-020",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿En cuántos días responde la jefatura la solicitud de teletrabajo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8357290625572205,
+          "margen": 0.013656079769134521,
+          "ejemplo": "¿Cuál es el último día para inscribirse?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:es-conv-020",
+        "idioma": "es",
+        "perfil": "medium",
+        "pregunta_efectiva": "¿En cuántos días entrega la Mesa de Ayuda un equipo nuevo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8284274339675903,
+          "margen": 0.0028455257415771484,
+          "ejemplo": "¿En qué fecha deja de funcionar la tarjeta?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-001",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and how many days do they have to accept it? supplier rejects order",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8712950348854065,
+          "margen": 0.00563889741897583,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-002",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and what equipment do I get? apply remote work many",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8563220500946045,
+          "margen": 0.017719507217407227,
+          "ejemplo": "I lost my membership card, how do I get another one?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-002",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and the allowance? apply remote work equipment",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8541531562805176,
+          "margen": 0.008380651473999023,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-003",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-005",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How long does the Brio C2 coffee maker warranty last?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8326195478439331,
+          "margen": 0.008780360221862793,
+          "ejemplo": "When does the coupon stop being valid?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-009",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many days does the supplier have to accept the Purchase Order?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8393930196762085,
+          "margen": 0.010049939155578613,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-009",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and to deliver the products? supplier accept purchase order",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8492976427078247,
+          "margen": 0.011102139949798584,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-010",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and in how many days is the order issued? purchase start registers request",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8709404468536377,
+          "margen": 0.011292874813079834,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-011",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "How many times a day does the irrigation run?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8124372959136963,
+          "margen": 0.01482081413269043,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-012",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "and urine samples? temperature blood long",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8456669449806213,
+          "margen": 0.011532127857208252,
+          "ejemplo": "I need to change my details, how is that arranged?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-015",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "What is the daily allowance within the country?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8266712427139282,
+          "margen": 0.020378589630126953,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-015",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "back to the allowance, and abroad? daily within country",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8689166307449341,
+          "margen": 0.02342677116394043,
+          "ejemplo": "How do I arrange a return at the shop?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-016",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "my account got locked, what now?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8907467126846313,
+          "margen": 0.036963582038879395,
+          "ejemplo": "My booking was cancelled, what do I do now?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-020",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "In how many days does the manager answer a remote work application?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.831611692905426,
+          "margen": 0.019055068492889404,
+          "ejemplo": "At what point does the call for applications close?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:en-conv-020",
+        "idioma": "en",
+        "perfil": "medium",
+        "pregunta_efectiva": "In how many days does the Help Desk deliver new equipment?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8155462145805359,
+          "margen": 0.01386493444442749,
+          "ejemplo": "What is the last day to sign up?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-001",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-002",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "e quantos dias por semana? pedir teletrabalho",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8724608421325684,
+          "margen": 0.005270779132843018,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-005",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "e o que ela não cobre? quanto dura garantia cafeteira brio c2",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "procedimiento",
+          "similitud": 0.8806535005569458,
+          "margen": 0.00463181734085083,
+          "ejemplo": "Não encontro minha carteirinha, o que faço para recuperá-la?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-008",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "e a cada quanto tempo o acordo é revisado? antecedencia avisam",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8911148309707642,
+          "margen": 0.006312727928161621,
+          "ejemplo": "Até quando a licença continua válida?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-009",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantos dias o fornecedor tem para aceitar a Ordem de Compra?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8731101751327515,
+          "margen": 0.01204061508178711,
+          "ejemplo": "Em que data acaba a promoção?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-011",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quantas vezes por dia funciona a irrigação?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8520196676254272,
+          "margen": 0.014870882034301758,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-011",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "quando a bomba desliga? quantas funciona irrigacao verao",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8403000831604004,
+          "margen": 0.007856488227844238,
+          "ejemplo": "Em que data o cartão deixa de funcionar?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-013",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "e em quantos dias ele é pago? ate pedir reembolso",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8786355257034302,
+          "margen": 0.0025984644889831543,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-014",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Quanto dura o empréstimo de livros?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8665831089019775,
+          "margen": 0.005781054496765137,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-015",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Qual é o horário da Central de Atendimento?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8867911100387573,
+          "margen": 0.008518099784851074,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-015",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "voltando à diária, e no exterior? valor dentro pais",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8665552735328674,
+          "margen": 0.005563557147979736,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-020",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Em quantos dias a chefia responde o pedido de teletrabalho?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8477610349655151,
+          "margen": 0.0021952390670776367,
+          "ejemplo": "Qual é o último dia para se inscrever?",
+          "aceptada": false,
+          "compatible": false
+        }
+      },
+      {
+        "sesion": "conversacion:pt-conv-020",
+        "idioma": "pt",
+        "perfil": "medium",
+        "pregunta_efectiva": "Em quantos dias a Central de Atendimento entrega um equipamento novo?",
+        "intencion": "desconocida",
+        "diagnostico": {
+          "nombre": "desconocida",
+          "origen": "similitud",
+          "candidato": "fin",
+          "similitud": 0.8675730228424072,
+          "margen": 0.0028888583183288574,
+          "ejemplo": "Em que momento termina a chamada para inscrições?",
+          "aceptada": false,
+          "compatible": false
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,217 @@
+# Banco de conversaciones en inglés (fuente). Las mismas conversaciones que
+# es/, escritas como las diría alguien en inglés, sobre el corpus de
+# ../../banco_consultas/en/corpus. Las claves por turno, en ../es/.
+
+- id: en-conv-001  # seguimiento y luego cambio de tema sin marcador
+  turnos:
+  - pregunta: What happens if the supplier rejects the order?
+    respuesta: the Purchasing Supervisor cancels the order
+  - pregunta: and how many days do they have to accept it?
+    hereda: true
+    respuesta: two business days to accept the Purchase Order
+  - pregunta: What are the Help Desk hours?
+    hereda: false
+    respuesta: Monday to Friday from 8:00 to 18:00
+
+- id: en-conv-002  # cuatro turnos sobre el mismo tema
+  turnos:
+  - pregunta: Who can apply for remote work?
+    respuesta: at least six months of service at the institution
+  - pregunta: and how many days a week?
+    hereda: true
+    respuesta: up to three days per week
+  - pregunta: and what equipment do I get?
+    hereda: true
+    respuesta: The institution provides a laptop and a monitor
+  - pregunta: and the allowance?
+    hereda: true
+    respuesta: A monthly allowance of 20,000 pesos
+
+- id: en-conv-003
+  turnos:
+  - pregunta: What is the daily allowance within the country?
+    respuesta: 45,000 pesos within the country
+  - pregunta: and abroad?
+    hereda: true
+    respuesta: 150 dollars abroad
+  - pregunta: how far in advance do I request it?
+    hereda: true
+    respuesta: at least seven days before the trip
+  - pregunta: and if I report late?
+    hereda: true
+    respuesta: the amount is deducted from the next salary
+
+- id: en-conv-004  # seguimiento y luego cambio de tema completo
+  turnos:
+  - pregunta: How do I change my password?
+    respuesta: Go to the self-service portal
+  - pregunta: how often does it expire?
+    hereda: true
+    respuesta: The password expires every 90 days
+  - pregunta: and how many characters must it have?
+    hereda: true
+    respuesta: at least 12 characters
+  - pregunta: Who buys the air tickets?
+    hereda: false
+    respuesta: Air tickets are bought by the Travel Unit
+
+- id: en-conv-005  # cambio de tema y vuelta con un seguimiento del tema nuevo
+  turnos:
+  - pregunta: How long does the Brio C2 coffee maker warranty last?
+    respuesta: 24 months from the date of purchase
+  - pregunta: and what doesn't it cover?
+    hereda: true
+    respuesta: does not cover damage from drops
+  - pregunta: What are the library opening hours?
+    hereda: false
+    respuesta: Monday to Friday from 8:30 to 20:00
+  - pregunta: and on Saturdays?
+    hereda: true
+    respuesta: On Saturdays it opens from 10:00 to 14:00
+
+- id: en-conv-006  # cambio de tema deliberado aunque empiece con «and»
+  turnos:
+  - pregunta: How long does it take to get a new computer?
+    respuesta: delivers the equipment within ten business days
+  - pregunta: and how much is the travel allowance abroad?
+    hereda: false
+    respuesta: 150 dollars abroad
+
+- id: en-conv-007  # una pregunta fuera de dominio en medio; luego vuelve (memoria de más de un turno)
+  turnos:
+  - pregunta: Who signs the purchase Resolution?
+    respuesta: Director of Administration for signature
+  - pregunta: What is the capital of Mongolia?
+    hereda: false
+    directa: false
+  - pregunta: and who drafts it?
+    hereda: true
+    respuesta: The Purchasing Officer drafts the purchase Resolution
+
+- id: en-conv-008
+  turnos:
+  - pregunta: What happens if I don't meet my goals while working remotely?
+    respuesta: may suspend remote work
+  - pregunta: how much notice do they give me?
+    hereda: true
+    respuesta: ten days in advance
+  - pregunta: and how often is the agreement reviewed?
+    hereda: true
+    respuesta: reviewed every six months
+
+- id: en-conv-009  # trampa dentro de un seguimiento
+  turnos:
+  - pregunta: How many days does the supplier have to accept the Purchase Order?
+    respuesta: two business days to accept the Purchase Order
+  - pregunta: and to deliver the products?
+    hereda: true
+    directa: false
+
+- id: en-conv-010
+  turnos:
+  - pregunta: when does the purchase start?
+    respuesta: Once the Requisition Form has been approved
+  - pregunta: and who registers the request?
+    hereda: true
+    respuesta: The Purchasing Officer registers the request in the system
+  - pregunta: and in how many days is the order issued?
+    hereda: true
+    respuesta: ten business days from the approval of the Requisition Form
+
+- id: en-conv-011
+  turnos:
+  - pregunta: How many times a day does the irrigation run?
+    respuesta: twice a day
+  - pregunta: and in summer?
+    hereda: true
+    respuesta: a third watering is added
+  - pregunta: when does the pump shut off?
+    hereda: true
+    respuesta: when the tank drops below 20 %
+
+- id: en-conv-012  # trampa dentro de un seguimiento de varios turnos
+  turnos:
+  - pregunta: At what temperature are blood samples kept?
+    respuesta: at 4 °C
+  - pregunta: for how long?
+    hereda: true
+    respuesta: for a maximum of 72 hours
+  - pregunta: and urine samples?
+    hereda: true
+    directa: false
+
+- id: en-conv-013
+  turnos:
+  - pregunta: Until when can I request a refund?
+    respuesta: up to 30 days after receiving the order
+  - pregunta: and how many days until it's paid?
+    hereda: true
+    respuesta: within 10 business days
+  - pregunta: and if the product arrives damaged?
+    hereda: true
+    respuesta: return shipping is free
+
+- id: en-conv-014  # tres temas seguidos, ninguno hereda
+  turnos:
+  - pregunta: How long do book loans last?
+    respuesta: Book loans last 14 days
+  - pregunta: Who buys the air tickets?
+    hereda: false
+    respuesta: Air tickets are bought by the Travel Unit
+  - pregunta: How often does the password expire?
+    hereda: false
+    respuesta: The password expires every 90 days
+
+- id: en-conv-015  # vuelve a un tema de dos turnos atrás (memoria de la conversación)
+  turnos:
+  - pregunta: What is the daily allowance within the country?
+    respuesta: 45,000 pesos within the country
+  - pregunta: What are the Help Desk hours?
+    hereda: false
+    respuesta: Monday to Friday from 8:00 to 18:00
+  - pregunta: back to the allowance, and abroad?
+    hereda: true
+    respuesta: 150 dollars abroad
+
+- id: en-conv-016
+  turnos:
+  - pregunta: my account got locked, what now?
+    respuesta: call the Help Desk at extension 4500
+  - pregunta: and outside office hours?
+    hereda: true
+    respuesta: emergencies are reported to extension 4501
+
+- id: en-conv-017  # seguimiento muy corto tras una respuesta con cifra
+  turnos:
+  - pregunta: Above what amount do you need a Resolution?
+    respuesta: Purchases above 100 UTM require a Resolution
+  - pregunta: and who signs it?
+    hereda: true
+    respuesta: Director of Administration for signature
+
+- id: en-conv-018  # premisa falsa dentro de un seguimiento
+  turnos:
+  - pregunta: What monthly allowance is paid for connection costs?
+    respuesta: A monthly allowance of 20,000 pesos
+  - pregunta: and what does the 35,000 pesos one cover?
+    hereda: true
+    directa: false
+
+- id: en-conv-019
+  turnos:
+  - pregunta: Who is in charge of sample registration?
+    respuesta: the technician Marta Rojas
+  - pregunta: and when is a sample rejected?
+    hereda: true
+    respuesta: if the tube arrives without a label
+  - pregunta: What does the coffee maker warranty cover?
+    hereda: false
+    respuesta: It covers defects in the motor, the pump and the heater
+
+- id: en-conv-020  # el tema nuevo comparte una palabra con el anterior («days»)
+  turnos:
+  - pregunta: In how many days does the manager answer a remote work application?
+    respuesta: The manager replies within five business days
+  - pregunta: In how many days does the Help Desk deliver new equipment?
+    hereda: false
+    respuesta: delivers the equipment within ten business days

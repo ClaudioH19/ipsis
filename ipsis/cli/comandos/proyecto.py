@@ -25,7 +25,7 @@ class ComandoInit(Comando):
         parser.add_argument("--domain-description", dest="descripcion_dominio", default=None,
                             help=t("init.opt_description"))
         parser.add_argument("--language", dest="idioma", default=None, help=t("init.opt_language"))
-        parser.add_argument("--profile", dest="perfil", choices=["light", "medium", "heavy"], default=None,
+        parser.add_argument("--profile", dest="perfil", choices=["light", "medium"], default=None,
                             help=t("init.opt_profile"))
         parser.add_argument("--force", action="store_true", help=t("init.opt_force"))
 

@@ -95,6 +95,15 @@ situations:
   - 'Não disponho de uma resposta direta. Apresento o conteúdo mais afim:'
   - 'Não consta uma resposta expressa. Sobre o tema, os documentos indicam:'
   - 'Na falta de uma resposta direta, compartilho o texto mais próximo:'
+  related_check:
+  - "Este trecho corresponde ao que procurava? Caso contrário, agradeço se puder reformular sua consulta."
+  - "Se a informação apresentada não responde sua consulta, pode formulá-la com outros termos."
+  - "Este texto atende sua pergunta? Caso contrário, indique qual aspecto necessita."
+  - "Convido a verificar se o trecho responde sua consulta; se não for o caso, posso fazer uma nova busca."
+  - "Se procura um dado diferente, peço que o especifique para continuar a busca."
+  - "Esta é a informação de que precisava? Com mais detalhes posso refinar o resultado."
+  - "Caso o trecho não seja pertinente, reformule sua pergunta e buscarei novamente."
+  - "Este conteúdo corresponde ao solicitado? Se não, indique o que falta."
   missing_focus:
   - 'Não foi encontrada informação específica sobre «{term}». Apresento o mais próximo:'
   - 'Os documentos não tratam especificamente de «{term}». Isto é o mais próximo:'
@@ -126,6 +135,24 @@ situations:
   - Os documentos disponíveis não mencionam "{entity}".
   - Não se achou "{entity}" nos documentos; é possível que exceda seu alcance.
   - Não disponho de informação sobre "{entity}" nos documentos.
+  needs_clarification:
+  - Poderia indicar a qual tema ou documento se refere a sua consulta?
+  - Sua consulta admite mais de uma interpretação. Agradeço se puder precisar o tema.
+  - Para responder com exatidão, preciso conhecer o procedimento a que se refere.
+  - Existem vários documentos que poderiam corresponder. Qual é o de seu interesse?
+  - Solicito um pouco mais de contexto para localizar a informação correta.
+  - A pergunta não indica o tema. Poderia reformulá-la com mais detalhes?
+  - Para evitar uma resposta incorreta, peço que especifique o assunto.
+  - Poderia, por gentileza, indicar a qual processo corresponde a sua pergunta?
+  alternatives_intro:
+  - 'Apresento as opções mais próximas que constam nos documentos:'
+  - 'A seguir, o conteúdo mais semelhante à sua consulta:'
+  - 'Os documentos contêm as seguintes opções afins:'
+  - 'Indico as alternativas mais próximas disponíveis:'
+  - 'Alguma das seguintes opções pode lhe ser útil:'
+  - 'Estas são as referências mais parecidas com o solicitado:'
+  - 'Permito-me sugerir as seguintes alternativas documentadas:'
+  - 'Foram encontradas as seguintes opções semelhantes:'
   welcome:
   - Saudações. Em que posso ajudar?
   - Boas-vindas. Formule a sua consulta, por favor.

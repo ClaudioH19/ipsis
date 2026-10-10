@@ -95,6 +95,15 @@ situations:
   - 'No pude encontrar una respuesta directa. Esto quizá te sirva:'
   - 'Para no dejarte sin nada, esto es lo relacionado que encontré:'
   - 'Busqué con cuidado y no hay respuesta directa; esto es lo más cercano:'
+  related_check:
+  - "Ojalá esto te ayude. Si no era lo que buscabas, cuéntame con otras palabras y sigo buscando contigo."
+  - "Entiendo que quizás buscabas algo más preciso; si este pasaje no te sirve, dime qué necesitas."
+  - "Quiero que encuentres lo que necesitas. ¿Te sirve esto, o lo busco de otra manera?"
+  - "Sé que no es una respuesta directa; si no te ayuda, reformula la pregunta y lo intento otra vez."
+  - "Si esto no resuelve tu duda, no te preocupes: con un poco más de detalle puedo buscar mejor."
+  - "¿Te ayuda este texto? Si no, cuéntame qué parte te falta y vuelvo a buscar."
+  - "Espero que esto se acerque a lo que necesitas; si no, estoy aquí para buscar de nuevo."
+  - "Si no era esto, dímelo con tus palabras y busco otra vez con calma."
   missing_focus:
   - 'Entiendo que te interesa «{term}»; no encontré nada específico, pero esto es lo más cercano:'
   - 'Lamento no tener información sobre «{term}». Esto puede orientarte:'
@@ -126,6 +135,24 @@ situations:
   - Perdón, "{entity}" no aparece en los documentos disponibles.
   - Comprendo que te interesa "{entity}", pero no figura en los documentos.
   - Revisé con atención y no hay nada sobre "{entity}".
+  needs_clarification:
+  - Quiero ayudarte bien; ¿me cuentas sobre qué tema es tu pregunta?
+  - Entiendo lo que preguntas, pero puede referirse a varias cosas. ¿Me dices cuál?
+  - Para no darte una respuesta equivocada, necesito saber de qué trámite se trata.
+  - Sé que quieres una respuesta rápida; con un poco más de contexto podré encontrarla.
+  - No quiero confundirte con algo que no buscas. ¿A qué documento o tema te refieres?
+  - Tu pregunta tiene sentido, pero en los documentos hay varias opciones. ¿Cuál te interesa?
+  - Cuéntame un poco más, por favor, y busco la respuesta exacta para ti.
+  - Con gusto te ayudo; solo necesito saber sobre qué tema me preguntas.
+  alternatives_intro:
+  - 'Sé que no es exactamente lo que necesitas, pero esto podría ayudarte:'
+  - 'Entiendo que buscabas otra cosa; te muestro lo más parecido que sí está:'
+  - 'Para que no te quedes sin opciones, esto es lo más cercano:'
+  - 'Quizá alguna de estas alternativas te sirva:'
+  - 'Busqué algo parecido para ayudarte y encontré esto:'
+  - 'Ojalá alguna de estas opciones similares te resulte útil:'
+  - 'No es lo mismo, pero puede orientarte:'
+  - 'Te comparto lo más similar que encontré, por si te ayuda:'
   welcome:
   - Hola, estoy aquí para ayudarte.
   - Hola, cuéntame qué necesitas.

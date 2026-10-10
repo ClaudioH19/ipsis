@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-06",
+  "metric": "selected_reader_span_v2",
+  "profiles": [
+    "light",
+    "medium"
+  ],
+  "languages": [
+    "es",
+    "en",
+    "pt"
+  ],
+  "before": "snapshot of the existing working tree before F2 runtime integration, with the corrected literal metric",
+  "before_code": "sha256:8e39343de7076fa6e1edd9bbdfad80dbe96238c9984bd8ce1af418d64ebeddcc",
+  "after_code": "sha256:b7790816ab028f0abdfa0e1ce0c5080fecd9bf58a74ad10612c946c50ba2d71e",
+  "banks": {
+    "queries": 60,
+    "universal": 30,
+    "conversations": 58
+  },
+  "policy_thresholds_changed": false,
+  "data_downloads": false,
+  "runtime_resources": {
+    "es.tsv": "5a3a88f408f097e3f0dee754b8913b2f6cda8853888b3fd02d5c201c2c4e6258",
+    "es.lexicon.tsv": "feb88ed2f7fdb5e4aa2a4230130f8f5c40ad748244719b941866603cbd978457",
+    "en.tsv": "fbf845c229ba35fbeb29cde491fc023ae10e3828171eb75b98660a3a1f9509f0",
+    "en.lexicon.tsv": "1797fee96c41ea7d448229a8930650ea0149f438ddd7785486ae36f4d80f357c",
+    "pt.tsv": "1fce782bd81048a68dbf47a41f25797668908eaa2aae9d1b9880c11e0d2b1b36",
+    "pt.lexicon.tsv": "3616be7a7d393f8745720848099c65476233bf8631119059e068ec8ff58328fa"
+  },
+  "initial_after_code": "sha256:a15ee9a6b00ca87ce8a362db97a38729be30c2b986de7be5c0af334154c75b94",
+  "optimization": "reuse query-content cache; cache normalized stopwords by stemmer and effective word list",
+  "final_code": "sha256:111347399e776b70fb21f54dfe30fe2604cbd9ac6acb6715122e64a020268b5c",
+  "provenance_completion": "After the final runner started, the lexical hash was extended to all non-presentation language rules and intention priority. Evaluation projects have no calibration file; this change does not affect their decisions. All subsequent banks and the full suite use the final source.",
+  "http_characterization": {
+    "samples": 32,
+    "before_after_equal": true,
+    "score_tolerance": 0.001,
+    "reference_origin": "captured from before-F2 code; original snapshots archived",
+    "historical_state_changes": "Sunday query no_answer -> related in both profiles, already before F2"
+  },
+  "validation_attempt_1": {
+    "tests": 1033,
+    "passed": 1018,
+    "failed": 13,
+    "skipped": 2,
+    "xml": "pruebas-intento-1.xml",
+    "failure_causes": [
+      "12 historical HTTP snapshot differences already present before F2",
+      "WinError 5 replacing personality.yaml inside OneDrive"
+    ]
+  },
+  "validation_attempt_2_temp": "C:/Users/claud/AppData/Local/ipsis/pytest-f2-20261006-v2",
+  "baseline_archive_sha256": "7739b324a5283c7a3fdb55da9e3510ebb20b2b6d6ae9bcd6ed7d8116a9cdd1f6",
+  "model_cache_snapshots": {
+    "models--intfloat--multilingual-e5-small": [
+      "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    ],
+    "models--cross-encoder--mmarco-mMiniLMv2-L12-H384-v1": [
+      "1427fd652930e4ba29e8149678df786c240d8825"
+    ],
+    "models--dewdev--mdeberta-v3-base-squad2-onnx": [
+      "8e70bb4dd7955b69e39e0c7347302e536a4b5f27"
+    ]
+  },
+  "final_archive_sha256": "00117d8e736f0016325119711f040a79ef357398fb7f6e72a464e5c5f029bbcf",
+  "validation_final": {
+    "passed": 1031,
+    "skipped": 2,
+    "failed": 0,
+    "seconds": 947.53,
+    "g5_alternating": true
+  }
+}

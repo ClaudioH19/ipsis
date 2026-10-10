@@ -95,6 +95,15 @@ situations:
   - 'Lo exacto no está, mira lo más parecido:'
   - 'Eso directo no aparece; esto te puede orientar:'
   - 'No hay respuesta tal cual. Te paso lo relacionado:'
+  related_check:
+  - "¿Era esto lo que buscabas? Si no, dímelo de otra forma y sigo buscando."
+  - "¿Te sirve? Si no, pregúntame con otras palabras."
+  - "Si no es justo esto, dame una pista más y lo busco."
+  - "¿Di en el clavo? Si no, cuéntame qué necesitas."
+  - "Mira si esto te sirve; si no, lo intento de otra manera."
+  - "¿Es lo que querías? Si no, dime qué te falta y busco de nuevo."
+  - "Si buscabas otra cosa, escríbemela distinto y lo encuentro."
+  - "¿Responde tu duda? Si no, seguimos buscando."
   missing_focus:
   - 'De «{term}» no encontré nada, pero mira esto:'
   - 'Uy, «{term}» no aparece. Lo más cercano es esto:'
@@ -126,6 +135,24 @@ situations:
   - Nada sobre "{entity}" en los documentos, perdón.
   - Lo busqué y "{entity}" no sale por ninguna parte.
   - '"{entity}" no está en lo que cargaste.'
+  needs_clarification:
+  - ¿De qué tema me hablas? Cuéntame y lo busco.
+  - Eso puede ser varias cosas. ¿Cuál tienes en mente?
+  - Me falta una pista. ¿De qué trámite es?
+  - Dame un poco más de contexto y lo encuentro.
+  - ¿Hablas de algún documento en particular? Dime y busco.
+  - Hay más de una respuesta posible. ¿A cuál te refieres?
+  - Cuéntame un poquito más y te ayudo.
+  - ¿Sobre qué es la pregunta? Así busco lo correcto.
+  alternatives_intro:
+  - 'Pero mira, tengo cosas parecidas:'
+  - 'A lo mejor te sirve algo de esto, que se le parece:'
+  - 'Te dejo lo más parecido que encontré:'
+  - 'Esto se le acerca bastante, por si acaso:'
+  - 'Tengo estas opciones parecidas, míralas:'
+  - 'Quizá alguna de estas te funcione:'
+  - 'Lo más cercano que tengo a mano es esto:'
+  - 'Mira estas opciones similares:'
   welcome:
   - ¡Hola! ¿Qué necesitas?
   - ¡Hola! Pregúntame lo que quieras.

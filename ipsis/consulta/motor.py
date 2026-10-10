@@ -23,6 +23,7 @@ from ipsis.nucleo.esquemas import (
     QueryAnalysis,
     QueryDiagnostic,
     RetrievalCandidate,
+    RetrievalSignals,
 )
 from ipsis.consulta.etapas.redaccion import construir_mensaje_abstencion
 from ipsis.consulta.etapas.conversacional import respuesta_conversacional
@@ -91,9 +92,17 @@ class Motor:
         self.lector = lector
         from ipsis.consulta.variantes import SelectorVariantes
 
-        from ipsis.consulta.seguimiento import ResolutorSeguimiento
+        from ipsis.consulta.seguimiento import MemoriaConversacion
 
-        self.seguimiento = ResolutorSeguimiento()
+        self.seguimiento = MemoriaConversacion()
+        from ipsis.lenguaje.intenciones import construir_respaldo
+
+        self.respaldo_intenciones = construir_respaldo(idioma, retriever)
+        from ipsis.consulta.alternativas import ConfigAlternativas
+
+        # Postura ante una abstención (ADR 0008) y taxonomía para la categoría de la pregunta.
+        self.alternativas = ConfigAlternativas()
+        self.taxonomia: dict | None = None
         self.selector_variantes = SelectorVariantes(tono=(plantillas or {}).get("tono") or "cordial",
                                                     fija=(plantillas or {}).get("variedad") == "fija")
 
@@ -235,7 +244,9 @@ class Motor:
             AssistantState.RELACIONADO: "relacionado",
             AssistantState.CONVERSACIONAL: "conversacional",
             AssistantState.SIN_RESPUESTA: "sin_respuesta",
+            AssistantState.NECESITA_ACLARACION: "sin_respuesta",
         }
+        alternativas = (diagnostico or {}).pop("_alternativas_http", None)
         contrato = {
             "estado": estados_http[estado],
             "nivel_servicio": "normal",
@@ -247,8 +258,13 @@ class Motor:
             "confianza": confianza,
             "latencia_ms": latencia_ms,
         }
+        nivel = self.nivel_confianza(estado)
+        if nivel is not None:
+            contrato["nivel_confianza"] = nivel
         if respuesta_exacta is not None:
             contrato["respuesta_exacta"] = respuesta_exacta
+        if alternativas:
+            contrato["alternativas"] = alternativas
         if estado == AssistantState.CONVERSACIONAL and motivo.startswith("conversacional:"):
             # Para el widget y el avatar: saludo, agradecimiento, despedida o capacidad.
             contrato["categoria_conversacional"] = motivo.split(":", 1)[1]
@@ -263,6 +279,24 @@ class Motor:
             diagnostico=detalles,
         )
 
+    def nivel_confianza(self, estado: AssistantState) -> str | None:
+        """Qué tan segura es la respuesta, por niveles medidos (docs/methodology/
+        informal-paraphrases.md, «Confidence and guarantees»):
+
+        - ``alta``: respuesta directa con lector (medium): 96,6 % correcta en 319
+          respuestas de los bancos, garantizado ≥ 94 % al 95 %;
+        - ``media``: respuesta directa sin lector (light): 85 % correcta;
+        - ``baja``: relacionado, el pasaje más cercano sin afirmar que responda;
+        - ``None``: abstención, aclaración o conversación (no hay respuesta que medir).
+
+        Sale del estado y del perfil, no de un umbral nuevo: los datos no sostienen
+        subniveles dentro de una respuesta directa de medium."""
+        if estado == AssistantState.RESPUESTA_DIRECTA:
+            return "alta" if self.lector is not None else "media"
+        if estado == AssistantState.RELACIONADO:
+            return "baja"
+        return None
+
     def _abstener(
         self,
         motivo: str,
@@ -271,18 +305,52 @@ class Motor:
         *,
         entidad_texto: str | None = None,
         diagnostico: dict[str, Any] | None = None,
+        alternativas=None,
     ) -> AssistantResult:
+        """Resultado ``sin_respuesta``. Con ``alternativas`` (``ResultadoAlternativas``
+        con alguna ofrecida), el mensaje sigue con un encabezado fijo del tono y
+        cada alternativa como pasaje literal con su cita: el estado no cambia."""
+        mensaje = construir_mensaje_abstencion(motivo, entidad_texto, self.plantillas)
+        bloques = None
+        if alternativas is not None and alternativas.ofrecidas:
+            from ipsis.consulta.etapas.redaccion import bloques_alternativas, texto_de_bloques
+
+            bloques = [{"tipo": "mensaje", "texto": mensaje},
+                       *bloques_alternativas([a.evidencia for a in alternativas.ofrecidas],
+                                             [a.chunk for a in alternativas.ofrecidas],
+                                             plantillas=self.plantillas, cfg_redaccion=self.configuracion_redaccion)]
+            mensaje = texto_de_bloques(bloques)
+            diagnostico = dict(diagnostico or {})
+            diagnostico["_alternativas_http"] = self._fragmentos_http(
+                [a.evidencia for a in alternativas.ofrecidas],
+                [RetrievalCandidate(chunk=a.chunk, signals=RetrievalSignals()) for a in alternativas.ofrecidas])
         return self._resultado(
             estado=AssistantState.SIN_RESPUESTA,
             motivo=motivo,
-            mensaje=construir_mensaje_abstencion(
-                motivo,
-                entidad_texto,
-                self.plantillas,
-            ),
+            mensaje=mensaje,
             confianza=confianza,
             latencia_ms=latencia_ms,
             plan="sin_respuesta",
+            diagnostico=diagnostico,
+            bloques=bloques,
+        )
+
+    def _aclarar(self, motivo: str, confianza: dict[str, Any], latencia_ms: int, *,
+                 diagnostico: dict[str, Any] | None = None) -> AssistantResult:
+        """Resultado ``necesita_aclaracion``: la pregunta no dice de qué se habla
+        (ipsis.lenguaje.aclaracion). En el contrato HTTP es ``sin_respuesta`` con
+        ``plan: aclaracion``, para no romper a los clientes que validan el estado."""
+        from ipsis.consulta.variantes import elegir
+
+        textos = self.plantillas["abstencion"]
+        mensaje = elegir("needs_clarification", list(textos.get("aclaracion") or textos["generico"]), motivo)
+        return self._resultado(
+            estado=AssistantState.NECESITA_ACLARACION,
+            motivo=motivo,
+            mensaje=mensaje,
+            confianza=confianza,
+            latencia_ms=latencia_ms,
+            plan="aclaracion",
             diagnostico=diagnostico,
         )
 

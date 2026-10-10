@@ -26,6 +26,7 @@ def _snapshot(spec: ModeloSpec, *, solo_local: bool) -> Path:
         allow_patterns=spec.patrones(),
         cache_dir=str(ruta_cache()),
         local_files_only=solo_local,
+        **({"revision": spec.revision} if spec.revision else {}),
     )
     return Path(carpeta)
 
@@ -39,8 +40,8 @@ def _sin_red() -> bool:
 
 
 def archivos_requeridos(spec: ModeloSpec) -> list[str]:
-    """Lo que debe estar en la carpeta para usar el modelo (``*_data`` es opcional)."""
-    return [spec.archivo_onnx(), *spec.archivos_extra]
+    """ONNX, datos externos declarados y archivos del tokenizador/configuración."""
+    return [spec.archivo_onnx(), *spec.datos_onnx(), *spec.archivos_extra]
 
 
 def faltantes(spec: ModeloSpec, carpeta: Path) -> list[str]:
@@ -81,7 +82,7 @@ def esta_en_cache(spec: ModeloSpec) -> bool:
 
 def tamano_en_disco(spec: ModeloSpec, carpeta: Path) -> int:
     """Bytes que ocupan los archivos del modelo (sigue los enlaces de la caché)."""
-    archivos = [carpeta / a for a in archivos_requeridos(spec)] + [carpeta / (spec.archivo_onnx() + "_data")]
+    archivos = {carpeta / a for a in archivos_requeridos(spec)} | {carpeta / (spec.archivo_onnx() + "_data")}
     return sum(a.stat().st_size for a in archivos if a.is_file())
 
 

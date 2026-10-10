@@ -26,16 +26,27 @@ class RegistroConfig(ConfiguracionEstricta):
     activo: bool = False
 
 
+class PosturaConfig(ConfiguracionEstricta):
+    """Qué hace el asistente cuando no encuentra lo pedido (ADR 0008).
+
+    ``proactiva``: ofrece hasta ``max_alternativas`` párrafos parecidos que sí
+    están en el corpus; ``estricta``: solo dice que no está."""
+
+    modo: Literal["proactiva", "estricta"] = "proactiva"
+    max_alternativas: int = Field(default=3, ge=1, le=5)
+
+
 class AsistenteConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
     descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
     idioma: str = Field(default="es", min_length=2)
     # «bm25» es de diagnóstico (ipsis benchmark): ipsis init no lo ofrece.
-    perfil: Literal["light", "medium", "heavy", "bm25"] = "light"
+    perfil: Literal["light", "medium", "bm25"] = "light"
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
     registro: RegistroConfig = Field(default_factory=RegistroConfig)
+    postura: PosturaConfig = Field(default_factory=PosturaConfig)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):
@@ -79,6 +90,12 @@ class ServicioConfig(ConfiguracionEstricta):
     concurrencia_maxima: int = Field(default=4, ge=1)
 
 
+class ConversacionConfig(ConfiguracionEstricta):
+    # Una conversación sin preguntas por este tiempo se olvida (ipsis.consulta.seguimiento).
+    vencimiento_minutos: float = Field(default=30, gt=0)
+    max_sesiones: int = Field(default=1024, ge=1)
+
+
 class LimitePeticionesConfig(ConfiguracionEstricta):
     capacidad: int = Field(default=100, ge=1)
     tasa_por_segundo: float = Field(default=1.0, gt=0)
@@ -102,6 +119,7 @@ class MotorConfig(ConfiguracionEstricta):
     componentes: ComponentesConfig = Field(default_factory=ComponentesConfig)
     qdrant: QdrantConfig = Field(default_factory=QdrantConfig)
     servicio: ServicioConfig = Field(default_factory=ServicioConfig)
+    conversacion: ConversacionConfig = Field(default_factory=ConversacionConfig)
     seguridad: SeguridadConfig = Field(default_factory=SeguridadConfig)
     redaccion: RedaccionConfig = Field(default_factory=RedaccionConfig)
     abstencion: dict[str, Any] | None = None
@@ -194,6 +212,11 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             version = 5
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(t("core.no_migration", name=nombre, version=version))
+    if nombre == "asistente" and salida.get("perfil") == "heavy":
+        # El perfil heavy se retiró: no superó a medium en ningún banco (ADR 0003).
+        # Un proyecto que lo tenía se carga como medium; si su índice era de otro
+        # modelo denso, ``ipsis profile show`` pide reindexar.
+        salida["perfil"] = "medium"
     return salida
 
 

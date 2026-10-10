@@ -10,6 +10,11 @@
 # avatar.placement: header | top-corner | bottom-corner
 # avatar.colors: {body: "#rrggbb", eyes: "#rrggbb"} (does not modify the avatar file)
 # avatar.events: event → animation or expression (`ipsis personality avatar events`)
+# With Folio, empty events uses the built-in defaults: float while closed,
+# wake-up on each opening, attentive while waiting, listening while typing,
+# nod on send, thinking/thinking-long during search, bounce on a found answer,
+# unsure for related answers, sorry for no answer, worried on error, goodbye
+# on close, and sleepy after inactivity. Assignments here override those defaults.
 config_version: 1
 tone:
   active: cordial

@@ -1,0 +1,1738 @@
+{
+ "light": {
+  "es": {
+   "casos": {
+    "es-exacta-001": {
+     "pregunta": "¿Cuánto dura la garantía de la cafetera Brío C2?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.8361795372144223,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.8361795372144223
+     }
+    },
+    "es-trampa-001": {
+     "pregunta": "¿Cuánto cuesta extender la garantía de la cafetera Brío C2?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6929111309971883,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 1.0,
+      "s_cov": 0.5273592321148182,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6929111309971883
+     }
+    },
+    "es-exacta-002": {
+     "pregunta": "¿Qué defectos cubre la garantía?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.47010679837104824,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.6666666666666667,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.47010679837104824
+     }
+    },
+    "es-trampa-002": {
+     "pregunta": "¿Quién autoriza las reparaciones de la garantía?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3538779108262346,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 0.5,
+      "s_cov": 0.2636796160574091,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3538779108262346
+     }
+    },
+    "es-parafrasis-001": {
+     "pregunta": "¿Qué tengo que hacer si mi cafetera se descompone?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5258509269311794,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5258509269311794
+     }
+    },
+    "es-trampa-003": {
+     "pregunta": "¿Cuántos días tarda la tienda en reparar la cafetera?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6169883655453818,
+      "s_oov": 0.5766869147217095,
+      "s_foco": 1.0,
+      "s_cov": 0.3217254934218711,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6169883655453818
+     }
+    },
+    "es-parafrasis-002": {
+     "pregunta": "¿Me cubren si se me cae la cafetera al suelo?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4967811287327357,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.17905223175104137,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4967811287327357
+     }
+    },
+    "es-exacta-003": {
+     "pregunta": "¿Hasta cuándo puedo pedir el reembolso?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.667559267668262,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.667559267668262
+     }
+    },
+    "es-exacta-004": {
+     "pregunta": "¿En cuántos días hábiles se paga el reembolso?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6837875636292758,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6837875636292758
+     }
+    },
+    "es-trampa-004": {
+     "pregunta": "¿Quién aprueba la solicitud de reembolso?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4956424664459757,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4956424664459757
+     }
+    },
+    "es-exacta-005": {
+     "pregunta": "¿Cuándo es gratuito el envío de la devolución?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6095259332295037,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6095259332295037
+     }
+    },
+    "es-trampa-005": {
+     "pregunta": "¿Qué empresa de transporte retira la devolución?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.39796184327938144,
+      "s_oov": 0.8431973626062352,
+      "s_foco": 1.0,
+      "s_cov": 0.1568026373937647,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.39796184327938144
+     }
+    },
+    "es-parafrasis-003": {
+     "pregunta": "¿Por qué no se pueden devolver los cepillos de dientes?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6036191062461111,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6036191062461111
+     }
+    },
+    "es-exacta-006": {
+     "pregunta": "¿Cuántos litros por hora entrega cada gotero?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6521172923170558,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6521172923170558
+     }
+    },
+    "es-trampa-006": {
+     "pregunta": "¿Cuántos goteros tiene el invernadero?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.48686912006275906,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.48686912006275906
+     }
+    },
+    "es-exacta-007": {
+     "pregunta": "¿A qué hora funciona el riego por goteo?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.700055905605373,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.826101001969741,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.700055905605373
+     }
+    },
+    "es-trampa-007": {
+     "pregunta": "¿Qué tipo de fertilizante se agrega al riego?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4532101115947143,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4532101115947143
+     }
+    },
+    "es-parafrasis-004": {
+     "pregunta": "¿Cuándo se riega una tercera vez en los meses de calor?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6000818953228907,
+      "s_oov": 0.5444165400074104,
+      "s_foco": 1.0,
+      "s_cov": 0.15186115333086322,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6000818953228907
+     }
+    },
+    "es-exacta-008": {
+     "pregunta": "¿Quién es la responsable del registro de muestras?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.578560618546372,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.578560618546372
+     }
+    },
+    "es-trampa-008": {
+     "pregunta": "¿Quién firma los resultados de las muestras?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4538871505094828,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4538871505094828
+     }
+    },
+    "es-exacta-009": {
+     "pregunta": "¿Por qué se rechaza una muestra sin etiqueta?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.489856233954415,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.489856233954415
+     }
+    },
+    "es-trampa-009": {
+     "pregunta": "¿Cuántas muestras se rechazan cada mes?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": true,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5152001026356267,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.6666666666666667,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5152001026356267
+     }
+    },
+    "es-parafrasis-005": {
+     "pregunta": "¿Por cuánto tiempo se pueden conservar las muestras de sangre?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6997074997244137,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6997074997244137
+     }
+    },
+    "es-exacta-010": {
+     "pregunta": "¿En qué piso está la biblioteca?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5709363248284389,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5709363248284389
+     }
+    },
+    "es-trampa-010": {
+     "pregunta": "¿Tiene ascensor el edificio B?",
+     "estado": "sin_respuesta",
+     "regla": "sin_respuesta",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3227967118738754,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 1.0,
+      "s_cov": 0.5273592321148182,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3227967118738754
+     }
+    },
+    "es-premisa-001": {
+     "pregunta": "¿Qué pasa si el estanque baja del 50 %?",
+     "estado": "sin_respuesta",
+     "regla": "premisa",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3991714410564524,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 1.0,
+      "s_cov": 0.5273592321148182,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3991714410564524
+     }
+    },
+    "es-ambigua-001": {
+     "pregunta": "¿Cuánto dura?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.41625641363052834,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.41625641363052834
+     }
+    },
+    "es-fuera-001": {
+     "pregunta": "¿Cuál es la capital de Mongolia?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.1467060829646786,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.1467060829646786
+     }
+    },
+    "es-fuera-002": {
+     "pregunta": "¿Cómo se prepara un pan de masa madre?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.27711264491717086,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.27711264491717086
+     }
+    },
+    "es-fuera-003": {
+     "pregunta": "¿Quién ganó el mundial de fútbol de 1998?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.009191842427054285,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.009191842427054285
+     }
+    }
+   },
+   "correctas": 8,
+   "erroneas": 1,
+   "media_ms": 32.6,
+   "p95_ms": 52.0
+  },
+  "en": {
+   "casos": {
+    "en-exacta-001": {
+     "pregunta": "How long does the warranty for the Brio C2 coffee maker last?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.8255127278643339,
+      "s_oov": 0.24144418424134384,
+      "s_foco": 1.0,
+      "s_cov": 0.7585558157586562,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.8255127278643339
+     }
+    },
+    "en-trampa-001": {
+     "pregunta": "How much does it cost to extend the warranty for the Brio C2 coffee maker?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.7077164765599904,
+      "s_oov": 0.5181857767738992,
+      "s_foco": 1.0,
+      "s_cov": 0.48181422322610085,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.7077164765599904
+     }
+    },
+    "en-exacta-002": {
+     "pregunta": "What defects does the warranty cover?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.42725614625555497,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.6666666666666667,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.42725614625555497
+     }
+    },
+    "en-trampa-002": {
+     "pregunta": "Who authorizes warranty repairs?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3467684147210951,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 0.5,
+      "s_cov": 0.2636796160574091,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3467684147210951
+     }
+    },
+    "en-parafrasis-001": {
+     "pregunta": "What should I do if my coffee maker breaks down?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.522279188415194,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.522279188415194
+     }
+    },
+    "en-trampa-003": {
+     "pregunta": "How many days does the store take to repair the coffee maker?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4813043073937535,
+      "s_oov": 0.6134259529280959,
+      "s_foco": 1.0,
+      "s_cov": 0.34222168449722873,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4813043073937535
+     }
+    },
+    "en-parafrasis-002": {
+     "pregunta": "Am I covered if I drop the coffee maker on the floor?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4901392080052261,
+      "s_oov": 0.2790289044117169,
+      "s_foco": 0.5,
+      "s_cov": 0.31133257807364745,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4901392080052261
+     }
+    },
+    "en-exacta-003": {
+     "pregunta": "Until when can I request a refund?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6262526288760161,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6262526288760161
+     }
+    },
+    "en-exacta-004": {
+     "pregunta": "Within how many business days is the refund paid?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5738112473943305,
+      "s_oov": 0.28998521162677054,
+      "s_foco": 1.0,
+      "s_cov": 0.7100147883732295,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5738112473943305
+     }
+    },
+    "en-trampa-004": {
+     "pregunta": "Who approves the refund request?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.45905749656487554,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.45905749656487554
+     }
+    },
+    "en-exacta-005": {
+     "pregunta": "When is return shipping free?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5819824195433664,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5819824195433664
+     }
+    },
+    "en-trampa-005": {
+     "pregunta": "Which carrier picks up the return?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3184847007359281,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 0.5,
+      "s_cov": 0.17905223175104137,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3184847007359281
+     }
+    },
+    "en-parafrasis-003": {
+     "pregunta": "Why can't toothbrushes be returned?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5021737312795086,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5021737312795086
+     }
+    },
+    "en-exacta-006": {
+     "pregunta": "How many liters per hour does each dripper deliver?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6088069670397599,
+      "s_oov": 0.2790289044117169,
+      "s_foco": 1.0,
+      "s_cov": 0.7209710955882829,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6088069670397599
+     }
+    },
+    "en-trampa-006": {
+     "pregunta": "How many drippers does the greenhouse have?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.370929212416063,
+      "s_oov": 0.8431973626062352,
+      "s_foco": 1.0,
+      "s_cov": 0.1568026373937647,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.370929212416063
+     }
+    },
+    "en-exacta-007": {
+     "pregunta": "At what time does drip irrigation run?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5910090953738829,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5910090953738829
+     }
+    },
+    "en-trampa-007": {
+     "pregunta": "What type of fertilizer is added to the irrigation?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3389962230609344,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 0.5,
+      "s_cov": 0.17905223175104137,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3389962230609344
+     }
+    },
+    "en-parafrasis-004": {
+     "pregunta": "When are the plants watered a third time during the hot months?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4478096341825302,
+      "s_oov": 0.7315173473403205,
+      "s_foco": 1.0,
+      "s_cov": 0.16645685082867462,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4478096341825302
+     }
+    },
+    "en-exacta-008": {
+     "pregunta": "Who is in charge of sample registration?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4008571125281475,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4008571125281475
+     }
+    },
+    "en-trampa-008": {
+     "pregunta": "Who signs the sample results?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.375017565924961,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.375017565924961
+     }
+    },
+    "en-exacta-009": {
+     "pregunta": "Why is a sample without a label rejected?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4955396943436207,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4955396943436207
+     }
+    },
+    "en-trampa-009": {
+     "pregunta": "How many samples are rejected each month?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3915235062621073,
+      "s_oov": 0.3740194602171297,
+      "s_foco": 1.0,
+      "s_cov": 0.41732035985524685,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3915235062621073
+     }
+    },
+    "en-parafrasis-005": {
+     "pregunta": "For how long can blood samples be stored?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5899151011967828,
+      "s_oov": 0.3740194602171297,
+      "s_foco": 1.0,
+      "s_cov": 0.41732035985524685,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5899151011967828
+     }
+    },
+    "en-exacta-010": {
+     "pregunta": "On which floor is the library?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4901689937045242,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4901689937045242
+     }
+    },
+    "en-trampa-010": {
+     "pregunta": "Does building B have an elevator?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.35112312514121347,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.35112312514121347
+     }
+    },
+    "en-premisa-001": {
+     "pregunta": "What happens if the tank drops below 50 %?",
+     "estado": "sin_respuesta",
+     "regla": "premisa",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.2872069097032496,
+      "s_oov": 0.4051722145229586,
+      "s_foco": 1.0,
+      "s_cov": 0.5948277854770414,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.2872069097032496
+     }
+    },
+    "en-ambigua-001": {
+     "pregunta": "How long does it last?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4813387161879534,
+      "s_oov": 0.7394729348679964,
+      "s_foco": 1.0,
+      "s_cov": 0.2605270651320037,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4813387161879534
+     }
+    },
+    "en-fuera-001": {
+     "pregunta": "What is the capital of Mongolia?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.05238904325941465,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.05238904325941465
+     }
+    },
+    "en-fuera-002": {
+     "pregunta": "How do you make sourdough bread?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.2595103873843118,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.2595103873843118
+     }
+    },
+    "en-fuera-003": {
+     "pregunta": "Who won the 1998 football World Cup?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.0,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.0
+     }
+    }
+   },
+   "correctas": 6,
+   "erroneas": 0,
+   "media_ms": 23.0,
+   "p95_ms": 36.0
+  },
+  "pt": {
+   "casos": {
+    "pt-exacta-001": {
+     "pregunta": "Quanto tempo dura a garantia da cafeteira Brío C2?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.8173934154064243,
+      "s_oov": 0.4567996832066609,
+      "s_foco": 1.0,
+      "s_cov": 0.543200316793339,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.8173934154064243
+     }
+    },
+    "pt-trampa-001": {
+     "pregunta": "Quanto custa estender a garantia da cafeteira Brío C2?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.7287512389856542,
+      "s_oov": 0.5968994402950492,
+      "s_foco": 1.0,
+      "s_cov": 0.40310055970495096,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.7287512389856542
+     }
+    },
+    "pt-exacta-002": {
+     "pregunta": "Quais defeitos a garantia cobre?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.546774078706889,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.7600178322159955,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.546774078706889
+     }
+    },
+    "pt-trampa-002": {
+     "pregunta": "Quem autoriza os reparos da garantia?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.44996692135958133,
+      "s_oov": 0.8502264335881867,
+      "s_foco": 1.0,
+      "s_cov": 0.14977356641181333,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.44996692135958133
+     }
+    },
+    "pt-parafrasis-001": {
+     "pregunta": "O que devo fazer se minha cafeteira quebrar?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5249542881519638,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.17905223175104137,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5249542881519638
+     }
+    },
+    "pt-trampa-003": {
+     "pregunta": "Quantos dias a loja demora para consertar a cafeteira?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5511996863395533,
+      "s_oov": 0.6714283890217919,
+      "s_foco": 1.0,
+      "s_cov": 0.24972028350337513,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5511996863395533
+     }
+    },
+    "pt-parafrasis-002": {
+     "pregunta": "Estou coberto se a cafeteira cair no chão?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5240479801924998,
+      "s_oov": 0.877599855589438,
+      "s_foco": 1.0,
+      "s_cov": 0.12240014441056199,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5240479801924998
+     }
+    },
+    "pt-exacta-003": {
+     "pregunta": "Até quando posso pedir o reembolso?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.662929670294825,
+      "s_oov": 0.3740194602171297,
+      "s_foco": 1.0,
+      "s_cov": 0.6259805397828703,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.662929670294825
+     }
+    },
+    "pt-exacta-004": {
+     "pregunta": "Em quantos dias úteis o reembolso é pago?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6179636378734639,
+      "s_oov": 0.3304723011632615,
+      "s_foco": 1.0,
+      "s_cov": 0.6695276988367386,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6179636378734639
+     }
+    },
+    "pt-trampa-004": {
+     "pregunta": "Quem aprova a solicitação de reembolso?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5015445039504817,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 1.0,
+      "s_cov": 0.5273592321148182,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5015445039504817
+     }
+    },
+    "pt-exacta-005": {
+     "pregunta": "Quando o frete da devolução é grátis?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6313099852622716,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6313099852622716
+     }
+    },
+    "pt-trampa-005": {
+     "pregunta": "Qual transportadora retira a devolução?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4092438432362525,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4092438432362525
+     }
+    },
+    "pt-parafrasis-003": {
+     "pregunta": "Por que não é possível devolver escovas de dentes?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5274029212578009,
+      "s_oov": 0.8431973626062352,
+      "s_foco": 1.0,
+      "s_cov": 0.1568026373937647,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5274029212578009
+     }
+    },
+    "pt-exacta-006": {
+     "pregunta": "Quantos litros por hora cada gotejador fornece?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6346043046493554,
+      "s_oov": 0.3304723011632615,
+      "s_foco": 1.0,
+      "s_cov": 0.6695276988367386,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6346043046493554
+     }
+    },
+    "pt-trampa-006": {
+     "pregunta": "Quantos gotejadores a estufa tem?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.47327644383618134,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.47327644383618134
+     }
+    },
+    "pt-exacta-007": {
+     "pregunta": "A que horas funciona a irrigação por gotejamento?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.7064979418880915,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 0.826101001969741,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.7064979418880915
+     }
+    },
+    "pt-trampa-007": {
+     "pregunta": "Que tipo de fertilizante é adicionado à irrigação?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.46503208866224527,
+      "s_oov": 0.6418955364979173,
+      "s_foco": 1.0,
+      "s_cov": 0.35810446350208275,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.46503208866224527
+     }
+    },
+    "pt-parafrasis-004": {
+     "pregunta": "Quando as plantas são regadas uma terceira vez nos meses quentes?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.48278023378565565,
+      "s_oov": 0.6714283890217919,
+      "s_foco": 1.0,
+      "s_cov": 0.12486014175168757,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.48278023378565565
+     }
+    },
+    "pt-exacta-008": {
+     "pregunta": "Quem é a responsável pelo registro de amostras?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5611672471349031,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5611672471349031
+     }
+    },
+    "pt-trampa-008": {
+     "pregunta": "Quem assina os resultados das amostras?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4537626332542491,
+      "s_oov": 0.7818957080144684,
+      "s_foco": 1.0,
+      "s_cov": 0.21810429198553155,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4537626332542491
+     }
+    },
+    "pt-exacta-009": {
+     "pregunta": "Por que uma amostra sem etiqueta é rejeitada?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5418594420908225,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5418594420908225
+     }
+    },
+    "pt-trampa-009": {
+     "pregunta": "Quantas amostras são rejeitadas por mês?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5242766190847099,
+      "s_oov": 0.3740194602171297,
+      "s_foco": 1.0,
+      "s_cov": 0.41732035985524685,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5242766190847099
+     }
+    },
+    "pt-parafrasis-005": {
+     "pregunta": "Por quanto tempo as amostras de sangue podem ser conservadas?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.6865921795344989,
+      "s_oov": 0.7289033888321079,
+      "s_foco": 1.0,
+      "s_cov": 0.271096611167892,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.6865921795344989
+     }
+    },
+    "pt-exacta-010": {
+     "pregunta": "Em que andar fica a biblioteca?",
+     "estado": "respuesta_directa",
+     "regla": "ok_lexico",
+     "directa": true,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5797960350613455,
+      "s_oov": 0.0,
+      "s_foco": 1.0,
+      "s_cov": 1.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5797960350613455
+     }
+    },
+    "pt-trampa-010": {
+     "pregunta": "O prédio B tem elevador?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4314010648350892,
+      "s_oov": 0.47264076788518183,
+      "s_foco": 1.0,
+      "s_cov": 0.5273592321148182,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4314010648350892
+     }
+    },
+    "pt-premisa-001": {
+     "pregunta": "O que acontece se o tanque ficar abaixo de 50 %?",
+     "estado": "sin_respuesta",
+     "regla": "premisa",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.4151669788114868,
+      "s_oov": 0.4051722145229586,
+      "s_foco": 1.0,
+      "s_cov": 0.5948277854770414,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.4151669788114868
+     }
+    },
+    "pt-ambigua-001": {
+     "pregunta": "Quanto tempo dura?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.5023556086865673,
+      "s_oov": 0.8502264335881867,
+      "s_foco": 1.0,
+      "s_cov": 0.14977356641181333,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.5023556086865673
+     }
+    },
+    "pt-fuera-001": {
+     "pregunta": "Qual é a capital da Mongólia?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.15725273674931,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.15725273674931
+     }
+    },
+    "pt-fuera-002": {
+     "pregunta": "Como se faz pão de fermentação natural?",
+     "estado": "relacionado",
+     "regla": "relacionado",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.3373121719877784,
+      "s_oov": 0.8431973626062352,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.3373121719877784
+     }
+    },
+    "pt-fuera-003": {
+     "pregunta": "Quem ganhou a Copa do Mundo de 1998?",
+     "estado": "sin_respuesta",
+     "regla": "fuera_dominio",
+     "directa": false,
+     "falso_ok": false,
+     "sin_literal": false,
+     "senales": {
+      "s_ret": 0.10689055673701818,
+      "s_oov": 1.0,
+      "s_foco": 1.0,
+      "s_cov": 0.0,
+      "s_lex": null,
+      "acuerdo": null,
+      "s_rr": null,
+      "s_qa": null,
+      "dominio": 0.10689055673701818
+     }
+    }
+   },
+   "correctas": 9,
+   "erroneas": 0,
+   "media_ms": 30.8,
+   "p95_ms": 42.0
+  }
+ }
+}

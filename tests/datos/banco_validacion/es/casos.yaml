@@ -1,0 +1,436 @@
+# Banco de validación (fuente). Documentos y preguntas nuevos, escritos antes de las
+# correcciones del 2026-10-09 y sin usarse para diseñarlas: mide una sola vez si
+# generalizan. Mismas reglas que el banco universal (la categoría sale del id).
+
+# --- equipos -------------------------------------------------------------------
+- id: es-exacta-001
+  documento: politica_equipos.md
+  capacidad: lista
+  pregunta: ¿Qué equipos recibe cada funcionario?
+  respuesta: un computador portátil y un mouse inalámbrico
+- id: es-parafrasis-001
+  documento: politica_equipos.md
+  capacidad: lista
+  pregunta: que me pasan para trabajar cuando entro
+  respuesta: un computador portátil y un mouse inalámbrico
+- id: es-trampa-001
+  par: es-exacta-001
+  pregunta: ¿Qué teléfono celular recibe cada funcionario?
+- id: es-exacta-002
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: ¿Quién firma el acta de entrega del equipo junto al funcionario?
+  respuesta: el Encargado de Inventario
+- id: es-exacta-003
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: ¿Para qué se puede usar el equipo?
+  respuesta: solo para labores institucionales
+- id: es-parafrasis-002
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: puedo instalar juegos en el computador del trabajo?
+  respuesta: Está prohibido instalar juegos o programas de descarga de archivos
+- id: es-exacta-004
+  documento: politica_equipos.md
+  capacidad: cantidad
+  pregunta: ¿Cuántos caracteres debe tener la contraseña del equipo?
+  respuesta: al menos 10 caracteres
+- id: es-trampa-002
+  par: es-exacta-004
+  pregunta: ¿Cuántos caracteres debe tener la contraseña del correo?
+- id: es-exacta-005
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: ¿Después de cuánto tiempo se bloquea la pantalla del equipo?
+  respuesta: después de 5 minutos de inactividad
+- id: es-parafrasis-003
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: en cuanto rato se bloquea la pantalla si no la uso
+  respuesta: después de 5 minutos de inactividad
+- id: es-exacta-006
+  documento: politica_equipos.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo se informa la pérdida del equipo?
+  respuesta: dentro de 24 horas
+- id: es-parafrasis-004
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: a quien aviso si me roban el notebook
+  respuesta: a la Mesa de Ayuda
+- id: es-trampa-003
+  par: es-parafrasis-004
+  pregunta: ¿A quién aviso si me roban el celular personal?
+- id: es-exacta-007
+  documento: politica_equipos.md
+  capacidad: procedimiento
+  pregunta: ¿Qué se adjunta en caso de robo del equipo?
+  respuesta: la denuncia de Carabineros
+- id: es-exacta-008
+  documento: politica_equipos.md
+  capacidad: persona
+  pregunta: ¿A quién se devuelve el equipo al terminar el contrato?
+  respuesta: al Encargado de Inventario
+- id: es-exacta-009
+  documento: politica_equipos.md
+  capacidad: condicion
+  pregunta: ¿Qué se hace con el equipo antes de asignarlo a otra persona?
+  respuesta: se formatea
+- id: es-trampa-004
+  par: es-exacta-009
+  pregunta: ¿Quién paga la reparación del equipo dañado?
+
+# --- casino --------------------------------------------------------------------
+- id: es-exacta-010
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: ¿En qué horario sirve almuerzo el casino?
+  respuesta: entre las 12:30 y las 15:00 horas
+- id: es-parafrasis-005
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: hasta q hora puedo almorzar en el casino
+  respuesta: entre las 12:30 y las 15:00 horas
+- id: es-trampa-005
+  par: es-parafrasis-005
+  pregunta: ¿Hasta qué hora se sirve la cena en el casino?
+- id: es-exacta-011
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: ¿En qué horario se sirve el desayuno?
+  respuesta: de 8:00 a 9:30 horas
+- id: es-exacta-012
+  documento: reglamento_casino.md
+  capacidad: cantidad
+  pregunta: ¿Cuánto cuesta el almuerzo para funcionarios?
+  respuesta: 3.500 pesos
+- id: es-parafrasis-006
+  documento: reglamento_casino.md
+  capacidad: cantidad
+  pregunta: cuanto pagan los practicantes por almorzar
+  respuesta: Los practicantes pagan la mitad del precio
+- id: es-trampa-006
+  par: es-parafrasis-006
+  pregunta: ¿Cuánto pagan las visitas por almorzar en el casino?
+- id: es-exacta-013
+  documento: reglamento_casino.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se publica el menú semanal?
+  respuesta: cada viernes en la intranet
+- id: es-parafrasis-007
+  documento: reglamento_casino.md
+  capacidad: condicion
+  pregunta: hay comida vegetariana en el casino?
+  respuesta: Todos los días hay una opción vegetariana
+- id: es-trampa-007
+  par: es-parafrasis-007
+  pregunta: ¿Hay comida sin gluten en el casino?
+- id: es-exacta-014
+  documento: reglamento_casino.md
+  capacidad: procedimiento
+  pregunta: ¿Cómo se paga el almuerzo?
+  respuesta: con la tarjeta institucional o en efectivo
+- id: es-exacta-015
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: ¿Dónde se recarga la tarjeta institucional?
+  respuesta: en la caja del casino
+- id: es-exacta-016
+  documento: reglamento_casino.md
+  capacidad: ubicacion
+  pregunta: ¿Dónde se dejan los reclamos sobre el servicio del casino?
+  respuesta: en el libro de sugerencias
+- id: es-exacta-017
+  documento: reglamento_casino.md
+  capacidad: persona
+  pregunta: ¿Quién responde los reclamos del casino?
+  respuesta: La Unidad de Bienestar
+- id: es-parafrasis-008
+  documento: reglamento_casino.md
+  capacidad: duracion
+  pregunta: en cuanto tiempo me contestan un reclamo del casino
+  respuesta: dentro de cinco días hábiles
+
+# --- proyector -----------------------------------------------------------------
+- id: es-exacta-018
+  documento: manual_proyector.md
+  capacidad: cantidad
+  pregunta: ¿A qué distancia de la pantalla se instala el proyector Vista X2?
+  respuesta: entre 2 y 5 metros de la pantalla
+- id: es-exacta-019
+  documento: manual_proyector.md
+  capacidad: procedimiento
+  pregunta: ¿Con qué cable se conecta el proyector al computador?
+  respuesta: con un cable HDMI
+- id: es-parafrasis-009
+  documento: manual_proyector.md
+  capacidad: procedimiento
+  pregunta: como conecto el proyector al notebook
+  respuesta: Se conecta al computador con un cable HDMI
+- id: es-exacta-020
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura la lámpara del proyector?
+  respuesta: aproximadamente 4.000 horas
+- id: es-parafrasis-010
+  documento: manual_proyector.md
+  capacidad: condicion
+  pregunta: la luz de la lampara esta roja, que hago
+  respuesta: hay que reemplazarla
+- id: es-trampa-008
+  par: es-parafrasis-010
+  pregunta: ¿Qué hago si la luz de encendido parpadea en verde?
+- id: es-exacta-021
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cada cuánto se limpia el filtro de aire del proyector?
+  respuesta: cada 200 horas de uso
+- id: es-exacta-022
+  documento: manual_proyector.md
+  capacidad: cantidad
+  pregunta: ¿Qué pilas usa el control remoto del proyector?
+  respuesta: dos pilas AAA
+- id: es-parafrasis-011
+  documento: manual_proyector.md
+  capacidad: condicion
+  pregunta: para que sirve el boton Freeze
+  respuesta: congela la imagen en pantalla
+- id: es-exacta-023
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura la garantía del proyector?
+  respuesta: una garantía de dos años
+- id: es-exacta-024
+  documento: manual_proyector.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura la garantía de la lámpara?
+  respuesta: una garantía de seis meses
+- id: es-trampa-009
+  par: es-exacta-024
+  pregunta: ¿Cuánto dura la garantía del control remoto?
+
+# --- capacitación --------------------------------------------------------------
+- id: es-exacta-025
+  documento: reglamento_capacitacion.md
+  capacidad: fecha
+  pregunta: ¿Cuándo se aprueba el plan anual de capacitación?
+  respuesta: se aprueba en marzo
+- id: es-exacta-026
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: ¿Quién elabora el plan anual de capacitación?
+  respuesta: el Comité Bipartito de Capacitación
+- id: es-parafrasis-012
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien arma el plan de cursos del año
+  respuesta: el Comité Bipartito de Capacitación
+- id: es-exacta-027
+  documento: reglamento_capacitacion.md
+  capacidad: procedimiento
+  pregunta: ¿Dónde se inscriben los funcionarios en los cursos?
+  respuesta: a través del portal de capacitación
+- id: es-exacta-028
+  documento: reglamento_capacitacion.md
+  capacidad: condicion
+  pregunta: ¿Qué autorización requiere la inscripción en un curso?
+  respuesta: la autorización de la jefatura directa
+- id: es-parafrasis-013
+  documento: reglamento_capacitacion.md
+  capacidad: persona
+  pregunta: quien tiene que autorizar que me inscriba en un curso
+  respuesta: la autorización de la jefatura directa
+- id: es-trampa-010
+  par: es-parafrasis-013
+  pregunta: ¿Quién autoriza los cursos en el extranjero?
+- id: es-exacta-029
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: ¿Qué asistencia mínima se exige para aprobar un curso?
+  respuesta: una asistencia mínima del 75 %
+- id: es-parafrasis-014
+  documento: reglamento_capacitacion.md
+  capacidad: condicion
+  pregunta: que pasa si no termino un curso sin justificar
+  respuesta: no puede inscribirse en otro curso durante seis meses
+- id: es-exacta-030
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas horas de capacitación al año puede usar cada funcionario?
+  respuesta: hasta 40 horas de capacitación al año
+- id: es-parafrasis-015
+  documento: reglamento_capacitacion.md
+  capacidad: cantidad
+  pregunta: cuantas horas de cursos me dan al año
+  respuesta: hasta 40 horas de capacitación al año
+- id: es-trampa-011
+  par: es-parafrasis-015
+  pregunta: ¿Cuántas horas de cursos online se pueden hacer fuera de la jornada?
+- id: es-exacta-031
+  documento: reglamento_capacitacion.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo se descargan los certificados de los cursos?
+  respuesta: dentro de diez días hábiles después de terminar el curso
+- id: es-trampa-012
+  par: es-exacta-031
+  pregunta: ¿Quiénes pueden dictar los cursos de capacitación?
+
+# --- seguro --------------------------------------------------------------------
+- id: es-exacta-032
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: ¿Qué porcentaje reembolsa el seguro en gastos ambulatorios?
+  respuesta: el 70 % de los gastos médicos ambulatorios
+- id: es-exacta-033
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: ¿A qué porcentaje se reembolsan los gastos hospitalarios?
+  respuesta: se reembolsan al 90 %
+- id: es-parafrasis-016
+  documento: seguro_salud.md
+  capacidad: cantidad
+  pregunta: cuanto me devuelve el seguro si me hospitalizan
+  respuesta: Los gastos hospitalarios se reembolsan al 90 %
+- id: es-trampa-013
+  par: es-parafrasis-016
+  pregunta: ¿Cuánto devuelve el seguro en gastos dentales?
+- id: es-exacta-034
+  documento: seguro_salud.md
+  capacidad: persona
+  pregunta: ¿Quiénes pueden incorporarse como cargas del seguro?
+  respuesta: el cónyuge y los hijos menores de 24 años
+- id: es-parafrasis-017
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: puedo meter a mi hijo de 20 años al seguro?
+  respuesta: Pueden incorporarse como cargas el cónyuge y los hijos menores de 24 años
+- id: es-trampa-014
+  par: es-parafrasis-017
+  pregunta: ¿Puedo incorporar a mis padres como cargas del seguro?
+- id: es-exacta-035
+  documento: seguro_salud.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo se solicitan los reembolsos del seguro?
+  respuesta: dentro de 60 días desde la atención médica
+- id: es-parafrasis-018
+  documento: seguro_salud.md
+  capacidad: procedimiento
+  pregunta: que papeles necesito para pedir el reembolso del seguro
+  respuesta: la boleta y la orden médica
+- id: es-exacta-036
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: ¿Qué no cubre el seguro complementario?
+  respuesta: tratamientos estéticos ni lentes ópticos
+- id: es-parafrasis-019
+  documento: seguro_salud.md
+  capacidad: condicion
+  pregunta: el seguro cubre lentes?
+  respuesta: El seguro no cubre tratamientos estéticos ni lentes ópticos
+- id: es-exacta-037
+  documento: seguro_salud.md
+  capacidad: persona
+  pregunta: ¿A quién se envían las consultas sobre el seguro?
+  respuesta: a la Unidad de Bienestar
+- id: es-exacta-038
+  documento: seguro_salud.md
+  capacidad: duracion
+  pregunta: ¿En qué plazo paga la aseguradora los reembolsos?
+  respuesta: en un plazo de diez días hábiles
+- id: es-trampa-015
+  par: es-exacta-038
+  pregunta: ¿Quién contrata el seguro complementario?
+
+# --- gimnasio ------------------------------------------------------------------
+- id: es-exacta-039
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: ¿En qué horario abre el gimnasio?
+  respuesta: de lunes a viernes de 7:00 a 20:00 horas
+- id: es-parafrasis-020
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: a q hora cierra el gym
+  respuesta: de lunes a viernes de 7:00 a 20:00 horas
+- id: es-trampa-016
+  par: es-parafrasis-020
+  pregunta: ¿A qué hora cierra la piscina?
+- id: es-exacta-040
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: ¿Qué se requiere para usar el gimnasio?
+  respuesta: un certificado médico vigente
+- id: es-exacta-041
+  documento: reglamento_gimnasio.md
+  capacidad: persona
+  pregunta: ¿Con quién se hace la inscripción al gimnasio?
+  respuesta: con la Unidad de Bienestar
+- id: es-exacta-042
+  documento: reglamento_gimnasio.md
+  capacidad: duracion
+  pregunta: ¿Cuánto dura como máximo una sesión cuando hay personas esperando?
+  respuesta: como máximo una hora
+- id: es-parafrasis-021
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: tengo que llevar toalla al gym?
+  respuesta: Es obligatorio usar toalla en las máquinas
+- id: es-exacta-043
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: ¿Cuándo son las clases de yoga?
+  respuesta: los martes y jueves a las 18:00 horas
+- id: es-parafrasis-022
+  documento: reglamento_gimnasio.md
+  capacidad: fecha
+  pregunta: q dias hay yoga
+  respuesta: los martes y jueves a las 18:00 horas
+- id: es-trampa-017
+  par: es-parafrasis-022
+  pregunta: ¿Qué días hay clases de pilates?
+- id: es-exacta-044
+  documento: reglamento_gimnasio.md
+  capacidad: cantidad
+  pregunta: ¿Cuántas personas admite cada clase de yoga?
+  respuesta: hasta 15 personas
+- id: es-parafrasis-023
+  documento: reglamento_gimnasio.md
+  capacidad: condicion
+  pregunta: que pasa con las cosas que dejo en el casillero en la noche
+  respuesta: se retiran y se guardan en la recepción
+- id: es-trampa-018
+  par: es-parafrasis-023
+  pregunta: ¿Cuánto cuesta arrendar un casillero?
+- id: es-trampa-019
+  par: es-exacta-040
+  pregunta: ¿Quiénes pueden usar el gimnasio los fines de semana?
+- id: es-trampa-020
+  par: es-exacta-044
+  pregunta: ¿Cuántas personas admite cada clase de spinning?
+
+# --- premisas falsas, fuera de dominio y ambiguas -----------------------------
+- id: es-premisa-001
+  pregunta: ¿Qué dice el artículo 15 del reglamento del gimnasio?
+- id: es-premisa-002
+  pregunta: ¿Cuánto cuesta el almuerzo de 5.000 pesos?
+- id: es-premisa-003
+  pregunta: ¿Cuándo es la clase de yoga del sábado?
+- id: es-premisa-004
+  pregunta: ¿Qué cubre la garantía de cinco años del proyector?
+- id: es-fuera-001
+  pregunta: ¿Cuál es el río más largo del mundo?
+- id: es-fuera-002
+  pregunta: ¿Cómo se hace el pan amasado?
+- id: es-fuera-003
+  pregunta: ¿Quién escribió Cien años de soledad?
+- id: es-fuera-004
+  pregunta: dame ideas para un regalo de cumpleaños
+- id: es-ambigua-001
+  pregunta: ¿Cuánto cuesta?
+- id: es-ambigua-002
+  pregunta: ¿Quién lo firma?
+- id: es-ambigua-003
+  pregunta: ¿Cuántas horas son?
+- id: es-ambigua-004
+  pregunta: ¿Y eso dónde se hace?

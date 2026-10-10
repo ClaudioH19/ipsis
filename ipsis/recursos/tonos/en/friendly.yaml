@@ -95,6 +95,15 @@ situations:
   - 'The exact thing isn''t there, here''s the most similar:'
   - 'That doesn''t show up directly; this might point you the right way:'
   - 'No answer as such. Here''s the related text:'
+  related_check:
+  - "Was this what you were after? If not, say it another way and I'll keep looking."
+  - "Does this help? If not, ask me in other words."
+  - "If this isn't quite it, give me one more clue and I'll find it."
+  - "Did I get it right? If not, tell me what you need."
+  - "See if this works for you; if not, I'll try another way."
+  - "Is this what you wanted? If not, tell me what's missing and I'll search again."
+  - "If you meant something else, write it differently and I'll find it."
+  - "Does it answer your question? If not, let's keep looking."
   missing_focus:
   - 'Found nothing on «{term}», but look at this:'
   - 'Oops, «{term}» is not there. The closest is this:'
@@ -126,6 +135,24 @@ situations:
   - Nothing on "{entity}" in the documents, sorry.
   - I looked and "{entity}" doesn't come up at all.
   - '"{entity}" isn''t in what you uploaded.'
+  needs_clarification:
+  - What topic are you asking about? Tell me and I'll look.
+  - That could be a few things. Which one do you have in mind?
+  - I'm missing a clue. Which process is it?
+  - Give me a bit more context and I'll find it.
+  - Is this about a particular document? Let me know and I'll search.
+  - There's more than one possible answer. Which do you mean?
+  - Tell me a little more and I'll help.
+  - What's the question about? That way I'll find the right thing.
+  alternatives_intro:
+  - 'But look, I have similar things:'
+  - 'Maybe something here works for you, it is close:'
+  - 'Here is the closest I could find:'
+  - 'This comes pretty close, just in case:'
+  - 'I have these similar options, have a look:'
+  - 'Maybe one of these will work for you:'
+  - 'The closest thing I have on hand is this:'
+  - 'Check out these similar options:'
   welcome:
   - Hey! What do you need?
   - Hi! Ask me anything.

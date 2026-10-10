@@ -4,7 +4,47 @@
 codigo: es
 nombre: Español
 stemmer: spanish
+bordes_respuesta:
+  unidades_cantidad: [carácter, caracteres, página, páginas]
+  prefijos_cantidad: [al menos, como mínimo, como máximo, hasta, dentro de, en, con, a partir de]
+  referencias_cantidad: [desde, después de, a partir de, tras]
+  limites_actor: ['\s+y\s+(?:(?:la|lo|las|los)\s+)?(?:envía|remite|entrega|firma|aprueba|autoriza)\b', ',\s*(?:que|quien)\b']
 stopwords:
+# Pronombres personales («te», «usted», «conmigo»): sin ellos sumaban a s_oov.
+- te
+- ti
+- tu
+- tus
+- usted
+- ustedes
+- nosotros
+- nosotras
+- nuestro
+- nuestra
+- nuestros
+- nuestras
+- mio
+- mia
+- conmigo
+- contigo
+# Abreviaturas informales de palabras funcionales («q» por «que», «pa» por «para»): sin
+# ellas, «a q hora se riega» sumaba «q» a s_oov como una palabra ausente del corpus.
+- q
+- k
+- xq
+- pq
+- porq
+- pa
+- pal
+- x
+- xa
+- d
+- dl
+- tb
+- tmb
+- tbn
+- dnd
+- cdo
 - a
 - al
 - asi
@@ -237,8 +277,24 @@ marcadores:
 # reconocen en la pregunta y sus palabras no cuentan como tema; las pistas
 # suelen estar en la oración que responde y la suben en la selección. En
 # minúsculas y sin tildes; gana la primera intención que calza.
+respaldo_intencion:
+  intfloat/multilingual-e5-small:
+    similitud: 0.85
+    margen: 0.0
+    habilitadas: [fin, procedimiento]
 intenciones:
   umbral:
+    ejemplos:
+    - "¿Qué cantidad máxima de entradas puedo reservar?"
+    - "¿Cuál es el mínimo de asistentes para abrir el taller?"
+    - "¿Cuánto debe superar el ingreso para pagar ese impuesto?"
+    - "¿Por debajo de qué temperatura se detiene el aparato?"
+    - "¿Desde qué valor se exige una declaración?"
+    - "¿A partir de qué edad se permite entrar al museo?"
+    - "¿Cuál es el límite de peso del equipaje?"
+    - "¿Qué importe mínimo activa el descuento?"
+    - "¿Desde cuántas personas se considera un grupo?"
+    - "¿Qué temperatura máxima soporta el horno?"
     patrones:
     - (desde|a partir de) que (monto|cantidad|valor|cifra|importe|edad|numero)
     - que (monto|cantidad|valor|importe|limite|tope)( minimo| maximo)?
@@ -260,6 +316,17 @@ intenciones:
     - igual o superior
     - a partir de
   inicio:
+    ejemplos:
+    - "¿Qué fecha marca el inicio de la campaña?"
+    - "¿Cuándo me activan la suscripción?"
+    - "¿Cuándo se habilita el acceso a la piscina?"
+    - "¿Desde qué momento rige la cobertura?"
+    - "¿En qué momento dan comienzo las clases?"
+    - "¿Qué tiene que pasar para que arranque la inscripción?"
+    - "¿Cuándo comienza la temporada de pesca?"
+    - "¿A partir de cuándo entra en vigor la norma?"
+    - "¿En qué momento puedo empezar a usar el abono?"
+    - "¿Qué da inicio al periodo de matrícula?"
     patrones:
     - cuando (empieza|empiezan|comienza|comienzan|parte|parten|inicia|inician|arranca|se inicia|se empieza|se comienza)
     - desde cuando
@@ -279,6 +346,20 @@ intenciones:
     - al momento de
     - cuando
   fin:
+    respaldo_patrones:
+    - venc\w*|expir\w*|caduc\w*|renov\w*|vigencia|validez|termin\w*|finaliz\w*
+    - hasta|ultimo dia|ultima fecha|fecha limite
+    ejemplos:
+    - "¿Cada cuánto caduca el pase de visitante?"
+    - "¿Con qué frecuencia vence el permiso de conducir?"
+    - "¿Cuándo tengo que renovar la licencia porque vence?"
+    - "¿En qué fecha deja de funcionar la tarjeta?"
+    - "¿Cuándo finaliza la vigencia del abono?"
+    - "¿En qué fecha se acaba la promoción?"
+    - "¿Hasta cuándo sigue vigente el permiso?"
+    - "¿Cuándo deja de ser válido el cupón?"
+    - "¿En qué momento termina la convocatoria?"
+    - "¿Cuál es el último día para inscribirse?"
     patrones:
     - cuando (termina|terminan|finaliza|finalizan|vence|vencen|acaba|concluye|expira)
     - hasta cuando
@@ -290,6 +371,17 @@ intenciones:
     - termina
     - finaliza
   consecuencia:
+    ejemplos:
+    - "¿Qué me sucede por incumplir la inscripción?"
+    - "¿Qué resultado tiene rechazar la invitación?"
+    - "¿Qué efectos trae no entregar la declaración?"
+    - "¿Qué medidas toman cuando se pierde la llave?"
+    - "¿Cómo afecta que falte un documento?"
+    - "¿Qué ocurre si llego tarde a la función?"
+    - "¿Qué pasa cuando se interrumpe el suministro?"
+    - "¿Qué sucede si el paquete llega dañado?"
+    - "¿Cuál es el efecto de cancelar la reserva?"
+    - "¿Y si falta la firma en el formulario?"
     patrones:
     - que (pasa|ocurre|sucede|hago|se hace) (si|cuando)
     - en caso de que
@@ -300,6 +392,17 @@ intenciones:
     - se procede
     - debera
   responsable:
+    ejemplos:
+    - "¿A quién le toca revisar el inventario?"
+    - "¿Quién tiene la tarea de abrir la sala?"
+    - "¿Qué entidad se ocupa de cobrar la matrícula?"
+    - "¿Quién lleva el control de las visitas?"
+    - "¿A cargo de quién está la reserva del alojamiento?"
+    - "¿Qué persona revisa las reservas del hotel?"
+    - "¿Quién se encarga del mantenimiento del ascensor?"
+    - "¿A qué oficina corresponde emitir el certificado?"
+    - "¿Quién autoriza el acceso al laboratorio?"
+    - "¿De quién es la responsabilidad de actualizar el registro?"
     patrones:
     - quien(es)?( se encarga| es responsable| debe| tiene que)?
     - a quien
@@ -311,6 +414,17 @@ intenciones:
     - corresponde a
     - le corresponde
   requisito:
+    ejemplos:
+    - "¿Qué se exige para que acepten la inscripción?"
+    - "¿Qué antecedentes hacen falta para postular?"
+    - "¿Qué características debe tener una foto válida?"
+    - "¿Cuántas páginas como mínimo debe tener el informe?"
+    - "¿Cuáles son las condiciones para recibir el permiso?"
+    - "¿Qué documentos debo llevar para renovar el permiso?"
+    - "¿Qué condiciones tengo que cumplir para obtener una beca?"
+    - "¿Qué hace falta para inscribirse en el taller?"
+    - "¿Cuáles son los requisitos para adoptar un animal?"
+    - "¿Qué debo presentar para acreditar mi residencia?"
     patrones:
     - que (se necesita|necesito|se requiere|requisitos|documentos)
     - que (debo|hay que) (presentar|tener|cumplir|entregar)
@@ -324,6 +438,19 @@ intenciones:
     - requisito
     - requisitos
   procedimiento:
+    respaldo_patrones:
+    - como|que (hago|hacemos|hacer|pasos)|de que (forma|manera)|procedimiento|proceso|tramitar|tramito
+    ejemplos:
+    - "Olvidé mi código de acceso, ¿cómo lo recupero?"
+    - "No encuentro mi carné, ¿qué hago para recuperarlo?"
+    - "Me cancelaron la reserva, ¿qué hago ahora?"
+    - "Necesito cambiar mis datos, ¿cómo lo tramito?"
+    - "¿De qué forma consigo un duplicado de la credencial?"
+    - "¿Cómo tramito una devolución en la tienda?"
+    - "¿Qué pasos debo seguir para reservar una sala?"
+    - "¿De qué manera se registra un visitante?"
+    - "¿Cuál es el procedimiento para cambiar una cita?"
+    - "Se perdió mi carné, ¿cómo consigo otro?"
     patrones:
     - como (se|puedo|hago|debo|hay que)
     - que pasos
@@ -334,6 +461,59 @@ intenciones:
     - despues
     - paso
     - se debe
+  # «¿Cuánto cuesta cambiar el filtro?» pide un monto: «cada 45 días» habla del filtro
+  # pero no responde lo que se pregunta.
+  costo:
+    exige_pista: true
+    entidades_pista: [monto]
+    ejemplos:
+    - "¿Cuánto cuesta renovar el pasaporte?"
+    - "¿Cuánto vale la entrada al museo?"
+    - "¿Qué precio tiene el curso de inglés?"
+    - "¿Cuánto cobran por el estacionamiento?"
+    - "¿Cuál es el costo de la matrícula?"
+    - "¿Cuánto sale reparar la lavadora?"
+    patrones:
+    - cuanto (cuesta|cuestan|vale|valen|cobra|cobran|sale|salen)
+    - que (precio|costo) tiene
+    - cual es el (precio|costo)
+    pistas:
+    - pesos
+    - dolares
+    - euros
+    - precio
+    - costo
+    - tarifa
+    - gratis
+    - gratuito
+    - gratuita
+    - sin costo
+  # «¿Cada cuánto vence la contraseña?» pide un período: la oración que responde lo dice
+  # con «cada 90 días», no con el procedimiento para cambiarla.
+  frecuencia:
+    exige_pista: true
+    ejemplos:
+    - "¿Cada cuánto se renueva la licencia de conducir?"
+    - "¿Con qué frecuencia se limpia el filtro del aire?"
+    - "¿Cuántas veces al año se revisa el extintor?"
+    - "¿Cada cuánto tiempo se respalda el servidor?"
+    - "¿Con qué periodicidad se pagan las cuotas?"
+    - "¿Cada cuánto pasa el camión de la basura?"
+    patrones:
+    - cada cuanto( tiempo)?
+    - con que (frecuencia|periodicidad)
+    - cada que tiempo
+    - cuantas veces (al|por|a la) (dia|semana|mes|ano)
+    pistas:
+    - cada
+    - veces al
+    - veces por
+    - veces a la
+    - diario
+    - diaria
+    - semanal
+    - mensual
+    - anual
 # Cómo empieza una pregunta de seguimiento (ipsis.consulta.seguimiento), en minúsculas y sin tildes.
 seguimiento:
 - y
@@ -362,9 +542,35 @@ sinonimos:
 - [arregla, arreglan, arreglar, repara, reparan, reparar]
 - [cuesta, cuestan, costar, vale, valen, precio]
 - [dura, duran, durar, vigencia]
+# Equivalencias coloquiales de uso general (cualquier documento de oficina): solo actúan
+# cuando la palabra de la pregunta no está en el corpus y un miembro del grupo sí.
+- [aguanta, aguantan, aguantar, dura, duran, durar]
+- [plata, dinero, monto, importe]
+- [demora, demoran, demorar, tarda, tardan, tardar]
+- [contesta, contestan, contestar, responde, responden, responder]
+- [anota, anotan, anotar, registra, registran, registrar]
+- [roto, rota, rotos, rotas, dañado, dañada, dañados, dañadas]
+- [refri, refrigerador, nevera, heladera]
+- [pc, compu, computador, computadora, ordenador]
+- [auto, autos, carro, carros, coche, coches, vehiculo, vehiculos]
+- [avion, aviones, aereo, aerea, aereos, aereas, vuelo, vuelos]
+- [gente, personas]
+- [cabe, caben, caber, capacidad]
+- [arrendar, arrienda, arriendo, alquilar, alquila, alquiler]
+- [muere, muera, morir, fallece, fallecer, fallecimiento]
+- [fuego, incendio]
+- [clave, contraseña]
+- [rendir, rinde, rinden, rindo]
+- [usar, usa, usan, utilizar, utiliza, utilizan]
+- [significa, significan, significar, indica, indican, indicar]
 # Palabras que nunca son término foco (ipsis.consulta.etapas.filtros): verbos de apoyo y
 # unidades. «¿Desde cuándo se hace la compra?» habla de la compra, no de hacer.
-genericas: [hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos]
+# Pronombres anafóricos: «¿Quién lo aprueba?» sin antecedente pide aclaración.
+pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
+# «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
+preposiciones_modificador: [de, del, para]
+genericas_memoria: [tiempo]
+genericas: [tiempo, hacer, hace, hacen, hecho, realizar, realiza, realizan, tener, tiene, tienen, tengo, poder, puede, pueden, puedo, deber, debe, deben, debo, haber, hay, ser, estar, dar, da, dan, ir, pasar, pasa, vez, veces, dia, dias, semana, semanas, mes, meses, año, años, hora, horas, minuto, minutos, alguien, algo, cualquiera, voy, va, van, vamos, viene, vienen, vengo, tenga, tuviera, estoy, estan]
 # Sufijos de sustantivos derivados que el stemmer deja (ipsis.lenguaje.consultas.equivalentes).
 # El de español ya lleva «aprobación» y «firma» a la raíz del verbo.
 sufijos_derivados: []
@@ -423,6 +629,7 @@ interfaz:
   placeholder: Escribe tu pregunta...
   send: Enviar pregunta
   not_direct: No es una respuesta directa
+  check_citation: Revisa la cita
   origin_error: Este sitio no está autorizado para usar el asistente.
   http_error: El servicio no pudo responder (HTTP {status}).
   source_code: Código fuente

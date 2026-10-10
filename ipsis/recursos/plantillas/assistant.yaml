@@ -13,3 +13,11 @@ widget_keys: []
 # `ipsis audit`.
 query_log:
   enabled: false
+# What the assistant does when the answer is not in the documents
+# (docs/decisions/0008-proactive-posture-and-metadata-similarity.md):
+# proactive offers up to max_alternatives similar passages that are in the
+# documents, quoted and cited; strict only says it is not there.
+# `ipsis configure posture.mode=strict`
+posture:
+  mode: proactive
+  max_alternatives: 3

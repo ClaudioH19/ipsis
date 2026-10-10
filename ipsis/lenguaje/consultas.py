@@ -80,6 +80,21 @@ def comprender(pregunta: str, paquete) -> Comprension:
     return Comprension()
 
 
+def comprender_consulta(consulta, paquete) -> Comprension:
+    """Las pistas del respaldo se aplican sin quitar palabras de contenido.
+
+    La similitud identifica una intención, pero no localiza una relación en
+    la pregunta. Solo los patrones pueden declarar términos de relación.
+    """
+    comprension = comprender(consulta.contexto.get("pregunta_usuario") or consulta.pregunta_original, paquete)
+    if comprension.intencion:
+        return comprension
+    intencion = (getattr(paquete, "intenciones", None) or {}).get(consulta.intencion)
+    if intencion is None:
+        return comprension
+    return Comprension(intencion=consulta.intencion, pistas=tuple(plano(p) for p in intencion.pistas))
+
+
 def terminos_de_contenido(pregunta: str, paquete, estadisticas=None, *, sin_genericas: bool = True) -> list[str]:
     """Los términos de contenido de la pregunta sin las palabras de su relación
     que no están en el corpus («empieza» en «¿cuándo empieza la compra?»: la
@@ -115,8 +130,8 @@ def _terminos_de_contenido(pregunta: str, paquete, estadisticas, sin_genericas: 
         # «necesita» no está y «requieren» sí: cuenta el sinónimo, no la ausencia.
         from ipsis.lenguaje.texto import terminos
 
-        reemplazos = {terminos(p, paquete)[0]: [r for f in formas for r in terminos(f, paquete)]
-                      for p, formas in sinonimos.items()}
+        reemplazos = {raiz: [r for f in formas for r in terminos_pregunta(f, paquete)]
+                      for p, formas in sinonimos.items() for raiz in terminos(p, paquete)}
         tq = list(dict.fromkeys(r for t in tq for r in reemplazos.get(t, [t])))
     relacion = comprender(pregunta, paquete).terminos_relacion
     df = getattr(estadisticas, "df", None)
@@ -140,7 +155,7 @@ def sinonimos_presentes(pregunta: str, paquete, estadisticas) -> dict[str, list[
     esas se encargan las pistas, y «inicia» traería oraciones de otro tema."""
     grupos = _grupos_por_raiz(paquete)
     df = getattr(estadisticas, "df", None)
-    if not grupos or df is None:
+    if df is None:
         return {}
     # La misma pregunta se mide en cada oración que se puntúa: se calcula una vez.
     clave = (pregunta, id(paquete), id(df), len(df))
@@ -148,6 +163,9 @@ def sinonimos_presentes(pregunta: str, paquete, estadisticas) -> dict[str, list[
         _PRESENTES.move_to_end(clave)
         return {k: list(v) for k, v in _PRESENTES[clave][1].items()}
     salida = _sinonimos_presentes(pregunta, paquete, grupos, df)
+    from ipsis.lenguaje.sinonimos import expansion_dominio
+
+    salida.update(expansion_dominio(pregunta, paquete, estadisticas))
     _PRESENTES[clave] = ((paquete, df), salida)
     if len(_PRESENTES) > 64:
         _PRESENTES.popitem(last=False)
@@ -217,15 +235,22 @@ _GRUPOS: dict[int, tuple[object, dict[str, list[list[tuple[str, tuple[str, ...]]
 
 def _grupos_por_raiz(paquete) -> dict[str, list[list[tuple[str, tuple[str, ...]]]]]:
     grupos = getattr(paquete, "sinonimos", None) or []
-    if not grupos:
+    if not grupos and not getattr(paquete, "sinonimos_dominio", None):
         return {}
     guardado = _GRUPOS.get(id(paquete))
     if guardado is not None and guardado[0] is paquete:
         return guardado[1]
     from ipsis.lenguaje.texto import terminos
 
+    dominio = getattr(paquete, "sinonimos_dominio", ())
+    propios = {r for g in dominio for f in g if len(plano(f).split()) == 1 for r in terminos(f, paquete)}
+    # Las frases se interpretan completas en expansion_dominio, nunca por sus tokens.
+    grupos = [[f for f in g if not propios.intersection(terminos(f, paquete))] for g in grupos]
+    grupos += [g for g in dominio if all(len(plano(f).split()) == 1 for f in g)]
     por_raiz: dict[str, list[list[tuple[str, tuple[str, ...]]]]] = {}
     for grupo in grupos:
+        if len(grupo) < 2:
+            continue
         formas = [(plano(f), tuple(terminos(plano(f), paquete))) for f in grupo]
         for raiz in {r for _, rs in formas for r in rs}:
             por_raiz.setdefault(raiz, []).append(formas)

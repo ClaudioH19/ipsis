@@ -111,12 +111,18 @@ class RespuestaConsulta(BaseModel):
     plan: Optional[Literal[
         "definition", "procedure", "requirement", "specific_fact",
         "comparison", "exception", "extractive", "gray_zone",
-        "no_answer", "conversational",
+        "no_answer", "conversational", "clarification",
     ]]
     fragments: list[Fragmento]
     confidence: Confianza
     latency_ms: int
     exact_answer: Optional[RespuestaExacta] = None
+    # Solo en ``no_answer`` con la postura proactiva (ADR 0008): lo más parecido
+    # que sí está, literal y citado. No responde la pregunta.
+    alternatives: list[Fragmento] = Field(default_factory=list)
+    # Qué tan segura es: high (directa con lector), medium (directa sin lector),
+    # low (relacionado). Ausente si no hay respuesta (abstención, aclaración, saludo).
+    confidence_level: Optional[Literal["high", "medium", "low"]] = None
     # Solo en respuestas conversacionales (para el avatar del widget).
     conversational_category: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
 
@@ -128,7 +134,7 @@ _NIVELES = {"normal": "normal", "media": "medium", "alta": "high"}
 _PLANES = {"definicion": "definition", "procedimiento": "procedure", "requisito": "requirement",
            "dato_puntual": "specific_fact", "comparacion": "comparison", "excepcion": "exception",
            "extractivo": "extractive", "zona_gris": "gray_zone", "sin_respuesta": "no_answer",
-           "conversacional": "conversational"}
+           "conversacional": "conversational", "aclaracion": "clarification"}
 
 
 _BLOQUES = {"encabezado": "lead", "pasaje": "passage", "mensaje": "message"}
@@ -160,10 +166,14 @@ def respuesta_publica(contrato: dict) -> dict:
                        "bm25_agreement": confianza.get("acuerdo_bm25")},
         "latency_ms": contrato["latencia_ms"],
     }
+    if contrato.get("nivel_confianza"):
+        publica["confidence_level"] = {"alta": "high", "media": "medium", "baja": "low"}[contrato["nivel_confianza"]]
     exacta = contrato.get("respuesta_exacta")
     if exacta:
         publica["exact_answer"] = {"chunk_id": exacta["chunk_id"], "text": exacta["texto"],
                                    "offset_start": exacta["offset_inicio"], "offset_end": exacta["offset_fin"]}
+    if contrato.get("alternativas"):
+        publica["alternatives"] = [fragmento(f) for f in contrato["alternativas"]]
     if contrato.get("categoria_conversacional"):
         publica["conversational_category"] = contrato["categoria_conversacional"]
     return publica
@@ -202,10 +212,42 @@ class EstadoAplicacion:
     diagnostico: tuple[float, dict | None] | None = None  # (momento, resumen) que publica /ready
     refrescando_diagnostico: bool = False
     candado_diagnostico: threading.Lock = field(default_factory=threading.Lock, repr=False)
+    # Recarga del motor pedida desde /admin (umbrales o reindexado): estado visible en el panel.
+    tarea: dict = field(default_factory=lambda: {"state": "idle"})
+    candado_recarga: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
 
 def _construir_motor_produccion() -> Motor:
     return construir_motor_del_proyecto()
+
+
+def recargar_motor(servicio: EstadoAplicacion, *, reindexar: bool = False) -> None:
+    """Cierra el motor, reindexa si se pide y abre uno nuevo (lo corre un hilo).
+
+    El índice local de Qdrant admite un solo cliente: mientras dura, el motor queda
+    reemplazado por uno vacío y ``/ask`` responde 503 («no listo»), sin errores.
+    El resultado queda en ``servicio.tarea`` para el panel."""
+    with servicio.candado_recarga:
+        servicio.tarea = {"state": "running", "reindex": reindexar}
+        servicio.listo = False
+        anterior, servicio.motor = servicio.motor, Motor()
+        try:
+            anterior.cerrar()
+            if reindexar:
+                from ipsis.aplicacion.corpus import indexar_proyecto
+
+                indexar_proyecto("documents")
+            motor = (servicio.constructor_motor or _construir_motor_produccion)()
+            motor.calentar()
+            servicio.motor = motor
+            servicio.abstencion_calibrada = getattr(motor, "abstencion_calibrada",
+                                                    motor.politica_abstencion is not None)
+            servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
+            servicio.listo, servicio.error_arranque = True, None
+            servicio.tarea = {"state": "done", "reindex": reindexar}
+        except Exception as exc:  # noqa: BLE001 -- se muestra en el panel y en /ready
+            servicio.error_arranque = f"{type(exc).__name__}: {exc}"
+            servicio.tarea = {"state": "error", "reindex": reindexar, "message": servicio.error_arranque}
 
 
 def _estado(request: Request) -> EstadoAplicacion:
@@ -378,7 +420,16 @@ def crear_app(
         from ipsis.servicio.admin import crear_router_admin, crear_router_panel
 
         aplicacion.include_router(crear_router_panel(modo, _DIR_ESTATICOS))
-        aplicacion.include_router(crear_router_admin(modo, estado.limitador, al_cambiar=lambda: _refrescar(estado)))
+        def _recargar_en_segundo_plano(reindexar: bool) -> bool:
+            if estado.tarea.get("state") == "running":
+                return False
+            estado.tarea = {"state": "running", "reindex": reindexar}
+            threading.Thread(target=recargar_motor, args=(estado,), kwargs={"reindexar": reindexar},
+                             daemon=True).start()
+            return True
+
+        aplicacion.include_router(crear_router_admin(modo, estado.limitador, al_cambiar=lambda: _refrescar(estado),
+                                                     servicio=estado, recargar=_recargar_en_segundo_plano))
     for problema in modo.problemas:
         _log.warning(problema)
 
@@ -527,5 +578,5 @@ app = crear_app()
 
 __all__ = [
     "Confianza", "ConfigWidget", "Filtros", "Fragmento", "PeticionConsulta",
-    "RespuestaConsulta", "app", "crear_app", "respuesta_publica",
+    "RespuestaConsulta", "app", "crear_app", "recargar_motor", "respuesta_publica",
 ]

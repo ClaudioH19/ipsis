@@ -15,10 +15,10 @@ your first project. Everyday use and the command reference are in
   |---|---|---|---|
   | `light` | dense e5-small | 0.5 GB | 150 ms |
   | `medium` | e5-small + mMiniLM reranker + mDeBERTa reader | 1.7 GB | 1 s |
-  | `heavy` | e5-base + bge-m3 reranker + mDeBERTa reader | 2.8 GB | 5 s |
 
   `bm25` is a diagnostic profile for `ipsis benchmark` only: it cannot be
   installed.
+  `medium` is the recommended default for `ipsis init`.
 - Network only to download the models. Afterwards the service works offline.
 
 ## Install the package
@@ -91,9 +91,9 @@ In another terminal:
 ipsis ask "How often should the filter be changed?"
 ```
 
-- **Profile:** `light`, `medium` or `heavy` (see the requirements table).
+- **Profile:** `light` or `medium` (see the requirements table).
   Change it later with `ipsis profile set <profile>`. `light` and `medium`
-  share the index; `heavy` needs reindexing.
+  share the index.
 - **Language:** `es`, `en` and `pt` have their own pack. A regional variant
   (`pt-br`) uses its base language. Any other ISO code works with the
   universal rules and English texts. Without `--language`, `ipsis init`

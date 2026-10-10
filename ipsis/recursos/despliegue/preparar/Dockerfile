@@ -23,9 +23,10 @@ RUN if ls /paquete/*.whl >/dev/null 2>&1; then python -m pip install --no-cache-
     && rm -rf /paquete
 
 ENV IPSIS_MODELS_DIR=/opt/ipsis/modelos
-RUN ipsis modelos descargar --perfil ${PERFIL} && chmod -R a+rX /opt/ipsis
-
 WORKDIR /app
+# La descarga debe leer profile_overrides.models del proyecto preparado.
+COPY config/ /app/config/
+RUN ipsis models download --profile ${PERFIL} && chmod -R a+rX /opt/ipsis
 RUN chown ipsis:ipsis /app
 
 ENV PYTHONUNBUFFERED=1 \
