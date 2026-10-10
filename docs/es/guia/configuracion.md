@@ -196,6 +196,7 @@ profile_overrides:
     cov: 0.60
     ok_strong: 0.99
     oov_ok_strong: 0.67
+    focus_informal: 0.5
 ```
 
 La pestaña **Estado** de `/admin` y `PUT /admin/thresholds` escriben los mismos

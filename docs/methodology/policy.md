@@ -51,6 +51,17 @@ function). Rule names are the internal ones shown in the diagnostics:
    muestras", "cuanta **plata** da la beca") and push `s_oov` just past 0.6
    while the answering sentence has every focus term; a nearly sure reader
    tolerates a little more. Without both thresholds the tier does not exist.
+
+   **Colloquial questions** (`foco_exigido`): a question written colloquially
+   (`ipsis.lenguaje.estilo`: it starts in lowercase, in Spanish without «¿», or
+   carries an informal abbreviation of the pack) with the reader at
+   `τ_ok_strong` needs `s_foco ≥ τ_focus_informal` (0.5 in medium) instead of
+   `τ_focus`, in both `ok` rules. The detector looks only at the form, never
+   at the vocabulary or the documents. Re-deciding the stored signals showed
+   that on colloquial questions the full focus blocked mostly correct answers
+   (21 correct for 3 wrong when switched off), while on formal ones it blocks
+   about one error per correct answer; requiring the nearly sure reader keeps
+   colloquial traps out. Without `focus_informal` the full focus applies.
 4. **`relacionado` (related):** domain ≥ `τ_related`. If the focus failed,
    the message names the missing term ("I couldn't find specific information
    about «warranty»…").
@@ -99,6 +110,7 @@ The profile's default thresholds (conservative, uncalibrated):
 | `ok` | 0.5 (on `s_ret`) | 0.8 (on `s_qa`) |
 | `cov` | 0.6 | 0.6 (not used with a reader) |
 | `ok_strong`, `oov_ok_strong` | — | 0.99, 0.67 |
+| `focus_informal` | — | 0.5 (colloquial question with the reader at `ok_strong`) |
 
 Order of application: profile ← `engine.yaml::profile_overrides` ←
 `calibration.yaml` (only when its provenance matches).

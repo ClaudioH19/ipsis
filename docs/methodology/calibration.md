@@ -50,6 +50,9 @@ under the new criterion. This is literal golden matching, not semantic entailmen
    value: they do not change the risk of an accepted answer. `τ_ok_strong`
    and `τ_oov_ok_strong` also keep it, but their answers do count: a case
    the strong reader tier accepts enters the sweep at every `τ_ok`.
+   `τ_focus_informal` keeps the profile's value too; the style of each
+   question travels in the stored signals (`coloquial`), so the sweep applies
+   the same `foco_exigido` as production.
 8. Verify the combination on `dev` with the full policy and report it on
    `test` separately (`cumple` = meets, `excede` = exceeds or
    `muestra_insuficiente` = insufficient sample). **`test` never chooses.**
