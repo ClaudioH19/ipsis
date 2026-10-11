@@ -1,0 +1,82 @@
+# Banco de termos (desenho, português). Perguntas que nomeiam as coisas como as pessoas
+# fazem («o primeiro estágio», «a coordenação», siglas) quando o documento usa outro nome
+# que ele mesmo define (glossário, siglas, «doravante»), ordinais e tabelas.
+
+- id: pt-parafrasis-001
+  documento: regulamento_estagios.md
+  capacidad: cantidad
+  pregunta: quanto pesa o portfolio no primeiro estagio
+  respuesta: Portfólio de evidências | 40%
+- id: pt-parafrasis-002
+  documento: regulamento_estagios.md
+  capacidad: duracion
+  pregunta: quanto dura o primeiro estagio
+  respuesta: O EP1 tem duração mínima de 4 semanas
+- id: pt-parafrasis-003
+  documento: regulamento_estagios.md
+  capacidad: condicion
+  pregunta: o que preciso pra me inscrever no primeiro estagio
+  respuesta: aprovado no quinto semestre e no módulo de Inserção Profissional
+- id: pt-parafrasis-004
+  documento: regulamento_estagios.md
+  capacidad: fecha
+  pregunta: quando e feito o primeiro estagio
+  respuesta: durante o período de verão, entre janeiro e fevereiro
+- id: pt-parafrasis-005
+  documento: regulamento_estagios.md
+  capacidad: duracion
+  pregunta: quanto dura o segundo estagio
+  respuesta: O EP2 tem duração mínima de 8 semanas
+- id: pt-parafrasis-006
+  documento: regulamento_estagios.md
+  capacidad: cantidad
+  pregunta: quanto pesa a defesa oral no segundo estagio
+  respuesta: Defesa oral | 30%
+- id: pt-parafrasis-007
+  documento: regulamento_estagios.md
+  capacidad: fecha
+  pregunta: ate quando a coordenacao de estagios recebe pedidos
+  respuesta: até 15 de dezembro
+- id: pt-exacta-001
+  documento: regulamento_estagios.md
+  capacidad: condicion
+  pregunta: Quais são os requisitos para se inscrever no EP2?
+  respuesta: aprovado no EP1 e no oitavo semestre
+- id: pt-parafrasis-008
+  documento: regulamento_estagios.md
+  capacidad: cantidad
+  pregunta: quanto vale o relatorio do supervisor no estagio 1
+  respuesta: Relatório do supervisor da empresa | 30%
+- id: pt-parafrasis-009
+  documento: regulamento_bibliotecas.md
+  capacidad: cantidad
+  pregunta: quantos livros posso pegar sendo da graduacao
+  respuesta: até 5 livros por 14 dias
+- id: pt-parafrasis-010
+  documento: regulamento_bibliotecas.md
+  capacidad: duracion
+  pregunta: com quanta antecedencia reservo uma sala de estudo em grupo
+  respuesta: no máximo 48 horas de antecedência
+- id: pt-parafrasis-011
+  documento: regulamento_bibliotecas.md
+  capacidad: condicion
+  pregunta: o que acontece se eu devolver um livro com 5 dias de atraso
+  respuesta: De 4 a 10 dias | Suspensão por 15 dias
+- id: pt-exacta-002
+  documento: regulamento_bibliotecas.md
+  capacidad: fecha
+  pregunta: Qual é o horário do SIBI?
+  respuesta: de segunda a sexta das 8:00 às 21:00 horas
+
+- id: pt-trampa-001
+  par: pt-parafrasis-002
+  pregunta: quanto dura o terceiro estagio
+- id: pt-trampa-002
+  par: pt-parafrasis-001
+  pregunta: quanto pesa a prova escrita no primeiro estagio
+- id: pt-trampa-003
+  par: pt-parafrasis-009
+  pregunta: quantos livros um funcionario pode pegar
+
+- id: pt-fuera-001
+  pregunta: qual e a capital da australia

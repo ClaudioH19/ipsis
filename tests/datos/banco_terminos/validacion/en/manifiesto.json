@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "dataset_id": "terminos_validacion_en",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "coffee_maker_warranty.md",
+        "doc_id": "coffee-maker-warranty"
+      },
+      {
+        "ruta": "greenhouse_irrigation.md",
+        "doc_id": "greenhouse-irrigation"
+      },
+      {
+        "ruta": "it_help_desk_faq.md",
+        "doc_id": "it-help-desk-faq"
+      },
+      {
+        "ruta": "lab_protocol.md",
+        "doc_id": "lab-protocol"
+      },
+      {
+        "ruta": "library_hours.md",
+        "doc_id": "library-hours"
+      },
+      {
+        "ruta": "procurement_manual.md",
+        "doc_id": "procurement-manual"
+      },
+      {
+        "ruta": "refunds.md",
+        "doc_id": "refunds"
+      },
+      {
+        "ruta": "remote_work_regulation.md",
+        "doc_id": "remote-work-regulation"
+      },
+      {
+        "ruta": "student_benefits.md",
+        "doc_id": "student-benefits"
+      },
+      {
+        "ruta": "thesis_rules.md",
+        "doc_id": "thesis-rules"
+      },
+      {
+        "ruta": "travel_allowance_policy.md",
+        "doc_id": "travel-allowance-policy"
+      }
+    ],
+    "sha256": "fc218bc5459bdec03b7684f53d51858372decb4ff95af887c4a73c1bc4db2fdf"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "en"
+}

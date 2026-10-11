@@ -1,0 +1,82 @@
+# Banco de términos (diseño, español). Preguntas que nombran las cosas como lo hace la
+# gente («la primera práctica», «la coordinación», siglas) cuando el documento usa otro
+# nombre que él mismo define (glosario, siglas, «en adelante»), ordinales y tablas.
+
+- id: es-parafrasis-001
+  documento: reglamento_practicas.md
+  capacidad: cantidad
+  pregunta: cuanto pondera el portafolio en la primera practica
+  respuesta: Portafolio de evidencias | 40%
+- id: es-parafrasis-002
+  documento: reglamento_practicas.md
+  capacidad: duracion
+  pregunta: cuanto dura la primera practica
+  respuesta: una duración mínima de 4 semanas
+- id: es-parafrasis-003
+  documento: reglamento_practicas.md
+  capacidad: condicion
+  pregunta: que necesito para inscribir la primera practica
+  respuesta: haber aprobado el quinto semestre y el módulo de Inserción Laboral
+- id: es-parafrasis-004
+  documento: reglamento_practicas.md
+  capacidad: fecha
+  pregunta: cuando se hace la primera practica
+  respuesta: durante el período estival, entre enero y febrero
+- id: es-parafrasis-005
+  documento: reglamento_practicas.md
+  capacidad: duracion
+  pregunta: cuanto dura la segunda practica
+  respuesta: una duración mínima de 8 semanas
+- id: es-parafrasis-006
+  documento: reglamento_practicas.md
+  capacidad: cantidad
+  pregunta: cuanto pondera la defensa oral en la segunda practica
+  respuesta: Defensa oral | 30%
+- id: es-parafrasis-007
+  documento: reglamento_practicas.md
+  capacidad: fecha
+  pregunta: hasta cuando recibe solicitudes la coordinacion de practicas
+  respuesta: hasta el 15 de diciembre
+- id: es-exacta-001
+  documento: reglamento_practicas.md
+  capacidad: condicion
+  pregunta: ¿Qué requisitos hay para inscribir la P2?
+  respuesta: haber aprobado la P1 y el octavo semestre
+- id: es-parafrasis-008
+  documento: reglamento_practicas.md
+  capacidad: cantidad
+  pregunta: cuanto vale el informe del supervisor en la practica 1
+  respuesta: Informe del supervisor de empresa | 30%
+- id: es-parafrasis-009
+  documento: reglamento_bibliotecas.md
+  capacidad: cantidad
+  pregunta: cuantos libros me puedo llevar si soy de pregrado
+  respuesta: hasta 5 libros por 14 días
+- id: es-parafrasis-010
+  documento: reglamento_bibliotecas.md
+  capacidad: duracion
+  pregunta: con cuanta anticipacion reservo una sala de estudio grupal
+  respuesta: un máximo de 48 horas de anticipación
+- id: es-parafrasis-011
+  documento: reglamento_bibliotecas.md
+  capacidad: condicion
+  pregunta: que pasa si devuelvo un libro con 5 dias de atraso
+  respuesta: De 4 a 10 días | Suspensión por 15 días
+- id: es-exacta-002
+  documento: reglamento_bibliotecas.md
+  capacidad: fecha
+  pregunta: ¿En qué horario atiende el SIBI?
+  respuesta: de lunes a viernes de 8:00 a 21:00 horas
+
+- id: es-trampa-001
+  par: es-parafrasis-002
+  pregunta: cuanto dura la tercera practica
+- id: es-trampa-002
+  par: es-parafrasis-001
+  pregunta: cuanto pondera el examen escrito en la primera practica
+- id: es-trampa-003
+  par: es-parafrasis-009
+  pregunta: cuantos libros se puede llevar un funcionario
+
+- id: es-fuera-001
+  pregunta: cual es la capital de australia

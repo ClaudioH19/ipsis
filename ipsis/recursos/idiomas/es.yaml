@@ -186,6 +186,10 @@ ordinales:
   cuarta: 4
   quinto: 5
   quinta: 5
+  primero: 1
+  tercero: 3
+  sexto: 6
+  sexta: 6
 meses:
 - enero
 - febrero
@@ -514,6 +518,32 @@ intenciones:
     - semanal
     - mensual
     - anual
+  # «¿Cuánto dura la práctica?» pide un plazo: la oración que responde lo dice («4 semanas»),
+  # no la que define la práctica.
+  duracion:
+    exige_pista: true
+    entidades_pista: [plazo]
+    ejemplos:
+    - "¿Cuánto dura la garantía del refrigerador?"
+    - "¿Cuánto tiempo dura el curso de primeros auxilios?"
+    - "¿Qué duración tiene el contrato de arriendo?"
+    - "¿Cuánto se demora el trámite de la licencia?"
+    - "¿Cuánto tarda en llegar el pedido?"
+    - "¿Por cuánto tiempo es válido el certificado?"
+    patrones:
+    - cuanto (tiempo )?(dura|duran)
+    - que duracion
+    - cuanto (tiempo )?(se )?(demora|demoran|tarda|tardan)
+    - por cuanto tiempo
+    pistas:
+    - minutos
+    - horas
+    - dias
+    - semanas
+    - meses
+    - anos
+    - semestre
+    - semestres
 # Cómo empieza una pregunta de seguimiento (ipsis.consulta.seguimiento), en minúsculas y sin tildes.
 seguimiento:
 - y
@@ -569,6 +599,8 @@ sinonimos:
 pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
 # Abreviaturas de quien escribe apurado: la pregunta es coloquial (ipsis.lenguaje.estilo).
 abreviaturas_informales: [q, k, xq, pq, porq, pa, pal, xa, dl, tb, tmb, tbn, dnd, cdo]
+# Preguntas que piden una definición: solo ellas se responden con la línea del glosario.
+patrones_definicion: ['^(que|qué) (es|son|significa|significan) ', ' (que|qué) (es|son|significa|significan) ']
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, del, para]
 genericas_memoria: [tiempo]

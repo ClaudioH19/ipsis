@@ -1,0 +1,77 @@
+# Banco de términos (validación retenida, español). Mismos fenómenos que el de diseño
+# (alias definidos, siglas, «en adelante», ordinales, tablas) en otros documentos; escrito
+# antes de implementar el grafo de términos y medido una vez antes y otra después.
+
+- id: es-parafrasis-001
+  documento: reglamento_titulacion.md
+  capacidad: condicion
+  pregunta: que necesito para inscribir el primer proyecto de titulo
+  respuesta: haber aprobado todas las asignaturas hasta el noveno semestre
+- id: es-parafrasis-002
+  documento: reglamento_titulacion.md
+  capacidad: cantidad
+  pregunta: cuanto pondera la defensa en el segundo proyecto de titulo
+  respuesta: Defensa pública | 35%
+- id: es-parafrasis-003
+  documento: reglamento_titulacion.md
+  capacidad: duracion
+  pregunta: en cuanto tiempo aprueba el comite una propuesta
+  respuesta: dentro de quince días hábiles desde su presentación
+- id: es-parafrasis-004
+  documento: reglamento_titulacion.md
+  capacidad: duracion
+  pregunta: cada cuanto revisa los avances el profesor guia
+  respuesta: cada dos semanas
+- id: es-parafrasis-005
+  documento: reglamento_titulacion.md
+  capacidad: fecha
+  pregunta: hasta cuando tengo para defender el proyecto de titulo 2
+  respuesta: a más tardar un año después de aprobado el PT1
+- id: es-parafrasis-006
+  documento: reglamento_titulacion.md
+  capacidad: cantidad
+  pregunta: cuanto vale el documento final en el segundo proyecto de titulo
+  respuesta: Documento final | 50%
+- id: es-exacta-001
+  documento: reglamento_titulacion.md
+  capacidad: persona
+  pregunta: ¿Quién designa a los profesores guía?
+  respuesta: aprueba los temas y designa a los profesores guía
+- id: es-parafrasis-007
+  documento: reglamento_beneficios.md
+  capacidad: cantidad
+  pregunta: cuanto da al mes la beca de alimentacion
+  respuesta: Beca de Alimentación Estudiantil | 32.000 pesos
+- id: es-parafrasis-008
+  documento: reglamento_beneficios.md
+  capacidad: fecha
+  pregunta: cuando postulo a los beneficios del servicio de bienestar
+  respuesta: en marzo de cada año
+- id: es-parafrasis-009
+  documento: reglamento_beneficios.md
+  capacidad: condicion
+  pregunta: que tengo que hacer para no perder la BAE
+  respuesta: aprobar al menos el 60 % de los créditos inscritos
+- id: es-parafrasis-010
+  documento: reglamento_beneficios.md
+  capacidad: cantidad
+  pregunta: de cuanto es la ayuda de emergencia
+  respuesta: Ayuda de Emergencia | 150.000 pesos por única vez
+- id: es-exacta-002
+  documento: reglamento_beneficios.md
+  capacidad: persona
+  pregunta: ¿Quién administra los beneficios estudiantiles?
+  respuesta: unidad que administra los beneficios
+
+- id: es-trampa-001
+  par: es-parafrasis-002
+  pregunta: cuanto pondera la defensa en el tercer proyecto de titulo
+- id: es-trampa-002
+  par: es-parafrasis-007
+  pregunta: cuanto da al mes la beca de residencia
+- id: es-trampa-003
+  par: es-parafrasis-004
+  pregunta: cada cuanto revisa los avances el profesor co-guia
+
+- id: es-fuera-001
+  pregunta: como se prepara un pisco sour

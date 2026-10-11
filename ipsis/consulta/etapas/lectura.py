@@ -108,6 +108,9 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
     # responde ninguna: «¿Quiénes pueden postular a la beca…?» se lee en «Requisitos».
     con_secciones = {c.chunk.doc_id for c in candidatos
                      if any(len(s["ruta"]) > 1 for s in (c.chunk.metadata or {}).get("secciones") or [])}
+    from ipsis.lenguaje.alias import es_definicion, pide_definicion
+
+    definicion = pide_definicion(pregunta, getattr(motor, "idioma", None))
     unidades = []  # (candidato, unidad, inicio de la oración previa de la línea)
     for candidato in candidatos:
         texto = candidato.chunk.texto_fuente
@@ -122,6 +125,11 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
             dentro = not secciones or any(a <= u.offset_inicio and u.offset_fin <= b for a, b in secciones)
             if dentro and candidato.chunk.doc_id in con_secciones:
                 dentro = len(seccion_de(candidato.chunk, base + u.offset_inicio)) > 1
+            if dentro and not definicion:
+                # «Práctica Profesional I (P1): primera práctica…» define el término; responde
+                # «¿qué es la P1?», no «¿cuánto dura la primera práctica?».
+                inicio_linea = texto.rfind("\n", 0, u.offset_inicio) + 1
+                dentro = not es_definicion(texto[inicio_linea:u.offset_fin])
             if dentro and len(u.texto.split()) >= 3:
                 unidades.append((candidato, u, previa.offset_inicio if misma_linea else u.offset_inicio))
             previa = u

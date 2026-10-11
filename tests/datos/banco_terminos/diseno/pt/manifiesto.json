@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "dataset_id": "terminos_diseno_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafeteira.md",
+        "doc_id": "garantia-cafeteira"
+      },
+      {
+        "ruta": "irrigacao_estufa.md",
+        "doc_id": "irrigacao-estufa"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_aquisicoes.md",
+        "doc_id": "manual-aquisicoes"
+      },
+      {
+        "ruta": "perguntas_frequentes_ti.md",
+        "doc_id": "perguntas-frequentes-ti"
+      },
+      {
+        "ruta": "politica_diarias.md",
+        "doc_id": "politica-diarias"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "regulamento_bibliotecas.md",
+        "doc_id": "regulamento-bibliotecas"
+      },
+      {
+        "ruta": "regulamento_estagios.md",
+        "doc_id": "regulamento-estagios"
+      },
+      {
+        "ruta": "regulamento_teletrabalho.md",
+        "doc_id": "regulamento-teletrabalho"
+      }
+    ],
+    "sha256": "0cf7a3f44f52ff4b6793c30d59132642b3626f282f36cb9d60f8ce83c7c0d03a"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}

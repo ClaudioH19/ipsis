@@ -1,0 +1,77 @@
+# Terms bank (held-out validation, English). Same phenomena as the design set (defined
+# aliases, acronyms, "hereinafter", ordinals, tables) in other documents; written before the
+# terms graph was implemented and measured once before and once after.
+
+- id: en-parafrasis-001
+  documento: thesis_rules.md
+  capacidad: condicion
+  pregunta: what do i need to enrol in the first thesis project
+  respuesta: passed all courses up to the ninth semester
+- id: en-parafrasis-002
+  documento: thesis_rules.md
+  capacidad: cantidad
+  pregunta: how much does the defence weigh in the second thesis project
+  respuesta: Public defence | 35%
+- id: en-parafrasis-003
+  documento: thesis_rules.md
+  capacidad: duracion
+  pregunta: how long does the committee take to approve a proposal
+  respuesta: within fifteen working days of submission
+- id: en-parafrasis-004
+  documento: thesis_rules.md
+  capacidad: duracion
+  pregunta: how often does the supervisor review progress
+  respuesta: every two weeks
+- id: en-parafrasis-005
+  documento: thesis_rules.md
+  capacidad: fecha
+  pregunta: until when do i have to defend thesis project 2
+  respuesta: no later than one year after TP1 is approved
+- id: en-parafrasis-006
+  documento: thesis_rules.md
+  capacidad: cantidad
+  pregunta: how much is the final document worth in the second thesis project
+  respuesta: Final document | 50%
+- id: en-exacta-001
+  documento: thesis_rules.md
+  capacidad: persona
+  pregunta: Who appoints the supervisors?
+  respuesta: approves the topics and appoints the supervisors
+- id: en-parafrasis-007
+  documento: student_benefits.md
+  capacidad: cantidad
+  pregunta: how much does the meal grant give per month
+  respuesta: Student Meal Grant | 32,000 pesos
+- id: en-parafrasis-008
+  documento: student_benefits.md
+  capacidad: fecha
+  pregunta: when do i apply for benefits at the welfare service
+  respuesta: in March every year
+- id: en-parafrasis-009
+  documento: student_benefits.md
+  capacidad: condicion
+  pregunta: what do i have to do to keep the SMG
+  respuesta: pass at least 60 % of the enrolled credits
+- id: en-parafrasis-010
+  documento: student_benefits.md
+  capacidad: cantidad
+  pregunta: how much is the emergency aid
+  respuesta: Emergency Aid | 150,000 pesos one time only
+- id: en-exacta-002
+  documento: student_benefits.md
+  capacidad: persona
+  pregunta: Who manages the student benefits?
+  respuesta: unit that manages the benefits
+
+- id: en-trampa-001
+  par: en-parafrasis-002
+  pregunta: how much does the defence weigh in the third thesis project
+- id: en-trampa-002
+  par: en-parafrasis-007
+  pregunta: how much does the housing grant give per month
+- id: en-trampa-003
+  par: en-parafrasis-004
+  pregunta: how often does the co-supervisor review progress
+
+- id: en-fuera-001
+  pregunta: how do you make a margarita

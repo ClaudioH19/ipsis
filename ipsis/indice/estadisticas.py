@@ -34,6 +34,8 @@ class EstadisticasLexicas(BaseModel):
     # y si la autoprueba al indexar lo activó. Un índice anterior no los trae: sin contexto.
     pares: list[str] = Field(default_factory=list)
     contexto_erratas: bool = False
+    # Grupos de nombres equivalentes que el corpus define (siglas, glosario, «en adelante»).
+    alias: list[list[str]] = Field(default_factory=list)
 
     @classmethod
     def construir(cls, textos: Iterable[str], paquete=None, *, hash_corpus: str = "",
@@ -64,6 +66,9 @@ class EstadisticasLexicas(BaseModel):
         if textos_contexto and paquete is not None and not getattr(paquete, "respaldo", True):
             from ipsis.lenguaje.ortografia import autoprueba_contexto, pares_de_contexto
 
+            from ipsis.lenguaje.alias import extraer_alias
+
+            estadisticas.alias = extraer_alias(textos_contexto, paquete)
             pares = pares_de_contexto(textos_contexto, paquete)
             estadisticas.pares = pares
             estadisticas.contexto_erratas = autoprueba_contexto(textos_contexto, paquete, estadisticas, pares)
