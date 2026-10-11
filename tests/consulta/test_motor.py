@@ -201,7 +201,17 @@ def test_motor_orquesta_recuperacion_dirigida_y_etapas_tipadas():
         max_fragmentos_adicionales=2,
     )
 
-    resultado = motor.consultar(pregunta, "sesión")
+    from ipsis.nucleo.traza import capturar_traza
+
+    with capturar_traza() as traza:
+        resultado = motor.consultar(pregunta, "sesión")
+
+    recuperaciones = [e for e in traza.eventos if e["tipo"] == "recuperacion"]
+    assert [e["origen"] for e in recuperaciones] == ["principal", "premisa"]
+    assert recuperaciones[0]["candidatos"][0]["chunk"]["chunk_id"] == "c8"
+    assert recuperaciones[1]["candidatos"][0]["chunk"]["chunk_id"] == "c9"
+    politica = next(e for e in traza.eventos if e.get("nombre") == "politica")
+    assert politica["salida"]["decision"]["capa_decisora"] == "ok_lector"
 
     assert resultado.estado == AssistantState.RESPUESTA_DIRECTA
     assert retriever.filtros == [None, valor_entidad]

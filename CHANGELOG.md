@@ -8,6 +8,14 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Query log version 2 records complete answers, diagnostics and original
+  execution traces: stage inputs/outputs and skips, admission, every retrieval
+  with candidates and filters, and exact reranker/reader inputs and outputs.
+  Project traces include the effective profile and corpus/configuration
+  fingerprints; failures retain partial traces without exception messages.
+  `ipsis audit --trace <consulta_id>` inspects a recorded case without models
+  or corpus access. Logging remains opt-in and version 1 logs remain readable.
+
 - Terminal progress with real ingestion and query stages, elapsed time,
   cancellation and separate output for answers and citations. Folio now has
   a folded corner and larger eyes; narrow and legacy terminals have fallbacks.

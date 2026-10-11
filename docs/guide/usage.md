@@ -124,7 +124,7 @@ creation or activation.
 | Command | What it does |
 |---|---|
 | `ipsis doctor` | Read-only diagnosis: configuration, profile, language, stemmer, models, index, calibration, golden set, CORS, personality and mode. Every error comes with its action. Exits with 0 when there are no errors |
-| `ipsis audit [--from DATE] [--to DATE]` | Reviews the query log: statuses, rules, tones and whether every piece of evidence is still literal in the corpus. With `--from`/`--to` (`YYYY-MM-DD` or ISO 8601, UTC by default, inclusive) it only counts that range. Turn the log on with `ipsis configure query_log.enabled=true` |
+| `ipsis audit [--from DATE] [--to DATE]` / `ipsis audit --trace ID` | Reviews the query log: statuses, rules, tones and whether every piece of evidence is still literal in the corpus. With `--from`/`--to` (`YYYY-MM-DD` or ISO 8601, UTC by default, inclusive) it only counts that range. `--trace` shows an original query and its steps by `consulta_id`, without running it or accessing the corpus. Turn the log on with `ipsis configure query_log.enabled=true` |
 
 ### Personality
 

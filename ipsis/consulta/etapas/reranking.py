@@ -27,7 +27,10 @@ class EtapaReranking(_Etapa):
         resto = ctx.candidatos[limite:] if limite else []
         if limite:
             ctx.candidatos = ctx.candidatos[:limite]
-        puntajes = m.reranker.puntuar(ctx.pregunta, [c.chunk.texto_fuente for c in ctx.candidatos])
+        from ipsis.nucleo.traza import ejecutar_modelo_con_traza
+
+        puntajes = ejecutar_modelo_con_traza("reranker", ctx.pregunta,
+                                             [c.chunk.texto_fuente for c in ctx.candidatos], m.reranker.puntuar)
         orden = sorted(
             range(len(ctx.candidatos)),
             key=lambda i: (-puntajes[i], ctx.candidatos[i].chunk.chunk_id),

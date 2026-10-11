@@ -39,6 +39,7 @@ from ipsis.aplicacion.proyecto import (
     microcopia_del_widget,
 )
 from ipsis.aplicacion.registro import RegistroConsultas, registro_del_proyecto
+from ipsis.nucleo.traza import capturar_traza
 from ipsis.servicio.seguridad import (
     NOMBRE_CABECERA_CLAVE_WIDGET,
     LimitadorPeticiones,
@@ -552,22 +553,31 @@ def crear_app(
     def preguntar(peticion: PeticionConsulta, request: Request) -> RespuestaConsulta:
         servicio = _estado(request)
         _refrescar(servicio)
-        try:
-            resultado = servicio.motor.consultar(peticion.question, peticion.session_id)
-        except MotorNoListo as exc:
-            raise HTTPException(status_code=503, detail="service not ready, see /ready") from exc
-        except MotorSaturado as exc:
-            raise HTTPException(
-                status_code=503,
-                detail="service saturated (concurrency limit reached), retry in a moment",
-                headers={"Retry-After": "1"},
-            ) from exc
-        if servicio.registro is not None:
+        with capturar_traza(activo=servicio.registro is not None):
             try:
-                servicio.registro.registrar(peticion.question, resultado)
-            except OSError as exc:  # el registro nunca tumba una respuesta
-                _log.warning(t("runtime.log_query_log", error=exc))
-        return RespuestaConsulta.model_validate(respuesta_publica(resultado.diagnostico["contrato_http"]))
+                resultado = servicio.motor.consultar(peticion.question, peticion.session_id)
+                respuesta = RespuestaConsulta.model_validate(respuesta_publica(resultado.diagnostico["contrato_http"]))
+            except Exception as exc:
+                if servicio.registro is not None:
+                    try:
+                        servicio.registro.registrar_error(peticion.question, exc)
+                    except (OSError, TypeError, ValueError) as error_registro:
+                        _log.warning(t("runtime.log_query_log", error=error_registro))
+                if isinstance(exc, MotorNoListo):
+                    raise HTTPException(status_code=503, detail="service not ready, see /ready") from exc
+                if isinstance(exc, MotorSaturado):
+                    raise HTTPException(
+                        status_code=503,
+                        detail="service saturated (concurrency limit reached), retry in a moment",
+                        headers={"Retry-After": "1"},
+                    ) from exc
+                raise
+            if servicio.registro is not None:
+                try:
+                    servicio.registro.registrar(peticion.question, resultado)
+                except (OSError, TypeError, ValueError) as exc:  # el registro nunca tumba una respuesta
+                    _log.warning(t("runtime.log_query_log", error=exc))
+            return respuesta
 
     return aplicacion
 

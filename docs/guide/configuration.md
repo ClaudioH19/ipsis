@@ -636,16 +636,38 @@ The service can store one JSON line per query in
 ipsis configure query_log.enabled=true   # and restart 'ipsis serve'
 ipsis audit
 ipsis audit --from 2026-10-01 --to 2026-10-31
+ipsis audit --trace <consulta_id>
 ```
 
-- **What it stores:** the question, status, rule, reason, profile, the
-  policy signals, the tone and the template ids used, the evidence
-  (document, offsets and text) and the exact span. It does not store the
-  session or the IP.
+- **What it stores (version 2):** a random `consulta_id`, UTC date, duration,
+  question, complete answer, output contract and diagnostic: status, rule,
+  reason, profile, policy signals, tone, templates, evidence (document,
+  offsets and text) and exact span. It does not store the session identifier
+  or IP; questions and document text are retained.
+- **Execution trace:** `traza` contains ordered events with timings and
+  status. Each stage records its inputs and outputs: corrected or interpreted
+  question, intent, signals, candidates, discarded candidates, evidence and
+  decision. Skipped stages include reasons, as do early exits and admission
+  or saturation. Every actual retrieval (confidence, main, premise or alternatives)
+  preserves question, limit, filter, mode and candidates with text, offsets
+  and scores. The reranker and reader record the exact questions and passages
+  they received and their outputs, including sentence reranking before
+  semantic reading.
+- **Execution context:** the project motor trace preserves Ipsis version,
+  components, effective profile, models, thresholds, corpus and lexicon hashes
+  and a configuration fingerprint. It does not dump service tokens or keys.
+  Hashes identify the environment; they do not archive the entire corpus or
+  guarantee exact replay.
 - **Who writes it:** only the service's `POST /ask`. `ipsis ask
   --diagnostics`, `ipsis evaluate` and `ipsis benchmark` do not write. If
   writing fails, the answer is not affected; a warning goes to the service
-  log.
+  log. Execution failures also produce an entry with `estado: error`, exception
+  type and partial trace; internal exception messages are omitted. Concurrent
+  requests have separate traces.
+- **Inspect a case:** take the `consulta_id` from a JSONL line and run
+  `ipsis audit --trace <consulta_id>`. It returns the original record as JSON
+  without models, searches or corpus access; date filters cannot be combined
+  with this option. Older version 1 records remain supported by `ipsis audit`.
 - **What `ipsis audit` checks:** it counts queries by status, rule and tone,
   and verifies that the text of each piece of evidence and each span is
   still at those offsets of the current corpus.
@@ -656,6 +678,13 @@ ipsis audit --from 2026-10-01 --to 2026-10-31
   - It exits with 0 when everything matches and with 1 when there are
     problems, unreadable lines or no log.
   - It uses no models and no index.
+
+The trace documents observable steps and explicit system decisions, not a
+model's internal reasoning. It lets you audit what happened; the literalness
+checked by `ipsis audit` does not establish answer correctness or completeness.
+Review real cases and turn failures into regression bank cases. The local
+JSONL is editable, without automatic rotation or tamper protection; manage
+its access and retention alongside the corpus when enabling logging.
 
 ## Widget presentation
 

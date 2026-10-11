@@ -1,6 +1,8 @@
 """Casos de uso de consulta: construir el motor desde la configuración."""
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -161,6 +163,15 @@ def construir_motor(
             stride=perfil_instalacion.cascada.stride,
         )
     motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
+    from ipsis import __version__
+
+    motor.metadatos_auditoria = {
+        "version_ipsis": __version__, "backend": motor.backend,
+        "componentes": componentes, "perfil_efectivo": perfil_instalacion.model_dump(mode="json"),
+        "hash_corpus": hash_corpus, "hash_lexico": hash_lexico,
+        "hash_configuracion": hashlib.sha256(json.dumps(
+            {"motor": cfg, "asistente": cfg_dominio}, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest(),
+    }
     motor._marca_presentacion = _marca_presentacion()  # base para recargar_presentacion
     return motor
 

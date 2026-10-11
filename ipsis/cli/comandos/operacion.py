@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 
 from ipsis.aplicacion.diagnostico import Estado, ProyectoNoEncontrado, diagnosticar
 from ipsis.aplicacion.proyecto import guardar_snapshot
-from ipsis.aplicacion.registro import FechaInvalida, SinRegistro, auditar_registro, interpretar_fecha
+from ipsis.aplicacion.registro import FechaInvalida, SinRegistro, auditar_registro, interpretar_fecha, leer_consulta
 from ipsis.cli.base import Comando
 from ipsis.recursos.mensajes import t
 
@@ -59,9 +60,20 @@ class ComandoAuditar(Comando):
     def registrar(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--from", dest="desde", default=None, help=t("audit.opt_from"))
         parser.add_argument("--to", dest="hasta", default=None, help=t("audit.opt_to"))
+        parser.add_argument("--trace", dest="consulta_id", default=None, help=t("audit.opt_trace"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
         try:
+            if args.consulta_id:
+                if args.desde or args.hasta:
+                    print(t("audit.trace_dates"))
+                    return 2
+                entrada = leer_consulta(args.consulta_id)
+                if entrada is None:
+                    print(t("audit.trace_missing", id=args.consulta_id))
+                    return 1
+                print(json.dumps(entrada, ensure_ascii=False, indent=2))
+                return 0
             desde = interpretar_fecha(args.desde) if args.desde else None
             hasta = interpretar_fecha(args.hasta, fin_del_dia=True) if args.hasta else None
             r = auditar_registro(desde=desde, hasta=hasta)

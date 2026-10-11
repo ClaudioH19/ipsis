@@ -142,7 +142,9 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
     obtener = getattr(motor.retriever, "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
     lex = _puntuar(pregunta, [u for _, u, _ in unidades], est, comprension)
-    ce = motor.reranker.puntuar(pregunta, textos)
+    from ipsis.nucleo.traza import ejecutar_modelo_con_traza
+
+    ce = ejecutar_modelo_con_traza("reranker_oraciones", pregunta, textos, motor.reranker.puntuar)
     q = np.asarray(vector(pregunta), dtype=float)
     matriz = np.asarray(codificador.codificar_documentos(textos), dtype=float)
     cos = list(matriz @ q)
@@ -248,8 +250,10 @@ class EtapaLectura(_Etapa):
             if getattr(comprension, "intencion", None) or len(propios) > 1:
                 pregunta_lectura = ctx.pregunta_usuario
         ctx.diagnostico["pregunta_lectura"] = pregunta_lectura
-        lecturas = m.lector.leer(pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(
-            (c.chunk.texto_fuente for c in candidatos), ventanas)])
+        from ipsis.nucleo.traza import ejecutar_modelo_con_traza
+
+        lecturas = ejecutar_modelo_con_traza("lector", pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(
+            (c.chunk.texto_fuente for c in candidatos), ventanas)], m.lector.leer)
         # offsets de la ventana -> offsets del pasaje completo
         ctx.lecturas = [
             lec.model_copy(update={"inicio": lec.inicio + ventanas[lec.indice_pasaje][0],

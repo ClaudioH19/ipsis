@@ -192,6 +192,9 @@ doctor:
   actions: 'Actions:'
   action_item: '  {action}'
 audit:
+  opt_trace: Show the original query and trace by consulta_id, without running it again.
+  trace_missing: 'No query with id {id} in the log.'
+  trace_dates: '--trace cannot be combined with --from or --to.'
   help: 'Review the query log: statuses, rules and whether each piece of evidence is still literal.'
   opt_from: Only queries from this date (YYYY-MM-DD or ISO 8601; UTC if it has no zone).
   opt_to: Only queries up to this date, inclusive.

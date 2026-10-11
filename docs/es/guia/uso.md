@@ -125,7 +125,7 @@ incluyen la instalación con uv, sin crear ni activar entornos manualmente.
 | Comando | Qué hace |
 |---|---|
 | `ipsis doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS, personalidad y modo. Cada error trae su acción. Sale con 0 si no hay errores |
-| `ipsis audit [--from FECHA] [--to FECHA]` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--from`/`--to` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. El registro se activa con `ipsis configure query_log.enabled=true` |
+| `ipsis audit [--from FECHA] [--to FECHA]` / `ipsis audit --trace ID` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--from`/`--to` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. `--trace` muestra una consulta original y sus pasos por `consulta_id`, sin ejecutarla ni consultar el corpus. El registro se activa con `ipsis configure query_log.enabled=true` |
 
 ### Personalidad
 

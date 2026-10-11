@@ -192,6 +192,9 @@ doctor:
   actions: 'Acciones:'
   action_item: '  {action}'
 audit:
+  opt_trace: Muestra la consulta y su traza original por consulta_id, sin repetirla.
+  trace_missing: 'No hay consulta con id {id} en el registro.'
+  trace_dates: '--trace no se combina con --from o --to.'
   help: 'Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal.'
   opt_from: Solo consultas desde esta fecha (AAAA-MM-DD o ISO 8601; UTC si no trae zona).
   opt_to: Solo consultas hasta esta fecha, inclusive.

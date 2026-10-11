@@ -164,7 +164,9 @@ class Motor:
         # Con reranker se recuperan más candidatos y él elige los mejores.
         perfil = self.perfil_instalacion
         limite = perfil.cascada.recuperar_n if self.reranker is not None and perfil is not None else self.top_k
-        return self.retriever.recuperar(consulta, limite)
+        from ipsis.nucleo.traza import recuperar_con_traza
+
+        return recuperar_con_traza(self.retriever, consulta, limite, origen="principal")
 
     def _completar_premisa(
         self,
@@ -183,10 +185,14 @@ class Motor:
         for entidad in en_corpus:
             if agregados >= self.max_fragmentos_adicionales:
                 break
-            dirigidos = self.retriever.recuperar(
+            from ipsis.nucleo.traza import recuperar_con_traza
+
+            dirigidos = recuperar_con_traza(
+                self.retriever,
                 consulta,
                 1,
                 filtro=FiltroEntidad(valor_norm=entidad["valor_norm"]),
+                origen="premisa",
             )
             for candidato in dirigidos:
                 if candidato.chunk.chunk_id not in vistos:
@@ -377,36 +383,72 @@ class Motor:
 
     def _ejecutar_etapa(self, etapa, ctx: ContextoConsulta) -> None:
         from ipsis.nucleo.progreso import informar
+        from ipsis.nucleo.traza import estado_etapa, traza_actual
 
         informar(etapa.nombre)
         marca = time.perf_counter()
-        etapa.ejecutar(ctx)
-        clave = f"{etapa.nombre}_ms"
-        ms = int((time.perf_counter() - marca) * 1000)
-        ctx.diagnostico.setdefault("etapas", {})[clave] = ms
-        if ctx.resultado is not None:
-            ctx.resultado.diagnostico.setdefault("etapas", {})[clave] = ms
+        traza = traza_actual()
+        evento = (traza.agregar("etapa", nombre=etapa.nombre, estado="iniciada", entrada=estado_etapa(ctx))
+                  if traza is not None else None)
+        try:
+            etapa.ejecutar(ctx)
+        except Exception as exc:
+            if evento is not None:
+                evento.update(estado="error", error=type(exc).__name__)
+            raise
+        else:
+            if evento is not None:
+                evento["estado"] = "completada"
+        finally:
+            clave = f"{etapa.nombre}_ms"
+            ms = int((time.perf_counter() - marca) * 1000)
+            ctx.diagnostico.setdefault("etapas", {})[clave] = ms
+            if ctx.resultado is not None:
+                ctx.resultado.diagnostico.setdefault("etapas", {})[clave] = ms
+            if evento is not None:
+                evento.update(duracion_ms=ms, salida=estado_etapa(ctx))
 
     def _consultar_en_contexto(self, pregunta: str, id_sesion: str) -> AssistantResult:
+        from ipsis.nucleo.traza import traza_actual
+
         ctx = ContextoConsulta(pregunta=pregunta, id_sesion=id_sesion)
         pendientes = list(self.etapas)
+        traza = traza_actual()
+        if traza is not None:
+            traza.agregar("consulta", etapas=[e.nombre for e in pendientes],
+                          entorno=getattr(self, "metadatos_auditoria", {}))
+
+        def omitir_restantes(etapas):
+            if traza is not None:
+                for etapa in etapas:
+                    traza.agregar("etapa", nombre=etapa.nombre, estado="omitida",
+                                  motivo="resultado_temprano")
         # Las etapas que no consumen recursos (conversacional) corren antes del
         # control de admisión: un saludo nunca espera ni satura el servicio.
         while pendientes and not pendientes[0].requiere_admision:
             self._ejecutar_etapa(pendientes.pop(0), ctx)
             if ctx.resultado is not None:
+                omitir_restantes(pendientes)
                 return ctx.resultado
 
         self._validar_listo()
         if self.control_admision is not None and not self.control_admision.intentar_admitir():
+            if traza is not None:
+                traza.agregar("admision", estado="rechazada", motivo="limite_concurrencia")
             raise MotorSaturado("límite de concurrencia alcanzado")
+        if traza is not None:
+            traza.agregar("admision", estado="admitida")
         ctx.diagnostico = {**self._diagnostico(), "etapas": dict(ctx.diagnostico.get("etapas", {}))}
         try:
-            for etapa in pendientes:
+            for indice, etapa in enumerate(pendientes):
                 if ctx.saltar_modelos and getattr(etapa, "usa_modelos", False):
+                    if traza is not None:
+                        traza.agregar("etapa", nombre=etapa.nombre, estado="omitida",
+                                      motivo="sin_foco_en_candidatos")
                     continue  # salida temprana: ningún candidato menciona lo que se pregunta
                 self._ejecutar_etapa(etapa, ctx)
                 if ctx.resultado is not None:
+                    omitir_restantes(pendientes[indice + 1:])
                     return ctx.resultado
             raise RuntimeError("ninguna etapa produjo un resultado")
         finally:

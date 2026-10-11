@@ -94,6 +94,16 @@ class RetrieverQdrant:
         pregunta = consulta.pregunta_original
         res = buscar(self.coleccion, pregunta, modo="vectorial", limit=max(limite, 2),
                      vector_precomputado=self._vector_consulta(pregunta))
+        from ipsis.nucleo.traza import traza_actual
+
+        traza = traza_actual()
+        if traza is not None:
+            traza.agregar("recuperacion", origen="confianza", estado="completada",
+                          pregunta_densa=pregunta, pregunta_recuperacion=pregunta,
+                          modo="vectorial", limite=max(limite, 2), filtro=None,
+                          candidatos=[{"chunk": chunk_desde_payload(payload).model_dump(mode="json"),
+                                       "score": float(score)}
+                                      for payload, score in zip(res.payloads, res.scores)])
         s1 = res.scores[0] if res.scores else 0.0
         s2 = res.scores[1] if len(res.scores) > 1 else 0.0
         return SenalesRecuperacion(
