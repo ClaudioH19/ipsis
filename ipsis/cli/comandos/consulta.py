@@ -95,7 +95,10 @@ class ComandoServir(Comando):
         anterior = Path.cwd()
         try:
             if args.carpeta:
-                proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
+                from ipsis.cli.progreso import actividad
+
+                with actividad("serve"):
+                    proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
                 print(t("serve.active_project", path=proyecto))
             proxy = self._preparar_modo(args.modo)
             print(t("serve.serving", host=args.host, port=args.port))

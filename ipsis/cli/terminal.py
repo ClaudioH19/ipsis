@@ -9,6 +9,7 @@ CLI: un comando nuevo aparece solo. Sin terminal real (o sin la librería) se us
 from __future__ import annotations
 
 import argparse
+import shutil
 import sys
 from pathlib import Path
 
@@ -16,11 +17,19 @@ from ipsis.recursos.mensajes import t
 
 # Folio, el avatar de ipsis, en caracteres (una hoja con cara).
 FOLIO = (
-    "╭──────╮",
-    "│ ◕  ◕ │",
-    "│  ‿   │",
-    "│ ──── │",
-    "╰──────╯",
+    "╭──────────────╮    ",
+    "│              │╲   ",
+    "│              │ ╲  ",
+    "│              ╰───┤",
+    "│                  │",
+    "│    ▄▄    ▄▄      │",
+    "│    ██    ██      │",
+    "│    ▀▀    ▀▀      │",
+    "│                  │",
+    "│  ━━━━━━━━━━━━    │",
+    "│  ━━━━━━  ━━━━    │",
+    "│                  │",
+    "╰──────────────────╯",
 )
 HISTORIAL = Path.home() / ".ipsis_history"
 PROPIOS = ("help", "diagnostics", "reload", "exit", "quit")
@@ -36,33 +45,91 @@ def _resumen_proyecto() -> tuple[str, int] | None:
         return None
     try:
         from ipsis.aplicacion.panel import documentos
-        from ipsis.configuracion.carga import cargar_dominio
+        from ipsis.aplicacion.proyecto import resumen_para_terminal
 
-        dominio = cargar_dominio()
-        return f"{dominio.get('perfil', '-')} · {dominio.get('idioma', '-')}", len(documentos())
+        return resumen_para_terminal(), len(documentos())
     except Exception:  # noqa: BLE001 -- el banner nunca impide abrir la terminal
         return None
 
 
-def lineas_banner() -> list[str]:
+def lineas_banner(ancho: int | None = None) -> list[str]:
     from ipsis import __version__
+    from rich.text import Text
 
     proyecto = _resumen_proyecto()
-    derecha = [f"ipsis {__version__}",
+    derecha = [f"ipsis {__version__} · Folio", t("terminal.subtitle"), "",
                t("terminal.project", profile=proyecto[0], n=proyecto[1]) if proyecto else t("terminal.no_project"),
-               t("terminal.tips"), ""]
-    return [f"  {folio}   {texto}".rstrip() for folio, texto in zip(FOLIO, derecha + [""])]
+               str(Path.cwd()), "", t("terminal.tips"), t("terminal.controls"), "",
+               t("terminal.no_activation")]
+    ancho = ancho or shutil.get_terminal_size((100, 24)).columns
+    folio = _folio_visible()
+    if ancho < 72:
+        return [f"  {linea}".rstrip() for linea in folio] + [""] + derecha
+    ajustadas = []
+    for linea in derecha:
+        texto = Text(linea)
+        texto.truncate(max(1, ancho - 25), overflow="ellipsis")
+        ajustadas.append(texto.plain)
+    derecha = ajustadas
+    derecha += [""] * (len(folio) - len(derecha))
+    return [f"  {linea}   {texto}".rstrip() for linea, texto in zip(folio, derecha)]
+
+
+def _folio_visible() -> tuple[str, ...]:
+    try:
+        "".join(FOLIO).encode(sys.stdout.encoding or "utf-8")
+    except UnicodeEncodeError:
+        traduccion = str.maketrans({c: "-" for c in "─━"} | {c: "|" for c in "│┤"}
+                                  | {c: "+" for c in "╭╮╰╯"} | {"╲": "\\", "▄": "o", "█": "|", "▀": "o"})
+        return tuple(linea.translate(traduccion) for linea in FOLIO)
+    return FOLIO
 
 
 def imprimir_banner() -> None:
-    texto = "\n".join(lineas_banner())
-    try:
-        from prompt_toolkit import print_formatted_text
-        from prompt_toolkit.formatted_text import FormattedText
+    from rich.console import Console
+    from rich.text import Text
 
-        print_formatted_text(FormattedText([("ansicyan", texto)]))
-    except ImportError:
-        print(texto)
+    consola = Console(highlight=False)
+    consola.print()
+    for linea in lineas_banner():
+        texto = Text(linea, style="dim")
+        if linea.startswith("  "):
+            texto.stylize("#ddd9c8 not dim", 0, min(22, len(linea)))
+        for ojos in ("▄▄", "██", "▀▀"):
+            texto.highlight_words([ojos], "bold #a6d4ff not dim")
+        texto.highlight_words(["ipsis", "Folio"], "bold cyan not dim")
+        texto.highlight_words(["/init", "/help", "/exit"], "cyan not dim")
+        texto.highlight_words(["━━━━━━━━━━━━", "━━━━━━", "━━━━"], "#8abfe8 not dim")
+        consola.print(texto)
+    consola.print()
+
+
+def imprimir_respuesta(estado: str, respuesta: str, evidencias: list[dict]) -> None:
+    from ipsis.cli.comandos.consulta import etiqueta_estado
+
+    if not sys.stdout.isatty():
+        print(etiqueta_estado(estado))
+        print(respuesta)
+        for e in evidencias:
+            print(t("ask.evidence", doc_id=e["doc_id"], start=e["offset_inicio"], end=e["offset_fin"]))
+        return
+    from rich.console import Console
+    from rich.padding import Padding
+    from rich.text import Text
+
+    consola = Console(highlight=False)
+    consola.print()
+    titulo = Text("Folio", style="bold cyan")
+    titulo.append(f"  {etiqueta_estado(estado)}", style="green" if estado == "ok" else "yellow")
+    consola.print(titulo)
+    # Text evita interpretar markup del documento y conserva la respuesta literal.
+    consola.print(Padding(Text(respuesta), (1, 2)))
+    if evidencias:
+        consola.print(Text(t("terminal.sources", n=len(evidencias)), style="dim"))
+        for e in evidencias:
+            consola.print(Text("  " + t("ask.evidence", doc_id=e["doc_id"],
+                                       start=e["offset_inicio"], end=e["offset_fin"]), style="dim"))
+    consola.print()
 
 
 # --- autocompletado desde el parser ---------------------------------------------------------
@@ -124,6 +191,7 @@ def crear_entrada(estado: dict):
         from prompt_toolkit.completion import Completer, Completion, PathCompleter
         from prompt_toolkit.document import Document
         from prompt_toolkit.history import FileHistory
+        from prompt_toolkit.styles import Style
     except ImportError:
         return None
     from ipsis.cli import construir_parser
@@ -150,9 +218,12 @@ def crear_entrada(estado: dict):
         historial = FileHistory(str(HISTORIAL))
     except OSError:
         historial = None
+    estilo = Style.from_dict({"prompt": "ansicyan bold", "bottom-toolbar": "bg:ansiblack ansibrightblack",
+                              "completion-menu.completion.current": "bg:ansicyan ansiblack",
+                              "completion-menu.meta.completion.current": "bg:ansicyan ansiblack"})
     sesion = PromptSession(completer=_Completador(), complete_while_typing=True, history=historial,
-                           bottom_toolbar=barra)
-    return lambda prompt: sesion.prompt("› ")
+                           bottom_toolbar=barra, style=estilo)
+    return lambda prompt: sesion.prompt([("class:prompt", "› ")])
 
 
 __all__ = ["FOLIO", "candidatos", "crear_entrada", "imprimir_banner", "lineas_banner", "terminal_real"]

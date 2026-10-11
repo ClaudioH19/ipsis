@@ -95,7 +95,9 @@ def motor_ocr(idioma: str | None) -> tuple[MotorOCR | None, str]:
         import pypdfium2  # noqa: F401
         import pytesseract
     except ImportError:
-        return None, t("core.ocr_missing_extra")
+        from ipsis.recursos.instalacion import comando_extra
+
+        return None, t("core.ocr_missing_extra", command=comando_extra("ocr"))
     comando = _comando_tesseract()
     if comando:
         pytesseract.pytesseract.tesseract_cmd = comando

@@ -67,14 +67,17 @@ def test_el_widget_enlaza_al_codigo_fuente():
 
 
 def test_el_wheel_incluye_las_licencias(tmp_path: Path):
-    subprocess.run([sys.executable, "-m", "pip", "wheel", str(RAIZ), "--no-deps", "--no-build-isolation",
-                    "-q", "-w", str(tmp_path)], check=True, capture_output=True)
+    subprocess.run(["uv", "build", "--wheel", str(RAIZ), "--python", sys.executable,
+                    "--out-dir", str(tmp_path), "--cache-dir", str(tmp_path / "uv-cache"), "--quiet"],
+                   check=True, capture_output=True)
     wheel = next(tmp_path.glob("ipsis-*.whl"))
     nombres = zipfile.ZipFile(wheel).namelist()
     assert any(n.endswith(".dist-info/licenses/LICENSE") for n in nombres), nombres
     assert "ipsis/servicio/estaticos/avatar.js.LICENSE.txt" in nombres
     assert "ipsis/servicio/estaticos/admin/panel.js" in nombres
     assert not any("herramientas" in n or "node_modules" in n for n in nombres)
+    assert not any(n.startswith(("rag/", ".cache/", "tests/")) for n in nombres)
+    assert "ipsis/cli/progreso.py" in nombres and "ipsis/nucleo/progreso.py" in nombres
     # Todo recurso que no es Python (perfiles, idiomas, tonos, plantillas, estáticos…) viaja en el wheel.
     recursos = {p.relative_to(RAIZ).as_posix() for p in (RAIZ / "ipsis").rglob("*")
                 if p.is_file() and p.suffix not in (".py", ".pyc") and "__pycache__" not in p.parts}

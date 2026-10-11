@@ -82,7 +82,7 @@ Los registros de consultas y los secretos no se copian.
 
 - **Versión exacta:** sin `--wheel`, la imagen instala la versión actual del
   repositorio público. Para fijar la tuya, construye el wheel
-  (`python -m pip wheel . --no-deps`) y pásalo con `--wheel`.
+  (`uv build --wheel`) y pásalo con `--wheel`.
 - **Regenerar:** `--force` reemplaza una carpeta preparada antes. Nunca
   borra una carpeta que no haya generado este comando.
 
@@ -163,5 +163,5 @@ publica; ningún comando la marca solo.
 - [ ] **Latencia:** `ipsis benchmark` cumple el presupuesto del perfil en la
   máquina de producción (light ≤ 150 ms y medium ≤ 1 s de p95).
 - [ ] **Pruebas en verde** sobre la versión que se despliega
-  (`python -m pytest`).
+  (`uv run --locked --extra test --extra browser pytest`).
 - [x] **Licencia:** AGPL-3.0-only.

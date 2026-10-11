@@ -6,7 +6,7 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 
 ## Requisitos
 
-- Python 3.11 o 3.12.
+- `uv` y Git. `uv` instala Python 3.12 automáticamente si falta; no necesitas instalarlo antes.
 - CPU: no hace falta GPU. Los modelos corren con onnxruntime.
 - Disco para los modelos del perfil. Es una caché global por usuario, que
   comparten todos los proyectos:
@@ -22,65 +22,74 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 
 ## Instalar el paquete
 
-**Como comando global (recomendado).** `uv tool` o `pipx` instalan ipsis en un
-entorno aislado propio y dejan `ipsis` en tu `PATH`: funciona en cualquier
-terminal, sin activar nada.
+La instalación de Python y sus dependencias se hace con **uv**. No necesitas
+crear un entorno virtual, activarlo ni clonar el repositorio para usar ipsis.
 
-```bash
-uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"   # o
-pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
-ipsis --version
-uv tool upgrade ipsis        # después, para actualizar (pipx upgrade ipsis)
-```
+### 1. Instalar uv (una sola vez)
 
-En Windows, instala `uv` con `winget install astral-sh.uv` (o `pipx` con
-`py -m pip install --user pipx` y `py -m pipx ensurepath`) y abre una terminal
-nueva.
-
-**En un entorno virtual**, uno por servidor o por máquina, si prefieres
-manejarlo tú:
-
-**Linux y macOS**
-
-```bash
-python3 -m venv ~/.venvs/ipsis
-source ~/.venvs/ipsis/bin/activate
-pip install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
-ipsis --version
-```
-
-**Windows (PowerShell)**
+En Windows, desde PowerShell:
 
 ```powershell
-py -3.12 -m venv $HOME\.venvs\ipsis
-& $HOME\.venvs\ipsis\Scripts\Activate.ps1
-pip install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
-ipsis --version
+winget install --id astral-sh.uv -e
 ```
 
-**En un servidor con Docker:** `ipsis deploy prepare` genera la imagen y el
-compose de tu proyecto (ver [despliegue.md](despliegue.md#3-docker)).
+En Linux o macOS:
 
-### Para desarrollar
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Abre una terminal nueva. Comprueba `uv --version` y `git --version`; Git es
+necesario para instalar desde el repositorio. Si falta en Windows, instala
+`winget install --id Git.Git -e`; en Linux o macOS usa el gestor de tu sistema.
+
+### 2. Instalar ipsis (el mismo comando en todos los sistemas)
+
+```bash
+uv tool install --python 3.12 "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+uv tool update-shell
+```
+
+Abre una terminal nueva y ejecuta `ipsis --version`. Ya puedes usar `ipsis`
+desde cualquier carpeta. `uv` mantiene un entorno aislado interno para evitar
+conflictos; tú no tienes que crearlo ni activarlo. La instalación del paquete
+es distinta de un proyecto: cada asistente sigue viviendo en su propia carpeta.
+
+### Actualizar
+
+```bash
+uv tool upgrade ipsis
+```
+
+**En Docker:** `ipsis deploy prepare` genera la imagen de tu proyecto;
+también instala el paquete con uv (ver [despliegue.md](despliegue.md#3-docker)).
+
+### Solo si vas a desarrollar el repositorio
+
+Para usar ipsis no necesitas estos pasos. Para modificar su código:
 
 ```bash
 git clone https://github.com/ClaudioH19/ipsis.git
 cd ipsis
-python -m venv .venv
-.venv/bin/python -m pip install -e ".[test]"        # Linux/macOS
-.venv\Scripts\python.exe -m pip install -e ".[test]" # Windows
+uv sync --locked --extra test
+uv run --locked --extra test ipsis --help
+uv run --locked --extra test pytest -m "not slow and not browser"
 ```
 
-Extras opcionales:
+`uv sync` crea y mantiene `.venv` automáticamente con las versiones de
+`uv.lock`; `uv run` ejecuta dentro de ella sin activarla. Para pruebas de
+navegador usa `uv sync --locked --extra test --extra browser` y
+`uv run --locked --extra test --extra browser playwright install chromium`.
+Conserva esos extras en los comandos `uv run` que los necesiten.
 
-| Extra | Para qué | ¿Producción? |
+| Extra | Instalar en el clon | Para qué |
 |---|---|---|
-| `test` | pytest | no |
-| `browser` | pruebas de navegador con Playwright (`python -m playwright install chromium`) | no |
-| `export` | `ipsis models export`: convierte un modelo de Hugging Face a ONNX (`optimum-onnx` y `torch`) | no; solo desarrollo |
+| `test` | `uv sync --locked --extra test` | pytest |
+| `browser` | `uv sync --locked --extra test --extra browser` | Playwright |
+| `export` | `uv sync --locked --extra export` | Exportar modelos a ONNX; solo desarrollo |
+| `ocr` | `uv sync --locked --extra ocr` | Leer PDF escaneados; además necesita Tesseract |
 
-La producción no instala torch. Una instalación editable guarda rutas
-absolutas: si mueves el clon, reinstala.
+La producción no instala torch. Si mueves el clon, vuelve a ejecutar `uv sync`.
 
 ## Crear un proyecto
 
@@ -123,7 +132,7 @@ extraer. Con OCR, `ipsis load` lee esas páginas con
 rechaza y el resto de la carpeta se carga igual.
 
 ```bash
-pip install "ipsis[ocr]"
+uv tool install --force --python 3.12 "ipsis[ocr] @ git+https://github.com/ClaudioH19/ipsis.git"
 ```
 
 Después instala el programa Tesseract con el idioma de tus documentos:

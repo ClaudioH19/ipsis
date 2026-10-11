@@ -95,7 +95,7 @@ umbrales y documentos, y `ipsis deploy prepare` con Docker y HTTPS (Caddy).
 ### Qué es ipsis (y qué no)
 
 - **Un paquete de Python con línea de comandos (`ipsis`) y un servicio HTTP**
-  (`ipsis serve`, FastAPI). Se instala con `pip`, se usa en una carpeta de
+  (`ipsis serve`, FastAPI). Se instala con `uv`, se usa en una carpeta de
   proyecto y tu sitio le habla con el widget o con `POST /ask`.
 - **Docker es solo para desplegar.** `ipsis deploy prepare` genera un
   `Dockerfile`, un `compose.yaml` y, si quieres, Caddy para HTTPS. Para
@@ -105,16 +105,31 @@ umbrales y documentos, y `ipsis deploy prepare` con Docker y HTTPS (Caddy).
 
 ## 🚀 Inicio rápido
 
-Requiere Python 3.11 o 3.12. No necesita GPU.
+Instala **uv** una sola vez. No necesitas crear ni activar entornos virtuales.
+Python 3.12 se instala automáticamente si hace falta. No necesita GPU.
 
-Instálalo como comando global, para que `ipsis` funcione en cualquier
-terminal sin activar un entorno de Python (cada herramienta crea el suyo,
-aislado):
+**Windows (PowerShell):**
+
+```powershell
+winget install --id astral-sh.uv -e
+```
+
+**Linux / macOS:**
 
 ```bash
-uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"    # o:
-pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Abre una terminal nueva. Con Git instalado (`git --version`), instala ipsis:
+
+```bash
+uv tool install --python 3.12 "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+uv tool update-shell
+```
+
+Abre otra terminal y comprueba `ipsis --version`. Ya puedes usar `ipsis` desde
+cualquier carpeta. Para actualizar: `uv tool upgrade ipsis`. Si te falta Git o
+el comando no aparece, consulta la [guía de instalación](docs/es/guia/instalacion.md).
 
 Después, en cualquier carpeta:
 
@@ -130,8 +145,8 @@ ipsis chat                                  # preguntar desde la terminal (/help
 ipsis serve                                 # API, widget y /admin en http://127.0.0.1:8000
 ```
 
-`ipsis` sin argumentos abre la terminal interactiva (abajo). Si desarrollas
-ipsis, `pip install -e .` en un entorno virtual también sirve. En modo local
+`ipsis` sin argumentos abre la terminal interactiva (abajo). `uv` gestiona
+su aislamiento internamente; tú no activas nada. En modo local
 el índice admite un proceso a la vez: detén `ipsis serve` antes de
 `ipsis chat` o `ipsis ask --diagnostics`. En PowerShell, la variable se fija
 con `$env:IPSIS_LANG = "es"`.
@@ -182,14 +197,30 @@ despliega un menú con todos los comandos y su descripción. Tras un comando,
 recupera líneas anteriores; la barra inferior indica si el diagnóstico está
 activo.
 
+Los comandos muestran la etapa real que están ejecutando y cuánto tiempo llevan.
+Por ejemplo, `/index` pasa por lectura, fragmentado, validación, vectores y guardado;
+las preguntas muestran búsqueda, lectura y verificación de citas. Las etapas
+dependen del perfil y de lo que necesite cada pregunta. La respuesta aparece en
+un bloque de Folio, con las fuentes debajo. `Ctrl+C` cancela la operación y
+permite seguir en el chat. Los avisos van a stderr; los resultados, a stdout.
+`/help` e `ipsis --help` recuerdan también cómo instalar con uv.
+
 ```text
-  ╭──────╮   ipsis 0.9.0
-  │ ◕  ◕ │   perfil medium · es · 3 documento(s)
-  │  ‿   │   / comandos con Tab · escribe una pregunta · /exit para salir
-  │ ──── │
-  ╰──────╯
+  ╭──────────────╮       ipsis 0.9.0 · Folio
+  │              │╲      Tus documentos, una conversación local.
+  │              │ ╲
+  │              ╰───┤   perfil medium · es · 3 documento(s)
+  │                  │   /home/usuario/mi-asistente
+  │    ▄▄    ▄▄      │
+  │    ██    ██      │   / comandos con Tab · /help · /exit
+  │    ▀▀    ▀▀      │   Ctrl+C cancela · Ctrl+D sale
+  │                  │
+  │  ━━━━━━━━━━━━    │   uv gestiona el entorno; no lo activas.
+  │  ━━━━━━  ━━━━    │
+  │                  │
+  ╰──────────────────╯
 › /cal
-   /calibrate   Elige umbrales con el golden set importado, bajo control de riesgo.
+   /calibrate   Elige umbrales con tu banco de preguntas.
 ```
 
 `ipsis help` imprime todos los comandos agrupados por tarea (también es lo
@@ -222,7 +253,10 @@ de seguimiento («¿y con 90?») conservan el tema de la conversación.
 $ ipsis chat
 ipsis chat -- escribe una pregunta, o /help para ver los comandos. /exit para salir.
 > cada cuanto se cambia el filtro?
-[OK]
+... Buscando una respuesta en tus documentos
+  Buscando los pasajes más relevantes
+  Verificando que las citas sean literales
+Folio  [OK]
 El filtro de carbón activado se cambia cada 12 meses ...
 > /diagnostics on          # etapas, señales, regla y tramo exacto de cada respuesta
 > /load ./manuales-nuevos  # cualquier comando de ipsis funciona como /comando
@@ -400,8 +434,8 @@ curl -X POST "https://asistente.tu-dominio.cl/admin/documents?name=politica.pdf"
 curl -X POST https://asistente.tu-dominio.cl/admin/reindex -H "Authorization: Bearer $IPSIS_ADMIN_TOKEN"
 ```
 
-Los PDF escaneados necesitan el extra de OCR (`pip install "ipsis[ocr]"` y
-Tesseract).
+Los PDF escaneados necesitan el extra de OCR y Tesseract; se añaden a la
+misma instalación con uv siguiendo la [guía de OCR](docs/es/guia/instalacion.md#pdf-escaneados-ocr-opcional).
 
 ### Personalizar
 
@@ -505,8 +539,8 @@ Por dentro: [notas de metodología](docs/methodology/README.md),
 ```bash
 git clone https://github.com/ClaudioH19/ipsis.git
 cd ipsis
-python -m venv .venv && .venv/bin/python -m pip install -e ".[test]"
-python -m pytest -m "not slow and not browser"         # pruebas rápidas
+uv sync --locked --extra test
+uv run --locked --extra test pytest -m "not slow and not browser"         # pruebas rápidas
 python herramientas/evaluacion/general.py --download   # regresión de punta a punta con documentos reales
 ```
 

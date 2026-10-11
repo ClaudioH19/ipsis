@@ -4,6 +4,7 @@
 # y .ipsis/) se monta desde esta carpeta (ver docker-compose.yml).
 
 FROM python:3.12-slim
+COPY --from=ghcr.io/astral-sh/uv:0.11.26 /uv /bin/uv
 
 ARG PERFIL={{perfil}}
 # Paquete a instalar si paquete/ no trae un wheel (ipsis desplegar preparar --wheel).
@@ -18,8 +19,8 @@ RUN apt-get update \
     && useradd --uid ${APP_UID} --gid ${APP_GID} --create-home --shell /usr/sbin/nologin ipsis
 
 COPY paquete/ /paquete/
-RUN if ls /paquete/*.whl >/dev/null 2>&1; then python -m pip install --no-cache-dir /paquete/*.whl; \
-    else python -m pip install --no-cache-dir "${PAQUETE}"; fi \
+RUN if ls /paquete/*.whl >/dev/null 2>&1; then uv pip install --system --no-cache /paquete/*.whl; \
+    else uv pip install --system --no-cache "${PAQUETE}"; fi \
     && rm -rf /paquete
 
 ENV IPSIS_MODELS_DIR=/opt/ipsis/modelos

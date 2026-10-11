@@ -97,7 +97,7 @@ and HTTPS (Caddy).
 ### What ipsis is (and is not)
 
 - **A Python package with a command line (`ipsis`) and an HTTP service**
-  (`ipsis serve`, FastAPI). You install it with `pip`, run it in a project
+  (`ipsis serve`, FastAPI). You install it with `uv`, run it in a project
   folder, and your site talks to it through the widget or `POST /ask`.
 - **Docker is only for deployment.** `ipsis deploy prepare` writes a
   `Dockerfile`, a `compose.yaml` and, optionally, Caddy for HTTPS. You do not
@@ -107,15 +107,31 @@ and HTTPS (Caddy).
 
 ## 🚀 Quick start
 
-Requires Python 3.11 or 3.12. No GPU needed.
+Install **uv** once. You do not need to create or activate virtual environments.
+Python 3.12 is installed automatically if needed. No GPU required.
 
-Install it as a global command, so `ipsis` works in any terminal without
-activating a Python environment (each tool creates its own isolated one):
+**Windows (PowerShell):**
+
+```powershell
+winget install --id astral-sh.uv -e
+```
+
+**Linux / macOS:**
 
 ```bash
-uv tool install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"    # or:
-pipx install "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Open a new terminal. With Git installed (`git --version`), install ipsis:
+
+```bash
+uv tool install --python 3.12 "ipsis @ git+https://github.com/ClaudioH19/ipsis.git"
+uv tool update-shell
+```
+
+Open a new terminal and check `ipsis --version`. You can now use `ipsis` from
+any folder. To update: `uv tool upgrade ipsis`. If Git is missing or you need
+help with PATH, see the [installation guide](docs/guide/installation.md).
 
 Then, in any folder:
 
@@ -131,8 +147,8 @@ ipsis serve                                 # API, widget and /admin on http://1
 ```
 
 `ipsis` with no arguments opens the interactive terminal (below). The command
-line speaks English; set `IPSIS_LANG=es` for Spanish. Inside a project you
-work on, `pip install -e .` in a virtual environment also works. In local mode the index
+line speaks English; set `IPSIS_LANG=es` for Spanish. `uv` manages its isolation
+internally; there is no activation step. In local mode the index
 admits one process at a time: stop `ipsis serve` before `ipsis chat` or
 `ipsis ask --diagnostics`.
 
@@ -181,14 +197,30 @@ its subcommands and options with their help (`/calibrate --` → `--alpha`,
 `--apply`), and after `/load` it completes paths. Arrow up recalls previous
 lines; the bottom bar shows whether diagnostics are on.
 
+Commands show the real stage they are running and elapsed time. For example,
+`/index` goes through reading, chunking, validation, vectors and storage;
+questions show searching, reading and citation verification. Stages depend on
+the profile and what each question needs. Answers appear under Folio, with
+sources underneath. `Ctrl+C` cancels the operation and lets you keep chatting.
+Progress goes to stderr; results go to stdout. `/help` and `ipsis --help` also
+show the uv installation command.
+
 ```text
-  ╭──────╮   ipsis 0.9.0
-  │ ◕  ◕ │   profile medium · es · 3 document(s)
-  │  ‿   │   / commands with Tab · type a question · /exit to leave
-  │ ──── │
-  ╰──────╯
+  ╭──────────────╮       ipsis 0.9.0 · Folio
+  │              │╲      Your documents, a local conversation.
+  │              │ ╲
+  │              ╰───┤   profile medium · en · 3 document(s)
+  │                  │   /home/user/my-assistant
+  │    ▄▄    ▄▄      │
+  │    ██    ██      │   / commands with Tab · /help · /exit
+  │    ▀▀    ▀▀      │   Ctrl+C cancels · Ctrl+D leaves
+  │                  │
+  │  ━━━━━━━━━━━━    │   uv manages isolation; no activation.
+  │  ━━━━━━  ━━━━    │
+  │                  │
+  ╰──────────────────╯
 › /cal
-   /calibrate   Choose thresholds with the imported golden set, under risk control.
+   /calibrate   Choose thresholds with your question bank.
 ```
 
 `ipsis help` prints every command grouped by task (also what `ipsis` prints
@@ -221,7 +253,10 @@ question, and what starts with `/` is a command. The models load once, and follo
 $ ipsis chat
 ipsis chat -- type a question, or /help for commands. /exit to leave.
 > how often is the filter replaced?
-[OK]
+... Looking for an answer in your documents
+  Finding the most relevant passages
+  Verifying that citations are literal
+Folio  [OK]
 The activated carbon filter is replaced every 12 months ...
 > /diagnostics on          # stages, signals, rule and exact span of each answer
 > /load ./new-manuals      # any ipsis command works as /command
@@ -399,7 +434,8 @@ curl -X POST "https://assistant.your-domain.com/admin/documents?name=policy.pdf"
 curl -X POST https://assistant.your-domain.com/admin/reindex -H "Authorization: Bearer $IPSIS_ADMIN_TOKEN"
 ```
 
-Scanned PDFs need the OCR extra (`pip install "ipsis[ocr]"` and Tesseract).
+Scanned PDFs need the OCR extra and Tesseract; add them to the same uv
+installation following the [OCR guide](docs/guide/installation.md#scanned-pdfs-ocr-optional).
 
 ### Customize
 
@@ -503,8 +539,8 @@ Guides in Spanish: [docs/es/](docs/es/README.md).
 ```bash
 git clone https://github.com/ClaudioH19/ipsis.git
 cd ipsis
-python -m venv .venv && .venv/bin/python -m pip install -e ".[test]"
-python -m pytest -m "not slow and not browser"     # fast tests
+uv sync --locked --extra test
+uv run --locked --extra test pytest -m "not slow and not browser"     # fast tests
 python herramientas/evaluacion/general.py --download   # end-to-end regression on real-format documents
 ```
 

@@ -85,7 +85,7 @@ The query logs and the secrets are not copied.
 
 - **Exact version:** without `--wheel`, the image installs the current
   version of the public repository. To pin yours, build the wheel
-  (`python -m pip wheel . --no-deps`) and pass it with `--wheel`.
+  (`uv build --wheel`) and pass it with `--wheel`.
 - **Regenerate:** `--force` replaces a previously prepared folder. It never
   deletes a folder this command did not generate.
 
@@ -164,5 +164,5 @@ command ticks it automatically.
   Generated `DEPLOY.md` includes configuration and container CLI instructions.
 - [ ] **Latency:** `ipsis benchmark` meets the profile budget on the
   production machine (light ≤ 150 ms and medium ≤ 1 s at p95).
-- [ ] **Tests green** on the version being deployed (`python -m pytest`).
+- [ ] **Tests green** on the version being deployed (`uv run --locked --extra test --extra browser pytest`).
 - [x] **License:** AGPL-3.0-only.

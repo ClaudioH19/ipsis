@@ -8,6 +8,13 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Terminal progress with real ingestion and query stages, elapsed time,
+  cancellation and separate output for answers and citations. Folio now has
+  a folded corner and larger eyes; narrow and legacy terminals have fallbacks.
+- A uv-only Python installation workflow: automatic Python and isolated tool
+  management, a committed development lockfile, uv-based CI and Docker, and
+  matching installation instructions in the CLI and both READMEs.
+
 - Six pinned multilingual CPU/ONNX alternative models: Granite 311M/97M R2,
   Harrier-270M, EmbeddingGemma 2 (text only), Horizon base/small. Runtime
   supports model-specific pooling, padding, named embeddings and external

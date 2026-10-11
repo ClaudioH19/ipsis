@@ -317,7 +317,7 @@ ipsis models export org/model --int8  # development: converts to ONNX
   `DOES NOT LOAD` (the file is there but invalid) or `FAILS` (invalid
   inference). It exits with 0 only when all are `OK`.
 - **`export`** is for development only. It needs the `[export]` extra
-  (`pip install "ipsis[export]"`, with `optimum-onnx` and `torch`).
+  (`uv sync --locked --extra export`, with `optimum-onnx` and `torch`).
   Production runs without torch.
   - It writes `exported/<org>--<model>/model.onnx` in the current folder
     and, with `--int8`, also `model_int8.onnx`, using onnxruntime's dynamic

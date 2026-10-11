@@ -71,14 +71,16 @@ class ComandoChat(Comando):
     # --- motor ---------------------------------------------------------------------------
     def _motor(self):
         if self.motor is None:
-            print(t("chat.loading"))
-            if self.construir_motor is not None:
-                self.motor = self.construir_motor()
-            else:
-                from ipsis.aplicacion.consulta import construir_motor_del_proyecto
+            from ipsis.cli.progreso import actividad
 
-                self.motor = construir_motor_del_proyecto()
-                self.motor.calentar()
+            with actividad("engine"):
+                if self.construir_motor is not None:
+                    self.motor = self.construir_motor()
+                else:
+                    from ipsis.aplicacion.consulta import construir_motor_del_proyecto
+
+                    self.motor = construir_motor_del_proyecto()
+                    self.motor.calentar()
         return self.motor
 
     def _cerrar_motor(self) -> None:
@@ -106,9 +108,12 @@ class ComandoChat(Comando):
             while True:
                 try:
                     linea = entrada("> ").strip()
-                except (EOFError, KeyboardInterrupt):
+                except EOFError:
                     print()
                     break
+                except KeyboardInterrupt:
+                    print(t("chat.cancelled"))
+                    continue
                 if not linea:
                     continue
                 if linea in ("/exit", "/quit"):
@@ -123,7 +128,11 @@ class ComandoChat(Comando):
         return 0
 
     def _comando(self, linea: str) -> None:
-        partes = shlex.split(linea[1:], posix=True) if linea[1:].strip() else []
+        try:
+            partes = shlex.split(linea[1:], posix=True) if linea[1:].strip() else []
+        except ValueError as e:
+            print(t("chat.invalid_command", error=e))
+            return
         if not partes or partes[0] == "help":
             self._ayuda()
             return
@@ -145,7 +154,9 @@ class ComandoChat(Comando):
             return
         self._cerrar_motor()  # el índice local admite un solo cliente
         try:
-            main(partes)
+            codigo = main(partes)
+            if codigo == 130:
+                print(t("chat.cancelled"))
         except SystemExit:
             pass  # argparse: --help o argumentos inválidos ya se informaron
 
@@ -154,13 +165,26 @@ class ComandoChat(Comando):
         for nombre, clave in PROPIOS.items():
             print(f"  {nombre:14} {t(clave)}")
         print(f"  {'/<command>':14} {t('chat.cmd_any')}")
+        from ipsis.recursos.instalacion import INSTALAR
+
+        print(t("terminal.install", command=INSTALAR))
+        print(t("terminal.update"))
+        print(t("terminal.no_activation"))
 
     def _preguntar(self, pregunta: str) -> None:
         from ipsis.aplicacion.consulta import MotorNoListo, diagnosticar_pregunta
-        from ipsis.cli.comandos.consulta import etiqueta_estado, imprimir_diagnostico
+        from ipsis.cli.comandos.consulta import imprimir_diagnostico
 
         try:
-            d = diagnosticar_pregunta(pregunta, self._motor())
+            from ipsis.cli.progreso import actividad
+
+            motor = self._motor()
+            with actividad("query"):
+                d = diagnosticar_pregunta(pregunta, motor)
+        except KeyboardInterrupt:
+            print(t("chat.cancelled"))
+            self._cerrar_motor()
+            return
         except MotorNoListo as e:
             print(t("ask.not_ready", error=e))
             print(t("cli.action", action="/doctor"))
@@ -174,10 +198,9 @@ class ComandoChat(Comando):
         if self.diagnostico:
             imprimir_diagnostico(d)
             return
-        print(etiqueta_estado(d.estado))
-        print(d.respuesta)
-        for e in d.evidencias:
-            print(t("ask.evidence", doc_id=e["doc_id"], start=e["offset_inicio"], end=e["offset_fin"]))
+        from ipsis.cli.terminal import imprimir_respuesta
+
+        imprimir_respuesta(d.estado, d.respuesta, d.evidencias)
 
 
 __all__ = ["ComandoAyuda", "ComandoChat", "PROPIOS"]

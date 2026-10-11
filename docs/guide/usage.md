@@ -47,9 +47,9 @@ so anyone can check it.
 
 ## The terminal: menu and interactive mode
 
-`ipsis` with no arguments prints every command grouped by task (Start,
-Documents, Ask, Customize, Measure and calibrate, Deploy and operate) with
-examples; `ipsis help <command>` prints the options of one command, the same
+`ipsis help` prints every command grouped by task (Start, Documents, Ask,
+Customize, Measure and calibrate, Deploy and operate) with examples;
+`ipsis` with no arguments does the same when its output is not a terminal. `ipsis help <command>` prints the options of one command, the same
 as `ipsis <command> --help`.
 
 `ipsis` alone (or `ipsis chat`) opens the interactive mode, in the style of
@@ -72,6 +72,15 @@ The models load once, with the first question. Before running a command the
 engine is closed (the local index admits one client) and it reloads with the
 next question. Like `ipsis ask --diagnostics`, it needs `ipsis serve` stopped
 when the index is local.
+
+Commands show real stages and elapsed time: file reading, passage preparation,
+vector computation, or search and citation verification. Folio's answers
+separate the text from its sources. `Ctrl+C` cancels and lets you keep chatting;
+`/exit` or Ctrl+D leave. Unclosed quotes are explained without ending the
+session. Progress goes to stderr and command output to stdout; redirected
+output has no animation or color codes. `ipsis --help`, `ipsis help` and
+`/help` include the uv installation command, with no manual environment
+creation or activation.
 
 ## Command reference
 

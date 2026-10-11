@@ -48,4 +48,4 @@ body:
   - type: input
     id: environment
     attributes:
-      label: Operating system, Python version and installation method (pip, Docker…)
+      label: Operating system, uv/Python version and installation (uv tool, clone or Docker)

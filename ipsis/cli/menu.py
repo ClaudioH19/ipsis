@@ -73,6 +73,9 @@ def texto_menu() -> str:
         lineas.append(f"   {_estilo('$', '2')} {comando}")
         lineas.append(f"     {_estilo(t(clave), '2')}")
     lineas += ["", " " + t("menu.footer")]
+    from ipsis.recursos.instalacion import INSTALAR
+
+    lineas += ["", " " + t("terminal.install", command=INSTALAR), " " + t("terminal.update"), " " + t("terminal.no_activation")]
     return "\n".join(lineas)
 
 

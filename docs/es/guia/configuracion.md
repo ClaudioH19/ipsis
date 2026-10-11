@@ -330,7 +330,7 @@ ipsis models export org/modelo --int8 # desarrollo: convierte a ONNX
   `NO CARGA` (archivo presente pero inválido) o `FALLA` (inferencia
   inválida). Sale con 0 solo si todos dan `OK`.
 - **`export`** es solo para desarrollo. Necesita el extra `[export]`
-  (`pip install "ipsis[export]"`, con `optimum-onnx` y `torch`). La
+  (`uv sync --locked --extra export`, con `optimum-onnx` y `torch`). La
   producción corre sin torch.
   - Deja `exported/<org>--<modelo>/model.onnx` en la carpeta actual y, con
     `--int8`, también `model_int8.onnx`, con la cuantización dinámica

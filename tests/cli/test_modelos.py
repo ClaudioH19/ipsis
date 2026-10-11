@@ -215,7 +215,7 @@ def test_exportar_sin_el_extra_dice_que_instalar(tmp_path, capsys, monkeypatch):
     monkeypatch.setitem(sys.modules, "torch", None)
     assert main(["models", "export", "org/modelo", "--int8"]) == 1
     salida = capsys.readouterr().out
-    assert 'Acción: pip install "ipsis[export]"' in salida
+    assert 'Acción: uv tool install --force --python 3.12 "ipsis[export] @ git+https://github.com/ClaudioH19/ipsis.git"' in salida
     assert "Traceback" not in salida and "ModuleNotFoundError" not in salida
     assert not Path("exported").exists()
 

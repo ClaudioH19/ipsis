@@ -183,8 +183,11 @@ def agregar_documentos_al_catalogo(rutas: list[str], carpeta_corpus: str = rutas
     hashes_existentes = {e["hash_contenido"]: e["doc_id"] for e in catalogo_actual if e.get("hash_contenido")}
 
     resultado: list[DocumentoCargado] = []
-    for ruta_str in rutas:
+    from ipsis.nucleo.progreso import informar
+
+    for numero, ruta_str in enumerate(rutas, 1):
         ruta_origen = Path(ruta_str)
+        informar("documento", archivo=ruta_origen.name, actual=numero, total=len(rutas))
         if not ruta_origen.is_file():
             raise FileNotFoundError(t("core.file_missing", path=ruta_origen))
         ext = ruta_origen.suffix.lower()

@@ -38,11 +38,10 @@ class Exportado:
 
 
 def comando_instalacion() -> str:
-    """``pip install`` del extra, con el nombre de distribución instalado."""
-    from importlib.metadata import packages_distributions
+    """Comando uv adecuado para el clon o la herramienta global."""
+    from ipsis.recursos.instalacion import comando_extra
 
-    nombre = (packages_distributions().get("ipsis") or ["ipsis"])[0]
-    return f'pip install "{nombre}[export]"'
+    return comando_extra("export")
 
 
 def dependencias_faltantes() -> list[str]:

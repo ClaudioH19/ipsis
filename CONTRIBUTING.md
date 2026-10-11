@@ -24,17 +24,16 @@ Issues and pull requests are welcome in English or Spanish.
 ```bash
 git clone https://github.com/ClaudioH19/ipsis.git
 cd ipsis
-python -m venv .venv
-.venv/bin/python -m pip install -e ".[test,browser]"     # .venv\Scripts\python.exe on Windows
-.venv/bin/python -m playwright install chromium
+uv sync --locked --extra test --extra browser
+uv run --locked --extra test --extra browser playwright install chromium
 ```
 
 ## Tests
 
 ```bash
-python -m pytest -m "not slow and not browser"   # fast (seconds)
-python -m pytest -m browser                      # widget and panel in Chromium
-python -m pytest                                 # everything; the slow ones download or use real models
+uv run --locked --extra test --extra browser pytest -m "not slow and not browser"   # fast (seconds)
+uv run --locked --extra test --extra browser pytest -m browser                      # widget and panel in Chromium
+uv run --locked --extra test --extra browser pytest                                 # everything; the slow ones download or use real models
 ```
 
 - A test lives in the folder of the module it tests (`tests/<layer>/`).
@@ -42,7 +41,7 @@ python -m pytest                                 # everything; the slow ones dow
 - If a change alters answers on purpose, regenerate the characterization
   and explain why in the commit.
 - Run the tests on Python 3.11 or 3.12 before opening the pull request: the
-  repository has no continuous integration.
+  regression workflow in `.github/workflows/` uses the same uv lockfile.
 
 ## The avatar engine
 

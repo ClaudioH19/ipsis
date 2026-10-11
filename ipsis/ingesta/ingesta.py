@@ -23,8 +23,12 @@ def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
     extensión de ``ipsis/ingesta/parsear.py::parsear_documento`` -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
     tenga que saber cuál es cuál."""
+    from ipsis.nucleo.progreso import informar
+
     docs = []
-    for entrada in entradas_vigentes():
+    entradas = entradas_vigentes()
+    for numero, entrada in enumerate(entradas, 1):
+        informar("documento", archivo=entrada["archivo"], actual=numero, total=len(entradas))
         ruta = str(Path(carpeta_corpus) / entrada["archivo"])
         doc = parsear_documento(ruta, doc_id=entrada["doc_id"], doc_titulo=entrada["doc_titulo"],
                                  version=entrada["version"])
@@ -169,10 +173,15 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
     version_coleccion = cfg_rec["version_coleccion"] if version_coleccion is None else version_coleccion
 
     taxonomia = cargar_taxonomia()
+    from ipsis.nucleo.progreso import informar
+
+    informar("parseo")
     docs = parsear_corpus(carpeta_corpus)
     resumen_docs = [ResumenDocumento(d.doc_id, len(d.bloques), len(d.texto_completo)) for d in docs]
 
+    informar("fragmentado", total=len(docs))
     chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia)
+    informar("validacion", total=len(payloads))
     errores = validar_payloads(payloads, taxonomia)
 
     advertencias: list[str] = []
@@ -189,6 +198,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
         payloads, modelo, coleccion, qdrant_path, usar_texto_embebido=con_header,
         n_version=version_coleccion, sufijo_coleccion=sufijo_coleccion,
     )
+    informar("guardado")
     estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
     huella = hash_corpus(payloads)
     estadisticas_lexicas.hash_corpus = huella

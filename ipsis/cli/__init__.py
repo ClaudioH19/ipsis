@@ -39,7 +39,11 @@ def construir_parser() -> argparse.ArgumentParser:
     from ipsis import __version__
     from ipsis.recursos.mensajes import t
 
-    parser = argparse.ArgumentParser(prog="ipsis", description=t("cli.description"))
+    from ipsis.recursos.instalacion import INSTALAR
+
+    parser = argparse.ArgumentParser(prog="ipsis", description=t("cli.description"),
+                                     epilog=t("terminal.install", command=INSTALAR) + "\n" + t("terminal.update") + "\n" + t("terminal.no_activation"),
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument("--version", action="version", version=f"ipsis {__version__}")
     subcomandos = parser.add_subparsers(dest="comando", required=True, metavar="<command>",
@@ -85,7 +89,14 @@ def main(argv: list[str] | None = None) -> int:
     for cambio in migrar_proyecto_activo():
         print(t("cli.migration", change=cambio))
     try:
-        return args.comando_cli.ejecutar(args)
+        from ipsis.cli.progreso import COMANDOS, actividad
+
+        if args.comando not in COMANDOS:
+            return args.comando_cli.ejecutar(args)
+        with actividad(COMANDOS[args.comando]) as trabajo:
+            codigo = args.comando_cli.ejecutar(args)
+            trabajo.codigo = codigo
+            return codigo
     except KeyboardInterrupt:
         return 130
 

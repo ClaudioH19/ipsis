@@ -14,10 +14,10 @@ node validar.mjs        # valida los avatares incluidos con la librería real
 
 ## Visualizador de Folio
 
-Desde la raíz del repositorio, con el entorno de ipsis activado:
+Desde la raíz del repositorio, con uv:
 
 ```bash
-python herramientas/avatar/visualizador.py
+uv run --locked python herramientas/avatar/visualizador.py
 ```
 
 Abre <http://127.0.0.1:8765/>. `visualizador.html` conserva la vista oscura
@@ -49,10 +49,10 @@ al comportamiento autónomo. **Pausar** congela también las reacciones.
 
 El botón **Detener visualizador** cierra el servidor y conserva los archivos.
 También puedes usar Ctrl+C. Si el puerto está ocupado, usa
-`python herramientas/avatar/visualizador.py --puerto 8766`.
+`uv run --locked python herramientas/avatar/visualizador.py --puerto 8766`.
 
 `muestra.html` sigue disponible como grilla de todas las poses y animaciones:
-sirve la raíz con `python -m http.server 8766 --bind 127.0.0.1` y abre
+sirve la raíz con `uv run --locked python -m http.server 8766 --bind 127.0.0.1` y abre
 <http://127.0.0.1:8766/herramientas/avatar/muestra.html?avatar=folio>.
 
 ## Diccionario de reacciones al texto

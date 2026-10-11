@@ -47,9 +47,10 @@ comprobarlo.
 
 ## La terminal: menú y modo interactivo
 
-`ipsis` sin argumentos imprime todos los comandos agrupados por tarea
+`ipsis help` imprime todos los comandos agrupados por tarea
 (Empezar, Documentos, Preguntar, Personalizar, Medir y calibrar, Desplegar y
-operar) con ejemplos; `ipsis help <comando>` imprime las opciones de un
+operar) con ejemplos; `ipsis` sin argumentos hace lo mismo si su salida no es
+una terminal. `ipsis help <comando>` imprime las opciones de un
 comando, igual que `ipsis <comando> --help`.
 
 `ipsis` solo (o `ipsis chat`) abre el modo interactivo, al estilo de Claude
@@ -72,6 +73,15 @@ Los modelos se cargan una vez, con la primera pregunta. Antes de correr un
 comando se cierra el motor (el índice local admite un solo cliente) y se
 vuelve a cargar con la pregunta siguiente. Igual que `ipsis ask
 --diagnostics`, requiere detener `ipsis serve` cuando el índice es local.
+
+Los comandos muestran las etapas reales y el tiempo transcurrido: lectura de
+archivos, preparación de fragmentos, cálculo de vectores o búsqueda y
+verificación de citas. La respuesta de Folio separa el texto y las fuentes.
+`Ctrl+C` cancela y permite seguir en el chat; `/exit` o Ctrl+D salen.
+Las comillas incompletas se explican sin cerrar la sesión. Los avisos de progreso
+van a stderr y la salida de los comandos a stdout; fuera de una terminal no
+hay animaciones ni códigos de color. `ipsis --help`, `ipsis help` y `/help`
+incluyen la instalación con uv, sin crear ni activar entornos manualmente.
 
 ## Referencia de comandos
 

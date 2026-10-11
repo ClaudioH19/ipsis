@@ -134,6 +134,9 @@ class Motor:
     def calentar(self) -> None:
         """Carga los modelos antes de aceptar tráfico: una falta de modelo se
         detecta al arrancar, no en la primera pregunta."""
+        from ipsis.nucleo.progreso import informar
+
+        informar("modelo")
         self._validar_listo()
         self.retriever.calentar()
         for modelo in (self.reranker, self.lector):
@@ -373,6 +376,9 @@ class Motor:
             return self._consultar_en_contexto(pregunta, id_sesion)
 
     def _ejecutar_etapa(self, etapa, ctx: ContextoConsulta) -> None:
+        from ipsis.nucleo.progreso import informar
+
+        informar(etapa.nombre)
         marca = time.perf_counter()
         etapa.ejecutar(ctx)
         clave = f"{etapa.nombre}_ms"

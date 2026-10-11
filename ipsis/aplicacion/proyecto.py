@@ -19,6 +19,12 @@ from ipsis.configuracion.carga import (
 from ipsis.recursos.mensajes import t
 
 
+def resumen_para_terminal() -> str:
+    """Perfil e idioma del proyecto, sin abrir el índice ni cargar modelos."""
+    dominio = cargar_dominio()
+    return f"{dominio.get('perfil', '-')} · {dominio.get('idioma', '-')}"
+
+
 def _booleano(clave: str, valor: str) -> bool:
     texto = valor.strip().lower()
     if texto in {"true", "si", "sí", "1", "yes", "on"}:

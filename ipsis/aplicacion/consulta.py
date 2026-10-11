@@ -51,7 +51,9 @@ def construir_motor(
     from ipsis.lenguaje.dominio import cargar_perfil
     from ipsis.aplicacion.registro_base import registrar_componentes_base
     from ipsis.consulta.admision import ConfiguracionAdmision, ControlAdmision
+    from ipsis.nucleo.progreso import informar
 
+    informar("configuracion")
     componentes = dict(cfg.get("componentes") or {})
     if not componentes:
         raise ValueError(t("app.no_components"))
@@ -74,6 +76,7 @@ def construir_motor(
 
     hash_lexico = huella_lexica(idioma)
     if not idioma.respaldo:
+        informar("lexico")
         from ipsis.lenguaje.ortografia import raices_lexico
 
         indice_automatico(idioma.codigo.split("-")[0], idioma.stemmer)
@@ -83,6 +86,7 @@ def construir_motor(
     cfg_red = config_redaccion(cfg)
     cfg_srv = config_servicio(cfg)
 
+    informar("apertura_indice")
     retriever = registro.crear(
         "retriever",
         componentes["retriever"],

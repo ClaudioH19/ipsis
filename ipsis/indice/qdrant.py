@@ -234,6 +234,9 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
     """
     from qdrant_client import models
 
+    from ipsis.nucleo.progreso import informar
+
+    informar("modelo")
     if codificador is None:
         from ipsis.modelos.catalogo import obtener
         from ipsis.modelos.denso import CodificadorDenso
@@ -272,6 +275,7 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
             client.create_payload_index(nombre_col, campo.replace("[]", ""), tipo)
 
     textos = [p["texto_embebido"] if usar_texto_embebido else p["texto"] for p in payloads]
+    informar("vectores", total=len(textos))
     vectores = codificador.codificar_documentos(textos)
 
     paquete = paquete if paquete is not None else idioma_activo()
@@ -285,5 +289,6 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
         puntos.append(models.PointStruct(
             id=i, vector={"denso": v.tolist(), "bm25": sparse}, payload=p,
         ))
+    informar("indice", total=len(puntos))
     client.upsert(collection_name=nombre_col, points=puntos)
     return client, codificador, estadisticas, nombre_col

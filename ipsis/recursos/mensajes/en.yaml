@@ -472,7 +472,7 @@ app:
   deploy_exists: '{path} already exists: use --force to regenerate it'
   wheel_invalid: --wheel {wheel!r} is not a .whl file
   deploy_no_domain: 'without --domain: the Caddyfile uses {example}; prepare again with --domain your-domain.com'
-  deploy_no_wheel: 'without --wheel: the image will install the current version of the public repository; to pin this version, build the wheel (python -m pip wheel . --no-deps) and pass it with --wheel'
+  deploy_no_wheel: 'without --wheel: the image will install the current version of the public repository; to pin this version, build the wheel (uv build --wheel) and pass it with --wheel'
   deploy_no_index: 'there is no index: run ''ipsis index'' and prepare again'
   duplicate_keys: 'duplicate keys: {keys}'
   avatar_too_big: it weighs {size} bytes; the maximum is {maximum} (256 KiB)
@@ -709,7 +709,7 @@ core:
   ocr_page: '        page {page} ({i}/{n}): confidence {confidence} %{note}{source}'
   ocr_page_low: ' (low)'
   ocr_cached: ' (already read)'
-  ocr_missing_extra: 'To read it with OCR, install the extra (pip install "ipsis[ocr]") and the Tesseract program with the document language.'
+  ocr_missing_extra: 'To read it with OCR, install the extra ({command}) and the Tesseract program with the document language.'
   ocr_missing_tesseract: 'The OCR extra is installed, but the Tesseract program is missing (or not on the PATH): install it with the document language.'
   ocr_missing_language: 'To read it with OCR, Tesseract needs the {language!r} language data (for example, the tesseract-ocr-{language} package).'
   ocr_off: 'OCR is turned off (IPSIS_OCR=off).'
@@ -1002,7 +1002,6 @@ chat:
   help: 'Interactive mode: type questions, and /commands (/help, /doctor, /index...).'
   opt_diagnostics: Start with diagnostics on (stages, signals, rule and span of each answer).
   welcome: "ipsis chat -- type a question, or /help for commands. /exit to leave."
-  loading: Loading the engine (only once)...
   commands: 'Commands:'
   cmd_help: Show this list.
   cmd_diagnostics: 'Turn diagnostics on or off (/diagnostics on|off).'
@@ -1014,10 +1013,12 @@ chat:
   reloaded: The engine will be reloaded with the next question.
   unknown: "Unknown command: /{command}. Type /help."
   bye: Bye.
+  cancelled: "Cancelled. You can keep typing; /exit to leave."
+  invalid_command: "Could not read the command: {error}. Check the quotes and try again."
 terminal:
   project: "profile {profile} · {n} document(s)"
-  no_project: "No project in this folder: /init --language en to create one"
-  tips: "/ commands with Tab · type a question · /exit to leave"
+  no_project: "No project · /init --language en to create one"
+  tips: "/ commands · Tab completes · ↑ history"
   toolbar: " ipsis · diagnostics {diagnostics} · /help · Ctrl+D to leave"
   'on': 'on'
   'off': 'off'
@@ -1026,3 +1027,51 @@ terminal:
   own_reload: Reload the engine after changing configuration or documents
   own_exit: Leave the interactive mode
   own_quit: Leave the interactive mode
+  subtitle: Your documents, a local conversation.
+  controls: "Enter sends · Ctrl+C cancels · /exit leaves"
+  no_activation: "uv manages isolation; nothing to activate."
+  install: "Install: {command}"
+  update: "Update: uv tool upgrade ipsis"
+  sources: "Sources · {n} citation(s)"
+progress:
+  load: Reading and registering your documents
+  index: Preparing the search index
+  doctor: Checking the project and what it needs
+  audit: Checking project integrity
+  evaluate: Evaluating answers with your question bank
+  calibrate: Finding safe thresholds with your question bank
+  benchmark: Measuring quality and response times
+  query: Looking for an answer in your documents
+  engine: Preparing the engine for the conversation
+  models: Checking the profile's models
+  deploy: Preparing deployment files
+  serve: Preparing the project to start the server
+  done: "[OK] {task} · {seconds:.1f} s"
+  failed: "[!] {task} was not completed · {seconds:.1f} s"
+  cancelled: "[-] {task} cancelled · {seconds:.1f} s"
+  stage_documento: "Reading {archivo} ({actual}/{total})"
+  stage_parseo: Reading the document catalog
+  stage_fragmentado: "Preparing passages from {total} document(s)"
+  stage_validacion: "Checking {total} passage(s)"
+  stage_modelo: Loading local models
+  stage_vectores: "Computing vectors for {total} passage(s)"
+  stage_indice: "Saving {total} passage(s) to the index"
+  stage_guardado: Saving vocabulary and corpus references
+  stage_conversacional: Checking whether this is a greeting or a question
+  stage_analisis: Interpreting your question and conversation topic
+  stage_confianza: Checking the question's vocabulary
+  stage_filtros: Narrowing the search in your documents
+  stage_recuperacion: Finding the most relevant passages
+  stage_reranking: Comparing the retrieved passages
+  stage_lectura: Reading passages to locate the answer
+  stage_evidencia: Selecting the text that answers
+  stage_politica: Checking whether the evidence supports an answer
+  stage_redaccion: Preparing the answer and citations
+  stage_verificacion: Verifying that citations are literal
+  stage_other: "Running {stage}"
+  stage_configuracion: Reading project configuration
+  stage_lexico: Preparing vocabulary and synonyms
+  stage_apertura_indice: Opening the document index
+  stage_descarga: "Downloading {modelo}"
+  stage_verificar_modelo: "Testing {modelo}"
+  stage_exportacion: "Exporting {modelo} to ONNX"

@@ -132,6 +132,7 @@ def descargar_modelos(perfil: str | None = None,
     descarga real, para que la CLI diga qué modelo baja.
     """
     from ipsis.modelos.descarga import ErrorDescarga, descargar, ruta_cache, ruta_local
+    from ipsis.nucleo.progreso import informar
 
     instalacion = _perfil(perfil)
     hechos: list[ModeloDescargado] = []
@@ -139,6 +140,7 @@ def descargar_modelos(perfil: str | None = None,
         try:
             carpeta, estado = ruta_local(spec), "ya_disponible"
         except FileNotFoundError:
+            informar("descarga", modelo=spec.id_hf)
             if avisar:
                 avisar(rol, spec.id_hf)
             try:
@@ -153,10 +155,12 @@ def verificar_modelos() -> ResultadoVerificacion:
     """Archivos completos e inferencia mínima de cada modelo del perfil activo; nunca descarga."""
     from ipsis.modelos.descarga import ruta_local
     from ipsis.modelos.verificacion import ModeloNoUtilizable, probar
+    from ipsis.nucleo.progreso import informar
 
     instalacion = _perfil(None)
     resultados = []
     for rol, spec in _modelos(instalacion):
+        informar("verificar_modelo", modelo=spec.id_hf)
         archivo = spec.archivo_onnx()
         try:
             probar(spec, ruta_local(spec))
@@ -173,7 +177,9 @@ def verificar_modelos() -> ResultadoVerificacion:
 def exportar_modelo(id_hf: str, int8: bool = False) -> Exportado:
     """Exporta ``id_hf`` a ONNX en una carpeta de desarrollo; no lo registra en el catálogo."""
     from ipsis.modelos.exportacion import exportar
+    from ipsis.nucleo.progreso import informar
 
+    informar("exportacion", modelo=id_hf)
     return exportar(id_hf, int8=int8)
 
 
