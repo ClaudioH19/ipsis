@@ -530,6 +530,8 @@ sinonimos:
 # e quantificadores da pergunta («a cada quanto tempo»: a forma da pergunta, não o tema).
 # Pronomes anafóricos: «Quem aprova isso?» sem antecedente pede esclarecimento.
 pronombres_anaforicos: [isso, isto, aquilo, ele, ela, eles, elas, lo, la, los, las]
+# Abreviações de quem escreve com pressa: a pergunta é coloquial (ipsis.lenguaje.estilo).
+abreviaturas_informales: [q, pq, oq, pra, pro, pras, pros, vc, vcs, tb, tbm, td, cmg, msm, qdo, qnd]
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, da, do, das, dos, para]
 genericas_memoria: [tempo]

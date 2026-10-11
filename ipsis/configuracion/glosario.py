@@ -32,7 +32,8 @@ def _c(externa: str, hijos: dict | None = None, **kw) -> Clave:
 # --- vocabulario compartido ----------------------------------------------------------------------
 UMBRALES = {"oov_dominio": _c("oov_domain"), "oov_ok": _c("oov_ok"), "dominio": _c("domain"),
             "relacionado": _c("related"), "foco": _c("focus"), "ok": _c("ok"), "cov": _c("cov"),
-            "ok_fuerte": _c("ok_strong"), "oov_ok_fuerte": _c("oov_ok_strong")}
+            "ok_fuerte": _c("ok_strong"), "oov_ok_fuerte": _c("oov_ok_strong"),
+            "foco_coloquial": _c("focus_informal")}
 MODELOS = {"denso": _c("dense"), "reranker": _c("reranker"), "lector": _c("reader")}
 MODOS_RECUPERACION = {"vectorial": "dense", "hibrida": "hybrid", "dispersa": "sparse"}
 ETAPAS = {"conversacional": "conversational", "analisis": "analysis", "confianza": "confidence",

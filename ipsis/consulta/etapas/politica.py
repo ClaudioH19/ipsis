@@ -81,6 +81,7 @@ class SenalesPolitica:
     s_cov: float
     s_rr: float | None
     s_qa: float | None
+    coloquial: bool = False  # la pregunta está escrita de manera coloquial (ipsis.lenguaje.estilo)
 
     @property
     def dominio(self) -> float:
@@ -109,6 +110,7 @@ def senales_de_contexto(ctx, piso_coseno: float = 0.0) -> SenalesPolitica:
         s_cov=lex.s_cov if lex is not None and lex.s_cov is not None else 0.0,
         s_rr=sigmoide(ctx.puntajes_rerank[0]) if ctx.puntajes_rerank else None,
         s_qa=max((lec.s_qa for lec in ctx.lecturas), default=0.0) if ctx.lecturas is not None else None,
+        coloquial=bool(getattr(ctx, "coloquial", False)),
     )
 
 
@@ -130,6 +132,22 @@ RESULTADO_DE_REGLA = {
 }
 
 
+def foco_exigido(s: SenalesPolitica, u) -> float:
+    """``τ_foco``, o ``τ_foco_coloquial`` si la pregunta es coloquial y el lector está casi
+    seguro (``s_qa ≥ τ_ok_fuerte``).
+
+    Quien escribe «cuanta plata sale el almuerzo» usa palabras que el documento no usa, y
+    el foco completo le cuesta respuestas correctas: en los bancos medidos, en preguntas
+    coloquiales el foco bloqueaba sobre todo respuestas bien encontradas. Una trampa
+    coloquial también existe («cuanta plata sale la once»), por eso el foco solo se relaja
+    con el lector casi seguro. Sin los dos umbrales (perfiles o calibraciones anteriores)
+    rige ``τ_foco``."""
+    coloquial, fuerte = u.get("foco_coloquial"), u.get("ok_fuerte")
+    if coloquial is None or fuerte is None or not s.coloquial or s.s_qa is None or s.s_qa < fuerte:
+        return u["foco"]
+    return min(u["foco"], coloquial)
+
+
 def lector_seguro(s: SenalesPolitica, u) -> bool:
     """Segundo tramo de ``ok`` con lector: foco completo, ``s_qa ≥ τ_ok_fuerte`` y
     ``s_oov < τ_oov_ok_fuerte`` (más permisivo que ``τ_oov_ok``).
@@ -141,7 +159,7 @@ def lector_seguro(s: SenalesPolitica, u) -> bool:
     anteriores) el tramo no existe."""
     if u.get("ok_fuerte") is None or u.get("oov_ok_fuerte") is None or s.s_qa is None:
         return False
-    return s.s_foco >= u["foco"] and s.s_qa >= u["ok_fuerte"] and s.s_oov < u["oov_ok_fuerte"]
+    return s.s_foco >= foco_exigido(s, u) and s.s_qa >= u["ok_fuerte"] and s.s_oov < u["oov_ok_fuerte"]
 
 
 def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
@@ -155,7 +173,7 @@ def regla_cascada(s: SenalesPolitica, u, *, premisa_falla: bool = False) -> str:
         return "premisa"
     if s.s_oov >= u["oov_dominio"] and s.dominio < u["dominio"]:
         return "fuera_dominio"
-    respaldo = s.s_foco >= u["foco"] and s.s_oov < u["oov_ok"]
+    respaldo = s.s_foco >= foco_exigido(s, u) and s.s_oov < u["oov_ok"]
     if respaldo and s.s_qa is not None and s.s_qa >= u["ok"]:
         return "ok_lector"
     if lector_seguro(s, u):

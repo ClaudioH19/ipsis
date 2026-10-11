@@ -354,7 +354,7 @@ documents.
 | Semantic reading (medium) | Chooses what the reader reads | Every sentence ranked by RRF of cross-encoder, e5 cosine and lexical overlap; the top three, each with its previous sentence; never headings nor the introduction of a document with sections |
 | Reading (medium) | Extracts the exact span | Extractive QA (mDeBERTa, SQuAD 2.0) that can answer "no answer" |
 | Evidence | Picks the literal sentence and checks it is about what was asked | Text and offsets verified against the corpus; focus terms in the sentence, its section titles or the previous sentence; required answer form ("how often" needs a period, "how much does it cost" an amount); same head with another modifier ("electricity costs" vs "connection costs", also against the section title) is something else |
-| Policy | Decides `ok`, `related` or `no_answer`, and a confidence level | `cascade_v1` rules over explainable signals; a strong reader tier lets informal wording through when the reader is nearly sure; thresholds calibrable with your golden set |
+| Policy | Decides `ok`, `related` or `no_answer`, and a confidence level | `cascade_v1` rules over explainable signals; a strong reader tier lets informal wording through when the reader is nearly sure, and a colloquial question (detected by how it is written, never by its words) then needs half of the focus terms; thresholds calibrable with your golden set |
 | Rendering | Writes the reply | Literal passages with citations and tone templates; a `related` reply asks whether that is what you wanted; with the proactive posture, similar passages after a `no_answer` |
 | Verification | Checks before publishing | `text == corpus[start:end]` and entities supported by the citations; the first cited passage feeds the conversation memory |
 
@@ -368,7 +368,7 @@ measured, kept and rejected ([informal questions](docs/methodology/informal-para
 **Measured (medium, held-out banks written before the changes they measure):**
 97.3 % of direct answers correct (guaranteed ≥ 94.0 % at 95 % confidence);
 with typos, 97 % of the correctly answered questions are still answered
-correctly; on colloquial questions, 25 % are answered directly and another
+correctly; on colloquial questions, 50 % are answered directly and another
 53 % show the right passage as `related`. Synthetic banks do not certify your
 documents: that is what [calibration](#-measure-and-calibrate) is for.
 
@@ -468,6 +468,7 @@ profile_overrides:
     related: 0.33       # domain score below which nothing related is shown
     ok_strong: 0.99     # strong reader tier: a nearly sure reader...
     oov_ok_strong: 0.67 # ...tolerates a little more informal wording
+    focus_informal: 0.5 # ...and, for a colloquial question, half of the focus terms
 ```
 
 or in the **Status** tab of `/admin` (empty value = the profile's), or over
@@ -556,7 +557,7 @@ Spanish; everything user-facing is in English. Read
   Tesseract); without it, their pages without text are reported and skipped.
 - Colloquial questions are mostly answered as `related` with the right
   passage, not as direct answers: on the held-out colloquial bank, medium
-  answers 18 of 72 directly and shows the right passage for 38 more. The
+  answers 36 of 72 directly (18 before the colloquial focus tier) and shows the right passage for most of the rest. The
   system cannot tell a paraphrase from a missing fact with its signals
   ("on bank holidays", "moto eléctrica" when the documents say "vehículos
   eléctricos") and keeps the safe side. [Measurements](docs/methodology/informal-paraphrases.md).

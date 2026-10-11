@@ -567,6 +567,8 @@ sinonimos:
 # unidades. «¿Desde cuándo se hace la compra?» habla de la compra, no de hacer.
 # Pronombres anafóricos: «¿Quién lo aprueba?» sin antecedente pide aclaración.
 pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
+# Abreviaturas de quien escribe apurado: la pregunta es coloquial (ipsis.lenguaje.estilo).
+abreviaturas_informales: [q, k, xq, pq, porq, pa, pal, xa, dl, tb, tmb, tbn, dnd, cdo]
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, del, para]
 genericas_memoria: [tiempo]

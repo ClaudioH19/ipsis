@@ -35,6 +35,7 @@ class SenalesObservadas(BaseModel):
     s_rr: float | None = None
     s_qa: float | None = None
     dominio: float | None = None
+    coloquial: bool | None = None  # la pregunta está escrita de manera coloquial
 
     @classmethod
     def desde_diagnostico(cls, diagnostico: dict) -> "SenalesObservadas | None":

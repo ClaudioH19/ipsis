@@ -178,3 +178,22 @@ def test_el_tramo_fuerte_del_lector_tolera_mas_vocabulario_ausente():
     assert regla_cascada(senales(0.61, 0.98), fuerte) == "relacionado"  # lector no tan seguro
     assert regla_cascada(senales(0.73, 1.0), fuerte) == "relacionado"  # demasiado ausente
     assert regla_cascada(senales(0.61, 1.0, s_foco=0.5), fuerte) == "relacionado"  # foco incompleto
+
+
+def test_una_pregunta_coloquial_con_el_lector_casi_seguro_exige_la_mitad_del_foco():
+    """«cuanta plata sale el almuerzo»: con un término foco de dos en la oración y el lector
+    casi seguro, responde; sin lector seguro, o si la pregunta no es coloquial, no."""
+    from ipsis.consulta.etapas.politica import SenalesPolitica, foco_exigido, regla_cascada
+
+    u = {"oov_dominio": 0.6, "oov_ok": 0.6, "dominio": 0.33, "relacionado": 0.33, "foco": 1.0, "ok": 0.8,
+         "cov": 0.6, "ok_fuerte": 0.99, "oov_ok_fuerte": 0.67, "foco_coloquial": 0.5}
+
+    def senales(coloquial, s_qa):
+        return SenalesPolitica(s_ret=0.5, s_oov=0.3, s_foco=0.5, s_cov=0.3, s_rr=0.5, s_qa=s_qa, coloquial=coloquial)
+
+    assert regla_cascada(senales(True, 1.0), u) == "ok_lector"
+    assert regla_cascada(senales(True, 0.95), u) == "relacionado"   # lector no tan seguro
+    assert regla_cascada(senales(False, 1.0), u) == "relacionado"   # pregunta formal: foco completo
+    sin_umbral = {k: v for k, v in u.items() if k != "foco_coloquial"}
+    assert regla_cascada(senales(True, 1.0), sin_umbral) == "relacionado"  # perfiles anteriores
+    assert foco_exigido(senales(True, 1.0), {**u, "foco": 0.5, "foco_coloquial": 0.75}) == 0.5  # nunca sube

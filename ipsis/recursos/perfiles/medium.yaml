@@ -50,6 +50,9 @@ default_thresholds:
   # words the corpus lacks ("quien anota las muestras"). See docs/methodology/policy.md.
   ok_strong: 0.99
   oov_ok_strong: 0.67
+  # A colloquial question ("cuanta plata sale el almuerzo") with the reader at ok_strong
+  # needs only half of the focus terms in the answering sentence (ipsis.lenguaje.estilo).
+  focus_informal: 0.5
 # Alternatives of the proactive posture (ADR 0008): affinity = weighted mean
 # of the signals; offered when it reaches the threshold. Calibrated with
 # tests/datos/banco_alternativas (precision >= 0.9, widest margin): the family

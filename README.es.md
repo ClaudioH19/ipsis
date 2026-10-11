@@ -354,7 +354,7 @@ tus documentos.
 | Lectura semántica (medium) | Elige qué lee el lector | Cada oración ordenada por RRF de cross-encoder, coseno e5 y coincidencia léxica; las tres mejores, cada una con su oración anterior; nunca títulos ni la presentación de un documento con secciones |
 | Lectura (medium) | Extrae el tramo exacto | QA extractivo (mDeBERTa, SQuAD 2.0) que puede responder «sin respuesta» |
 | Evidencia | Elige la oración literal y comprueba que hable de lo preguntado | Texto y offsets verificados contra el corpus; términos foco en la oración, los títulos de su sección o la oración anterior; forma de respuesta exigida («cada cuánto» pide un periodo, «cuánto cuesta» un monto); mismo núcleo con otro modificador («gastos de electricidad» frente a «gastos de conexión», también contra el título de la sección) es otra cosa |
-| Política | Decide `ok`, `relacionado` o `sin_respuesta`, y un nivel de confianza | Reglas `cascada_v1` sobre señales explicables; un tramo fuerte del lector deja pasar la redacción informal cuando el lector está casi seguro; umbrales calibrables con tu golden set |
+| Política | Decide `ok`, `relacionado` o `sin_respuesta`, y un nivel de confianza | Reglas `cascada_v1` sobre señales explicables; un tramo fuerte del lector deja pasar la redacción informal cuando el lector está casi seguro, y entonces una pregunta coloquial (detectada por cómo está escrita, nunca por sus palabras) exige la mitad de los términos foco; umbrales calibrables con tu golden set |
 | Redacción | Escribe la respuesta | Pasajes literales con citas y plantillas de tono; una respuesta `relacionado` pregunta si era eso lo que buscabas; con la postura proactiva, pasajes similares tras un `sin_respuesta` |
 | Verificación | Comprueba antes de publicar | `texto == corpus[inicio:fin]` y entidades respaldadas por las citas; el primer pasaje citado alimenta la memoria de la conversación |
 
@@ -368,7 +368,7 @@ lo conservado y lo descartado ([preguntas informales](docs/methodology/informal-
 **Medido (medium, bancos retenidos escritos antes de los cambios que miden):**
 97,3 % de las respuestas directas correctas (garantizado ≥ 94,0 % con 95 % de
 confianza); con erratas, el 97 % de las preguntas que se responden bien siguen
-respondiéndose bien; en preguntas coloquiales, 25 % se responden directo y
+respondiéndose bien; en preguntas coloquiales, 50 % se responden directo y
 otro 53 % muestra el pasaje correcto como `relacionado`. Los bancos sintéticos
 no certifican tus documentos: para eso está la [calibración](#-medir-y-calibrar).
 
@@ -468,6 +468,7 @@ profile_overrides:
     related: 0.33       # puntaje de dominio bajo el cual no se muestra nada relacionado
     ok_strong: 0.99     # tramo fuerte: un lector casi seguro...
     oov_ok_strong: 0.67 # ...tolera algo más de redacción informal
+    focus_informal: 0.5 # ...y, en una pregunta coloquial, la mitad de los términos foco
 ```
 
 o en la pestaña **Estado** de `/admin` (valor vacío = el del perfil), o por
@@ -557,7 +558,7 @@ pull request.
   Tesseract); sin él, sus páginas sin texto se informan y se omiten.
 - Las preguntas coloquiales se responden casi siempre como `relacionado` con
   el pasaje correcto, no directo: en el banco coloquial retenido, medium
-  responde directo 18 de 72 y muestra el pasaje correcto en otras 38. Con sus
+  responde directo 36 de 72 (18 antes del foco coloquial) y muestra el pasaje correcto en casi todas las demás. Con sus
   señales, el sistema no distingue una paráfrasis de un dato ausente («los
   feriados», «moto eléctrica» cuando los documentos dicen «vehículos
   eléctricos») y se queda del lado seguro.

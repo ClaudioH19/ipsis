@@ -347,6 +347,25 @@ examined and rejected: stems mix nouns and verbs ("contrato", "práctica",
 evacuate"), no new error. Words of one installation's domain belong in its
 `config/domain.yaml`, and the document-dependent lever is calibrating
 `focus` with the project's golden set.
+### Is the focus filter worth it? (2026-10-10)
+
+Testing with real documents, most natural questions ended as `related` with
+the right passage. Re-deciding every measured case with the focus off showed
+the filter is not useless but blunt: on the design banks it removes 40 wrong
+direct answers for 45 correct ones, and on the held-out validation 12 for 28;
+on the held-out colloquial bank, however, it blocked 21 correct answers for 3
+wrong. So the focus is relaxed only for colloquial questions, detected by how
+they are written (lowercase start, in Spanish without «¿», informal
+abbreviations), and only with the reader nearly sure. Detecting colloquial
+style or support verbs from WordNet's part of speech was rejected: stems mix
+nouns and verbs.
+
+| Medium | Before | Colloquial focus tier |
+|---|---|---|
+| Design banks | 329 correct / 7 errors (97.9 %) | 348 / 8 (97.8 %) |
+| Held-out validation | 148 / 4 (97.4 %, ≥ 94.1 %) | 165 / 5 (97.1 %, ≥ 93.9 %) |
+| Held-out typos | 143 / 5 (96.6 %) | 160 / 8 (95.2 %) |
+| Held-out colloquial | 18 / 3 | 36 / 5 |
 
 ## Open
 

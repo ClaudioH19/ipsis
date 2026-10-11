@@ -218,6 +218,7 @@ class QueryDiagnostic(EsquemaEstricto):
     tramo_completado: dict[str, Any] | None = None  # span QA original antes de completar bordes literales
     intencion: dict[str, Any] | None = None  # origen, relación o similitud/margen del respaldo
     conversacion: dict[str, str] | None = None  # qué hizo el turno (hereda, retoma, tema_nuevo) y el tema en curso
+    estilo_coloquial: bool | None = None  # la pregunta está escrita de manera coloquial
     ortografia: dict[str, str] | None = None  # errata de la pregunta → forma del corpus que la corrige
     sinonimos: dict[str, list[str]] | None = None  # palabra ausente del corpus → sinónimos presentes
     recursos_lexicos: list[dict[str, Any]] | None = None  # fuente/sentido/POS de la expansión automática

@@ -255,6 +255,14 @@ a minor change may break compatibility and is marked as such.
   missing from the answering sentence. A closed class per language, valid for
   any corpus (domain words go in `config/domain.yaml`). Design banks: +1
   correct, no new error.
+- **Colloquial focus tier:** a question written colloquially (lowercase
+  start, in Spanish without «¿», or an informal abbreviation of the pack:
+  `ipsis.lenguaje.estilo`, new pack field `abreviaturas_informales`) with the
+  reader at `ok_strong` needs half of the focus terms (`focus_informal` 0.5
+  in medium). The style travels in the stored signals, so calibration uses the
+  same rule. Medium: held-out colloquial bank 18 → 36 of 72 answered directly
+  (errors 3 → 5); held-out validation 148/4 → 165/5 (97.1 %, guaranteed
+  ≥ 93.9 %); design banks +19 correct, +1 error.
 - **Interactive terminal in the style of Claude Code:** `ipsis` alone (in a
   real terminal) opens it, with Folio and the project of the folder; typing
   `/` unfolds every command with its description, `Tab` shows subcommands and
