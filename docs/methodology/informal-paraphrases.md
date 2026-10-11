@@ -333,6 +333,21 @@ passage as `related`**, with the confirmation question: 78 % see the answer.
 The open lever is not more vocabulary but deciding `ok` with less lexical
 evidence, which needs a signal beyond words (the reader alone admits traps).
 
+### Support verbs (2026-10-10)
+
+Testing with real documents, "¿Qué requisitos debo cumplir para inscribir la
+Práctica Profesional I?" ended as `related` with the right passage and the
+reader at 1.0: "cumplir" counted as a focus term and the answering sentence
+does not contain it. Support verbs (wanting, knowing, meeting a requirement)
+are a closed class per language, unlike colloquial vocabulary, so they go to
+the packs' generic words. Deciding it from the part of speech in WordNet was
+examined and rejected: stems mix nouns and verbs ("contrato", "práctica",
+"cover"), and content verbs ("cubre", "devolver") must keep counting, or
+"who signs?" traps pass. Design banks: +1 correct ("where do we meet if we
+evacuate"), no new error. Words of one installation's domain belong in its
+`config/domain.yaml`, and the document-dependent lever is calibrating
+`focus` with the project's golden set.
+
 ## Open
 
 - Related answers end with a `related_check` question ("Is this what you were

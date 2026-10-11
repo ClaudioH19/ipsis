@@ -248,6 +248,13 @@ a minor change may break compatibility and is marked as such.
   "yours"… in English, and the forms of ir/vir/ter/dar/estar ("vou", "tiver",
   "der", "viene") become generic. Design banks: +2 correct (Portuguese
   informal questions), no new error.
+- **Support verbs are not topic:** "cumplir", "quisiera", "saber" (es),
+  "meet", "fulfil", "like", "know", "want" (en) and "cumprir", "gostaria",
+  "saber" (pt) are generic words: "¿Qué requisitos debo cumplir para
+  inscribir…?" failed the focus because "cumplir" counted as a topic word
+  missing from the answering sentence. A closed class per language, valid for
+  any corpus (domain words go in `config/domain.yaml`). Design banks: +1
+  correct, no new error.
 - **Interactive terminal in the style of Claude Code:** `ipsis` alone (in a
   real terminal) opens it, with Folio and the project of the folder; typing
   `/` unfolds every command with its description, `Tab` shows subcommands and
