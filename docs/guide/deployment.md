@@ -1,5 +1,49 @@
 # Deploying on your own server
 
+## Continuous integration
+
+`.github/workflows/servicio.yml` runs on pushes, pull requests and manual starts.
+Its contract job checks the engine and HTTP boundary without downloading models.
+Its container job builds a wheel from the current checkout, creates a Spanish
+light-profile project containing a known inventory record, downloads the required
+CPU model, loads and indexes the document, then runs `ipsis deploy prepare --wheel`.
+The generated Dockerfile installs that wheel, so the check tests the commit in
+question rather than another branch or a published version.
+
+Docker Compose builds with the runner's UID/GID for writable mounted configuration
+and index directories, starts the service and waits for its `/ready` healthcheck.
+`herramientas/ci/comprobar_servicio.py` then verifies a nonempty v2 index, production
+mode, the widget catalog, four kinds of conversation and literal source retrieval
+with correct offsets. A question prefixed with “hola” must still retrieve the
+known inventory value. Replies with HTTP 200 but empty or incorrect bodies fail.
+The helper saves a JSON report even on failure; Actions also uploads container
+status and logs and stops only its own test deployment afterwards.
+
+The manual `.github/workflows/regresion-general.yml` retains the historical
+direct-answer evaluation and artifacts. Its optional `comparar_referencia` input
+enables comparison with the frozen baseline. Those answer/abstention metrics
+are not ranking metrics: v2 intentionally returns sources for review. This
+evaluation is separate from the automatic service startup gate; the baseline
+has not been rewritten to conceal that difference.
+
+To reproduce the container check on Linux with Docker Compose and uv:
+
+```bash
+uv sync --locked --extra test
+uv build --wheel --out-dir .cache/ci/wheels
+uv run python herramientas/ci/preparar_contenedor.py --output .cache/ci --wheels .cache/ci/wheels
+export COMPOSE_FILE="$PWD/.cache/ci/deploy/docker-compose.yml"
+export COMPOSE_PROJECT_NAME=ipsis-ci
+docker compose build --build-arg APP_UID="$(id -u)" --build-arg APP_GID="$(id -g)"
+docker compose up -d --no-build --wait --wait-timeout 180
+uv run python herramientas/ci/comprobar_servicio.py --url http://127.0.0.1:8000 --output .cache/ci/reporte.json
+docker compose down --remove-orphans
+```
+
+Use a fresh output directory when repeating preparation. Port 8000 must be
+available. The check proves packaging, startup and basic interaction with a
+real indexed corpus; it does not certify search quality on every document.
+
 How to put the assistant on a server with HTTPS: the service, Caddy, Docker,
 `ipsis deploy prepare` and the run modes. Installation and profiles are in
 [installation.md](installation.md).

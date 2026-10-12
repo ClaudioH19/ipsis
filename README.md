@@ -207,6 +207,16 @@ This catalog is separate from the existing tones and source templates. See
 
 Discover options from the console:
 
+On pushes and pull requests, **Servicio y contenedor** validates the v2 contracts,
+builds the current commit's wheel, creates and indexes a small real project,
+builds its generated Dockerfile and starts it with Docker Compose. It requires
+`/ready` and checks greetings, thanks, farewell, capabilities and literal document
+retrieval through `POST /ask`, including a greeting followed by a document question.
+Failures publish the HTTP report and container logs as the `servicio-contenedor`
+artifact. The older direct-answer quality comparison is available separately as
+the manual **Evaluación documental manual** workflow; its historical baseline
+does not measure v2 source ranking. See [CI verification](docs/guide/deployment.md#continuous-integration).
+
 ```bash
 ipsis help
 ipsis help serve
