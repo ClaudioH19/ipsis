@@ -342,7 +342,7 @@ def test_lector_por_campos_mapea_celdas_y_http_sin_inventar_span(tmp_path):
 
 
 @pytest.mark.parametrize("sin_selector", [False, True])
-def test_fabrica_default_v2_no_construye_cascada_y_se_puede_servir(monkeypatch, sin_selector):
+def test_fabrica_default_v2_no_construye_cascada_y_se_puede_servir(monkeypatch, tmp_path, sin_selector):
     from fastapi.testclient import TestClient
     from ipsis.aplicacion.consulta import construir_motor
     from ipsis.configuracion.carga import cargar_proyecto, cargar_dominio
@@ -354,6 +354,11 @@ def test_fabrica_default_v2_no_construye_cascada_y_se_puede_servir(monkeypatch, 
         raise AssertionError("v2 no debe construir respaldo de intención")
 
     monkeypatch.setattr(intenciones, "construir_respaldo", prohibido)
+    # Este motor usa un índice en memoria y no necesita modelos descargados.
+    # La disponibilidad del proyecto de disco se verifica en el smoke real,
+    # no contra la caché global de quien ejecuta esta prueba de la fábrica.
+    monkeypatch.setenv("IPSIS_MODELS_DIR", str(tmp_path / "modelos-vacios"))
+    monkeypatch.setattr("ipsis.servicio.api._calcular_diagnostico", lambda: None)
     registro = RegistroComponentes()
     registro.registrar("retriever", "memoria_v2", lambda **_: Recuperador([candidato(TABLA)]))
     cfg = cargar_proyecto()
