@@ -11,6 +11,7 @@ de arquitectura (ADR) y la arquitectura están en inglés, en
 | [Configuración](guia/configuracion.md) | Cada archivo del proyecto, umbrales y precedencia |
 | [Golden set](guia/golden.md) | Preguntas de prueba, evaluación y calibración |
 | [Web](guia/web.md) | Widget, ubicación, API JavaScript, CSP y avatar |
+| [Integraciones](guia/integraciones.md) | Ejemplos HTML, Astro, Svelte, React, Angular y Python; CORS, rutas y SSR |
 | [Personalidad](guia/personalidad.md) | Tonos, Folio y panel `/admin` (también estado, umbrales y documentos) |
 | [Despliegue](guia/despliegue.md) | Servidor con HTTPS, Docker, modos y lista antes de lanzar |
 

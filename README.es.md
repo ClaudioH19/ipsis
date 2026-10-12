@@ -469,6 +469,32 @@ no certifican tus documentos: para eso está la [calibración](#-medir-y-calibra
 
 ## 🌐 Interfaces web
 
+### Añadir el asistente a tu sitio
+
+Mantén `ipsis serve` ejecutándose, permite el origen de tu página con
+`ipsis configure cors_origins=https://www.tu-sitio.cl` y reinicia el servicio.
+Pega esto antes de `</body>`:
+
+```html
+<script src="https://asistente.tu-dominio.cl/widget.js"
+        data-api="https://asistente.tu-dominio.cl" defer></script>
+```
+
+El script crea el widget; no hace falta instalar un paquete npm de ipsis.
+Para un chat dentro de la página, coloca
+`<ipsis-chat mode="embedded" api="..."></ipsis-chat>` antes del script,
+en un contenedor con altura definida. La
+[guía de integración](docs/es/guia/integraciones.md) incluye el flujo local,
+componentes que puedes copiar y ejemplos ejecutables:
+
+| HTML | Astro | Svelte | React | Angular | Python / FastAPI |
+|---|---|---|---|---|---|
+| [Ejemplo](examples/html) | [Ejemplo](examples/astro) | [Ejemplo](examples/svelte) | [Ejemplo](examples/react) | [Ejemplo](examples/angular) | [Ejemplo](examples/python) |
+
+Consulta los [comandos de cada ejemplo](examples/README.md) para configurar
+y levantar cada framework. La URL del asistente y el origen CORS de tu página
+son distintos.
+
 `ipsis serve` publica todo en un solo puerto:
 
 | Dirección | Qué es | Acceso |
@@ -633,6 +659,7 @@ y la [guía del golden set](docs/es/guia/golden.md).
 | [Configuración](docs/es/guia/configuracion.md) | Cada archivo del proyecto, umbrales y precedencia |
 | [Golden set](docs/es/guia/golden.md) | Preguntas de prueba, evaluación y calibración |
 | [Web](docs/es/guia/web.md) | Widget, ubicación, API de JavaScript, CSP y avatar |
+| [Integraciones](docs/es/guia/integraciones.md) | HTML, Astro, Svelte, React, Angular y Python; CORS, SSR y rutas |
 | [Personalidad](docs/es/guia/personalidad.md) | Tonos, Folio y el panel `/admin` |
 | [Despliegue](docs/es/guia/despliegue.md) | Servidor con HTTPS, Docker, modos y lista previa al lanzamiento |
 | [Arquitectura](docs/architecture.md) | Módulos, flujos y diagramas (en inglés) |

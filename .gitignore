@@ -16,6 +16,9 @@ exported/
 # npm tools and examples
 node_modules/
 examples/react/dist/
+examples/*/.env
+examples/astro/.astro/
+examples/angular/.angular/
 
 # Sistema y editores
 .DS_Store

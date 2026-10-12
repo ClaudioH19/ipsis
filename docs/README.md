@@ -20,7 +20,7 @@ each decision is audited, with diagrams.
 |---|---|
 | `ipsis/` | The package: code by layers, plus resources |
 | `tests/` | Tests mirroring `ipsis/`, plus `datos/` (synthetic corpora and banks) and `integracion/` |
-| `examples/` | Tested web integrations: HTML, React and WordPress |
+| `examples/` | Web integrations: HTML, Astro, Svelte, React, Angular, Python and WordPress |
 | `herramientas/avatar/` | Reproducible build of the avatar engine and Folio (development only) |
 | `docs/` | This documentation |
 | `.github/` | Issue forms and the pull request template |

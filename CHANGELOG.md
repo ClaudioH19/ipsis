@@ -29,6 +29,12 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Runnable widget integrations for Astro, Svelte 5, Angular 20 and Python /
+  FastAPI, alongside HTML, React and WordPress. English and Spanish guides
+  document setup, CORS, public keys, embedded mode, SSR and persistent layouts.
+  The React adapter loads the widget once, including under Strict Mode and
+  callback updates.
+
 - Inventory retrieval from XLSX, XLS, CSV and TSV, including admin uploads.
   Each row is indexed with its column labels without mixing neighboring
   products. Native source tables retain sheet/row/cell locators, empty fields,
