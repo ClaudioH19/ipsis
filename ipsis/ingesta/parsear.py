@@ -74,6 +74,7 @@ class Bloque:
     texto: str
     offset_inicio: int
     offset_fin: int
+    metadata: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -117,6 +118,26 @@ def _fila_a_texto(row) -> str:
         vistas.add(cid)
         celdas_unicas.append(c.text.strip().replace("\n", " "))
     return " | ".join(x for x in celdas_unicas if x)
+
+
+def _celdas_presentacion(row, inicio: int) -> list[dict]:
+    """Cuadrícula de la fila legacy, referida a su texto canónico existente."""
+    celdas, vistas, posicion, escritos = [], {}, inicio, 0
+    for columna, celda in enumerate(row.cells):
+        identidad = id(celda._tc)
+        if identidad in vistas:
+            vistas[identidad]["column_span"] += 1
+            continue
+        texto = celda.text.strip().replace("\n", " ")
+        if texto and escritos:
+            posicion += 3  # separador literal « | »
+        copia = {"column": columna, "column_span": 1, "row_span": 1,
+                 "text": texto, "offset_start": posicion, "offset_end": posicion + len(texto)}
+        vistas[identidad] = copia
+        celdas.append(copia)
+        posicion += len(texto)
+        escritos += bool(texto)
+    return celdas
 
 
 def _iter_bloques_crudos(document: docx.document.Document):
@@ -178,7 +199,7 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
             seccion_path_bloque = [t for (_, t) in pila_secciones] + [f"Tabla {tabla_contador}"]
             seccion_nivel = (pila_secciones[-1][0] if pila_secciones else 0) + 1
             encabezado_tabla = None
-            for row in elemento.rows:
+            for numero_fila, row in enumerate(elemento.rows):
                 texto_fila = _fila_a_texto(row)
                 if not texto_fila:
                     continue
@@ -193,10 +214,15 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
                 texto_partes.append(SEPARADOR_BLOQUE)
                 offset_actual += len(SEPARADOR_BLOQUE)
 
+                header = row._tr.find("./" + qn("w:trPr") + "/" + qn("w:tblHeader"))
                 bloques.append(Bloque(
                     indice=indice, seccion_path=ruta_fila, seccion_nivel=seccion_nivel + (len(ruta_fila) > len(
                         seccion_path_bloque)),
                     tipo_contenido="tabla", texto=texto_fila, offset_inicio=inicio, offset_fin=fin,
+                    metadata={"table_id": f"tabla_{tabla_contador}", "row": numero_fila,
+                              "columns": len(row.cells), "cells": _celdas_presentacion(row, inicio),
+                              "header": header is not None and header.get(qn("w:val"), "true")
+                                        not in ("0", "false", "off")},
                 ))
                 indice += 1
 
@@ -280,6 +306,9 @@ def _ensamblar_bloques(eventos: list[Evento]) -> tuple[str, list[Bloque]]:
         bloques.append(Bloque(
             indice=indice, seccion_path=seccion_path_bloque, seccion_nivel=seccion_nivel,
             tipo_contenido=tipo_contenido, texto=texto, offset_inicio=inicio, offset_fin=fin,
+            metadata={**evento[4], "cells": [{**c, "offset_start": c["offset_start"] + inicio,
+                          "offset_end": c["offset_end"] + inicio} for c in evento[4]["cells"]]}
+                     if len(evento) > 4 else {},
         ))
         indice += 1
 
@@ -386,6 +415,7 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
             parrafo_actual.clear()
 
     encabezado_tabla: str | None = None  # primera fila de la tabla en curso
+    tabla_contador = 0
     for linea in lineas:
         m = _RE_HEADING_MD.match(linea.strip())
         fila = _fila_tabla_md(linea)
@@ -398,8 +428,24 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
             hay_encabezados = True
         elif fila is not None:
             _cerrar_parrafo()
-            if not _RE_SEPARADOR_TABLA_MD.match(linea.strip()) and fila:
-                eventos.append((fila, None, "tabla", encabezado_tabla))
+            if _RE_SEPARADOR_TABLA_MD.match(linea.strip()):
+                if eventos and len(eventos[-1]) > 4:
+                    eventos[-1][4]["header"] = True
+            elif fila:
+                if encabezado_tabla is None:
+                    tabla_contador += 1
+                valores = [c.strip() for c in linea.strip()[1:-1].split("|")]
+                celdas, posicion, escritos = [], 0, 0
+                for columna, valor in enumerate(valores):
+                    if valor and escritos:
+                        posicion += 3
+                    celdas.append({"column": columna, "column_span": 1, "row_span": 1,
+                                   "text": valor, "offset_start": posicion, "offset_end": posicion + len(valor)})
+                    posicion += len(valor)
+                    escritos += bool(valor)
+                eventos.append((fila, None, "tabla", encabezado_tabla,
+                    {"table_id": f"tabla_md_{tabla_contador}", "columns": len(valores),
+                     "cells": celdas, "header": False}))
                 if encabezado_tabla is None:
                     encabezado_tabla = fila
         elif linea.strip():

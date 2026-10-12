@@ -383,6 +383,7 @@ class MotorV2:
             "offset_coincidencia_inicio": por_chunk[e.chunk_id].metadata["ventana_resultado"]["coincidencia_inicio"],
             "offset_coincidencia_fin": por_chunk[e.chunk_id].metadata["ventana_resultado"]["coincidencia_fin"],
             "truncado": por_chunk[e.chunk_id].metadata["ventana_resultado"]["truncado"],
+            "bloques_fuente": por_chunk[e.chunk_id].metadata.get("bloques_presentacion", []),
             "tipo_puntaje": "logit_reranker" if por_candidato[e.chunk_id].signals.reranker_score is not None
                             else "recuperacion"} for e in ctx.evidencias]
         diagnostico = QueryDiagnostic(backend=self.backend, pipeline=self.pipeline,

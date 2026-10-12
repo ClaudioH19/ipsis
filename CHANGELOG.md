@@ -8,6 +8,12 @@ a minor change may break compatibility and is marked as such.
 
 ### Changed
 
+- Source reading now separates paragraphs and declared headings, applies the
+  theme's justified alignment and renders verified DOCX/Markdown cells as
+  accessible tables with horizontal scrolling. Empty columns remain visible;
+  prepared DOCX tables retain merged cells. Original literal text stays
+  available for comparison. No table layout is guessed from arbitrary pipes.
+
 - V2 is now the default query engine in project templates, configuration
   loading (including old files without a selector) and the engine factory.
   Explicit `pipeline: v1` remains supported. The default output is ranked

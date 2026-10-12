@@ -65,7 +65,7 @@ PRESETS: dict[str, dict[str, Any]] = {
             "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.5"},
             "forma": {"radio_panel": "12px", "radio_control": "24px"},
             "ubicacion": {"tamano": "amplio"},
-            "presentacion": {"densidad": "comoda", "alineacion": "inicio", "citas": "acordeon"},
+            "presentacion": {"densidad": "comoda", "alineacion": "justificada", "citas": "acordeon"},
         },
     },
     "buscador_compacto": {
@@ -75,7 +75,7 @@ PRESETS: dict[str, dict[str, Any]] = {
             "colores_oscuro": {"acento": "#a8c7fa", "acento_texto": "#202124"},
             "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.45"},
             "forma": {"radio_panel": "8px", "radio_control": "20px"},
-            "presentacion": {"densidad": "compacta", "alineacion": "inicio", "citas": "acordeon"},
+            "presentacion": {"densidad": "compacta", "alineacion": "justificada", "citas": "acordeon"},
         },
     },
 }
