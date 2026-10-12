@@ -8,6 +8,12 @@ a minor change may break compatibility and is marked as such.
 
 ### Changed
 
+- CLI help now includes service examples, inventory loading and the demo/admin
+  workflow. `ipsis help` accepts nested command paths and interactive `/help`
+  shows command options without unloading the engine. Help skips configuration
+  migrations. English and Spanish READMEs document default v2 search, source
+  review and continuation, with the previous v1 rules and measurements labeled.
+
 - Source reading now separates paragraphs and declared headings, applies the
   theme's justified alignment and renders verified DOCX/Markdown cells as
   accessible tables with horizontal scrolling. Empty columns remain visible;

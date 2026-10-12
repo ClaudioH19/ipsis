@@ -25,6 +25,8 @@ class ComandoServir(Comando):
         self.init, self.cargar, self.indexar = init, cargar, indexar
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.formatter_class = argparse.RawDescriptionHelpFormatter
+        parser.epilog = t("serve.examples")
         parser.add_argument("carpeta", metavar="folder", nargs="?", help=t("serve.arg_folder"))
         parser.add_argument("--host", default="127.0.0.1", help=t("serve.opt_host"))
         parser.add_argument("--port", type=int, default=8000, help=t("serve.opt_port"))

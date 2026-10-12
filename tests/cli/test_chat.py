@@ -32,6 +32,46 @@ def test_help_de_un_comando_muestra_sus_opciones(capsys):
     assert "--alpha" in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("ruta,opciones", [
+    (["serve"], ["--demo", "--open", "--mode", "--port", "--reindex", "widget/demo.html"]),
+    (["widget", "theme", "apply"], ["--path", "search", "search_compact"]),
+    (["widg", "the", "app"], ["--path", "search_compact"]),
+])
+def test_ayuda_anidada_muestra_opciones_sin_migrar_ni_ejecutar(monkeypatch, capsys, ruta, opciones):
+    monkeypatch.setattr("ipsis.aplicacion.proyecto.migrar_proyecto_activo",
+        lambda: pytest.fail("la ayuda no debe migrar el proyecto"))
+    monkeypatch.setattr("ipsis.cli.comandos.consulta.ComandoServir.ejecutar",
+        lambda *_: pytest.fail("la ayuda no debe iniciar el servicio"))
+    assert main(["help", *ruta]) == 0
+    salida = capsys.readouterr().out
+    assert all(opcion in salida for opcion in opciones)
+
+
+def test_ayuda_interactiva_preserva_motor_y_estado(monkeypatch, capsys):
+    cerrados = []
+    chat = ComandoChat()
+    activo = SimpleNamespace(cerrar=lambda: cerrados.append(True))
+    chat.motor = activo
+    chat.diagnostico = False
+    chat._comando("/help serve")
+    assert "--demo" in capsys.readouterr().out
+    chat._comando("/help widget theme apply")
+    assert "search_compact" in capsys.readouterr().out
+    chat._comando("/help diagnostics")
+    assert "on|off" in capsys.readouterr().out
+    assert chat.motor is activo and not cerrados and chat.diagnostico is False
+
+
+def test_menu_anuncia_flujo_demo_e_inventarios(capsys):
+    assert main(["help"]) == 0
+    salida = capsys.readouterr().out
+    assert "ipsis load ./inventario.xlsx" in salida
+    assert "ipsis serve --demo --open" in salida
+    assert "ipsis serve --mode development --open" in salida
+    assert "ipsis help widget theme apply" in salida
+    assert "ser -> serve" in salida
+
+
 class _Diagnostico(SimpleNamespace):
     pass
 

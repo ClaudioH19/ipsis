@@ -29,14 +29,12 @@ resultados bajo demanda. Proyectos nuevos y configuraciones sin selector usan
 v2. Una selección explícita `pipeline: v1` en `config/engine.yaml` conserva el
 motor de respuestas anterior descrito abajo. Ver [fuentes ordenadas](docs/methodology/fuentes-v2.md).
 
-**ipsis** es un asistente para tu sitio web que responde preguntas sobre tus
-documentos **mostrando el texto literal que sustenta la respuesta**, con su
-documento, sección y posición exacta. No escribe con un modelo generativo:
-usa comprobaciones para abstenerse o mostrar información relacionada cuando
-no encuentra sustento suficiente. Una cita literal igual puede no responder lo
-que se preguntó; esas comprobaciones reducen el riesgo, no lo eliminan. Corre
-en CPU, en tu propio servidor y, una vez descargados los modelos, sin acceso a
-la red.
+**ipsis** es un asistente de búsqueda para tu sitio web que recupera y ordena
+**pasajes literales de tus documentos**, con documento, sección y posición
+exacta. El usuario revisa las fuentes y su contexto para comprobar la información.
+No genera texto con un LLM. Una cita literal puede no responder la pregunta:
+la trazabilidad permite verificarla, pero no garantiza su relevancia. Corre en
+CPU, en tu propio servidor y, una vez descargados los modelos, sin acceso a la red.
 
 El nombre viene del latín *ipsissima verba*, «las palabras mismas»: el
 asistente responde con las propias palabras del documento.
@@ -46,6 +44,7 @@ asistente responde con las propias palabras del documento.
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/widget-answer-dark.png">
   <img alt="El widget responde con un tramo literal y lo destaca dentro de la cita del manual" src="docs/assets/widget-answer.png" width="88%">
 </picture>
+<p><sub>Vista del motor v1 opcional. El flujo predeterminado v2 muestra fuentes ordenadas para revisar.</sub></p>
 </div>
 
 ## ✨ Características
@@ -59,9 +58,9 @@ Los pasajes de la respuesta son tramos literales del documento, con plantillas
 fijas y citas. `ipsis audit` comprueba texto y offsets literales; no prueba
 que el pasaje responda bien la pregunta.
 
-**🛑 Sabe cuándo no responder**<br>
-Estados `ok`, `related` y `no_answer`, decididos por señales explicables.
-Los umbrales se calibran con una cota de riesgo observada (Clopper-Pearson).
+**🔎 Fuentes ordenadas para revisar**<br>
+Hasta tres resultados por página, contexto desplegable y continuación de
+búsqueda. El motor v1 opcional conserva los estados de respuesta y la calibración.
 
 **⚡ Perfiles según el uso**<br>
 `light` prioriza la latencia; `medium` es el recomendado. Todo en CPU con ONNX.
@@ -69,11 +68,10 @@ Los umbrales se calibran con una cota de riesgo observada (Clopper-Pearson).
 </td>
 <td width="50%" valign="top">
 
-**🗣️ Entiende cómo escribe la gente**<br>
-Erratas («pasword», «covran», «abreel»), abreviaturas, palabras coloquiales y
-paráfrasis; pide el tema cuando la pregunta no lo dice («¿Quién lo aprueba?»).
-Paquetes `es`, `en` y `pt`; cualquier otro idioma funciona con reglas
-universales.
+**🗣️ Búsqueda multilingüe**<br>
+Búsqueda híbrida y variantes léxicas para recuperar fuentes. Paquetes `es`,
+`en` y `pt`; modelos multilingües en CPU. La calidad se comprueba con consultas
+sobre los documentos de cada proyecto.
 
 **💬 Widget embebible**<br>
 Una línea de HTML, adaptable, aislado en Shadow DOM, con 7 tonos de respuesta
@@ -143,12 +141,12 @@ Después, en cualquier carpeta:
 mkdir mi-asistente && cd mi-asistente
 export IPSIS_LANG=es                        # la terminal en español
 ipsis init --profile medium --language es   # configuración del proyecto
-ipsis models download                       # una vez por máquina (~1,7 GB con medium)
+ipsis models download                       # descarga los modelos que usa el motor activo
 ipsis load /ruta/a/documentos               # PDF, DOCX, Markdown, TXT, XLSX, XLS, CSV, TSV
 ipsis index                                 # parsear, fragmentar, vectorizar y guardar
 ipsis doctor                                # ¿puede correr? si no, qué comando lo arregla
-ipsis chat                                  # preguntar desde la terminal (/help adentro)
-ipsis serve                                 # API, widget y /admin en http://127.0.0.1:8000
+ipsis widget theme apply search             # presentación de resultados tipo buscador
+ipsis serve --demo --open                   # API y página de prueba; abre el navegador
 ```
 
 `ipsis` sin argumentos abre la terminal interactiva (abajo). `uv` gestiona
@@ -157,17 +155,67 @@ el índice admite un proceso a la vez: detén `ipsis serve` antes de
 `ipsis chat` o `ipsis ask --diagnostics`. En PowerShell, la variable se fija
 con `$env:IPSIS_LANG = "es"`.
 
+### Flujo de documentos a resultados en v2
+
+1. **Cargar:** `ipsis load` acepta documentos o inventarios XLSX/XLS/CSV/TSV.
+   Cada registro de inventario conserva sus columnas, valores y coordenadas.
+2. **Indexar:** ejecuta `ipsis index` después de cargar o cambiar documentos.
+   El índice queda en el proyecto y los modelos se reutilizan desde su caché.
+3. **Presentar:** `ipsis widget theme apply search` configura una vista de
+   buscador; `search_compact` ofrece la misma lectura con menos espacio.
+4. **Probar:** `ipsis serve --open` inicia el servicio y abre la página de prueba
+   con el widget real y los estilos del proyecto. También activa `--demo`.
+5. **Verificar:** escribe una consulta, revisa hasta tres fuentes ordenadas y
+   despliega su contexto. Las tablas conservan sus celdas; sus coordenadas se
+   muestran al pasar el cursor. Pulsa **Seguir buscando** para otros resultados
+   de esa consulta o escribe otra pregunta. El ranking orienta la lectura;
+   no certifica que una fuente responda la pregunta.
+
+| Necesitas | Comando | Resultado |
+|---|---|---|
+| Servir solo la API y el widget | `ipsis serve` | Mantiene el modo configurado; la demo depende de ese modo o de `IPSIS_DEMO` |
+| Disponer del HTML de prueba | `ipsis serve --demo` | Habilita `http://127.0.0.1:8000/widget/demo.html` |
+| Abrirlo automáticamente | `ipsis serve --open` | Activa la demo y abre el navegador cuando puede servirla |
+| Probar y administrar | `ipsis serve --mode development --open` | La demo enlaza a `/admin/panel`; imprime un token temporal si no has configurado `IPSIS_ADMIN_TOKEN` |
+| Usar otro puerto | `ipsis serve --demo --port 8123` | La demo queda en `http://127.0.0.1:8123/widget/demo.html` |
+| Preparar una carpeta documental | `ipsis serve ./documentos --demo --open` | Crea/reutiliza `./documentos/.ipsis-project`, carga, indexa si hace falta y sirve |
+| Consultar desde la terminal | `ipsis chat` | Consultas y `/comandos`; con índice local, detén primero el servicio |
+
+El panel acepta las mismas extensiones para subir archivos; **Reindexar** hace
+buscables los cambios. Si el widget exige una clave, la página de prueba permite
+introducirla. `--demo` y `--open` conservan el modo y las claves de acceso; para
+el panel se usa el token de administración. Ctrl+C detiene el servidor.
+Los inventarios recuperan valores guardados; no recalculan fórmulas ni suman stock.
+Ver [formatos y límites](docs/es/guia/inventarios.md).
+
+Para descubrir opciones desde la consola:
+
+```bash
+ipsis help
+ipsis help serve
+ipsis serve --help
+ipsis help widget theme apply
+ipsis widget theme list
+```
+
+En el modo interactivo usa `/help serve` o `/help widget theme apply`.
+Escribe `/serve ` y pulsa Tab para ver sus opciones con descripción. Enter
+resuelve comandos incompletos únicos (`/ser --open` → `/serve --open`); las
+rutas, argumentos y opciones se conservan y las coincidencias ambiguas se informan.
+
 <details>
 <summary><b>Elegir un perfil</b></summary>
 
-| Perfil | Modelos | Disco | p95 objetivo | Medido |
-|---|---|---|---|---|
-| `light` | e5-small | 0,5 GB | 150 ms | 85 ms p95 |
-| `medium` | e5-small + reranker mMiniLM + lector mDeBERTa, lectura semántica | 1,7 GB | 1 s | 2,5 s p50, 4,2 s p95 en una CPU de 2 hilos con un corpus realista |
+| Perfil | Modelos usados por v2 predeterminado | Uso |
+|---|---|---|
+| `light` | e5-small, búsqueda híbrida con BM25 | Prioriza la latencia de recuperación |
+| `medium` | e5-small + reranker mMiniLM, búsqueda híbrida con BM25 | Añade comparación semántica de los candidatos en CPU |
 
 Se cambia con `ipsis profile set <perfil>` (te dice si hay que reindexar o
-recalibrar). `light` no tiene lector: responde directo menos preguntas, sobre
-todo coloquiales. El antiguo perfil `heavy` se eliminó: ningún modelo mayor
+recalibrar). V2 no carga el lector QA en su configuración predeterminada:
+presenta fuentes para revisar. `ipsis models list` muestra los modelos efectivos;
+las mediciones del motor v1 se describen en su apartado más abajo.
+El antiguo perfil `heavy` se eliminó: ningún modelo mayor
 sumó una respuesta correcta sobre medium
 ([ADR 0003](docs/decisions/0003-onnx-and-profiles.md)). Se pueden elegir
 modelos alternativos en la
@@ -179,6 +227,17 @@ modelos alternativos en la
 <summary><b>Windows, instalación de desarrollo y Docker</b></summary>
 
 Todo el detalle está en la [guía de instalación](docs/es/guia/instalacion.md).
+Si desarrollas desde un clon, detén el servicio y ejecuta desde la raíz del
+repositorio:
+
+```bash
+uv tool install --force --editable .
+```
+
+La CLI queda vinculada al código del clon. Usa los comandos desde la carpeta
+de tu proyecto, que contiene `config/` y `documents/`. Reinicia `ipsis serve`
+para cargar cambios de código; al añadir dependencias, repite la instalación.
+
 Para un servidor con HTTPS:
 
 ```bash
@@ -238,10 +297,11 @@ permite seguir en el chat. Los avisos van a stderr; los resultados, a stdout.
 `ipsis help` imprime todos los comandos agrupados por tarea (también es lo
 que imprime `ipsis` cuando su salida no es una terminal, en scripts);
 `ipsis help <comando>` (o `ipsis <comando> --help`) explica un comando.
+También admite rutas anidadas: `ipsis help widget theme apply`.
 
 ```text
 $ ipsis
- ipsis 0.9.0 · Respuestas extractivas sobre tus documentos: citas literales, abstención calibrada, solo CPU.
+ ipsis 0.9.0 · Busca información en tus documentos: fuentes literales ordenadas, solo CPU.
 
  Empezar
    init             Crea la configuración de un dominio nuevo.
@@ -285,7 +345,7 @@ El filtro de carbón activado se cambia cada 12 meses ...
 | | `ipsis profile show` · `ipsis profile set medium` | Muestra el perfil activo, sus modelos, presupuesto y si índice y calibración le sirven; lo cambia |
 | | `ipsis models list` · `download [--profile P]` · `verify` · `export` | Modelos ONNX: licencia y caché, descarga, inferencia de prueba; `export` convierte un modelo de Hugging Face (desarrollo) |
 | | `ipsis doctor` | Diagnóstico de solo lectura con el comando que arregla cada problema |
-| | `ipsis help [comando]` | El menú, o la ayuda de un comando |
+| | `ipsis help [comando ...]` | El menú o las opciones de una ruta de comandos, incluidos subcomandos |
 | **Documentos** | `ipsis load RUTA` | Copia un archivo o carpeta a `documents/` y lo cataloga |
 | | `ipsis index [--corpus CARPETA]` | Parsea, fragmenta, vectoriza y guarda el índice |
 | **Preguntar** | `ipsis chat [--diagnostics]` | Modo interactivo (preguntas y `/comandos`) |
@@ -295,7 +355,7 @@ El filtro de carbón activado se cambia cada 12 meses ...
 | | `ipsis personality show` · `validate` | Tono y avatar activos; valida `personality.yaml` |
 | | `ipsis personality tone list` · `apply TONO` · `try [--tone T] [--situation S]` | Siete tonos de respuesta; imprime las variantes de uno |
 | | `ipsis personality avatar list` · `import ARCHIVO [--name N]` · `apply NOMBRE` · `events` · `assign` · `colors` | Avatar del widget y cómo reacciona a cada evento |
-| | `ipsis widget theme list` · `apply PRESET` · `preview` | Temas visuales: `classic`, `minimal`, `editorial`, `contrast` |
+| | `ipsis widget theme list` · `apply PRESET` · `preview` | Temas visuales: `classic`, `minimal`, `editorial`, `contrast`, `search`, `search_compact` |
 | | `ipsis widget style show [--section S]` · `set seccion.clave=valor ...` | Cada valor de estilo de `config/styles.yaml` |
 | | `ipsis widget snippet [--api URL] [--component] [--key K]` · `export CARPETA [--api URL]` | Código para pegar en tu sitio; una carpeta con `widget.js` |
 | **Medir y calibrar** | `ipsis golden template [--n N]` · `import ARCHIVO` · `validate` · `export --format squad2\|csv` | Tus preguntas de prueba (golden set) |
@@ -326,6 +386,27 @@ Precedencia de los umbrales: **perfil → `config/engine.yaml` → calibración
 vigente**. Detalle en la [guía de configuración](docs/es/guia/configuracion.md).
 
 ## 🧭 Cómo funciona
+
+El recorrido predeterminado v2 recupera y ordena fuentes para que el usuario
+revise su contenido. Los inventarios se preparan como registros completos;
+el contexto se amplía después de puntuar, conservando la procedencia.
+
+```mermaid
+flowchart LR
+    D[Documentos o inventarios] --> I[Preparar e indexar]
+    P[Consulta] --> R[Búsqueda híbrida]
+    I --> R
+    R --> O[Ordenar candidatos]
+    O --> C[Ampliar contexto y verificar citas]
+    C --> V[Hasta 3 fuentes con contexto desplegable]
+    V --> S[Seguir buscando o reformular]
+```
+
+<details>
+<summary><b>Motor v1 opcional: capas, reglas y mediciones anteriores</b></summary>
+
+Se activa con `pipeline: v1`. Las reglas y cifras siguientes corresponden a
+ese recorrido, no al enrutador v2 predeterminado.
 
 ```mermaid
 flowchart TD
@@ -383,6 +464,8 @@ confianza); con erratas, el 97 % de las preguntas que se responden bien siguen
 respondiéndose bien; en preguntas coloquiales, 50 % se responden directo y
 otro 53 % muestra el pasaje correcto como `relacionado`. Los bancos sintéticos
 no certifican tus documentos: para eso está la [calibración](#-medir-y-calibrar).
+
+</details>
 
 ## 🌐 Interfaces web
 

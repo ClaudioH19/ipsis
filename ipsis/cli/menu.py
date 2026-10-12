@@ -25,9 +25,12 @@ GRUPOS: list[tuple[str, list[str]]] = [
 # Ejemplos: (clave de la explicación, comando).
 EJEMPLOS: list[tuple[str, str]] = [
     ("menu.example_new", "ipsis init --profile medium --language es"),
-    ("menu.example_load", "ipsis load ./docs && ipsis index"),
+    ("menu.example_load", "ipsis load ./docs"),
+    ("menu.example_inventory", "ipsis load ./inventario.xlsx"),
+    ("menu.example_index", "ipsis index"),
     ("menu.example_chat", "ipsis chat"),
-    ("menu.example_serve", "ipsis serve --mode development"),
+    ("menu.example_demo", "ipsis serve --demo --open"),
+    ("menu.example_serve", "ipsis serve --mode development --open"),
     ("menu.example_threshold", "ipsis calibrate --alpha 0.05 --apply"),
 ]
 
@@ -72,7 +75,7 @@ def texto_menu() -> str:
     for clave, comando in EJEMPLOS:
         lineas.append(f"   {_estilo('$', '2')} {comando}")
         lineas.append(f"     {_estilo(t(clave), '2')}")
-    lineas += ["", " " + t("menu.footer")]
+    lineas += ["", " " + t("menu.footer"), " " + t("terminal.partial_help")]
     from ipsis.recursos.instalacion import INSTALAR
 
     lineas += ["", " " + t("terminal.install", command=INSTALAR), " " + t("terminal.update"), " " + t("terminal.no_activation")]

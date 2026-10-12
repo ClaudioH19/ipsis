@@ -1,7 +1,8 @@
 # Messages of the ipsis interface (CLI). English is the default; set IPSIS_LANG=es for Spanish.
 # Variables go between braces ({name}); write a literal brace as {{ or }}.
 cli:
-  description: 'Respuestas extractivas sobre tus documentos: citas literales, abstención calibrada, solo CPU.'
+  description: 'Busca información en tus documentos: fuentes literales ordenadas, solo CPU.'
+  options_help: 'Opciones y ejemplos: ipsis help serve. Ayuda anidada: ipsis help widget theme apply. También puedes usar <comando> --help.'
   migration: '[migración] {change}'
   error: 'Error: {error}'
   error_dot: 'Error: {error}.'
@@ -14,7 +15,7 @@ cli:
   'yes': sí
   'no': 'no'
 prepare:
-  help: Prepara DOCX y una vista previa en una copia independiente del proyecto.
+  help: Prepara DOCX e inventarios XLSX/XLS/CSV/TSV con una vista previa en una copia independiente del proyecto.
   project: Proyecto original de solo lectura.
   output: Carpeta nueva fuera del proyecto original.
   index: Construye además el índice estructural separado con los modelos del perfil.
@@ -114,10 +115,20 @@ demo:
   key_apply: Aplicar clave
   footer: Consulta los documentos cargados en este proyecto. Las fuentes te permiten comprobar la información.
 serve:
+  examples: |
+    Ejemplos (desde la carpeta del proyecto):
+      ipsis serve --demo               Sirve /widget/demo.html con los estilos del proyecto.
+      ipsis serve --open               También abre esa página; activa --demo.
+      ipsis serve --mode development --open
+                                      Habilita el panel; imprime un token temporal si falta IPSIS_ADMIN_TOKEN.
+      ipsis serve ./documentos --demo --open
+                                      Prepara una carpeta documental antes de servirla.
+      ipsis serve --demo --port 8123   Página de prueba en http://127.0.0.1:8123/widget/demo.html.
+    La demo conserva el modo y las claves de acceso. Ctrl+C detiene el servicio.
   opt_demo: Sirve una página de prueba con el widget y los estilos del proyecto.
   opt_open: Abre la página de prueba en el navegador cuando el servicio esté listo; activa --demo.
   demo_url: 'Página de prueba: {url}'
-  help: Levanta la API del servicio.
+  help: Levanta la API y el widget; --demo sirve la página de prueba y --open la abre.
   arg_folder: Carpeta de documentos o proyecto existente; se prepara automáticamente.
   opt_host: 'Dirección donde escucha el servicio (por defecto: ''127.0.0.1'', solo local; usa ''0.0.0.0'' para aceptar conexiones externas).'
   opt_port: 'Puerto donde escucha el servicio (por defecto: 8000).'
@@ -446,6 +457,7 @@ widget:
   theme_list_help: Muestra los presets disponibles.
   theme_apply_help: Aplica un preset a styles.yaml.
   arg_preset: Nombre del preset visual.
+  available_presets: 'Disponibles: {names}. También puedes verlos con ipsis widget theme list.'
   opt_styles: Archivo de estilos a modificar.
   preset_failed: 'No se pudo aplicar el preset: {error}'
   preset_applied: Preset {preset!r} aplicado en {path}
@@ -1031,21 +1043,24 @@ menu:
   group_operate: Desplegar y operar
   group_other: Otros
   examples: Ejemplos
-  example_new: Proyecto nuevo en español con lector (perfil medium)
-  example_load: Agregar una carpeta de documentos y construir el índice
+  example_new: 'Proyecto nuevo en español (medium: búsqueda y reranking en v2)'
+  example_load: Agregar una carpeta de documentos al catálogo
+  example_inventory: Agregar un inventario XLSX, XLS, CSV o TSV; conserva filas y columnas
+  example_index: Construir o actualizar el índice después de cargar documentos
+  example_demo: Servir y abrir la página de prueba con el widget y el tema del proyecto
   example_chat: Preguntar y correr comandos en modo interactivo (/help adentro)
-  example_serve: API, widget y panel /admin en http://127.0.0.1:8000
+  example_serve: Abrir la prueba y habilitar el panel; se imprime un token temporal si falta uno
   example_threshold: Elegir umbrales con tu golden set al 5 % de riesgo
-  footer: "Opciones de un comando: ipsis <comando> --help  ·  modo interactivo: ipsis chat"
+  footer: "Opciones: ipsis help serve · ipsis help widget theme apply · <comando> --help · modo interactivo: ipsis chat"
 help:
   help: Muestra los comandos agrupados por tarea, o la ayuda de un comando.
-  arg_command: Comando a explicar (p. ej. calibrate).
+  arg_command: Ruta del comando a explicar (p. ej. serve o widget theme apply).
 chat:
   help: 'Modo interactivo: escribe preguntas y /comandos (/help, /doctor, /index...).'
   opt_diagnostics: Empezar con el diagnóstico activo (etapas, señales, regla y tramo de cada respuesta).
   welcome: "ipsis chat -- escribe una pregunta, o /help para ver los comandos. /exit para salir."
   commands: 'Comandos:'
-  cmd_help: Muestra esta lista.
+  cmd_help: 'Muestra esta lista o las opciones de un comando: /help serve, /help widget theme apply.'
   cmd_diagnostics: 'Activa o desactiva el diagnóstico (/diagnostics on|off).'
   cmd_reload: Recarga el motor después de cambiar configuración o documentos.
   cmd_exit: Salir (también /quit o Ctrl+D).
@@ -1058,6 +1073,8 @@ chat:
   cancelled: "Cancelado. Puedes seguir escribiendo; /exit para salir."
   invalid_command: "No pude leer el comando: {error}. Revisa las comillas y vuelve a intentarlo."
 terminal:
+  options_help: 'Opciones: /help serve · /help widget theme apply · /serve --help. Escribe /serve y pulsa Tab para ver sus opciones.'
+  partial_help: 'Enter resuelve nombres incompletos o errores próximos (ser -> serve); conserva argumentos y opciones. Si hay varias coincidencias, pide concretar.'
   interpreted: 'Comando interpretado: {command}'
   ambiguous: 'Comando ambiguo «{command}». Especifica una opción: {choices}'
   project: "perfil {profile} · {n} documento(s)"
@@ -1066,7 +1083,7 @@ terminal:
   toolbar: " ipsis · diagnóstico {diagnostics} · /help · Ctrl+D para salir"
   'on': 'activo'
   'off': 'apagado'
-  own_help: Comandos del modo interactivo
+  own_help: Ayuda general o de un comando (/help serve)
   own_diagnostics: Etapas, señales, regla y tramo de cada respuesta (on|off)
   own_reload: Recarga el motor tras cambiar configuración o documentos
   own_exit: Salir del modo interactivo
