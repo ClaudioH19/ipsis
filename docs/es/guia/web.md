@@ -7,6 +7,10 @@ La integración tiene dos partes:
 - el **widget**, un solo archivo `widget.js` sin dependencias que el
   servicio publica en `/widget.js`.
 
+Para configurarlo en HTML, Astro, Svelte, React, Angular o Python, consulta
+[integraciones web](integraciones.md): ejemplos ejecutables, CORS,
+configuración y cómo conservar el widget al navegar entre rutas.
+
 ![El widget responde citando el manual y marca el dato dentro de la cita](../../assets/widget-answer.png)
 
 ## Insertarlo
@@ -216,7 +220,12 @@ Genera, para servirlos desde otro servidor:
 
 - `examples/html`: página estática configurable desde `config.js`;
 - `examples/react`: proyecto Vite y adaptador de eventos para React;
+- `examples/astro`, `examples/svelte`, `examples/angular`: adaptadores de frameworks;
+- `examples/python`: página FastAPI que incrusta el widget;
 - `examples/wordpress`: plugin instalable con el shortcode `[ipsis]`.
+
+Los comandos y las URLs locales están en
+[examples/README.md](../../../examples/README.md).
 
 Las pruebas de navegador (`pytest -m browser`) usan Chromium real y
 verifican:

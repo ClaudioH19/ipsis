@@ -1,0 +1,11 @@
+{
+  "name": "ipsis-example-svelte",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5174 --strictPort",
+    "build": "vite build"
+  },
+  "dependencies": { "svelte": "5.39.6" },
+  "devDependencies": { "@sveltejs/vite-plugin-svelte": "6.2.1", "vite": "7.1.7" }
+}

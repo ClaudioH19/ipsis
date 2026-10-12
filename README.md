@@ -494,6 +494,30 @@ documents: that is what [calibration](#-measure-and-calibrate) is for.
 
 ## 🌐 Web interfaces
 
+### Embed the assistant in your website
+
+Keep `ipsis serve` running, allow your website's origin with
+`ipsis configure cors_origins=https://www.your-site.com`, then restart the
+service. Paste this before `</body>`:
+
+```html
+<script src="https://assistant.your-domain.com/widget.js"
+        data-api="https://assistant.your-domain.com" defer></script>
+```
+
+The script creates the widget; no ipsis npm package is needed. For a chat
+inside your page, use `<ipsis-chat mode="embedded" api="..."></ipsis-chat>`
+before the script, with a container that has a defined height.
+The [integration guide](docs/guide/integrations.md) includes local setup,
+copyable components and runnable examples:
+
+| HTML | Astro | Svelte | React | Angular | Python / FastAPI |
+|---|---|---|---|---|---|
+| [Example](examples/html) | [Example](examples/astro) | [Example](examples/svelte) | [Example](examples/react) | [Example](examples/angular) | [Example](examples/python) |
+
+See [example commands](examples/README.md) for each framework's configuration
+and development URL. The assistant's URL and the page's CORS origin are different.
+
 `ipsis serve` publishes everything on one port:
 
 | Address | What it is | Access |
@@ -657,6 +681,7 @@ and the [golden set guide](docs/guide/golden.md).
 | [Configuration](docs/guide/configuration.md) | Every project file, thresholds and precedence |
 | [Golden set](docs/guide/golden.md) | Test questions, evaluation and calibration |
 | [Web](docs/guide/web.md) | Widget, placement, JavaScript API, CSP and avatar |
+| [Integrations](docs/guide/integrations.md) | HTML, Astro, Svelte, React, Angular and Python; CORS, SSR and routing |
 | [Personality](docs/guide/personality.md) | Tones, Folio and the `/admin` panel |
 | [Deployment](docs/guide/deployment.md) | Server with HTTPS, Docker, modes and a pre-launch checklist |
 | [Architecture](docs/architecture.md) | Modules, flows and diagrams |

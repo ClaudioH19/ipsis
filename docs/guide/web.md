@@ -6,6 +6,10 @@ The integration has two parts:
 - the **widget**, a single dependency-free `widget.js` file the service
   publishes at `/widget.js`.
 
+For a complete setup with HTML, Astro, Svelte, React, Angular or Python,
+see [framework integrations](integrations.md): runnable examples, CORS,
+configuration and how to keep the widget mounted when navigating.
+
 ![The widget answers citing the manual and marks «6 months» inside the citation](../assets/widget-answer.png)
 
 ## Try the widget and configure the project
@@ -260,7 +264,11 @@ It generates, to serve them from another server:
 
 - `examples/html`: a static page configurable from `config.js`;
 - `examples/react`: a Vite project and an event adapter for React;
+- `examples/astro`, `examples/svelte`, `examples/angular`: framework adapters;
+- `examples/python`: a FastAPI page embedding the widget;
 - `examples/wordpress`: an installable plugin with the `[ipsis]` shortcode.
+
+Commands and local URLs are in [examples/README.md](../../examples/README.md).
 
 The browser tests (`pytest -m browser`) use a real Chromium and check:
 

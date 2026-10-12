@@ -1,0 +1,6 @@
+---
+const api = (import.meta.env.PUBLIC_IPSIS_API || 'http://127.0.0.1:8000').replace(/\/$/, '');
+const widgetKey = import.meta.env.PUBLIC_IPSIS_WIDGET_KEY || undefined;
+---
+<ipsis-chat api={api} widget-key={widgetKey} position="bottom-right"></ipsis-chat>
+<script is:inline src={`${api}/widget.js`} defer></script>
