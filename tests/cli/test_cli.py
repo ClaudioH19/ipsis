@@ -29,6 +29,12 @@ RAIZ = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(autouse=True)
+def _no_abrir_navegador_real(monkeypatch):
+    from threading import Event
+    monkeypatch.setattr("ipsis.aplicacion.vista_servicio.abrir_cuando_listo", lambda url: Event())
+
+
+@pytest.fixture(autouse=True)
 def _restaurar_perfil_activo():
     """``ipsis index``/``ipsis load`` configuran el perfil de dominio activo
     como estado de PROCESO (``ipsis.lenguaje.entidades.configurar_perfil``,

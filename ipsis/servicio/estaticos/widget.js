@@ -178,6 +178,13 @@
     search_added: "Added {n} results.",
     search_start: "Search your documents",
     search_instruction: "Enter a question or keywords to find information.",
+    voice_label: "Guidance from ipsis",
+    voice_help: "Search tips",
+    voice_options: "What I can do",
+    voice_show_all: "Show full message",
+    voice_results: "Open a source to check its context.",
+    voice_continuation: "Review the newly added sources.",
+    voice_no_results: "Try different keywords or check the loaded documents.",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -577,6 +584,17 @@
     "  border:1px solid var(--rw-acento);border-radius:var(--rw-radio-control);padding:.5em .8em;cursor:pointer;}",
     ".rw-seguir:disabled{opacity:.45;cursor:default;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
+    ".rw-voz{flex:none;padding:12px var(--rw-separacion);border-bottom:1px solid var(--rw-borde);",
+    "  background:var(--rw-fondo);color:var(--rw-texto);text-align:start;}",
+    ".rw-voz[hidden]{display:none;}",
+    ".rw-voz-cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}",
+    ".rw-voz h3{margin:0;font-size:var(--rw-tamano-etiqueta);font-weight:600;color:var(--rw-texto-suave);}",
+    ".rw-voz-texto{margin:8px 0;min-height:2.8em;font-size:var(--rw-tamano-cita);line-height:1.45;overflow-wrap:anywhere;}",
+    ".rw-voz-acciones{display:flex;flex-wrap:wrap;gap:8px;}",
+    ".rw-voz button{font:inherit;font-size:var(--rw-tamano-etiqueta);color:var(--rw-texto);",
+    "  background:var(--rw-superficie);border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);",
+    "  padding:5px 10px;cursor:pointer;}",
+    ".rw-voz button:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
 
     // Teléfono (o apaisado bajo): hoja a pantalla completa. La altura sigue al
     // viewport visible, así el teclado virtual no tapa el campo de texto.
@@ -918,6 +936,7 @@
     return {
       estado: ESTADOS_INTERNOS[r.status] || "sin_respuesta",
       modo: r.response_mode,
+      categoria: r.conversational_category,
       continuation: r.continuation,
       has_more: r.has_more,
       respuesta: r.answer,
@@ -956,10 +975,16 @@
   }
 
   function agregarMensajeAsistente(respuesta) {
+    if (modoBusqueda && respuesta.estado === "conversacional") {
+      hablar(respuesta.categoria ? voz(respuesta.categoria, respuesta.respuesta) : respuesta.respuesta,
+             respuesta.categoria || "greeting");
+      return;
+    }
     if (respuesta.modo === "ranked_sources") {
       renderizarBusqueda(respuesta);
       return;
     }
+    if (modoBusqueda) { hablar(respuesta.respuesta, "message"); return; }
     var estadoResp = respuesta.estado || "sin_respuesta";
     var alternativas = estadoResp === "sin_respuesta" ? (respuesta.alternativas || []) : [];
     var burbuja = document.createElement("div");
@@ -999,6 +1024,83 @@
 
   var modoBusqueda = false;
   var paginaBusqueda = null;
+  var BANCO_VOZ = {}, girosVoz = {}, animacionesVoz = true, cuadroVoz = null, textoVozCompleto = "";
+  var espacioVoz = document.createElement("section");
+  espacioVoz.className = "rw-voz";
+  espacioVoz.hidden = true;
+  var cabeceraVoz = document.createElement("div");
+  cabeceraVoz.className = "rw-voz-cabecera";
+  var tituloVoz = document.createElement("h3");
+  tituloVoz.id = "rw-voz-titulo";
+  espacioVoz.setAttribute("aria-labelledby", tituloVoz.id);
+  var completarVoz = document.createElement("button");
+  completarVoz.type = "button";
+  completarVoz.hidden = true;
+  completarVoz.addEventListener("click", finalizarVoz);
+  cabeceraVoz.append(tituloVoz, completarVoz);
+  var textoVoz = document.createElement("p");
+  textoVoz.className = "rw-voz-texto";
+  textoVoz.setAttribute("aria-hidden", "true");
+  // Se anuncia una vez el texto completo, nunca carácter por carácter.
+  var anuncioVoz = document.createElement("span");
+  anuncioVoz.className = "rw-sr-solo";
+  anuncioVoz.setAttribute("role", "status");
+  anuncioVoz.setAttribute("aria-live", "polite");
+  anuncioVoz.setAttribute("aria-atomic", "true");
+  var accionesVoz = document.createElement("div");
+  accionesVoz.className = "rw-voz-acciones";
+  var ayudaVoz = document.createElement("button"), opcionesVoz = document.createElement("button");
+  ayudaVoz.type = opcionesVoz.type = "button";
+  ayudaVoz.addEventListener("click", function () { hablar(voz("tips", texto("search_instruction")), "tips"); });
+  opcionesVoz.addEventListener("click", function () { hablar(voz("capability", texto("search_instruction")), "capability"); });
+  accionesVoz.append(ayudaVoz, opcionesVoz);
+  espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz, accionesVoz);
+
+  function voz(categoria, repuesto) {
+    var opciones = BANCO_VOZ[categoria];
+    if (!opciones || !opciones.length) return repuesto || texto("search_instruction");
+    if (girosVoz[categoria] === undefined) girosVoz[categoria] = Math.floor(Math.random() * opciones.length);
+    var indice = girosVoz[categoria]++ % opciones.length;
+    return String(opciones[indice]);
+  }
+
+  function finalizarVoz() {
+    if (cuadroVoz !== null) window.cancelAnimationFrame(cuadroVoz);
+    cuadroVoz = null;
+    textoVoz.textContent = textoVozCompleto;
+    espacioVoz.dataset.typing = "false";
+    if (raiz.activeElement === completarVoz) input.focus({ preventScroll: true });
+    completarVoz.hidden = true;
+  }
+
+  function hablar(mensaje, categoria) {
+    finalizarVoz();
+    textoVozCompleto = String(mensaje || "");
+    espacioVoz.dataset.category = categoria || "message";
+    anuncioVoz.textContent = textoVozCompleto;
+    if (!animacionesVoz || sinMovimiento() || !textoVozCompleto) { finalizarVoz(); return; }
+    var caracteres = window.Intl && Intl.Segmenter
+      ? Array.from(new Intl.Segmenter(panel.lang || undefined, { granularity: "grapheme" }).segment(textoVozCompleto),
+                   function (s) { return s.segment; }) : Array.from(textoVozCompleto);
+    var inicio = performance.now();
+    textoVoz.textContent = "";
+    espacioVoz.dataset.typing = "true";
+    completarVoz.hidden = false;
+    function escribir(ahora) {
+      if (!animacionesVoz || sinMovimiento()) { finalizarVoz(); return; }
+      var n = Math.min(caracteres.length, Math.floor((ahora - inicio) / 18) + 1);
+      textoVoz.textContent = caracteres.slice(0, n).join("");
+      if (n >= caracteres.length) finalizarVoz();
+      else cuadroVoz = window.requestAnimationFrame(escribir);
+    }
+    cuadroVoz = window.requestAnimationFrame(escribir);
+  }
+  if (window.matchMedia) {
+    var movimientoVoz = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (movimientoVoz.addEventListener) movimientoVoz.addEventListener("change", function (e) {
+      if (e.matches) finalizarVoz();
+    });
+  }
 
   function activarBusqueda() {
     modoBusqueda = true;
@@ -1007,6 +1109,12 @@
     botonCerrar.setAttribute("aria-label", texto("search_close"));
     subtituloTexto.textContent = texto("search_subtitle");
     panel.insertBefore(form, mensajes);
+    panel.insertBefore(espacioVoz, mensajes);
+    espacioVoz.hidden = false;
+    tituloVoz.textContent = texto("voice_label");
+    completarVoz.textContent = texto("voice_show_all");
+    ayudaVoz.textContent = texto("voice_help");
+    opcionesVoz.textContent = texto("voice_options");
     mensajes.setAttribute("role", "region");
     mensajes.setAttribute("aria-label", texto("search_results_label"));
     mensajes.removeAttribute("aria-live");
@@ -1300,6 +1408,8 @@
     anunciador.textContent = respuesta.continuando
       ? texto("search_added", { n: cantidad - cantidadAnterior }) : paginaBusqueda.contador.textContent;
     if (respuesta.continuando && primero) primero.focus({ preventScroll: true });
+    var categoriaVoz = cantidad === 0 ? "no_results" : respuesta.continuando ? "continuation" : "results";
+    hablar(voz(categoriaVoz, texto("voice_" + categoriaVoz)), categoriaVoz);
   }
 
   // Indicador de "escribiendo": sin el, el widget se queda mudo entre que
@@ -1308,6 +1418,7 @@
   var burbujaEspera = null;
 
   function mostrarEscribiendo() {
+    if (modoBusqueda) { hablar(voz("searching", micro("waiting")), "searching"); return; }
     if (burbujaEspera) return;
     burbujaEspera = document.createElement("div");
     burbujaEspera.className = "rw-escribiendo";
@@ -1331,6 +1442,7 @@
   }
 
   function agregarMensajeError(texto) {
+    if (modoBusqueda) { hablar(texto, "error"); return; }
     var burbuja = document.createElement("div");
     burbuja.className = "rw-msg rw-msg-sin_respuesta";
     burbuja.textContent = texto;
@@ -1384,6 +1496,8 @@
         if (cfg.preset) panel.setAttribute("data-preset", cfg.preset);
         aplicarInterfaz(cfg.interface);
         if (cfg.microcopy && typeof cfg.microcopy === "object") MICROCOPIA = cfg.microcopy;
+        if (cfg.assistant_messages && typeof cfg.assistant_messages === "object") BANCO_VOZ = cfg.assistant_messages;
+        animacionesVoz = cfg.animations_enabled !== false;
         var p = cfg.placement || {};
         // styles.yaml::placement con los nombres públicos → los del widget.
         var u = { posicion: p.position, tamano: p.size, lanzador: p.launcher, desplazamiento_x: p.offset_x,
@@ -1409,7 +1523,10 @@
         var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.greeting;
         if (cfg.response_mode === "ranked_sources" || modoBusqueda) {
           activarBusqueda();
-          if (!paginaBusqueda && !peticionPendiente) mostrarInicioBusqueda();
+          if (!paginaBusqueda && !peticionPendiente && !textoVozCompleto) {
+            mostrarInicioBusqueda();
+            hablar(voz("welcome", cfg.greeting), "welcome");
+          }
         } else if (bienvenida && mensajes.children.length === 0) {
           agregarMensajeAsistente({ estado: "conversacional", respuesta: bienvenida });
         }
@@ -1435,7 +1552,6 @@
         agregarMensajeUsuario(pregunta);
         input.value = "";
       } else input.value = pregunta;
-      mensajes.querySelectorAll(".rw-seguir").forEach(function (b) { b.dataset.activo = "no"; });
     }
     mensajes.querySelectorAll(".rw-seguir").forEach(function (b) { b.disabled = true; });
     input.disabled = true;

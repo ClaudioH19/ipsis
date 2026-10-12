@@ -117,18 +117,20 @@ demo:
 serve:
   examples: |
     Examples (from the project folder):
-      ipsis serve --demo               Serve /widget/demo.html with the project styles.
-      ipsis serve --open               Also open that page; enables --demo.
-      ipsis serve --mode development --open
-                                      Enable the panel; print a temporary token if IPSIS_ADMIN_TOKEN is missing.
-      ipsis serve ./documents --demo --open
+      ipsis serve                     Open the widget and enable the panel with a temporary token if missing.
+      ipsis serve --no-open            Serve widget and panel without opening a browser.
+      ipsis serve --no-demo --no-admin --no-open
+                                      Serve only the API and widget assets.
+      ipsis serve ./documents
                                       Prepare a document folder before serving it.
       ipsis serve --demo --port 8123   Test page at http://127.0.0.1:8123/widget/demo.html.
     Demo preserves the service mode and access keys. Ctrl+C stops the service.
-  opt_demo: Serve a test page with the widget and the project styles.
-  opt_open: Open the test page in a browser when the server is ready; enables --demo.
+  opt_demo: 'Test page with the project styles (enabled by default; --no-demo disables it and suppresses browser opening).'
+  opt_open: 'Open the widget when the server is ready (enabled by default; --no-open suppresses opening).'
+  opt_admin: 'Configuration panel enabled by default; create a temporary token if IPSIS_ADMIN_TOKEN is missing. --no-admin disables it.'
+  admin_url: 'Configuration panel: {url}'
   demo_url: 'Test page: {url}'
-  help: Start the API and widget; --demo serves the test page and --open opens it.
+  help: Start the API, open the widget and enable the configuration panel by default.
   arg_folder: Folder of documents or an existing project; it is prepared automatically.
   opt_host: 'Address the service listens on (default: ''127.0.0.1'', local only; use ''0.0.0.0'' to accept external connections).'
   opt_port: 'Port the service listens on (default: 8000).'

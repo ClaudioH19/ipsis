@@ -309,8 +309,8 @@ def test_continuacion_expirada_o_reintento_de_error_temporal(navegador, servidor
     expect(page.locator(".rw-resultado")).to_have_count(3)
     if error == 409:
         expect(mas).to_be_disabled()
-        expect(page.get_by_role("region", name="Search results").get_by_text(
-            "This search has expired. Submit your question again.")).to_be_visible()
+        expect(page.locator(".rw-voz-texto")).to_have_text(
+            "This search has expired. Submit your question again.")
         entrada.fill("stock")
         page.get_by_role("button", name="Search", exact=True).click()
         expect(mas).to_be_enabled()

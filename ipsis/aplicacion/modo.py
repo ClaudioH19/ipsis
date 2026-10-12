@@ -37,7 +37,7 @@ class ModoServicio:
     proxy_confiable: tuple[str, ...] = ()
     admin_ips: tuple[str, ...] = ()
     docs: bool = False  # IPSIS_DOCS=1: /docs también en producción
-    demo: bool = False  # IPSIS_DEMO=1: /widget/demo.html también en producción
+    demo: bool | None = None  # None: según el modo; False permite desactivar la demo en desarrollo.
     url_fuente: str = URL_FUENTE_POR_DEFECTO
 
     @property
@@ -55,7 +55,7 @@ class ModoServicio:
 
     @property
     def demo_activa(self) -> bool:
-        return self.desarrollo or self.demo
+        return self.desarrollo if self.demo is None else self.demo
 
     @property
     def admin_activo(self) -> bool:
@@ -89,7 +89,7 @@ def modo_servicio(modo: str | None = None, entorno: Mapping[str, str] | None = N
         proxy_confiable=_lista(entorno.get("IPSIS_TRUSTED_PROXY")),
         admin_ips=_lista(entorno.get("IPSIS_ADMIN_IPS")),
         docs=entorno.get("IPSIS_DOCS") == "1",
-        demo=entorno.get("IPSIS_DEMO") == "1",
+        demo=None if "IPSIS_DEMO" not in entorno else entorno["IPSIS_DEMO"] == "1",
         url_fuente=entorno.get("IPSIS_SOURCE_URL") or URL_FUENTE_POR_DEFECTO,
     )
 

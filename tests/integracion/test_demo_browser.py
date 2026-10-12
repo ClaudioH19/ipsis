@@ -18,7 +18,10 @@ def demo(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--profile", "light"]) == 0
     assert main(["widget", "theme", "apply", "search"]) == 0
-    app = crear_app(motor(), modo=ModoServicio(modo="desarrollo", demo=True, token_admin="a" * 40))
+    from ipsis.lenguaje.paquete import cargar_paquete
+    m = motor(idioma=cargar_paquete("es"), opciones={"corregir_erratas": False})
+    m.plantillas["conversacional"] = m.idioma.conversacional.model_dump()
+    app = crear_app(m, modo=ModoServicio(modo="desarrollo", demo=True, token_admin="a" * 40))
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         puerto = sock.getsockname()[1]
@@ -81,4 +84,114 @@ def test_clave_se_aplica_a_una_instancia_inicializada(navegador, demo):
     assert llamada.value.status == 200
     assert llamada.value.request.headers["x-ipsis-widget-key"] == "clave-de-prueba"
     assert "clave-de-prueba" not in page.url
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("ancho,tema", [(1280, "light"), (390, "dark")])
+def test_voz_separada_escribe_sin_retrasar_fuentes_y_conserva_resultados(navegador, demo, ancho, tema):
+    from pathlib import Path
+    from playwright.sync_api import expect
+    from tests.integracion.test_widget_browser import _pagina_fuentes
+
+    url, _ = demo
+    page = navegador.new_page(viewport={"width": ancho, "height": 900}, color_scheme=tema)
+    peticiones = []
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        if cuerpo["question"] == "hola":
+            ruta.fulfill(json={"status": "conversational", "conversational_category": "greeting", "answer": "Hola."})
+        else:
+            ruta.fulfill(json=_pagina_fuentes(3, False) if cuerpo.get("continuation") else _pagina_fuentes())
+    page.route("**/ask", responder)
+    page.goto(url.replace("/widget/demo.html", "/"))
+    expect(page.locator(".rw-voz")).to_be_visible()
+    page.get_by_role("button", name="Cómo buscar", exact=True).click()
+    expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "true")
+    parcial = page.locator(".rw-voz-texto").inner_text()
+    completo = page.locator(".rw-voz .rw-sr-solo").inner_text()
+    assert len(parcial) < len(completo)
+    page.get_by_role("button", name="Mostrar completo").click()
+    expect(page.locator(".rw-voz-texto")).to_have_text(completo)
+    expect(page.locator("#rw-input")).to_be_focused()
+    page.locator("#rw-input").fill("stock")
+    page.locator(".rw-enviar").click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "results")
+    expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "true")
+    assert page.locator(".rw-mensajes .rw-voz").count() == 0
+    expect(page.locator(".rw-resultado-vista").first).to_have_text("Stock 10")
+    page.locator(".rw-resultado-titulo").first.click()
+    expect(page.locator(".rw-resultado-contexto").first).to_be_visible()
+    page.locator("#rw-input").fill("hola")
+    page.locator(".rw-enviar").click()
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "greeting")
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-resultado-contexto").first).to_be_visible()
+    page.locator(".rw-seguir").click()
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    assert peticiones[-1]["question"] == "stock" and peticiones[-1]["continuation"] == "pagina-2"
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "continuation")
+    page.get_by_role("button", name="Mostrar completo").click()
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+    captura = Path(__file__).resolve().parents[2] / ".cache/voz-widget" / f"demo-voz-{ancho}.png"
+    captura.parent.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(captura), full_page=True)
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("reducido,activadas", [(True, True), (False, False)])
+def test_voz_sin_movimiento_y_error_no_reemplaza_fuentes(navegador, demo, reducido, activadas):
+    from playwright.sync_api import expect
+    from tests.integracion.test_widget_browser import _pagina_fuentes
+    from ipsis.lenguaje.voz import voz_del_widget
+
+    url, _ = demo
+    banco = voz_del_widget("es")
+    page = navegador.new_page(reduced_motion="reduce" if reducido else "no-preference")
+    page.route("**/config", lambda r: r.fulfill(json={"response_mode": "ranked_sources", "language": "es",
+        "assistant_messages": banco["messages"], "interface": banco["interface"], "animations_enabled": activadas}))
+    page.route("**/ask", lambda r: r.fulfill(json=_pagina_fuentes()))
+    page.goto(url)
+    expect(page.locator(".rw-voz-texto")).not_to_be_empty()
+    expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "false")
+    expect(page.get_by_role("button", name="Mostrar completo")).to_be_hidden()
+    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "capability")
+    assert page.locator(".rw-voz-texto").inner_text() == page.locator(".rw-voz .rw-sr-solo").inner_text()
+    page.locator("#rw-input").fill("stock")
+    page.locator(".rw-enviar").click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    page.route("**/ask", lambda r: r.fulfill(status=500))
+    page.locator("#rw-input").fill("otro")
+    page.locator(".rw-enviar").click()
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "error")
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    assert page.locator(".rw-mensajes .rw-msg").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_nuevo_mensaje_cancela_escritura_y_cambio_de_movimiento_la_completa(navegador, demo):
+    from playwright.sync_api import expect
+
+    url, _ = demo
+    page = navegador.new_page(reduced_motion="no-preference")
+    errores = []
+    page.on("pageerror", lambda e: errores.append(str(e)))
+    page.goto(url)
+    expect(page.locator(".rw-voz")).to_be_visible()
+    page.get_by_role("button", name="Cómo buscar", exact=True).click()
+    anterior = page.locator(".rw-voz .rw-sr-solo").inner_text()
+    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    siguiente = page.locator(".rw-voz .rw-sr-solo").inner_text()
+    assert siguiente != anterior
+    page.emulate_media(reduced_motion="reduce")
+    expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "false")
+    expect(page.locator(".rw-voz-texto")).to_have_text(siguiente)
+    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    assert page.locator(".rw-voz-texto").inner_text() != siguiente
+    assert not errores
     page.close()

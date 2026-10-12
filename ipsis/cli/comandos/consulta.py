@@ -33,21 +33,25 @@ class ComandoServir(Comando):
         parser.add_argument("--reindex", dest="reindexar", action="store_true", help=t("serve.opt_reindex"))
         parser.add_argument("--mode", dest="modo", choices=["production", "development"], default=None,
                             help=t("serve.opt_mode"))
-        parser.add_argument("--demo", action="store_true", help=t("serve.opt_demo"))
-        parser.add_argument("--open", dest="abrir", action="store_true", help=t("serve.opt_open"))
+        parser.add_argument("--demo", action=argparse.BooleanOptionalAction, default=True, help=t("serve.opt_demo"))
+        parser.add_argument("--open", dest="abrir", action=argparse.BooleanOptionalAction, default=True,
+                            help=t("serve.opt_open"))
+        parser.add_argument("--admin", action=argparse.BooleanOptionalAction, default=True, help=t("serve.opt_admin"))
 
-    def _preparar_modo(self, modo: str | None) -> dict:
+    def _preparar_modo(self, modo: str | None, *, admin: bool = True) -> dict:
         """Fija IPSIS_MODE para el proceso del servicio y devuelve las opciones de proxy de uvicorn."""
         from ipsis.aplicacion.modo import generar_token, modo_servicio
 
         if modo:
             os.environ["IPSIS_MODE"] = modo
+        if admin and not os.environ.get("IPSIS_ADMIN_TOKEN"):
+            os.environ["IPSIS_ADMIN_TOKEN"] = generar_token()
+            print(t("serve.temporary_token", token=os.environ["IPSIS_ADMIN_TOKEN"]))
+        elif not admin:
+            os.environ.pop("IPSIS_ADMIN_TOKEN", None)
         efectivo = modo_servicio()
         if efectivo.desarrollo:
             print(t("serve.development"))
-            if not os.environ.get("IPSIS_ADMIN_TOKEN"):
-                os.environ["IPSIS_ADMIN_TOKEN"] = generar_token()
-                print(t("serve.temporary_token", token=os.environ["IPSIS_ADMIN_TOKEN"]))
         for problema in efectivo.problemas:
             print(t("cli.warning", warning=problema))
         # El esquema (https) y la IP real solo se aceptan de los X-Forwarded-* del proxy declarado.
@@ -97,8 +101,9 @@ class ComandoServir(Comando):
         import uvicorn
 
         anterior = Path.cwd()
-        demo_anterior = os.environ.get("IPSIS_DEMO")
-        demo = bool(getattr(args, "demo", False) or getattr(args, "abrir", False))
+        entorno_anterior = {clave: os.environ.get(clave) for clave in
+                            ("IPSIS_DEMO", "IPSIS_MODE", "IPSIS_ADMIN_TOKEN")}
+        demo = getattr(args, "demo", True)
         apertura = None
         try:
             if args.carpeta:
@@ -107,16 +112,20 @@ class ComandoServir(Comando):
                 with actividad("serve"):
                     proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
                 print(t("serve.active_project", path=proyecto))
-            if demo:
-                os.environ["IPSIS_DEMO"] = "1"
-            proxy = self._preparar_modo(args.modo)
+            os.environ["IPSIS_DEMO"] = "1" if demo else "0"
+            proxy = self._preparar_modo(args.modo, admin=getattr(args, "admin", True))
             print(t("serve.serving", host=args.host, port=args.port))
+            from ipsis.aplicacion.modo import modo_servicio
+            from ipsis.aplicacion.vista_servicio import url_local
+
+            if modo_servicio().admin_activo:
+                print(t("serve.admin_url", url=url_local(args.host, args.port, "/admin/panel")))
             if demo:
                 from ipsis.aplicacion.vista_servicio import abrir_cuando_listo, url_local
 
                 url = url_local(args.host, args.port)
                 print(t("serve.demo_url", url=url))
-                if getattr(args, "abrir", False):
+                if getattr(args, "abrir", True):
                     apertura = abrir_cuando_listo(url)
             uvicorn.run("ipsis.servicio.api:crear_app", factory=True, host=args.host, port=args.port,
                         log_level="info", **proxy)
@@ -127,11 +136,11 @@ class ComandoServir(Comando):
         finally:
             if apertura is not None:
                 apertura.set()
-            if demo:
-                if demo_anterior is None:
-                    os.environ.pop("IPSIS_DEMO", None)
+            for clave, valor in entorno_anterior.items():
+                if valor is None:
+                    os.environ.pop(clave, None)
                 else:
-                    os.environ["IPSIS_DEMO"] = demo_anterior
+                    os.environ[clave] = valor
             os.chdir(anterior)
 
 

@@ -106,7 +106,7 @@ ipsis models verify            # loads each model and runs a minimal inference
 ipsis load /path/to/documents  # PDF with text, DOCX, Markdown or TXT
 ipsis index
 ipsis doctor                   # can it run? If not, which command to run
-ipsis serve                    # http://127.0.0.1:8000 (open /widget/demo.html with --mode development)
+ipsis serve                    # opens the widget and enables /admin/panel with a temporary token if needed
 ```
 
 In another terminal:

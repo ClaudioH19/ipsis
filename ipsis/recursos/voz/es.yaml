@@ -1,0 +1,119 @@
+interface:
+  voice_label: Orientación de ipsis
+  voice_help: Cómo buscar
+  voice_options: Qué puedo hacer
+  voice_show_all: Mostrar completo
+  voice_results: Abre una fuente para comprobar su contexto.
+  voice_continuation: Revisa las fuentes recién añadidas.
+  voice_no_results: Prueba otras palabras clave o revisa los documentos cargados.
+messages:
+  welcome:
+    - Hola. Escribe una pregunta y revisa las fuentes ordenadas por relevancia.
+    - Bienvenido. Puedes buscar por pregunta, nombre, código o palabras clave.
+    - ¿Qué información necesitas? Empieza con una pregunta sobre tus documentos.
+    - Explora tus documentos. Abre los resultados para leer su contexto.
+    - Hola. Te ayudaré a encontrar pasajes para que puedas verificar la información.
+    - Empieza con lo que buscas. Puedes reformular la consulta si necesitas otras opciones.
+    - Bienvenido. Aquí encontrarás fuentes para revisar, con su documento y contexto.
+    - ¿Buscas un dato o una explicación? Escribe el tema y lo que necesitas conocer.
+    - Hola. Prueba con una pregunta concreta o con el identificador de un producto.
+    - Tus documentos son el punto de partida. Escribe una consulta para explorarlos.
+  greeting:
+    - Hola. ¿Qué quieres buscar en tus documentos?
+    - Buenos días. Puedes empezar con una pregunta o palabras clave.
+    - Hola. Escribe el tema que necesitas consultar.
+    - Bienvenido. ¿Qué información te gustaría revisar?
+    - Hola. Estoy listo para buscar fuentes en tu proyecto.
+    - Buenas. Puedes consultar un nombre, código o tema.
+    - Hola. Si necesitas orientación, pulsa «Cómo buscar».
+    - Qué gusto saludarte. ¿Qué dato necesitas encontrar?
+    - Hola. Los resultados que abras conservarán el contexto del documento.
+    - Bienvenido de nuevo. Escribe tu próxima consulta cuando quieras.
+  thanks:
+    - De nada. Puedes seguir buscando cuando lo necesites.
+    - Con gusto. Recuerda revisar la fuente antes de usar la información.
+    - Gracias a ti. Los resultados siguen disponibles para consultarlos.
+    - Me alegra ayudar. Puedes escribir otra pregunta.
+    - De nada. Si necesitas más contexto, abre el resultado.
+    - Con gusto. Una consulta más concreta puede acercarte al dato que buscas.
+    - Gracias. Puedes volver a las fuentes mostradas cuando quieras.
+    - De nada. Si queda alguna duda, prueba con otras palabras clave.
+    - Con gusto. Puedes buscar otro tema sin salir de esta página.
+    - Gracias a ti. Aquí puedes continuar revisando tus documentos.
+  farewell:
+    - Hasta luego. Puedes volver a buscar cuando quieras.
+    - Adiós. Los documentos estarán aquí para tu próxima consulta.
+    - Nos vemos. Recuerda verificar las fuentes que vayas a utilizar.
+    - Hasta pronto. Puedes retomar la búsqueda en esta página.
+    - Que tengas buen día. Vuelve cuando necesites consultar un documento.
+    - Chao. Gracias por revisar las fuentes de tu proyecto.
+    - Hasta luego. Puedes dejar los resultados abiertos para leerlos después.
+    - Nos vemos pronto. Escribe otra consulta si decides continuar.
+    - Adiós. Espero que la revisión de los documentos te resulte útil.
+    - Hasta la próxima. Esta página sigue disponible para buscar.
+  capability:
+    - Busco información en los documentos cargados y muestro fuentes ordenadas para revisar.
+    - Puedes consultar temas, nombres o códigos y abrir el contexto de cada resultado.
+    - Te ayudo a localizar información. Tú puedes comprobar qué fuente responde a tu pregunta.
+    - Muestro pasajes del proyecto con sus referencias; puedes pedir más resultados si están disponibles.
+    - Puedes buscar datos de inventarios, instrucciones o textos presentes en los documentos cargados.
+    - Recupero texto documental. No calculo existencias ni modifico los valores de un inventario.
+    - Puedes revisar las primeras opciones, abrirlas o reformular la búsqueda con otro término.
+    - Ayudo a encontrar fuentes; no redacto una respuesta nueva a partir de ellas.
+    - Busca con lenguaje natural o palabras clave. Cada resultado permite revisar su procedencia.
+    - La búsqueda funciona sobre este proyecto. El panel de administración permite gestionar sus documentos.
+  tips:
+    - Incluye el tema y el dato que buscas, por ejemplo «stock del producto» junto a su código.
+    - Si conoces un nombre o identificador, escríbelo como aparece en el documento.
+    - Busca una cosa por vez para que sea más sencillo comparar las fuentes.
+    - Si faltan opciones, prueba con un término más general y revisa el contexto.
+    - Abre cada resultado para leer el pasaje completo y comprobar su relación con la pregunta.
+    - Puedes cambiar las palabras clave si los primeros resultados no son útiles.
+    - Usa «Seguir buscando» cuando aparezca para revisar más opciones del mismo ranking.
+    - En una tabla, revisa los encabezados junto con la fila que contiene el dato.
+    - Añade el nombre del manual, producto o tema si la consulta es muy amplia.
+    - Comprueba la referencia y la versión del documento antes de usar un dato.
+  searching:
+    - Buscando fuentes en tus documentos…
+    - Revisando opciones para esta consulta…
+    - Recuperando pasajes relacionados…
+    - Consultando el índice del proyecto…
+    - Ordenando los resultados de la búsqueda…
+    - Buscando el tema que indicaste…
+    - Preparando las fuentes para revisar…
+    - Localizando posibles coincidencias…
+    - Buscando información en el corpus cargado…
+    - Recuperando opciones con su contexto…
+  results:
+    - Revisa estas opciones. Abre cada fuente para comprobar si responde a tu pregunta.
+    - Las fuentes están ordenadas por relevancia. La primera opción también necesita verificación.
+    - Ya puedes leer los resultados. El contexto ayuda a distinguir datos parecidos.
+    - Abre el pasaje que te interese y revisa su documento de origen.
+    - Compara las opciones antes de elegir qué información utilizar.
+    - Estas son posibles fuentes. Puedes reformular la consulta para buscar otras.
+    - Si el dato está en una tabla, revisa también los encabezados de sus columnas.
+    - Los resultados conservan el texto del documento. Revisa el contexto de la coincidencia.
+    - Puedes seguir leyendo las fuentes o escribir una consulta más específica.
+    - Revisa el documento y su versión al comprobar la información encontrada.
+  continuation:
+    - Las nuevas opciones se añadieron a la lista. Puedes compararlas con las anteriores.
+    - Aquí hay más fuentes del mismo ranking para revisar.
+    - La búsqueda continúa. Abre las opciones nuevas para leer su contexto.
+    - Revisa los resultados añadidos; conservamos los que ya estaban en la lista.
+    - Puedes comparar estos pasajes con las primeras fuentes mostradas.
+    - Más opciones disponibles para la misma consulta. Comprueba cuál te sirve.
+    - Añadimos otros resultados sin repetir los ya mostrados.
+    - Continúa revisando las fuentes o cambia la consulta si necesitas otro enfoque.
+    - Las opciones nuevas aparecen después de las anteriores.
+    - Revisa estos pasajes adicionales con sus referencias.
+  no_results:
+    - No hay fuentes para mostrar en esta búsqueda. Prueba con otras palabras clave.
+    - No se recuperaron opciones. Comprueba el nombre o código que escribiste.
+    - Prueba una consulta más general o añade el nombre del documento.
+    - Esta búsqueda no devolvió fuentes. Puedes reformular la pregunta.
+    - Revisa si el documento que necesitas está cargado en el proyecto.
+    - No hay opciones para revisar aquí. Intenta buscar el tema por separado.
+    - Puedes usar un sinónimo o una palabra que recuerdes del documento.
+    - Prueba con el identificador completo si buscas un producto o registro.
+    - No se mostraron fuentes. Divide la consulta en preguntas más breves.
+    - Intenta otra búsqueda y comprueba qué documentos están disponibles en el panel.

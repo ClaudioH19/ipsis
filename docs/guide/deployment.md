@@ -22,7 +22,7 @@ After=network.target
 User=ipsis
 WorkingDirectory=/srv/my-assistant
 Environment=HF_HUB_OFFLINE=1
-ExecStart=/srv/venv/bin/ipsis serve --host 127.0.0.1 --port 8000
+ExecStart=/srv/venv/bin/ipsis serve --host 127.0.0.1 --port 8000 --no-open --no-demo
 Restart=on-failure
 
 [Install]
@@ -105,7 +105,7 @@ The service runs in one of two modes, with `ipsis serve --mode` or
 | Aspect | `development` | `production` |
 |---|---|---|
 | `/admin` panel over plain HTTP | allowed from any IP, with a warning | only from the machine itself; from outside it requires HTTPS |
-| `/admin` token | required; if `IPSIS_ADMIN_TOKEN` is not set, a temporary one is printed at startup | required; without `IPSIS_ADMIN_TOKEN` the panel does not exist |
+| `/admin` token | required; `serve` prints a temporary token if one is not configured | required; `serve` prints a temporary token if one is not configured; `--no-admin` disables the panel |
 | Proxy headers | accepted from the machine itself | only from the proxy in `IPSIS_TRUSTED_PROXY` |
 | `/docs` (OpenAPI) | enabled | disabled unless `IPSIS_DOCS=1` |
 | Widget files | not cached, to see changes on reload | long versioned cache |
@@ -113,7 +113,12 @@ The service runs in one of two modes, with `ipsis serve --mode` or
 
 Use `development` on your machine or to try a server without a
 certificate. Use `production` for any public service. The mode does not
-change the assistant's answers.
+change the assistant's answers. `ipsis serve` enables the test widget and admin
+panel and opens the browser by default. Use `--no-open --no-demo` for a service
+without a browser or test page, and add `--no-admin` if you do not need the panel.
+For a persistent admin credential, configure `IPSIS_ADMIN_TOKEN`; temporary
+tokens change at every startup and are not written to the project. Direct ASGI
+startup with `crear_app` keeps the environment-based defaults.
 
 Variables of the mode and the `/admin` panel:
 
@@ -140,7 +145,7 @@ On a server with Caddy in front:
 ```bash
 export IPSIS_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
 export IPSIS_TRUSTED_PROXY=127.0.0.1      # Caddy on the same machine
-ipsis serve --mode production
+ipsis serve --mode production --no-open --no-demo
 ```
 
 To rotate the token, change it and restart the service.
