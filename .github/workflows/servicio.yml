@@ -22,7 +22,7 @@ jobs:
       - run: uv sync --locked --extra test
       - name: Validar motor, conversación, HTTP y preparación del despliegue
         run: >-
-          uv run --locked --extra test pytest
+          uv run --locked --extra test python -m pytest
           tests/test_arquitectura.py tests/lenguaje/test_voz.py
           tests/consulta/test_motor_v2.py tests/servicio/test_demo.py
           tests/ci/test_servicio.py tests/evaluacion/test_banco_general.py

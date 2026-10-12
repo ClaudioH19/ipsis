@@ -1,7 +1,16 @@
 """La comprobación de arranque no acepta un HTTP 200 con una respuesta vacía."""
+import importlib.util
+from pathlib import Path
+
 import pytest
 
-from herramientas.ci.comprobar_servicio import validar_conversacion, validar_fuentes, PASO_DOCUMENTAL
+_ruta = Path(__file__).resolve().parents[2] / "herramientas/ci/comprobar_servicio.py"
+_spec = importlib.util.spec_from_file_location("comprobar_servicio_ci", _ruta)
+_modulo = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_modulo)
+validar_conversacion = _modulo.validar_conversacion
+validar_fuentes = _modulo.validar_fuentes
+PASO_DOCUMENTAL = _modulo.PASO_DOCUMENTAL
 
 
 @pytest.mark.parametrize("respuesta", [
