@@ -29,6 +29,9 @@ def unidades_documento(documento: DocumentoPreparado, max_palabras=400, palabras
             cerrar()
             tabla = tablas[e.element_id]
             filas = [por_id[fid] for fid in tabla.filas_ids]
+            if documento.parser_version.startswith("tabular-"):
+                grupos.append((filas, tabla))
+                continue
             # Una tabla pequeña es una unidad completa; una grande conserva
             # filas enteras, y referencias separadas a sus encabezados.
             grupo, n = [], 0
@@ -82,7 +85,8 @@ def unidades_documento(documento: DocumentoPreparado, max_palabras=400, palabras
         padres[pid] = padre
         prefijo = "\n".join([documento.titulo, *padre.seccion_path,
             *[documento.texto_completo[r["offset_inicio"]:r["offset_fin"]] for r in contexto_refs]])
-        for e in grupo:
+        buscables = grupo[1:] if documento.parser_version.startswith("tabular-") and tabla else grupo
+        for e in buscables:
             # Filas completas siempre; párrafos largos se dividen sin perder texto.
             limites = [(0, len(e.texto))]
             if not tabla:

@@ -55,7 +55,7 @@ from ipsis.recursos.mensajes import t
 SEPARADOR_BLOQUE = "\n"
 
 # Formatos que reconoce el despacho de `parsear_documento`.
-EXTENSIONES_SOPORTADAS = {".docx", ".pdf", ".md", ".markdown", ".txt"}
+EXTENSIONES_SOPORTADAS = {".docx", ".pdf", ".md", ".markdown", ".txt", ".xlsx", ".xls", ".csv", ".tsv"}
 
 
 class DocumentoEscaneadoError(ValueError):
@@ -738,6 +738,10 @@ def parsear_documento(ruta: str, doc_id: str, doc_titulo: str, version: str) -> 
     Lanza ``ValueError`` con la lista de formatos soportados si la extensión
     no se reconoce -- nunca intenta adivinar el formato por contenido."""
     ext = Path(ruta).suffix.lower()
+    if ext in {".xlsx", ".xls", ".csv", ".tsv"}:
+        from ipsis.ingesta.tabulares import parsear_tabular
+
+        return parsear_tabular(ruta, doc_id, doc_titulo, version)
     if ext == ".docx":
         return parsear_docx(ruta, doc_id, doc_titulo, version)
     if ext == ".pdf":

@@ -107,6 +107,25 @@ def test_reindexar_corre_en_segundo_plano_y_no_se_duplica(cliente, monkeypatch):
     assert _esperar_tarea(cliente)["state"] == "done" and llamadas == ["documents"]
 
 
+def test_inventario_xlsx_subido_se_cataloga_con_coordenadas(cliente):
+    from io import BytesIO
+    from openpyxl import Workbook
+    from ipsis.ingesta.ingesta import parsear_corpus
+
+    libro = Workbook()
+    libro.active.title = "Bodega"
+    libro.active.append(["SKU", "Producto", "Stock"])
+    libro.active.append(["0007", "Taladro", 0])
+    datos = BytesIO()
+    libro.save(datos)
+    libro.close()
+    r = cliente.post("/admin/documents?name=inventario.xlsx", headers=AUTH, content=datos.getvalue())
+    assert r.status_code == 200 and not r.json()["rejected"]
+    d = parsear_corpus("documents", "legacy")[0]
+    assert "0007 | Taladro | 0" in d.texto_completo
+    assert d.bloques[-1].metadata["cells"][2]["locator"] == "'Bodega'!C2"
+
+
 def test_una_recarga_fallida_queda_en_la_tarea_sin_tumbar_el_servicio(cliente, monkeypatch):
     def falla():
         raise RuntimeError("modelo faltante")

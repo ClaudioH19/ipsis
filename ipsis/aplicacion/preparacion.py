@@ -25,7 +25,7 @@ def preparar_proyecto(origen, destino, *, indexar=False):
     from ipsis.configuracion.carga import cargar_proyecto
     from ipsis.configuracion.archivos import volcar
     from ipsis.ingesta.catalogo import entradas_vigentes
-    from ipsis.ingesta.preparacion import preparar_docx
+    from ipsis.ingesta.preparacion import preparar_documento
     from ipsis.ingesta.unidades import unidades_documento
 
     origen, destino = Path(origen).resolve(), Path(destino).resolve()
@@ -42,9 +42,7 @@ def preparar_proyecto(origen, destino, *, indexar=False):
         archivo = (origen / "documents" / e["archivo"]).resolve()
         if not archivo.is_relative_to(origen / "documents"):
             raise ValueError("archivo del catálogo fuera de documents")
-        if archivo.suffix.lower() != ".docx":
-            raise ValueError("estructura-1 soporta DOCX; el proyecto original admite sus formatos legacy")
-        d = preparar_docx(archivo, doc_id=e["doc_id"], doc_titulo=e["doc_titulo"], version=e["version"])
+        d = preparar_documento(archivo, doc_id=e["doc_id"], doc_titulo=e["doc_titulo"], version=e["version"])
         cs, ps = unidades_documento(d)
         docs.append(d)
         padres.update(ps)

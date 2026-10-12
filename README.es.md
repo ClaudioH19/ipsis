@@ -144,7 +144,7 @@ mkdir mi-asistente && cd mi-asistente
 export IPSIS_LANG=es                        # la terminal en español
 ipsis init --profile medium --language es   # configuración del proyecto
 ipsis models download                       # una vez por máquina (~1,7 GB con medium)
-ipsis load /ruta/a/documentos               # PDF con texto, DOCX, Markdown o TXT
+ipsis load /ruta/a/documentos               # PDF, DOCX, Markdown, TXT, XLSX, XLS, CSV, TSV
 ipsis index                                 # parsear, fragmentar, vectorizar y guardar
 ipsis doctor                                # ¿puede correr? si no, qué comando lo arregla
 ipsis chat                                  # preguntar desde la terminal (/help adentro)
@@ -202,6 +202,12 @@ despliega un menú con todos los comandos y su descripción. Tras un comando,
 `--alpha`, `--apply`), y tras `/load` completa rutas. La flecha arriba
 recupera líneas anteriores; la barra inferior indica si el diagnóstico está
 activo.
+
+Enter también resuelve un comando incompleto único o un error de escritura
+cercano: `/ser --demo --open` pasa a `/serve --demo --open`, y
+`/widg the app search` a `/widget theme apply search`. Se muestra el comando
+interpretado; si hay varias coincidencias, pide concretar. Los argumentos,
+rutas y nombres de opciones se conservan.
 
 Los comandos muestran la etapa real que están ejecutando y cuánto tiempo llevan.
 Por ejemplo, `/index` pasa por lectura, fragmentado, validación, vectores y guardado;
@@ -284,7 +290,7 @@ El filtro de carbón activado se cambia cada 12 meses ...
 | | `ipsis index [--corpus CARPETA]` | Parsea, fragmenta, vectoriza y guarda el índice |
 | **Preguntar** | `ipsis chat [--diagnostics]` | Modo interactivo (preguntas y `/comandos`) |
 | | `ipsis ask "PREGUNTA" [--url URL] [--diagnostics]` | Una pregunta al servicio en marcha, o con `--diagnostics` al motor en este proceso |
-| | `ipsis serve [CARPETA] [--host H] [--port P] [--mode production\|development] [--reindex]` | Levanta la API, el widget y `/admin`; con una carpeta, prepara el proyecto antes |
+| | `ipsis serve [CARPETA] [--host H] [--port P] [--mode production\|development] [--reindex] [--demo] [--open]` | Levanta la API, el widget y `/admin`; con una carpeta, prepara el proyecto antes |
 | **Personalizar** | `ipsis configure clave=valor ...` | `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys`, `query_log.enabled`, `posture.mode`, `posture.max_alternatives` |
 | | `ipsis personality show` · `validate` | Tono y avatar activos; valida `personality.yaml` |
 | | `ipsis personality tone list` · `apply TONO` · `try [--tone T] [--situation S]` | Siete tonos de respuesta; imprime las variantes de uno |
@@ -385,11 +391,22 @@ no certifican tus documentos: para eso está la [calibración](#-medir-y-calibra
 | Dirección | Qué es | Acceso |
 |---|---|---|
 | `/admin/panel` | **Panel de administración**: tono, avatar, widget, **Estado** (perfil, índice, calibración, umbrales y diagnóstico; edición de umbrales) y **Documentos** (subir archivos y reindexar) | Exige `IPSIS_ADMIN_TOKEN` (≥ 32 caracteres); HTTPS en producción |
-| `/widget/demo.html` | **Página de demostración** con el widget en un sitio ficticio, para probar los cuatro estados | `--mode development`, o `IPSIS_DEMO=1` en producción |
+| `/widget/demo.html` | **Página de prueba** con el widget incrustado, los estilos del proyecto y búsqueda en documentos reales | `--demo`, `--open`, `--mode development`, o `IPSIS_DEMO=1` |
 | `/widget.js` | El widget para tu sitio (`<script src="https://asistente.tu-dominio.cl/widget.js" data-api="https://asistente.tu-dominio.cl" defer>`) | Público |
 | `POST /ask` | La API de preguntas (`{"question": "...", "session_id": "..."}`) | Pública; claves de widget y límite de peticiones opcionales |
 | `/health`, `/ready` | Vida y disponibilidad (con resumen del diagnóstico) | Públicas |
 | `/docs` | Documentación interactiva de la API | `--mode development`, o `IPSIS_DOCS=1` en producción |
+
+```bash
+ipsis serve --demo --open              # inicia el servicio y abre la página de prueba
+ipsis serve --mode development --open  # también habilita el panel con un token temporal
+```
+
+Los inventarios admiten XLSX, XLS, CSV y TSV mediante `ipsis load` y las subidas
+del panel. Cada fila de producto conserva sus etiquetas de columna; los
+resultados muestran tablas y referencias a hojas/celdas. Es recuperación de
+información: no suma existencias ni recalcula fórmulas. Ver
+[carga de inventarios](docs/es/guia/inventarios.md).
 
 ```bash
 export IPSIS_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
@@ -404,7 +421,7 @@ ipsis serve --mode development         # /admin por HTTP, /docs, widget sin cach
 </tr>
 <tr>
 <td align="center"><sub><b>Estado</b>: umbrales vigentes y su origen (perfil, proyecto o calibración)</sub></td>
-<td align="center"><sub><b>Documentos</b>: subir PDF, DOCX, Markdown o TXT y reindexar</sub></td>
+<td align="center"><sub><b>Documentos</b>: subir documentos o inventarios XLSX/XLS/CSV/TSV y reindexar</sub></td>
 </tr>
 <tr>
 <td width="50%"><img alt="Panel /admin: tono de las respuestas con sus variantes y vista previa del widget" src="docs/assets/panel-tone.png"></td>

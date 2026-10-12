@@ -77,8 +77,8 @@ profile:
   dense_changed: 'The dense model changed: {old} → {new}. The index must be rebuilt (the previous one is kept).'
 load:
   help: Copy a file or folder into the corpus and catalog it.
-  arg_path: File or folder with .docx/.pdf/.md/.txt
-  nothing: 'No supported file found in {path!r} (supported: .docx, .pdf, .md, .markdown, .txt).'
+  arg_path: File or folder with DOCX, PDF, Markdown, TXT, XLSX, XLS, CSV or TSV.
+  nothing: 'No supported file found in {path!r} (supported: .docx, .pdf, .md, .markdown, .txt, .xlsx, .xls, .csv, .tsv).'
   duplicate: '  = {file}: already loaded as doc_id={doc_id!r} (same content, skipped)'
   added: '  + {file}: doc_id={doc_id!r}, title={title!r}'
   warning: '      [!] {warning}'
@@ -102,7 +102,21 @@ index:
   indexed: 'Indexed in collection {collection!r}: BM25 ({terms} terms), entity inventory ({entities} values).'
   time: 'Total time: {seconds:.1f}s'
   next: 'Next step: ''ipsis serve'' (or ''ipsis ask "..."'' if it is already serving).'
+demo:
+  lang: en
+  title: Explore your documents
+  intro: Search for information and review sources ranked by relevance. Open each result to read its context and keep searching if you need more options.
+  navigation: Navigation
+  admin: Manage project
+  open: Open test page
+  key_title: Widget access key
+  key_label: If your project requires a key, enter it here.
+  key_apply: Apply key
+  footer: Search the documents loaded in this project. Sources let you check the information.
 serve:
+  opt_demo: Serve a test page with the widget and the project styles.
+  opt_open: Open the test page in a browser when the server is ready; enables --demo.
+  demo_url: 'Test page: {url}'
   help: Start the service API.
   arg_folder: Folder of documents or an existing project; it is prepared automatically.
   opt_host: 'Address the service listens on (default: ''127.0.0.1'', local only; use ''0.0.0.0'' to accept external connections).'
@@ -904,7 +918,7 @@ panel:
   doctor_title: "Diagnosis (ipsis doctor)"
   refresh: "Refresh"
   documents_title: "Documents"
-  documents_note: "PDF with text, DOCX, Markdown or TXT, up to 20 MiB each. Upload adds them to the corpus; Reindex makes them answerable (the assistant pauses meanwhile)."
+  documents_note: "PDF with text, DOCX, Markdown, TXT, XLSX, XLS, CSV or TSV, up to 20 MiB each. Upload adds them to the corpus; Reindex makes them searchable (the service pauses meanwhile)."
   choose_files: "Files to upload"
   upload: "Upload"
   doc_title: "Title"
@@ -1044,6 +1058,8 @@ chat:
   cancelled: "Cancelled. You can keep typing; /exit to leave."
   invalid_command: "Could not read the command: {error}. Check the quotes and try again."
 terminal:
+  interpreted: 'Interpreted command: {command}'
+  ambiguous: 'Ambiguous command "{command}". Choose one: {choices}'
   project: "profile {profile} · {n} document(s)"
   no_project: "No project · /init --language en to create one"
   tips: "/ commands · Tab completes · ↑ history"

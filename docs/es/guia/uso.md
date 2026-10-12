@@ -38,8 +38,8 @@ ipsis index
 `ipsis prepare --index` construye además el índice durante la preparación.
 La carpeta destino debe ser nueva y estar fuera del proyecto original. La copia
 usa v2 y un índice estructural distinto; el original conserva su configuración.
-Esta variante soporta estructura del cuerpo de DOCX y publica avisos sobre partes
-no extraídas. No añade soporte de Excel ni garantiza mejor calidad de respuesta.
+Esta variante soporta estructura del cuerpo de DOCX y registros XLSX/XLS/CSV/TSV,
+y publica avisos de extracción. No garantiza mejor calidad de respuesta.
 Ver [preparación estructural](../../methodology/preparacion-estructural.md).
 
 Cada respuesta tiene un estado, que el widget pinta distinto:
@@ -122,16 +122,29 @@ incluyen la instalación con uv, sin crear ni activar entornos manualmente.
 
 ### Corpus
 
+Los inventarios XLSX, XLS, CSV y TSV se cargan con `ipsis load` o desde el panel.
+Cada resultado conserva una fila completa con sus columnas y coordenadas;
+ver [formatos y límites](inventarios.md).
+
+`ipsis serve --demo` sirve la página con el tema del proyecto en
+`/widget/demo.html`; `ipsis serve --open` también la abre cuando está lista.
+Añade `--mode development` para habilitar el panel con un token temporal.
+
+Enter resuelve comandos incompletos únicos y errores próximos, incluidos
+subcomandos: `/widg the app search` pasa a `/widget theme apply search`.
+También funciona desde la shell: `ipsis ser --demo`. La consola muestra la
+interpretación, conserva argumentos y opciones, y no ejecuta nombres ambiguos.
+
 | Comando | Qué hace |
 |---|---|
-| `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |
+| `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |
 | `ipsis index [--corpus CARPETA]` | Reconstruye el índice completo. Ejecútalo después de cada cambio de documentos o de un cambio de perfil que lo pida |
 
 ### Consulta
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis serve [carpeta] [--host H] [--port P] [--reindex] [--mode production\|development]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.ipsis-project/`. `--mode`: ver [despliegue.md](despliegue.md#modos-de-ejecución-desarrollo-y-producción); en desarrollo, sin `IPSIS_ADMIN_TOKEN`, imprime un token temporal |
+| `ipsis serve [carpeta] [--host H] [--port P] [--reindex] [--mode production\|development] [--demo] [--open]` | Levanta la API y el widget. Con una carpeta de documentos, crea y prepara un proyecto privado en `.ipsis-project/`. `--mode`: ver [despliegue.md](despliegue.md#modos-de-ejecución-desarrollo-y-producción); en desarrollo, sin `IPSIS_ADMIN_TOKEN`, imprime un token temporal |
 | `ipsis chat [--diagnostics]` | Modo interactivo: preguntas y `/comandos` (ver arriba) |
 | `ipsis ask "<pregunta>" [--url URL] [--timeout S]` | Pregunta al servicio en marcha |
 | `ipsis ask "<pregunta>" --diagnostics` | Ejecuta el motor localmente, sin servicio, y muestra etapas con su latencia, señales, términos foco, la regla que decidió, el tramo exacto, el tono y las plantillas usadas. En modo Qdrant local, detén `ipsis serve` antes |

@@ -5,6 +5,7 @@
 body{margin:0;}
 .cabecera{padding:16px 24px;background:var(--superficie);border-bottom:1px solid var(--borde);}
 .cabecera h1{margin:0;font-size:20px;}
+.cabecera a{color:var(--acento);font-size:14px;text-underline-offset:3px;}
 main{padding:16px;max-width:1280px;margin:0 auto;}
 .tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:12px;padding:16px;margin-bottom:16px;}
 .tarjeta h2{margin-top:0;font-size:17px;}

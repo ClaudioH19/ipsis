@@ -315,7 +315,8 @@ def test_servir_sin_carpeta_conserva_el_modo_actual(monkeypatch, proyecto_tempor
 
     assert main(["serve", "--port", "8123"]) == 0
 
-    assert llamadas[0][0] == ("ipsis.servicio.api:app",)
+    assert llamadas[0][0] == ("ipsis.servicio.api:crear_app",)
+    assert llamadas[0][1]["factory"] is True
     assert llamadas[0][1]["port"] == 8123
     assert Path.cwd() == proyecto_temporal
 

@@ -136,7 +136,7 @@ costos de embeddings, búsqueda, cross-encoder y lector se miden por separado.
 | Encabezados, pies y notas fuera del cuerpo | No extraídos, con aviso cuando existen partes correspondientes |
 | Control de cambios | No resuelto; aviso y revisión de vista previa |
 | PDF, Markdown y TXT | Continúan por el recorrido legacy; rechazados por esta preparación |
-| XLSX, CSV, fórmulas de hojas de cálculo | No soportados por esta preparación |
+| XLSX, XLS, CSV y TSV | Registros completos con etiquetas y coordenadas; parser `tabular-1`, sin recalcular fórmulas. Ver [inventarios](../guide/inventories.md) |
 
 La tabla expresa capacidades de estructura, no comprensión de manuales,
 recetas, cuentos, leyes o diccionarios. Esos temas requieren evaluación real.

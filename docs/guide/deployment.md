@@ -130,7 +130,7 @@ Variables of the mode and the `/admin` panel:
 After 5 wrong tokens, the IP is blocked for 15 minutes. Every change is
 logged in `.ipsis/logs/admin.jsonl`: date, IP, action and keys, never the
 token. The panel can also change thresholds and upload documents (up to
-20 MiB each, PDF, DOCX, MD or TXT) and reindex: treat the token like a
+20 MiB each, PDF, DOCX, MD, TXT, XLSX, XLS, CSV or TSV) and reindex: treat the token like a
 deployment credential. A reload replaces the engine in the background and
 `/ask` answers 503 meanwhile, so reindex outside busy hours. `ipsis doctor` checks the mode: it warns in development and fails
 with a short token.

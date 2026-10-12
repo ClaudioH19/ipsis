@@ -12,6 +12,7 @@
 <header class="cabecera">
   <h1>{{title}}</h1>
   <p class="nota">{{note}}</p>
+  [[DEMO_LINK]]
 </header>
 
 <main>
@@ -151,7 +152,7 @@
           <h2>{{documents_title}}</h2>
           <p class="nota">{{documents_note}}</p>
           <label for="doc-archivo">{{choose_files}}</label>
-          <input id="doc-archivo" type="file" multiple accept=".pdf,.docx,.md,.markdown,.txt">
+          <input id="doc-archivo" type="file" multiple accept=".pdf,.docx,.md,.markdown,.txt,.xlsx,.xls,.csv,.tsv">
           <button type="button" id="doc-subir">{{upload}}</button>
           <ul id="doc-resultados" class="nota"></ul>
           <table class="eventos">

@@ -1,88 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Demostración del widget -- ipsis</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{{title}} · ipsis</title>
 <style>
-  /* Estilos DELIBERADAMENTE ruidosos y con nombres de clase genéricos
-     (.btn, .card, .container) -- el punto de esta página es demostrar que
-     el CSS de un sitio anfitrión cualquiera no deforma el widget (y que el
-     widget, con su Shadow DOM, no deforma este sitio), no que el sitio se
-     vea bonito. */
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; font-family: Georgia, 'Times New Roman', serif;
-    background: #fdf6e3; color: #222; line-height: 1.6;
-  }
-  header {
-    background: #073642; color: #fdf6e3; padding: 24px 32px;
-  }
-  header h1 { margin: 0 0 6px; font-size: 22px; }
-  header p { margin: 0; opacity: .8; font-size: 14px; }
-  .container { max-width: 760px; margin: 0 auto; padding: 32px; }
-  .card {
-    background: #fff; border: 3px double #cb4b16; border-radius: 2px;
-    padding: 20px 24px; margin-bottom: 20px;
-  }
-  .btn {
-    display: inline-block; background: #dc322f; color: #fff; padding: 10px 18px;
-    border-radius: 999px; text-decoration: none; font-family: Arial, sans-serif;
-    font-size: 13px; font-weight: bold;
-  }
-  button, input { font-family: Georgia, 'Times New Roman', serif; }
-  code {
-    background: #eee8d5; padding: 2px 6px; border-radius: 3px; font-size: 13px;
-  }
-  .nota {
-    font-family: Arial, sans-serif; font-size: 13px; color: #555;
-    border-left: 4px solid #268bd2; padding-left: 12px; margin-top: 28px;
-  }
+*{box-sizing:border-box}
+body{margin:0;--rw-fondo:#f7f8fa;--rw-superficie:#fff;--rw-texto:#17212f;--rw-texto-suave:#607085;--rw-borde:#dce2e9;--rw-acento:#2563eb;--rw-fuente:system-ui,sans-serif;background:var(--rw-fondo);color:var(--rw-texto);font:16px/1.6 var(--rw-fuente)}
+main{max-width:1000px;margin:auto;padding:32px 24px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+nav strong{font-size:22px;letter-spacing:-.05em}a{color:var(--rw-acento);text-underline-offset:4px}
+.intro{max-width:670px;margin:44px 0 28px}h1{font-size:clamp(28px,5vw,44px);line-height:1.15;letter-spacing:-.035em;margin:0 0 16px}.intro p,footer{color:var(--rw-texto-suave)}
+ipsis-chat{display:block;width:100%;min-width:0}.ayuda{margin:24px 0}summary{cursor:pointer}label{display:block;margin:12px 0 4px}input,button{font:inherit;padding:8px 12px;border:1px solid var(--rw-borde);border-radius:8px}input{background:var(--rw-superficie);color:inherit;max-width:100%;width:320px}button{background:var(--rw-acento);color:#fff;cursor:pointer}footer{font-size:13px;margin:24px 0}
+@media(prefers-color-scheme:dark){body{--rw-fondo:#101820;--rw-superficie:#192430;--rw-texto:#ecf1f7;--rw-texto-suave:#acb9c8;--rw-borde:#354657;--rw-acento:#8bb9ff}}
+@media(max-width:480px){main{padding:20px 12px}.intro{margin-top:28px}}
 </style>
+<link rel="stylesheet" href="/styles.css">
 </head>
-<body>
-  <header>
-    <h1>Cooperativa Ficticia de Documentación Técnica</h1>
-    <p>Sitio de demostración -- simula un anfitrión CUALQUIERA, ajeno a ipsis.</p>
-  </header>
-
-  <div class="container">
-    <div class="card">
-      <h2>Bienvenido</h2>
-      <p>Esta página no tiene relación real con ningún negocio: existe
-      solo para comprobar que el widget de chat (<code>/widget.js</code>)
-      se integra con una sola línea y que su CSS no se filtra hacia esta
-      página, ni al revés (el widget vive dentro de un
-      <em>Shadow DOM</em>).</p>
-      <a class="btn" href="#">Botón de ejemplo del sitio anfitrión</a>
-    </div>
-
-    <div class="card">
-      <h2>Prueba los cuatro estados</h2>
-      <p>Después de cargar e indexar tus documentos, prueba preguntas como
-      estas para comprobar los cuatro estados:</p>
-      <ul>
-        <li><strong>ok</strong>: una pregunta respondida literalmente por tus documentos.</li>
-        <li><strong>relacionado</strong>: una pregunta cercana al contenido pero sin respuesta directa.</li>
-        <li><strong>sin_respuesta</strong>: "¿Cuál es la capital de Mongolia?"</li>
-        <li><strong>conversacional</strong>: "hola"</li>
-      </ul>
-    </div>
-
-    <p class="nota">
-      El botón flotante de chat está en la esquina inferior de la pantalla.
-      Si esta página se sirve desde el propio servicio (<code>/widget/demo.html</code>),
-      <code>data-api</code> se deja vacío a propósito: el widget usa
-      <code>window.location.origin</code> como base por defecto.
-    </p>
-  </div>
-
-  <script
-    src="/widget.js"
-    data-title="Demo assistant"
-    data-color="#2563eb"
-    data-position="bottom-right"
-    data-greeting="Hi, I am the demo assistant. Ask me something about the loaded document."
-  ></script>
+<body class="rw-raiz">
+<main>
+  <nav aria-label="{{navigation}}"><strong>ipsis<span aria-hidden="true">.</span></strong>[[ADMIN_LINK]]</nav>
+  <section class="intro"><h1>{{title}}</h1><p>{{intro}}</p></section>
+  <div id="buscador"><ipsis-chat mode="embedded" size="wide"></ipsis-chat></div>
+  <details class="ayuda"><summary>{{key_title}}</summary><form id="clave-form">
+    <label for="clave">{{key_label}}</label><input id="clave" type="password" autocomplete="off">
+    <button type="submit">{{key_apply}}</button>
+  </form></details>
+  <footer>{{footer}}</footer>
+</main>
+<script>
+var clave=sessionStorage.getItem('ipsis-demo-key') || '';
+if(clave)document.querySelector('ipsis-chat').setAttribute('widget-key',clave);
+document.getElementById('clave').value=clave;
+document.getElementById('clave-form').addEventListener('submit',function(e){
+  e.preventDefault();var valor=document.getElementById('clave').value;
+  if(valor)sessionStorage.setItem('ipsis-demo-key',valor);else sessionStorage.removeItem('ipsis-demo-key');
+  window.location.reload();
+});
+</script>
+<script src="/widget.js"></script>
 </body>
 </html>

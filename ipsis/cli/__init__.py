@@ -85,7 +85,16 @@ def main(argv: list[str] | None = None) -> int:
 
         imprimir_menu()
         return 0
-    args = construir_parser().parse_args(argv)
+    from ipsis.cli.resolucion import ComandoAmbiguo, informar_ambiguedad, informar_cambios, resolver
+
+    parser = construir_parser()
+    try:
+        normalizado, cambios = resolver(sys.argv[1:] if argv is None else argv, parser)
+    except ComandoAmbiguo as error:
+        informar_ambiguedad(error)
+        return 2
+    informar_cambios(cambios)
+    args = parser.parse_args(normalizado)
     for cambio in migrar_proyecto_activo():
         print(t("cli.migration", change=cambio))
     try:

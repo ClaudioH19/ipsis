@@ -20,7 +20,8 @@ from ipsis.recursos.mensajes import t
 
 def parsear_corpus(carpeta_corpus: str, preparacion: str | None = None) -> list[DocumentoParseado]:
     """Parsea todo el catálogo (``documents/catalog.yaml``) con el despacho por
-    extensión de ``ipsis/ingesta/parsear.py::parsear_documento`` -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
+    extensión de ``ipsis/ingesta/parsear.py::parsear_documento``: documentos y
+    archivos tabulares XLSX/XLS/CSV/TSV, sin
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
     tenga que saber cuál es cuál."""
     from ipsis.nucleo.progreso import informar
@@ -38,11 +39,9 @@ def parsear_corpus(carpeta_corpus: str, preparacion: str | None = None) -> list[
         informar("documento", archivo=entrada["archivo"], actual=numero, total=len(entradas))
         ruta = str(Path(carpeta_corpus) / entrada["archivo"])
         if preparacion == "estructural_v1":
-            from ipsis.ingesta.preparacion import como_documento_parseado, preparar_docx
+            from ipsis.ingesta.preparacion import como_documento_parseado, preparar_documento
 
-            if Path(ruta).suffix.lower() != ".docx":
-                raise ValueError("la preparación estructural v1 admite DOCX; otros formatos siguen en legacy")
-            doc = como_documento_parseado(preparar_docx(ruta, doc_id=entrada["doc_id"],
+            doc = como_documento_parseado(preparar_documento(ruta, doc_id=entrada["doc_id"],
                 doc_titulo=entrada["doc_titulo"], version=entrada["version"]))
         else:
             doc = parsear_documento(ruta, doc_id=entrada["doc_id"], doc_titulo=entrada["doc_titulo"],
@@ -62,7 +61,10 @@ def construir_chunks_y_payloads(docs: list[DocumentoParseado], estrategia: str,
     from ipsis.lenguaje.entidades import idioma_activo
 
     entradas = {e["doc_id"]: e for e in entradas_vigentes()}
-    por_documento = [(chunk_fn(doc), entradas[doc.doc_id]) for doc in docs]
+    from ipsis.ingesta.chunking import chunks_tabulares
+
+    por_documento = [(chunks_tabulares(doc) if any(b.metadata.get("record_id") for b in doc.bloques)
+                      else chunk_fn(doc), entradas[doc.doc_id]) for doc in docs]
     # Las palabras clave usan el IDF del corpus completo.
     estadisticas = EstadisticasLexicas.construir(
         [ch.texto for chunks, _ in por_documento for ch in chunks], idioma_activo()
@@ -131,6 +133,7 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
     import hashlib
 
     from ipsis.configuracion.carga import config_recuperacion
+    from ipsis.ingesta.tabulares import EXTENSIONES, PARSER_VERSION as VERSION_TABULAR
 
     cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
     digest = hashlib.sha256(f"{cfg_rec['estrategia_chunking']}|{cfg_rec['con_header']}".encode("utf-8"))
@@ -143,6 +146,8 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
         digest.update(json.dumps({"preparacion": preparacion, "parser": PARSER_VERSION,
             "chunker": CHUNKER_VERSION}, sort_keys=True).encode("utf-8"))
     for entrada in sorted(entradas_vigentes(), key=lambda e: e["doc_id"]):
+        if Path(entrada["archivo"]).suffix.lower() in EXTENSIONES:
+            digest.update(VERSION_TABULAR.encode("utf-8"))
         contenido = (Path(carpeta_corpus) / entrada["archivo"]).read_bytes()
         digest.update(f"\n{entrada['doc_id']}|{entrada['doc_titulo']}|{entrada['version']}|".encode("utf-8"))
         digest.update(hashlib.sha256(contenido).digest())
@@ -253,6 +258,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
             from ipsis.ingesta.unidades import CHUNKER_VERSION
 
             metadata_preparacion = {**opciones, "parser_version": PARSER_VERSION, "chunker_version": CHUNKER_VERSION,
+                "parser_versions": sorted({d.parser_version for d in preparados}),
                 "contextos_sha256": guardar_contextos(nombre_col, preparados, padres, opciones)}
         guardar_manifiesto(ManifiestoIndice(
             coleccion=nombre_col, modelo_denso=modelo, dimension=_codificador.dimension,

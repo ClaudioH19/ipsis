@@ -119,7 +119,8 @@ class ComandoChat(Comando):
                 if linea in ("/exit", "/quit"):
                     break
                 if linea.startswith("/"):
-                    self._comando(linea)
+                    if self._comando(linea):
+                        break
                 else:
                     self._preguntar(linea)
         finally:
@@ -127,12 +128,24 @@ class ComandoChat(Comando):
         print(t("chat.bye"))
         return 0
 
-    def _comando(self, linea: str) -> None:
+    def _comando(self, linea: str) -> bool | None:
         try:
             partes = shlex.split(linea[1:], posix=True) if linea[1:].strip() else []
         except ValueError as e:
             print(t("chat.invalid_command", error=e))
             return
+        from ipsis.cli import construir_parser
+        from ipsis.cli.resolucion import ComandoAmbiguo, informar_ambiguedad, informar_cambios, resolver
+
+        try:
+            partes, cambios = resolver(partes, construir_parser(),
+                propios=[n[1:] for n in PROPIOS] + ["quit"], excluir=["chat"])
+        except ComandoAmbiguo as error:
+            informar_ambiguedad(error)
+            return
+        informar_cambios(cambios)
+        if partes and partes[0] in ("exit", "quit"):
+            return True
         if not partes or partes[0] == "help":
             self._ayuda()
             return
