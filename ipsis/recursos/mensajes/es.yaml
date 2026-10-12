@@ -77,8 +77,8 @@ profile:
   dense_changed: 'El modelo denso cambió: {old} → {new}. Hay que reconstruir el índice (el anterior se conserva).'
 load:
   help: Copia un archivo o carpeta al corpus y lo cataloga.
-  arg_path: Archivo o carpeta con .docx/.pdf/.md/.txt
-  nothing: 'No se encontró ningún archivo soportado en {path!r} (soportados: .docx, .pdf, .md, .markdown, .txt).'
+  arg_path: Archivo o carpeta con DOCX, PDF, Markdown, TXT, XLSX, XLS, CSV o TSV.
+  nothing: 'No se encontró ningún archivo soportado en {path!r} (soportados: .docx, .pdf, .md, .markdown, .txt, .xlsx, .xls, .csv, .tsv).'
   duplicate: '  = {file}: ya estaba cargado como doc_id={doc_id!r} (mismo contenido, se omite)'
   added: '  + {file}: doc_id={doc_id!r}, título={title!r}'
   warning: '      [!] {warning}'
@@ -102,7 +102,21 @@ index:
   indexed: 'Indexado en la colección {collection!r}: BM25 ({terms} términos), inventario de entidades ({entities} valores).'
   time: 'Tiempo total: {seconds:.1f}s'
   next: 'Siguiente paso: ''ipsis serve'' (o ''ipsis ask "..."'' si ya está sirviendo).'
+demo:
+  lang: es
+  title: Explora tus documentos
+  intro: Busca información y revisa las fuentes ordenadas por relevancia. Abre cada resultado para leer su contexto y sigue buscando si necesitas más opciones.
+  navigation: Navegación
+  admin: Administrar proyecto
+  open: Abrir página de prueba
+  key_title: Clave de acceso al widget
+  key_label: Si tu proyecto exige una clave, introdúcela aquí.
+  key_apply: Aplicar clave
+  footer: Consulta los documentos cargados en este proyecto. Las fuentes te permiten comprobar la información.
 serve:
+  opt_demo: Sirve una página de prueba con el widget y los estilos del proyecto.
+  opt_open: Abre la página de prueba en el navegador cuando el servicio esté listo; activa --demo.
+  demo_url: 'Página de prueba: {url}'
   help: Levanta la API del servicio.
   arg_folder: Carpeta de documentos o proyecto existente; se prepara automáticamente.
   opt_host: 'Dirección donde escucha el servicio (por defecto: ''127.0.0.1'', solo local; usa ''0.0.0.0'' para aceptar conexiones externas).'
@@ -904,7 +918,7 @@ panel:
   doctor_title: "Diagnóstico (ipsis doctor)"
   refresh: "Actualizar"
   documents_title: "Documentos"
-  documents_note: "PDF con texto, DOCX, Markdown o TXT, hasta 20 MiB cada uno. Subir los agrega al corpus; Reindexar los vuelve respondibles (mientras tanto el asistente se pausa)."
+  documents_note: "PDF con texto, DOCX, Markdown, TXT, XLSX, XLS, CSV o TSV, hasta 20 MiB cada uno. Subir los agrega al corpus; Reindexar permite recuperarlos en las búsquedas (mientras tanto el servicio se pausa)."
   choose_files: "Archivos para subir"
   upload: "Subir"
   doc_title: "Título"
@@ -1044,6 +1058,8 @@ chat:
   cancelled: "Cancelado. Puedes seguir escribiendo; /exit para salir."
   invalid_command: "No pude leer el comando: {error}. Revisa las comillas y vuelve a intentarlo."
 terminal:
+  interpreted: 'Comando interpretado: {command}'
+  ambiguous: 'Comando ambiguo «{command}». Especifica una opción: {choices}'
   project: "perfil {profile} · {n} documento(s)"
   no_project: "Sin proyecto · /init --language es para crear uno"
   tips: "/ comandos · Tab completa · ↑ historial"

@@ -23,6 +23,18 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Inventory retrieval from XLSX, XLS, CSV and TSV, including admin uploads.
+  Each row is indexed with its column labels without mixing neighboring
+  products. Native source tables retain sheet/row/cell locators, empty fields,
+  zero values and simple leading-zero number formats. Structural preparation
+  accepts these formats. Formula results are read as saved, never recalculated.
+- `ipsis serve --demo` serves a themed page with the embedded live widget;
+  `--open` opens it when available. Demo and admin link to each other when
+  enabled, without changing admin authentication or the service mode.
+- Enter resolves unique partial command names and close misspellings in the
+  shell and interactive terminal, including nested commands. Corrections are
+  shown; ambiguous matches do not execute. Arguments and options are untouched.
+
 - Search-style v2 presentation with a top query field, visible source titles
   and excerpts, literal query highlights, expandable context and one growing
   results list. New `search` and `search_compact` themes include offline previews.

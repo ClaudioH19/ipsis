@@ -145,7 +145,7 @@ Then, in any folder:
 mkdir my-assistant && cd my-assistant
 ipsis init --profile medium --language en   # project configuration
 ipsis models download                       # once per machine (~1.7 GB for medium)
-ipsis load /path/to/documents               # PDF with text, DOCX, Markdown or TXT
+ipsis load /path/to/documents               # PDF, DOCX, Markdown, TXT, XLSX, XLS, CSV, TSV
 ipsis index                                 # parse, chunk, embed and store
 ipsis doctor                                # can it run? if not, which command fixes it
 ipsis chat                                  # ask from the terminal (/help inside)
@@ -202,6 +202,12 @@ a menu with every command and its description. After a command, `Tab` shows
 its subcommands and options with their help (`/calibrate --` → `--alpha`,
 `--apply`), and after `/load` it completes paths. Arrow up recalls previous
 lines; the bottom bar shows whether diagnostics are on.
+
+Enter also resolves a unique incomplete command or a close misspelling:
+`/ser --demo --open` becomes `/serve --demo --open`, and
+`/widg the app search` becomes `/widget theme apply search`. The interpreted
+command is shown; ambiguous matches ask you to be more specific. Arguments,
+paths and option names are preserved.
 
 Commands show the real stage they are running and elapsed time. For example,
 `/index` goes through reading, chunking, validation, vectors and storage;
@@ -284,7 +290,7 @@ The activated carbon filter is replaced every 12 months ...
 | | `ipsis index [--corpus FOLDER]` | Parses, chunks, embeds and stores the index |
 | **Ask** | `ipsis chat [--diagnostics]` | Interactive mode (questions and `/commands`) |
 | | `ipsis ask "QUESTION" [--url URL] [--diagnostics]` | One question to the running service, or with `--diagnostics` to the engine in this process |
-| | `ipsis serve [FOLDER] [--host H] [--port P] [--mode production\|development] [--reindex]` | Starts the API, the widget and `/admin`; with a folder, prepares the project first |
+| | `ipsis serve [FOLDER] [--host H] [--port P] [--mode production\|development] [--reindex] [--demo] [--open]` | Starts the API, the widget and `/admin`; with a folder, prepares the project first |
 | **Customize** | `ipsis configure key=value ...` | `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys`, `query_log.enabled`, `posture.mode`, `posture.max_alternatives` |
 | | `ipsis personality show` · `validate` | Active tone and avatar; checks `personality.yaml` |
 | | `ipsis personality tone list` · `apply TONE` · `try [--tone T] [--situation S]` | Seven answer tones; prints the variants of one |
@@ -385,11 +391,21 @@ documents: that is what [calibration](#-measure-and-calibrate) is for.
 | Address | What it is | Access |
 |---|---|---|
 | `/admin/panel` | **Admin panel**: tone, avatar, widget, **Status** (profile, index, calibration, thresholds and diagnosis; edit thresholds) and **Documents** (upload files and reindex) | Requires `IPSIS_ADMIN_TOKEN` (≥ 32 characters); HTTPS in production |
-| `/widget/demo.html` | **Demo page** with the widget on a fictitious site, to try the four statuses | `--mode development`, or `IPSIS_DEMO=1` in production |
+| `/widget/demo.html` | **Test page** with the embedded widget, project styles and live document search | `--demo`, `--open`, `--mode development`, or `IPSIS_DEMO=1` |
 | `/widget.js` | The widget for your site (`<script src="https://assistant.your-domain.com/widget.js" data-api="https://assistant.your-domain.com" defer>`) | Public |
 | `POST /ask` | The question API (`{"question": "...", "session_id": "..."}`) | Public; optional widget keys and rate limit |
 | `/health`, `/ready` | Liveness and readiness (with a diagnosis summary) | Public |
 | `/docs` | Interactive API documentation | `--mode development`, or `IPSIS_DOCS=1` in production |
+
+```bash
+ipsis serve --demo --open              # start the service and open the test page
+ipsis serve --mode development --open  # also enables the admin panel with a temporary token
+```
+
+Inventories support XLSX, XLS, CSV and TSV through `ipsis load` and admin uploads.
+Each product row stays with its column labels; results show native tables and
+sheet/cell references. This is information retrieval: it does not calculate
+stock totals or recalculate formulas. See [inventory ingestion](docs/guide/inventories.md).
 
 ```bash
 export IPSIS_ADMIN_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
@@ -404,7 +420,7 @@ ipsis serve --mode development         # /admin over HTTP, /docs, no widget cach
 </tr>
 <tr>
 <td align="center"><sub><b>Status</b>: thresholds in force and their source (profile, project or calibration)</sub></td>
-<td align="center"><sub><b>Documents</b>: upload PDF, DOCX, Markdown or TXT and reindex</sub></td>
+<td align="center"><sub><b>Documents</b>: upload documents or XLSX/XLS/CSV/TSV inventories and reindex</sub></td>
 </tr>
 <tr>
 <td width="50%"><img alt="/admin panel: answer tone with its variants and a live widget preview" src="docs/assets/panel-tone.png"></td>

@@ -337,7 +337,12 @@ def crear_router_panel(modo: ModoServicio, carpeta) -> APIRouter:
         if nombre not in ARCHIVOS_PANEL:
             raise HTTPException(status_code=404, detail="not found")
         if nombre == "panel.html":
-            respuesta = Response(content=_panel_en_el_idioma(carpeta / DIR_PANEL / nombre),
+            import html
+            from ipsis.recursos.mensajes import t
+
+            contenido = _panel_en_el_idioma(carpeta / DIR_PANEL / nombre)
+            enlace = f'<a href="/widget/demo.html" target="_blank" rel="noopener">{html.escape(t("demo.open"))}</a>' if modo.demo_activa else ""
+            respuesta = Response(content=contenido.replace("[[DEMO_LINK]]", enlace),
                                  media_type=ARCHIVOS_PANEL[nombre])
         else:
             respuesta = FileResponse(carpeta / DIR_PANEL / nombre, media_type=ARCHIVOS_PANEL[nombre])

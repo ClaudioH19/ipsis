@@ -1139,6 +1139,7 @@
             var c = porColumna[x], td = document.createElement(fila.header ? "th" : "td");
             if (c) {
               td.colSpan = c.column_span; td.rowSpan = c.row_span;
+              if (c.locator) td.title = c.locator;
               if (fila.header) td.setAttribute("scope", c.column_span > 1 ? "colgroup" : "col");
               escribir(td, c.text, indice(c.offset_start));
               for (var j = y; j < y + c.row_span; j++) for (var k = x; k < x + c.column_span; k++) {

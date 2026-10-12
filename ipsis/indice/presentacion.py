@@ -24,9 +24,9 @@ def bloques_fuente(documento, inicio: int, fin: int) -> list[dict]:
             for i in range(tabla.filas):
                 celdas = [{"column": c.columna, "column_span": c.columnas, "row_span": c.filas,
                            "text": c.texto, "offset_start": c.referencia.offset_inicio,
-                           "offset_end": c.referencia.offset_fin}
+                           "offset_end": c.referencia.offset_fin, "locator": c.referencia.localizador}
                           for c in tabla.celdas if c.fila == i and not c.continuacion_de]
-                filas.append({"header": i in tabla.filas_encabezado, "cells": celdas})
+                filas.append({"header": tabla.encabezado_explicito and i in tabla.filas_encabezado, "cells": celdas})
             bloque.update(kind="table", columns=tabla.columnas, rows=filas)
         elif tipo == "tabla" and completo and metadata.get("cells"):
             bloque.update(kind="table", columns=metadata["columns"],

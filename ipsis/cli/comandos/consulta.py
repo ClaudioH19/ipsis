@@ -31,6 +31,8 @@ class ComandoServir(Comando):
         parser.add_argument("--reindex", dest="reindexar", action="store_true", help=t("serve.opt_reindex"))
         parser.add_argument("--mode", dest="modo", choices=["production", "development"], default=None,
                             help=t("serve.opt_mode"))
+        parser.add_argument("--demo", action="store_true", help=t("serve.opt_demo"))
+        parser.add_argument("--open", dest="abrir", action="store_true", help=t("serve.opt_open"))
 
     def _preparar_modo(self, modo: str | None) -> dict:
         """Fija IPSIS_MODE para el proceso del servicio y devuelve las opciones de proxy de uvicorn."""
@@ -93,6 +95,9 @@ class ComandoServir(Comando):
         import uvicorn
 
         anterior = Path.cwd()
+        demo_anterior = os.environ.get("IPSIS_DEMO")
+        demo = bool(getattr(args, "demo", False) or getattr(args, "abrir", False))
+        apertura = None
         try:
             if args.carpeta:
                 from ipsis.cli.progreso import actividad
@@ -100,14 +105,31 @@ class ComandoServir(Comando):
                 with actividad("serve"):
                     proyecto = self._preparar_carpeta(args.carpeta, reindexar=args.reindexar)
                 print(t("serve.active_project", path=proyecto))
+            if demo:
+                os.environ["IPSIS_DEMO"] = "1"
             proxy = self._preparar_modo(args.modo)
             print(t("serve.serving", host=args.host, port=args.port))
-            uvicorn.run("ipsis.servicio.api:app", host=args.host, port=args.port, log_level="info", **proxy)
+            if demo:
+                from ipsis.aplicacion.vista_servicio import abrir_cuando_listo, url_local
+
+                url = url_local(args.host, args.port)
+                print(t("serve.demo_url", url=url))
+                if getattr(args, "abrir", False):
+                    apertura = abrir_cuando_listo(url)
+            uvicorn.run("ipsis.servicio.api:crear_app", factory=True, host=args.host, port=args.port,
+                        log_level="info", **proxy)
             return 0
         except (OSError, RuntimeError, ValueError) as exc:
             print(t("serve.failed", error=exc))
             return 1
         finally:
+            if apertura is not None:
+                apertura.set()
+            if demo:
+                if demo_anterior is None:
+                    os.environ.pop("IPSIS_DEMO", None)
+                else:
+                    os.environ["IPSIS_DEMO"] = demo_anterior
             os.chdir(anterior)
 
 

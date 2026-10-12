@@ -55,10 +55,11 @@ def _n_tokens(texto: str) -> int:
     return len(texto.split())
 
 
-def _construir_chunk(doc: DocumentoParseado, bloques: list[Bloque], orden: int, estrategia: str) -> Chunk:
+def _construir_chunk(doc: DocumentoParseado, bloques: list[Bloque], orden: int, estrategia: str,
+                     *, conservar_fin: bool = False) -> Chunk:
     texto = doc.texto_completo[bloques[0].offset_inicio:bloques[-1].offset_fin]
     # recorta el separador final de bloque para no incluir un '\n' colgante
-    texto_sin_sep = texto.rstrip("\n")
+    texto_sin_sep = texto if conservar_fin else texto.rstrip("\n")
     offset_fin = bloques[0].offset_inicio + len(texto_sin_sep)
     seccion_path = bloques[0].seccion_path
     tipos = {b.tipo_contenido for b in bloques}
@@ -254,6 +255,16 @@ ESTRATEGIAS = {
     "CH-SEC": lambda doc: chunking_por_seccion(doc),
     "CH-ORA": lambda doc: chunking_por_oraciones(doc),
 }
+
+
+def chunks_tabulares(doc):
+    """Una fila de inventario con sus encabezados; nunca mezcla productos."""
+    grupos = {}
+    for bloque in doc.bloques:
+        if registro := bloque.metadata.get("record_id"):
+            grupos.setdefault(registro, []).append(bloque)
+    return [_construir_chunk(doc, bloques, i, "CH-ROW1", conservar_fin=True)
+            for i, bloques in enumerate(grupos.values())]
 
 
 def construir_texto_embebido(doc_titulo: str, seccion_path: list[str], texto: str, paquete=None) -> str:

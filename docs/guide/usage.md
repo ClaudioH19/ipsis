@@ -37,8 +37,8 @@ ipsis index
 `ipsis prepare --index` also builds the index during preparation. The output
 folder must be new and outside the source project. The copy uses v2 and a
 separate structural index; the source keeps its configuration. This variant
-supports DOCX body structures with explicit extraction warnings. It does not
-add Excel support or guarantee better answers. See
+supports DOCX body structures and XLSX/XLS/CSV/TSV records with explicit
+extraction warnings. Preparation does not guarantee better answers. See
 [structural preparation](../methodology/preparacion-estructural.md).
 
 Every answer has a status, and the widget renders each one differently:
@@ -97,6 +97,17 @@ output has no animation or color codes. `ipsis --help`, `ipsis help` and
 `/help` include the uv installation command, with no manual environment
 creation or activation.
 
+On Enter, `/ser --demo --open` resolves to `/serve --demo --open` and
+`/widg the app search` resolves nested command names. This also works in the
+shell (`ipsis ser --demo`). The console shows corrections and leaves arguments,
+paths and options intact. Ambiguous names list choices without executing.
+
+For inventory formats and extraction limits, see [inventories](inventories.md).
+`ipsis serve --demo` serves the themed page at `/widget/demo.html`;
+`ipsis serve --open` also opens it once ready. Add `--mode development`
+to enable the admin panel with a temporary token; the demo alone keeps the
+current service mode and access controls.
+
 ## Command reference
 
 ### Project
@@ -122,14 +133,14 @@ creation or activation.
 
 | Command | What it does |
 |---|---|
-| `ipsis load <file\|folder>` | Copies the documents (PDF with text, DOCX, MD, TXT) to `documents/` and catalogs them. A file with the same name as one already loaded but different content is added separately: to retire the old one, set `active: false` in `documents/catalog.yaml` |
+| `ipsis load <file\|folder>` | Copies the documents (PDF with text, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) to `documents/` and catalogs them. A file with the same name as one already loaded but different content is added separately: to retire the old one, set `active: false` in `documents/catalog.yaml` |
 | `ipsis index [--corpus FOLDER]` | Rebuilds the whole index. Run it after every document change or after a profile change that asks for it |
 
 ### Asking
 
 | Command | What it does |
 |---|---|
-| `ipsis serve [folder] [--host H] [--port P] [--reindex] [--mode production\|development]` | Starts the API and the widget. Given a folder of documents, it creates and prepares a private project in `.ipsis-project/`. `--mode`: see [deployment.md](deployment.md#run-modes-development-and-production); in development, without `IPSIS_ADMIN_TOKEN`, it prints a temporary token |
+| `ipsis serve [folder] [--host H] [--port P] [--reindex] [--mode production\|development] [--demo] [--open]` | Starts the API and the widget. Given a folder of documents, it creates and prepares a private project in `.ipsis-project/`. `--mode`: see [deployment.md](deployment.md#run-modes-development-and-production); in development, without `IPSIS_ADMIN_TOKEN`, it prints a temporary token |
 | `ipsis chat [--diagnostics]` | Interactive mode: questions and `/commands` (see above) |
 | `ipsis ask "<question>" [--url URL] [--timeout S]` | Asks the running service |
 | `ipsis ask "<question>" --diagnostics` | Runs the engine locally, without the service, and shows each stage with its latency, the signals, focus terms, the deciding rule, the exact span, the tone and the templates used. With local Qdrant, stop `ipsis serve` first |

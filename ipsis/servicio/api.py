@@ -74,6 +74,7 @@ class CeldaVisual(BaseModel):
     text: str
     offset_start: int = Field(ge=0)
     offset_end: int = Field(ge=0)
+    locator: Optional[str] = None
 
 
 class FilaVisual(BaseModel):
@@ -631,7 +632,14 @@ def crear_app(
     def widget_demo():
         if not modo.demo_activa:
             raise HTTPException(status_code=404, detail="not available in production (IPSIS_DEMO=1 enables it)")
-        return FileResponse(_DIR_ESTATICOS / "demo.html", media_type="text/html; charset=utf-8")
+        import html
+        import re
+        from ipsis.recursos.mensajes import t
+
+        contenido = (_DIR_ESTATICOS / "demo.html").read_text(encoding="utf-8")
+        contenido = re.sub(r"\{\{(\w+)\}\}", lambda m: html.escape(t(f"demo.{m.group(1)}"), quote=True), contenido)
+        admin = f'<a href="/admin/panel">{html.escape(t("demo.admin"))}</a>' if modo.admin_activo else ""
+        return Response(content=contenido.replace("[[ADMIN_LINK]]", admin), media_type="text/html; charset=utf-8")
 
     @aplicacion.post(
         "/ask",

@@ -11,6 +11,16 @@ from ipsis.nucleo.esquemas import ElementRecord
 PARSER_VERSION = "docx-estructura-1"
 
 
+def preparar_documento(ruta, *, doc_id, doc_titulo, version="1"):
+    from ipsis.ingesta.tabulares import EXTENSIONES, preparar_tabular
+
+    if Path(ruta).suffix.lower() in EXTENSIONES:
+        return preparar_tabular(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
+    if Path(ruta).suffix.lower() == ".docx":
+        return preparar_docx(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
+    raise ValueError("estructura-1 soporta DOCX, XLSX, XLS, CSV y TSV; otros formatos siguen en legacy")
+
+
 def _hash(datos):
     return "sha256:" + hashlib.sha256(json.dumps(datos, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
