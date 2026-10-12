@@ -209,7 +209,10 @@ def test_markdown_separa_items_de_lista_y_filas_de_tabla(tmp_path: Path):
         ("tabla", "Pieza | Vida útil"),
         ("tabla", "Filtro | seis meses"),
     ]
-    assert all(b.seccion_path == ["Instalación"] for b in doc.bloques)
+    # Las filas de datos quedan bajo el encabezado de su tabla; el resto, bajo su título.
+    rutas = {b.texto: b.seccion_path for b in doc.bloques}
+    assert rutas["Filtro | seis meses"] == ["Instalación", "Pieza | Vida útil"]
+    assert all(r == ["Instalación"] for t, r in rutas.items() if t != "Filtro | seis meses")
 
 
 def test_texto_plano_reconoce_titulos_sueltos_y_listas(tmp_path: Path):

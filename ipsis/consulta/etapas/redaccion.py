@@ -351,6 +351,28 @@ def construir_mensaje_abstencion(
     return elegir("no_answer", _lista(textos["generico"]), motivo)
 
 
+def _mostrar_ventana_leida(ctx) -> None:
+    """El pasaje que se muestra es la ventana que leyó el lector (oración anterior de la línea +
+    la oración del tramo), recortada literal del chunk: la política ya decidió con la oración
+    sola, así que mostrar más no cambia ninguna decisión."""
+    inicio = getattr(ctx, "inicio_ventana_lector", None)
+    if inicio is None or not ctx.evidencias or ctx.evidencias[0] is not ctx.evidencia_lector:
+        return
+    evidencia = ctx.evidencias[0]
+    candidato = next((c for c in ctx.candidatos if c.chunk.chunk_id == evidencia.chunk_id), None)
+    if candidato is None or not candidato.chunk.offset_inicio <= inicio < evidencia.offset_inicio:
+        return
+    from ipsis.indice.payload import payload_desde_evidencia
+
+    chunk = candidato.chunk
+    ancha = evidencia.model_copy(update={
+        "texto": chunk.texto_fuente[inicio - chunk.offset_inicio:evidencia.offset_fin - chunk.offset_inicio],
+        "offset_inicio": inicio,
+    })
+    ctx.payloads = [payload_desde_evidencia(ancha, chunk), *ctx.payloads[1:]]
+    ctx.diagnostico["ventana_mostrada"] = {"offset_inicio": inicio, "offset_fin": evidencia.offset_fin}
+
+
 class EtapaRedaccion(_Etapa):
     """Arma el texto con plantillas: respuesta directa o pasajes relacionados."""
 
@@ -360,6 +382,7 @@ class EtapaRedaccion(_Etapa):
         from ipsis.nucleo.esquemas import AssistantState
 
         m = self.motor
+        _mostrar_ventana_leida(ctx)
         if ctx.decision.resultado == "relacionado":
             termino = ctx.decision.entidad_texto if ctx.decision.motivo == "foco_ausente" else None
             ctx.bloques = redactar_zona_gris_bloques(ctx.payloads, plantillas=m.plantillas,

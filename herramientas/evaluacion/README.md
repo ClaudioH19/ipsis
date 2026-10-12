@@ -1,5 +1,10 @@
 # Regresión documental general
 
+Para comparar el motor experimental v2 con v1 sobre un proyecto real, consultar
+el [avance y los comandos](../../docs/plan/motor-v2-avance.md). El comparador
+offline trabaja sobre copias y conserva respuestas completas y trazas; la
+selección por defecto del servicio sigue siendo v1.
+
 Desde la raíz del repositorio, después de cualquier cambio:
 
 ```bash
@@ -102,3 +107,16 @@ otro corpus, sin sobrescribir el congelado. No se regeneran las respuestas
 esperadas ni sus offsets al evaluar. El banco es de regresión y se rechaza
 para calibración. Los PDFs son digitales: este conjunto no certifica OCR,
 tablas complejas, archivos dañados ni documentos cuyo texto sea ilegible.
+
+## Investigación de calidad v2
+
+`auditar_v2.py` prueba presupuestos, ausencia de reranking y corrección,
+lectura de unidades conocidas y formatos derivados en copias de un índice
+estructural. Admite un cross-encoder alternativo disponible en caché. Memoiza
+inferencias: sus tiempos globales no son un benchmark de servicio.
+Ver [método, resultados y límites](../../docs/methodology/motor-v2-diagnostico.md).
+
+El comparador del consejo se retiró junto con su runtime. El
+[informe histórico](../../docs/methodology/consejo-v2.md) conserva las medidas
+y ubicación de sus snapshots privados. El enfoque vigente de v2 entrega
+[fuentes ordenadas con contexto](../../docs/methodology/fuentes-v2.md).

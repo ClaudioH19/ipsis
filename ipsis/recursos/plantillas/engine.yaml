@@ -1,7 +1,19 @@
 # Engine settings. Most projects never edit this file: the installation
-# profile (assistant.yaml::profile) sets the models and thresholds, and
-# `ipsis calibrate` tunes the thresholds with your own questions.
-config_version: 5
+# profile (assistant.yaml::profile) sets the CPU models.
+config_version: 7
+pipeline: v2
+# Default source router. Set pipeline: v1 explicitly for the legacy engine.
+# These settings apply only to v2; it does not use v1 calibration or focus rules.
+v2:
+  results_limit: 3              # ranked source dropdowns per page
+  retrieve_n: 60               # candidate pool; "Keep searching" reuses its ranking
+  rerank_candidates: 60
+  query_budget_ms: 2500         # total work budget; running inference cannot be interrupted
+  reranker_batch_size: 2
+  reranker_max_tokens: 256
+  qa_highlights: false
+  max_result_chars: 16000
+  context_neighbors: 1
 retrieval:
   # model: set by the profile; uncomment to pin it.
   chunking_strategy: "CH-F256"
@@ -20,11 +32,11 @@ components:
   retriever: "qdrant"
   fusion: "rrf"
   reranker: null
-  intent_classifier: "rules"
-  answer_extractor: "sentence_selector"
+  intent_classifier: "rules"     # v1 only
+  answer_extractor: "sentence_selector"  # v1 only
   evidence_verifier: "literal_offsets"
   response_renderer: "templates"
-  abstention_policy: "cascade_v1"
+  abstention_policy: "cascade_v1"  # v1 only
 
 qdrant:
   mode: "local"                 # local | server
@@ -33,7 +45,7 @@ qdrant:
 service:
   max_concurrency: 4
 
-# Memory of each conversation (follow-up questions): forgotten after this
+# V1 memory of each conversation (follow-up questions): forgotten after this
 # many minutes without questions; at most max_sessions at a time.
 conversation:
   expiry_minutes: 30
@@ -44,6 +56,7 @@ security:
     capacity: 100
     rate_per_second: 1.0
 
+# V1 answer rendering. V2 source publication is controlled by the v2 block.
 rendering:
   max_fragment_chars: 500
   max_fragments: 2
@@ -51,7 +64,7 @@ rendering:
   inline_citation: "short"      # full | short | none
   include_opening: true
 
-# The policy thresholds live in the profile (`ipsis profile show`) and, after
+# V1 policy thresholds live in the profile (`ipsis profile show`) and, after
 # calibrating, in config/calibration.yaml.
 abstention:
   # If the question names an entity (e.g. "article 9") that exists in the

@@ -82,6 +82,11 @@ def test_activo_registra_una_linea_por_consulta_sin_datos_de_sesion(corpus, caps
     lineas = REGISTRO.read_text(encoding="utf-8").splitlines()
     assert len(lineas) == 2
     entrada = json.loads(lineas[0])
+    assert entrada["version"] == 2 and entrada["consulta_id"]
+    assert entrada["respuesta"] == ORACION
+    assert entrada["salida"]["respuesta"] == ORACION
+    assert entrada["diagnostico"]["regla"] == "ok_lector"
+    assert entrada["duracion_ms"] >= 0
     assert {k: entrada[k] for k in ("pregunta", "estado", "regla", "motivo", "perfil")} == {
         "pregunta": "¿Cada cuánto se cambia el filtro?", "estado": "ok", "regla": "ok_lector",
         "motivo": "lector", "perfil": "medium"}
@@ -128,6 +133,24 @@ def test_documento_retirado_del_corpus_se_reporta(corpus):
     escribir_proyecto(catalogo, datos)
     r = auditar_registro()
     assert not r.ok and {p.motivo for p in r.problemas} == {"missing_document"}
+
+
+def test_auditoria_verifica_referencias_de_destacados_v2(corpus):
+    from ipsis.aplicacion.registro import auditar_registro, entrada_de_registro
+
+    resultado = MotorFalso(corpus).consultar("pregunta", "s")
+    entrada = entrada_de_registro("pregunta", resultado)
+    entrada["respuesta_exacta"] = None
+    ref = {"offset_inicio": corpus["tramo"], "offset_fin": corpus["tramo"] + 7, "texto": "6 meses"}
+    entrada["salida"]["bloques"] = [{"tipo": "pasaje", "chunk_id": "manual__c0000",
+        "texto": ORACION, "destacados": [{"tipo": "posible_fragmento", "referencias": [ref]}]}]
+    REGISTRO.parent.mkdir(parents=True)
+    REGISTRO.write_text(json.dumps(entrada), encoding="utf-8")
+    reporte = auditar_registro()
+    assert reporte.ok and reporte.evidencias == 2
+    ref["texto"] = "9 meses"
+    REGISTRO.write_text(json.dumps(entrada), encoding="utf-8")
+    assert [p.motivo for p in auditar_registro().problemas] == ["altered_highlight"]
 
 
 def test_sin_registro_auditar_dice_como_activarlo(capsys):
@@ -180,3 +203,60 @@ def test_auditar_con_fecha_invalida_dice_el_formato(corpus, capsys):
     assert "AAAA-MM-DD" in capsys.readouterr().out
     assert main(["audit", "--from", "2026-10-02", "--to", "2026-10-01"]) == 2
     assert "posterior" in capsys.readouterr().out
+
+
+def test_trace_lee_el_caso_original_sin_corpus_y_admite_registro_mixto(corpus, capsys, monkeypatch):
+    assert main(["configure", "query_log.enabled=true"]) == 0
+    _preguntar(corpus, "caso real")
+    entrada = json.loads(REGISTRO.read_text(encoding="utf-8"))
+    antigua = {k: v for k, v in entrada.items() if k not in {"consulta_id", "traza", "diagnostico", "salida"}}
+    antigua["version"] = 1
+    with REGISTRO.open("a", encoding="utf-8") as archivo:
+        archivo.write(json.dumps(antigua) + "\n")
+    assert main(["audit"]) == 0
+
+    def no_parsear(*args, **kwargs):
+        raise AssertionError("inspeccionar una traza no necesita corpus")
+
+    monkeypatch.setattr("ipsis.ingesta.ingesta.parsear_corpus", no_parsear)
+    capsys.readouterr()
+    assert main(["audit", "--trace", entrada["consulta_id"]]) == 0
+    assert json.loads(capsys.readouterr().out) == entrada
+    assert main(["audit", "--trace", "inexistente"]) == 1
+    assert main(["audit", "--trace", entrada["consulta_id"], "--from", "2026-10-01"]) == 2
+
+
+@pytest.mark.parametrize("tipo", ["saturado", "no_listo", "interno"])
+def test_error_de_consulta_se_registra_sin_mensaje_interno(tipo):
+    from ipsis.aplicacion.consulta import MotorNoListo, MotorSaturado
+    from ipsis.servicio.api import crear_app
+
+    assert main(["configure", "query_log.enabled=true"]) == 0
+    errores = {"saturado": MotorSaturado, "no_listo": MotorNoListo, "interno": RuntimeError}
+
+    class Falla:
+        def consultar(self, pregunta, id_sesion):
+            raise errores[tipo]("sesion-secreta")
+
+    cliente = TestClient(crear_app(Falla()), raise_server_exceptions=False)
+    respuesta = cliente.post("/ask", json={"question": "dato", "session_id": "sesion-secreta"})
+    assert respuesta.status_code == (500 if tipo == "interno" else 503)
+    texto = REGISTRO.read_text(encoding="utf-8")
+    entrada = json.loads(texto)
+    assert entrada["estado"] == "error"
+    assert entrada["motivo"] == errores[tipo].__name__
+    assert "sesion-secreta" not in texto
+
+
+def test_servicio_con_motor_real_registra_ruta_conversacional():
+    from ipsis.aplicacion.consulta import Motor
+    from ipsis.servicio.api import crear_app
+
+    assert main(["configure", "query_log.enabled=true"]) == 0
+    cliente = TestClient(crear_app(Motor()))
+    assert cliente.post("/ask", json={"question": "hola", "session_id": "secreta"}).status_code == 200
+    entrada = json.loads(REGISTRO.read_text(encoding="utf-8"))
+    etapas = [e for e in entrada["traza"] if e["tipo"] == "etapa"]
+    assert etapas[0]["nombre"] == "conversacional" and etapas[0]["estado"] == "completada"
+    assert all(e["estado"] == "omitida" for e in etapas[1:])
+    assert not any(e["tipo"] == "recuperacion" for e in entrada["traza"])

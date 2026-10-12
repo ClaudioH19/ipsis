@@ -103,6 +103,7 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
             "ready": True,
             "mode": "production",
             "backend": "memoria",
+            "pipeline": "v1",
             "collection": "memoria",
             "n_chunks": 4,
             "n_inventory_entities": 1,
@@ -201,7 +202,17 @@ def test_motor_orquesta_recuperacion_dirigida_y_etapas_tipadas():
         max_fragmentos_adicionales=2,
     )
 
-    resultado = motor.consultar(pregunta, "sesión")
+    from ipsis.nucleo.traza import capturar_traza
+
+    with capturar_traza() as traza:
+        resultado = motor.consultar(pregunta, "sesión")
+
+    recuperaciones = [e for e in traza.eventos if e["tipo"] == "recuperacion"]
+    assert [e["origen"] for e in recuperaciones] == ["principal", "premisa"]
+    assert recuperaciones[0]["candidatos"][0]["chunk"]["chunk_id"] == "c8"
+    assert recuperaciones[1]["candidatos"][0]["chunk"]["chunk_id"] == "c9"
+    politica = next(e for e in traza.eventos if e.get("nombre") == "politica")
+    assert politica["salida"]["decision"]["capa_decisora"] == "ok_lector"
 
     assert resultado.estado == AssistantState.RESPUESTA_DIRECTA
     assert retriever.filtros == [None, valor_entidad]
@@ -289,6 +300,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
     registro.registrar("evidence_verifier", "fake", object)
     registro.registrar("response_renderer", "fake", object)
 
+    cfg["pipeline"] = "v1"  # este contrato verifica las etapas del motor anterior
     motor = construir_motor(
         cfg,
         cfg_dominio=cargar_dominio(),

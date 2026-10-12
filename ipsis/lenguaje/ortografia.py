@@ -44,6 +44,7 @@ from importlib.resources import files
 from types import SimpleNamespace
 
 from ipsis.lenguaje.texto import terminos
+from ipsis.lenguaje.lexico_base import grupos_por_raiz, plano, terminos_genericos
 
 LARGO_MINIMO = 4
 MUESTRA_AUTOPRUEBA = 300
@@ -103,8 +104,6 @@ class Corrector:
     """Índices de un corpus y un paquete; se construye una vez por motor."""
 
     def __init__(self, paquete, estadisticas, pares: frozenset[tuple[str, str]] | None = None) -> None:
-        from ipsis.lenguaje.consultas import _grupos_por_raiz, plano, terminos_genericos
-
         self.paquete, self.plano = paquete, plano
         self.df = getattr(estadisticas, "df", {}) or {}
         superficie = getattr(estadisticas, "superficie", {}) or {}
@@ -116,7 +115,7 @@ class Corrector:
         self.lexico = raices_lexico(paquete.codigo.split("-")[0], paquete.stemmer)
         self.stop = {plano(s) for s in paquete.stopwords}
         self.genericos = terminos_genericos(paquete)
-        self.de_grupos = set(_grupos_por_raiz(paquete))
+        self.de_grupos = set(grupos_por_raiz(paquete))
         self.idx_formas = _indice(self.por_forma, 2)
         self.idx_raices = _indice([r for r in self.formas if len(r) >= 4], 1)
         if pares is None and getattr(estadisticas, "contexto_erratas", False):
@@ -249,8 +248,6 @@ def pares_de_contexto(textos, paquete) -> list[str]:
     """Pares «raíz raíz» de palabras de contenido vecinas, línea por línea, sin repetir:
     cuenta la presencia, no la frecuencia, para que un título o un pie de página que se
     repite no gane importancia."""
-    from ipsis.lenguaje.consultas import plano
-
     stop = {plano(s) for s in getattr(paquete, "stopwords", ())}
     pares: set[str] = set()
     for texto in textos:

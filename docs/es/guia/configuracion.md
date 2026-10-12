@@ -33,7 +33,7 @@ mi-asistente/
 ### `assistant.yaml`
 
 ```yaml
-config_version: 5
+config_version: 7
 assistant_name: "Asistente de soporte"
 domain_description: "los manuales del producto"
 language: es              # código ISO 639: es, en, pt, pt-br...
@@ -50,7 +50,7 @@ posture:
 ## Versionado
 
 `assistant.yaml` y `engine.yaml` declaran `config_version`. La versión vigente
-es la `5`.
+es la `7`.
 
 - Cualquier comando `ipsis` migra un proyecto anterior al cargar: un archivo
   sin `config_version` se lee como versión 0 y sube paso a paso.
@@ -77,6 +77,22 @@ Estas funciones devuelven los nombres internos que usa el motor; los
 archivos en disco usan los nombres en inglés de esta guía.
 
 ## Componentes
+
+### Selección del motor
+
+Proyectos nuevos y configuraciones sin selector usan v2:
+
+```yaml
+config_version: 7
+pipeline: v2
+```
+
+V2 publica fuentes literales ordenadas con continuación. No ejecuta las
+reglas de intención/foco, políticas de respuesta, memoria conversacional ni
+calibración de v1. Sus opciones están en [fuentes ordenadas](../../methodology/fuentes-v2.md).
+Una selección explícita `pipeline: v1` sigue siendo válida y se conserva al
+cargar configuraciones antiguas. Cambia esa línea y reinicia el servicio para
+elegir otro motor; cambiar solo el motor no exige reindexar.
 
 La sección `components` selecciona implementaciones por nombre:
 
@@ -657,16 +673,38 @@ El servicio puede guardar una línea JSON por consulta en
 ipsis configure query_log.enabled=true   # y reiniciar 'ipsis serve'
 ipsis audit
 ipsis audit --from 2026-10-01 --to 2026-10-31
+ipsis audit --trace <consulta_id>
 ```
 
-- **Qué guarda:** la pregunta, el estado, la regla, el motivo, el perfil, las
-  señales de la política, el tono y los ids de plantilla usados, las
-  evidencias (documento, offsets y texto) y el tramo exacto. No guarda la
-  sesión ni la IP.
+- **Qué guarda (versión 2):** un `consulta_id` aleatorio, fecha UTC, duración,
+  pregunta, respuesta completa, contrato de salida y diagnóstico: estado,
+  regla, motivo, perfil, señales de política, tono, plantillas, evidencias
+  (documento, offsets y texto) y tramo exacto. No guarda el identificador
+  de sesión ni la IP; las preguntas y los textos documentales sí se conservan.
+- **Traza de ejecución:** `traza` contiene eventos ordenados con tiempos y
+  estado. Cada etapa guarda su entrada y salida: pregunta corregida o
+  interpretada, intención, señales, candidatos, descartes, evidencia y
+  decisión. Registra las etapas omitidas y su motivo, las salidas tempranas
+  y la admisión o saturación. Cada recuperación real (confianza, principal, por premisa
+  o por alternativas) conserva pregunta, límite, filtro, modo y candidatos
+  con su texto, offsets y puntuaciones. El reranker y el lector guardan las
+  preguntas y pasajes exactos que recibieron y sus salidas, incluyendo el
+  reranking de oraciones previo a la lectura semántica.
+- **Contexto de la ejecución:** la traza del motor del proyecto conserva
+  versión de Ipsis, componentes, perfil efectivo, modelos, umbrales, hashes
+  del corpus y léxico, y una huella de la configuración. No vuelca tokens
+  ni claves del servicio. Los hashes identifican el entorno; no archivan
+  todos los documentos ni garantizan reproducir exactamente la ejecución.
 - **Quién escribe:** solo `POST /ask` del servicio. `ipsis ask
   --diagnostics`, `ipsis evaluate` y `ipsis benchmark` no escriben. Si
   escribir falla, la respuesta no se ve afectada; queda un aviso en el log
-  del servicio.
+  del servicio. Los fallos de ejecución también dejan una entrada con
+  `estado: error`, tipo de excepción y la traza parcial; se omite el mensaje
+  interno de la excepción. Las trazas están aisladas entre peticiones.
+- **Inspeccionar un caso:** toma el `consulta_id` de una línea JSONL y usa
+  `ipsis audit --trace <consulta_id>`. Devuelve el registro original como
+  JSON, sin modelos, búsquedas ni corpus; no se combina con filtros de fecha.
+  Las líneas antiguas (versión 1) siguen admitidas por `ipsis audit`.
 - **Qué revisa `ipsis audit`:** cuenta las consultas por estado, por regla y
   por tono, y comprueba que el texto de cada evidencia y de cada tramo siga
   en esos offsets del corpus vigente.
@@ -677,6 +715,14 @@ ipsis audit --from 2026-10-01 --to 2026-10-31
   - Sale con 0 si todo coincide y con 1 si hay problemas, líneas ilegibles o
     no hay registro.
   - No usa modelos ni el índice.
+
+La traza documenta pasos observables y motivos explícitos del sistema, no
+razonamiento interno de un modelo. Permite auditar qué ocurrió; la
+literalidad que comprueba `ipsis audit` no demuestra que la respuesta sea
+correcta o completa. Conviene revisar los casos reales y convertir los
+fallos encontrados en casos de regresión del banco. El JSONL es local y
+editable, sin rotación automática ni protección contra alteraciones; al
+activarlo, administra su acceso y conservación junto con el corpus.
 
 ## Presentación del widget
 

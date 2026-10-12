@@ -186,6 +186,10 @@ ordinales:
   cuarta: 4
   quinto: 5
   quinta: 5
+  primero: 1
+  tercero: 3
+  sexto: 6
+  sexta: 6
 meses:
 - enero
 - febrero
@@ -514,6 +518,32 @@ intenciones:
     - semanal
     - mensual
     - anual
+  # «¿Cuánto dura la práctica?» pide un plazo: la oración que responde lo dice («4 semanas»),
+  # no la que define la práctica.
+  duracion:
+    exige_pista: true
+    entidades_pista: [plazo]
+    ejemplos:
+    - "¿Cuánto dura la garantía del refrigerador?"
+    - "¿Cuánto tiempo dura el curso de primeros auxilios?"
+    - "¿Qué duración tiene el contrato de arriendo?"
+    - "¿Cuánto se demora el trámite de la licencia?"
+    - "¿Cuánto tarda en llegar el pedido?"
+    - "¿Por cuánto tiempo es válido el certificado?"
+    patrones:
+    - cuanto (tiempo )?(dura|duran)
+    - que duracion
+    - cuanto (tiempo )?(se )?(demora|demoran|tarda|tardan)
+    - por cuanto tiempo
+    pistas:
+    - minutos
+    - horas
+    - dias
+    - semanas
+    - meses
+    - anos
+    - semestre
+    - semestres
 # Cómo empieza una pregunta de seguimiento (ipsis.consulta.seguimiento), en minúsculas y sin tildes.
 seguimiento:
 - y
@@ -569,6 +599,8 @@ sinonimos:
 pronombres_anaforicos: [lo, le, les, eso, esto, ello, aquello]
 # Abreviaturas de quien escribe apurado: la pregunta es coloquial (ipsis.lenguaje.estilo).
 abreviaturas_informales: [q, k, xq, pq, porq, pa, pal, xa, dl, tb, tmb, tbn, dnd, cdo]
+# Preguntas que piden una definición: solo ellas se responden con la línea del glosario.
+patrones_definicion: ['^(que|qué) (es|son|significa|significan) ', ' (que|qué) (es|son|significa|significan) ']
 # «gastos de electricidad» frente a «gastos de conexión»: mismo núcleo, otro modificador.
 preposiciones_modificador: [de, del, para]
 genericas_memoria: [tiempo]
@@ -618,6 +650,30 @@ mensajes:
   cita_completa: '(Fuente: {documento}, sección: {seccion})'
   cabecera_embebido: 'Documento: {documento} | Sección: {seccion}'
 interfaz:
+  search_send: 'Buscar'
+  search_open: 'Abrir buscador de {title}'
+  search_close: 'Cerrar buscador'
+  search_question_label: 'Buscar en tus documentos'
+  search_results_label: 'Resultados de búsqueda'
+  search_results_count: '{n} resultados para «{query}»'
+  search_read_document: 'Leer contexto completo'
+  search_close_document: 'Cerrar contexto'
+  search_more: 'Mostrar más resultados'
+  search_added: 'Se añadieron {n} resultados.'
+  search_start: 'Busca en tus documentos'
+  search_instruction: 'Escribe una pregunta o palabras clave para encontrar información.'
+  keep_searching: 'Seguir buscando'
+  rephrase_search: 'También puedes escribir una pregunta más específica.'
+  search_exhausted: 'No hay más resultados en esta búsqueda. Prueba reformulando la pregunta.'
+  search_expired: 'Esta búsqueda expiró. Vuelve a enviar tu pregunta.'
+  search_greeting: 'Hola. Describe lo que buscas y te mostraré fuentes ordenadas para revisar.'
+  search_placeholder: '¿Qué información buscas?'
+  search_subtitle: 'Busca y revisa las fuentes'
+  search_empty: 'No se encontraron fuentes para revisar. Prueba reformulando la pregunta.'
+  ranked_sources: '{n} resultados relacionados para revisar.'
+  ranked_hint: 'Fuentes ordenadas por pertinencia'
+  read_context: 'Leer la fuente y el contexto completo'
+  context_truncated: 'El contexto mostrado está recortado.'
   default_assistant_name: Asistente documental
   default_domain_description: los documentos cargados
   sources_one: 1 fuente del documento

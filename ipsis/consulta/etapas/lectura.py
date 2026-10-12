@@ -108,6 +108,9 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
     # responde ninguna: «¿Quiénes pueden postular a la beca…?» se lee en «Requisitos».
     con_secciones = {c.chunk.doc_id for c in candidatos
                      if any(len(s["ruta"]) > 1 for s in (c.chunk.metadata or {}).get("secciones") or [])}
+    from ipsis.lenguaje.alias import es_definicion, pide_definicion
+
+    definicion = pide_definicion(pregunta, getattr(motor, "idioma", None))
     unidades = []  # (candidato, unidad, inicio de la oración previa de la línea)
     for candidato in candidatos:
         texto = candidato.chunk.texto_fuente
@@ -122,6 +125,11 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
             dentro = not secciones or any(a <= u.offset_inicio and u.offset_fin <= b for a, b in secciones)
             if dentro and candidato.chunk.doc_id in con_secciones:
                 dentro = len(seccion_de(candidato.chunk, base + u.offset_inicio)) > 1
+            if dentro and not definicion:
+                # «Práctica Profesional I (P1): primera práctica…» define el término; responde
+                # «¿qué es la P1?», no «¿cuánto dura la primera práctica?».
+                inicio_linea = texto.rfind("\n", 0, u.offset_inicio) + 1
+                dentro = not es_definicion(texto[inicio_linea:u.offset_fin])
             if dentro and len(u.texto.split()) >= 3:
                 unidades.append((candidato, u, previa.offset_inicio if misma_linea else u.offset_inicio))
             previa = u
@@ -134,7 +142,9 @@ def ventanas_semanticas(motor, pregunta: str, candidatos: list, comprension=None
     obtener = getattr(motor.retriever, "estadisticas_lexico", None)
     est = obtener() if callable(obtener) else None
     lex = _puntuar(pregunta, [u for _, u, _ in unidades], est, comprension)
-    ce = motor.reranker.puntuar(pregunta, textos)
+    from ipsis.nucleo.traza import ejecutar_modelo_con_traza
+
+    ce = ejecutar_modelo_con_traza("reranker_oraciones", pregunta, textos, motor.reranker.puntuar)
     q = np.asarray(vector(pregunta), dtype=float)
     matriz = np.asarray(codificador.codificar_documentos(textos), dtype=float)
     cos = list(matriz @ q)
@@ -240,8 +250,10 @@ class EtapaLectura(_Etapa):
             if getattr(comprension, "intencion", None) or len(propios) > 1:
                 pregunta_lectura = ctx.pregunta_usuario
         ctx.diagnostico["pregunta_lectura"] = pregunta_lectura
-        lecturas = m.lector.leer(pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(
-            (c.chunk.texto_fuente for c in candidatos), ventanas)])
+        from ipsis.nucleo.traza import ejecutar_modelo_con_traza
+
+        lecturas = ejecutar_modelo_con_traza("lector", pregunta_lectura, [texto[a:b] for texto, (a, b) in zip(
+            (c.chunk.texto_fuente for c in candidatos), ventanas)], m.lector.leer)
         # offsets de la ventana -> offsets del pasaje completo
         ctx.lecturas = [
             lec.model_copy(update={"inicio": lec.inicio + ventanas[lec.indice_pasaje][0],
@@ -276,6 +288,10 @@ class EtapaLectura(_Etapa):
                 mejor = mejor.model_copy(update={"inicio": ini_completa, "fin": fin_completa,
                                                   "texto": chunk.texto_fuente[ini_completa:fin_completa]})
         ini, fin = oracion_que_contiene(chunk.texto_fuente, mejor.inicio, mejor.fin)
+        if semanticas and ventanas[mejor.indice_pasaje][0] < ini:
+            # La ventana semántica trae la oración anterior de la línea: «…de dicho período»
+            # se entiende con la oración que nombra el período. Se muestra, no se decide con ella.
+            ctx.inicio_ventana_lector = chunk.offset_inicio + ventanas[mejor.indice_pasaje][0]
         ctx.evidencia_lector = EvidenceSpan(
             doc_id=chunk.doc_id,
             chunk_id=chunk.chunk_id,

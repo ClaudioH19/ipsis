@@ -26,6 +26,21 @@ ipsis golden template → (a person fills in golden.csv) → ipsis golden import
 
 ## What the assistant answers
 
+To inspect experimental structural DOCX preparation in a separate project:
+
+```bash
+ipsis prepare --project /path/project --output /path/new-copy
+cd /path/new-copy
+ipsis index
+```
+
+`ipsis prepare --index` also builds the index during preparation. The output
+folder must be new and outside the source project. The copy uses v2 and a
+separate structural index; the source keeps its configuration. This variant
+supports DOCX body structures with explicit extraction warnings. It does not
+add Excel support or guarantee better answers. See
+[structural preparation](../methodology/preparacion-estructural.md).
+
 Every answer has a status, and the widget renders each one differently:
 
 | Status | Meaning |
@@ -124,7 +139,7 @@ creation or activation.
 | Command | What it does |
 |---|---|
 | `ipsis doctor` | Read-only diagnosis: configuration, profile, language, stemmer, models, index, calibration, golden set, CORS, personality and mode. Every error comes with its action. Exits with 0 when there are no errors |
-| `ipsis audit [--from DATE] [--to DATE]` | Reviews the query log: statuses, rules, tones and whether every piece of evidence is still literal in the corpus. With `--from`/`--to` (`YYYY-MM-DD` or ISO 8601, UTC by default, inclusive) it only counts that range. Turn the log on with `ipsis configure query_log.enabled=true` |
+| `ipsis audit [--from DATE] [--to DATE]` / `ipsis audit --trace ID` | Reviews the query log: statuses, rules, tones and whether every piece of evidence is still literal in the corpus. With `--from`/`--to` (`YYYY-MM-DD` or ISO 8601, UTC by default, inclusive) it only counts that range. `--trace` shows an original query and its steps by `consulta_id`, without running it or accessing the corpus. Turn the log on with `ipsis configure query_log.enabled=true` |
 
 ### Personality
 
@@ -185,6 +200,18 @@ Details in [web.md](web.md).
 | `ipsis deploy prepare [--target D] [--domain DOM] [--wheel W] [--force]` | Generates in `dist/` everything a server needs: project, index, `Dockerfile`, `docker-compose.yml` with optional Caddy and `DEPLOY.md`. See [deployment.md](deployment.md) |
 
 ## Environment variables
+
+V2 is the default engine for new projects and configurations without a pipeline
+selector. It routes queries to ranked sources for review. An explicit
+`pipeline: v1` in `config/engine.yaml` keeps the legacy engine; change it to
+`pipeline: v2` and restart the service to switch an existing project.
+It publishes up to three source dropdowns per page with literal neighboring
+context and a button to continue searching, and
+keeps QA disabled by default. Reranking is progressive, with a 2500 ms work
+budget; pending candidates remain available for continuation. See [ranked sources](../methodology/fuentes-v2.md)
+for budgets, API fields and the retired council migration.
+Use `ipsis widget theme apply search` (or `search_compact`) for visible
+source titles and excerpts, a top search field and expandable context.
 
 | Variable | Effect |
 |---|---|

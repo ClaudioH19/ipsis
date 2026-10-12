@@ -2,8 +2,8 @@
 
 El registro es un JSONL en ``.ipsis/logs/queries.jsonl``, apagado por
 defecto (privacidad: ``assistant.yaml::query_log.enabled``). Cada línea guarda
-la pregunta, el estado, la regla, las señales y las evidencias con sus
-offsets; no guarda la sesión ni la IP. Solo lo escribe el servicio.
+la pregunta, la respuesta, el diagnóstico y la traza observable de la
+ejecución; no guarda la sesión ni la IP. Solo lo escribe el servicio.
 
 ``auditar_registro`` comprueba que cada evidencia registrada siga siendo
 literal: el texto guardado debe estar en esos offsets del corpus vigente.
@@ -12,26 +12,40 @@ from __future__ import annotations
 
 import json
 import threading
+import time
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from ipsis.configuracion import rutas
 from ipsis.recursos.mensajes import t
+from ipsis.nucleo.traza import traza_actual
 
-VERSION_REGISTRO = 1
+VERSION_REGISTRO = 2
 
 
 class SinRegistro(FileNotFoundError):
     """No hay registro de consultas que auditar."""
 
 
+def _cabecera() -> dict[str, Any]:
+    traza = traza_actual()
+    return {
+        "version": VERSION_REGISTRO,
+        "fecha": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+        "consulta_id": traza.consulta_id if traza is not None else uuid4().hex,
+        "duracion_ms": round((time.perf_counter() - traza.inicio) * 1000, 3) if traza is not None else None,
+        "traza": traza.eventos if traza is not None else [],
+    }
+
+
 def entrada_de_registro(pregunta: str, resultado) -> dict[str, Any]:
     """Línea del registro para un ``AssistantResult``."""
     d = resultado.diagnostico or {}
-    contrato = d.get("contrato_http") or {}
+    contrato = getattr(resultado, "contrato_http", None) or d.get("contrato_http") or {}
     evidencias = [{"doc_id": e.doc_id, "chunk_id": e.chunk_id, "offset_inicio": e.offset_inicio,
                    "offset_fin": e.offset_fin, "texto": e.texto} for e in resultado.evidencias]
     exacta = contrato.get("respuesta_exacta")
@@ -39,8 +53,7 @@ def entrada_de_registro(pregunta: str, resultado) -> dict[str, Any]:
         doc_id = next((e["doc_id"] for e in evidencias if e["chunk_id"] == exacta.get("chunk_id")), None)
         exacta = {**exacta, "doc_id": doc_id}
     return {
-        "version": VERSION_REGISTRO,
-        "fecha": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        **_cabecera(),
         "pregunta": pregunta,
         "estado": contrato.get("estado", resultado.estado.value),
         "regla": d.get("regla"),
@@ -51,6 +64,9 @@ def entrada_de_registro(pregunta: str, resultado) -> dict[str, Any]:
         "plantillas": list(d.get("plantillas") or []),
         "evidencias": evidencias,
         "respuesta_exacta": exacta,
+        "respuesta": resultado.mensaje_usuario,
+        "salida": contrato,
+        "diagnostico": {k: v for k, v in d.items() if k != "contrato_http"},
     }
 
 
@@ -62,11 +78,35 @@ class RegistroConsultas:
         self._candado = threading.Lock()
 
     def registrar(self, pregunta: str, resultado) -> None:
-        linea = json.dumps(entrada_de_registro(pregunta, resultado), ensure_ascii=False)
+        self._escribir(entrada_de_registro(pregunta, resultado))
+
+    def registrar_error(self, pregunta: str, error: Exception) -> None:
+        # No se guarda str(error): puede contener credenciales o datos de sesión.
+        self._escribir({**_cabecera(), "pregunta": pregunta, "estado": "error",
+                        "motivo": type(error).__name__, "evidencias": [], "respuesta_exacta": None})
+
+    def _escribir(self, entrada: dict[str, Any]) -> None:
+        linea = json.dumps(entrada, ensure_ascii=False)
         with self._candado:
             self.ruta.parent.mkdir(parents=True, exist_ok=True)
             with self.ruta.open("a", encoding="utf-8") as archivo:
                 archivo.write(linea + "\n")
+
+
+def leer_consulta(consulta_id: str, ruta: str | Path = rutas.REGISTRO_CONSULTAS) -> dict[str, Any] | None:
+    """Lee la consulta original, sin modelos ni acceso al corpus actual."""
+    ruta = Path(ruta)
+    if not ruta.is_file():
+        raise SinRegistro(ruta)
+    with ruta.open(encoding="utf-8") as archivo:
+        for linea in archivo:
+            try:
+                entrada = json.loads(linea)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(entrada, dict) and entrada.get("consulta_id") == consulta_id:
+                return entrada
+    return None
 
 
 def registro_del_proyecto(cfg_dominio: dict) -> RegistroConsultas | None:
@@ -205,11 +245,21 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: date
                                   exacta.get("offset_fin"), exacta.get("texto"), textos, "altered_span")
             if problema:
                 reporte.problemas.append(problema)
+        por_chunk = {e.get("chunk_id"): e.get("doc_id") for e in evidencias}
+        for bloque in (entrada.get("salida") or {}).get("bloques") or []:
+            for destacado in bloque.get("destacados") or []:
+                for ref in destacado.get("referencias") or []:
+                    reporte.evidencias += 1
+                    problema = _verificar(numero, por_chunk.get(bloque.get("chunk_id")),
+                        ref.get("offset_inicio"), ref.get("offset_fin"), ref.get("texto"),
+                        textos, "altered_highlight")
+                    if problema:
+                        reporte.problemas.append(problema)
     return reporte
 
 
 __all__ = ["FechaInvalida", "ProblemaEvidencia", "RegistroConsultas", "ReporteAuditoria", "SinRegistro", "auditar_registro",
-           "entrada_de_registro", "interpretar_fecha", "registrar_admin", "registro_del_proyecto"]
+           "entrada_de_registro", "interpretar_fecha", "leer_consulta", "registrar_admin", "registro_del_proyecto"]
 
 
 def registrar_admin(ip: str | None, accion: str, claves: list[str] | None = None) -> None:

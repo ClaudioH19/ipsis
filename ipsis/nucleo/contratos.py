@@ -23,6 +23,23 @@ from ipsis.nucleo.esquemas import (
 
 
 @runtime_checkable
+class QueryEngine(Protocol):
+    """Frontera de consulta; independiente de clasificador, política y pipeline."""
+
+    pipeline: str
+    backend: str
+    abstencion_calibrada: bool
+    control_admision: Any
+
+    def consultar(self, pregunta: str, id_sesion: str) -> AssistantResult: ...
+    def calentar(self) -> None: ...
+    def cerrar(self) -> None: ...
+    def n_chunks(self) -> int: ...
+    def inventario_entidades(self) -> set[str]: ...
+    def respuesta_conversacional(self, categoria: str, pregunta: str = "") -> str: ...
+
+
+@runtime_checkable
 class DocumentParser(Protocol):
     def parsear(self, ruta: str, **metadata: Any) -> DocumentRecord: ...
 
@@ -121,5 +138,5 @@ class Etapa(Protocol):
 __all__ = [
     "AbstentionPolicy", "AnswerExtractor", "Chunker", "DenseEncoder", "DocumentParser", "Etapa",
     "EvidenceVerifier", "FusionStrategy", "IntentClassifier", "Reranker",
-    "ResponseRenderer", "Retriever", "SparseEncoder",
+    "ResponseRenderer", "Retriever", "SparseEncoder", "QueryEngine",
 ]

@@ -213,3 +213,22 @@ def test_las_erratas_son_deterministas_y_cambian_la_pregunta(idioma):
         assert casos and all(c["pregunta"] != c["original"] and c["erratas"] for c in casos)
         for c in casos[:10]:
             assert generar.errar(c["original"], idioma, f"{conjunto}:{c['id']}")[0] == c["pregunta"]
+
+
+# --- banco de términos (diseño y validación retenida) ----------------------------------------
+TERMINOS = DATOS / "banco_terminos"
+
+
+def _construir_terminos():
+    spec = importlib.util.spec_from_file_location("banco_terminos_construir", TERMINOS / "construir.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+@pytest.mark.parametrize("conjunto", ("diseno", "validacion"))
+@pytest.mark.parametrize("idioma", IDIOMAS)
+def test_los_derivados_del_banco_de_terminos_estan_al_dia(conjunto, idioma):
+    manifiesto, casos = _construir_terminos().construir(conjunto, idioma)
+    assert (TERMINOS / conjunto / idioma / "manifiesto.json").read_text(encoding="utf-8") == manifiesto
+    assert (TERMINOS / conjunto / idioma / "banco.jsonl").read_text(encoding="utf-8") == casos

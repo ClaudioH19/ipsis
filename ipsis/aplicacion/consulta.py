@@ -1,6 +1,8 @@
 """Casos de uso de consulta: construir el motor desde la configuración."""
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -10,9 +12,11 @@ from ipsis.configuracion.glosario import ETAPAS
 from ipsis.consulta.etapas.redaccion import cargar_plantillas
 # El servicio usa el motor y sus errores a través de esta capa.
 from ipsis.consulta.motor import Motor, MotorNoListo, MotorSaturado
+from ipsis.consulta.errores import ContinuacionInvalida
 from ipsis.lenguaje.paquete import cargar_paquete
 from ipsis.configuracion.perfiles import perfil_efectivo
 from ipsis.nucleo.registro import RegistroComponentes
+from ipsis.nucleo.contratos import QueryEngine
 from ipsis.recursos.mensajes import t
 
 
@@ -34,7 +38,7 @@ def construir_motor(
     *,
     cfg_dominio: dict[str, Any] | None = None,
     registro: RegistroComponentes | None = None,
-) -> Motor:
+) -> QueryEngine:
     """Construye el motor completo desde la selección declarativa.
 
     Primero valida todos los nombres configurados y solo después crea
@@ -54,6 +58,14 @@ def construir_motor(
     from ipsis.nucleo.progreso import informar
 
     informar("configuracion")
+    pipeline = cfg.get("pipeline", "v2")
+    if pipeline not in {"v1", "v2"}:
+        raise ValueError("pipeline debe ser v1 o v2")
+    opciones_v2 = None
+    if pipeline == "v2":
+        from ipsis.configuracion.esquemas import PipelineV2Config
+
+        opciones_v2 = PipelineV2Config.model_validate(cfg.get("v2") or {}).model_dump()
     componentes = dict(cfg.get("componentes") or {})
     if not componentes:
         raise ValueError(t("app.no_components"))
@@ -63,8 +75,9 @@ def construir_motor(
             registro.obtener(tipo, nombre)
 
     cfg_dominio = cfg_dominio or cargar_dominio()
-    perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"))
-    for nombre_etapa in perfil_instalacion.etapas:
+    perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
+        **({"ruta_calibracion": None} if pipeline == "v2" else {}))
+    for nombre_etapa in (perfil_instalacion.etapas if pipeline == "v1" else []):
         try:
             registro.obtener("etapa", nombre_etapa)
         except KeyError as exc:
@@ -79,7 +92,8 @@ def construir_motor(
         informar("lexico")
         from ipsis.lenguaje.ortografia import raices_lexico
 
-        indice_automatico(idioma.codigo.split("-")[0], idioma.stemmer)
+        if pipeline == "v1":
+            indice_automatico(idioma.codigo.split("-")[0], idioma.stemmer)
         raices_lexico(idioma.codigo.split("-")[0], idioma.stemmer)  # la primera errata no espera al léxico
     plantillas = cargar_plantillas(idioma, cfg_dominio)
     cfg_rec = config_recuperacion(cfg)
@@ -93,79 +107,143 @@ def construir_motor(
         recuperacion=cfg_rec,
         qdrant=cfg.get("qdrant", {}),
     )
-    analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
-    # La calibración solo vale para el corpus con que se calibró: se vuelve a
-    # resolver el perfil con el hash del índice recién abierto.
-    hash_corpus = _hash_corpus_indexado(retriever)
-    if hash_corpus is not None:
-        perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
-                                             hash_corpus=hash_corpus, hash_lexico=hash_lexico)
-    politica = registro.crear(
-        "abstention_policy",
-        componentes["abstention_policy"],
-        umbrales=perfil_instalacion.umbrales_por_defecto,
-        paquete=idioma,
-        piso_coseno=obtener_modelo(perfil_instalacion.modelos.denso).coseno_piso,
-    )
-    extractor = registro.crear(
-        "answer_extractor",
-        componentes["answer_extractor"],
-        limite_caracteres=cfg_red["longitud_maxima_fragmento_chars"],
-        estadisticas=retriever.estadisticas_lexico(),
-    )
-    verificador = registro.crear(
-        "evidence_verifier", componentes["evidence_verifier"]
-    )
-    renderer = registro.crear("response_renderer", componentes["response_renderer"])
-    motor = Motor(
-        retriever=retriever,
-        analizador=analizador,
-        politica_abstencion=politica,
-        extractor=extractor,
-        verificador=verificador,
-        renderer=renderer,
-        control_admision=ControlAdmision(
-            ConfiguracionAdmision(concurrencia_maxima=cfg_srv["concurrencia_maxima"])
-        ),
-        backend=componentes["retriever"],
-        perfil=perfil,
-        idioma=idioma,
-        plantillas=plantillas,
-        configuracion_redaccion=cfg_red,
-        top_k=cfg_rec["top_k"],
-        max_fragmentos_adicionales=(cfg.get("abstencion") or {}).get("max_fragmentos_adicionales", 2),
-        abstencion_calibrada=perfil_instalacion.origen_umbrales == "calibracion",
-    )
-    motor.perfil_instalacion = perfil_instalacion
-    from ipsis.consulta.alternativas import ConfigAlternativas
-    from ipsis.ingesta.metadata import cargar_taxonomia
+    if pipeline == "v2":
+        from ipsis.consulta.v2 import MotorV2
+        from ipsis.indice.contextos import envolver_contextos
 
-    postura = cfg_dominio.get("postura") or {}
-    motor.alternativas = ConfigAlternativas(
-        modo=postura.get("modo", "proactiva"), max_alternativas=int(postura.get("max_alternativas", 3)),
-        umbral=perfil_instalacion.alternativas.umbral, pesos=dict(perfil_instalacion.alternativas.pesos))
-    motor.taxonomia = cargar_taxonomia()
-    from ipsis.consulta.seguimiento import MemoriaConversacion
+        retriever = envolver_contextos(retriever)
+        if not hasattr(retriever, "ampliar_resultado") and getattr(getattr(retriever, "coleccion", None), "nombre", None):
+            from ipsis.indice.contextos import RecuperadorConContextos
+            from ipsis.ingesta.ingesta import parsear_corpus
+            from ipsis.configuracion import rutas
 
-    cfg_conv = cfg.get("conversacion") or {}
-    motor.seguimiento = MemoriaConversacion(
-        max_sesiones=int(cfg_conv.get("max_sesiones", 1024)),
-        vencimiento_s=float(cfg_conv.get("vencimiento_minutos", 30)) * 60,
-    )
-    if perfil_instalacion.modelos.reranker and "reranking" in perfil_instalacion.etapas:
+            documentos = parsear_corpus(rutas.DOCUMENTOS, preparacion="legacy")
+            retriever = RecuperadorConContextos(retriever, {}, {d.doc_id: d for d in documentos})
+        hash_corpus = _hash_corpus_indexado(retriever)
+        motor = MotorV2(
+            retriever=retriever,
+            verificador=registro.crear("evidence_verifier", componentes["evidence_verifier"]),
+            idioma=idioma, perfil=perfil_instalacion, plantillas=plantillas,
+            control_admision=ControlAdmision(ConfiguracionAdmision(
+                concurrencia_maxima=cfg_srv["concurrencia_maxima"])),
+            opciones=opciones_v2,
+        )
+        motor.backend = componentes["retriever"]
+    else:
+        analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
+        # La calibración solo vale para el corpus con que se calibró: se vuelve a
+        # resolver el perfil con el hash del índice recién abierto.
+        hash_corpus = _hash_corpus_indexado(retriever)
+        if hash_corpus is not None:
+            perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
+                                                 hash_corpus=hash_corpus, hash_lexico=hash_lexico)
+        politica = registro.crear(
+            "abstention_policy",
+            componentes["abstention_policy"],
+            umbrales=perfil_instalacion.umbrales_por_defecto,
+            paquete=idioma,
+            piso_coseno=obtener_modelo(perfil_instalacion.modelos.denso).coseno_piso,
+        )
+        extractor = registro.crear(
+            "answer_extractor",
+            componentes["answer_extractor"],
+            limite_caracteres=cfg_red["longitud_maxima_fragmento_chars"],
+            estadisticas=retriever.estadisticas_lexico(),
+        )
+        verificador = registro.crear(
+            "evidence_verifier", componentes["evidence_verifier"]
+        )
+        renderer = registro.crear("response_renderer", componentes["response_renderer"])
+        motor = Motor(
+            retriever=retriever,
+            analizador=analizador,
+            politica_abstencion=politica,
+            extractor=extractor,
+            verificador=verificador,
+            renderer=renderer,
+            control_admision=ControlAdmision(
+                ConfiguracionAdmision(concurrencia_maxima=cfg_srv["concurrencia_maxima"])
+            ),
+            backend=componentes["retriever"],
+            perfil=perfil,
+            idioma=idioma,
+            plantillas=plantillas,
+            configuracion_redaccion=cfg_red,
+            top_k=cfg_rec["top_k"],
+            max_fragmentos_adicionales=(cfg.get("abstencion") or {}).get("max_fragmentos_adicionales", 2),
+            abstencion_calibrada=perfil_instalacion.origen_umbrales == "calibracion",
+        )
+        motor.perfil_instalacion = perfil_instalacion
+        from ipsis.consulta.alternativas import ConfigAlternativas
+        from ipsis.ingesta.metadata import cargar_taxonomia
+
+        postura = cfg_dominio.get("postura") or {}
+        motor.alternativas = ConfigAlternativas(
+            modo=postura.get("modo", "proactiva"), max_alternativas=int(postura.get("max_alternativas", 3)),
+            umbral=perfil_instalacion.alternativas.umbral, pesos=dict(perfil_instalacion.alternativas.pesos))
+        motor.taxonomia = cargar_taxonomia()
+        from ipsis.consulta.seguimiento import MemoriaConversacion
+
+        cfg_conv = cfg.get("conversacion") or {}
+        motor.seguimiento = MemoriaConversacion(
+            max_sesiones=int(cfg_conv.get("max_sesiones", 1024)),
+            vencimiento_s=float(cfg_conv.get("vencimiento_minutos", 30)) * 60,
+        )
+    if perfil_instalacion.modelos.reranker and (pipeline == "v2" or "reranking" in perfil_instalacion.etapas):
         motor.reranker = registro.crear("reranker", "onnx", modelo=perfil_instalacion.modelos.reranker)
-    if perfil_instalacion.modelos.lector and "lectura" in perfil_instalacion.etapas:
+        if pipeline == "v2":
+            motor.reranker.lote = motor.opciones["lote_reranker"]
+            spec = motor.reranker.spec
+            motor.reranker.spec = spec.model_copy(update={"max_tokens": min(
+                spec.max_tokens, motor.opciones["max_tokens_reranker"])})
+    if perfil_instalacion.modelos.lector and (
+            motor.opciones["destacar_fragmentos"] if pipeline == "v2" else "lectura" in perfil_instalacion.etapas):
         motor.lector = registro.crear(
             "answer_reader", "onnx", modelo=perfil_instalacion.modelos.lector,
-            max_tokens_pasaje=perfil_instalacion.cascada.max_tokens_pasaje,
-            stride=perfil_instalacion.cascada.stride,
+            max_tokens_pasaje=(motor.opciones["max_tokens_pasaje"] if pipeline == "v2"
+                               else perfil_instalacion.cascada.max_tokens_pasaje),
+            stride=(motor.opciones["stride"] if pipeline == "v2" else perfil_instalacion.cascada.stride),
         )
-    motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
+    if pipeline == "v1":
+        motor.etapas = [registro.crear("etapa", nombre, motor) for nombre in perfil_instalacion.etapas]
+    from ipsis import __version__
+
+    motor.metadatos_auditoria = {
+        "version_ipsis": __version__, "backend": motor.backend, "pipeline": pipeline,
+        "componentes": componentes, "perfil_efectivo": perfil_instalacion.model_dump(mode="json"),
+        "modelos": {rol: {"id": nombre, "revision": obtener_modelo(nombre).revision,
+                           "archivo_onnx": obtener_modelo(nombre).archivo_onnx()}
+                    for rol, nombre in perfil_instalacion.modelos.model_dump().items() if nombre},
+        "hash_corpus": hash_corpus, "hash_lexico": hash_lexico,
+        "etapas_efectivas": (list(motor.etapas_efectivas) if pipeline == "v2"
+                            else [e.nombre for e in motor.etapas]),
+        "calibracion_aplicada": motor.abstencion_calibrada,
+        "hash_configuracion": hashlib.sha256(json.dumps(
+            {"motor": cfg, "asistente": cfg_dominio}, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest(),
+    }
+    if pipeline == "v2":
+        # Las opciones heredadas describen v1; no son componentes ejecutados por v2.
+        motor.metadatos_auditoria["componentes_configurados"] = componentes
+        motor.metadatos_auditoria["componentes"] = {
+            "retriever": componentes["retriever"], "fusion": componentes["fusion"],
+            "reranker": "onnx" if motor.reranker is not None else None,
+            "answer_reader": "onnx" if motor.lector is not None else None,
+            "evidence_verifier": componentes["evidence_verifier"],
+            "response_renderer": "fuentes_ordenadas_v2",
+            "abstention_policy": "recuperacion_sin_certificacion_de_respuesta_v2",
+        }
+        motor.metadatos_auditoria["preparacion_indice"] = getattr(retriever, "preparacion_indice", None)
+        motor.metadatos_auditoria["presupuestos_v2"] = dict(motor.opciones)
+        if motor.lector is None:
+            motor.metadatos_auditoria["modelos"].pop("lector", None)
+        if motor.reranker is not None:
+            motor.metadatos_auditoria["modelos"]["reranker"].update(
+                lote=motor.reranker.lote, max_tokens=motor.reranker.spec.max_tokens)
     motor._marca_presentacion = _marca_presentacion()  # base para recargar_presentacion
     return motor
 
 
-def construir_motor_del_proyecto() -> Motor:
+def construir_motor_del_proyecto() -> QueryEngine:
     """Motor del proyecto del directorio actual (lo que sirve ``ipsis serve``)."""
     from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
 
@@ -216,7 +294,7 @@ class DiagnosticoConsulta:
         return sum(ms for _, ms in self.etapas)
 
 
-def diagnosticar_pregunta(pregunta: str, motor: Motor | None = None) -> DiagnosticoConsulta:
+def diagnosticar_pregunta(pregunta: str, motor: QueryEngine | None = None) -> DiagnosticoConsulta:
     """Ejecuta ``pregunta`` con el motor del proyecto, en este proceso, y devuelve
     su diagnóstico. No pasa por el servicio HTTP, que no publica el diagnóstico.
     ``motor`` se inyecta en las pruebas (motor falso)."""
@@ -279,7 +357,7 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
     manuales = d.get("sinonimos") or {}
     if manuales:
         efectiva = f"{efectiva.rstrip()} {' '.join(f for fs in manuales.values() for f in fs)}"
-    if retriever is not None and hasattr(retriever, "rankings_diagnostico"):
+    if d.get("pipeline", "v1") == "v1" and retriever is not None and hasattr(retriever, "rankings_diagnostico"):
         try:
             automatica = d.get("pregunta_recuperacion")
             rankings = (retriever.rankings_diagnostico(efectiva, pregunta_bm25=automatica) if automatica
@@ -295,13 +373,14 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
         lectura = lecturas.get(cid) or {}
         candidatos.append({
             "chunk_id": cid, "inicio": c.get("inicio", ""),
-            "denso": posicion(rankings.get("denso", [])), "bm25": posicion(rankings.get("bm25", [])),
+            "denso": posicion(rankings.get("denso", [])) if rankings else (c.get("signals") or {}).get("dense_rank"),
+            "bm25": posicion(rankings.get("bm25", [])) if rankings else (c.get("signals") or {}).get("sparse_rank"),
             "fusion": (c.get("signals") or {}).get("fusion_rank"),
             "rerank": rerank.get(cid, (None, None))[0], "rerank_score": rerank.get(cid, (None, None))[1],
             "qa": lectura.get("prob_respuesta"), "qa_texto": lectura.get("texto"),
         })
     oraciones: list[dict] = []
-    if retriever is not None and hasattr(retriever, "textos_diagnostico") and candidatos:
+    if d.get("pipeline", "v1") == "v1" and retriever is not None and hasattr(retriever, "textos_diagnostico") and candidatos:
         from contextlib import nullcontext
 
         from ipsis.consulta.etapas.seleccion import _puntuar_turno, dividir_en_unidades
@@ -333,7 +412,7 @@ def _ranking_diagnostico(motor, pregunta: str, d: dict) -> tuple[list[dict], lis
     return candidatos, oraciones
 
 
-__all__ = ["DiagnosticoConsulta", "Motor", "MotorNoListo", "MotorSaturado", "construir_motor",
+__all__ = ["DiagnosticoConsulta", "Motor", "MotorNoListo", "MotorSaturado", "ContinuacionInvalida", "construir_motor",
            "construir_motor_del_proyecto", "diagnosticar_pregunta", "recargar_presentacion"]
 
 
@@ -350,7 +429,7 @@ def _marca_presentacion() -> tuple:
     return tuple(marcas)
 
 
-def recargar_presentacion(motor: Motor) -> bool:
+def recargar_presentacion(motor: QueryEngine) -> bool:
     """Si cambió el tono o los textos del proyecto, el motor toma las plantillas
     nuevas sin reiniciar (un ``stat`` por llamada). Las consultas en curso
     terminan con las anteriores: el cambio es una asignación atómica."""

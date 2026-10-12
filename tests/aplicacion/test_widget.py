@@ -14,7 +14,19 @@ from ipsis.aplicacion.widget import (
 
 
 def test_catalogo_de_presets_es_estable():
-    assert list(listar_presets()) == ["classic", "minimal", "editorial", "contrast"]
+    assert list(listar_presets()) == ["classic", "minimal", "editorial", "contrast", "search", "search_compact"]
+
+
+@pytest.mark.parametrize("preset", ["search", "search_compact"])
+def test_templates_de_busqueda_se_exportan_y_tienen_contexto_accesible(tmp_path, preset):
+    ruta = tmp_path / "styles.yaml"
+    aplicar_preset(preset, str(ruta))
+    salida = generar_vista_previa(str(tmp_path / "preview.html"), str(ruta))
+    contenido = salida.read_text(encoding="utf-8")
+    assert contenido.count("<article>") == 3
+    assert '<input id="consulta"' in contenido and '<details id="contexto-1"' in contenido
+    assert "rw-msg-usuario" not in contenido
+    assert 'data-densidad="compacta"' in contenido if preset == "search_compact" else 'data-densidad="comoda"' in contenido
 
 
 def test_aplicar_preset_preserva_css_extra_y_escribe_yaml_valido(tmp_path):

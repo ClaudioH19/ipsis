@@ -110,6 +110,9 @@ class PaqueteIdioma(_Estricto):
     stopwords: list[str] = Field(default_factory=list)
     numeros: dict[str, int] = Field(default_factory=dict)
     ordinales: dict[str, int] = Field(default_factory=dict)
+    # Preguntas que piden una definición («¿qué es la P1?»): solo ellas se leen en la línea
+    # del glosario que define el término (ipsis.lenguaje.alias.es_definicion).
+    patrones_definicion: list[str] = Field(default_factory=list)
     meses: list[str] = Field(default_factory=list)
     dias_semana: dict[str, list[str]] = Field(default_factory=dict)  # ISO: 1=lunes … 7=domingo
     unidades_tiempo: dict[str, list[str]] = Field(default_factory=dict)

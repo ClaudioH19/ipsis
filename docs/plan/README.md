@@ -8,6 +8,17 @@ Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
 - [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
   conversión reproducible y activación medida de F2.
 
+## Plan de motor v2
+
+[motor-v2.md](motor-v2.md) define el trabajo experimental solicitado el
+2026-10-11: frontera común, motor sin heurísticas semánticas de v1,
+comparación con casos reales, preparación estructurada y reemplazo limpio
+condicionado a resultados. La primera implementación está en curso; consultar
+el [avance del motor v2](motor-v2-avance.md). Desde el 2026-10-12, v2 es el
+motor predeterminado; la evaluación general y el retiro de v1 siguen pendientes.
+Este documento conserva el
+historial y los criterios del plan V4.
+
 ## Objetivo
 
 Que la comprensión de la pregunta y la conversación se apoyen en evidencia

@@ -1,0 +1,82 @@
+# Terms bank (design, English). Questions that name things as people do ("the first
+# internship", "the office", acronyms) when the document uses another name it defines
+# itself (glossary, acronyms, "hereinafter"), ordinals and tables.
+
+- id: en-parafrasis-001
+  documento: internship_rules.md
+  capacidad: cantidad
+  pregunta: how much is the portfolio worth in the first internship
+  respuesta: Evidence portfolio | 40%
+- id: en-parafrasis-002
+  documento: internship_rules.md
+  capacidad: duracion
+  pregunta: how long is the first internship
+  respuesta: PI1 lasts at least 4 weeks
+- id: en-parafrasis-003
+  documento: internship_rules.md
+  capacidad: condicion
+  pregunta: what do i need to enrol in the first internship
+  respuesta: passed the fifth semester and the Workplace Readiness module
+- id: en-parafrasis-004
+  documento: internship_rules.md
+  capacidad: fecha
+  pregunta: when is the first internship done
+  respuesta: during the summer period, between January and February
+- id: en-parafrasis-005
+  documento: internship_rules.md
+  capacidad: duracion
+  pregunta: how long is the second internship
+  respuesta: PI2 lasts at least 8 weeks
+- id: en-parafrasis-006
+  documento: internship_rules.md
+  capacidad: cantidad
+  pregunta: how much does the oral defence weigh in the second internship
+  respuesta: Oral defence | 30%
+- id: en-parafrasis-007
+  documento: internship_rules.md
+  capacidad: fecha
+  pregunta: until when does the internship office take requests
+  respuesta: until 15 December
+- id: en-exacta-001
+  documento: internship_rules.md
+  capacidad: condicion
+  pregunta: What are the requirements to enrol in PI2?
+  respuesta: passed PI1 and the eighth semester
+- id: en-parafrasis-008
+  documento: internship_rules.md
+  capacidad: cantidad
+  pregunta: how much is the supervisor report worth in internship 1
+  respuesta: Company supervisor report | 30%
+- id: en-parafrasis-009
+  documento: library_rules.md
+  capacidad: cantidad
+  pregunta: how many books can i take as an undergrad
+  respuesta: up to 5 books for 14 days
+- id: en-parafrasis-010
+  documento: library_rules.md
+  capacidad: duracion
+  pregunta: how far ahead can i book a group study room
+  respuesta: at most 48 hours in advance
+- id: en-parafrasis-011
+  documento: library_rules.md
+  capacidad: condicion
+  pregunta: what happens if i return a book 5 days late
+  respuesta: From 4 to 10 days | Suspension for 15 days
+- id: en-exacta-002
+  documento: library_rules.md
+  capacidad: fecha
+  pregunta: What are the opening hours of the ULS?
+  respuesta: Monday to Friday from 8:00 to 21:00
+
+- id: en-trampa-001
+  par: en-parafrasis-002
+  pregunta: how long is the third internship
+- id: en-trampa-002
+  par: en-parafrasis-001
+  pregunta: how much is the written exam worth in the first internship
+- id: en-trampa-003
+  par: en-parafrasis-009
+  pregunta: how many books can a staff member take
+
+- id: en-fuera-001
+  pregunta: whats the capital of australia

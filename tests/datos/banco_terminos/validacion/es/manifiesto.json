@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "dataset_id": "terminos_validacion_es",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "biblioteca.md",
+        "doc_id": "biblioteca"
+      },
+      {
+        "ruta": "garantia_cafetera.md",
+        "doc_id": "garantia-cafetera"
+      },
+      {
+        "ruta": "laboratorio.md",
+        "doc_id": "laboratorio"
+      },
+      {
+        "ruta": "manual_adquisiciones.md",
+        "doc_id": "manual-adquisiciones"
+      },
+      {
+        "ruta": "politica_viaticos.md",
+        "doc_id": "politica-viaticos"
+      },
+      {
+        "ruta": "preguntas_frecuentes_ti.md",
+        "doc_id": "preguntas-frecuentes-ti"
+      },
+      {
+        "ruta": "reembolsos.md",
+        "doc_id": "reembolsos"
+      },
+      {
+        "ruta": "reglamento_beneficios.md",
+        "doc_id": "reglamento-beneficios"
+      },
+      {
+        "ruta": "reglamento_teletrabajo.md",
+        "doc_id": "reglamento-teletrabajo"
+      },
+      {
+        "ruta": "reglamento_titulacion.md",
+        "doc_id": "reglamento-titulacion"
+      },
+      {
+        "ruta": "riego_invernadero.md",
+        "doc_id": "riego-invernadero"
+      }
+    ],
+    "sha256": "24718107ea91eb0e8b9dbd2723de3980e31b315b6b0fc43f8f1422f8974aa373"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "es"
+}

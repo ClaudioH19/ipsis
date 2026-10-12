@@ -507,6 +507,27 @@ def _proximidad_del_foco(motor, ctx) -> None:
 
     marco = (terminos(seccion, motor.idioma) if seccion else []) + (terminos(previa, motor.idioma) if previa else [])
     terminos_foco_oracion = equivalentes(terminos_oracion + marco, motor.idioma)
+    ordinal_distinto = False
+    from ipsis.lenguaje.alias import alias_del_indice
+
+    alias = alias_del_indice(est, motor.idioma)
+    if alias is not None:
+        # «Evaluación de la P1» enmarca «Portafolio de evidencias | 40%»: si la pregunta dijo
+        # «la primera práctica», el grupo de la P1 cuenta como nombrado en la oración.
+        texto_marco = " ".join(t for t in (oracion, seccion, previa) if t)
+        presentes = alias.presentes(texto_marco)
+        raices = {r for i in presentes for r in alias.raices[i]}
+        terminos_foco_oracion = terminos_foco_oracion + sorted(r for r in raices if not r.startswith("#"))
+        pedidos = alias.ordinales_ligados(ctx.pregunta_usuario or ctx.pregunta)
+        if pedidos:
+            vistos = alias.ordinales_ligados(texto_marco) | {r for r in raices if r.startswith("#")}
+            if pedidos <= vistos:
+                # El ordinal coincide: la palabra «primera» de la pregunta está respondida.
+                from ipsis.lenguaje.alias import _ordinales
+
+                terminos_foco_oracion += [r for p in _ordinales(motor.idioma) for r in terminos(p, motor.idioma)[:1]]
+            else:
+                ordinal_distinto = True
     # Una palabra de la relación suma a la cobertura si está en la oración («até» en
     # «…reembolso até 30 dias»), pero no resta si falta: «when does the purchase start?»
     # se responde con «Once the form is approved…», sin «start».
@@ -526,6 +547,10 @@ def _proximidad_del_foco(motor, ctx) -> None:
         # «gastos de electricidad» y la oración dice «gastos de conexión»: habla de otra cosa.
         ctx.diagnostico["modificador_distinto"] = distinto
         foco = min(foco, 0.5)
+    if ordinal_distinto:
+        # «la tercera práctica» y la oración habla de la P1: es otra.
+        ctx.diagnostico["ordinal_distinto"] = True
+        foco = min(foco, 0.0)
     ctx.lexicas = ctx.lexicas.model_copy(update={
         "s_foco": foco,
         "s_cov": s_cov(tq_cov, terminos_oracion, est),

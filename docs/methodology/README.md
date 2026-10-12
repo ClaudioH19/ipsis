@@ -70,3 +70,27 @@ its original proposal and links to the subsequent local measurements.
 
 The notes use the internal names of the code (signals such as `s_foco`,
 rules such as `ok_lector`), because they describe the implementation.
+
+[Motor v2 layer map and proposal](motor-v2.md) documents the current request
+path and a CPU-only, non-generative comparison design with fewer semantic
+heuristics. The experimental engine is implemented; v1 remains the default.
+
+[Structured document preparation](preparacion-estructural.md) describes the
+experimental DOCX representation, parent/child retrieval, isolated indexes,
+preview command and supported structures. It does not imply better answer quality.
+
+[V2 quality diagnosis](motor-v2-diagnostico.md) traces losses in retrieval,
+reranking and QA with controlled budgets, oracle passages, table representations
+and an alternate reranker. It separates literal citations from answer correctness.
+
+[V2 mapped reading changes](motor-v2-mejoras-lectura.md) records field/value
+contexts, independent budgets and QA highlights that cannot override ranking.
+It reports real-case improvements, the rejected search representation and
+remaining ranking failures.
+
+[V2 ranked sources](fuentes-v2.md) describes the query router, independent
+publication budget, literal neighboring context and expandable source cards.
+It uses at most one reranker and disables QA by default.
+
+[Retired reranking council](consejo-v2.md) preserves the CPU measurements
+that led to removing the ensemble and its runtime/configuration support.

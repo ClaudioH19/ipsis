@@ -203,6 +203,13 @@ def test_calibrar_medium_con_el_banco_v1_1_0(tmp_path, monkeypatch, capsys):
     assert banco_v11.manifiesto.dataset_version == "1.1.0" and banco_v11.manifiesto.uso == "evaluacion"
     monkeypatch.chdir(tmp_path)
     assert main(["init", "--profile", "medium"]) == 0
+    # La calibración de respuestas directas corresponde al motor v1.
+    from apoyo import escribir_proyecto
+
+    archivo = Path("config/engine.yaml")
+    cfg = leer_proyecto(archivo)
+    cfg["pipeline"] = "v1"
+    escribir_proyecto(archivo, cfg)
     assert main(["load", str(CORPUS)]) == 0
     assert main(["index"]) == 0
     escribir_csv(exportar_filas_csv(banco_v11), tmp_path / "golden" / "golden.csv", COLUMNAS_EXPORTADAS)

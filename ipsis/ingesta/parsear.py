@@ -90,6 +90,8 @@ class DocumentoParseado:
     # filtros por seccion_path pero no impide indexar. `ipsis index` las
     # junta e imprime al final (ver ipsis/ingesta/ingesta.py::ejecutar_ingesta).
     advertencias: list[str] = field(default_factory=list)
+    # Solo la preparación opt-in llena esta representación versionada.
+    estructura: dict | None = None
 
     def __post_init__(self) -> None:
         if not self.hash_documento:
@@ -175,10 +177,15 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
             tabla_contador += 1
             seccion_path_bloque = [t for (_, t) in pila_secciones] + [f"Tabla {tabla_contador}"]
             seccion_nivel = (pila_secciones[-1][0] if pila_secciones else 0) + 1
+            encabezado_tabla = None
             for row in elemento.rows:
                 texto_fila = _fila_a_texto(row)
                 if not texto_fila:
                     continue
+                # Desde la segunda fila, el encabezado de la tabla es el último nivel de la sección.
+                ruta_fila = seccion_path_bloque + [encabezado_tabla] if encabezado_tabla else seccion_path_bloque
+                if encabezado_tabla is None:
+                    encabezado_tabla = texto_fila
                 inicio = offset_actual
                 texto_partes.append(texto_fila)
                 offset_actual += len(texto_fila)
@@ -187,7 +194,8 @@ def parsear_docx(ruta: str, doc_id: str, doc_titulo: str, version: str) -> Docum
                 offset_actual += len(SEPARADOR_BLOQUE)
 
                 bloques.append(Bloque(
-                    indice=indice, seccion_path=seccion_path_bloque, seccion_nivel=seccion_nivel,
+                    indice=indice, seccion_path=ruta_fila, seccion_nivel=seccion_nivel + (len(ruta_fila) > len(
+                        seccion_path_bloque)),
                     tipo_contenido="tabla", texto=texto_fila, offset_inicio=inicio, offset_fin=fin,
                 ))
                 indice += 1
@@ -254,6 +262,13 @@ def _ensamblar_bloques(eventos: list[Evento]) -> tuple[str, list[Bloque]]:
             tipo_contenido = tipo_evento
             seccion_path_bloque = [t for (_, t) in pila_secciones]
             seccion_nivel = pila_secciones[-1][0] if pila_secciones else 0
+            encabezado = evento[3] if len(evento) > 3 else None
+            if tipo_evento == "tabla" and encabezado:
+                # La fila queda bajo el encabezado de su tabla: «40%» es una «Ponderación».
+                # El texto de la fila no cambia (la cita sigue literal); el encabezado llega al
+                # foco y al orden de oraciones como cualquier título de sección.
+                seccion_path_bloque = seccion_path_bloque + [encabezado]
+                seccion_nivel += 1
 
         inicio = offset_actual
         texto_partes.append(texto)
@@ -370,9 +385,12 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
             eventos.extend(_eventos_de_lineas(parrafo_actual))
             parrafo_actual.clear()
 
+    encabezado_tabla: str | None = None  # primera fila de la tabla en curso
     for linea in lineas:
         m = _RE_HEADING_MD.match(linea.strip())
         fila = _fila_tabla_md(linea)
+        if fila is None:
+            encabezado_tabla = None
         if m:
             _cerrar_parrafo()
             nivel = len(m.group(1))
@@ -381,7 +399,9 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
         elif fila is not None:
             _cerrar_parrafo()
             if not _RE_SEPARADOR_TABLA_MD.match(linea.strip()) and fila:
-                eventos.append((fila, None, "tabla"))
+                eventos.append((fila, None, "tabla", encabezado_tabla))
+                if encabezado_tabla is None:
+                    encabezado_tabla = fila
         elif linea.strip():
             parrafo_actual.append(linea.strip())
         else:

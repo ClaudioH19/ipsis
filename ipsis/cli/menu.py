@@ -15,7 +15,7 @@ from ipsis.recursos.mensajes import t
 # Clave del título del grupo → comandos, en el orden de un proyecto nuevo.
 GRUPOS: list[tuple[str, list[str]]] = [
     ("menu.group_start", ["init", "profile", "models", "doctor", "help"]),
-    ("menu.group_documents", ["load", "index"]),
+    ("menu.group_documents", ["load", "prepare", "index"]),
     ("menu.group_ask", ["chat", "ask", "serve"]),
     ("menu.group_customize", ["configure", "personality", "widget"]),
     ("menu.group_quality", ["golden", "evaluate", "calibrate", "compare", "benchmark", "audit"]),

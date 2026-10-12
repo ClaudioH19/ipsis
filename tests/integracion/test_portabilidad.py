@@ -148,13 +148,23 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
 
 
 @pytest.mark.slow
-def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
+@pytest.mark.parametrize("pipeline", ["v1", "v2"])
+def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path, pipeline):
     """Criterio de cierre 1 (completo): init -> cargar -> indexar -> servir
     -> preguntar, con el servicio real levantado en un puerto libre y
-    cerrado al final. Comprueba que una pregunta respondible da 'ok' con una
-    cita literal del documento fuente, y que una pregunta ajena NO da 'ok'."""
+    cerrado al final. V1 devuelve 'ok'; el default v2 publica fuentes 'related'.
+    Ambos conservan citas literales y una pregunta ajena NO da 'ok'."""
     docs = _construir_documentos(proyecto_externo)
     _init_cargar_indexar(proyecto_externo, docs)
+
+    from apoyo import escribir_proyecto, leer_proyecto
+
+    archivo_motor = proyecto_externo / "config/engine.yaml"
+    cfg = leer_proyecto(archivo_motor)
+    assert cfg["pipeline"] == "v2"  # init activa v2 sin configuración adicional
+    if pipeline == "v1":
+        cfg["pipeline"] = "v1"
+        escribir_proyecto(archivo_motor, cfg)
 
     puerto = _puerto_libre()
     proceso = subprocess.Popen(
@@ -174,8 +184,11 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
                 pass
             time.sleep(1)
         assert listo, "el servicio no quedó listo en 90s"
+        assert resp.json()["pipeline"] == pipeline
+        modo = httpx.get(f"http://127.0.0.1:{puerto}/config", timeout=10).json()["response_mode"]
+        assert modo == ("ranked_sources" if pipeline == "v2" else None)
 
-        # Caso literal: 'ok' + cita literal del manual (usa el vocabulario del documento).
+        # Caso literal: cita del manual, directa en v1 y fuente ordenada en v2.
         resp = httpx.post(
             f"http://127.0.0.1:{puerto}/ask",
             json={"question": "¿Cuántos meses cubre la garantía del equipo X100?", "session_id": "portabilidad"},
@@ -183,7 +196,8 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["status"] == "ok", datos
+        assert datos["status"] == ("related" if pipeline == "v2" else "ok"), datos
+        assert datos.get("response_mode") == ("ranked_sources" if pipeline == "v2" else None)
         assert "18 meses" in datos["answer"]
         assert len(datos["fragments"]) >= 1
         # "Literal" significa substring exacto de lo que el parser extrajo

@@ -36,7 +36,20 @@ The HTTP contract publishes `exact_answer` only when the status is `ok`.
 The reader receives a window of `max_reading_chars` around the anchor
 sentence (centered, with context on both sides), not the whole passage: it
 cut reading from ~1 s to ~0.5 s in medium. What is **shown** starts at the
-anchor sentence and only adds context to the right.
+anchor sentence and only adds context to the right, except in the semantic
+reading of medium: when the window the reader read starts with the previous
+sentence of the same line, the shown passage starts there too ("Se realiza
+en el segundo semestre. Debe inscribirse antes del inicio de dicho
+período."). The policy has already decided with the sentence alone, so this
+changes no decision; the shown text is a literal slice of the chunk (offsets
+widened, never rewritten) and the diagnostic shows `ventana_mostrada`.
+
+Glossary lines that define a term ("Práctica Profesional I (P1): primera
+práctica profesional del plan…") are not read by the semantic reading unless
+the question asks for a definition (`patrones_definicion` of the pack: "¿qué
+es…?", "what does … mean"). They name the term with all its forms and
+attracted every question about it: "¿cuánto dura la primera práctica?" was
+answered with the definition.
 
 For follow-ups expressing a recognized relation or multiple content terms,
 the reader receives the current user's question. A bare qualifier ("and in

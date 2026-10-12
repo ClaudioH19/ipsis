@@ -23,6 +23,12 @@
 
 ---
 
+**V2 es el motor predeterminado:** la búsqueda entrega hasta tres fuentes
+literales ordenadas por página, con extractos, contexto desplegable y más
+resultados bajo demanda. Proyectos nuevos y configuraciones sin selector usan
+v2. Una selección explícita `pipeline: v1` en `config/engine.yaml` conserva el
+motor de respuestas anterior descrito abajo. Ver [fuentes ordenadas](docs/methodology/fuentes-v2.md).
+
 **ipsis** es un asistente para tu sitio web que responde preguntas sobre tus
 documentos **mostrando el texto literal que sustenta la respuesta**, con su
 documento, sección y posición exacta. No escribe con un modelo generativo:

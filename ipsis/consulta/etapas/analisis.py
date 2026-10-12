@@ -63,6 +63,20 @@ class EtapaAnalisis(_Etapa):
                 }})
                 ctx.diagnostico["recursos_lexicos"] = detalles
                 ctx.diagnostico["pregunta_recuperacion"] = recuperacion
+            from ipsis.lenguaje.alias import alias_del_indice
+
+            # «la primera práctica» → también «P1», «Práctica Profesional I»: los nombres que
+            # el propio corpus definió para lo mismo.
+            alias = alias_del_indice(obtener(), getattr(m, "idioma", None))
+            nombrados = alias.mencionados(ctx.pregunta) if alias is not None else []
+            if nombrados:
+                base = ctx.consulta.contexto.get("pregunta_recuperacion") or ctx.pregunta.rstrip()
+                recuperacion = f"{base} {' '.join(alias.expansion(nombrados))}"
+                ctx.consulta = ctx.consulta.model_copy(update={"contexto": {
+                    **ctx.consulta.contexto, "pregunta_recuperacion": recuperacion,
+                }})
+                ctx.diagnostico["alias"] = [alias.grupos[i] for i in nombrados]
+                ctx.diagnostico["pregunta_recuperacion"] = recuperacion
         if ctx.consulta.intencion != "desconocida":
             ctx.diagnostico["intencion"] = {"nombre": ctx.consulta.intencion,
                                             "origen": "patron",

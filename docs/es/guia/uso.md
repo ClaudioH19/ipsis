@@ -26,6 +26,22 @@ ipsis golden template → (una persona completa golden.csv) → ipsis golden imp
 
 ## Qué responde el asistente
 
+Para revisar la preparación estructural experimental de DOCX en un proyecto separado:
+
+```bash
+ipsis prepare --project /ruta/proyecto --output /ruta/copia-nueva
+# Después de revisar la vista previa, construir el índice en esa copia:
+cd /ruta/copia-nueva
+ipsis index
+```
+
+`ipsis prepare --index` construye además el índice durante la preparación.
+La carpeta destino debe ser nueva y estar fuera del proyecto original. La copia
+usa v2 y un índice estructural distinto; el original conserva su configuración.
+Esta variante soporta estructura del cuerpo de DOCX y publica avisos sobre partes
+no extraídas. No añade soporte de Excel ni garantiza mejor calidad de respuesta.
+Ver [preparación estructural](../../methodology/preparacion-estructural.md).
+
 Cada respuesta tiene un estado, que el widget pinta distinto:
 
 | Estado | Qué significa |
@@ -125,7 +141,7 @@ incluyen la instalación con uv, sin crear ni activar entornos manualmente.
 | Comando | Qué hace |
 |---|---|
 | `ipsis doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS, personalidad y modo. Cada error trae su acción. Sale con 0 si no hay errores |
-| `ipsis audit [--from FECHA] [--to FECHA]` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--from`/`--to` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. El registro se activa con `ipsis configure query_log.enabled=true` |
+| `ipsis audit [--from FECHA] [--to FECHA]` / `ipsis audit --trace ID` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--from`/`--to` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. `--trace` muestra una consulta original y sus pasos por `consulta_id`, sin ejecutarla ni consultar el corpus. El registro se activa con `ipsis configure query_log.enabled=true` |
 
 ### Personalidad
 
@@ -186,6 +202,19 @@ Detalle en [web.md](web.md).
 | `ipsis deploy prepare [--target D] [--domain DOM] [--wheel W] [--force]` | Genera en `dist/` todo lo necesario para un VPS: proyecto, índice, `Dockerfile`, `docker-compose.yml` con Caddy opcional y `DEPLOY.md`. Ver [despliegue.md](despliegue.md) |
 
 ## Variables de entorno
+
+V2 es el motor predeterminado de proyectos nuevos y configuraciones sin
+selector. Enruta consultas a fuentes ordenadas para revisar. Una selección
+explícita `pipeline: v1` en `config/engine.yaml` conserva el motor anterior;
+cámbiala a `pipeline: v2` y reinicia el servicio para activar v2. Publica hasta
+tres desplegables por página con contexto literal cercano, botón para seguir
+buscando y QA apagado por defecto. El reranking es progresivo, con presupuesto
+de trabajo de 2500 ms; los candidatos pendientes se conservan para continuar.
+Los presets `search` y `search_compact` muestran títulos y extractos visibles,
+barra de búsqueda superior y contexto desplegable; se aplican con
+`ipsis widget theme apply search`.
+Ver [fuentes ordenadas](../../methodology/fuentes-v2.md) para presupuestos,
+campos de la API y migración del consejo retirado.
 
 | Variable | Efecto |
 |---|---|

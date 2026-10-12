@@ -1,6 +1,8 @@
 # Widget theme. `ipsis init` copies it into each project; edit it here, with
 # `ipsis widget style set section.key=value` or in the /admin/panel.
 preset: "classic"
+# Search layouts for pipeline v2: search | search_compact.
+# V2 shows visible source excerpts with an expandable full context in every theme.
 presentation:
   density: "comfortable"       # comfortable | compact
   citations: "accordion"       # accordion | list (citations are always shown)

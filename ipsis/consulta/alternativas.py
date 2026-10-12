@@ -312,7 +312,10 @@ def buscar_alternativas(motor, ctx, *, entidades_ausentes: list[dict] | None = N
             continue
         for valor in vecinos_de_familia(entidad["valor_norm"], inventario):
             (familia if propia else medidas).add(valor)
-            for candidato in motor.retriever.recuperar(ctx.consulta, 1, filtro=FiltroEntidad(valor_norm=valor)):
+            from ipsis.nucleo.traza import recuperar_con_traza
+
+            for candidato in recuperar_con_traza(motor.retriever, ctx.consulta, 1,
+                                                  filtro=FiltroEntidad(valor_norm=valor), origen="alternativa"):
                 fragmentos.setdefault(candidato.chunk.chunk_id, (candidato.chunk, "familia"))
 
     # 2. Párrafos elegibles con sus señales léxicas y de metadatos.

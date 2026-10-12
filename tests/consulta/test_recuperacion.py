@@ -142,6 +142,27 @@ def test_senales_usan_el_coseno_denso(retriever):
     assert senales.margen_top1_top2 >= 0.0
 
 
+def test_traza_confianza_guarda_los_candidatos_originales_sin_busquedas_extra(retriever, monkeypatch):
+    from ipsis.consulta.etapas import recuperacion
+    from ipsis.nucleo.traza import capturar_traza
+
+    buscar_original = recuperacion.buscar
+    llamadas = []
+
+    def buscar(*args, **kwargs):
+        llamadas.append(kwargs)
+        return buscar_original(*args, **kwargs)
+
+    monkeypatch.setattr(recuperacion, "buscar", buscar)
+    with capturar_traza() as traza:
+        senales = retriever.estimar_confianza(_consulta("garantía del equipo"), limite=2)
+    assert len(llamadas) == 1
+    evento = traza.eventos[0]
+    assert evento["origen"] == "confianza" and evento["modo"] == "vectorial"
+    assert evento["candidatos"][0]["score"] == senales.confianza_top1
+    assert evento["candidatos"][0]["chunk"]["texto_fuente"]
+
+
 def test_la_pregunta_se_codifica_una_sola_vez_por_texto(retriever):
     codificador = retriever.coleccion.codificador
     antes = codificador.llamadas

@@ -88,12 +88,20 @@ def _perfil(perfil: str | None):
     return perfil_de_instalacion(validar_perfil_instalable(perfil))
 
 
-def _modelos(instalacion):
+def _modelos(instalacion, *, usar_pipeline=False):
     """(rol, spec) de los modelos que usa el perfil, sin repetir un mismo repositorio."""
     from ipsis.modelos.catalogo import obtener
 
+    sin_lector = False
+    if usar_pipeline:
+        from ipsis.configuracion.carga import cargar_proyecto
+
+        cfg = cargar_proyecto()
+        sin_lector = cfg.get("pipeline") == "v2" and not (cfg.get("v2") or {}).get("destacar_fragmentos", False)
     vistos: dict[str, tuple[str, object]] = {}
     for rol, id_hf in instalacion.modelos.model_dump().items():
+        if rol == "lector" and sin_lector:
+            continue
         if id_hf and id_hf not in vistos:
             vistos[id_hf] = (rol, obtener(id_hf))
     return list(vistos.values())
@@ -102,16 +110,16 @@ def _modelos(instalacion):
 def listar_modelos() -> ModelosPerfil:
     """Modelos del perfil activo, con licencia, archivo ONNX y estado de la caché."""
     instalacion = _perfil(None)
-    return ModelosPerfil(instalacion.perfil, estado_modelos(instalacion))
+    return ModelosPerfil(instalacion.perfil, estado_modelos(instalacion, usar_pipeline=True))
 
 
-def estado_modelos(instalacion) -> list[EstadoModelo]:
+def estado_modelos(instalacion, *, usar_pipeline=False) -> list[EstadoModelo]:
     """Estado en caché de cada modelo de un perfil efectivo. Solo mira la caché local:
     no descarga ni carga ONNX (para eso, ``verificar_modelos``)."""
     from ipsis.modelos.descarga import ruta_local, tamano_en_disco
 
     estados = []
-    for rol, spec in _modelos(instalacion):
+    for rol, spec in _modelos(instalacion, usar_pipeline=usar_pipeline):
         try:
             carpeta = ruta_local(spec)
         except FileNotFoundError:
@@ -136,7 +144,7 @@ def descargar_modelos(perfil: str | None = None,
 
     instalacion = _perfil(perfil)
     hechos: list[ModeloDescargado] = []
-    for rol, spec in _modelos(instalacion):
+    for rol, spec in _modelos(instalacion, usar_pipeline=perfil is None):
         try:
             carpeta, estado = ruta_local(spec), "ya_disponible"
         except FileNotFoundError:
@@ -159,7 +167,7 @@ def verificar_modelos() -> ResultadoVerificacion:
 
     instalacion = _perfil(None)
     resultados = []
-    for rol, spec in _modelos(instalacion):
+    for rol, spec in _modelos(instalacion, usar_pipeline=True):
         informar("verificar_modelo", modelo=spec.id_hf)
         archivo = spec.archivo_onnx()
         try:

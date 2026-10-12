@@ -1,0 +1,77 @@
+# Banco de termos (validação retida, português). Mesmos fenômenos do desenho (aliases
+# definidos, siglas, «doravante», ordinais, tabelas) em outros documentos; escrito antes de
+# implementar o grafo de termos e medido uma vez antes e outra depois.
+
+- id: pt-parafrasis-001
+  documento: regulamento_tcc.md
+  capacidad: condicion
+  pregunta: o que preciso pra me inscrever no primeiro trabalho de conclusao
+  respuesta: aprovado em todas as disciplinas até o nono semestre
+- id: pt-parafrasis-002
+  documento: regulamento_tcc.md
+  capacidad: cantidad
+  pregunta: quanto pesa a defesa no segundo trabalho de conclusao
+  respuesta: Defesa pública | 35%
+- id: pt-parafrasis-003
+  documento: regulamento_tcc.md
+  capacidad: duracion
+  pregunta: em quanto tempo o comite aprova uma proposta
+  respuesta: em até quinze dias úteis após a apresentação
+- id: pt-parafrasis-004
+  documento: regulamento_tcc.md
+  capacidad: duracion
+  pregunta: de quanto em quanto tempo o orientador revisa o progresso
+  respuesta: a cada duas semanas
+- id: pt-parafrasis-005
+  documento: regulamento_tcc.md
+  capacidad: fecha
+  pregunta: ate quando tenho pra defender o trabalho de conclusao 2
+  respuesta: no máximo um ano depois de aprovado o TC1
+- id: pt-parafrasis-006
+  documento: regulamento_tcc.md
+  capacidad: cantidad
+  pregunta: quanto vale o documento final no segundo trabalho de conclusao
+  respuesta: Documento final | 50%
+- id: pt-exacta-001
+  documento: regulamento_tcc.md
+  capacidad: persona
+  pregunta: Quem designa os orientadores?
+  respuesta: aprova os temas e designa os orientadores
+- id: pt-parafrasis-007
+  documento: regulamento_beneficios.md
+  capacidad: cantidad
+  pregunta: quanto da por mes a bolsa alimentacao
+  respuesta: Bolsa Alimentação Estudantil | 32.000 pesos
+- id: pt-parafrasis-008
+  documento: regulamento_beneficios.md
+  capacidad: fecha
+  pregunta: quando me candidato aos beneficios do servico de bem-estar
+  respuesta: em março de cada ano
+- id: pt-parafrasis-009
+  documento: regulamento_beneficios.md
+  capacidad: condicion
+  pregunta: o que tenho que fazer pra nao perder a BAE
+  respuesta: aprovado em pelo menos 60 % dos créditos inscritos
+- id: pt-parafrasis-010
+  documento: regulamento_beneficios.md
+  capacidad: cantidad
+  pregunta: de quanto e o auxilio emergencial
+  respuesta: Auxílio Emergencial | 150.000 pesos uma única vez
+- id: pt-exacta-002
+  documento: regulamento_beneficios.md
+  capacidad: persona
+  pregunta: Quem administra os benefícios estudantis?
+  respuesta: unidade que administra os benefícios
+
+- id: pt-trampa-001
+  par: pt-parafrasis-002
+  pregunta: quanto pesa a defesa no terceiro trabalho de conclusao
+- id: pt-trampa-002
+  par: pt-parafrasis-007
+  pregunta: quanto da por mes a bolsa moradia
+- id: pt-trampa-003
+  par: pt-parafrasis-004
+  pregunta: de quanto em quanto tempo o coorientador revisa o progresso
+
+- id: pt-fuera-001
+  pregunta: como se faz uma caipirinha

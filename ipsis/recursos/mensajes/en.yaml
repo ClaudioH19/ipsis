@@ -13,6 +13,14 @@ cli:
   subcommand: Command to run.
   'yes': 'yes'
   'no': 'no'
+prepare:
+  help: Prepare DOCX and a preview in an independent project copy.
+  project: Read-only source project.
+  output: New folder outside the original project.
+  index: Also build the separate structural index with the profile models.
+  done: 'Prepared {documents} documents, {units} source units and {children} searchable fragments.'
+  preview: 'Preview: {path}'
+  project_done: 'Experimental project: {path}'
 init:
   help: Create the configuration for a new project.
   opt_name: 'Visible name of the assistant (default: ''Document assistant'', or its translation).'
@@ -192,6 +200,9 @@ doctor:
   actions: 'Actions:'
   action_item: '  {action}'
 audit:
+  opt_trace: Show the original query and trace by consulta_id, without running it again.
+  trace_missing: 'No query with id {id} in the log.'
+  trace_dates: '--trace cannot be combined with --from or --to.'
   help: 'Review the query log: statuses, rules and whether each piece of evidence is still literal.'
   opt_from: Only queries from this date (YYYY-MM-DD or ISO 8601; UTC if it has no zone).
   opt_to: Only queries up to this date, inclusive.
@@ -464,6 +475,8 @@ deploy:
   done: 'Deployment prepared in {path} (profile {profile}, domain {domain}): {n} files.'
   next: 'Next step: read {path} and copy the folder to the server.'
 app:
+  ranked_sources: '{n} related results to review.'
+  search_empty: 'No sources found to review. Try rephrasing your question.'
   domain_only_name: '--domain {domain!r}: write only the name, e.g. {example}'
   domain_invalid: --domain {domain!r} is not a valid domain name
   deploy_no_project: 'there is no project in this folder: run ''ipsis init'' first'
@@ -917,11 +930,26 @@ panel:
   source_project: "project (engine.yaml)"
   source_profile: "profile"
 presets:
+  search: Wide search layout with visible excerpts and source links.
+  search_compact: Compact search layout for panels and result lists.
   classic: Neutral blue, comfortable, the same as the factory design.
   minimal: Compact interface, subtle radii and soft shadows.
   editorial: Warm palette and serif typography for long documentation.
   contrast: High contrast, marked controls and animations off.
 runtime:
+  preview_search_heading: Search your documents
+  preview_search_button: Search
+  preview_search_results: results to review
+  preview_search_source: manual.txt
+  preview_search_read: Read full context
+  preview_search_more: Show more results
+  preview_search_note: Sample template preview; it does not search or represent uploaded documents.
+  preview_search_result_1: Requirements to start the procedure
+  preview_search_excerpt_1: To start the procedure, submit the form and the documents listed in the manual.
+  preview_search_result_2: Procedure steps
+  preview_search_excerpt_2: The procedure starts with receiving the documents and continues with their review.
+  preview_search_result_3: Deadlines and tracking
+  preview_search_excerpt_3: Deadlines and channels for checking the procedure status appear in this section of the document.
   short_token: 'IPSIS_ADMIN_TOKEN has {length} characters; {minimum} or more are needed: /admin stays off'
   bad_source_url: 'IPSIS_SOURCE_URL={url!r} is not an http(s) URL: /source uses {default}'
   positive: '{name} must be greater than zero'

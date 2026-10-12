@@ -13,6 +13,14 @@ cli:
   subcommand: Comando a ejecutar.
   'yes': sí
   'no': 'no'
+prepare:
+  help: Prepara DOCX y una vista previa en una copia independiente del proyecto.
+  project: Proyecto original de solo lectura.
+  output: Carpeta nueva fuera del proyecto original.
+  index: Construye además el índice estructural separado con los modelos del perfil.
+  done: 'Preparados {documents} documentos, {units} unidades y {children} fragmentos buscables.'
+  preview: 'Vista previa: {path}'
+  project_done: 'Proyecto experimental: {path}'
 init:
   help: Crea la configuración de un dominio nuevo.
   opt_name: 'Nombre visible del asistente (por defecto: ''Asistente documental'', o su traducción).'
@@ -192,6 +200,9 @@ doctor:
   actions: 'Acciones:'
   action_item: '  {action}'
 audit:
+  opt_trace: Muestra la consulta y su traza original por consulta_id, sin repetirla.
+  trace_missing: 'No hay consulta con id {id} en el registro.'
+  trace_dates: '--trace no se combina con --from o --to.'
   help: 'Revisa el registro de consultas: estados, reglas y si cada evidencia sigue siendo literal.'
   opt_from: Solo consultas desde esta fecha (AAAA-MM-DD o ISO 8601; UTC si no trae zona).
   opt_to: Solo consultas hasta esta fecha, inclusive.
@@ -464,6 +475,8 @@ deploy:
   done: 'Despliegue preparado en {path} (perfil {profile}, dominio {domain}): {n} archivos.'
   next: 'Siguiente paso: lee {path} y copia la carpeta al servidor.'
 app:
+  ranked_sources: '{n} resultados relacionados para revisar.'
+  search_empty: 'No se encontraron fuentes para revisar. Prueba reformulando la pregunta.'
   domain_only_name: '--domain {domain!r}: escribe solo el nombre, p. ej. {example}'
   domain_invalid: --domain {domain!r} no es un nombre de dominio válido
   deploy_no_project: 'no hay un proyecto en esta carpeta: ejecuta ''ipsis init'' primero'
@@ -917,11 +930,26 @@ panel:
   source_project: "proyecto (engine.yaml)"
   source_profile: "perfil"
 presets:
+  search: Buscador amplio, extractos visibles y enlaces a las fuentes.
+  search_compact: Buscador compacto para paneles y listas de resultados.
   classic: Azul neutro, cómodo y equivalente al diseño de fábrica.
   minimal: Interfaz compacta, radios discretos y sombras suaves.
   editorial: Paleta cálida y tipografía serif para documentación extensa.
   contrast: Contraste alto, controles marcados y animaciones desactivadas.
 runtime:
+  preview_search_heading: Busca en tus documentos
+  preview_search_button: Buscar
+  preview_search_results: resultados para revisar
+  preview_search_source: manual.txt
+  preview_search_read: Leer contexto completo
+  preview_search_more: Mostrar más resultados
+  preview_search_note: Vista de ejemplo del template; no ejecuta búsquedas ni representa documentos cargados.
+  preview_search_result_1: Requisitos para iniciar el trámite
+  preview_search_excerpt_1: Para iniciar el trámite debes presentar el formulario y los documentos indicados en el manual.
+  preview_search_result_2: Pasos del procedimiento
+  preview_search_excerpt_2: El procedimiento comienza con la recepción de los antecedentes y continúa con su revisión.
+  preview_search_result_3: Plazos y seguimiento
+  preview_search_excerpt_3: Los plazos y canales para consultar el estado del trámite aparecen en esta sección del documento.
   short_token: 'IPSIS_ADMIN_TOKEN tiene {length} caracteres; se necesitan {minimum} o más: /admin queda apagado'
   bad_source_url: 'IPSIS_SOURCE_URL={url!r} no es una URL http(s): /source usa {default}'
   positive: '{name} debe ser mayor que cero'
