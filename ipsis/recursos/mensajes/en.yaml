@@ -1,7 +1,8 @@
 # Messages of the ipsis interface (CLI). English is the default; set IPSIS_LANG=es for Spanish.
 # Variables go between braces ({name}); write a literal brace as {{ or }}.
 cli:
-  description: 'Extractive answers from your documents: literal citations, calibrated abstention, CPU only.'
+  description: 'Search your documents: ranked literal sources, CPU-only.'
+  options_help: 'Options and examples: ipsis help serve. Nested help: ipsis help widget theme apply. You can also use <command> --help.'
   migration: '[migration] {change}'
   error: 'Error: {error}'
   error_dot: 'Error: {error}.'
@@ -14,7 +15,7 @@ cli:
   'yes': 'yes'
   'no': 'no'
 prepare:
-  help: Prepare DOCX and a preview in an independent project copy.
+  help: Prepare DOCX and XLSX/XLS/CSV/TSV inventories with a preview in an independent project copy.
   project: Read-only source project.
   output: New folder outside the original project.
   index: Also build the separate structural index with the profile models.
@@ -114,10 +115,20 @@ demo:
   key_apply: Apply key
   footer: Search the documents loaded in this project. Sources let you check the information.
 serve:
+  examples: |
+    Examples (from the project folder):
+      ipsis serve --demo               Serve /widget/demo.html with the project styles.
+      ipsis serve --open               Also open that page; enables --demo.
+      ipsis serve --mode development --open
+                                      Enable the panel; print a temporary token if IPSIS_ADMIN_TOKEN is missing.
+      ipsis serve ./documents --demo --open
+                                      Prepare a document folder before serving it.
+      ipsis serve --demo --port 8123   Test page at http://127.0.0.1:8123/widget/demo.html.
+    Demo preserves the service mode and access keys. Ctrl+C stops the service.
   opt_demo: Serve a test page with the widget and the project styles.
   opt_open: Open the test page in a browser when the server is ready; enables --demo.
   demo_url: 'Test page: {url}'
-  help: Start the service API.
+  help: Start the API and widget; --demo serves the test page and --open opens it.
   arg_folder: Folder of documents or an existing project; it is prepared automatically.
   opt_host: 'Address the service listens on (default: ''127.0.0.1'', local only; use ''0.0.0.0'' to accept external connections).'
   opt_port: 'Port the service listens on (default: 8000).'
@@ -446,6 +457,7 @@ widget:
   theme_list_help: Show the available presets.
   theme_apply_help: Apply a preset to styles.yaml.
   arg_preset: Name of the visual preset.
+  available_presets: 'Available: {names}. You can also list them with ipsis widget theme list.'
   opt_styles: Styles file to change.
   preset_failed: 'Could not apply the preset: {error}'
   preset_applied: Preset {preset!r} applied to {path}
@@ -1023,6 +1035,9 @@ styles:
   key_error: '{key}: {error}'
   no_changes: 'give at least one change: section.key=value'
 menu:
+  example_inventory: Add an XLSX, XLS, CSV or TSV inventory; preserves rows and columns
+  example_index: Build or update the index after loading documents
+  example_demo: Serve and open the test page with the widget and project theme
   group_start: Start
   group_documents: Documents
   group_ask: Ask
@@ -1031,21 +1046,21 @@ menu:
   group_operate: Deploy and operate
   group_other: Other
   examples: Examples
-  example_new: New project in Spanish with the reader (medium profile)
-  example_load: Add a folder of documents and build the index
+  example_new: 'New project in Spanish (medium: search and reranking in v2)'
+  example_load: Add a folder of documents to the catalog
   example_chat: Ask and run commands interactively (/help inside)
-  example_serve: API, widget and /admin panel on http://127.0.0.1:8000
+  example_serve: Open the test page and enable the panel; prints a temporary token if none is configured
   example_threshold: Choose thresholds with your golden set at 5 % risk
-  footer: "Options of a command: ipsis <command> --help  ·  interactive mode: ipsis chat"
+  footer: "Options: ipsis help serve · ipsis help widget theme apply · <command> --help · interactive mode: ipsis chat"
 help:
   help: Show the commands grouped by task, or the help of one command.
-  arg_command: Command to explain (e.g. calibrate).
+  arg_command: Command path to explain (e.g. serve or widget theme apply).
 chat:
   help: 'Interactive mode: type questions, and /commands (/help, /doctor, /index...).'
   opt_diagnostics: Start with diagnostics on (stages, signals, rule and span of each answer).
   welcome: "ipsis chat -- type a question, or /help for commands. /exit to leave."
   commands: 'Commands:'
-  cmd_help: Show this list.
+  cmd_help: 'Show this list or the options of one command: /help serve, /help widget theme apply.'
   cmd_diagnostics: 'Turn diagnostics on or off (/diagnostics on|off).'
   cmd_reload: Reload the engine after changing configuration or documents.
   cmd_exit: Leave (also /quit or Ctrl+D).
@@ -1058,6 +1073,8 @@ chat:
   cancelled: "Cancelled. You can keep typing; /exit to leave."
   invalid_command: "Could not read the command: {error}. Check the quotes and try again."
 terminal:
+  options_help: 'Options: /help serve · /help widget theme apply · /serve --help. Type /serve and press Tab to see its options.'
+  partial_help: 'Enter resolves incomplete names or close misspellings (ser -> serve); arguments and options are preserved. Ambiguous matches ask you to be more specific.'
   interpreted: 'Interpreted command: {command}'
   ambiguous: 'Ambiguous command "{command}". Choose one: {choices}'
   project: "profile {profile} · {n} document(s)"
@@ -1066,7 +1083,7 @@ terminal:
   toolbar: " ipsis · diagnostics {diagnostics} · /help · Ctrl+D to leave"
   'on': 'on'
   'off': 'off'
-  own_help: Commands of the interactive mode
+  own_help: General or command help (/help serve)
   own_diagnostics: Stages, signals, rule and span of each answer (on|off)
   own_reload: Reload the engine after changing configuration or documents
   own_exit: Leave the interactive mode

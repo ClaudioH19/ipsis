@@ -34,7 +34,8 @@ class ComandoTemaAplicar(Comando):
     ayuda = "widget.theme_apply_help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("preset", help=t("widget.arg_preset"))
+        parser.add_argument("preset", help=t("widget.arg_preset") + " " +
+            t("widget.available_presets", names=", ".join(listar_presets())))
         parser.add_argument("--path", dest="ruta", default="config/styles.yaml", help=t("widget.opt_styles"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:

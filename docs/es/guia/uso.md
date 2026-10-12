@@ -135,6 +135,12 @@ subcomandos: `/widg the app search` pasa a `/widget theme apply search`.
 También funciona desde la shell: `ipsis ser --demo`. La consola muestra la
 interpretación, conserva argumentos y opciones, y no ejecuta nombres ambiguos.
 
+`ipsis help serve` y `ipsis serve --help` muestran todas las opciones y sus
+ejemplos. La ayuda anidada admite `ipsis help widget theme apply`. Dentro de
+la terminal usa `/help serve` o `/help widget theme apply`; escribe `/serve `
+y pulsa Tab para ver opciones y descripciones. La ayuda conserva el motor
+cargado y no migra la configuración del proyecto.
+
 | Comando | Qué hace |
 |---|---|
 | `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |

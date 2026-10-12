@@ -102,6 +102,12 @@ On Enter, `/ser --demo --open` resolves to `/serve --demo --open` and
 shell (`ipsis ser --demo`). The console shows corrections and leaves arguments,
 paths and options intact. Ambiguous names list choices without executing.
 
+`ipsis help serve` and `ipsis serve --help` list every service option with
+examples. Nested help works as `ipsis help widget theme apply`. In the
+interactive terminal use `/help serve` or `/help widget theme apply`; type
+`/serve ` and press Tab to see option descriptions. Help preserves the loaded
+engine and does not migrate project configuration.
+
 For inventory formats and extraction limits, see [inventories](inventories.md).
 `ipsis serve --demo` serves the themed page at `/widget/demo.html`;
 `ipsis serve --open` also opens it once ready. Add `--mode development`

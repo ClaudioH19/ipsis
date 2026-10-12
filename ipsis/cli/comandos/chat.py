@@ -22,10 +22,10 @@ class ComandoAyuda(Comando):
     ayuda = "help.help"
 
     def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("comando", metavar="command", nargs="?", help=t("help.arg_command"))
+        parser.add_argument("ruta_comando", metavar="command", nargs="*", help=t("help.arg_command"))
 
     def ejecutar(self, args: argparse.Namespace) -> int:
-        if not args.comando:
+        if not args.ruta_comando:
             from ipsis.cli.menu import imprimir_menu
 
             imprimir_menu()
@@ -33,7 +33,7 @@ class ComandoAyuda(Comando):
         from ipsis.cli import main
 
         try:
-            return main([args.comando, "--help"])
+            return main([*args.ruta_comando, "--help"])
         except SystemExit as salida:  # argparse termina tras imprimir la ayuda
             return int(salida.code or 0)
 
@@ -147,7 +147,13 @@ class ComandoChat(Comando):
         if partes and partes[0] in ("exit", "quit"):
             return True
         if not partes or partes[0] == "help":
-            self._ayuda()
+            propio = "/" + partes[1] if len(partes) == 2 else ""
+            if propio in PROPIOS or propio == "/quit":
+                print(t(PROPIOS.get(propio, "chat.cmd_exit")))
+            elif len(partes) > 1:
+                ComandoAyuda().ejecutar(argparse.Namespace(ruta_comando=partes[1:]))
+            else:
+                self._ayuda()
             return
         nombre = partes[0]
         if nombre == "diagnostics":
@@ -178,6 +184,8 @@ class ComandoChat(Comando):
         for nombre, clave in PROPIOS.items():
             print(f"  {nombre:14} {t(clave)}")
         print(f"  {'/<command>':14} {t('chat.cmd_any')}")
+        print(t("terminal.options_help"))
+        print(t("terminal.partial_help"))
         from ipsis.recursos.instalacion import INSTALAR
 
         print(t("terminal.install", command=INSTALAR))

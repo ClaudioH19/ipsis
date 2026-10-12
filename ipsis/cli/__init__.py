@@ -42,7 +42,7 @@ def construir_parser() -> argparse.ArgumentParser:
     from ipsis.recursos.instalacion import INSTALAR
 
     parser = argparse.ArgumentParser(prog="ipsis", description=t("cli.description"),
-                                     epilog=t("terminal.install", command=INSTALAR) + "\n" + t("terminal.update") + "\n" + t("terminal.no_activation"),
+                                     epilog=t("cli.options_help") + "\n\n" + t("terminal.install", command=INSTALAR) + "\n" + t("terminal.update") + "\n" + t("terminal.no_activation"),
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument("--version", action="version", version=f"ipsis {__version__}")
@@ -95,8 +95,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     informar_cambios(cambios)
     args = parser.parse_args(normalizado)
-    for cambio in migrar_proyecto_activo():
-        print(t("cli.migration", change=cambio))
+    if args.comando != "help":
+        for cambio in migrar_proyecto_activo():
+            print(t("cli.migration", change=cambio))
     try:
         from ipsis.cli.progreso import COMANDOS, actividad
 
