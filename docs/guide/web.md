@@ -8,6 +8,49 @@ The integration has two parts:
 
 ![The widget answers citing the manual and marks «6 months» inside the citation](../assets/widget-answer.png)
 
+## Try the widget and configure the project
+
+From a project folder, run `ipsis serve`. It opens `/widget/demo.html` using
+the project's existing theme and enables `/admin/panel`; the test page links
+to the panel and `/` redirects to the test page. Paste the admin token printed
+in the terminal to enter the panel. An existing `IPSIS_ADMIN_TOKEN` is reused;
+otherwise a temporary token is created for this run, without being saved.
+Production mode is preserved, including HTTPS for remote admin access.
+
+Use `ipsis serve --no-open` to keep the browser closed. `--no-demo` disables
+the test page and suppresses opening; `--no-admin` disables the panel even if
+a token is configured. The API and widget assets remain available. Run
+`ipsis help serve` to see all options.
+
+## Guidance separate from search results
+
+With engine v2, a guidance section sits above the ranked sources. It uses a
+fixed catalog of 100 messages for each of Spanish, English and Portuguese,
+selected using the project's document language. Other languages use English
+guidance as a fallback. The ten categories are `welcome`, `greeting`, `thanks`,
+`farewell`, `capability`, `tips`, `searching`, `results`, `continuation` and
+`no_results`. The YAML catalogs live in `ipsis/recursos/voz/`, independently
+of the existing tones and source templates. This is interface text, never
+documentary evidence or generated answers.
+
+**Search tips** and **What I can do** rotate through their messages locally,
+without sending a search request. Typed greetings, thanks and farewells go to
+this section too, preserving expanded sources and the continuation button.
+Only complete courtesy expressions bypass document retrieval; a mixed query
+such as “hello, what is the stock of product A?” still searches the corpus.
+
+Guidance is revealed character by character, without delaying network requests
+or displaying sources character by character. **Show full message** finishes
+the animation immediately. A newer message cancels the previous animation.
+Reduced motion preferences, including changes while typing, reveal the complete
+text; `ipsis widget style set animations.enabled=false` also disables typing.
+Screen readers receive the complete message once instead of character updates.
+Search errors appear in guidance and leave existing results available.
+
+`GET /config` adds `assistant_messages` (category → list of fixed strings),
+`animations_enabled`, and the labels `voice_label`, `voice_help`, `voice_options`
+and `voice_show_all` in `interface`. Engine v1 retains its existing chat flow.
+
 ## Add it
 
 The simplest way: ask for the ready-made code and paste it before `</body>`.
@@ -101,7 +144,7 @@ The widget uses three public endpoints; you can call them too:
 | Endpoint | What it returns |
 |---|---|
 | `POST /ask` with `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` by paragraph: `type` is `lead`, `passage` or `message`, with `text`, `connector`, `citation` and `chunk_id`; `passage` text is literal from the document), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` when the question has no topic: the assistant asks for it), `confidence_level` (`high`: direct answer read by the QA reader, 96.6 % correct on the measured banks; `medium`: direct answer without a reader, 85 %; `low`: related passage; absent when there is no answer), `confidence`, `latency_ms`, `exact_answer` when the reader marked a span, `alternatives` (only in `no_answer` with the proactive posture: similar literal passages, same fields as `fragments`; they do not answer the question) and `conversational_category` |
-| `GET /config` | What the widget needs: `assistant_name`, `greeting`, `preset`, `density`, `citations`, `interface` texts, `microcopy` of the tone, `placement` and `avatar` |
+| `GET /config` | What the widget needs: `assistant_name`, `greeting`, `response_mode`, `preset`, `density`, `citations`, `interface` texts, `microcopy` of the tone, `assistant_messages`, `animations_enabled`, `placement` and `avatar` |
 | `GET /health`, `GET /ready` | Liveness and readiness (with the same diagnosis as `ipsis doctor` under `project`) |
 
 With widget keys configured, `POST /ask` needs the `X-Ipsis-Widget-Key`
@@ -151,8 +194,10 @@ they show:
 ## Texts
 
 - **From the active tone** (see [personality.md](personality.md)): the
-  welcome, "searching…", the invitation to the citations and the error
+  v1 welcome, "searching…", the invitation to the citations and the error
   messages come from `/config` in 7 variants, and the widget rotates them.
+- **v2 guidance:** its separate fixed catalog has 100 messages per supported
+  language; the visible source cards retain their existing presentation.
 - **Interface texts** (button labels, placeholder…) come from the language
   pack of the project.
 - **Accessibility:** "searching…" and the errors are announced to screen

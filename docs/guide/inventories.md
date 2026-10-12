@@ -9,7 +9,7 @@ three ranked sources, expandable for reading, with search continuation.
 ```bash
 ipsis load ./inventory.xlsx
 ipsis index
-ipsis serve --demo --open
+ipsis serve
 ```
 
 The parser retains a product record as column labels plus the whole data row.

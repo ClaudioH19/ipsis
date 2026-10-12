@@ -117,18 +117,20 @@ demo:
 serve:
   examples: |
     Ejemplos (desde la carpeta del proyecto):
-      ipsis serve --demo               Sirve /widget/demo.html con los estilos del proyecto.
-      ipsis serve --open               También abre esa página; activa --demo.
-      ipsis serve --mode development --open
-                                      Habilita el panel; imprime un token temporal si falta IPSIS_ADMIN_TOKEN.
-      ipsis serve ./documentos --demo --open
+      ipsis serve                     Abre el widget y habilita el panel con un token temporal si falta uno.
+      ipsis serve --no-open            Sirve widget y panel sin abrir el navegador.
+      ipsis serve --no-demo --no-admin --no-open
+                                      Sirve solo la API y los archivos del widget.
+      ipsis serve ./documentos
                                       Prepara una carpeta documental antes de servirla.
       ipsis serve --demo --port 8123   Página de prueba en http://127.0.0.1:8123/widget/demo.html.
     La demo conserva el modo y las claves de acceso. Ctrl+C detiene el servicio.
-  opt_demo: Sirve una página de prueba con el widget y los estilos del proyecto.
-  opt_open: Abre la página de prueba en el navegador cuando el servicio esté listo; activa --demo.
+  opt_demo: 'Página de prueba con los estilos del proyecto (activa por defecto; --no-demo la desactiva y no abre el navegador).'
+  opt_open: 'Abre el widget cuando el servicio esté listo (activo por defecto; --no-open evita la apertura).'
+  opt_admin: 'Panel de configuración activo por defecto; genera un token temporal si falta IPSIS_ADMIN_TOKEN. --no-admin lo desactiva.'
+  admin_url: 'Panel de configuración: {url}'
   demo_url: 'Página de prueba: {url}'
-  help: Levanta la API y el widget; --demo sirve la página de prueba y --open la abre.
+  help: Levanta la API, abre el widget y habilita el panel de configuración por defecto.
   arg_folder: Carpeta de documentos o proyecto existente; se prepara automáticamente.
   opt_host: 'Dirección donde escucha el servicio (por defecto: ''127.0.0.1'', solo local; usa ''0.0.0.0'' para aceptar conexiones externas).'
   opt_port: 'Puerto donde escucha el servicio (por defecto: 8000).'

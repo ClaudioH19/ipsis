@@ -1,0 +1,119 @@
+interface:
+  voice_label: Guidance from ipsis
+  voice_help: Search tips
+  voice_options: What I can do
+  voice_show_all: Show full message
+  voice_results: Open a source to check its context.
+  voice_continuation: Review the newly added sources.
+  voice_no_results: Try different keywords or check the loaded documents.
+messages:
+  welcome:
+    - Hello. Enter a question and review sources ranked by relevance.
+    - Welcome. You can search with a question, name, code or keywords.
+    - What information do you need? Start with a question about your documents.
+    - Explore your documents. Open results to read their context.
+    - Hello. I can help you find passages so you can check the information.
+    - Start with what you need. Rephrase the query if you want different options.
+    - Welcome. Find sources here with their document references and context.
+    - Looking for a value or an explanation? Enter the topic and what you need to know.
+    - Hello. Try a specific question or a product identifier.
+    - Your documents are the starting point. Enter a query to explore them.
+  greeting:
+    - Hello. What would you like to find in your documents?
+    - Good morning. You can start with a question or keywords.
+    - Hi. Enter the topic you need to look up.
+    - Welcome. What information would you like to review?
+    - Hello. I am ready to search the sources in your project.
+    - Hi there. You can look up a name, code or topic.
+    - Hello. Select Search tips if you need guidance.
+    - Nice to meet you. What information do you need to find?
+    - Hi. Open a result to see its document context.
+    - Welcome back. Enter your next query whenever you are ready.
+  thanks:
+    - You are welcome. You can keep searching whenever you need to.
+    - Glad to help. Remember to check the source before using the information.
+    - Thank you. The results are still available for you to review.
+    - Happy to help. You can enter another question.
+    - You are welcome. Open a result if you need more context.
+    - Glad to help. A more specific query can bring you closer to the information you need.
+    - Thanks. You can return to the sources shown whenever you like.
+    - You are welcome. Try different keywords if you still have questions.
+    - Glad to help. You can search another topic on this page.
+    - Thank you. You can continue exploring your documents here.
+  farewell:
+    - Goodbye. Come back to search whenever you like.
+    - Bye. Your documents will be here for your next query.
+    - See you. Remember to check the sources you plan to use.
+    - See you soon. You can resume your search on this page.
+    - Have a good day. Come back when you need to look up a document.
+    - Bye for now. Thanks for reviewing your project sources.
+    - Goodbye. You can leave results open to read them later.
+    - See you soon. Enter another query if you decide to continue.
+    - Bye. I hope reviewing the documents is useful to you.
+    - Until next time. This page is still available for searching.
+  capability:
+    - I search loaded documents and display ranked sources for you to review.
+    - You can look up topics, names or codes and open the context of each result.
+    - I help locate information. You can check which source answers your question.
+    - I show project passages with references; you can request more results when available.
+    - You can search inventory values, instructions or text in the loaded documents.
+    - I retrieve document text. I do not calculate stock or change inventory values.
+    - You can review the first options, open them or rephrase the search with another term.
+    - I help find sources without writing a new answer from their content.
+    - Search with natural language or keywords. Each result lets you check its origin.
+    - Search covers this project. The administration panel lets you manage its documents.
+  tips:
+    - Include the topic and the value you need, such as product stock along with its code.
+    - If you know a name or identifier, enter it as it appears in the document.
+    - Search for one thing at a time to make sources easier to compare.
+    - If options are missing, try a broader term and read the context.
+    - Open each result to read the full passage and check its connection to your question.
+    - Change the keywords if the first results are not useful.
+    - Use Show more results when available to review more options from the same ranking.
+    - For a table, read the headers along with the row containing the value.
+    - Add the manual, product or topic name if your query is too broad.
+    - Check the document reference and version before using a value.
+  searching:
+    - Searching your documents for sources…
+    - Reviewing options for this query…
+    - Retrieving related passages…
+    - Looking up the project index…
+    - Ranking the search results…
+    - Searching for the topic you entered…
+    - Preparing sources for review…
+    - Locating possible matches…
+    - Searching the loaded corpus…
+    - Retrieving options with their context…
+  results:
+    - Review these options. Open each source to check whether it answers your question.
+    - Sources are ranked by relevance. The first option still needs verification.
+    - You can now read the results. Context helps distinguish similar values.
+    - Open the passage you need and check its source document.
+    - Compare the options before choosing which information to use.
+    - These are possible sources. Rephrase the query to look for different options.
+    - If the value is in a table, check the column headers too.
+    - Results preserve the document text. Review the context around the match.
+    - Keep reading the sources or enter a more specific query.
+    - Check the document and its version when verifying the information you found.
+  continuation:
+    - New options were added to the list. Compare them with the earlier results.
+    - Here are more sources from the same ranking for review.
+    - The search continues. Open the new options to read their context.
+    - Review the added results; the earlier options remain in the list.
+    - Compare these passages with the first sources shown.
+    - More options for the same query are available. Check which one is useful.
+    - We added other results without repeating those already displayed.
+    - Keep reviewing sources or change the query if you need another approach.
+    - The new options appear after the earlier results.
+    - Review these additional passages with their references.
+  no_results:
+    - No sources are available for this search. Try different keywords.
+    - No options were retrieved. Check the name or code you entered.
+    - Try a broader query or add the document name.
+    - This search returned no sources. You can rephrase the question.
+    - Check whether the document you need is loaded in the project.
+    - There are no options to review here. Try searching the topic separately.
+    - Use a synonym or a word you remember from the document.
+    - Try the full identifier if you are searching for a product or record.
+    - No sources were shown. Split the query into shorter questions.
+    - Try another search and check the available documents in the panel.

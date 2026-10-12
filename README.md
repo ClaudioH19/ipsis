@@ -148,7 +148,7 @@ ipsis load /path/to/documents               # PDF, DOCX, Markdown, TXT, XLSX, XL
 ipsis index                                 # parse, chunk, embed and store
 ipsis doctor                                # can it run? if not, which command fixes it
 ipsis widget theme apply search             # search-style result presentation
-ipsis serve --demo --open                   # API and live test page; opens the browser
+ipsis serve                                 # opens the widget and enables the admin panel
 ```
 
 `ipsis` with no arguments opens the interactive terminal (below). The command
@@ -165,8 +165,9 @@ admits one process at a time: stop `ipsis serve` before `ipsis chat` or
    belongs to the project and models are reused from their cache.
 3. **Present:** `ipsis widget theme apply search` selects a search-style view;
    `search_compact` offers the same reading flow with less spacing.
-4. **Try:** `ipsis serve --open` starts the service and opens the test page with
-   the real widget and project styles. It also enables `--demo`.
+4. **Try:** `ipsis serve` opens the real widget with the project styles and an
+   access link to the configuration panel. If no admin token is configured,
+   the terminal prints one valid for this run; paste it in the panel to sign in.
 5. **Verify:** enter a query, review up to three ranked sources and expand their
    context. Tables preserve their cells; hover over a cell to see its source
    coordinates. Use **Keep searching** for more results from that query or enter
@@ -175,19 +176,34 @@ admits one process at a time: stop `ipsis serve` before `ipsis chat` or
 
 | You need | Command | Result |
 |---|---|---|
-| Serve the API and widget | `ipsis serve` | Keeps the configured mode; demo availability follows that mode or `IPSIS_DEMO` |
-| Serve the test HTML | `ipsis serve --demo` | Enables `http://127.0.0.1:8000/widget/demo.html` |
-| Open it automatically | `ipsis serve --open` | Enables demo and opens the browser when the page is available |
-| Try and administer | `ipsis serve --mode development --open` | Demo links to `/admin/panel`; prints a temporary token if `IPSIS_ADMIN_TOKEN` is not configured |
+| Widget and configuration panel | `ipsis serve` | Opens the widget; `/` redirects to `/widget/demo.html`; the page links to `/admin/panel` |
+| Keep the browser closed | `ipsis serve --no-open` | Serves widget and panel without opening a browser |
+| API and widget assets only | `ipsis serve --no-demo --no-admin --no-open` | Disables the test page, panel and browser opening for this run |
+| Development tools | `ipsis serve --mode development` | Also enables `/docs` and disables widget caching |
 | Use another port | `ipsis serve --demo --port 8123` | Demo is at `http://127.0.0.1:8123/widget/demo.html` |
 | Prepare a document folder | `ipsis serve ./documents --demo --open` | Creates/reuses `./documents/.ipsis-project`, loads, indexes when needed and serves |
 | Search in the terminal | `ipsis chat` | Queries and `/commands`; stop the service first when using a local index |
 
 The panel accepts the same file extensions for uploads; **Reindex** makes
 changes searchable. If the widget requires a key, the test page lets you enter
-it. `--demo` and `--open` preserve the mode and widget access keys; the panel
-uses the admin token. Ctrl+C stops the server. Inventories retrieve saved values;
+it. The startup preserves production mode and widget access keys; remote admin
+access still requires HTTPS in production. `--no-demo` also suppresses browser
+opening. `--no-admin` disables the panel even when a token is configured.
+Temporary tokens are not saved to the project. Ctrl+C stops the server. Inventories retrieve saved values;
 they do not recalculate formulas or sum stock. See [formats and limits](docs/guide/inventories.md).
+
+The v2 widget has a separate **Guidance from ipsis** area above the sources.
+It contains fixed welcomes, greetings, farewells, search tips and status messages:
+100 variants each in Spanish, English and Portuguese, in `ipsis/recursos/voz/`.
+**Search tips** and **What I can do** show guidance without making a search request.
+Messages rotate within each category and appear character by character. Select
+**Show full message** to reveal the whole text immediately; reduced motion or
+`ipsis widget style set animations.enabled=false` disables typing. Sources appear
+complete as soon as the API responds, independently of that animation. Pure
+greetings and farewells update guidance while preserving results and pagination;
+mixed queries such as “hello, what is the stock of product A?” still search documents.
+This catalog is separate from the existing tones and source templates. See
+[the widget guide](docs/guide/web.md) for the API fields and behavior.
 
 Discover options from the console:
 
@@ -349,7 +365,7 @@ The activated carbon filter is replaced every 12 months ...
 | | `ipsis index [--corpus FOLDER]` | Parses, chunks, embeds and stores the index |
 | **Ask** | `ipsis chat [--diagnostics]` | Interactive mode (questions and `/commands`) |
 | | `ipsis ask "QUESTION" [--url URL] [--diagnostics]` | One question to the running service, or with `--diagnostics` to the engine in this process |
-| | `ipsis serve [FOLDER] [--host H] [--port P] [--mode production\|development] [--reindex] [--demo] [--open]` | Starts the API, the widget and `/admin`; with a folder, prepares the project first |
+| | `ipsis serve [FOLDER] [--host H] [--port P] [--mode production\|development] [--reindex] [--demo\|--no-demo] [--open\|--no-open] [--admin\|--no-admin]` | Opens the widget and enables `/admin` by default; with a folder, prepares the project first |
 | **Customize** | `ipsis configure key=value ...` | `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys`, `query_log.enabled`, `posture.mode`, `posture.max_alternatives` |
 | | `ipsis personality show` · `validate` | Active tone and avatar; checks `personality.yaml` |
 | | `ipsis personality tone list` · `apply TONE` · `try [--tone T] [--situation S]` | Seven answer tones; prints the variants of one |
@@ -472,16 +488,16 @@ documents: that is what [calibration](#-measure-and-calibrate) is for.
 
 | Address | What it is | Access |
 |---|---|---|
-| `/admin/panel` | **Admin panel**: tone, avatar, widget, **Status** (profile, index, calibration, thresholds and diagnosis; edit thresholds) and **Documents** (upload files and reindex) | Requires `IPSIS_ADMIN_TOKEN` (≥ 32 characters); HTTPS in production |
-| `/widget/demo.html` | **Test page** with the embedded widget, project styles and live document search | `--demo`, `--open`, `--mode development`, or `IPSIS_DEMO=1` |
+| `/admin/panel` | **Admin panel**: tone, avatar, widget, **Status** (profile, index, calibration, thresholds and diagnosis; edit thresholds) and **Documents** (upload files and reindex) | Enabled by `serve`; uses the configured token or a temporary one printed in the terminal. `--no-admin` disables it; remote production access requires HTTPS |
+| `/widget/demo.html` | **Test page** with the embedded widget, project styles and live document search | Enabled and opened by `serve`; `--no-demo` disables it; `--no-open` keeps the browser closed |
 | `/widget.js` | The widget for your site (`<script src="https://assistant.your-domain.com/widget.js" data-api="https://assistant.your-domain.com" defer>`) | Public |
 | `POST /ask` | The question API (`{"question": "...", "session_id": "..."}`) | Public; optional widget keys and rate limit |
 | `/health`, `/ready` | Liveness and readiness (with a diagnosis summary) | Public |
 | `/docs` | Interactive API documentation | `--mode development`, or `IPSIS_DOCS=1` in production |
 
 ```bash
-ipsis serve --demo --open              # start the service and open the test page
-ipsis serve --mode development --open  # also enables the admin panel with a temporary token
+ipsis serve                           # widget and configuration panel by default
+ipsis serve --no-open                  # same pages, without opening a browser
 ```
 
 Inventories support XLSX, XLS, CSV and TSV through `ipsis load` and admin uploads.

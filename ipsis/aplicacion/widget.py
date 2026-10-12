@@ -15,6 +15,13 @@ from ipsis.configuracion.archivos import escribir
 from ipsis.recursos import leer_plantilla
 
 
+def mensajes_de_orientacion(idioma: str) -> dict:
+    """Presentación fija de v2: etiquetas y mensajes, independiente del corpus."""
+    from ipsis.lenguaje.voz import voz_del_widget
+
+    return voz_del_widget(idioma)
+
+
 PRESETS: dict[str, dict[str, Any]] = {
     "clasico": {
         "tema": {},
@@ -343,7 +350,7 @@ d.querySelector('summary').focus();}});}});
 
 __all__ = [
     "PRESETS", "actualizar_estilos", "aplicar_preset", "citas_presentacion", "exportar_widget",
-    "generar_vista_previa", "listar_presets", "snippet_widget", "ubicacion_widget", "validar_tema",
+    "generar_vista_previa", "listar_presets", "mensajes_de_orientacion", "snippet_widget", "ubicacion_widget", "validar_tema",
 ]
 
 

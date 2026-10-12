@@ -273,6 +273,8 @@ class ConfigWidget(BaseModel):
     interface: dict[str, str] = {}
     # Variantes del tono para welcome, waiting, citations_hint y errores.
     microcopy: dict[str, list[str]] = {}
+    assistant_messages: dict[str, list[str]] = {}
+    animations_enabled: bool = True
     # styles.yaml::placement: position, offset_x, offset_y, z_index, size y launcher.
     placement: dict[str, str | int] = {}
     # personality.yaml::avatar efectivo; enabled=false si falta (el widget usa el ícono).
@@ -580,6 +582,10 @@ def crear_app(
             # El saludo de búsqueda no promete una respuesta única, independientemente del tono.
             microcopy = {**microcopy, "welcome": [interfaz["search_greeting"]]}
         nombre = dominio.get("nombre_asistente") or interfaz.get("default_assistant_name", "")
+        from ipsis.aplicacion.widget import mensajes_de_orientacion
+
+        voz = mensajes_de_orientacion(idioma)
+        interfaz = {**interfaz, **voz["interface"]}
         estilos = cargar_estilos()
         presentacion = presentacion_publica(estilos)
         return ConfigWidget(
@@ -596,6 +602,8 @@ def crear_app(
             language=idioma,
             interface=interfaz,
             microcopy=microcopy,
+            assistant_messages=voz["messages"] if es_enrutador else {},
+            animations_enabled=estilos.get("animaciones", {}).get("activadas", True),
             placement=ubicacion_publica(ubicacion_widget(estilos)),
             avatar=config_avatar_publica(),
         )
@@ -627,6 +635,16 @@ def crear_app(
         from ipsis.aplicacion.estilos import render_css
 
         return Response(content=render_css(), media_type="text/css; charset=utf-8")
+
+    @aplicacion.get("/", include_in_schema=False)
+    def inicio():
+        from fastapi.responses import RedirectResponse
+
+        if modo.demo_activa:
+            return RedirectResponse("/widget/demo.html", status_code=307)
+        if modo.admin_activo:
+            return RedirectResponse("/admin/panel", status_code=307)
+        raise HTTPException(status_code=404, detail="not available")
 
     @aplicacion.get("/widget/demo.html")
     def widget_demo():

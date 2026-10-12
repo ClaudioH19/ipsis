@@ -46,7 +46,7 @@ class MotorV2:
     """Implementa la frontera de motor sin heredar la cascada de v1."""
 
     pipeline = "v2"
-    etapas_efectivas = ("preparacion", "recuperacion", "contexto", "reranking", "lectura", "evidencia", "redaccion")
+    etapas_efectivas = ("cortesia", "preparacion", "recuperacion", "contexto", "reranking", "lectura", "evidencia", "redaccion")
     abstencion_calibrada = False
 
     def __init__(self, *, retriever, verificador, idioma=None, perfil=None, plantillas=None,
@@ -200,6 +200,21 @@ class MotorV2:
 
     def _consultar(self, pregunta, id_sesion, inicio, deadline_ms):
         ctx = _Consulta(pregunta=pregunta, inicio=inicio)
+        from ipsis.lenguaje.voz import categoria_cortesia, voz_del_widget
+
+        with self._etapa("cortesia", ctx):
+            categoria = categoria_cortesia(pregunta, self.plantillas)
+        if categoria:
+            from ipsis.consulta.variantes import elegir
+
+            banco = voz_del_widget(getattr(self.idioma, "codigo", "en"))["messages"]
+            return construir_resultado(
+                estado=AssistantState.CONVERSACIONAL, motivo=f"conversacional:{categoria}",
+                mensaje=elegir(categoria, banco[categoria], pregunta),
+                confianza={"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None},
+                latencia_ms=round((time.perf_counter() - inicio) * 1000),
+                plan="conversacional", diagnostico=ctx.diagnostico,
+            )
         limite = self._limite(inicio, deadline_ms)
         ctx.diagnostico["presupuestos"] = dict(self.opciones)
         ctx.diagnostico["presupuestos"]["presupuesto_aplicado_ms"] = self._presupuesto(deadline_ms)

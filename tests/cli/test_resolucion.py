@@ -50,7 +50,7 @@ def test_serve_demo_factory_modo_y_entorno(monkeypatch, capsys):
     monkeypatch.setenv("IPSIS_MODE", "production")
     llamadas = []
     monkeypatch.setattr("uvicorn.run", lambda *a, **k: llamadas.append((a, k, os.environ.get("IPSIS_DEMO"))))
-    assert main(["ser", "--demo", "--port", "8123"]) == 0
+    assert main(["ser", "--demo", "--no-open", "--port", "8123"]) == 0
     assert llamadas[0][0] == ("ipsis.servicio.api:crear_app",)
     assert llamadas[0][1]["factory"] is True and llamadas[0][2] == "1"
     assert "http://127.0.0.1:8123/widget/demo.html" in capsys.readouterr().out
@@ -58,14 +58,41 @@ def test_serve_demo_factory_modo_y_entorno(monkeypatch, capsys):
     assert os.environ["IPSIS_MODE"] == "production"
 
 
-def test_open_implica_demo_y_cancela_apertura_al_terminar(monkeypatch):
+def test_serve_por_defecto_activa_widget_admin_y_apertura_temporales(monkeypatch, capsys):
     evento, urls = Event(), []
     monkeypatch.setenv("IPSIS_DEMO", "0")
     monkeypatch.setattr("ipsis.aplicacion.vista_servicio.abrir_cuando_listo", lambda url: urls.append(url) or evento)
-    monkeypatch.setattr("uvicorn.run", lambda *a, **k: None)
-    assert main(["serve", "--open", "--host", "0.0.0.0"]) == 0
+    monkeypatch.delenv("IPSIS_ADMIN_TOKEN", raising=False)
+    def servir(*a, **k):
+        from ipsis.aplicacion.modo import modo_servicio
+        modo = modo_servicio()
+        assert modo.admin_activo and modo.demo_activa and not modo.desarrollo
+        assert len(os.environ["IPSIS_ADMIN_TOKEN"]) >= 32
+    monkeypatch.setattr("uvicorn.run", servir)
+    monkeypatch.setenv("IPSIS_MODE", "production")
+    assert main(["serve", "--host", "0.0.0.0"]) == 0
     assert urls == ["http://127.0.0.1:8000/widget/demo.html"]
     assert evento.is_set() and os.environ["IPSIS_DEMO"] == "0"
+    assert "IPSIS_ADMIN_TOKEN" not in os.environ
+    assert "/admin/panel" in capsys.readouterr().out
+
+
+def test_serve_opciones_desactivan_vistas_incluso_en_desarrollo(monkeypatch):
+    token = "a" * 40
+    monkeypatch.setenv("IPSIS_ADMIN_TOKEN", token)
+    monkeypatch.setenv("IPSIS_DEMO", "1")
+    monkeypatch.setenv("IPSIS_MODE", "production")
+    def servir(*a, **k):
+        from ipsis.aplicacion.modo import modo_servicio
+        modo = modo_servicio()
+        assert modo.desarrollo and not modo.demo_activa and not modo.admin_activo
+    def abrir(url):
+        raise AssertionError("no debe abrir el navegador")
+    monkeypatch.setattr("uvicorn.run", servir)
+    monkeypatch.setattr("ipsis.aplicacion.vista_servicio.abrir_cuando_listo", abrir)
+    assert main(["serve", "--mode", "development", "--no-demo", "--no-admin"]) == 0
+    assert os.environ["IPSIS_ADMIN_TOKEN"] == token
+    assert os.environ["IPSIS_MODE"] == "production" and os.environ["IPSIS_DEMO"] == "1"
 
 
 def test_apertura_espera_http_disponible(monkeypatch):

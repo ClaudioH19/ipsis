@@ -233,16 +233,22 @@ def test_servir_en_desarrollo_genera_un_token_temporal(proyecto, monkeypatch, ca
     import os
 
     llamadas = []
-    monkeypatch.setattr("uvicorn.run", lambda *a, **k: llamadas.append(k))
-    assert main(["serve", "--mode", "development"]) == 0
+    tokens = []
+    def servir(*a, **k):
+        llamadas.append(k)
+        tokens.append(os.environ.get("IPSIS_ADMIN_TOKEN"))
+    monkeypatch.setattr("uvicorn.run", servir)
+    assert main(["serve", "--mode", "development", "--no-open"]) == 0
     salida = capsys.readouterr().out
-    token = os.environ["IPSIS_ADMIN_TOKEN"]
+    token = tokens[0]
     assert len(token) >= 32 and token in salida and "Modo desarrollo" in salida
     assert llamadas[0]["proxy_headers"] is True and llamadas[0]["forwarded_allow_ips"] == "127.0.0.1"
-    monkeypatch.delenv("IPSIS_ADMIN_TOKEN")
+    assert "IPSIS_ADMIN_TOKEN" not in os.environ
+    assert "IPSIS_MODE" not in os.environ
     monkeypatch.setenv("IPSIS_TRUSTED_PROXY", "10.0.0.2")
-    assert main(["serve", "--mode", "production"]) == 0
-    assert "IPSIS_ADMIN_TOKEN" not in os.environ  # producción nunca inventa un token
+    assert main(["serve", "--mode", "production", "--no-open"]) == 0
+    assert len(tokens[1]) >= 32 and tokens[1] != token
+    assert "IPSIS_ADMIN_TOKEN" not in os.environ  # temporal solo durante el servicio
     assert llamadas[1]["forwarded_allow_ips"] == "10.0.0.2"
 
 

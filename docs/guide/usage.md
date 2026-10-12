@@ -109,10 +109,13 @@ interactive terminal use `/help serve` or `/help widget theme apply`; type
 engine and does not migrate project configuration.
 
 For inventory formats and extraction limits, see [inventories](inventories.md).
-`ipsis serve --demo` serves the themed page at `/widget/demo.html`;
-`ipsis serve --open` also opens it once ready. Add `--mode development`
-to enable the admin panel with a temporary token; the demo alone keeps the
-current service mode and access controls.
+`ipsis serve` opens the themed widget at `/widget/demo.html` and enables
+`/admin/panel`. The terminal prints a temporary admin token if none is
+configured; production mode and widget access controls are preserved.
+`--no-open` prevents browser opening, `--no-demo` disables the test page and
+also suppresses opening, and `--no-admin` disables the panel. Pure greetings
+and search guidance appear in a separate section with gradual typing; sources
+remain complete and expandable. See [the widget guide](web.md).
 
 ## Command reference
 
@@ -146,7 +149,7 @@ current service mode and access controls.
 
 | Command | What it does |
 |---|---|
-| `ipsis serve [folder] [--host H] [--port P] [--reindex] [--mode production\|development] [--demo] [--open]` | Starts the API and the widget. Given a folder of documents, it creates and prepares a private project in `.ipsis-project/`. `--mode`: see [deployment.md](deployment.md#run-modes-development-and-production); in development, without `IPSIS_ADMIN_TOKEN`, it prints a temporary token |
+| `ipsis serve [folder] [--host H] [--port P] [--reindex] [--mode production\|development] [--demo\|--no-demo] [--open\|--no-open] [--admin\|--no-admin]` | Starts the API, opens the widget and enables the configuration panel by default. Given a document folder, prepares a private project in `.ipsis-project/`. Reuses `IPSIS_ADMIN_TOKEN` or prints a temporary token for this run; `--no-admin` disables the panel. See [deployment.md](deployment.md#run-modes-development-and-production) |
 | `ipsis chat [--diagnostics]` | Interactive mode: questions and `/commands` (see above) |
 | `ipsis ask "<question>" [--url URL] [--timeout S]` | Asks the running service |
 | `ipsis ask "<question>" --diagnostics` | Runs the engine locally, without the service, and shows each stage with its latency, the signals, focus terms, the deciding rule, the exact span, the tone and the templates used. With local Qdrant, stop `ipsis serve` first |
