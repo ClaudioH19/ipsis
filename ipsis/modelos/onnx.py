@@ -24,6 +24,7 @@ class ModeloOnnx:
         self._sesion = None
         self._tokenizador = None
         self._candado = threading.Lock()
+        self._candado_tokenizador = threading.Lock()
 
     @property
     def carpeta(self) -> Path:
@@ -64,6 +65,11 @@ class ModeloOnnx:
 
     def tokenizar(self, textos: Sequence[str] | Sequence[tuple[str, str]], max_tokens: int | None = None):
         """Codificaciones con truncado y relleno al más largo del lote."""
+        # Truncado/relleno son estado mutable del tokenizador compartido.
+        with self._candado_tokenizador:
+            return self._tokenizar(textos, max_tokens)
+
+    def _tokenizar(self, textos, max_tokens):
         tokenizador = self.tokenizador
         tokenizador.enable_truncation(max_length=max_tokens or self.spec.max_tokens)
         id_relleno = self.spec.pad_token_id

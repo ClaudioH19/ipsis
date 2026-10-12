@@ -356,6 +356,7 @@ def test_perfil_con_etapa_desconocida_falla_al_construir(monkeypatch):
     from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
 
     cfg = deepcopy(cargar_proyecto())
+    cfg["pipeline"] = "v1"  # v2 no ejecuta las etapas declaradas de v1
     cfg["ajustes_perfil"] = {"etapas": ["conversacional", "no_existe"]}
     with pytest.raises(ValueError, match="no_existe"):
         construir_motor(cfg, cfg_dominio=cargar_dominio())

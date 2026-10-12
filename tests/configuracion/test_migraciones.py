@@ -51,7 +51,7 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     conf = tmp_path / "config"
     assert not (tmp_path / "configuracion").exists()
     crudo = yaml.safe_load((conf / "assistant.yaml").read_text(encoding="utf-8"))
-    assert crudo["config_version"] == 5 and crudo["profile"] == "light" and crudo["assistant_name"] == "Demo"
+    assert crudo["config_version"] == 7 and crudo["profile"] == "light" and crudo["assistant_name"] == "Demo"
     assert (conf / "assistant.yaml").read_text(encoding="utf-8").startswith("# Identidad")
     assert not (conf / "categorias.yaml").exists()
     assert not (conf / "dominios" / "equipos").exists()
@@ -61,7 +61,7 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     assert [c["id"] for c in cargar_taxonomia(str(conf / "domain.yaml"))["categorias"]] == ["equipo", "otro"]
     assert "regex_extractors" in yaml.safe_load((conf / "domain.yaml").read_text(encoding="utf-8"))
     motor = leer_proyecto(conf / "engine.yaml")
-    assert motor["config_version"] == 5
+    assert motor["config_version"] == 7
     assert motor["recuperacion"]["qdrant_path"] == ".ipsis/index/qdrant"
     assert (tmp_path / ".ipsis" / "index" / "qdrant" / "meta.json").is_file()
     assert (tmp_path / ".ipsis" / "index" / "demo.json").is_file()
@@ -132,7 +132,7 @@ def test_migra_un_proyecto_v4_a_nombres_en_ingles(tmp_path: Path):
         return yaml.safe_load((tmp_path / relativa).read_text(encoding="utf-8"))
 
     asistente = crudo("config/assistant.yaml")
-    assert asistente == {"config_version": 5, "assistant_name": "Demo", "language": "es", "profile": "medium",
+    assert asistente == {"config_version": 7, "assistant_name": "Demo", "language": "es", "profile": "medium",
                          "query_log": {"enabled": True}}
     assert (tmp_path / "config/assistant.yaml").read_text(encoding="utf-8").startswith("# Identidad.")
     motor = crudo("config/engine.yaml")

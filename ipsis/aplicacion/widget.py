@@ -56,6 +56,28 @@ PRESETS: dict[str, dict[str, Any]] = {
             "presentacion": {"mostrar_etiqueta_estado": True},
         },
     },
+    "buscador": {
+        "tema": {
+            "colores": {"acento": "#1a0dab", "fondo": "#ffffff", "superficie": "#ffffff",
+                        "texto": "#202124", "texto_suave": "#5f6368", "borde": "#dadce0"},
+            "colores_oscuro": {"acento": "#a8c7fa", "acento_texto": "#202124",
+                               "texto": "#e8eaed", "texto_suave": "#bdc1c6"},
+            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.5"},
+            "forma": {"radio_panel": "12px", "radio_control": "24px"},
+            "ubicacion": {"tamano": "amplio"},
+            "presentacion": {"densidad": "comoda", "alineacion": "inicio", "citas": "acordeon"},
+        },
+    },
+    "buscador_compacto": {
+        "tema": {
+            "colores": {"acento": "#1a0dab", "fondo": "#ffffff", "superficie": "#ffffff",
+                        "texto": "#202124", "texto_suave": "#5f6368", "borde": "#dadce0"},
+            "colores_oscuro": {"acento": "#a8c7fa", "acento_texto": "#202124"},
+            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.45"},
+            "forma": {"radio_panel": "8px", "radio_control": "20px"},
+            "presentacion": {"densidad": "compacta", "alineacion": "inicio", "citas": "acordeon"},
+        },
+    },
 }
 
 _SECCIONES = {"colores", "colores_oscuro", "tipografia", "forma", "sombras", "animaciones"}
@@ -230,6 +252,11 @@ def generar_vista_previa(
     if "</style" in css_tema.lower():
         raise ValueError(t("styles.custom_css_style"))
     preset_html = html.escape(preset)
+    if preset in {"buscador", "buscador_compacto"}:
+        destino = Path(salida)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(_vista_busqueda(css_tema, preset_html), encoding="utf-8")
+        return destino
     contenido_html = f"""<!doctype html>
 <html lang="{t('runtime.preview_lang')}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -271,6 +298,47 @@ def generar_vista_previa(
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(contenido_html, encoding="utf-8")
     return destino
+
+
+def _vista_busqueda(css_tema: str, preset: str) -> str:
+    """Buscador de ejemplo, sin API ni consultas reales."""
+    def texto(clave):
+        return html.escape(t("runtime." + clave))
+
+    resultados = "".join(f"""<article>
+      <p class="origen">{texto('preview_search_source')} · v1</p>
+      <h2><a href="#contexto-{i}">{texto('preview_search_result_' + str(i))}</a></h2>
+      <p>{texto('preview_search_excerpt_' + str(i))}</p>
+      <details id="contexto-{i}"><summary>{texto('preview_search_read')}</summary>
+        <p class="contexto">{texto('preview_search_excerpt_' + str(i))}</p></details>
+    </article>""" for i in range(1, 4))
+    return f"""<!doctype html><html lang="{texto('preview_lang')}"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{texto('preview_heading')} · {preset}</title><style>{css_tema}
+*{{box-sizing:border-box}}body{{margin:0;padding:24px;font-family:var(--rw-fuente,Arial,sans-serif);
+background:var(--rw-fondo);color:var(--rw-texto)}}main{{max-width:800px;margin:auto}}
+form{{display:flex;gap:8px;padding:18px 0;border-bottom:1px solid var(--rw-borde)}}
+input{{flex:1;min-width:0;padding:12px 18px;border:1px solid var(--rw-borde);border-radius:24px;
+background:var(--rw-superficie);color:var(--rw-texto);font:inherit}}
+button{{padding:10px 18px;border:1px solid var(--rw-borde);border-radius:24px;font:inherit;
+background:var(--rw-superficie);color:var(--rw-acento)}}.contador,.origen,.nota{{color:var(--rw-texto-suave);font-size:13px}}
+article{{margin:24px 0}}h2{{font-size:20px;font-weight:400;margin:4px 0}}a{{color:var(--rw-acento);text-decoration:none}}
+main[data-densidad="compacta"] article{{margin:16px 0}}main[data-densidad="compacta"] h2{{font-size:18px}}
+a:hover{{text-decoration:underline}}p{{line-height:1.5;overflow-wrap:anywhere}}summary{{color:var(--rw-acento);cursor:pointer}}
+.contexto{{white-space:pre-wrap}}@media(max-width:480px){{body{{padding:16px}}}}
+</style></head><body><main data-densidad="{'compacta' if preset == 'buscador_compacto' else 'comoda'}">
+<h1>{texto('preview_search_heading')}</h1>
+<form><label for="consulta" hidden>{texto('preview_search_heading')}</label>
+<input id="consulta" value="{texto('preview_question')}" readonly>
+<button type="button" disabled>{texto('preview_search_button')}</button></form>
+<p class="contador">3 {texto('preview_search_results')} · {preset}</p>{resultados}
+<button type="button" disabled>{texto('preview_search_more')}</button>
+<p class="nota">{texto('preview_search_note')}</p>
+</main><script>
+document.querySelectorAll('h2 a').forEach(function(a){{a.addEventListener('click',function(e){{
+e.preventDefault();var d=document.getElementById(a.getAttribute('href').slice(1));d.open=!d.open;
+d.querySelector('summary').focus();}});}});
+</script></body></html>"""
 
 
 __all__ = [

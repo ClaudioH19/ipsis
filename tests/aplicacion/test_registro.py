@@ -135,6 +135,24 @@ def test_documento_retirado_del_corpus_se_reporta(corpus):
     assert not r.ok and {p.motivo for p in r.problemas} == {"missing_document"}
 
 
+def test_auditoria_verifica_referencias_de_destacados_v2(corpus):
+    from ipsis.aplicacion.registro import auditar_registro, entrada_de_registro
+
+    resultado = MotorFalso(corpus).consultar("pregunta", "s")
+    entrada = entrada_de_registro("pregunta", resultado)
+    entrada["respuesta_exacta"] = None
+    ref = {"offset_inicio": corpus["tramo"], "offset_fin": corpus["tramo"] + 7, "texto": "6 meses"}
+    entrada["salida"]["bloques"] = [{"tipo": "pasaje", "chunk_id": "manual__c0000",
+        "texto": ORACION, "destacados": [{"tipo": "posible_fragmento", "referencias": [ref]}]}]
+    REGISTRO.parent.mkdir(parents=True)
+    REGISTRO.write_text(json.dumps(entrada), encoding="utf-8")
+    reporte = auditar_registro()
+    assert reporte.ok and reporte.evidencias == 2
+    ref["texto"] = "9 meses"
+    REGISTRO.write_text(json.dumps(entrada), encoding="utf-8")
+    assert [p.motivo for p in auditar_registro().problemas] == ["altered_highlight"]
+
+
 def test_sin_registro_auditar_dice_como_activarlo(capsys):
     assert main(["audit"]) == 1
     assert "Acción: ipsis configure query_log.enabled=true" in capsys.readouterr().out

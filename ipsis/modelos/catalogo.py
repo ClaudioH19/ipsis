@@ -87,6 +87,13 @@ CATALOGO: dict[str, ModeloSpec] = {
             archivos_onnx={"*": "onnx/model_int8.onnx"}, max_tokens=8192,
         ),
         ModeloSpec(
+            id_hf="onnx-community/gte-multilingual-reranker-base",
+            tarea="reranker", licencia="Apache-2.0 (Alibaba-NLP/gte-multilingual-reranker-base)",
+            atribucion="Alibaba GTE; ONNX Community conversion", parametros=306_000_000,
+            revision="ee64367e35a2db0da46bb6497e13a18f8bd585cb",
+            archivos_onnx={"*": "onnx/model_int8.onnx"}, max_tokens=8192, pad_token_id=1,
+        ),
+        ModeloSpec(
             id_hf="dewdev/mdeberta-v3-base-squad2-onnx",
             tarea="lector", licencia="MIT (timpal0l/mdeberta-v3-base-squad2)", parametros=278_220_802,
             # fp32: la variante int8 publicada pierde la señal (logits planos) y

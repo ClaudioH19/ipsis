@@ -25,6 +25,22 @@ from ipsis.lenguaje.texto import terminos
 # BM25 disperso con términos del proyecto
 # ---------------------------------------------------------------------------
 
+
+def test_indice_estructural_no_borra_coleccion_existente():
+    from types import SimpleNamespace
+    from ipsis.indice.qdrant import indexar_qdrant
+
+    class Cliente:
+        def collection_exists(self, nombre):
+            return True
+
+        def delete_collection(self, *_):
+            raise AssertionError("no se debe borrar la referencia")
+
+    with pytest.raises(ValueError, match="ya existe"):
+        indexar_qdrant([], "x", "referencia", "no-usada", codificador=SimpleNamespace(dimension=2),
+                       client=Cliente(), permitir_recrear=False)
+
 def test_vector_disperso_usa_ids_por_hash_y_tf_saturado():
     est = EstadisticasLexicas.construir(["hola mundo", "hola feliz"])
     pesos = bm25_doc(terminos("hola hola mundo"), est)

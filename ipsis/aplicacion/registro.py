@@ -45,7 +45,7 @@ def _cabecera() -> dict[str, Any]:
 def entrada_de_registro(pregunta: str, resultado) -> dict[str, Any]:
     """Línea del registro para un ``AssistantResult``."""
     d = resultado.diagnostico or {}
-    contrato = d.get("contrato_http") or {}
+    contrato = getattr(resultado, "contrato_http", None) or d.get("contrato_http") or {}
     evidencias = [{"doc_id": e.doc_id, "chunk_id": e.chunk_id, "offset_inicio": e.offset_inicio,
                    "offset_fin": e.offset_fin, "texto": e.texto} for e in resultado.evidencias]
     exacta = contrato.get("respuesta_exacta")
@@ -245,6 +245,16 @@ def auditar_registro(ruta: str | Path = rutas.REGISTRO_CONSULTAS, *, desde: date
                                   exacta.get("offset_fin"), exacta.get("texto"), textos, "altered_span")
             if problema:
                 reporte.problemas.append(problema)
+        por_chunk = {e.get("chunk_id"): e.get("doc_id") for e in evidencias}
+        for bloque in (entrada.get("salida") or {}).get("bloques") or []:
+            for destacado in bloque.get("destacados") or []:
+                for ref in destacado.get("referencias") or []:
+                    reporte.evidencias += 1
+                    problema = _verificar(numero, por_chunk.get(bloque.get("chunk_id")),
+                        ref.get("offset_inicio"), ref.get("offset_fin"), ref.get("texto"),
+                        textos, "altered_highlight")
+                    if problema:
+                        reporte.problemas.append(problema)
     return reporte
 
 

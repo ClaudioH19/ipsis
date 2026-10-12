@@ -9,6 +9,7 @@ tests/datos/banco_garantias/** text eol=lf
 tests/datos/banco_validacion/** text eol=lf
 tests/datos/banco_coloquial/** text eol=lf
 tests/datos/banco_erratas/** text eol=lf
+tests/datos/banco_terminos/** text eol=lf
 # Generados por herramientas/avatar: se comparan byte a byte (sha256).
 ipsis/servicio/estaticos/avatar.js -text
 ipsis/servicio/estaticos/avatar.js.LICENSE.txt -text

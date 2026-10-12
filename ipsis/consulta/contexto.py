@@ -23,6 +23,9 @@ class ContextoConsulta:
     id_sesion: str
     pregunta_usuario: str = ""  # la que escribió, si ``pregunta`` es la interpretada (seguimiento)
     coloquial: bool = False  # escrita de manera coloquial (ipsis.lenguaje.estilo)
+    # Dónde empieza la ventana que leyó el lector (offset global): la redacción muestra esa
+    # ventana completa, aunque la política decida solo con la oración del tramo.
+    inicio_ventana_lector: int | None = None
     turno_memoria: int | None = None
     inicio: float = field(default_factory=time.perf_counter)
     diagnostico: dict[str, Any] = field(default_factory=dict)

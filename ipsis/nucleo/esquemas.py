@@ -202,6 +202,13 @@ class QueryDiagnostic(EsquemaEstricto):
 
     schema_version: Literal[2] = 2
     backend: str = Field(min_length=1)
+    pipeline: Literal["v1", "v2"] = "v1"
+    duplicados: dict[str, list[str]] = Field(default_factory=dict)
+    expansiones: list[dict[str, Any]] = Field(default_factory=list)
+    presupuestos: dict[str, Any] = Field(default_factory=dict)
+    contextos_resultados: list[dict[str, Any]] = Field(default_factory=list)
+    paginacion: dict[str, Any] = Field(default_factory=dict)
+    reranking_progresivo: dict[str, Any] = Field(default_factory=dict)
     perfil: str | None = None
     etapas: dict[str, int] = Field(default_factory=dict)
     candidatos: list[DiagnosticCandidate] = Field(default_factory=list)
@@ -221,6 +228,7 @@ class QueryDiagnostic(EsquemaEstricto):
     estilo_coloquial: bool | None = None  # la pregunta está escrita de manera coloquial
     alias: list[list[str]] | None = None  # grupos de alias del corpus que la pregunta nombró
     ordinal_distinto: bool | None = None  # la pregunta pide otro ordinal que el de la oración
+    ventana_mostrada: dict[str, int] | None = None  # pasaje mostrado: la ventana que leyó el lector
     ortografia: dict[str, str] | None = None  # errata de la pregunta → forma del corpus que la corrige
     sinonimos: dict[str, list[str]] | None = None  # palabra ausente del corpus → sinónimos presentes
     recursos_lexicos: list[dict[str, Any]] | None = None  # fuente/sentido/POS de la expansión automática
@@ -248,6 +256,7 @@ class AssistantResult(EsquemaEstricto):
     opciones: list[str] = Field(default_factory=list)
     puede_reintentar: bool = False
     confianza: dict[str, Any] = Field(default_factory=dict)
+    contrato_http: dict[str, Any] = Field(default_factory=dict, exclude=True)
     diagnostico: dict[str, Any] = Field(default_factory=dict, exclude=True)
 
 

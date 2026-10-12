@@ -33,7 +33,7 @@ mi-asistente/
 ### `assistant.yaml`
 
 ```yaml
-config_version: 5
+config_version: 7
 assistant_name: "Asistente de soporte"
 domain_description: "los manuales del producto"
 language: es              # código ISO 639: es, en, pt, pt-br...
@@ -50,7 +50,7 @@ posture:
 ## Versionado
 
 `assistant.yaml` y `engine.yaml` declaran `config_version`. La versión vigente
-es la `5`.
+es la `7`.
 
 - Cualquier comando `ipsis` migra un proyecto anterior al cargar: un archivo
   sin `config_version` se lee como versión 0 y sube paso a paso.
@@ -77,6 +77,22 @@ Estas funciones devuelven los nombres internos que usa el motor; los
 archivos en disco usan los nombres en inglés de esta guía.
 
 ## Componentes
+
+### Selección del motor
+
+Proyectos nuevos y configuraciones sin selector usan v2:
+
+```yaml
+config_version: 7
+pipeline: v2
+```
+
+V2 publica fuentes literales ordenadas con continuación. No ejecuta las
+reglas de intención/foco, políticas de respuesta, memoria conversacional ni
+calibración de v1. Sus opciones están en [fuentes ordenadas](../../methodology/fuentes-v2.md).
+Una selección explícita `pipeline: v1` sigue siendo válida y se conserva al
+cargar configuraciones antiguas. Cambia esa línea y reinicia el servicio para
+elegir otro motor; cambiar solo el motor no exige reindexar.
 
 La sección `components` selecciona implementaciones por nombre:
 

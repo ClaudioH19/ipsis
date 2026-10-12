@@ -154,6 +154,26 @@
     sources_many: "{n} sources from the document",
     citation_position: "characters {start}–{end}",
     source_code: "Source code",
+    ranked_hint: "Sources ranked by relevance",
+    read_context: "Read the source and full context",
+    context_truncated: "The displayed context is truncated.",
+    keep_searching: "Keep searching",
+    rephrase_search: "You can also write a more specific question.",
+    search_exhausted: "No more results in this search. Try rephrasing your question.",
+    search_expired: "This search has expired. Submit your question again.",
+    search_send: "Search",
+    search_subtitle: "Search and review sources",
+    search_open: "Open search of {title}",
+    search_close: "Close search",
+    search_question_label: "Search your documents",
+    search_results_label: "Search results",
+    search_results_count: "{n} results for “{query}”",
+    search_read_document: "Read full context",
+    search_close_document: "Close context",
+    search_more: "Show more results",
+    search_added: "Added {n} results.",
+    search_start: "Search your documents",
+    search_instruction: "Enter a question or keywords to find information.",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -402,6 +422,48 @@
     ".rw-parrafo + .rw-parrafo{margin-top:.6em;}",
     ".rw-conector,.rw-cita-breve{color:var(--rw-texto-suave);}",
     ".rw-cita-breve{font-size:var(--rw-tamano-cita);}",
+    ".rw-resultados{margin:.8em 0 0;padding-left:1.5em;white-space:normal;}",
+    ".rw-resultado{margin:.8em 0;padding:.7em;border:1px solid var(--rw-borde);border-radius:8px;}",
+    ".rw-resultado-titulo{margin:0;font-weight:600;overflow-wrap:anywhere;}",
+    ".rw-resultado-origen{margin:.35em 0;color:var(--rw-texto-suave);font-size:var(--rw-tamano-cita);}",
+    ".rw-resultado-vista,.rw-resultado-contexto{white-space:pre-wrap;overflow-wrap:anywhere;}",
+    ".rw-resultado details{margin-top:.6em;}",
+    ".rw-resultado summary{cursor:pointer;color:var(--rw-acento);}",
+    ".rw-panel[data-modo='busqueda'] .rw-form{border-top:0;border-bottom:1px solid var(--rw-borde);",
+    "  background:var(--rw-superficie);padding:12px var(--rw-relleno);}",
+    ".rw-panel[data-modo='busqueda'] .rw-form input{border-radius:24px;min-width:0;}",
+    ".rw-panel[data-modo='busqueda'] .rw-enviar{border-radius:50%;}",
+    ".rw-panel[data-modo='busqueda'] .rw-mensajes{gap:0;background:var(--rw-superficie);}",
+    ".rw-busqueda{width:100%;min-width:0;color:var(--rw-texto);line-height:var(--rw-interlineado);}",
+    ".rw-busqueda-contador{font-size:var(--rw-tamano-cita);font-weight:400;color:var(--rw-texto-suave);",
+    "  margin:0 0 18px;overflow-wrap:anywhere;}",
+    ".rw-busqueda .rw-resultados{list-style:none;margin:0;padding:0;}",
+    ".rw-busqueda .rw-resultado{border:0;border-radius:0;margin:0 0 24px;padding:0;}",
+    ".rw-busqueda .rw-resultado-origen{margin:0 0 3px;line-height:1.4;overflow-wrap:anywhere;}",
+    ".rw-busqueda .rw-resultado-titulo{display:block;font:inherit;font-size:calc(var(--rw-tamano-mensaje) + 3px);",
+    "  text-align:start;background:none;border:0;padding:0;color:var(--rw-acento);cursor:pointer;}",
+    ".rw-busqueda .rw-resultado-titulo:hover{text-decoration:underline;}",
+    ".rw-panel[data-preset='search'] .rw-resultado-titulo{font-size:20px;line-height:1.35;}",
+    ".rw-panel[data-preset='search_compact'] .rw-resultado-titulo{font-size:18px;line-height:1.35;}",
+    ".rw-busqueda .rw-resultado-titulo:focus-visible,.rw-busqueda summary:focus-visible{",
+    "  outline:2px solid var(--rw-acento);outline-offset:3px;}",
+    ".rw-panel[data-preset='contrast'] .rw-resultado-titulo,",
+    ".rw-panel[data-preset='contrast'] .rw-busqueda summary{color:var(--rw-texto);text-decoration:underline;}",
+    ".rw-panel[data-preset='contrast'] .rw-seguir{color:var(--rw-texto);border-color:var(--rw-texto);}",
+    ".rw-panel[data-preset='contrast'] .rw-busqueda :focus-visible,",
+    ".rw-panel[data-preset='contrast'] .rw-form input:focus{outline:2px solid var(--rw-texto);outline-offset:3px;}",
+    ".rw-panel[data-modo='busqueda'] .rw-enviando svg{animation:none;}",
+    ".rw-resultado-ruta{margin:3px 0;color:var(--rw-texto-suave);font-size:var(--rw-tamano-cita);overflow-wrap:anywhere;}",
+    ".rw-busqueda .rw-resultado-vista{white-space:normal;margin:6px 0;font-size:var(--rw-tamano-mensaje);}",
+    ".rw-busqueda .rw-resultado-vista strong{font-weight:700;}",
+    ".rw-busqueda .rw-resultado-contexto{font-size:var(--rw-tamano-mensaje);margin:10px 0;}",
+    ".rw-busqueda details{margin:8px 0 0;padding:0;font-size:var(--rw-tamano-cita);}",
+    ".rw-busqueda details[open]{border-left:2px solid var(--rw-borde);padding-left:12px;}",
+    ".rw-busqueda-acciones{border-top:1px solid var(--rw-borde);padding-top:12px;}",
+    ".rw-busqueda-ayuda{font-size:var(--rw-tamano-cita);color:var(--rw-texto-suave);margin:0 0 12px;}",
+    ".rw-busqueda-vacia{text-align:center;padding:36px 0;color:var(--rw-texto-suave);}",
+    ".rw-busqueda-vacia h3{color:var(--rw-texto);font-size:18px;margin:0 0 10px;}",
+    ".rw-panel[data-densidad='compacta'] .rw-busqueda .rw-resultado{margin-bottom:16px;}",
     // Justificado opcional (presentation.text_align): solo el texto del
     // documento, con guiones para que no queden huecos en una burbuja angosta.
     ".rw-panel[data-alineacion='justificada'] .rw-parrafo-pasaje,",
@@ -486,7 +548,10 @@
     "  40%{transform:translate(9px,-9px) scale(.7);opacity:0;}",
     "  41%{transform:translate(-9px,9px) scale(.7);opacity:0;}",
     "  100%{transform:none;opacity:1;}}",
-    ".rw-enviar:focus-visible{outline:3px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-enviar:focus-visible,.rw-seguir:focus-visible{outline:3px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-seguir{font:inherit;color:var(--rw-acento);background:var(--rw-superficie);",
+    "  border:1px solid var(--rw-acento);border-radius:var(--rw-radio-control);padding:.5em .8em;cursor:pointer;}",
+    ".rw-seguir:disabled{opacity:.45;cursor:default;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
 
     // Teléfono (o apaisado bajo): hoja a pantalla completa. La altura sigue al
@@ -527,7 +592,8 @@
   var NS_SVG = "http://www.w3.org/2000/svg";
   var TRAZOS = {
     cerrar: "M18 6 6 18M6 6l12 12",
-    enviar: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
+    enviar: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z",
+    buscar: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"
   };
 
   function icono(nombre, clase) {
@@ -817,14 +883,19 @@
   var ESTADOS_INTERNOS = { ok: "ok", related: "relacionado", no_answer: "sin_respuesta",
                            conversational: "conversacional", degraded: "degradado", saturated: "saturado" };
   function fragmentoInterno(f) {
-    return { chunk_id: f.chunk_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
-             offset_inicio: f.offset_start, offset_fin: f.offset_end };
+    return { chunk_id: f.chunk_id, doc_id: f.doc_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
+             offset_inicio: f.offset_start, offset_fin: f.offset_end, version: f.version,
+             rango: f.rank, coincidencia_inicio: f.match_start, coincidencia_fin: f.match_end,
+             truncado: f.truncated, archivo: f.source_name };
   }
   function respuestaInterna(r) {
     r = r || {};
     var exacta = r.exact_answer;
     return {
       estado: ESTADOS_INTERNOS[r.status] || "sin_respuesta",
+      modo: r.response_mode,
+      continuation: r.continuation,
+      has_more: r.has_more,
       respuesta: r.answer,
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
@@ -859,6 +930,10 @@
   }
 
   function agregarMensajeAsistente(respuesta) {
+    if (respuesta.modo === "ranked_sources") {
+      renderizarBusqueda(respuesta);
+      return;
+    }
     var estadoResp = respuesta.estado || "sin_respuesta";
     var alternativas = estadoResp === "sin_respuesta" ? (respuesta.alternativas || []) : [];
     var burbuja = document.createElement("div");
@@ -894,6 +969,181 @@
 
     mensajes.appendChild(burbuja);
     desplazarAlFinal();
+  }
+
+  var modoBusqueda = false;
+  var paginaBusqueda = null;
+
+  function activarBusqueda() {
+    modoBusqueda = true;
+    panel.setAttribute("data-modo", "busqueda");
+    boton.setAttribute("aria-label", texto("search_open", { title: tituloEl.textContent }));
+    botonCerrar.setAttribute("aria-label", texto("search_close"));
+    subtituloTexto.textContent = texto("search_subtitle");
+    panel.insertBefore(form, mensajes);
+    mensajes.setAttribute("role", "region");
+    mensajes.setAttribute("aria-label", texto("search_results_label"));
+    mensajes.removeAttribute("aria-live");
+    etiquetaInput.textContent = texto("search_question_label");
+    input.placeholder = texto("search_start");
+    botonEnviar.setAttribute("aria-label", texto("search_send"));
+    botonEnviar.replaceChildren(icono("buscar"));
+  }
+
+  function mostrarInicioBusqueda() {
+    var inicio = document.createElement("div");
+    inicio.className = "rw-busqueda-vacia";
+    var titulo = document.createElement("h3");
+    titulo.textContent = texto("search_start");
+    var ayuda = document.createElement("p");
+    ayuda.textContent = texto("search_instruction");
+    inicio.appendChild(titulo);
+    inicio.appendChild(ayuda);
+    mensajes.replaceChildren(inicio);
+  }
+
+  function textoDestacado(elemento, contenido, pregunta) {
+    // Destacar palabras literales de la consulta; no modifica el texto fuente.
+    var palabras = (pregunta || "").split(/[^A-Za-z0-9_\u00c0-\u024f]+/).filter(function (p) {
+      return p.length > 2;
+    }).slice(0, 20);
+    var minusculas = contenido.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    var tramos = [];
+    if (minusculas.length === contenido.length) palabras.forEach(function (palabra) {
+      var termino = palabra.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(), posicion = 0, encontrado;
+      while ((encontrado = minusculas.indexOf(termino, posicion)) !== -1) {
+        tramos.push([encontrado, encontrado + termino.length]);
+        posicion = encontrado + termino.length;
+      }
+    });
+    tramos.sort(function (a, b) { return a[0] - b[0]; });
+    var unidos = [];
+    tramos.forEach(function (t) {
+      var ultimo = unidos[unidos.length - 1];
+      if (ultimo && t[0] <= ultimo[1]) ultimo[1] = Math.max(ultimo[1], t[1]);
+      else unidos.push(t.slice());
+    });
+    var posicion = 0;
+    unidos.forEach(function (t) {
+      elemento.appendChild(document.createTextNode(contenido.slice(posicion, t[0])));
+      var destacado = document.createElement("strong");
+      destacado.textContent = contenido.slice(t[0], t[1]);
+      elemento.appendChild(destacado);
+      posicion = t[1];
+    });
+    elemento.appendChild(document.createTextNode(contenido.slice(posicion)));
+  }
+
+  function agregarResultados(lista, fragmentos, pregunta) {
+    var primero = null;
+    fragmentos.forEach(function (frag, indice) {
+      var clave = JSON.stringify([frag.doc_id, frag.chunk_id, frag.version, frag.offset_inicio, frag.offset_fin]);
+      if (paginaBusqueda && paginaBusqueda.vistos.has(clave)) return;
+      if (paginaBusqueda) paginaBusqueda.vistos.add(clave);
+      var item = document.createElement("li");
+      item.className = "rw-resultado";
+      item.value = frag.rango || indice + 1;
+      var origen = document.createElement("p");
+      origen.className = "rw-resultado-origen";
+      origen.textContent = (frag.archivo || frag.doc_titulo) + (frag.version ? " \u00b7 v" + frag.version : "");
+      item.appendChild(origen);
+      var secciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
+      var titulo = document.createElement("button");
+      titulo.type = "button";
+      titulo.className = "rw-resultado-titulo";
+      titulo.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
+      item.appendChild(titulo);
+      if (secciones.length > 1) {
+        var ruta = document.createElement("p");
+        ruta.className = "rw-resultado-ruta";
+        ruta.textContent = secciones.slice(0, -1).join(" \u203a ");
+        item.appendChild(ruta);
+      }
+      var completo = frag.texto || "";
+      // La API cuenta caracteres Unicode; slice de JavaScript cuenta unidades UTF-16.
+      var caracteres = Array.from(completo);
+      var inicioFuente = Math.max(0, (frag.coincidencia_inicio == null ? frag.offset_inicio : frag.coincidencia_inicio) - frag.offset_inicio);
+      var finFuente = Math.min(caracteres.length, (frag.coincidencia_fin == null ? frag.offset_fin : frag.coincidencia_fin) - frag.offset_inicio);
+      var inicio = caracteres.slice(0, inicioFuente).join("").length;
+      var fin = caracteres.slice(0, finFuente).join("").length;
+      var coincidencia = completo.slice(inicio, fin) || completo;
+      var vista = document.createElement("p");
+      vista.className = "rw-resultado-vista";
+      var caracteresVista = Array.from(coincidencia);
+      textoDestacado(vista, caracteresVista.length > 400 ? caracteresVista.slice(0, 400).join("") + "\u2026" : coincidencia, pregunta);
+      item.appendChild(vista);
+      var detalles = document.createElement("details");
+      detalles.id = "rw-documento-" + (lista.children.length + 1);
+      var resumen = document.createElement("summary");
+      resumen.textContent = texto("search_read_document");
+      detalles.appendChild(resumen);
+      titulo.setAttribute("aria-controls", detalles.id);
+      titulo.setAttribute("aria-expanded", "false");
+      titulo.addEventListener("click", function () { detalles.open = !detalles.open; });
+      detalles.addEventListener("toggle", function () {
+        titulo.setAttribute("aria-expanded", String(detalles.open));
+        resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
+      });
+      var posicion = document.createElement("p");
+      posicion.className = "rw-resultado-origen";
+      posicion.textContent = texto("citation_position", { start: frag.offset_inicio, end: frag.offset_fin });
+      detalles.appendChild(posicion);
+      var contexto = document.createElement("p");
+      contexto.className = "rw-resultado-contexto";
+      textoConTramo(contexto, completo, fin > inicio && fin - inicio < completo.length ? [inicio, fin] : null);
+      detalles.appendChild(contexto);
+      if (frag.truncado) {
+        var recorte = document.createElement("p");
+        recorte.textContent = texto("context_truncated");
+        detalles.appendChild(recorte);
+      }
+      item.appendChild(detalles);
+      lista.appendChild(item);
+      if (!primero) primero = titulo;
+    });
+    return primero;
+  }
+
+  function renderizarBusqueda(respuesta) {
+    activarBusqueda();
+    if (!respuesta.continuando || !paginaBusqueda) {
+      var seccion = document.createElement("section");
+      seccion.className = "rw-busqueda";
+      var contador = document.createElement("h3");
+      contador.className = "rw-busqueda-contador";
+      var lista = document.createElement("ol");
+      lista.className = "rw-resultados";
+      var acciones = document.createElement("div");
+      acciones.className = "rw-busqueda-acciones";
+      seccion.appendChild(contador);
+      seccion.appendChild(lista);
+      seccion.appendChild(acciones);
+      paginaBusqueda = { seccion: seccion, contador: contador, lista: lista, acciones: acciones, vistos: new Set() };
+      mensajes.replaceChildren(seccion);
+      mensajes.scrollTop = 0;
+    }
+    var cantidadAnterior = paginaBusqueda.lista.children.length;
+    var primero = agregarResultados(paginaBusqueda.lista, respuesta.fragmentos, respuesta.pregunta);
+    var cantidad = paginaBusqueda.lista.children.length;
+    paginaBusqueda.contador.textContent = texto("search_results_count", { n: cantidad, query: respuesta.pregunta });
+    paginaBusqueda.acciones.replaceChildren();
+    var ayuda = document.createElement("p");
+    ayuda.className = "rw-busqueda-ayuda";
+    ayuda.textContent = cantidad === 0 ? respuesta.respuesta || texto("search_instruction")
+      : texto(respuesta.has_more === false ? "search_exhausted" : "rephrase_search");
+    paginaBusqueda.acciones.appendChild(ayuda);
+    if (respuesta.has_more && respuesta.continuation) {
+      var mas = document.createElement("button");
+      mas.type = "button";
+      mas.className = "rw-seguir";
+      mas.dataset.activo = "si";
+      mas.textContent = texto("search_more");
+      mas.addEventListener("click", function () { enviarPregunta(respuesta.pregunta, respuesta.continuation, mas); });
+      paginaBusqueda.acciones.appendChild(mas);
+    }
+    anunciador.textContent = respuesta.continuando
+      ? texto("search_added", { n: cantidad - cantidadAnterior }) : paginaBusqueda.contador.textContent;
+    if (respuesta.continuando && primero) primero.focus({ preventScroll: true });
   }
 
   // Indicador de "escribiendo": sin el, el widget se queda mudo entre que
@@ -1001,7 +1251,10 @@
           boton.setAttribute("aria-label", texto("open", { title: cfg.assistant_name }));
         }
         var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.greeting;
-        if (bienvenida && mensajes.children.length === 0) {
+        if (cfg.response_mode === "ranked_sources" || modoBusqueda) {
+          activarBusqueda();
+          if (!paginaBusqueda && !peticionPendiente) mostrarInicioBusqueda();
+        } else if (bienvenida && mensajes.children.length === 0) {
           agregarMensajeAsistente({ estado: "conversacional", respuesta: bienvenida });
         }
       })
@@ -1016,9 +1269,19 @@
       });
   }
 
-  function enviarPregunta(pregunta) {
-    agregarMensajeUsuario(pregunta);
-    input.value = "";
+  var peticionPendiente = false;
+  function enviarPregunta(pregunta, cursor, botonMas) {
+    if (peticionPendiente) return;
+    peticionPendiente = true;
+    var exito = false;
+    if (!cursor) {
+      if (!modoBusqueda) {
+        agregarMensajeUsuario(pregunta);
+        input.value = "";
+      } else input.value = pregunta;
+      mensajes.querySelectorAll(".rw-seguir").forEach(function (b) { b.dataset.activo = "no"; });
+    }
+    mensajes.querySelectorAll(".rw-seguir").forEach(function (b) { b.disabled = true; });
     input.disabled = true;
     botonEnviar.disabled = true;
     mostrarEscribiendo();
@@ -1026,7 +1289,7 @@
     fetch(API_BASE + "/ask", {
       method: "POST",
       headers: cabecerasComunes(),
-      body: JSON.stringify({ question: pregunta, session_id: ID_SESION }),
+      body: JSON.stringify({ question: pregunta, session_id: ID_SESION, continuation: cursor || undefined }),
     })
       .then(function (r) {
         if (r.status === 429) {
@@ -1038,6 +1301,10 @@
         if (r.status === 503) {
           throw new Error(micro("service_error"));
         }
+        if (r.status === 409 && cursor) {
+          if (botonMas) botonMas.dataset.activo = "no";
+          throw new Error(texto("search_expired"));
+        }
         if (!r.ok) {
           throw new Error(texto("http_error", { status: r.status }));
         }
@@ -1045,7 +1312,11 @@
       })
       .then(function (publica) {
         var respuesta = respuestaInterna(publica);
+        respuesta.pregunta = pregunta;
+        respuesta.continuando = !!cursor;
+        if (botonMas) botonMas.dataset.activo = "no";
         agregarMensajeAsistente(respuesta);
+        exito = true;
         emitir("ipsis:answer", { status: publica.status, answer: publica });
         avatarAlResponder(respuesta.estado);
       })
@@ -1063,16 +1334,20 @@
       })
       .finally(function () {
         ocultarEscribiendo();
+        peticionPendiente = false;
+        mensajes.querySelectorAll(".rw-seguir").forEach(function (b) {
+          b.disabled = b.dataset.activo !== "si";
+        });
         input.disabled = false;
         botonEnviar.disabled = false;
-        input.focus();
+        if (!cursor || !modoBusqueda || !paginaBusqueda || !exito) input.focus();
       });
   }
 
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     var texto = input.value.trim();
-    if (!texto) return;
+    if (!texto || peticionPendiente) return;
     emitir("ipsis:question", { question: texto });
     botonEnviar.classList.remove("rw-enviando");
     void botonEnviar.offsetWidth; // reinicia la animación si se envía otra vez enseguida
@@ -1087,7 +1362,7 @@
   var elementoFocoPrevio = null;
 
   function elementosFocables() {
-    var lista = panel.querySelectorAll("button, input, [href], [tabindex]:not([tabindex='-1'])");
+    var lista = panel.querySelectorAll("button, input, summary, [href], [tabindex]:not([tabindex='-1'])");
     return Array.prototype.filter.call(lista, function (el) {
       return !el.disabled && el.offsetParent !== null;
     });

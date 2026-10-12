@@ -18,7 +18,7 @@ from ipsis.indice.qdrant import (
 from ipsis.recursos.mensajes import t
 
 
-def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
+def parsear_corpus(carpeta_corpus: str, preparacion: str | None = None) -> list[DocumentoParseado]:
     """Parsea todo el catálogo (``documents/catalog.yaml``) con el despacho por
     extensión de ``ipsis/ingesta/parsear.py::parsear_documento`` -- soporta ``.docx``, ``.pdf``, ``.md``/``.markdown`` y ``.txt`` sin
     que este módulo (ni ningún otro consumidor de ``DocumentoParseado``)
@@ -26,12 +26,27 @@ def parsear_corpus(carpeta_corpus: str) -> list[DocumentoParseado]:
     from ipsis.nucleo.progreso import informar
 
     docs = []
+    if preparacion is None:
+        from ipsis.configuracion.carga import cargar_proyecto
+
+        preparacion = (cargar_proyecto()["recuperacion"].get("preparacion", {}).get("modo", "legacy")
+                       if Path(rutas.MOTOR).is_file() else "legacy")
+    if preparacion not in {"legacy", "estructural_v1"}:
+        raise ValueError("preparación desconocida")
     entradas = entradas_vigentes()
     for numero, entrada in enumerate(entradas, 1):
         informar("documento", archivo=entrada["archivo"], actual=numero, total=len(entradas))
         ruta = str(Path(carpeta_corpus) / entrada["archivo"])
-        doc = parsear_documento(ruta, doc_id=entrada["doc_id"], doc_titulo=entrada["doc_titulo"],
-                                 version=entrada["version"])
+        if preparacion == "estructural_v1":
+            from ipsis.ingesta.preparacion import como_documento_parseado, preparar_docx
+
+            if Path(ruta).suffix.lower() != ".docx":
+                raise ValueError("la preparación estructural v1 admite DOCX; otros formatos siguen en legacy")
+            doc = como_documento_parseado(preparar_docx(ruta, doc_id=entrada["doc_id"],
+                doc_titulo=entrada["doc_titulo"], version=entrada["version"]))
+        else:
+            doc = parsear_documento(ruta, doc_id=entrada["doc_id"], doc_titulo=entrada["doc_titulo"],
+                                     version=entrada["version"])
         docs.append(doc)
     return docs
 
@@ -119,6 +134,14 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
 
     cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
     digest = hashlib.sha256(f"{cfg_rec['estrategia_chunking']}|{cfg_rec['con_header']}".encode("utf-8"))
+    preparacion = cfg_rec.get("preparacion", {})
+    if preparacion.get("modo", "legacy") != "legacy":
+        import json
+        from ipsis.ingesta.preparacion import PARSER_VERSION
+        from ipsis.ingesta.unidades import CHUNKER_VERSION
+
+        digest.update(json.dumps({"preparacion": preparacion, "parser": PARSER_VERSION,
+            "chunker": CHUNKER_VERSION}, sort_keys=True).encode("utf-8"))
     for entrada in sorted(entradas_vigentes(), key=lambda e: e["doc_id"]):
         contenido = (Path(carpeta_corpus) / entrada["archivo"]).read_bytes()
         digest.update(f"\n{entrada['doc_id']}|{entrada['doc_titulo']}|{entrada['version']}|".encode("utf-8"))
@@ -132,8 +155,15 @@ def huella_corpus(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None =
     from ipsis.configuracion.carga import config_recuperacion
 
     cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
-    _chunks, payloads = construir_chunks_y_payloads(parsear_corpus(carpeta_corpus), cfg_rec["estrategia_chunking"],
-                                                    cfg_rec["con_header"], cargar_taxonomia())
+    opciones = cfg_rec.get("preparacion", {"modo": "legacy"})
+    docs = parsear_corpus(carpeta_corpus, opciones["modo"])
+    if opciones["modo"] == "estructural_v1":
+        from ipsis.ingesta.unidades import construir_payloads_estructurados
+
+        _, payloads, _, _ = construir_payloads_estructurados(docs, cargar_taxonomia(), opciones)
+    else:
+        _chunks, payloads = construir_chunks_y_payloads(docs, cfg_rec["estrategia_chunking"],
+                                                       cfg_rec["con_header"], cargar_taxonomia())
     return hash_corpus(payloads)
 
 
@@ -176,11 +206,20 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
     from ipsis.nucleo.progreso import informar
 
     informar("parseo")
-    docs = parsear_corpus(carpeta_corpus)
+    opciones = cfg_rec.get("preparacion", {"modo": "legacy"})
+    estructural = opciones["modo"] == "estructural_v1"
+    docs = parsear_corpus(carpeta_corpus, opciones["modo"])
     resumen_docs = [ResumenDocumento(d.doc_id, len(d.bloques), len(d.texto_completo)) for d in docs]
 
     informar("fragmentado", total=len(docs))
-    chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia)
+    padres, preparados = {}, []
+    if estructural:
+        from ipsis.ingesta.unidades import construir_payloads_estructurados
+
+        chunks, payloads, padres, preparados = construir_payloads_estructurados(docs, taxonomia, opciones)
+        con_header = True
+    else:
+        chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia)
     informar("validacion", total=len(payloads))
     errores = validar_payloads(payloads, taxonomia)
 
@@ -193,23 +232,39 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
 
     if solo_validar:
         return ResumenIngesta(resumen_docs, len(chunks), errores, advertencias, time.perf_counter() - t0)
+    if estructural and errores:
+        raise ValueError("preparación estructural inválida: " + "; ".join(errores))
 
     _client, _codificador, estadisticas_lexicas, nombre_col = indexar_qdrant(
         payloads, modelo, coleccion, qdrant_path, usar_texto_embebido=con_header,
         n_version=version_coleccion, sufijo_coleccion=sufijo_coleccion,
+        **({"permitir_recrear": False, "modo": "local"} if estructural else {}),
     )
-    informar("guardado")
-    estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
-    huella = hash_corpus(payloads)
-    estadisticas_lexicas.hash_corpus = huella
-    estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
-    inventario = inventario_entidades(payloads)
-    guardar_manifiesto(ManifiestoIndice(
-        coleccion=nombre_col, modelo_denso=modelo, dimension=_codificador.dimension,
-        stemmer=estadisticas_lexicas.stemmer, hash_corpus=huella, n_chunks=len(payloads),
-        hash_archivos=huella_archivos(carpeta_corpus, {"estrategia_chunking": estrategia, "con_header": con_header}),
-        inventario_entidades=inventario,
-    ))
+    try:
+        informar("guardado")
+        huella = hash_corpus(payloads)
+        estadisticas_lexicas.hash_corpus = huella
+        estadisticas_lexicas.guardar(ruta_estadisticas(nombre_col))
+        inventario = inventario_entidades(payloads)
+        metadata_preparacion = None
+        if estructural:
+            from ipsis.indice.contextos import guardar_contextos
+            from ipsis.ingesta.preparacion import PARSER_VERSION
+            from ipsis.ingesta.unidades import CHUNKER_VERSION
+
+            metadata_preparacion = {**opciones, "parser_version": PARSER_VERSION, "chunker_version": CHUNKER_VERSION,
+                "contextos_sha256": guardar_contextos(nombre_col, preparados, padres, opciones)}
+        guardar_manifiesto(ManifiestoIndice(
+            coleccion=nombre_col, modelo_denso=modelo, dimension=_codificador.dimension,
+            stemmer=estadisticas_lexicas.stemmer, hash_corpus=huella, n_chunks=len(payloads),
+            hash_archivos=huella_archivos(carpeta_corpus, {"estrategia_chunking": estrategia, "con_header": con_header,
+                                                       "preparacion": opciones}),
+            inventario_entidades=inventario,
+            preparacion=metadata_preparacion,
+        ))
+    finally:
+        if estructural:
+            _client.close()
 
     return ResumenIngesta(
         documentos=resumen_docs, n_chunks=len(chunks), errores_validacion=errores, advertencias=advertencias,

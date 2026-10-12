@@ -6,7 +6,61 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Changed
+
+- V2 is now the default query engine in project templates, configuration
+  loading (including old files without a selector) and the engine factory.
+  Explicit `pipeline: v1` remains supported. The default output is ranked
+  literal sources with continuation, without v1 focus rules or calibration.
+  Project model downloads and doctor checks omit unused QA models in v2.
+  Selecting an engine alone reuses the existing index.
+
 ### Added
+
+- Search-style v2 presentation with a top query field, visible source titles
+  and excerpts, literal query highlights, expandable context and one growing
+  results list. New `search` and `search_compact` themes include offline previews.
+  New queries replace the list; continuation appends new sources.
+
+- V2 scores compact retrieved passages progressively within a query work
+  budget (2500 ms by default). Unscored sources remain available; continuing
+  scores only pending candidates, while cursor retries preserve their page.
+  Optional HTTP deadlines reduce the server budget. Running ONNX inference
+  is not interrupted. Default batches use two passages and 256 tokens.
+
+- V2 routes queries to up to three ranked sources per page with search continuation,
+  literal context, source
+  offsets and an expandable result card in the widget. Publication is independent
+  of QA, which is disabled by default in v2. Context expands after ranking within
+  document/section/version boundaries, preserving scores and marking truncation.
+  The experimental reranking council and its comparator were removed after the
+  CPU comparison; configuration 7 migrates its retired settings automatically.
+
+- CPU-only query pipeline v2, selected with `engine.yaml::pipeline`,
+  with configuration migration 7 preserving explicit engine selections. A common engine
+  contract and output adapter allow switching implementations in the factory.
+  V2 reuses hybrid retrieval, spelling correction, ONNX reranking/QA and literal
+  verification; it reads source chunks without v1 intent/focus rules or inherited
+  topics, retains surrounding evidence and records each stage. Offline paired
+  comparison runs on isolated copies and exports full answers and traces.
+  V2 is the default source router; broader quality evaluation remains pending.
+
+- Experimental DOCX preparation with canonical text, XML/cell references,
+  empty and merged cells, source parents and searchable children. The v2
+  reranker retains declared section context; tables offer mapped field/value
+  contexts for QA while published evidence stays literal. Search/reranking
+  retain their earlier representation after a field-format variant regressed.
+  `ipsis prepare` creates an independent project and an escaped HTML preview,
+  with optional indexing in a separate local collection that refuses recreation.
+  Parser, structure, fragmenter and store fingerprints prevent mixed-version
+  references. Unsupported structures produce notices. Table reading includes
+  external headers with cell references; structured answer rendering remains pending.
+
+- V2 has independent, validated retrieval/reranking/reading budgets (60/60/8/4
+  by default) and reader windows. QA can suggest highlights with source maps
+  but cannot replace passage ranking or certify a complete answer. Retrieved
+  evidence remains `related`; optional API highlights preserve disjoint references
+  without inventing contiguous source spans. V1 behavior and defaults remain unchanged.
 
 - Query log version 2 records complete answers, diagnostics and original
   execution traces: stage inputs/outputs and skips, admission, every retrieval
@@ -15,6 +69,29 @@ a minor change may break compatibility and is marked as such.
   fingerprints; failures retain partial traces without exception messages.
   `ipsis audit --trace <consulta_id>` inspects a recorded case without models
   or corpus access. Logging remains opt-in and version 1 logs remain readable.
+
+- **Terms graph built at indexing:** the index stores the groups of
+  equivalent names each corpus defines (`alias` in `.stats.json`): acronyms
+  ("Práctica Profesional I (P1)"), short glossary definitions ("P1: primera
+  práctica profesional del plan") and "en adelante / hereinafter /
+  doravante" referents. Ordinals and Roman numerals are normalized ("primera"
+  = "I" = "1"). A question that names a group in another way searches with
+  all its forms, the focus recognizes the group in the sentence or its
+  section title ("Evaluación de la P1"), and a different ordinal ("la tercera
+  práctica" against the P1) sets the focus to 0 (`ordinal_distinto`). Never
+  a hand-written list: every installation gets the groups of its own
+  documents. A new `duracion` intent ("¿cuánto dura…?", "how long is…")
+  requires a time unit in the answer, and glossary definition lines are only
+  read for definition questions (`patrones_definicion`). New terms bank
+  (`tests/datos/banco_terminos`, design and held-out validation).
+- **Table rows keep their header:** the parser adds the table header as the
+  last section level of each data row, so the focus sees "Pieza | Vida útil"
+  framing "Filtro | seis meses". The row text and its offsets are unchanged.
+- **The shown passage is the window the reader read:** in medium's semantic
+  reading, when the window starts with the previous sentence of the line, the
+  shown passage starts there too ("…antes del inicio de dicho período" comes
+  with the sentence naming the period). Decisions are unchanged; the slice is
+  literal (`ventana_mostrada`).
 
 - Terminal progress with real ingestion and query stages, elapsed time,
   cancellation and separate output for answers and citations. Folio now has

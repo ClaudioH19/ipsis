@@ -78,6 +78,9 @@ def test_el_wheel_incluye_las_licencias(tmp_path: Path):
     assert not any("herramientas" in n or "node_modules" in n for n in nombres)
     assert not any(n.startswith(("rag/", ".cache/", "tests/")) for n in nombres)
     assert "ipsis/cli/progreso.py" in nombres and "ipsis/nucleo/progreso.py" in nombres
+    # Un build incremental de setuptools puede conservar módulos eliminados.
+    codigo = {p.relative_to(RAIZ).as_posix() for p in (RAIZ / "ipsis").rglob("*.py")}
+    assert {n for n in nombres if n.endswith(".py")} == codigo
     # Todo recurso que no es Python (perfiles, idiomas, tonos, plantillas, estáticos…) viaja en el wheel.
     recursos = {p.relative_to(RAIZ).as_posix() for p in (RAIZ / "ipsis").rglob("*")
                 if p.is_file() and p.suffix not in (".py", ".pyc") and "__pycache__" not in p.parts}

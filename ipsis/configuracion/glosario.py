@@ -72,11 +72,26 @@ ASISTENTE = {
 
 MOTOR = {
     "config_version": _c("config_version"),
+    "pipeline": _c("pipeline"),
+    "v2": _c("v2", {"corregir_erratas": _c("spelling_corrections"),
+                     "max_caracteres_contexto": _c("max_context_chars"),
+                     "recuperar_n": _c("retrieve_n"), "rerank_candidatos": _c("rerank_candidates"),
+                     "rerank_k": _c("rerank_k"), "leer_m": _c("read_m"),
+                     "lote_reranker": _c("reranker_batch_size"),
+                     "presupuesto_consulta_ms": _c("query_budget_ms"),
+                     "max_tokens_reranker": _c("reranker_max_tokens"),
+                     "max_tokens_pasaje": _c("max_passage_tokens"), "stride": _c("stride"),
+                     "resultados_n": _c("results_limit"),
+                     "max_caracteres_resultado": _c("max_result_chars"),
+                     "vecinos_contexto": _c("context_neighbors"),
+                     "destacar_fragmentos": _c("qa_highlights")}),
     "recuperacion": _c("retrieval", {
         "modelo": _c("model"), "estrategia_chunking": _c("chunking_strategy"), "con_header": _c("with_header"),
         "modo": _c("mode", valores=MODOS_RECUPERACION), "top_k": _c("top_k"),
         "coleccion_base": _c("collection_base"), "qdrant_path": _c("qdrant_path"),
         "version_coleccion": _c("collection_version"),
+        "preparacion": _c("preparation", {"modo": _c("mode", valores={"estructural_v1": "structural_v1"}),
+            "max_palabras_unidad": _c("max_unit_words"), "palabras_hijo": _c("child_words")}),
     }),
     "componentes": _c("components", {
         nombre: _c(nombre) for nombre in ("parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
@@ -108,7 +123,8 @@ POSICIONES = {"abajo-derecha": "bottom-right", "abajo-izquierda": "bottom-left",
               "arriba-izquierda": "top-left", "incrustado": "embedded"}
 TAMANOS = {"compacto": "compact", "normal": "normal", "amplio": "wide"}
 LANZADORES = {"burbuja": "bubble", "pestana": "tab", "oculto": "hidden"}
-PRESETS = {"clasico": "classic", "contraste": "contrast", "minimal": "minimal", "editorial": "editorial"}
+PRESETS = {"clasico": "classic", "contraste": "contrast", "minimal": "minimal", "editorial": "editorial",
+           "buscador": "search", "buscador_compacto": "search_compact"}
 
 ESTILOS = {
     "preset": _c("preset", valores=PRESETS),

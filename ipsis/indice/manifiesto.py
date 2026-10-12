@@ -37,12 +37,18 @@ class ManifiestoIndice(BaseModel):
     version_payload: int = SCHEMA_VERSION
     n_chunks: int = Field(ge=0)
     inventario_entidades: list[str] = Field(default_factory=list)
+    preparacion: dict | None = None
     fecha: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
 
 def hash_corpus(payloads: list[dict]) -> str:
     """Huella del contenido indexado: hash de los hashes de cada fragmento."""
-    huellas = sorted(p["hash_texto"] for p in payloads)
+    if any(p.get("preparacion") for p in payloads):
+        huellas = sorted(json.dumps({k: p.get(k) for k in ("chunk_id", "hash_texto", "texto_embebido",
+            "parent_id", "offset_inicio", "offset_fin", "structure_hash", "preparacion")},
+            sort_keys=True, ensure_ascii=False) for p in payloads)
+    else:
+        huellas = sorted(p["hash_texto"] for p in payloads)
     return "sha256:" + hashlib.sha256("\n".join(huellas).encode("utf-8")).hexdigest()
 
 
@@ -59,7 +65,10 @@ def guardar_manifiesto(manifiesto: ManifiestoIndice, directorio: str = rutas.IND
     destino = ruta_manifiesto(manifiesto.coleccion, directorio)
     destino.parent.mkdir(parents=True, exist_ok=True)
     temporal = destino.with_suffix(".json.tmp")
-    temporal.write_text(manifiesto.model_dump_json(indent=1), encoding="utf-8")
+    datos = manifiesto.model_dump(mode="json")
+    if datos["preparacion"] is None:
+        datos.pop("preparacion")  # manifiestos legacy siguen siendo legibles por v1 anterior
+    temporal.write_text(json.dumps(datos, ensure_ascii=False, indent=1), encoding="utf-8")
     os.replace(temporal, destino)
     return destino
 

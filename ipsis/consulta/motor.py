@@ -27,17 +27,13 @@ from ipsis.nucleo.esquemas import (
 )
 from ipsis.consulta.etapas.redaccion import construir_mensaje_abstencion
 from ipsis.consulta.etapas.conversacional import respuesta_conversacional
-
-class MotorNoListo(RuntimeError):
-    pass
-
-
-class MotorSaturado(RuntimeError):
-    pass
+from ipsis.consulta.errores import MotorNoListo, MotorSaturado
 
 
 class Motor:
     """Coordina análisis, recuperación, abstención, evidencia y respuesta."""
+
+    pipeline = "v1"
 
     def __init__(
         self,
@@ -248,44 +244,15 @@ class Motor:
         respuesta_exacta: dict[str, Any] | None = None,
         bloques: list[dict[str, Any]] | None = None,
     ) -> AssistantResult:
-        estados_http = {
-            AssistantState.RESPUESTA_DIRECTA: "ok",
-            AssistantState.RELACIONADO: "relacionado",
-            AssistantState.CONVERSACIONAL: "conversacional",
-            AssistantState.SIN_RESPUESTA: "sin_respuesta",
-            AssistantState.NECESITA_ACLARACION: "sin_respuesta",
-        }
+        from ipsis.consulta.salida import construir_resultado
+
         alternativas = (diagnostico or {}).pop("_alternativas_http", None)
-        contrato = {
-            "estado": estados_http[estado],
-            "nivel_servicio": "normal",
-            "respuesta": mensaje,
-            # Los párrafos de ``respuesta``; abstenciones y saludos son un solo mensaje.
-            "bloques": bloques or [{"tipo": "mensaje", "texto": mensaje}],
-            "plan": plan,
-            "fragmentos": fragmentos_http or [],
-            "confianza": confianza,
-            "latencia_ms": latencia_ms,
-        }
-        nivel = self.nivel_confianza(estado)
-        if nivel is not None:
-            contrato["nivel_confianza"] = nivel
-        if respuesta_exacta is not None:
-            contrato["respuesta_exacta"] = respuesta_exacta
-        if alternativas:
-            contrato["alternativas"] = alternativas
-        if estado == AssistantState.CONVERSACIONAL and motivo.startswith("conversacional:"):
-            # Para el widget y el avatar: saludo, agradecimiento, despedida o capacidad.
-            contrato["categoria_conversacional"] = motivo.split(":", 1)[1]
-        detalles = self._diagnostico(**(diagnostico or {}))
-        detalles["contrato_http"] = contrato
-        return AssistantResult(
-            estado=estado,
-            motivo=motivo,
-            mensaje_usuario=mensaje,
-            evidencias=evidencias or [],
-            confianza=confianza,
-            diagnostico=detalles,
+        return construir_resultado(
+            estado=estado, motivo=motivo, mensaje=mensaje, confianza=confianza,
+            latencia_ms=latencia_ms, plan=plan, evidencias=evidencias,
+            fragmentos_http=fragmentos_http, respuesta_exacta=respuesta_exacta,
+            bloques=bloques, nivel_confianza=self.nivel_confianza(estado),
+            alternativas=alternativas, diagnostico=self._diagnostico(**(diagnostico or {})),
         )
 
     def nivel_confianza(self, estado: AssistantState) -> str | None:

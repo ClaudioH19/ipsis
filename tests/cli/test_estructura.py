@@ -10,6 +10,7 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
 COMANDOS_ACTUALES = {
+    ("prepare",),
     ("init",), ("load",), ("configure",), ("profile", "show"), ("profile", "set"), ("index",),
     ("models", "list"), ("models", "download"), ("models", "verify"), ("models", "export"),
     ("personality", "show"), ("personality", "validate"), ("personality", "tone", "list"),

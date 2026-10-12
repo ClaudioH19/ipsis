@@ -23,6 +23,12 @@
 
 ---
 
+**V2 is the default engine:** search returns up to three ranked literal sources
+per page, with excerpts, expandable context and further results on demand.
+New projects and configurations without a selector use v2. Explicit
+`pipeline: v1` in `config/engine.yaml` keeps the legacy answer engine described
+below. See [ranked sources](docs/methodology/fuentes-v2.md) for switching engines.
+
 **ipsis** is an assistant for your website that answers questions about your
 documents **by showing the literal text that supports the answer**, with its
 document, section and exact position. It does not write with a generative

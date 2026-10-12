@@ -97,4 +97,29 @@ class ComandoIndexar(Comando):
         return 0
 
 
-__all__ = ["ComandoCargar", "ComandoIndexar"]
+class ComandoPreparar(Comando):
+    nombre = "prepare"
+    ayuda = "prepare.help"
+
+    def registrar(self, parser):
+        parser.add_argument("--project", type=Path, default=Path.cwd(), help=t("prepare.project"))
+        parser.add_argument("--output", type=Path, required=True, help=t("prepare.output"))
+        parser.add_argument("--index", action="store_true", help=t("prepare.index"))
+
+    def ejecutar(self, args):
+        from ipsis.aplicacion.preparacion import preparar_proyecto
+
+        try:
+            r = preparar_proyecto(args.project, args.output, indexar=args.index)
+        except (ValueError, OSError, RuntimeError) as exc:
+            print(t("cli.error", error=exc))
+            return 1
+        print(t("prepare.done", documents=r.documentos, units=r.unidades, children=r.hijos))
+        print(t("prepare.preview", path=r.vista_previa))
+        print(t("prepare.project_done", path=r.proyecto))
+        for aviso in r.advertencias:
+            print(t("cli.warning", warning=aviso))
+        return 0
+
+
+__all__ = ["ComandoCargar", "ComandoIndexar", "ComandoPreparar"]

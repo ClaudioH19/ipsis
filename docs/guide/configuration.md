@@ -32,7 +32,7 @@ my-assistant/
 ### `assistant.yaml`
 
 ```yaml
-config_version: 5
+config_version: 7
 assistant_name: "Support assistant"
 domain_description: "the product manuals"
 language: en              # ISO 639 code: es, en, pt, pt-br...
@@ -49,7 +49,7 @@ posture:
 ## Versioning
 
 `assistant.yaml` and `engine.yaml` declare `config_version`. The current
-version is `5`.
+version is `7`.
 
 - Any `ipsis` command migrates an older project when it starts: files without
   `config_version` count as version 0 and move up step by step.
@@ -75,6 +75,22 @@ These functions return the internal names the engine uses; the files on disk
 use the English names shown in this guide.
 
 ## Components
+
+### Engine selection
+
+New projects and configurations without a selector use v2:
+
+```yaml
+config_version: 7
+pipeline: v2
+```
+
+V2 publishes ranked literal sources with continuation and does not execute
+v1 intent/focus rules, answer policies, conversation memory or calibration.
+See [ranked sources](../methodology/fuentes-v2.md) for its options.
+An explicit `pipeline: v1` remains valid and is preserved when loading older
+configuration. Change that line and restart the service to switch engines;
+changing only the engine does not require reindexing.
 
 The `components` section selects implementations by name:
 

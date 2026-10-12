@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import json
 import socket
 import threading
 import time
@@ -135,6 +136,157 @@ def test_teclado_dialogo_aria_y_captura_de_foco(navegador, servidor_widget):
 
 
 @pytest.mark.browser
+def test_fuentes_ordenadas_muestra_tarjetas_y_contexto_sin_html_crudo(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    fuente = 'Antes 😊.\nProducto A: <img src=x onerror="window.inyectado=true"> stock 10.\nDespués.'
+    publico = {"status": "related", "response_mode": "ranked_sources", "answer": "1 resultado para revisar.",
+        "answer_blocks": [{"type": "message", "text": "1 resultado para revisar."}],
+        "fragments": [{"chunk_id": "producto", "doc_title": "Inventario", "section": "Productos", "version": "1",
+            "source_name": "inventario.txt",
+            "rank": 1, "offset_start": 100, "offset_end": 100 + len(fuente), "text": fuente,
+            "match_start": 100 + fuente.index("Producto"), "match_end": 100 + fuente.index("\nDespués"),
+            "truncated": False}]}
+    page.route("**/ask", lambda ruta: ruta.fulfill(json=json.loads(json.dumps(publico))))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Send question").click()
+    tarjeta = page.locator(".rw-resultado")
+    expect(tarjeta).to_have_count(1)
+    expect(tarjeta.locator(".rw-resultado-titulo")).to_have_text("Productos")
+    expect(tarjeta.locator(".rw-resultado-contexto")).to_be_hidden()
+    expect(tarjeta.locator(".rw-resultado-vista")).to_be_visible()
+    expect(tarjeta.locator(".rw-resultado-vista")).to_contain_text("stock 10")
+    expect(tarjeta.locator(".rw-resultado-vista")).to_have_text(fuente[fuente.index("Producto"):fuente.index("\nDespués")])
+    tarjeta.locator(".rw-resultado-titulo").click()
+    expect(tarjeta.locator(".rw-resultado-origen").first).to_contain_text("inventario.txt")
+    assert page.locator(".rw-citas").count() == 0
+    expect(tarjeta.locator(".rw-resultado-contexto")).to_have_text(fuente)
+    assert tarjeta.locator("img").count() == 0 and page.evaluate("window.inyectado === undefined")
+    assert tarjeta.evaluate("e => e.getBoundingClientRect().right") <= 375
+    page.close()
+
+
+def _pagina_fuentes(inicio=0, continuar=True):
+    return {"status": "related", "response_mode": "ranked_sources", "answer": "Sources",
+            "answer_blocks": [{"type": "message", "text": "3 results"}],
+            "has_more": continuar, "continuation": "pagina-2" if continuar else None,
+            "fragments": [{"chunk_id": str(i), "doc_title": "Inventory", "section": "Products",
+                "version": "1", "rank": i + 1, "offset_start": 0, "offset_end": 8,
+                "text": "Stock 10", "match_start": 0, "match_end": 8} for i in range(inicio, inicio + 3)]}
+
+
+@pytest.mark.browser
+def test_tres_desplegables_continuacion_sin_doble_click_y_reformulacion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    peticiones = []
+
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        ruta.fulfill(json=_pagina_fuentes(3, False) if cuerpo.get("continuation") else _pagina_fuentes())
+
+    page.route("**/ask", responder)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    entrada = page.locator("#rw-input")
+    entrada.fill("stock")
+    page.get_by_role("button", name="Send question").click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-resultado-contexto").first).to_be_hidden()
+    summary = page.locator(".rw-resultado summary").first
+    summary.focus()
+    page.keyboard.press("Enter")
+    expect(page.locator(".rw-resultado-contexto").first).to_be_visible()
+    page.get_by_role("button", name="Show more results").evaluate("b => { b.click(); b.click(); }")
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    expect(page.get_by_text("No more results in this search. Try rephrasing your question.")).to_be_visible()
+    assert len(peticiones) == 2 and peticiones[1]["continuation"] == "pagina-2"
+    assert page.locator(".rw-msg-usuario").count() == 0
+    assert page.locator(".rw-resultado").evaluate_all("es => es.map(e => e.value)") == list(range(1, 7))
+    entrada.fill("delivery")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-busqueda-contador")).to_contain_text("delivery")
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    assert "continuation" not in peticiones[2] and peticiones[2]["question"] == "delivery"
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("error", [409, 503])
+def test_continuacion_expirada_o_reintento_de_error_temporal(navegador, servidor_widget, error):
+    page = navegador.new_page()
+    peticiones = []
+
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        if len(peticiones) == 2:
+            ruta.fulfill(status=error, json={"detail": "retry"})
+        else:
+            ruta.fulfill(json=_pagina_fuentes(3, False) if cuerpo.get("continuation") else _pagina_fuentes())
+
+    page.route("**/ask", responder)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    entrada = page.locator("#rw-input")
+    entrada.fill("stock")
+    page.get_by_role("button", name="Send question").click()
+    mas = page.get_by_role("button", name="Show more results")
+    mas.click()
+    expect(entrada).to_be_enabled()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    if error == 409:
+        expect(mas).to_be_disabled()
+        expect(page.get_by_role("region", name="Search results").get_by_text(
+            "This search has expired. Submit your question again.")).to_be_visible()
+        entrada.fill("stock")
+        page.get_by_role("button", name="Search", exact=True).click()
+        expect(mas).to_be_enabled()
+        expect(page.locator(".rw-resultado")).to_have_count(3)
+        assert "continuation" not in peticiones[2]
+    else:
+        expect(mas).to_be_enabled()
+        mas.click()
+        expect(page.locator(".rw-resultado")).to_have_count(6)
+        assert peticiones[1]["continuation"] == peticiones[2]["continuation"]
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("preset", ["classic", "minimal", "editorial", "contrast", "search", "search_compact"])
+def test_busqueda_tiene_barra_arriba_extractos_visibles_y_teclado(navegador, servidor_widget, preset):
+    page = navegador.new_page(viewport={"width": 375, "height": 667}, color_scheme="dark" if preset == "contrast" else "light")
+    page.route("**/config", lambda r: r.fulfill(json={
+        "assistant_name": "Library", "response_mode": "ranked_sources", "greeting": "Hello",
+        "preset": preset, "density": "compact" if preset == "search_compact" else "comfortable"}))
+    publico = _pagina_fuentes()
+    publico["fragments"][0].update(section="Inventory > Products", text="Pr\u00e1ctica: stock 10.",
+                                  offset_end=19, match_end=19, source_name="inventory.txt")
+    page.route("**/ask", lambda r: r.fulfill(json=publico))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Library").click()
+    entrada = page.get_by_label("Search your documents")
+    expect(page.get_by_text("Enter a question or keywords to find information.")).to_be_visible()
+    assert page.evaluate("Array.from(document.querySelector('ipsis-chat').shadowRoot.querySelectorAll('.rw-form,.rw-mensajes')).map(e => e.className)") == ["rw-form", "rw-mensajes"]
+    entrada.fill("practica stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    resultados = page.get_by_role("region", name="Search results")
+    expect(resultados.locator(".rw-resultado")).to_have_count(3)
+    expect(entrada).to_have_value("practica stock")
+    expect(resultados.locator(".rw-resultado-vista").first).to_be_visible()
+    expect(resultados.locator(".rw-resultado-vista strong").first).to_have_text("Pr\u00e1ctica")
+    assert resultados.locator(".rw-msg-usuario").count() == 0
+    titulo = resultados.locator(".rw-resultado-titulo").first
+    titulo.focus()
+    page.keyboard.press("Enter")
+    expect(titulo).to_have_attribute("aria-expanded", "true")
+    expect(resultados.locator(".rw-resultado-contexto").first).to_be_visible()
+    assert titulo.evaluate("e => e.getBoundingClientRect().right") <= 375
+    page.close()
+
+
+@pytest.mark.browser
 def test_movil_ocupa_la_ventana_completa(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})
     page.goto(servidor_widget)
@@ -173,7 +325,7 @@ def test_error_de_red_es_claro_y_permite_reintentar(navegador, servidor_widget):
     entrada.fill("¿Hay conexión?")
     page.get_by_role("button", name="Send question").click()
 
-    expect(page.get_by_text("Could not reach the assistant. Check your connection and try again.")).to_be_visible()
+    expect(page.get_by_role("log").get_by_text("Could not reach the assistant. Check your connection and try again.")).to_be_visible()
     expect(entrada).to_be_enabled()
     expect(entrada).to_be_focused()
     page.close()

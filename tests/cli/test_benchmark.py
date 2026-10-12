@@ -178,7 +178,26 @@ def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, ca
 @pytest.mark.slow
 @pytest.mark.modelos("intfloat/multilingual-e5-small", "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
                      "dewdev/mdeberta-v3-base-squad2-onnx")
-def test_benchmark_real_light_y_medium_sobre_el_mismo_banco(tmp_path, capsys):
+def test_benchmark_real_light_y_medium_sobre_el_mismo_banco(tmp_path, capsys, monkeypatch):
+    # Este banco compara la cascada y lectura de v1; el default del producto es v2.
+    from apoyo import escribir_proyecto, leer_proyecto
+    from ipsis.aplicacion import benchmark
+
+    evaluar = benchmark._evaluar_en_proyecto
+
+    def evaluar_v1(perfil, manifiesto, banco, main, experimentos, ajustes=None):
+        def main_v1(argumentos):
+            codigo = main(argumentos)
+            if argumentos[0] == "init" and codigo == 0:
+                archivo = Path("config/engine.yaml")
+                cfg = leer_proyecto(archivo)
+                cfg["pipeline"] = "v1"
+                escribir_proyecto(archivo, cfg)
+            return codigo
+
+        return evaluar(perfil, manifiesto, banco, main_v1, experimentos, ajustes)
+
+    monkeypatch.setattr(benchmark, "_evaluar_en_proyecto", evaluar_v1)
     salida = tmp_path / "reportes"
     codigo = main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
                    "--output", str(salida)])

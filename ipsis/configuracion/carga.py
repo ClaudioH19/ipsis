@@ -121,6 +121,12 @@ def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perf
         recuperacion["modelo"] = instalacion.modelos.denso
     if instalacion.recuperacion_modo:
         recuperacion["modo"] = instalacion.recuperacion_modo
+    if recuperacion.get("preparacion", {}).get("modo") == "estructural_v1":
+        recuperacion["estrategia_chunking"] = "CH-STRUCT"
+        recuperacion["con_header"] = True
+        recuperacion["coleccion_base"] += "_estructura1"
+        recuperacion["qdrant_path"] = str(Path(recuperacion["qdrant_path"]).with_name(
+            Path(recuperacion["qdrant_path"]).name + "-estructura1"))
     return recuperacion
 
 

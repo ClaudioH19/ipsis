@@ -301,7 +301,7 @@ def _modelos(ctx: _Contexto) -> ChequeoDoctor:
 
     if ctx.instalacion is None:
         return _no_evaluado("modelos", t("check.dep_profile"))
-    estados = estado_modelos(ctx.instalacion)
+    estados = estado_modelos(ctx.instalacion, usar_pipeline=True)
     detalles = [t("check.model_available" if e.en_cache else "check.model_missing", role=t(f"models.role_{e.rol}"),
                   model=e.id_hf) for e in estados]
     faltan = [e.id_hf for e in estados if not e.en_cache]

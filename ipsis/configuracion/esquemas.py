@@ -4,11 +4,11 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ipsis.recursos.mensajes import t
 
-CONFIG_VERSION = 5
+CONFIG_VERSION = 7
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
@@ -49,6 +49,12 @@ class AsistenteConfig(ConfiguracionEstricta):
     postura: PosturaConfig = Field(default_factory=PosturaConfig)
 
 
+class PreparacionConfig(ConfiguracionEstricta):
+    modo: Literal["legacy", "estructural_v1"] = "legacy"
+    max_palabras_unidad: int = Field(default=400, ge=32, le=4000)
+    palabras_hijo: int = Field(default=80, ge=16, le=1000)
+
+
 class RecuperacionConfig(ConfiguracionEstricta):
     modelo: str | None = None  # si falta, el modelo denso del perfil
     estrategia_chunking: str = Field(min_length=1)
@@ -58,6 +64,7 @@ class RecuperacionConfig(ConfiguracionEstricta):
     coleccion_base: str = Field(min_length=1)
     qdrant_path: str = ".ipsis/index/qdrant"
     version_coleccion: int = Field(default=1, ge=1)
+    preparacion: PreparacionConfig = Field(default_factory=PreparacionConfig)
 
 
 class ComponentesConfig(ConfiguracionEstricta):
@@ -113,8 +120,38 @@ class RedaccionConfig(ConfiguracionEstricta):
     incluir_apertura: bool = True
 
 
+class PipelineV2Config(ConfiguracionEstricta):
+    """Fuentes ordenadas, contexto de lectura y destacado QA optativo."""
+
+    corregir_erratas: bool = True
+    max_caracteres_contexto: int = Field(default=12000, ge=256, le=100000)
+    recuperar_n: int = Field(default=60, ge=1, le=500)
+    rerank_candidatos: int = Field(default=60, ge=1, le=500)
+    rerank_k: int = Field(default=8, ge=1, le=500)  # Compatibilidad; ya no recorta el ranking publicado.
+    lote_reranker: int = Field(default=2, ge=1, le=32)
+    max_tokens_reranker: int = Field(default=256, ge=64, le=8192)
+    presupuesto_consulta_ms: int = Field(default=2500, ge=1, le=30000)
+    leer_m: int = Field(default=4, ge=1, le=100)
+    resultados_n: int = Field(default=3, ge=1, le=50)
+    max_caracteres_resultado: int = Field(default=16000, ge=256, le=100000)
+    vecinos_contexto: int = Field(default=1, ge=0, le=5)
+    destacar_fragmentos: bool = False
+    max_tokens_pasaje: int = Field(default=384, ge=64, le=512)
+    stride: int = Field(default=128, ge=0, le=256)
+
+    @model_validator(mode="after")
+    def presupuestos(self):
+        if self.rerank_candidatos > self.recuperar_n:
+            raise ValueError("v2 requiere rerank_candidates <= retrieve_n")
+        if self.stride >= self.max_tokens_pasaje - 32:
+            raise ValueError("v2 requiere stride menor que la ventana útil de lectura")
+        return self
+
+
 class MotorConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
+    pipeline: Literal["v1", "v2"] = "v2"
+    v2: PipelineV2Config = Field(default_factory=PipelineV2Config)
     recuperacion: RecuperacionConfig
     componentes: ComponentesConfig = Field(default_factory=ComponentesConfig)
     qdrant: QdrantConfig = Field(default_factory=QdrantConfig)
@@ -210,6 +247,19 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
             # traduce al cargar, así que en memoria no cambia nada.
             salida["config_version"] = 5
             version = 5
+        elif version == 5:
+            if nombre == "motor":
+                # La selección explícita se conserva; sin selector se usa v2.
+                salida.setdefault("pipeline", "v2")
+            salida["config_version"] = 6
+            version = 6
+        elif version == 6:
+            if nombre == "motor" and isinstance(salida.get("v2"), dict):
+                # El experimento se retiró; conservar los otros presupuestos.
+                salida["v2"].pop("consejo", None)
+                salida["v2"].pop("council", None)
+            salida["config_version"] = 7
+            version = 7
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(t("core.no_migration", name=nombre, version=version))
     if nombre == "asistente" and salida.get("perfil") == "heavy":

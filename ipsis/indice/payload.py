@@ -35,6 +35,9 @@ def chunk_desde_payload(payload: dict[str, Any]) -> ChunkRecord:
     datos.setdefault("texto_embedding", datos.get("texto_fuente", ""))
     if datos.get("seccion_path") is None:
         datos["seccion_path"] = []
+    for campo in ("parent_id", "prev_id", "next_id"):
+        if campo in payload:
+            datos[campo] = payload[campo]
     return ChunkRecord(**datos, metadata=metadata)
 
 
@@ -43,6 +46,9 @@ def payload_desde_chunk(chunk: ChunkRecord) -> dict[str, Any]:
     for original, tipado in _RENOMBRADOS.items():
         payload[original] = getattr(chunk, tipado)
     payload.update(chunk.metadata)
+    for campo in ("parent_id", "prev_id", "next_id"):
+        if getattr(chunk, campo) is not None:
+            payload[campo] = getattr(chunk, campo)
     return payload
 
 

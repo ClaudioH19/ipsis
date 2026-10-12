@@ -1,6 +1,6 @@
 # Assistant identity. Created by `ipsis init`; edit it here or with
 # `ipsis configure key=value`.
-config_version: 5
+config_version: 7
 assistant_name: "Document assistant"
 domain_description: "the loaded documents"
 language: en

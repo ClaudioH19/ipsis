@@ -288,6 +288,10 @@ class EtapaLectura(_Etapa):
                 mejor = mejor.model_copy(update={"inicio": ini_completa, "fin": fin_completa,
                                                   "texto": chunk.texto_fuente[ini_completa:fin_completa]})
         ini, fin = oracion_que_contiene(chunk.texto_fuente, mejor.inicio, mejor.fin)
+        if semanticas and ventanas[mejor.indice_pasaje][0] < ini:
+            # La ventana semántica trae la oración anterior de la línea: «…de dicho período»
+            # se entiende con la oración que nombra el período. Se muestra, no se decide con ella.
+            ctx.inicio_ventana_lector = chunk.offset_inicio + ventanas[mejor.indice_pasaje][0]
         ctx.evidencia_lector = EvidenceSpan(
             doc_id=chunk.doc_id,
             chunk_id=chunk.chunk_id,

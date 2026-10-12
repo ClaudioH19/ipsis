@@ -178,7 +178,7 @@ def test_proyecto_sano_con_calibracion_y_golden_vigentes_queda_todo_ok(proyecto)
 # --- todos los fallos a la vez ------------------------------------------------------------------
 def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     proyecto("medium")
-    instalar(E5_SMALL)  # faltan reranker y lector
+    instalar(E5_SMALL)  # falta el reranker; v2 no usa lector QA por defecto
     cargar_manual()
     importar_golden()
     indexar(E5_BASE)  # índice de otro modelo denso
@@ -189,7 +189,7 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
                           "personalidad": "ok", "modo": "ok"}
-    assert r.chequeo("modelos").datos["faltantes"] == [MMARCO, LECTOR]
+    assert r.chequeo("modelos").datos["faltantes"] == [MMARCO]
     assert r.chequeo("modelos").acciones == ("ipsis models download",)
     assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis index",)
     assert "obsoleta" in r.chequeo("calibracion").mensaje
@@ -303,6 +303,18 @@ def test_light_solo_requiere_el_denso(proyecto):
     instalar(E5_SMALL)
     modelos = reporte().chequeo("modelos")
     assert modelos.estado.value == "ok" and len(modelos.detalles) == 1
+
+
+def test_default_v2_medium_no_exige_qa_pero_v1_explicito_si(proyecto):
+    proyecto("medium")
+    instalar(E5_SMALL, MMARCO)
+    assert leer_proyecto(Path("config/engine.yaml"))["pipeline"] == "v2"
+    modelos = reporte().chequeo("modelos")
+    assert modelos.estado.value == "ok" and len(modelos.detalles) == 2
+    editar("config/engine.yaml", pipeline="v1")
+    assert reporte().chequeo("modelos").datos["faltantes"] == [LECTOR]
+    editar("config/engine.yaml", pipeline="v2", v2={"destacar_fragmentos": True})
+    assert reporte().chequeo("modelos").datos["faltantes"] == [LECTOR]
 
 
 # --- índice -----------------------------------------------------------------------------------

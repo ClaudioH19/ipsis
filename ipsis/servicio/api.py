@@ -28,9 +28,11 @@ from ipsis.aplicacion.consulta import (
     Motor,
     MotorNoListo,
     MotorSaturado,
+    ContinuacionInvalida,
     construir_motor_del_proyecto,
     recargar_presentacion,
 )
+from ipsis.nucleo.contratos import QueryEngine
 from ipsis.aplicacion.modo import ModoServicio, modo_servicio
 from ipsis.aplicacion.proyecto import (
     configuracion_asistente,
@@ -49,7 +51,7 @@ from ipsis.servicio.seguridad import (
 
 _DIR_ESTATICOS = Path(__file__).resolve().parent / "estaticos"
 _log = logging.getLogger(__name__)
-ConstructorMotor = Callable[[], Motor]
+ConstructorMotor = Callable[[], QueryEngine]
 
 
 class Filtros(BaseModel):
@@ -61,7 +63,8 @@ class PeticionConsulta(BaseModel):
     question: str
     session_id: str
     filters: Filtros = Field(default_factory=Filtros)
-    deadline_ms: int = 1500
+    deadline_ms: Optional[int] = Field(default=None, ge=1, le=30000)
+    continuation: Optional[str] = Field(default=None, min_length=1, max_length=128)
 
 
 class Fragmento(BaseModel):
@@ -74,6 +77,13 @@ class Fragmento(BaseModel):
     offset_end: int
     text: str
     score: float
+    score_kind: Optional[Literal["reranker_logit", "retrieval_score"]] = None
+    doc_id: Optional[str] = None
+    source_name: Optional[str] = None
+    rank: Optional[int] = None
+    match_start: Optional[int] = None
+    match_end: Optional[int] = None
+    truncated: Optional[bool] = None
 
 
 class Confianza(BaseModel):
@@ -91,6 +101,23 @@ class RespuestaExacta(BaseModel):
     offset_end: int
 
 
+class ReferenciaDestacado(BaseModel):
+    element_id: str
+    cell_id: Optional[str] = None
+    offset_start: int
+    offset_end: int
+    text: str
+    locator: str
+    role: str
+
+
+class DestacadoRespuesta(BaseModel):
+    """Propuesta del lector, sin certificación de pertinencia o completitud."""
+
+    type: Literal["possible_fragment"] = "possible_fragment"
+    references: list[ReferenciaDestacado]
+
+
 class BloqueRespuesta(BaseModel):
     """Un párrafo de ``answer``. ``passage`` es texto literal del documento;
     ``lead`` y ``message`` son frases fijas del tono."""
@@ -100,12 +127,16 @@ class BloqueRespuesta(BaseModel):
     connector: Optional[str] = None
     citation: Optional[str] = None
     chunk_id: Optional[str] = None
+    highlights: list[DestacadoRespuesta] = Field(default_factory=list)
 
 
 class RespuestaConsulta(BaseModel):
     status: Literal["ok", "related", "conversational", "no_answer", "degraded", "saturated"]
     service_level: Literal["normal", "medium", "high"]
     answer: Optional[str]
+    response_mode: Optional[Literal["ranked_sources"]] = None
+    continuation: Optional[str] = None
+    has_more: Optional[bool] = None
     # ``answer`` por párrafos, para pintarlo con estructura: unirlos con una
     # línea en blanco (conector + texto + cita) reproduce ``answer``.
     answer_blocks: list[BloqueRespuesta] = Field(default_factory=list)
@@ -144,13 +175,30 @@ _BLOQUES = {"encabezado": "lead", "pasaje": "passage", "mensaje": "message"}
 def respuesta_publica(contrato: dict) -> dict:
     """``diagnostico["contrato_http"]`` del motor con los nombres del contrato público."""
     def fragmento(f: dict) -> dict:
-        return {"chunk_id": f["chunk_id"], "doc_title": f["doc_titulo"], "section": f["seccion"],
+        salida = {"chunk_id": f["chunk_id"], "doc_title": f["doc_titulo"], "section": f["seccion"],
                 "version": f["version"], "page": f.get("pagina"), "offset_start": f["offset_inicio"],
                 "offset_end": f["offset_fin"], "text": f["texto"], "score": f["score"]}
+        for interno, externo in (("doc_id", "doc_id"), ("rango", "rank"),
+                ("archivo_fuente", "source_name"),
+                ("offset_coincidencia_inicio", "match_start"), ("offset_coincidencia_fin", "match_end"),
+                ("truncado", "truncated")):
+            if interno in f:
+                salida[externo] = f[interno]
+        if "tipo_puntaje" in f:
+            salida["score_kind"] = {"logit_reranker": "reranker_logit",
+                                    "recuperacion": "retrieval_score"}[f["tipo_puntaje"]]
+        return salida
 
     def bloque(b: dict) -> dict:
-        return {"type": _BLOQUES[b["tipo"]], "text": b["texto"], "connector": b.get("conector"),
-                "citation": b.get("cita"), "chunk_id": b.get("chunk_id")}
+        salida = {"type": _BLOQUES[b["tipo"]], "text": b["texto"], "connector": b.get("conector"),
+                  "citation": b.get("cita"), "chunk_id": b.get("chunk_id")}
+        if b.get("destacados"):
+            salida["highlights"] = [{"type": "possible_fragment", "references": [
+                {"element_id": r["element_id"], "cell_id": r.get("cell_id"),
+                 "offset_start": r["offset_inicio"], "offset_end": r["offset_fin"],
+                 "text": r["texto"], "locator": r["localizador"], "role": r["rol"]}
+                for r in d["referencias"]]} for d in b["destacados"]]
+        return salida
 
     confianza = contrato.get("confianza") or {}
     bloques = contrato.get("bloques")
@@ -177,6 +225,11 @@ def respuesta_publica(contrato: dict) -> dict:
         publica["alternatives"] = [fragmento(f) for f in contrato["alternativas"]]
     if contrato.get("categoria_conversacional"):
         publica["conversational_category"] = contrato["categoria_conversacional"]
+    if contrato.get("modo_respuesta") == "fuentes_ordenadas":
+        publica["response_mode"] = "ranked_sources"
+        if "continuation" in contrato:
+            publica["continuation"] = contrato["continuation"]
+            publica["has_more"] = contrato["has_more"]
     return publica
 
 
@@ -184,6 +237,7 @@ class ConfigWidget(BaseModel):
     assistant_name: str
     domain_description: str
     greeting: str
+    response_mode: Optional[Literal["ranked_sources"]] = None
     preset: str = "classic"
     density: Literal["comfortable", "compact"] = "comfortable"
     citations: Literal["accordion", "list"] = "accordion"  # las citas nunca se ocultan
@@ -202,7 +256,7 @@ class ConfigWidget(BaseModel):
 
 @dataclass
 class EstadoAplicacion:
-    motor: Motor
+    motor: QueryEngine
     constructor_motor: ConstructorMotor | None
     claves_widget: list[str]
     limitador: LimitadorPeticiones
@@ -218,7 +272,7 @@ class EstadoAplicacion:
     candado_recarga: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
 
-def _construir_motor_produccion() -> Motor:
+def _construir_motor_produccion() -> QueryEngine:
     return construir_motor_del_proyecto()
 
 
@@ -242,7 +296,7 @@ def recargar_motor(servicio: EstadoAplicacion, *, reindexar: bool = False) -> No
             motor.calentar()
             servicio.motor = motor
             servicio.abstencion_calibrada = getattr(motor, "abstencion_calibrada",
-                                                    motor.politica_abstencion is not None)
+                                                    bool(getattr(motor, "politica_abstencion", None)))
             servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
             servicio.listo, servicio.error_arranque = True, None
             servicio.tarea = {"state": "done", "reindex": reindexar}
@@ -323,7 +377,7 @@ def _diagnostico_cacheado(servicio) -> dict | None:
 
 
 def crear_app(
-    motor: Motor | None = None,
+    motor: QueryEngine | None = None,
     *,
     constructor_motor: ConstructorMotor | None = None,
     modo: ModoServicio | None = None,
@@ -359,7 +413,7 @@ def crear_app(
             servicio.abstencion_calibrada = getattr(
                 servicio.motor,
                 "abstencion_calibrada",
-                servicio.motor.politica_abstencion is not None,
+                bool(getattr(servicio.motor, "politica_abstencion", None)),
             )
             # El diagnóstico se calcula aquí, antes de declararse listo: /ready nunca lo espera.
             servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
@@ -469,6 +523,7 @@ def crear_app(
             "ready": True,
             "mode": modo.publico,
             "backend": motor_activo.backend,
+            "pipeline": getattr(motor_activo, "pipeline", "v1"),
             "collection": getattr(coleccion, "nombre", motor_activo.backend),
             "n_chunks": motor_activo.n_chunks(),
             "n_inventory_entities": len(motor_activo.inventario_entidades()),
@@ -490,13 +545,24 @@ def crear_app(
         dominio = configuracion_asistente()
         idioma = dominio.get("idioma", "es")
         interfaz = interfaz_del_idioma(idioma)
+        es_enrutador = getattr(_estado(request).motor, "pipeline", "v1") == "v2"
+        microcopy = microcopia_del_widget(idioma, dominio.get("nombre_asistente") or
+                                         interfaz.get("default_assistant_name", ""))
+        if es_enrutador:
+            interfaz = dict(interfaz)
+            interfaz["placeholder"] = interfaz["search_placeholder"]
+            interfaz["subtitle"] = interfaz["search_subtitle"]
+            # El saludo de búsqueda no promete una respuesta única, independientemente del tono.
+            microcopy = {**microcopy, "welcome": [interfaz["search_greeting"]]}
         nombre = dominio.get("nombre_asistente") or interfaz.get("default_assistant_name", "")
         estilos = cargar_estilos()
         presentacion = presentacion_publica(estilos)
         return ConfigWidget(
             assistant_name=nombre,
             domain_description=dominio.get("descripcion_dominio") or interfaz.get("default_domain_description", ""),
-            greeting=_estado(request).motor.respuesta_conversacional("greeting"),
+            greeting=interfaz["search_greeting"] if es_enrutador else
+                     _estado(request).motor.respuesta_conversacional("greeting"),
+            response_mode="ranked_sources" if es_enrutador else None,
             preset=presentacion["preset"],
             density=presentacion["density"],
             citations=citas_presentacion(presentacion["citations"]),
@@ -504,7 +570,7 @@ def crear_app(
             text_align=presentacion["text_align"],
             language=idioma,
             interface=interfaz,
-            microcopy=microcopia_del_widget(idioma, nombre),
+            microcopy=microcopy,
             placement=ubicacion_publica(ubicacion_widget(estilos)),
             avatar=config_avatar_publica(),
         )
@@ -555,14 +621,32 @@ def crear_app(
         _refrescar(servicio)
         with capturar_traza(activo=servicio.registro is not None):
             try:
-                resultado = servicio.motor.consultar(peticion.question, peticion.session_id)
-                respuesta = RespuestaConsulta.model_validate(respuesta_publica(resultado.diagnostico["contrato_http"]))
+                if peticion.continuation is not None:
+                    continuar = getattr(servicio.motor, "continuar", None)
+                    if not callable(continuar):
+                        raise HTTPException(status_code=400, detail="engine does not support search continuation")
+                    if callable(getattr(servicio.motor, "consultar_con_presupuesto", None)):
+                        resultado = continuar(peticion.question, peticion.session_id,
+                                              peticion.continuation, deadline_ms=peticion.deadline_ms)
+                    else:
+                        resultado = continuar(peticion.question, peticion.session_id, peticion.continuation)
+                else:
+                    consultar = getattr(servicio.motor, "consultar_con_presupuesto", None)
+                    if callable(consultar):
+                        resultado = consultar(peticion.question, peticion.session_id,
+                                              deadline_ms=peticion.deadline_ms)
+                    else:
+                        resultado = servicio.motor.consultar(peticion.question, peticion.session_id)
+                contrato = resultado.contrato_http or resultado.diagnostico["contrato_http"]
+                respuesta = RespuestaConsulta.model_validate(respuesta_publica(contrato))
             except Exception as exc:
                 if servicio.registro is not None:
                     try:
                         servicio.registro.registrar_error(peticion.question, exc)
                     except (OSError, TypeError, ValueError) as error_registro:
                         _log.warning(t("runtime.log_query_log", error=error_registro))
+                if isinstance(exc, ContinuacionInvalida):
+                    raise HTTPException(status_code=409, detail=str(exc)) from exc
                 if isinstance(exc, MotorNoListo):
                     raise HTTPException(status_code=503, detail="service not ready, see /ready") from exc
                 if isinstance(exc, MotorSaturado):

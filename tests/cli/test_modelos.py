@@ -70,6 +70,14 @@ def test_light_lista_solo_el_denso(hub, capsys):
     assert _descargas(hub) == []  # listar nunca descarga
 
 
+def test_default_v2_descarga_solo_los_modelos_que_ejecuta(hub):
+    _proyecto("medium")
+    assert leer_proyecto(Path("config/engine.yaml"))["pipeline"] == "v2"
+    assert main(["models", "download"]) == 0
+    assert _descargas(hub) == [E5_SMALL, MMARCO]
+    assert _perfil_activo() == "medium"
+
+
 def test_medium_lista_sus_roles_con_datos_del_catalogo_y_estado_de_cache(hub, capsys, monkeypatch):
     from ipsis.modelos.catalogo import obtener
 
@@ -80,8 +88,8 @@ def test_medium_lista_sus_roles_con_datos_del_catalogo_y_estado_de_cache(hub, ca
     assert main(["models", "list"]) == 0
     salida = capsys.readouterr().out
     bloques = {b.split(":")[0]: b for b in salida.split("\n\n")[1:] if not b.startswith(" ")}
-    assert set(bloques) == {"denso", "reranker", "lector"}
-    for rol, id_hf in zip(("denso", "reranker", "lector"), MEDIUM):
+    assert set(bloques) == {"denso", "reranker"}
+    for rol, id_hf in zip(("denso", "reranker"), MEDIUM[:2]):
         spec = obtener(id_hf)
         assert id_hf in bloques[rol] and spec.licencia in bloques[rol]
         assert spec.archivo_onnx("aarch64") in bloques[rol]  # el ONNX de la CPU actual
@@ -102,17 +110,29 @@ def test_descargar_usa_el_perfil_activo_y_la_frontera_de_cache(hub, capsys, tmp_
 
     _proyecto("medium")
     assert main(["models", "download"]) == 0
-    assert _descargas(hub) == MEDIUM
+    assert _descargas(hub) == MEDIUM[:2]
     for llamada in (ll for ll in hub if not ll["local_files_only"]):
         assert llamada["allow_patterns"] == obtener(llamada["repo_id"]).patrones()
         assert llamada["cache_dir"] == str(tmp_path / "cache")  # caché global, no el proyecto
     salida = capsys.readouterr().out
-    assert salida.count("-- descargado") == 3 and "Licencia: Apache-2.0" in salida
+    assert salida.count("-- descargado") == 2 and "Licencia: Apache-2.0" in salida
     assert not Path("modelos").exists()
 
     hub.clear()
     assert main(["models", "download"]) == 0  # todo está: no se vuelve a descargar
-    assert _descargas(hub) == [] and capsys.readouterr().out.count("ya disponible") == 3
+    assert _descargas(hub) == [] and capsys.readouterr().out.count("ya disponible") == 2
+
+
+def test_v1_explicito_conserva_la_descarga_del_lector(hub):
+    from apoyo import escribir_proyecto
+
+    _proyecto("medium")
+    archivo = Path("config/engine.yaml")
+    cfg = leer_proyecto(archivo)
+    cfg["pipeline"] = "v1"
+    escribir_proyecto(archivo, cfg)
+    assert main(["models", "download"]) == 0
+    assert _descargas(hub) == MEDIUM
 
 
 def test_descargar_otro_perfil_no_cambia_el_activo_y_reutiliza_lo_compartido(hub, capsys):
@@ -205,7 +225,7 @@ def test_inferencia_invalida_identifica_al_modelo(hub, capsys, monkeypatch):
     lineas = capsys.readouterr().out.splitlines()
     fila = next(i for i, linea in enumerate(lineas) if MMARCO in linea)
     assert lineas[fila].endswith("FALLA") and "puntaje inválido" in lineas[fila + 1]
-    assert sum(linea.endswith(" OK") for linea in lineas) == 2
+    assert sum(linea.endswith(" OK") for linea in lineas) == 1
 
 
 # --- exportar -----------------------------------------------------------------------------
@@ -304,4 +324,4 @@ def test_verificar_medium_con_los_modelos_reales(tmp_path, capsys, monkeypatch):
     _proyecto("medium")
     capsys.readouterr()
     assert main(["models", "verify"]) == 0
-    assert capsys.readouterr().out.count(" OK") == 3
+    assert capsys.readouterr().out.count(" OK") == 2

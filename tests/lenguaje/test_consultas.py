@@ -23,7 +23,8 @@ def es():
     ("¿Qué documentos se necesitan?", "requisito"),
     ("¿Cómo se pide un reembolso?", "procedimiento"),
     ("¿Desde qué monto se necesita una Resolución?", "umbral"),
-    ("¿Cuánto dura la garantía?", None),  # sin intención: todo sigue como antes
+    ("¿Cuánto dura la garantía?", "duracion"),
+    ("¿Cuál es el horario de la biblioteca?", None),  # sin intención: todo sigue como antes
 ])
 def test_reconoce_la_relacion_que_se_pregunta(es, pregunta, intencion):
     assert comprender(pregunta, es).intencion == intencion
@@ -340,3 +341,21 @@ def test_los_verbos_de_apoyo_no_son_tema(idioma, pregunta, apoyo):
 
     paquete = cargar_paquete(idioma)
     assert terminos(apoyo, paquete)[0] in terminos_genericos(paquete)
+
+
+@pytest.mark.parametrize(("idioma", "pregunta", "definicion", "plazo"), [
+    ("es", "cuanto dura la primera practica",
+     "La práctica es una actividad formativa en una empresa.", "La práctica dura cuatro semanas."),
+    ("en", "How long is the internship?",
+     "The internship is a training activity in a company.", "The internship lasts four weeks."),
+    ("pt", "quanto dura o estagio",
+     "O estágio é uma atividade formativa numa empresa.", "O estágio dura quatro semanas."),
+])
+def test_una_pregunta_de_duracion_exige_un_plazo_en_la_respuesta(idioma, pregunta, definicion, plazo):
+    """«¿Cuánto dura…?» se responde con un plazo, no con la oración que define el término."""
+    from ipsis.consulta.etapas.seleccion import forma_ausente
+
+    paquete = cargar_paquete(idioma)
+    assert comprender(pregunta, paquete).intencion == "duracion"
+    assert forma_ausente(paquete, pregunta, definicion)
+    assert not forma_ausente(paquete, pregunta, plazo)

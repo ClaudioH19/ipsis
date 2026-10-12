@@ -103,6 +103,7 @@ def test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor():
             "ready": True,
             "mode": "production",
             "backend": "memoria",
+            "pipeline": "v1",
             "collection": "memoria",
             "n_chunks": 4,
             "n_inventory_entities": 1,
@@ -299,6 +300,7 @@ def test_motor_desde_configuracion_resuelve_runtime_y_usa_clasificador(
     registro.registrar("evidence_verifier", "fake", object)
     registro.registrar("response_renderer", "fake", object)
 
+    cfg["pipeline"] = "v1"  # este contrato verifica las etapas del motor anterior
     motor = construir_motor(
         cfg,
         cfg_dominio=cargar_dominio(),

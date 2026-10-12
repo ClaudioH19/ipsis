@@ -220,7 +220,7 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
                     usar_texto_embebido: bool = True,
                     codificador=None, n_version: int = 1, sufijo_coleccion: str | None = None,
                     client=None, modo: str | None = None, url_servidor: str | None = None,
-                    paquete=None):
+                    paquete=None, permitir_recrear: bool = True):
     """Codifica los textos con el codificador ONNX de ``modelo_nombre`` (con el
     prefijo de pasaje que exige el modelo, p. ej. ``passage: `` en e5) e
     indexa en una colección Qdrant real. Crea la colección con vector denso COSENO + vector sparse BM25
@@ -250,9 +250,14 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
     # almacenamiento: para poder crear/consultar muchas colecciones en la
     # misma corrida (p. ej. el benchmark de perfiles) hay que REUSAR un único cliente por
     # `qdrant_path`, nunca abrir uno nuevo por colección.
+    cliente_propio = client is None
     if client is None:
         client = crear_cliente_qdrant(qdrant_path=qdrant_path, modo=modo, url_servidor=url_servidor)
     if client.collection_exists(nombre_col):
+        if not permitir_recrear:
+            if cliente_propio:
+                client.close()
+            raise ValueError("la colección ya existe; usar otra versión o ubicación para preparar un índice nuevo")
         client.delete_collection(nombre_col)
     client.create_collection(
         collection_name=nombre_col,
