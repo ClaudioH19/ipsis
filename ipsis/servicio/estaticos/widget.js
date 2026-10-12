@@ -168,8 +168,12 @@
     search_question_label: "Search your documents",
     search_results_label: "Search results",
     search_results_count: "{n} results for “{query}”",
+    search_results_count_one: "1 result for “{query}”",
     search_read_document: "Read full context",
     search_close_document: "Close context",
+    source_original: "View original text",
+    source_table: "Source table",
+    source_table_hint: "Open full context to read the table with its columns.",
     search_more: "Show more results",
     search_added: "Added {n} results.",
     search_start: "Search your documents",
@@ -457,6 +461,24 @@
     ".rw-busqueda .rw-resultado-vista{white-space:normal;margin:6px 0;font-size:var(--rw-tamano-mensaje);}",
     ".rw-busqueda .rw-resultado-vista strong{font-weight:700;}",
     ".rw-busqueda .rw-resultado-contexto{font-size:var(--rw-tamano-mensaje);margin:10px 0;}",
+    ".rw-resultado-encabezado{margin:0;font-size:inherit;font-weight:600;}",
+    ".rw-documento{white-space:normal;min-width:0;line-height:max(1.6,var(--rw-interlineado));}",
+    ".rw-documento p{margin:0;white-space:pre-line;overflow-wrap:anywhere;}",
+    ".rw-documento p + p{margin-top:.85em;}",
+    ".rw-documento h5{margin:1.1em 0 .5em;font-size:1.05em;line-height:1.4;text-align:start;}",
+    ".rw-documento h5:first-child{margin-top:0;}",
+    ".rw-tabla-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;margin:.9em 0;",
+    "  border:1px solid var(--rw-borde);border-radius:8px;scrollbar-width:thin;}",
+    ".rw-tabla-scroll:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-tabla{border-collapse:collapse;table-layout:auto;min-width:100%;font-size:.95em;}",
+    ".rw-tabla td,.rw-tabla th{padding:10px 12px;min-width:140px;max-width:320px;",
+    "  vertical-align:top;border-bottom:1px solid var(--rw-borde);border-right:1px solid var(--rw-borde);",
+    "  text-align:start;white-space:pre-wrap;overflow-wrap:anywhere;}",
+    ".rw-tabla tr:last-child>*{border-bottom:0;}.rw-tabla tr>*:last-child{border-right:0;}",
+    ".rw-tabla th{font-weight:650;background:var(--rw-fondo);overflow-wrap:normal;hyphens:none;}",
+    ".rw-tabla tbody tr:nth-child(even){background:color-mix(in srgb,var(--rw-fondo) 60%,transparent);}",
+    ".rw-fuente-literal pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;}",
+    ".rw-parrafo-frase .rw-documento{color:var(--rw-texto-suave);}",
     ".rw-busqueda details{margin:8px 0 0;padding:0;font-size:var(--rw-tamano-cita);}",
     ".rw-busqueda details[open]{border-left:2px solid var(--rw-borde);padding-left:12px;}",
     ".rw-busqueda-acciones{border-top:1px solid var(--rw-borde);padding-top:12px;}",
@@ -469,6 +491,8 @@
     ".rw-panel[data-alineacion='justificada'] .rw-parrafo-pasaje,",
     ".rw-panel[data-alineacion='justificada'] .rw-cita-texto{text-align:justify;",
     "  -webkit-hyphens:auto;hyphens:auto;}",
+    ".rw-panel[data-alineacion='justificada'] .rw-documento p{text-align:justify;",
+    "  text-align-last:start;-webkit-hyphens:auto;hyphens:auto;}",
     ".rw-msg-usuario{align-self:flex-end;background:var(--rw-acento);color:var(--rw-acento-texto);",
     "  border-bottom-right-radius:5px;}",
     ".rw-msg-ok{align-self:flex-start;background:var(--rw-superficie);color:var(--rw-texto);",
@@ -867,10 +891,10 @@
         origen.appendChild(posicion);
       }
       cabeceraCita.appendChild(origen);
-      var cuerpo = document.createElement("p");
+      var cuerpo = document.createElement("div");
       cuerpo.className = "rw-cita-texto";
       var rango = rangoExacto(frag, exacta);
-      textoConTramo(cuerpo, frag.texto || "", rango);
+      documentoVisual(cuerpo, frag.texto || "", frag.bloques_fuente, frag.offset_inicio, rango);
       if (rango && !enLista) item.open = true;  // la cita con el tramo se ve sin desplegar
       item.appendChild(cabeceraCita);
       item.appendChild(cuerpo);
@@ -886,7 +910,7 @@
     return { chunk_id: f.chunk_id, doc_id: f.doc_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
              offset_inicio: f.offset_start, offset_fin: f.offset_end, version: f.version,
              rango: f.rank, coincidencia_inicio: f.match_start, coincidencia_fin: f.match_end,
-             truncado: f.truncated, archivo: f.source_name };
+             truncado: f.truncated, archivo: f.source_name, bloques_fuente: f.source_blocks };
   }
   function respuestaInterna(r) {
     r = r || {};
@@ -911,7 +935,7 @@
   // Texto de la API, siempre por textContent: conector, pasaje literal y cita
   // en elementos separados para darles estilo distinto.
   function parrafoDeBloque(bloque) {
-    var parrafo = document.createElement("p");
+    var parrafo = document.createElement("div");
     parrafo.className = "rw-parrafo rw-parrafo-" + (bloque.tipo === "passage" ? "pasaje" : "frase");
     if (bloque.conector) {
       var conector = document.createElement("span");
@@ -919,7 +943,9 @@
       conector.textContent = bloque.conector + " ";
       parrafo.appendChild(conector);
     }
-    parrafo.appendChild(document.createTextNode(bloque.texto || ""));
+    var contenido = document.createElement("div");
+    documentoVisual(contenido, bloque.texto || "");
+    parrafo.appendChild(contenido);
     if (bloque.cita) {
       var cita = document.createElement("span");
       cita.className = "rw-cita-breve";
@@ -1034,6 +1060,106 @@
     elemento.appendChild(document.createTextNode(contenido.slice(posicion)));
   }
 
+  // La estructura procede del parser. Nunca se adivinan columnas separando «|».
+  function bloquesVerificados(bloques, fuente, base) {
+    if (!Array.isArray(bloques) || !bloques.length || bloques.length > 500 || !Number.isInteger(base)) return [];
+    var caracteres = Array.from(fuente), anterior = base, totalCeldas = 0;
+    function literal(c) {
+      return c && typeof c.text === "string" && Number.isInteger(c.offset_start) && Number.isInteger(c.offset_end) && c.offset_start >= base &&
+        c.offset_end >= c.offset_start && c.offset_end <= base + caracteres.length &&
+        caracteres.slice(c.offset_start - base, c.offset_end - base).join("") === c.text;
+    }
+    for (var b of bloques) {
+      if (!literal(b) || b.offset_start < anterior || !["paragraph", "heading", "table"].includes(b.kind)) return [];
+      anterior = b.offset_end;
+      if (b.kind !== "table") continue;
+      if (!Number.isInteger(b.columns) || b.columns < 1 || b.columns > 100 ||
+          !Array.isArray(b.rows) || !b.rows.length || b.rows.length > 200) return [];
+      var ocupadas = [];
+      for (var i = 0; i < b.rows.length; i++) {
+        var fila = b.rows[i];
+        if (!Array.isArray(fila.cells)) return [];
+        for (var c of fila.cells) {
+          if (++totalCeldas > 2000 || !literal(c) || c.offset_start < b.offset_start || c.offset_end > b.offset_end ||
+              !Number.isInteger(c.column) || c.column < 0 || !Number.isInteger(c.column_span) || c.column_span < 1 ||
+              !Number.isInteger(c.row_span) || c.row_span < 1 || c.column + c.column_span > b.columns ||
+              i + c.row_span > b.rows.length) return [];
+          for (var y = i; y < i + c.row_span; y++) for (var x = c.column; x < c.column + c.column_span; x++) {
+            ocupadas[y] = ocupadas[y] || [];
+            if (ocupadas[y][x]) return [];
+            ocupadas[y][x] = true;
+          }
+        }
+      }
+    }
+    return bloques;
+  }
+
+  function documentoVisual(contenedor, fuente, bloques, base, rango, pregunta) {
+    contenedor.classList.add("rw-documento");
+    var caracteres = Array.from(fuente);
+    function indice(offset) { return caracteres.slice(0, offset - base).join("").length; }
+    function escribir(e, contenido, inicio) {
+      if (rango) {
+        var desde = Math.max(0, rango[0] - inicio), hasta = Math.min(contenido.length, rango[1] - inicio);
+        textoConTramo(e, contenido, hasta > desde ? [desde, hasta] : null);
+      } else textoDestacado(e, contenido, pregunta);
+    }
+    function parrafos(textoFuente, inicio) {
+      var partes = textoFuente.split(/(\n\s*\n)/), posicion = inicio;
+      partes.forEach(function (parte) {
+        if (!parte.trim()) contenedor.appendChild(document.createTextNode(parte));
+        else {
+          var p = document.createElement("p");
+          escribir(p, parte, posicion);
+          contenedor.appendChild(p);
+        }
+        posicion += parte.length;
+      });
+    }
+    var validos = bloquesVerificados(bloques, fuente, base), posicion = 0;
+    if (!validos.length) { parrafos(fuente, 0); return false; }
+    validos.forEach(function (b) {
+      var inicio = indice(b.offset_start), fin = indice(b.offset_end);
+      parrafos(fuente.slice(posicion, inicio), posicion);
+      if (b.kind === "table") {
+        var scroll = document.createElement("div");
+        scroll.className = "rw-tabla-scroll";
+        scroll.tabIndex = 0;
+        scroll.setAttribute("role", "region");
+        scroll.setAttribute("aria-label", texto("source_table"));
+        var tabla = document.createElement("table"), cuerpo = document.createElement("tbody"), ocupadas = [];
+        tabla.className = "rw-tabla";
+        tabla.setAttribute("aria-label", texto("source_table"));
+        b.rows.forEach(function (fila, y) {
+          var tr = document.createElement("tr"), porColumna = {};
+          fila.cells.forEach(function (c) { porColumna[c.column] = c; });
+          for (var x = 0; x < b.columns; x++) {
+            if (ocupadas[y] && ocupadas[y][x]) continue;
+            var c = porColumna[x], td = document.createElement(fila.header ? "th" : "td");
+            if (c) {
+              td.colSpan = c.column_span; td.rowSpan = c.row_span;
+              if (fila.header) td.setAttribute("scope", c.column_span > 1 ? "colgroup" : "col");
+              escribir(td, c.text, indice(c.offset_start));
+              for (var j = y; j < y + c.row_span; j++) for (var k = x; k < x + c.column_span; k++) {
+                ocupadas[j] = ocupadas[j] || []; ocupadas[j][k] = true;
+              }
+            }
+            tr.appendChild(td);
+          }
+          cuerpo.appendChild(tr);
+        });
+        tabla.appendChild(cuerpo); scroll.appendChild(tabla); contenedor.appendChild(scroll);
+      } else {
+        var p = document.createElement(b.kind === "heading" ? "h5" : "p");
+        escribir(p, b.text, inicio); contenedor.appendChild(p);
+      }
+      posicion = fin;
+    });
+    parrafos(fuente.slice(posicion), posicion);
+    return validos.some(function (b) { return b.kind === "table"; });
+  }
+
   function agregarResultados(lista, fragmentos, pregunta) {
     var primero = null;
     fragmentos.forEach(function (frag, indice) {
@@ -1048,11 +1174,21 @@
       origen.textContent = (frag.archivo || frag.doc_titulo) + (frag.version ? " \u00b7 v" + frag.version : "");
       item.appendChild(origen);
       var secciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
+      if (bloquesVerificados(frag.bloques_fuente, frag.texto || "", frag.offset_inicio).some(function (b) {
+        return b && b.kind === "table" && b.rows && b.rows[0] &&
+          b.rows[0].cells.filter(function (c) { return c.text; }).map(function (c) { return c.text; })
+            .join(" | ") === secciones[secciones.length - 1];
+      })) {
+        secciones.pop();  // ruta sintética del parser legacy, ya visible en la tabla
+      }
+      var encabezado = document.createElement("h4");
+      encabezado.className = "rw-resultado-encabezado";
       var titulo = document.createElement("button");
       titulo.type = "button";
       titulo.className = "rw-resultado-titulo";
       titulo.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
-      item.appendChild(titulo);
+      encabezado.appendChild(titulo);
+      item.appendChild(encabezado);
       if (secciones.length > 1) {
         var ruta = document.createElement("p");
         ruta.className = "rw-resultado-ruta";
@@ -1067,10 +1203,19 @@
       var inicio = caracteres.slice(0, inicioFuente).join("").length;
       var fin = caracteres.slice(0, finFuente).join("").length;
       var coincidencia = completo.slice(inicio, fin) || completo;
-      var vista = document.createElement("p");
+      var vista = document.createElement("div");
       vista.className = "rw-resultado-vista";
       var caracteresVista = Array.from(coincidencia);
-      textoDestacado(vista, caracteresVista.length > 400 ? caracteresVista.slice(0, 400).join("") + "\u2026" : coincidencia, pregunta);
+      var tablaCoincidente = bloquesVerificados(frag.bloques_fuente, completo, frag.offset_inicio).find(function (b) {
+        return b.kind === "table" && b.offset_start < frag.offset_inicio + finFuente &&
+          frag.offset_inicio + inicioFuente < b.offset_end;
+      });
+      // Una tabla corta se muestra con sus columnas; el contexto completo conserva las grandes.
+      if (tablaCoincidente && Array.from(tablaCoincidente.text).length <= 1600) {
+        documentoVisual(vista, tablaCoincidente.text, [tablaCoincidente], tablaCoincidente.offset_start, null, pregunta);
+      } else if (tablaCoincidente) vista.textContent = texto("source_table_hint");
+      else documentoVisual(vista, caracteresVista.length > 400 ? caracteresVista.slice(0, 400).join("") + "\u2026"
+        : coincidencia, [], frag.offset_inicio + inicioFuente, null, pregunta);
       item.appendChild(vista);
       var detalles = document.createElement("details");
       detalles.id = "rw-documento-" + (lista.children.length + 1);
@@ -1088,10 +1233,19 @@
       posicion.className = "rw-resultado-origen";
       posicion.textContent = texto("citation_position", { start: frag.offset_inicio, end: frag.offset_fin });
       detalles.appendChild(posicion);
-      var contexto = document.createElement("p");
+      var contexto = document.createElement("div");
       contexto.className = "rw-resultado-contexto";
-      textoConTramo(contexto, completo, fin > inicio && fin - inicio < completo.length ? [inicio, fin] : null);
+      var conTabla = documentoVisual(contexto, completo, frag.bloques_fuente, frag.offset_inicio,
+        fin > inicio && fin - inicio < completo.length ? [inicio, fin] : null);
       detalles.appendChild(contexto);
+      if (conTabla) {
+        var original = document.createElement("details"), etiquetaOriginal = document.createElement("summary");
+        original.className = "rw-fuente-literal";
+        etiquetaOriginal.textContent = texto("source_original");
+        var literal = document.createElement("pre");
+        literal.textContent = completo;
+        original.appendChild(etiquetaOriginal); original.appendChild(literal); detalles.appendChild(original);
+      }
       if (frag.truncado) {
         var recorte = document.createElement("p");
         recorte.textContent = texto("context_truncated");
@@ -1125,7 +1279,8 @@
     var cantidadAnterior = paginaBusqueda.lista.children.length;
     var primero = agregarResultados(paginaBusqueda.lista, respuesta.fragmentos, respuesta.pregunta);
     var cantidad = paginaBusqueda.lista.children.length;
-    paginaBusqueda.contador.textContent = texto("search_results_count", { n: cantidad, query: respuesta.pregunta });
+    paginaBusqueda.contador.textContent = texto(cantidad === 1 ? "search_results_count_one" : "search_results_count",
+      { n: cantidad, query: respuesta.pregunta });
     paginaBusqueda.acciones.replaceChildren();
     var ayuda = document.createElement("p");
     ayuda.className = "rw-busqueda-ayuda";

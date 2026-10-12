@@ -89,6 +89,33 @@ texto fuente. El título y **Leer contexto completo** abren la ventana literal.
 No se crean enlaces a archivos que la API no sirve ni se promete mostrar
 el documento entero cuando se dispone de una ventana de contexto.
 
+### Lectura de párrafos y tablas
+
+El texto documental respeta `presentation.text_align` del tema; el valor por
+defecto es justificado, también en `search` y `search_compact`. Los títulos y
+las celdas se alinean al inicio. Los párrafos tienen separación vertical y
+conservan los saltos de línea. Los encabezados declarados en el documento
+se muestran como subtítulos; no se generan títulos por interpretación del texto.
+
+Los fragmentos v2 pueden incluir `source_blocks`: párrafos, encabezados y
+tablas con filas, columnas, celdas y offsets globales. Se verifican contra
+el texto de la ventana. DOCX legacy y Markdown conservan la cuadrícula al
+volver a leer el corpus, sin cambiar su texto canónico ni requerir reindexación
+solo por esta presentación. La preparación estructural conserva además las
+combinaciones horizontales y verticales. La primera fila no se convierte en
+encabezado si el documento no la declara.
+
+Las tablas cortas se ven en el extracto; las largas se leen en el contexto
+desplegable, con desplazamiento horizontal accesible en pantallas estrechas.
+**Ver texto original** permite comparar la representación con el texto literal
+y sus separadores. `text`, offsets y ranking mantienen su contrato.
+
+Si falta estructura, es inconsistente o una tabla preparada queda cortada
+por el límite de contexto, se conserva el texto literal. No se inventan
+columnas separando cualquier barra `|` encontrada en una frase. Las columnas
+ya perdidas en una extracción PDF o de texto plano requieren mejorar esa
+extracción; esta presentación no puede reconstruirlas con certeza.
+
 La lista acumula **Mostrar más resultados** de tres en tres. Una consulta nueva
 reemplaza la lista; no se presenta como una conversación de burbujas. El
 contador describe resultados efectivamente mostrados y no estima totales

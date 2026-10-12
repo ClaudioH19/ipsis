@@ -67,6 +67,29 @@ class PeticionConsulta(BaseModel):
     continuation: Optional[str] = Field(default=None, min_length=1, max_length=128)
 
 
+class CeldaVisual(BaseModel):
+    column: int = Field(ge=0)
+    column_span: int = Field(default=1, ge=1)
+    row_span: int = Field(default=1, ge=1)
+    text: str
+    offset_start: int = Field(ge=0)
+    offset_end: int = Field(ge=0)
+
+
+class FilaVisual(BaseModel):
+    header: bool = False
+    cells: list[CeldaVisual]
+
+
+class BloqueFuente(BaseModel):
+    kind: Literal["heading", "paragraph", "table"]
+    text: str
+    offset_start: int = Field(ge=0)
+    offset_end: int = Field(ge=0)
+    columns: Optional[int] = Field(default=None, ge=1)
+    rows: list[FilaVisual] = Field(default_factory=list)
+
+
 class Fragmento(BaseModel):
     chunk_id: str
     doc_title: str
@@ -84,6 +107,7 @@ class Fragmento(BaseModel):
     match_start: Optional[int] = None
     match_end: Optional[int] = None
     truncated: Optional[bool] = None
+    source_blocks: list[BloqueFuente] = Field(default_factory=list)
 
 
 class Confianza(BaseModel):
@@ -181,7 +205,7 @@ def respuesta_publica(contrato: dict) -> dict:
         for interno, externo in (("doc_id", "doc_id"), ("rango", "rank"),
                 ("archivo_fuente", "source_name"),
                 ("offset_coincidencia_inicio", "match_start"), ("offset_coincidencia_fin", "match_end"),
-                ("truncado", "truncated")):
+                ("truncado", "truncated"), ("bloques_fuente", "source_blocks")):
             if interno in f:
                 salida[externo] = f[interno]
         if "tipo_puntaje" in f:

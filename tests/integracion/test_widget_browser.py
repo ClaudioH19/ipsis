@@ -177,6 +177,77 @@ def _pagina_fuentes(inicio=0, continuar=True):
 
 
 @pytest.mark.browser
+@pytest.mark.parametrize("ancho", [375, 900])
+def test_tablas_reales_con_columnas_contexto_literal_y_tipografia(navegador, servidor_widget, tmp_path, ancho):
+    from tests.indice.test_presentacion import documento_tabla
+    from ipsis.ingesta.parsear import parsear_docx
+    from ipsis.indice.presentacion import bloques_fuente
+
+    d = parsear_docx(str(documento_tabla(tmp_path)), "d", "Manual", "1")
+    fuente = d.texto_completo
+    inicio = fuente.index("Control")
+    f = {"chunk_id": "tabla", "doc_title": "Manual", "section": "Evaluación > Tabla 1 > Instrumento | Peso | Observaciones",
+         "version": "1", "rank": 1, "offset_start": 0, "offset_end": len(fuente), "text": fuente,
+         "match_start": inicio, "match_end": fuente.index("\n", inicio),
+         "source_blocks": bloques_fuente(d, 0, len(fuente))}
+    page = navegador.new_page(viewport={"width": ancho, "height": 900})
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Manual", "response_mode": "ranked_sources",
+               "preset": "search", "text_align": "justify"}))
+    page.route("**/ask", lambda r: r.fulfill(json={"status": "related", "response_mode": "ranked_sources", "fragments": [f]}))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Manual").click()
+    page.locator("#rw-input").fill("seguridad")
+    page.get_by_role("button", name="Search", exact=True).click()
+    titulo = page.get_by_role("heading", name="Tabla 1", level=4)
+    expect(titulo).to_be_visible()
+    expect(page.locator(".rw-busqueda-contador")).to_have_text('1 result for “seguridad”')
+    vista = page.locator(".rw-resultado-vista")
+    expect(vista.locator("table")).to_be_visible()
+    expect(vista.locator("th")).to_have_count(3)
+    expect(vista.locator("tr").nth(1).locator("td")).to_have_count(3)
+    expect(vista.locator("tr").nth(1).locator("td").last).to_have_text("")
+    expect(vista.locator("strong")).to_have_text("seguridad")
+    titulo.get_by_role("button").click()
+    contexto = page.locator(".rw-resultado-contexto")
+    expect(contexto.get_by_role("heading", name="Evaluación", level=5)).to_be_visible()
+    assert contexto.locator("p").first.evaluate("e => getComputedStyle(e).textAlign") == "justify"
+    assert contexto.locator("td").first.evaluate("e => getComputedStyle(e).textAlign") == "start"
+    scroll = contexto.locator(".rw-tabla-scroll")
+    scroll.focus()
+    expect(scroll).to_be_focused()
+    assert scroll.evaluate("e => e.getBoundingClientRect().right") <= ancho
+    if ancho == 375:
+        assert scroll.evaluate("e => e.scrollWidth > e.clientWidth")
+    page.get_by_text("View original text", exact=True).click()
+    expect(page.locator(".rw-fuente-literal pre")).to_have_text(fuente)
+    assert page.locator(".rw-resultado img").count() == 0
+    page.screenshot(path=str(tmp_path / f"tabla-{ancho}.png"))
+    page.close()
+
+
+@pytest.mark.browser
+def test_estructura_inconsistente_o_barra_en_prosa_no_inventa_tablas(navegador, servidor_widget):
+    page = navegador.new_page()
+    fuente = "Usa A | B como alternativas.\n\nLa frase siguiente."
+    publico = _pagina_fuentes(0, False)
+    publico["fragments"] = [{"chunk_id": "texto", "doc_title": "Manual", "section": "Uso", "version": "1",
+         "offset_start": 0, "offset_end": len(fuente), "text": fuente, "source_blocks": [
+             {"kind": "table", "text": "contenido inventado", "offset_start": 0, "offset_end": len(fuente),
+              "columns": 2, "rows": []}]}]
+    page.route("**/ask", lambda r: r.fulfill(json=publico))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name=re.compile("Open chat")).click()
+    page.locator("#rw-input").fill("alternativas")
+    page.get_by_role("button", name="Send question").click()
+    page.locator(".rw-resultado-titulo").click()
+    contexto = page.locator(".rw-resultado-contexto")
+    expect(contexto).to_have_text(fuente)
+    expect(contexto.locator("p")).to_have_count(2)
+    assert contexto.locator("table").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
 def test_tres_desplegables_continuacion_sin_doble_click_y_reformulacion(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})
     peticiones = []

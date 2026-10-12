@@ -144,6 +144,16 @@ class RecuperadorConContextos:
                     continue
                 ini, fin = min(ini, u.offset_inicio), max(fin, u.offset_fin)
                 usados.append(getattr(u, "chunk_id", f"{u.offset_inicio}:{u.offset_fin}"))
+        # En legacy DOCX, la primera fila puede estar en otra ruta de sección.
+        # La relación table_id permite conservarla sin inferir encabezados.
+        tablas_coincidentes = {getattr(u, "metadata", {}).get("table_id") for u in unidades
+                              if u.offset_inicio < ch.offset_fin and ch.offset_inicio < u.offset_fin}
+        tablas_coincidentes.discard(None)
+        for tabla_id in tablas_coincidentes:
+            filas = [u for u in unidades if getattr(u, "metadata", {}).get("table_id") == tabla_id]
+            primero = min(u.offset_inicio for u in filas)
+            if fin - min(ini, primero) <= max_caracteres:
+                ini = min(ini, primero)
         # Centrarse en la coincidencia; nunca añadir solo un prefijo que la pierda.
         deseado = (ini, fin)
         if fin - ini > max_caracteres:
@@ -155,6 +165,9 @@ class RecuperadorConContextos:
         nuevo = ch.model_copy(deep=True)
         nuevo.texto_fuente = fuente[ini:fin]
         nuevo.offset_inicio, nuevo.offset_fin = ini, fin
+        from ipsis.indice.presentacion import bloques_fuente
+
+        nuevo.metadata["bloques_presentacion"] = bloques_fuente(doc, ini, fin)
         nuevo.metadata["ventana_resultado"] = {
             "coincidencia_inicio": max(ini, ch.offset_inicio),
             "coincidencia_fin": min(fin, ch.offset_fin),
