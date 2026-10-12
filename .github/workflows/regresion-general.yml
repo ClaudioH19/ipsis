@@ -1,8 +1,11 @@
-name: Regresión documental general
+name: Evaluación documental manual
 on:
-  push:
-  pull_request:
   workflow_dispatch:
+    inputs:
+      comparar_referencia:
+        description: Comparar respuestas directas contra la referencia histórica (no mide ranking v2)
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -27,7 +30,12 @@ jobs:
       - name: Validar contratos y referencias congeladas
         run: uv run --locked --extra test pytest tests/evaluacion/test_banco_general.py tests/modelos/test_contratos_embeddings.py tests/modelos/test_catalogo_descarga.py tests/configuracion/test_perfiles.py -q
       - name: Medir los dos perfiles y las tres calidades
-        run: uv run --locked --extra test python herramientas/evaluacion/general.py --download
+        env:
+          COMPARAR_REFERENCIA: ${{ inputs.comparar_referencia }}
+        run: |
+          opciones=(--download)
+          if [[ "$COMPARAR_REFERENCIA" != "true" ]]; then opciones+=(--no-baseline); fi
+          uv run --locked --extra test python herramientas/evaluacion/general.py "${opciones[@]}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,0 +1,79 @@
+name: Servicio y contenedor
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: servicio-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contratos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.11.26'
+          enable-cache: true
+          python-version: '3.12'
+      - run: uv sync --locked --extra test
+      - name: Validar motor, conversación, HTTP y preparación del despliegue
+        run: >-
+          uv run --locked --extra test python -m pytest
+          tests/test_arquitectura.py tests/lenguaje/test_voz.py
+          tests/consulta/test_motor_v2.py tests/servicio/test_demo.py
+          tests/ci/test_servicio.py tests/evaluacion/test_banco_general.py
+          tests/modelos/test_contratos_embeddings.py tests/modelos/test_catalogo_descarga.py
+          tests/configuracion/test_perfiles.py -q
+  contenedor:
+    needs: contratos
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      IPSIS_MODELS_DIR: ${{ github.workspace }}/.cache/modelos
+      IPSIS_ONNX_THREADS: '2'
+      COMPOSE_FILE: ${{ github.workspace }}/.cache/ci/deploy/docker-compose.yml
+      COMPOSE_PROJECT_NAME: ipsis-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.11.26'
+          enable-cache: true
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: .cache/modelos
+          key: onnx-linux-${{ hashFiles('ipsis/modelos/catalogo.py', 'ipsis/recursos/perfiles/*.yaml') }}
+      - run: uv sync --locked --extra test
+      - name: Construir el wheel del commit actual
+        run: uv build --wheel --out-dir .cache/ci/wheels
+      - name: Crear e indexar un proyecto real y preparar su despliegue
+        run: uv run --locked --extra test python herramientas/ci/preparar_contenedor.py --output .cache/ci --wheels .cache/ci/wheels
+      - name: Construir el Dockerfile de despliegue con permisos del volumen
+        run: docker compose build --build-arg APP_UID="$(id -u)" --build-arg APP_GID="$(id -g)"
+      - name: Levantar el contenedor y esperar a que esté listo
+        run: docker compose up -d --no-build --wait --wait-timeout 180
+      - name: Verificar conversación y fuentes por HTTP
+        run: uv run --locked --extra test python herramientas/ci/comprobar_servicio.py --url http://127.0.0.1:8000 --output .cache/ci/reporte.json
+      - name: Guardar diagnóstico del contenedor
+        if: always()
+        run: |
+          mkdir -p .cache/ci
+          docker compose ps --all > .cache/ci/contenedores.txt 2>&1 || true
+          docker compose logs --no-color > .cache/ci/contenedor.log 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: servicio-contenedor
+          path: |
+            .cache/ci/reporte.json
+            .cache/ci/contenedores.txt
+            .cache/ci/contenedor.log
+          if-no-files-found: warn
+      - name: Detener el contenedor de prueba
+        if: always()
+        run: docker compose down --remove-orphans

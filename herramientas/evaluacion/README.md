@@ -3,9 +3,16 @@
 Para comparar el motor experimental v2 con v1 sobre un proyecto real, consultar
 el [avance y los comandos](../../docs/plan/motor-v2-avance.md). El comparador
 offline trabaja sobre copias y conserva respuestas completas y trazas; la
-selección por defecto del servicio sigue siendo v1.
+selección por defecto del servicio es v2, que entrega fuentes rankeadas para revisar.
 
-Desde la raíz del repositorio, después de cualquier cambio:
+El workflow automático `Servicio y contenedor` verifica el arranque de Docker y
+la conversación y recuperación por HTTP sobre un proyecto real. Esta evaluación
+de respuestas directas conserva su referencia histórica y se ejecuta mediante
+el workflow manual `Evaluación documental manual`; comparar esa referencia con
+v2 no mide la calidad de su ranking. No se modifica la referencia para ocultar
+esa diferencia. Para explorar sin comparación, usa `--no-baseline`.
+
+Para ejecutar la comparación histórica desde la raíz del repositorio:
 
 ```bash
 python herramientas/evaluacion/general.py --download
