@@ -35,6 +35,19 @@ def validar_fuentes(respuesta):
         exigir(fuente["offset_end"] - fuente["offset_start"] == len(fuente["text"]), "Offsets inconsistentes")
 
 
+def validar_catalogos(configuracion):
+    """Las variantes y las preguntas reconocidas son contratos distintos."""
+    mensajes = configuracion.get("assistant_messages", {})
+    exigir(isinstance(mensajes, dict) and sum(map(len, mensajes.values())) >= 100, "Falta el catálogo de conversación")
+    for categoria in ("welcome", "greeting", "thanks", "farewell", "capability", "tips", "searching", "results",
+                      "continuation", "no_results", "about", "limits", "examples"):
+        exigir(bool(mensajes.get(categoria)), "Falta una categoría de mensajes: " + categoria)
+    preguntas = configuracion.get("default_questions", [])
+    exigir(len(preguntas) >= 100, "Falta el catálogo de preguntas reconocidas")
+    exigir(len({p["question"] for p in preguntas}) == len(preguntas), "Preguntas de ayuda duplicadas")
+    exigir(len({p["topic"] for p in preguntas}) >= 10, "Faltan temas de ayuda")
+
+
 def comprobar(url, *, espera=180, salida=None):
     url = url.rstrip("/")
     reporte = {"ok": False, "comprobaciones": []}
@@ -64,10 +77,11 @@ def comprobar(url, *, espera=180, salida=None):
         exigir(salud.get("status") == "alive" and salud.get("mode") == "production", "Servicio no está vivo en producción")
         cfg = solicitar("/config")
         exigir(cfg.get("response_mode") == "ranked_sources", "Configuración del widget no corresponde a v2")
-        exigir(sum(map(len, cfg.get("assistant_messages", {}).values())) == 100, "Falta el catálogo de conversación")
+        validar_catalogos(cfg)
         reporte["comprobaciones"].append({"paso": "health_config", "ok": True})
         for pregunta, categoria in [("hola", "greeting"), ("gracias", "thanks"), ("adiós", "farewell"),
-                                    ("¿Qué puedes hacer?", "capability")]:
+                                    ("¿Qué puedes hacer?", "capability"), ("¿Qué es ipsis?", "help"),
+                                    ("¿Necesito un golden dataset para usar el enrutador?", "help")]:
             respuesta = solicitar("/ask", {"question": pregunta, "session_id": "ipsis-ci"})
             validar_conversacion(respuesta, categoria)
             reporte["comprobaciones"].append({"paso": categoria, "respuesta": respuesta})

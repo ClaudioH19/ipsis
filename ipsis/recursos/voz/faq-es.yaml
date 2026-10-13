@@ -1,0 +1,313 @@
+# Fixed assistant help. Full-question matching only; never document evidence.
+questions:
+- topic: Sobre el asistente
+  question: ¿Qué es ipsis?
+  answer: Ipsis es un asistente autoalojado que busca y ordena fuentes de tus documentos.
+- topic: Sobre el asistente
+  question: ¿Quién eres?
+  answer: Soy un asistente para consultar documentos y ayudarte a revisar sus fuentes.
+- topic: Sobre el asistente
+  question: ¿Eres una persona?
+  answer: Soy software; los mensajes de ayuda son respuestas fijas y las fuentes provienen de documentos.
+- topic: Sobre el asistente
+  question: ¿Qué significa el nombre ipsis?
+  answer: El nombre alude a ipsissima verba, las palabras mismas del documento.
+- topic: Sobre el asistente
+  question: ¿Usas un LLM para redactar respuestas?
+  answer: El flujo predeterminado busca fuentes literales; no usa un LLM para redactar una respuesta nueva.
+- topic: Sobre el asistente
+  question: ¿Necesitas una GPU?
+  answer: Ipsis ejecuta sus modelos en CPU; no requiere una GPU para el flujo predeterminado.
+- topic: Sobre el asistente
+  question: ¿Necesitas internet para cada consulta?
+  answer: Después de descargar los modelos, un despliegue local puede consultar sus documentos sin internet.
+- topic: Sobre el asistente
+  question: ¿De dónde sale tu información?
+  answer: Las fuentes salen de los documentos indexados en este proyecto; la ayuda sale de un catálogo fijo.
+- topic: Sobre el asistente
+  question: ¿Qué idiomas soporta ipsis?
+  answer: Español, inglés y portugués tienen mensajes y reglas propios; otros idiomas usan reglas universales y
+    ayuda en inglés.
+- topic: Sobre el asistente
+  question: ¿Por qué muestras varias fuentes?
+  answer: El enrutador ofrece distintas fuentes para que puedas comparar su contenido y comprobar cuál sirve.
+- topic: Buscar información
+  question: ¿Cómo empiezo a usar el buscador?
+  answer: Escribe una pregunta sobre tus documentos, envíala y abre el contexto de los resultados.
+- topic: Buscar información
+  question: ¿Puedo buscar con palabras clave?
+  answer: Sí. Puedes usar palabras clave, nombres o identificadores en lugar de una pregunta completa.
+- topic: Buscar información
+  question: ¿Cómo hago una consulta más precisa?
+  answer: Añade el tema, producto, proceso o código concreto y consulta una cosa por vez.
+- topic: Buscar información
+  question: ¿Cómo busco un código de producto?
+  answer: Escribe el código tal como aparece en el inventario y añade el campo que necesitas, como stock o precio.
+- topic: Buscar información
+  question: ¿Puedo hacer varias preguntas juntas?
+  answer: Puedes escribirlas, pero separar las preguntas facilita comparar las fuentes de cada tema.
+- topic: Buscar información
+  question: ¿Cómo reformulo una búsqueda?
+  answer: Cambia las palabras, añade un nombre concreto o divide la consulta y envíala de nuevo.
+- topic: Buscar información
+  question: ¿Para qué sirve Mostrar más resultados?
+  answer: Añade otras fuentes del conjunto recuperado para la misma consulta, conservando las que ya ves.
+- topic: Buscar información
+  question: ¿Qué pasa cuando envío otra consulta?
+  answer: Una consulta documental nueva reemplaza la lista de resultados de la búsqueda anterior.
+- topic: Buscar información
+  question: ¿Recuerdas el tema de mi pregunta anterior?
+  answer: El enrutador busca usando la consulta actual; incluye el nombre o tema en cada nueva pregunta.
+- topic: Buscar información
+  question: ¿Qué hago si mi pregunta es demasiado amplia?
+  answer: Indica el documento, producto o actividad que te interesa y el dato que quieres localizar.
+- topic: Leer fuentes
+  question: ¿Cómo se ordenan las fuentes en ipsis?
+  answer: La búsqueda recupera candidatos y, según el perfil, un reranker ayuda a ordenar su relevancia.
+- topic: Leer fuentes
+  question: ¿La primera fuente garantiza la respuesta?
+  answer: No. La posición indica relevancia en el ranking; debes comprobar el contenido y su contexto.
+- topic: Leer fuentes
+  question: ¿Qué indica la sección de un resultado?
+  answer: Identifica la parte del documento de donde procede el pasaje, cuando el documento declara esa estructura.
+- topic: Leer fuentes
+  question: ¿Qué indica el archivo de una fuente?
+  answer: Es el nombre del archivo de origen; ayuda a reconocer el documento sin mostrar su ruta local.
+- topic: Leer fuentes
+  question: ¿Qué significa la versión de una fuente?
+  answer: Es la versión documental registrada para esa fuente; compruébala antes de usar sus datos.
+- topic: Leer fuentes
+  question: ¿Qué significan las posiciones en caracteres?
+  answer: Son los límites del pasaje dentro del texto extraído del documento, no números de página.
+- topic: Leer fuentes
+  question: ¿Qué diferencia hay entre extracto y contexto?
+  answer: El extracto permite revisar la coincidencia rápidamente; el contexto muestra una ventana literal más amplia.
+- topic: Leer fuentes
+  question: ¿Cómo abro el contexto de una fuente?
+  answer: Selecciona su título o el control Leer contexto completo; puedes cerrarlo con el mismo control.
+- topic: Leer fuentes
+  question: ¿Qué significa contexto recortado?
+  answer: La ventana mostrada llegó al límite de tamaño; no representa todo el contenido del documento.
+- topic: Leer fuentes
+  question: ¿Para qué sirve Ver texto original?
+  answer: Permite comparar una tabla presentada visualmente con el texto literal publicado de la misma fuente.
+- topic: Tablas e inventarios
+  question: ¿Qué formatos de inventario acepta ipsis?
+  answer: Puede cargar XLSX, XLS, CSV y TSV; consulta los límites de formatos en la documentación del proyecto.
+- topic: Tablas e inventarios
+  question: ¿Cómo se busca una fila de inventario?
+  answer: Cada registro conserva sus campos; usa su nombre o código junto al dato que necesitas revisar.
+- topic: Tablas e inventarios
+  question: ¿Por qué debo leer los encabezados de una tabla?
+  answer: Los encabezados explican qué representa cada valor y evitan confundir columnas parecidas.
+- topic: Tablas e inventarios
+  question: ¿Qué representa una celda vacía?
+  answer: Se conserva como vacía; el asistente no la completa ni la interpreta como cero.
+- topic: Tablas e inventarios
+  question: ¿Se conservan los ceros del inventario?
+  answer: Los valores cero se conservan y se distinguen de las celdas vacías.
+- topic: Tablas e inventarios
+  question: ¿Se conservan los ceros iniciales de un código?
+  answer: Se conservan los textos y los formatos simples compatibles; verifica el código mostrado con el archivo
+    de origen.
+- topic: Tablas e inventarios
+  question: ¿Ipsis recalcula fórmulas de Excel?
+  answer: No. Lee los valores de fórmulas que quedaron guardados en el archivo.
+- topic: Tablas e inventarios
+  question: ¿Ipsis suma el stock de varias filas?
+  answer: No calcula nuevos totales; recupera los valores presentes en las fuentes para que puedas revisarlos.
+- topic: Tablas e inventarios
+  question: ¿Qué indican las coordenadas de una celda?
+  answer: Cuando están disponibles, señalan la hoja, fila o celda de origen y se muestran al pasar el cursor.
+- topic: Tablas e inventarios
+  question: ¿Puedes reconstruir columnas perdidas de un PDF?
+  answer: La vista no inventa columnas; si la extracción perdió la estructura, hay que mejorar la extracción del
+    documento.
+- topic: Alcance
+  question: ¿Puedes inventar un dato que no está en los documentos?
+  answer: No. Las fuentes documentales deben conservar texto que exista en los documentos indexados.
+- topic: Alcance
+  question: ¿Una búsqueda vacía demuestra que el dato no existe?
+  answer: No. Puede deberse a la consulta o al índice; prueba otras palabras y comprueba qué documentos están cargados.
+- topic: Alcance
+  question: ¿Puedes corregir un dato incorrecto del documento?
+  answer: Muestro el texto de origen. Para corregirlo, modifica el documento y vuelve a cargarlo e indexarlo.
+- topic: Alcance
+  question: ¿Qué hago si una fuente parece equivocada?
+  answer: Revisa su contexto y versión; reformula la consulta o verifica el documento original antes de usarla.
+- topic: Alcance
+  question: ¿Una fuente relacionada es una respuesta confirmada?
+  answer: No. Una fuente relacionada es una opción para revisar, no una certificación de que responde tu pregunta.
+- topic: Alcance
+  question: ¿Puedes redactar un resumen nuevo?
+  answer: El flujo predeterminado presenta pasajes literales; no redacta un resumen nuevo a partir de ellos.
+- topic: Alcance
+  question: ¿Traduces el texto de las fuentes?
+  answer: El texto documental se conserva en su idioma original; la traducción de la interfaz no traduce las fuentes.
+- topic: Alcance
+  question: ¿Puedes hacer cálculos con mis documentos?
+  answer: Recupero datos documentales; los cálculos nuevos requieren otra herramienta y revisar los valores de origen.
+- topic: Alcance
+  question: ¿Consultas noticias o información de internet?
+  answer: La búsqueda del asistente consulta este proyecto; no busca noticias en internet para completar las fuentes.
+- topic: Alcance
+  question: ¿Puedes modificar mis documentos desde el chat?
+  answer: La conversación consulta información; la carga y los cambios se gestionan con la CLI o el panel autorizado.
+- topic: Privacidad y acceso
+  question: ¿Dónde se ejecuta ipsis?
+  answer: Se ejecuta en el servidor o equipo donde el administrador lo instaló.
+- topic: Privacidad y acceso
+  question: ¿Envías mis consultas a un LLM externo?
+  answer: El flujo predeterminado no llama a un LLM externo; la ubicación del servicio y del índice depende del
+    despliegue.
+- topic: Privacidad y acceso
+  question: ¿Dónde se guarda el índice del proyecto?
+  answer: En modo local suele guardarse en .ipsis/index/qdrant; también se puede configurar un servidor Qdrant.
+- topic: Privacidad y acceso
+  question: ¿Se registran mis preguntas?
+  answer: El registro de consultas es optativo y depende de la configuración del administrador.
+- topic: Privacidad y acceso
+  question: ¿Debo escribir contraseñas en una consulta?
+  answer: El buscador no necesita contraseñas; usa los controles de acceso del sitio y del panel para autenticarte.
+- topic: Privacidad y acceso
+  question: ¿La clave pública del widget es secreta?
+  answer: No. Identifica el acceso del widget y puede verse en el sitio; no reemplaza la autenticación del panel.
+- topic: Privacidad y acceso
+  question: ¿Para qué sirve CORS en ipsis?
+  answer: Define qué orígenes web pueden acceder al servicio desde un navegador.
+- topic: Privacidad y acceso
+  question: ¿Puedo usar ipsis en una red privada?
+  answer: Sí, si el servidor y los modelos están preparados y los usuarios pueden acceder al servicio en esa red.
+- topic: Privacidad y acceso
+  question: ¿Los proyectos comparten sus documentos?
+  answer: Cada proyecto mantiene su configuración, documentos e índice; la caché de modelos puede compartirse por
+    usuario.
+- topic: Privacidad y acceso
+  question: ¿El widget guarda la conversación en localStorage?
+  answer: No guarda la conversación en localStorage; crea una sesión nueva al cargar la página.
+- topic: Apariencia del widget
+  question: ¿Qué temas tiene el widget de ipsis?
+  answer: Incluye classic, minimal, editorial, contrast, search, search_compact, ocean, forest y midnight.
+- topic: Apariencia del widget
+  question: ¿Puedo cambiar el color de los títulos?
+  answer: Sí. El panel y styles.yaml permiten ajustar colors.heading y colors.section por separado.
+- topic: Apariencia del widget
+  question: ¿Puedo cambiar las fuentes del widget?
+  answer: Sí. typography.family controla el texto y typography.heading_family controla los títulos.
+- topic: Apariencia del widget
+  question: ¿Puedo ocultar los números de los resultados?
+  answer: Sí. Ajusta presentation.show_result_numbers a false; las referencias documentales siguen disponibles.
+- topic: Apariencia del widget
+  question: ¿El widget tiene modo oscuro?
+  answer: Los temas incluyen colores oscuros y responden a la preferencia del sistema; midnight es oscuro también
+    en modo claro.
+- topic: Apariencia del widget
+  question: ¿El widget funciona en teléfonos?
+  answer: Sí. Se adapta a pantallas estrechas y permite desplazar las tablas horizontalmente.
+- topic: Apariencia del widget
+  question: ¿Puedo desactivar las animaciones del widget?
+  answer: Sí. Ajusta animations.enabled a false; también se respeta la preferencia de movimiento reducido.
+- topic: Apariencia del widget
+  question: ¿Las preguntas sugeridas se envían solas?
+  answer: No. Rellenan el campo para que puedas adaptarlas y decidir cuándo enviarlas.
+- topic: Apariencia del widget
+  question: ¿Puedo personalizar el título y la bienvenida?
+  answer: Sí. content.title, content.subtitle, content.welcome_title y content.welcome_text controlan esos textos.
+- topic: Apariencia del widget
+  question: ¿Cómo inserto el widget en otro sitio?
+  answer: Usa ipsis widget snippet para obtener la etiqueta HTML y configura el origen del sitio en CORS.
+- topic: Gestionar documentos
+  question: ¿Cómo se cargan documentos en ipsis?
+  answer: Usa ipsis load o la pestaña Documentos del panel y luego reindexa para hacerlos buscables.
+- topic: Gestionar documentos
+  question: ¿Qué formatos documentales acepta ipsis?
+  answer: Admite PDF con texto, DOCX, Markdown, TXT, XLSX, XLS, CSV y TSV; el OCR de PDF escaneados es opcional.
+- topic: Gestionar documentos
+  question: ¿Cuándo debo reindexar mis documentos?
+  answer: Después de cargar o cambiar documentos, o cuando cambie una preparación o modelo que requiera un índice
+    nuevo.
+- topic: Gestionar documentos
+  question: ¿Por qué no aparece un archivo recién cargado?
+  answer: Comprueba que esté en el catálogo y que se haya reindexado después de cargarlo.
+- topic: Gestionar documentos
+  question: ¿Qué es el catálogo de documentos?
+  answer: Es el registro de los documentos cargados y sus versiones que utiliza el proyecto.
+- topic: Gestionar documentos
+  question: ¿Qué ocurre al actualizar un documento?
+  answer: Carga la nueva versión y reindexa para que las consultas usen el contenido actualizado.
+- topic: Gestionar documentos
+  question: ¿Por qué el índice local admite un proceso a la vez?
+  answer: Qdrant local bloquea su carpeta; detén el servicio antes de abrir ese índice con otro proceso.
+- topic: Gestionar documentos
+  question: ¿Qué debo respaldar de mi proyecto ipsis?
+  answer: Conserva config, documents y .ipsis, junto con cualquier banco de evaluación propio que utilices.
+- topic: Gestionar documentos
+  question: ¿Qué es un fragmento del índice?
+  answer: Es una unidad de texto buscable con referencia al documento, sección y posiciones de origen.
+- topic: Gestionar documentos
+  question: ¿Cómo se leen los PDF escaneados?
+  answer: Requieren el extra OCR y Tesseract con los idiomas adecuados; sin OCR un PDF sin texto se rechaza.
+- topic: Servicio y errores
+  question: ¿Cómo inicio el servicio ipsis?
+  answer: Desde la carpeta del proyecto ejecuta ipsis serve; conserva tus opciones de despliegue y acceso.
+- topic: Servicio y errores
+  question: ¿Cómo abro la página de prueba del widget?
+  answer: Usa ipsis serve --demo --open; la página de prueba utiliza el widget y los estilos del proyecto.
+- topic: Servicio y errores
+  question: ¿Cómo accedo al panel de administración?
+  answer: Abre /admin/panel en el servicio y usa el token configurado por el administrador.
+- topic: Servicio y errores
+  question: ¿Qué significa origen no autorizado en el widget?
+  answer: El origen de tu sitio no está permitido para el servicio; el administrador debe revisar CORS y el acceso
+    del widget.
+- topic: Servicio y errores
+  question: ¿Qué hago si envío demasiadas consultas?
+  answer: Espera unos segundos y vuelve a intentarlo; el servicio puede limitar consultas consecutivas.
+- topic: Servicio y errores
+  question: ¿Qué hago si el widget no conecta?
+  answer: Comprueba la conexión, la dirección del servicio y que esté iniciado; luego vuelve a intentar la consulta.
+- topic: Servicio y errores
+  question: ¿Qué significa que una búsqueda venció?
+  answer: Su cursor de continuación ya no está disponible; vuelve a enviar la consulta para iniciar otra búsqueda.
+- topic: Servicio y errores
+  question: ¿Debo reiniciar después de actualizar ipsis?
+  answer: Sí. Reinicia el servicio para cargar el código actualizado y recarga la página del widget.
+- topic: Servicio y errores
+  question: ¿Cómo compruebo si ipsis está listo?
+  answer: El administrador puede usar ipsis doctor o el endpoint /ready para revisar la preparación del servicio.
+- topic: Servicio y errores
+  question: ¿Por qué veo un widget antiguo tras actualizar?
+  answer: Recarga la página y comprueba la caché; si usas un widget exportado, reemplaza también su copia de widget.js.
+- topic: Calidad y mantenimiento
+  question: ¿Necesito un golden dataset para usar el enrutador?
+  answer: No. El enrutador puede buscar fuentes sin un golden dataset ni calibración de respuestas directas.
+- topic: Calidad y mantenimiento
+  question: ¿Para qué sirve la calibración del motor v1?
+  answer: Ajusta umbrales del motor opcional de respuestas directas con un banco revisado; no controla el ranking
+    v2.
+- topic: Calidad y mantenimiento
+  question: ¿Cómo evalúo la calidad de las fuentes?
+  answer: Usa consultas representativas y revisa si recuperan el documento correcto, su posición y el contexto necesario.
+- topic: Calidad y mantenimiento
+  question: ¿El score del ranking es una probabilidad?
+  answer: No. Los scores de búsqueda y reranking ordenan candidatos; no son probabilidades de una respuesta correcta.
+- topic: Calidad y mantenimiento
+  question: ¿Qué comprueba ipsis audit?
+  answer: Comprueba texto, referencias y offsets literales; no certifica que una fuente responda bien la pregunta.
+- topic: Calidad y mantenimiento
+  question: ¿Qué determina la calidad de una búsqueda?
+  answer: Influyen los documentos, su extracción, la consulta, la recuperación y el ranking; conviene revisar casos
+    reales.
+- topic: Calidad y mantenimiento
+  question: ¿Qué hace el reranker de ipsis?
+  answer: Compara la consulta con candidatos recuperados para ayudar a ordenar las fuentes; no redacta respuestas.
+- topic: Calidad y mantenimiento
+  question: ¿Qué diferencia hay entre light y medium en v2?
+  answer: Light prioriza la recuperación híbrida; medium añade un reranker semántico para ordenar candidatos.
+- topic: Calidad y mantenimiento
+  question: ¿Cambiar el tema del widget requiere reindexar?
+  answer: No. Los colores, fuentes y textos de presentación se pueden cambiar sin reconstruir el índice documental.
+- topic: Calidad y mantenimiento
+  question: ¿Cómo actualizo ipsis?
+  answer: Si lo instalaste como herramienta uv, usa uv tool upgrade ipsis y reinicia el servicio; conserva la carpeta
+    del proyecto.

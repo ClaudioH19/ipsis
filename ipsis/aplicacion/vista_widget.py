@@ -32,6 +32,7 @@ def vista_widget(tema: dict, css: str, presentacion: dict) -> str:
         "greeting": voz["messages"]["welcome"][0],
         "assistant_messages": voz["messages"],
         "suggested_questions": voz["suggestions"],
+        "default_questions": voz["questions"],
         "widget_content": a_externo({"contenido": tema.get("contenido") or {}}, "estilos")["content"],
         "animations_enabled": tema.get("animaciones", {}).get("activadas", True),
         "avatar": {"enabled": False},

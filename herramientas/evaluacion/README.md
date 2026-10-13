@@ -58,8 +58,8 @@ La suite normal de pytest ejecuta esta regresión real cuando los modelos
 están disponibles (`tests/evaluacion/test_general_regresion.py`, marca
 `slow`); en su ausencia se omite explícitamente. Las pruebas de integridad y
 del comparador se ejecutan sin modelos. El workflow
-`.github/workflows/regresion-general.yml` descarga los modelos y mide los
-dos perfiles en las tres calidades en cada push y pull request; sus reportes quedan
+`.github/workflows/regresion-general.yml` se ejecuta manualmente, descarga los
+modelos y mide los dos perfiles en las tres calidades; sus reportes quedan
 como artefacto incluso si hay errores.
 
 ## Comparar modelos alternativos

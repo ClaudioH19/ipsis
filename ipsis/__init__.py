@@ -1,4 +1,4 @@
-"""API pública básica de :mod:`rag`."""
+"""Metadatos del paquete ipsis; la integración pública usa CLI y HTTP."""
 from importlib.metadata import PackageNotFoundError, version
 
 try:

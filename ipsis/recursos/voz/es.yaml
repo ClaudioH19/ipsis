@@ -1,4 +1,10 @@
 interface:
+  voice_menu: Ayuda
+  voice_show_less: Contraer
+  faq_title: Preguntas frecuentes
+  faq_topic: Tema
+  faq_all: Todos los temas
+  faq_count: '{n} preguntas disponibles'
   voice_about: Sobre el asistente
   voice_limits: Alcance
   voice_examples: Ejemplos

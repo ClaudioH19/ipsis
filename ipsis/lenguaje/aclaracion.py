@@ -14,8 +14,9 @@ trae el tema de la conversación y no las dispara):
   un pronombre anafórico del paquete («lo», «it», «isso»): «¿Quién lo aprueba?»;
 - **tema que no acota:** queda una sola palabra de contenido, la pregunta es corta
   (hasta ``PALABRAS_CORTA`` palabras) y esa palabra está en candidatos de dos o más
-  documentos, o de ninguno con más de una palabra: «¿Cuánto dura?» (la garantía, el
-  préstamo, el viaje), «¿Cuánto tarda?» en un corpus sin «tarda». «¿Bitcoin?» sigue
+  documentos, o de ninguno con más de una palabra. Los verbos ya reconocidos como
+  relación, como «dura» o «tarda», se excluyen del tema y producen ``sin_tema``.
+  «¿Bitcoin?» sigue
   el camino normal y queda fuera de dominio.
 
 Una pregunta con una sola palabra pero larga («cuando empieza la compra?») no se toca:

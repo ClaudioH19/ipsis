@@ -1,4 +1,10 @@
 interface:
+  voice_menu: Help
+  voice_show_less: Show less
+  faq_title: Frequently asked questions
+  faq_topic: Topic
+  faq_all: All topics
+  faq_count: '{n} questions available'
   voice_about: About the assistant
   voice_limits: Scope
   voice_examples: Examples

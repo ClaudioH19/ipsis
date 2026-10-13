@@ -6,6 +6,16 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-13
+
+### Fixed
+
+- HTTP presentation now accesses theme content through the application layer,
+  restoring the architecture contract enforced by CI. Service checks validate a
+  minimum of 100 message variants instead of rejecting larger catalogs.
+- CI checks the fixed-question catalog independently from message variants,
+  and runs real Chromium widget and panel tests before release.
+
 ### Changed
 
 - CLI help now includes service examples, inventory loading and the demo/admin
@@ -28,6 +38,22 @@ a minor change may break compatibility and is marked as such.
   Selecting an engine alone reuses the existing index.
 
 ### Added
+
+- At least 100 recognized fixed questions per language in Spanish, English and
+  Portuguese, covering ten assistant topics. FAQ matching uses complete inputs;
+  mixed document queries still retrieve sources. The widget exposes a topic
+  selector and fills queries without sending them automatically.
+- Nine visual presets, including ocean, forest and midnight; card, divider and
+  editorial result layouts; independent heading and section typography/colors;
+  dark palettes, result numbering, context controls and editable welcome text.
+- Visible loading progress and staggered transitions for new source cards,
+  respecting disabled animation and reduced motion. Guidance uses two lines
+  with optional expansion; help actions open an overlay menu to preserve reading
+  space. Scrollbars are slim, rounded and adapt to the theme.
+- Interactive offline previews reuse the real widget. English and Spanish
+  READMEs, reproducible screenshots and package metadata now describe the
+  default source router. V1 golden datasets and calibration are optional legacy
+  tools, separate from assessing v2 source relevance.
 
 - Runnable widget integrations for Astro, Svelte 5, Angular 20 and Python /
   FastAPI, alongside HTML, React and WordPress. English and Spanish guides

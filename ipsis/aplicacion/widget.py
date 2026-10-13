@@ -22,6 +22,13 @@ def mensajes_de_orientacion(idioma: str) -> dict:
     return voz_del_widget(idioma)
 
 
+def contenido_publico(tema: dict) -> dict:
+    """Textos del widget con las claves públicas, sin exponer el glosario al HTTP."""
+    from ipsis.configuracion.glosario import a_externo
+
+    return a_externo({"contenido": tema.get("contenido") or {}}, "estilos")["content"]
+
+
 PRESETS: dict[str, dict[str, Any]] = {
     "clasico": {
         "tema": {},

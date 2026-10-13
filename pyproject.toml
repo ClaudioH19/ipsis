@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ipsis"
-version = "0.9.0"
-description = "Answers in the exact words of your documents: an extractive, self-hosted, CPU-only assistant that never invents."
+version = "1.0.0"
+description = "Find and review ranked literal sources from your documents: a self-hosted, CPU-only assistant without a generative LLM."
 requires-python = ">=3.11"
 readme = "README.md"
 license = "AGPL-3.0-only"

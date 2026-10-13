@@ -62,6 +62,17 @@ from creating a project: each assistant still lives in its own folder.
 uv tool upgrade ipsis
 ```
 
+Stop the service before updating and start it again from the same project
+directory. Documents, indexes and configuration are preserved; presentation
+changes need no reindexing. Existing `styles.yaml` files are retained: apply a
+preset or edit individual settings to adopt new options. Reload the browser
+and replace exported `widget.js` copies if your website uses them.
+
+Git branch installations update to a new commit on that branch. To pin the
+1.0 release, install `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`. Tag or commit installations
+need a changed reference to move to another release.
+
 **In Docker:** `ipsis deploy prepare` generates your project's image;
 it also installs the package with uv (see [deployment.md](deployment.md#3-docker)).
 

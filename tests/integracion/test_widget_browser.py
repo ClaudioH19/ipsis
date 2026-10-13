@@ -472,7 +472,7 @@ def test_temas_reales_demarcadores_y_titulos_personalizables(navegador, servidor
 @pytest.mark.parametrize("idioma", ["es", "en", "pt"])
 def test_preguntas_y_mensajes_localizados_sin_consultas_automaticas(navegador, servidor_widget, tmp_path, idioma):
     from ipsis.aplicacion.proyecto import interfaz_del_idioma
-    from ipsis.lenguaje.voz import voz_del_widget
+    from ipsis.lenguaje.voz import respuesta_fija, voz_del_widget
 
     voz = voz_del_widget(idioma)
     interfaz = {**interfaz_del_idioma(idioma), **voz["interface"]}
@@ -480,7 +480,8 @@ def test_preguntas_y_mensajes_localizados_sin_consultas_automaticas(navegador, s
     consultas = []
     page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
                "language": idioma, "interface": interfaz, "assistant_messages": voz["messages"],
-               "suggested_questions": voz["suggestions"], "widget_content": {"welcome_title": "Mi biblioteca"}}))
+               "suggested_questions": voz["suggestions"], "default_questions": voz["questions"],
+               "widget_content": {"welcome_title": "Mi biblioteca"}}))
     page.on("request", lambda r: consultas.append(r.url) if r.url.endswith('/ask') else None)
     page.goto(servidor_widget)
     page.get_by_role("button", name=interfaz["search_open"].replace("{title}", "Biblioteca")).click()
@@ -490,9 +491,25 @@ def test_preguntas_y_mensajes_localizados_sin_consultas_automaticas(navegador, s
     expect(page.locator("#rw-input")).to_have_value(voz["suggestions"][0])
     expect(page.locator("#rw-input")).to_be_focused()
     for categoria in ("about", "limits", "examples"):
+        page.locator(".rw-voz-menu summary").click()
         page.get_by_role("button", name=interfaz["voice_" + categoria], exact=True).click()
         assert page.locator(".rw-voz-texto").inner_text() in voz["messages"][categoria]
     assert consultas == []
+    page.locator(".rw-faq summary").click()
+    expect(page.locator(".rw-faq-lista button")).to_have_count(len(voz["questions"]))
+    page.locator(".rw-faq select").select_option(voz["questions"][0]["topic"])
+    expect(page.locator(".rw-faq-lista button")).to_have_count(
+        sum(p["topic"] == voz["questions"][0]["topic"] for p in voz["questions"]))
+    page.locator(".rw-faq-lista button").first.click()
+    pregunta_faq = voz["questions"][0]["question"]
+    expect(page.locator("#rw-input")).to_have_value(pregunta_faq)
+    assert consultas == []
+    page.route("**/ask", lambda r: r.fulfill(json={"status": "conversational", "conversational_category": "help",
+               "answer": respuesta_fija(r.request.post_data_json["question"], idioma), "fragments": []}))
+    page.get_by_role("button", name=interfaz["search_send"], exact=True).click()
+    expect(page.locator(".rw-voz-texto")).to_have_text(respuesta_fija(pregunta_faq, idioma))
+    expect(page.locator(".rw-faq")).to_be_visible()
+    assert len(consultas) == 1
     if idioma == "es":
         page.screenshot(path=str(tmp_path / "bienvenida-es.png"), full_page=True)
     page.close()
@@ -518,4 +535,58 @@ def test_vista_previa_autonoma_renderiza_widget_real_y_texto_seguro(navegador, t
     assert page.locator('.rw-resultado-numero').count() == page.locator('.rw-resultado-ruta').count() == 0
     expect(page.locator('#rw-titulo')).to_have_text('</script><img src=x onerror=alert(1)>')
     assert page.locator('img').count() == 0 and errores == []
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("movimiento,activadas", [("no-preference", True), ("reduce", True), ("no-preference", False)])
+def test_carga_transicion_ayuda_compacta_y_scrollbar(navegador, servidor_widget, movimiento, activadas):
+    page = navegador.new_page(viewport={"width": 375, "height": 667}, reduced_motion=movimiento)
+    pendientes = []
+    llamadas = []
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+               "animations_enabled": activadas, "assistant_messages": {"results": ["Review the source context. " * 15]}}))
+    def responder(ruta):
+        llamadas.append(ruta.request.post_data_json)
+        if len(llamadas) == 1:
+            ruta.fulfill(json=_pagina_fuentes(continuar=False))
+        else:
+            pendientes.append(ruta)
+    page.route("**/ask", responder)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock inicial")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    voz = page.locator(".rw-voz")
+    assert voz.evaluate("e => e.getBoundingClientRect().height") <= 100
+    alto_resultados = page.locator(".rw-mensajes").evaluate("e => e.getBoundingClientRect().height")
+    assert alto_resultados >= 350
+    page.locator(".rw-voz-menu summary").click()
+    expect(page.get_by_role("button", name="Search tips", exact=True)).to_be_visible()
+    assert page.locator(".rw-mensajes").evaluate("e => e.getBoundingClientRect().height") == alto_resultados
+    page.keyboard.press("Escape")
+    expect(page.get_by_role("dialog")).to_be_visible()
+    expect(page.locator(".rw-voz-menu")).not_to_have_attribute("open", "")
+    page.get_by_role("button", name="Show full message", exact=True).click()
+    expect(voz).to_have_attribute("data-expandido", "true")
+    page.get_by_role("button", name="Show less", exact=True).click()
+    expect(voz).to_have_attribute("data-expandido", "false")
+    page.locator("#rw-input").fill("stock actualizado")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-mensajes")).to_have_attribute("aria-busy", "true")
+    expect(page.locator(".rw-carga")).to_be_visible()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    siguiente = _pagina_fuentes(continuar=False)
+    for fuente in siguiente["fragments"]:
+        fuente["text"] = "Stock 17"
+    assert len(pendientes) == 1
+    pendientes[0].fulfill(json=siguiente)
+    expect(page.locator(".rw-resultado-vista").first).to_have_text("Stock 17")
+    expect(page.locator(".rw-mensajes")).to_have_attribute("aria-busy", "false")
+    expect(page.locator(".rw-carga")).to_be_hidden()
+    animacion = page.locator(".rw-resultado").first.evaluate("e => getComputedStyle(e).animationName")
+    assert animacion == ("rw-resultados-entrar" if activadas and movimiento != "reduce" else "none")
+    assert page.locator(".rw-mensajes").evaluate("e => getComputedStyle(e).scrollbarWidth") == "thin"
+    assert page.locator(".rw-mensajes").evaluate("e => getComputedStyle(e).scrollbarColor") != "auto"
     page.close()

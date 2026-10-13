@@ -23,7 +23,6 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from ipsis import __version__
-from ipsis.configuracion.glosario import a_externo
 from ipsis.recursos.mensajes import t
 from ipsis.aplicacion.consulta import (
     Motor,
@@ -182,7 +181,7 @@ class RespuestaConsulta(BaseModel):
     # low (relacionado). Ausente si no hay respuesta (abstención, aclaración, saludo).
     confidence_level: Optional[Literal["high", "medium", "low"]] = None
     # Solo en respuestas conversacionales (para el avatar del widget).
-    conversational_category: Optional[Literal["greeting", "thanks", "farewell", "capability"]] = None
+    conversational_category: Optional[Literal["greeting", "thanks", "farewell", "capability", "help"]] = None
 
 
 # Contrato interno del motor → público.
@@ -277,6 +276,7 @@ class ConfigWidget(BaseModel):
     show_suggestions: bool = True
     widget_content: dict[str, str] = {}
     suggested_questions: list[str] = []
+    default_questions: list[dict[str, str]] = []
     language: str = "es"  # idioma del asistente: el atributo lang del widget
     interface: dict[str, str] = {}
     # Variantes del tono para welcome, waiting, citations_hint y errores.
@@ -590,7 +590,7 @@ def crear_app(
             # El saludo de búsqueda no promete una respuesta única, independientemente del tono.
             microcopy = {**microcopy, "welcome": [interfaz["search_greeting"]]}
         nombre = dominio.get("nombre_asistente") or interfaz.get("default_assistant_name", "")
-        from ipsis.aplicacion.widget import mensajes_de_orientacion
+        from ipsis.aplicacion.widget import contenido_publico, mensajes_de_orientacion
 
         voz = mensajes_de_orientacion(idioma)
         interfaz = {**interfaz, **voz["interface"]}
@@ -612,9 +612,9 @@ def crear_app(
             show_section_path=presentacion["show_section_path"],
             expand_context=presentacion["expand_context"],
             show_suggestions=presentacion["show_suggestions"],
-            widget_content=a_externo(
-                {"contenido": estilos.get("contenido") or {}}, "estilos")["content"],
+            widget_content=contenido_publico(estilos),
             suggested_questions=voz["suggestions"],
+            default_questions=voz["questions"] if es_enrutador else [],
             language=idioma,
             interface=interfaz,
             microcopy=microcopy,

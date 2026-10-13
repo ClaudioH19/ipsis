@@ -21,11 +21,14 @@ def test_ejemplo_html_carga_el_web_component_configurable():
 def test_ejemplo_react_declara_build_y_conecta_eventos():
     paquete = json.loads((RAIZ / "examples/react/package.json").read_text(encoding="utf-8"))
     fuente = (RAIZ / "examples/react/src/main.jsx").read_text(encoding="utf-8")
+    adaptador = (RAIZ / "examples/react/src/IpsisChat.jsx").read_text(encoding="utf-8")
 
     assert paquete["scripts"]["build"] == "vite build"
-    assert "ipsis:answer" in fuente
-    assert "ipsis:error" in fuente
-    assert 'React.createElement("ipsis-chat"' in fuente
+    assert "onAnswer=" in fuente and "onError=" in fuente
+    assert 'addEventListener("ipsis:answer"' in adaptador
+    assert 'addEventListener("ipsis:error"' in adaptador
+    assert 'removeEventListener("ipsis:answer"' in adaptador
+    assert 'React.createElement("ipsis-chat"' in adaptador
 
 
 def test_ejemplo_wordpress_es_plugin_y_escapa_atributos():

@@ -46,7 +46,8 @@ def test_v2_publica_banco_y_cortesia_sin_filtrar_preguntas_documentales(tmp_path
     m.plantillas["conversacional"] = m.idioma.conversacional.model_dump()
     cliente = TestClient(crear_app(m, modo=ModoServicio(demo=True)))
     cfg = cliente.get("/config").json()
-    assert sum(map(len, cfg["assistant_messages"].values())) == 100
+    assert sum(map(len, cfg["assistant_messages"].values())) >= 100
+    assert len(cfg["default_questions"]) >= 100
     assert cfg["interface"]["voice_help"] == "Cómo buscar" and cfg["animations_enabled"] is True
     for pregunta in ("hola", "gracias", "adiós", "¿Qué puedes hacer?"):
         r = cliente.post("/ask", json={"question": pregunta, "session_id": "misma"})

@@ -11,6 +11,19 @@ _spec.loader.exec_module(_modulo)
 validar_conversacion = _modulo.validar_conversacion
 validar_fuentes = _modulo.validar_fuentes
 PASO_DOCUMENTAL = _modulo.PASO_DOCUMENTAL
+validar_catalogos = _modulo.validar_catalogos
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_comprobador_de_ci_acepta_catalogos_completos_y_rechaza_preguntas_insuficientes(idioma):
+    from ipsis.lenguaje.voz import voz_del_widget
+
+    voz = voz_del_widget(idioma)
+    cfg = {"assistant_messages": voz["messages"], "default_questions": voz["questions"]}
+    validar_catalogos(cfg)
+    cfg["default_questions"] = cfg["default_questions"][:99]
+    with pytest.raises(RuntimeError, match="preguntas reconocidas"):
+        validar_catalogos(cfg)
 
 
 @pytest.mark.parametrize("respuesta", [

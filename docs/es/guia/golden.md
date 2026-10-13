@@ -1,5 +1,11 @@
 # Tu golden set
 
+> Esta guía describe la evaluación y calibración del motor opcional
+> `pipeline: v1`. El enrutador v2 predeterminado no necesita un golden dataset
+> para funcionar y no usa estos umbrales para ordenar fuentes. Los bancos
+> de consultas siguen siendo útiles para evaluar recuperación, relevancia y
+> contexto; las métricas de respuestas directas no certifican su ranking.
+
 El golden set es el banco de preguntas reales del cliente con el que se mide
 y calibra el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
 se mezcla con el banco sintético de las pruebas (`tests/datos/banco/`).

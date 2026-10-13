@@ -11,7 +11,7 @@ Para configurarlo en HTML, Astro, Svelte, React, Angular o Python, consulta
 [integraciones web](integraciones.md): ejemplos ejecutables, CORS,
 configuración y cómo conservar el widget al navegar entre rutas.
 
-![El widget responde citando el manual y marca el dato dentro de la cita](../../assets/widget-answer.png)
+![Widget v2 con fuentes numeradas y contexto literal](../../assets/widget-sources-es.png)
 
 ## Insertarlo
 
@@ -206,6 +206,18 @@ En español, inglés y portugués, la bienvenida ofrece seis preguntas que
 rellenan el campo sin enviarlo. Los botones **Sobre el asistente**, **Alcance**
 y **Ejemplos** amplían los mensajes fijos. Estos textos de interfaz se muestran
 separados de las fuentes documentales y no ejecutan consultas.
+
+**Preguntas frecuentes** permite explorar al menos 100 preguntas completas
+por idioma, repartidas en diez temas. `/config::default_questions` publica
+pregunta y tema; la respuesta fija se resuelve en el servicio. Las consultas
+con información documental añadida siguen consultando el índice. Las 118
+variantes de mensajes son un catálogo distinto de las preguntas reconocidas.
+
+La orientación ocupa dos líneas por defecto. **Mostrar completo** permite
+leerla en un área desplazable; **Contraer** devuelve el espacio a las fuentes.
+El menú **Ayuda** muestra las acciones sobre la lista, sin cambiar su altura.
+La barra de carga y las transiciones de las tarjetas hacen visibles las
+consultas nuevas; respetan `animations.enabled` y el movimiento reducido.
 
 Todo el aspecto vive en `config/styles.yaml` y se aplica sin reiniciar el
 servicio:

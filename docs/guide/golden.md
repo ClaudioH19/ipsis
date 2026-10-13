@@ -1,5 +1,10 @@
 # Your golden set
 
+> This guide covers evaluation and calibration for the optional `pipeline: v1`
+> engine. The default v2 router needs no golden dataset to run and does not use
+> these thresholds to rank sources. Query banks remain useful for checking
+> retrieval, relevance and context; direct-answer metrics do not certify ranking.
+
 The golden set is the bank of real questions you use to measure and
 calibrate the assistant. It lives in the `golden/` folder of each project and
 is never mixed with the synthetic bank of the tests (`tests/datos/banco/`).

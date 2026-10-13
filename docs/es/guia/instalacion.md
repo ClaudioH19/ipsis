@@ -61,6 +61,18 @@ es distinta de un proyecto: cada asistente sigue viviendo en su propia carpeta.
 uv tool upgrade ipsis
 ```
 
+Detén el servicio antes de actualizar y vuelve a iniciarlo desde la misma
+carpeta del proyecto. Se conservan documentos, índice y configuración;
+los cambios de presentación no requieren reindexación. El `styles.yaml`
+existente se conserva: aplica un preset o cambia valores individuales para
+adoptar opciones nuevas. Recarga el navegador y reemplaza las copias exportadas
+de `widget.js` si tu sitio las utiliza.
+
+Una instalación desde una rama Git se actualiza a un commit nuevo de esa rama.
+Para fijar la release 1.0, usa `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.0.0` al instalar. Si fijaste un
+tag o commit, debes cambiar esa referencia para actualizar a otra release.
+
 **En Docker:** `ipsis deploy prepare` genera la imagen de tu proyecto;
 también instala el paquete con uv (ver [despliegue.md](despliegue.md#3-docker)).
 

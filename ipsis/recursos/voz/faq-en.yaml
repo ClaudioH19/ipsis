@@ -1,0 +1,306 @@
+# Fixed assistant help. Full-question matching only; never document evidence.
+questions:
+- topic: About the assistant
+  question: What is ipsis?
+  answer: Ipsis is a self-hosted assistant that searches and ranks sources from your documents.
+- topic: About the assistant
+  question: Who are you?
+  answer: I am an assistant for exploring documents and helping you review their sources.
+- topic: About the assistant
+  question: Are you a person?
+  answer: I am software; help messages are fixed responses and sources come from documents.
+- topic: About the assistant
+  question: What does the name ipsis mean?
+  answer: The name refers to ipsissima verba, the very words of the document.
+- topic: About the assistant
+  question: Do you use an LLM to write answers?
+  answer: The default flow searches literal sources; it does not use an LLM to write a new answer.
+- topic: About the assistant
+  question: Do you need a GPU?
+  answer: Ipsis runs its models on CPU; the default flow does not require a GPU.
+- topic: About the assistant
+  question: Do you need internet for every query?
+  answer: After downloading the models, a local deployment can search its documents without internet.
+- topic: About the assistant
+  question: Where does your information come from?
+  answer: Sources come from this project's indexed documents; help comes from a fixed catalog.
+- topic: About the assistant
+  question: Which languages does ipsis support?
+  answer: Spanish, English and Portuguese have dedicated messages and rules; other languages use universal rules
+    and English help.
+- topic: About the assistant
+  question: Why do you show multiple sources?
+  answer: The router offers different sources so you can compare their content and check which one is useful.
+- topic: Searching
+  question: How do I start using the search?
+  answer: Enter a question about your documents, submit it and open the context of the results.
+- topic: Searching
+  question: Can I search with keywords?
+  answer: Yes. You can use keywords, names or identifiers instead of a complete question.
+- topic: Searching
+  question: How do I make a query more specific?
+  answer: Add the exact topic, product, process or code and search for one thing at a time.
+- topic: Searching
+  question: How do I search for a product code?
+  answer: Enter the code as it appears in the inventory and add the field you need, such as stock or price.
+- topic: Searching
+  question: Can I ask several questions together?
+  answer: You can enter them, but separate questions make it easier to compare sources for each topic.
+- topic: Searching
+  question: How do I rephrase a search?
+  answer: Change the wording, add a specific name or split the query and submit it again.
+- topic: Searching
+  question: What is Show more results for?
+  answer: It adds other sources from the retrieved set for the same query while keeping the ones already displayed.
+- topic: Searching
+  question: What happens when I submit another query?
+  answer: A new document query replaces the previous search's result list.
+- topic: Searching
+  question: Do you remember the topic of my previous question?
+  answer: The router searches using the current query; include the name or topic in each new question.
+- topic: Searching
+  question: What should I do if my question is too broad?
+  answer: Specify the document, product or activity you need and the information you want to find.
+- topic: Reading sources
+  question: How does ipsis rank sources?
+  answer: Search retrieves candidates and, depending on the profile, a reranker helps order their relevance.
+- topic: Reading sources
+  question: Does the first source guarantee the answer?
+  answer: No. Its position indicates ranking relevance; you need to check the content and context.
+- topic: Reading sources
+  question: What does a result's section show?
+  answer: It identifies the part of the document containing the passage when that structure is declared.
+- topic: Reading sources
+  question: What does a source's filename show?
+  answer: It is the original filename; it helps identify the document without showing its local path.
+- topic: Reading sources
+  question: What does a source's version mean?
+  answer: It is the recorded document version for that source; check it before using its data.
+- topic: Reading sources
+  question: What do character positions mean?
+  answer: They mark the passage boundaries in the document's extracted text, not page numbers.
+- topic: Reading sources
+  question: What is the difference between an excerpt and context?
+  answer: The excerpt lets you review the match quickly; context shows a wider literal window.
+- topic: Reading sources
+  question: How do I open a source's context?
+  answer: Select its title or Read full context; use the same control to close it.
+- topic: Reading sources
+  question: What does truncated context mean?
+  answer: The displayed window reached its size limit; it does not represent the entire document.
+- topic: Reading sources
+  question: What is View original text for?
+  answer: It lets you compare a visually rendered table with the literal text published for the same source.
+- topic: Tables and inventories
+  question: Which inventory formats does ipsis accept?
+  answer: It can load XLSX, XLS, CSV and TSV; see the project documentation for format limits.
+- topic: Tables and inventories
+  question: How do I search an inventory row?
+  answer: Each record keeps its fields; use its name or code with the value you need to review.
+- topic: Tables and inventories
+  question: Why should I read a table's headers?
+  answer: Headers explain what each value represents and help avoid confusing similar columns.
+- topic: Tables and inventories
+  question: What does an empty cell represent?
+  answer: It remains empty; the assistant does not fill it in or interpret it as zero.
+- topic: Tables and inventories
+  question: Are inventory zero values preserved?
+  answer: Zero values are preserved and remain distinct from empty cells.
+- topic: Tables and inventories
+  question: Are a code's leading zeros preserved?
+  answer: Text and supported simple formats are preserved; check the displayed code against the original file.
+- topic: Tables and inventories
+  question: Does ipsis recalculate Excel formulas?
+  answer: No. It reads the formula values saved in the file.
+- topic: Tables and inventories
+  question: Does ipsis add stock across rows?
+  answer: It does not calculate new totals; it retrieves values present in the sources for you to review.
+- topic: Tables and inventories
+  question: What do cell coordinates show?
+  answer: When available, they identify the original sheet, row or cell and appear on hover.
+- topic: Tables and inventories
+  question: Can you reconstruct missing PDF columns?
+  answer: The view does not invent columns; lost structure requires improving document extraction.
+- topic: Scope
+  question: Can you invent a value missing from the documents?
+  answer: No. Document sources must preserve text that exists in the indexed documents.
+- topic: Scope
+  question: Does an empty search prove the information is absent?
+  answer: No. The query or index may be responsible; try other wording and check which documents are loaded.
+- topic: Scope
+  question: Can you correct an incorrect document value?
+  answer: I show the original text. To correct it, edit the document, load it again and reindex.
+- topic: Scope
+  question: What should I do if a source seems wrong?
+  answer: Review its context and version; rephrase the query or check the original document before using it.
+- topic: Scope
+  question: Is a related source a confirmed answer?
+  answer: No. A related source is an option to review, not a certification that it answers your question.
+- topic: Scope
+  question: Can you write a new summary?
+  answer: The default flow presents literal passages; it does not write a new summary from them.
+- topic: Scope
+  question: Do you translate source text?
+  answer: Document text stays in its original language; translating the interface does not translate sources.
+- topic: Scope
+  question: Can you perform calculations with my documents?
+  answer: I retrieve document data; new calculations require another tool and checking the original values.
+- topic: Scope
+  question: Do you look up news or information on the internet?
+  answer: The assistant searches this project; it does not search internet news to fill in source content.
+- topic: Scope
+  question: Can you modify my documents from chat?
+  answer: The conversation searches information; uploads and changes are managed with the CLI or authorized panel.
+- topic: Privacy and access
+  question: Where does ipsis run?
+  answer: It runs on the server or computer where the administrator installed it.
+- topic: Privacy and access
+  question: Do you send my queries to an external LLM?
+  answer: The default flow does not call an external LLM; service and index locations depend on the deployment.
+- topic: Privacy and access
+  question: Where is the project index stored?
+  answer: In local mode it is usually stored in .ipsis/index/qdrant; a Qdrant server can also be configured.
+- topic: Privacy and access
+  question: Are my questions logged?
+  answer: Query logging is optional and depends on the administrator's configuration.
+- topic: Privacy and access
+  question: Should I enter passwords in a query?
+  answer: Search does not need passwords; use the site's and panel's access controls to authenticate.
+- topic: Privacy and access
+  question: Is the widget's public key secret?
+  answer: No. It identifies widget access and can be seen on the site; it does not replace panel authentication.
+- topic: Privacy and access
+  question: What is CORS for in ipsis?
+  answer: It defines which web origins can access the service from a browser.
+- topic: Privacy and access
+  question: Can I use ipsis on a private network?
+  answer: Yes, if the server and models are prepared and users can reach the service on that network.
+- topic: Privacy and access
+  question: Do projects share their documents?
+  answer: Each project keeps its own configuration, documents and index; the model cache can be shared per user.
+- topic: Privacy and access
+  question: Does the widget store conversation in localStorage?
+  answer: It does not store conversation in localStorage; it creates a new session when the page loads.
+- topic: Widget appearance
+  question: Which themes does the ipsis widget have?
+  answer: It includes classic, minimal, editorial, contrast, search, search_compact, ocean, forest and midnight.
+- topic: Widget appearance
+  question: Can I change heading colors?
+  answer: Yes. The panel and styles.yaml let you adjust colors.heading and colors.section separately.
+- topic: Widget appearance
+  question: Can I change widget fonts?
+  answer: Yes. typography.family controls body text and typography.heading_family controls headings.
+- topic: Widget appearance
+  question: Can I hide result numbers?
+  answer: Yes. Set presentation.show_result_numbers to false; document references remain available.
+- topic: Widget appearance
+  question: Does the widget have a dark mode?
+  answer: Themes include dark colors and follow system preferences; midnight is dark in light mode too.
+- topic: Widget appearance
+  question: Does the widget work on phones?
+  answer: Yes. It adapts to narrow screens and lets tables scroll horizontally.
+- topic: Widget appearance
+  question: Can I disable widget animations?
+  answer: Yes. Set animations.enabled to false; reduced motion preferences are also respected.
+- topic: Widget appearance
+  question: Are suggested questions submitted automatically?
+  answer: No. They fill the input so you can adapt them and decide when to submit.
+- topic: Widget appearance
+  question: Can I customize the title and welcome text?
+  answer: Yes. content.title, content.subtitle, content.welcome_title and content.welcome_text control those texts.
+- topic: Widget appearance
+  question: How do I embed the widget on another site?
+  answer: Use ipsis widget snippet to get the HTML tag and configure the site's origin in CORS.
+- topic: Managing documents
+  question: How are documents loaded into ipsis?
+  answer: Use ipsis load or the panel's Documents tab, then reindex to make them searchable.
+- topic: Managing documents
+  question: Which document formats does ipsis accept?
+  answer: It supports text PDFs, DOCX, Markdown, TXT, XLSX, XLS, CSV and TSV; scanned PDF OCR is optional.
+- topic: Managing documents
+  question: When should I reindex my documents?
+  answer: After loading or changing documents, or when preparation or model changes require a new index.
+- topic: Managing documents
+  question: Why does a newly loaded file not appear?
+  answer: Check that it is in the catalog and that reindexing ran after it was loaded.
+- topic: Managing documents
+  question: What is the document catalog?
+  answer: It records the loaded documents and versions used by the project.
+- topic: Managing documents
+  question: What happens when a document is updated?
+  answer: Load the new version and reindex so queries use the updated content.
+- topic: Managing documents
+  question: Why does the local index allow one process at a time?
+  answer: Local Qdrant locks its directory; stop the service before opening that index from another process.
+- topic: Managing documents
+  question: What should I back up from my ipsis project?
+  answer: Preserve config, documents and .ipsis, along with any custom evaluation bank you use.
+- topic: Managing documents
+  question: What is an index chunk?
+  answer: It is a searchable text unit with references to its document, section and original positions.
+- topic: Managing documents
+  question: How are scanned PDFs read?
+  answer: They require the OCR extra and Tesseract with suitable languages; without OCR a PDF without text is rejected.
+- topic: Service and errors
+  question: How do I start the ipsis service?
+  answer: Run ipsis serve from the project directory, keeping your deployment and access settings.
+- topic: Service and errors
+  question: How do I open the widget test page?
+  answer: Use ipsis serve --demo --open; the test page uses the project's widget and styles.
+- topic: Service and errors
+  question: How do I access the administration panel?
+  answer: Open /admin/panel on the service and use the token configured by the administrator.
+- topic: Service and errors
+  question: What does an unauthorized widget origin mean?
+  answer: Your site's origin is not allowed by the service; the administrator should check CORS and widget access.
+- topic: Service and errors
+  question: What should I do after sending too many queries?
+  answer: Wait a few seconds and try again; the service can limit consecutive queries.
+- topic: Service and errors
+  question: What should I do if the widget cannot connect?
+  answer: Check your connection, the service address and that it is running, then retry the query.
+- topic: Service and errors
+  question: What does an expired search mean?
+  answer: Its continuation cursor is no longer available; submit the query again to start a new search.
+- topic: Service and errors
+  question: Should I restart after updating ipsis?
+  answer: Yes. Restart the service to load updated code and reload the widget page.
+- topic: Service and errors
+  question: How do I check whether ipsis is ready?
+  answer: The administrator can use ipsis doctor or the /ready endpoint to check service readiness.
+- topic: Service and errors
+  question: Why do I see an old widget after updating?
+  answer: Reload the page and check the cache; if you use an exported widget, replace its widget.js copy too.
+- topic: Quality and maintenance
+  question: Do I need a golden dataset to use the router?
+  answer: No. The router can search sources without a golden dataset or direct-answer calibration.
+- topic: Quality and maintenance
+  question: What is v1 engine calibration for?
+  answer: It tunes the optional direct-answer engine's thresholds using a reviewed bank; it does not control v2
+    ranking.
+- topic: Quality and maintenance
+  question: How do I evaluate source quality?
+  answer: Use representative queries and check whether they retrieve the right document, its position and the needed
+    context.
+- topic: Quality and maintenance
+  question: Is the ranking score a probability?
+  answer: No. Search and reranking scores order candidates; they are not probabilities of a correct answer.
+- topic: Quality and maintenance
+  question: What does ipsis audit check?
+  answer: It checks literal text, references and offsets; it does not certify that a source answers the question
+    well.
+- topic: Quality and maintenance
+  question: What determines search quality?
+  answer: Documents, extraction, the query, retrieval and ranking all matter; review real cases.
+- topic: Quality and maintenance
+  question: What does the ipsis reranker do?
+  answer: It compares the query with retrieved candidates to help order sources; it does not write answers.
+- topic: Quality and maintenance
+  question: What is the difference between light and medium in v2?
+  answer: Light prioritizes hybrid retrieval; medium adds a semantic reranker to order candidates.
+- topic: Quality and maintenance
+  question: Does changing the widget theme require reindexing?
+  answer: No. Colors, fonts and presentation text can change without rebuilding the document index.
+- topic: Quality and maintenance
+  question: How do I update ipsis?
+  answer: If installed as a uv tool, use uv tool upgrade ipsis and restart the service; keep the project directory.

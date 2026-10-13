@@ -29,8 +29,9 @@ def _candidatos(idioma):
     ("es", "¿Cuánto es?", "sin_tema"),
     ("es", "¿Cuántos días son?", "sin_tema"),
     ("es", "¿Quién lo aprueba?", "pronombre"),
-    ("es", "¿Cuánto dura?", "varios_documentos"),
-    ("es", "¿Cuánto tarda?", "tema_desconocido"),
+    # Duración/plazo reconocen el verbo como relación, no como tema documental.
+    ("es", "¿Cuánto dura?", "sin_tema"),
+    ("es", "¿Cuánto tarda?", "sin_tema"),
     ("en", "How much is it?", "sin_tema"),
     ("en", "Who approves it?", "pronombre"),
     ("en", "How long does it last?", "pronombre"),

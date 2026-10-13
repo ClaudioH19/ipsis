@@ -1002,7 +1002,7 @@ runtime:
   preview_lang: en
   preview_title: Widget preview — {preset}
   preview_header: Document assistant · preset {preset}
-  preview_question: How often should I replace the filter?
+  preview_question: What are the requirements to start the procedure?
   preview_heading: Preview
   preview_preset: 'Active preset:'
 styles:

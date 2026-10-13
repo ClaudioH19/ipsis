@@ -28,6 +28,29 @@ jobs:
           tests/ci/test_servicio.py tests/evaluacion/test_banco_general.py
           tests/modelos/test_contratos_embeddings.py tests/modelos/test_catalogo_descarga.py
           tests/configuracion/test_perfiles.py -q
+      - name: Validar temas, textos y catálogos públicos
+        run: >-
+          uv run --locked --extra test python -m pytest
+          tests/aplicacion/test_widget.py tests/aplicacion/test_estilos.py
+          tests/aplicacion/test_widget_exportar.py tests/cli/test_mensajes.py -q
+  widget:
+    needs: contratos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.11.26'
+          enable-cache: true
+          python-version: '3.12'
+      - run: uv sync --locked --extra test --extra browser
+      - run: uv run --locked --extra test --extra browser playwright install --with-deps chromium
+      - name: Validar presentación, preguntas frecuentes y panel en Chromium
+        run: >-
+          uv run --locked --extra test --extra browser python -m pytest
+          tests/integracion/test_widget_browser.py tests/integracion/test_widget_responsive.py
+          tests/integracion/test_panel_admin.py -q
   contenedor:
     needs: contratos
     runs-on: ubuntu-latest

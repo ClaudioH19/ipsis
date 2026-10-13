@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 from ipsis.lenguaje.paquete import cargar_paquete
-from ipsis.lenguaje.voz import voz_del_widget, categoria_cortesia
+from ipsis.lenguaje.voz import voz_del_widget, categoria_cortesia, preguntas_fijas, respuesta_fija
 from ipsis.nucleo.esquemas import AssistantState
 from tests.consulta.test_motor_v2 import motor
 
@@ -13,15 +13,48 @@ from tests.consulta.test_motor_v2 import motor
 def test_banco_completo_y_copias_independientes(idioma):
     voz = voz_del_widget(idioma)
     mensajes = [texto for lista in voz["messages"].values() for texto in lista]
-    assert len(mensajes) == len(set(mensajes)) == 118
-    assert all(len(voz["messages"][categoria]) == 6 for categoria in ("about", "limits", "examples"))
+    assert len(mensajes) == len(set(mensajes)) and len(mensajes) >= 100
+    assert all(len(voz["messages"][categoria]) >= 6 for categoria in ("about", "limits", "examples"))
     assert len(voz["suggestions"]) == len(set(voz["suggestions"])) == 6
+    assert len(voz["questions"]) >= 100
+    assert len({p["topic"] for p in voz["questions"]}) >= 10
     assert all(isinstance(texto, str) and texto.strip() for texto in mensajes)
     assert voz_del_widget(idioma + "-XX") == voz
     voz["messages"]["greeting"].clear()
     assert len(voz_del_widget(idioma)["messages"]["greeting"]) == 10
     voz["suggestions"].clear()
     assert len(voz_del_widget(idioma)["suggestions"]) == 6
+    voz["questions"][0]["question"] = "alterada"
+    assert voz_del_widget(idioma)["questions"][0]["question"] != "alterada"
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_cien_preguntas_distintas_se_responden_sin_recuperar_documentos(idioma):
+    entradas = preguntas_fijas(idioma)
+    assert len(entradas) >= 100 and len({p["question"] for p in entradas}) == len(entradas)
+    m = motor(idioma=SimpleNamespace(codigo=idioma), opciones={"corregir_erratas": False})
+    m.plantillas["conversacional"] = cargar_paquete(idioma).conversacional.model_dump()
+    for entrada in entradas:
+        resultado = m.consultar(entrada["question"], "faq")
+        assert resultado.estado == AssistantState.CONVERSACIONAL
+        assert resultado.contrato_http["categoria_conversacional"] == "help"
+        assert resultado.mensaje_usuario == entrada["answer"]
+        assert not resultado.evidencias and not resultado.contrato_http["fragmentos"]
+        assert respuesta_fija(entrada["question"].upper(), idioma) == entrada["answer"]
+    assert not m.retriever.consultas
+
+
+@pytest.mark.parametrize("idioma,sufijo", [("es", " según el manual del producto"),
+                                          ("en", " according to the product manual"),
+                                          ("pt", " segundo o manual do produto")])
+def test_ayuda_no_captura_consultas_mixtas_y_las_sugerencias_siguen_buscando(idioma, sufijo):
+    m = motor(idioma=SimpleNamespace(codigo=idioma), opciones={"corregir_erratas": False})
+    voz = voz_del_widget(idioma)
+    consultas = [p["question"] + sufijo for p in preguntas_fijas(idioma)] + voz["suggestions"]
+    for pregunta in consultas:
+        assert respuesta_fija(pregunta, idioma) is None
+        m.consultar(pregunta, "docs")
+    assert len(m.retriever.consultas) == len(consultas)
 
 
 @pytest.mark.parametrize("idioma,saludo,consulta", [

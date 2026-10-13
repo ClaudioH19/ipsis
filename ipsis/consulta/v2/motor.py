@@ -200,17 +200,22 @@ class MotorV2:
 
     def _consultar(self, pregunta, id_sesion, inicio, deadline_ms):
         ctx = _Consulta(pregunta=pregunta, inicio=inicio)
-        from ipsis.lenguaje.voz import categoria_cortesia, voz_del_widget
+        from ipsis.lenguaje.voz import categoria_cortesia, respuesta_fija, voz_del_widget
 
         with self._etapa("cortesia", ctx):
-            categoria = categoria_cortesia(pregunta, self.plantillas)
-        if categoria:
+            ayuda = respuesta_fija(pregunta, getattr(self.idioma, "codigo", "en"))
+            categoria = None if ayuda else categoria_cortesia(pregunta, self.plantillas)
+        if categoria or ayuda:
             from ipsis.consulta.variantes import elegir
 
-            banco = voz_del_widget(getattr(self.idioma, "codigo", "en"))["messages"]
+            if categoria:
+                banco = voz_del_widget(getattr(self.idioma, "codigo", "en"))["messages"]
+                mensaje = elegir(categoria, banco[categoria], pregunta)
+            else:
+                categoria, mensaje = "help", ayuda
             return construir_resultado(
                 estado=AssistantState.CONVERSACIONAL, motivo=f"conversacional:{categoria}",
-                mensaje=elegir(categoria, banco[categoria], pregunta),
+                mensaje=mensaje,
                 confianza={"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None},
                 latencia_ms=round((time.perf_counter() - inicio) * 1000),
                 plan="conversacional", diagnostico=ctx.diagnostico,

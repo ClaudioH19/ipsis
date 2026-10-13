@@ -1002,7 +1002,7 @@ runtime:
   preview_lang: es
   preview_title: Vista previa del widget — {preset}
   preview_header: Asistente documental · preset {preset}
-  preview_question: ¿Cada cuánto debo cambiar el filtro?
+  preview_question: ¿Qué requisitos se necesitan para iniciar el trámite?
   preview_heading: Vista previa
   preview_preset: 'Preset activo:'
 styles:

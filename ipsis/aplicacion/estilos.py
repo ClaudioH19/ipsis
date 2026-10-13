@@ -139,9 +139,9 @@ def render_css(tema: dict | None = None, ruta: str = RUTA_ESTILOS) -> str:
     # poner cada duración en cero a mano.
     if animaciones.get("activadas") is False:
         partes.append(
-            ".rw-panel,.rw-msg,.rw-punto,.rw-parrafo,.rw-citas,.rw-escribiendo,.rw-enviando svg"
+            ".rw-panel,.rw-msg,.rw-punto,.rw-parrafo,.rw-citas,.rw-escribiendo,.rw-enviando svg,.rw-resultado,.rw-carga::after"
             "{animation:none !important;}\n"
-            ".rw-boton,.rw-boton > svg,.rw-enviar,.rw-cerrar,.rw-form input{transition:none !important;}\n"
+            ".rw-boton,.rw-boton > svg,.rw-enviar,.rw-cerrar,.rw-form input,.rw-busqueda{transition:none !important;}\n"
             ".rw-boton:hover,.rw-enviar:hover:not(:disabled){transform:none !important;}"
         )
 

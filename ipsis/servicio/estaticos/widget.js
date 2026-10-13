@@ -190,6 +190,12 @@
     voice_examples: "Examples",
     suggestions_label: "Try a question",
     result_number: "Source {n}",
+    faq_title: "Frequently asked questions",
+    faq_topic: "Topic",
+    faq_all: "All topics",
+    faq_count: "{n} questions available",
+    voice_menu: "Help",
+    voice_show_less: "Show less",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -223,7 +229,7 @@
     expandirContexto: false,
     mostrarSugerencias: true,
   };
-  var CONTENIDO = {}, SUGERENCIAS = [];
+  var CONTENIDO = {}, SUGERENCIAS = [], PREGUNTAS_FIJAS = [];
   function emitir(nombre, detalle) {
     host.dispatchEvent(new CustomEvent(nombre, { detail: detalle || {}, bubbles: true }));
   }
@@ -426,9 +432,13 @@
 
     ".rw-mensajes{flex:1 1 auto;overflow-y:auto;padding:var(--rw-relleno);display:flex;",
     "  flex-direction:column;gap:var(--rw-separacion);background:var(--rw-fondo);",
-    "  scrollbar-width:thin;}",
-    ".rw-mensajes::-webkit-scrollbar{width:8px;}",
-    ".rw-mensajes::-webkit-scrollbar-thumb{background:var(--rw-borde);border-radius:99px;}",
+    "  min-height:0;scrollbar-gutter:stable;}",
+    ".rw-mensajes,.rw-tabla-scroll,.rw-faq-lista,.rw-voz-texto{scrollbar-width:thin;",
+    "  scrollbar-color:color-mix(in srgb,var(--rw-texto-suave) 40%,transparent) transparent;}",
+    ".rw-raiz ::-webkit-scrollbar{width:6px;height:6px;}",
+    ".rw-raiz ::-webkit-scrollbar-track{background:transparent;}",
+    ".rw-raiz ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--rw-texto-suave) 40%,transparent);border-radius:99px;}",
+    ".rw-raiz ::-webkit-scrollbar-thumb:hover{background:var(--rw-acento);}",
     ".rw-panel[data-densidad='compacta'] .rw-mensajes{padding:10px;gap:8px;}",
     ".rw-panel[data-densidad='compacta'] .rw-msg{padding:7px 10px;max-width:92%;}",
     ".rw-msg{max-width:86%;padding:10px 13px;border-radius:var(--rw-radio-burbuja);",
@@ -465,7 +475,19 @@
     "  margin:0 0 18px;overflow-wrap:anywhere;}",
     ".rw-busqueda .rw-resultados{list-style:none;margin:0;padding:0;}",
     ".rw-busqueda .rw-resultado{border:1px solid var(--rw-borde-resultado);border-radius:var(--rw-radio-resultado);",
-    "  margin:0 0 var(--rw-separacion-resultado);padding:var(--rw-relleno-resultado);background:var(--rw-superficie-resultado);}",
+    "  margin:0 0 var(--rw-separacion-resultado);padding:var(--rw-relleno-resultado);background:var(--rw-superficie-resultado);",
+    "  animation:rw-resultados-entrar var(--rw-dur-burbuja) var(--rw-curva) both;}",
+    "@keyframes rw-resultados-entrar{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}",
+    ".rw-mensajes.rw-buscando .rw-busqueda{opacity:.5;transition:opacity var(--rw-dur-control) ease;}",
+    ".rw-carga{height:3px;flex:none;overflow:hidden;background:var(--rw-fondo);}",
+    ".rw-carga[hidden]{display:none;}",
+    ".rw-carga::after{content:'';display:block;width:40%;height:100%;background:var(--rw-acento);",
+    "  border-radius:99px;animation:rw-carga 1s ease-in-out infinite;}",
+    "@keyframes rw-carga{from{transform:translateX(-100%);}to{transform:translateX(350%);}}",
+    ".rw-panel[data-animaciones='false'] .rw-resultado,.rw-panel[data-animaciones='false'] .rw-carga::after{animation:none;}",
+    ".rw-panel[data-animaciones='false'] .rw-busqueda{transition:none;}",
+    "@media(prefers-reduced-motion:reduce){.rw-busqueda .rw-resultado,.rw-carga::after{animation:none;}",
+    "  .rw-mensajes.rw-buscando .rw-busqueda{transition:none;}}",
     ".rw-busqueda .rw-resultado-origen{margin:0 0 8px;line-height:1.4;overflow-wrap:anywhere;}",
     ".rw-resultado-numero{display:inline-block;border:1px solid var(--rw-borde-resultado);border-radius:4px;",
     "  padding:1px 6px;margin-inline-end:8px;color:var(--rw-seccion);font-weight:650;font-size:var(--rw-tamano-seccion);}",
@@ -518,6 +540,16 @@
     "  border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);background:var(--rw-superficie);color:var(--rw-texto);",
     "  padding:8px 10px;cursor:pointer;}.rw-sugerencias button:hover{border-color:var(--rw-acento);}",
     ".rw-sugerencias button:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-faq{margin:20px 0 0;text-align:start;border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);",
+    "  background:var(--rw-superficie);padding:12px;color:var(--rw-texto);}",
+    ".rw-faq summary{cursor:pointer;font-weight:600;color:var(--rw-titulo);}",
+    ".rw-faq label{display:block;margin:12px 0 6px;font-size:var(--rw-tamano-cita);}",
+    ".rw-faq select{width:100%;font:inherit;border:1px solid var(--rw-borde);border-radius:6px;padding:6px;",
+    "  background:var(--rw-fondo);color:var(--rw-texto);}",
+    ".rw-faq-lista{max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:4px;}",
+    ".rw-faq-lista button{font:inherit;font-size:var(--rw-tamano-cita);text-align:start;border:0;border-radius:4px;",
+    "  padding:8px;background:var(--rw-fondo);color:var(--rw-texto);cursor:pointer;overflow-wrap:anywhere;}",
+    ".rw-faq :focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
     ".rw-panel[data-densidad='compacta'] .rw-busqueda .rw-resultado{margin-bottom:calc(var(--rw-separacion-resultado) * .75);}",
     // Justificado opcional (presentation.text_align): solo el texto del
     // documento, con guiones para que no queden huecos en una burbuja angosta.
@@ -610,12 +642,22 @@
     "  border:1px solid var(--rw-acento);border-radius:var(--rw-radio-control);padding:.5em .8em;cursor:pointer;}",
     ".rw-seguir:disabled{opacity:.45;cursor:default;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
-    ".rw-voz{flex:none;padding:12px var(--rw-separacion);border-bottom:1px solid var(--rw-borde);",
+    ".rw-voz{flex:none;padding:8px var(--rw-separacion);border-bottom:1px solid var(--rw-borde);",
     "  background:var(--rw-fondo);color:var(--rw-texto);text-align:start;}",
     ".rw-voz[hidden]{display:none;}",
-    ".rw-voz-cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}",
-    ".rw-voz h3{margin:0;font-size:var(--rw-tamano-etiqueta);font-weight:600;color:var(--rw-texto-suave);}",
-    ".rw-voz-texto{margin:8px 0;min-height:2.8em;font-size:var(--rw-tamano-cita);line-height:1.45;overflow-wrap:anywhere;}",
+    ".rw-voz-cabecera{display:flex;align-items:center;gap:8px;}",
+    ".rw-voz h3{flex:1;min-width:0;margin:0;font-size:var(--rw-tamano-etiqueta);font-weight:600;color:var(--rw-texto-suave);",
+    "  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
+    ".rw-voz-texto{margin:6px 0 0;min-height:0;font-size:var(--rw-tamano-cita);line-height:1.45;overflow-wrap:anywhere;",
+    "  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}",
+    ".rw-voz[data-expandido='true'] .rw-voz-texto{display:block;max-height:min(120px,25dvh);overflow:auto;}",
+    ".rw-voz-menu{position:relative;flex:none;margin-inline-start:auto;}",
+    ".rw-voz-menu summary{cursor:pointer;font-size:var(--rw-tamano-etiqueta);color:var(--rw-texto);}",
+    ".rw-voz-menu .rw-voz-acciones{position:absolute;inset-inline-end:0;top:calc(100% + 8px);z-index:4;",
+    "  width:220px;max-width:calc(100vw - 32px);padding:10px;display:flex;flex-direction:column;",
+    "  background:var(--rw-superficie);border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);box-shadow:var(--rw-sombra-panel);}",
+    ".rw-voz-menu:not([open]) .rw-voz-acciones{display:none;}",
+    ".rw-voz-menu .rw-voz-acciones button{text-align:start;width:100%;}",
     ".rw-voz-acciones{display:flex;flex-wrap:wrap;gap:8px;}",
     ".rw-voz button{font:inherit;font-size:var(--rw-tamano-etiqueta);color:var(--rw-texto);",
     "  background:var(--rw-superficie);border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);",
@@ -1050,6 +1092,10 @@
 
   var modoBusqueda = false;
   var paginaBusqueda = null;
+  var indicadorBusqueda = document.createElement("div");
+  indicadorBusqueda.className = "rw-carga";
+  indicadorBusqueda.hidden = true;
+  indicadorBusqueda.setAttribute("aria-hidden", "true");
   var BANCO_VOZ = {}, girosVoz = {}, animacionesVoz = true, cuadroVoz = null, textoVozCompleto = "";
   var espacioVoz = document.createElement("section");
   espacioVoz.className = "rw-voz";
@@ -1062,7 +1108,10 @@
   var completarVoz = document.createElement("button");
   completarVoz.type = "button";
   completarVoz.hidden = true;
-  completarVoz.addEventListener("click", finalizarVoz);
+  completarVoz.addEventListener("click", function () {
+    espacioVoz.dataset.expandido = espacioVoz.dataset.expandido === "true" ? "false" : "true";
+    finalizarVoz();
+  });
   cabeceraVoz.append(tituloVoz, completarVoz);
   var textoVoz = document.createElement("p");
   textoVoz.className = "rw-voz-texto";
@@ -1075,6 +1124,14 @@
   anuncioVoz.setAttribute("aria-atomic", "true");
   var accionesVoz = document.createElement("div");
   accionesVoz.className = "rw-voz-acciones";
+  var menuVoz = document.createElement("details"), resumenMenuVoz = document.createElement("summary");
+  menuVoz.className = "rw-voz-menu";
+  menuVoz.append(resumenMenuVoz, accionesVoz);
+  cabeceraVoz.appendChild(menuVoz);
+  accionesVoz.addEventListener("click", function (e) {
+    if (e.target.closest("button")) { menuVoz.open = false; resumenMenuVoz.focus(); }
+  });
+  raiz.addEventListener("click", function (e) { if (!menuVoz.contains(e.target)) menuVoz.open = false; });
   var ayudaVoz = document.createElement("button"), opcionesVoz = document.createElement("button");
   ayudaVoz.type = opcionesVoz.type = "button";
   ayudaVoz.addEventListener("click", function () { hablar(voz("tips", texto("search_instruction")), "tips"); });
@@ -1088,7 +1145,9 @@
     botonesVoz[categoria] = accion;
     accionesVoz.appendChild(accion);
   });
-  espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz, accionesVoz);
+  textoVoz.id = "rw-voz-texto";
+  completarVoz.setAttribute("aria-controls", textoVoz.id);
+  espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz);
 
   function voz(categoria, repuesto) {
     var opciones = BANCO_VOZ[categoria];
@@ -1103,12 +1162,18 @@
     cuadroVoz = null;
     textoVoz.textContent = textoVozCompleto;
     espacioVoz.dataset.typing = "false";
-    if (raiz.activeElement === completarVoz) input.focus({ preventScroll: true });
-    completarVoz.hidden = true;
+    var expandido = espacioVoz.dataset.expandido === "true";
+    completarVoz.setAttribute("aria-expanded", String(expandido));
+    completarVoz.textContent = texto(expandido ? "voice_show_less" : "voice_show_all");
+    completarVoz.hidden = !expandido && textoVozCompleto.length <= 90 && textoVoz.scrollHeight <= textoVoz.clientHeight + 1;
+    if (completarVoz.hidden && raiz.activeElement === completarVoz) resumenMenuVoz.focus();
   }
 
   function hablar(mensaje, categoria) {
     finalizarVoz();
+    espacioVoz.dataset.expandido = "false";
+    completarVoz.textContent = texto("voice_show_all");
+    completarVoz.setAttribute("aria-expanded", "false");
     textoVozCompleto = String(mensaje || "");
     espacioVoz.dataset.category = categoria || "message";
     anuncioVoz.textContent = textoVozCompleto;
@@ -1144,11 +1209,13 @@
     subtituloTexto.textContent = CONTENIDO.subtitle || texto("search_subtitle");
     panel.insertBefore(form, mensajes);
     panel.insertBefore(espacioVoz, mensajes);
+    panel.insertBefore(indicadorBusqueda, mensajes);
     espacioVoz.hidden = false;
     tituloVoz.textContent = texto("voice_label");
     completarVoz.textContent = texto("voice_show_all");
     ayudaVoz.textContent = texto("voice_help");
     opcionesVoz.textContent = texto("voice_options");
+    resumenMenuVoz.textContent = texto("voice_menu");
     Object.keys(botonesVoz).forEach(function (categoria) {
       botonesVoz[categoria].textContent = texto("voice_" + categoria);
       botonesVoz[categoria].hidden = !(BANCO_VOZ[categoria] && BANCO_VOZ[categoria].length);
@@ -1187,6 +1254,44 @@
         sugerencias.appendChild(sugerencia);
       });
       inicio.appendChild(sugerencias);
+    }
+    if (PREGUNTAS_FIJAS.length) {
+      var frecuentes = document.createElement("details");
+      frecuentes.className = "rw-faq";
+      var resumenFaq = document.createElement("summary");
+      resumenFaq.textContent = texto("faq_title");
+      var filtroLabel = document.createElement("label");
+      filtroLabel.textContent = texto("faq_topic");
+      var filtro = document.createElement("select");
+      var todos = document.createElement("option");
+      todos.value = "";
+      todos.textContent = texto("faq_all");
+      filtro.appendChild(todos);
+      Array.from(new Set(PREGUNTAS_FIJAS.map(function (p) { return p.topic; }))).forEach(function (tema) {
+        var opcion = document.createElement("option");
+        opcion.value = opcion.textContent = tema;
+        filtro.appendChild(opcion);
+      });
+      filtroLabel.appendChild(filtro);
+      var cuentaFaq = document.createElement("p");
+      cuentaFaq.setAttribute("role", "status");
+      var listaFaq = document.createElement("div");
+      listaFaq.className = "rw-faq-lista";
+      function filtrarPreguntas() {
+        listaFaq.replaceChildren();
+        PREGUNTAS_FIJAS.filter(function (p) { return !filtro.value || p.topic === filtro.value; }).forEach(function (p) {
+          var consulta = document.createElement("button");
+          consulta.type = "button";
+          consulta.textContent = p.question;
+          consulta.addEventListener("click", function () { input.value = p.question; input.focus(); });
+          listaFaq.appendChild(consulta);
+        });
+        cuentaFaq.textContent = texto("faq_count", { n: listaFaq.children.length });
+      }
+      filtro.addEventListener("change", filtrarPreguntas);
+      filtrarPreguntas();
+      frecuentes.append(resumenFaq, filtroLabel, cuentaFaq, listaFaq);
+      inicio.appendChild(frecuentes);
     }
     mensajes.replaceChildren(inicio);
   }
@@ -1332,6 +1437,7 @@
       if (paginaBusqueda) paginaBusqueda.vistos.add(clave);
       var item = document.createElement("li");
       item.className = "rw-resultado";
+      item.style.animationDelay = Math.min(indice, 4) * 60 + "ms";
       item.value = frag.rango || indice + 1;
       var origen = document.createElement("p");
       origen.className = "rw-resultado-origen";
@@ -1482,7 +1588,13 @@
   var burbujaEspera = null;
 
   function mostrarEscribiendo() {
-    if (modoBusqueda) { hablar(voz("searching", micro("waiting")), "searching"); return; }
+    if (modoBusqueda) {
+      mensajes.setAttribute("aria-busy", "true");
+      mensajes.classList.add("rw-buscando");
+      indicadorBusqueda.hidden = false;
+      hablar(voz("searching", micro("waiting")), "searching");
+      return;
+    }
     if (burbujaEspera) return;
     burbujaEspera = document.createElement("div");
     burbujaEspera.className = "rw-escribiendo";
@@ -1499,6 +1611,9 @@
   }
 
   function ocultarEscribiendo() {
+    mensajes.setAttribute("aria-busy", "false");
+    mensajes.classList.remove("rw-buscando");
+    indicadorBusqueda.hidden = true;
     if (burbujaEspera && burbujaEspera.parentNode) {
       burbujaEspera.parentNode.removeChild(burbujaEspera);
     }
@@ -1562,6 +1677,9 @@
         SUGERENCIAS = (Array.isArray(cfg.suggested_questions) ? cfg.suggested_questions : []).filter(function (s) {
           return typeof s === "string" && s.trim();
         }).slice(0, 6);
+        PREGUNTAS_FIJAS = (Array.isArray(cfg.default_questions) ? cfg.default_questions : []).filter(function (p) {
+          return p && typeof p.question === "string" && p.question.trim() && typeof p.topic === "string" && p.topic.trim();
+        }).slice(0, 500);
         panel.setAttribute("data-diseno", PRESENTACION.diseno);
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
         panel.setAttribute("data-alineacion", PRESENTACION.alineacion);
@@ -1574,6 +1692,7 @@
         if (cfg.microcopy && typeof cfg.microcopy === "object") MICROCOPIA = cfg.microcopy;
         if (cfg.assistant_messages && typeof cfg.assistant_messages === "object") BANCO_VOZ = cfg.assistant_messages;
         animacionesVoz = cfg.animations_enabled !== false;
+        panel.setAttribute("data-animaciones", String(animacionesVoz));
         var p = cfg.placement || {};
         // styles.yaml::placement con los nombres públicos → los del widget.
         var u = { posicion: p.position, tamano: p.size, lanzador: p.launcher, desplazamiento_x: p.offset_x,
@@ -1712,7 +1831,7 @@
   var elementoFocoPrevio = null;
 
   function elementosFocables() {
-    var lista = panel.querySelectorAll("button, input, summary, [href], [tabindex]:not([tabindex='-1'])");
+    var lista = panel.querySelectorAll("button, input, select, textarea, summary, [href], [tabindex]:not([tabindex='-1'])");
     return Array.prototype.filter.call(lista, function (el) {
       return !el.disabled && el.offsetParent !== null;
     });
@@ -1744,6 +1863,7 @@
     ajustarViewport();
     terminarSalida(false);
     panel.hidden = false;
+    if (cuadroVoz === null) finalizarVoz();
     boton.setAttribute("aria-expanded", "true");
     input.focus();
     document.addEventListener("keydown", manejarTeclado, true);
@@ -1795,6 +1915,7 @@
   function manejarTeclado(ev) {
     if (ev.key === "Escape") {
       ev.preventDefault();
+      if (menuVoz.open) { menuVoz.open = false; resumenMenuVoz.focus(); return; }
       cerrarPanel();
       return;
     }

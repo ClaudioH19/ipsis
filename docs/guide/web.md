@@ -10,7 +10,7 @@ For a complete setup with HTML, Astro, Svelte, React, Angular or Python,
 see [framework integrations](integrations.md): runnable examples, CORS,
 configuration and how to keep the widget mounted when navigating.
 
-![The widget answers citing the manual and marks «6 months» inside the citation](../assets/widget-answer.png)
+![V2 widget with numbered sources and literal context](../assets/widget-sources-en.png)
 
 ## Try the widget and configure the project
 
@@ -248,6 +248,18 @@ In Spanish, English and Portuguese, six example questions fill the input
 without submitting it. **About the assistant**, **Scope** and **Examples**
 offer additional fixed messages. These interface messages are separate from
 document sources and do not execute searches.
+
+**Frequently asked questions** exposes at least 100 complete questions per
+language across ten topics. `/config::default_questions` publishes questions
+and topics; the service resolves each fixed answer. Queries with added document
+information still search the index. The 118 message variants form a separate
+catalog from the recognized questions.
+
+Guidance occupies two lines by default. **Show full message** expands a
+scrollable area; **Show less** returns that space to the sources. The **Help**
+menu overlays its actions without changing the results area's height. Loading
+progress and source-card transitions make new queries visible; they respect
+`animations.enabled` and reduced motion preferences.
 
 The whole look lives in `config/styles.yaml` and applies without restarting
 the service:
