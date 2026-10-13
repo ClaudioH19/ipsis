@@ -1,4 +1,9 @@
 interface:
+  voice_about: Sobre el asistente
+  voice_limits: Alcance
+  voice_examples: Ejemplos
+  suggestions_label: Prueba una pregunta
+  result_number: Fuente {n}
   voice_label: Orientación de ipsis
   voice_help: Cómo buscar
   voice_options: Qué puedo hacer
@@ -19,9 +24,9 @@ messages:
     - Hola. Prueba con una pregunta concreta o con el identificador de un producto.
     - Tus documentos son el punto de partida. Escribe una consulta para explorarlos.
   greeting:
-    - Hola. ¿Qué quieres buscar en tus documentos?
+    - Hola, ¿en qué puedo ayudarte hoy?
     - Buenos días. Puedes empezar con una pregunta o palabras clave.
-    - Hola. Escribe el tema que necesitas consultar.
+    - Hola. Cuéntame qué necesitas y empezamos.
     - Bienvenido. ¿Qué información te gustaría revisar?
     - Hola. Estoy listo para buscar fuentes en tu proyecto.
     - Buenas. Puedes consultar un nombre, código o tema.
@@ -30,10 +35,10 @@ messages:
     - Hola. Los resultados que abras conservarán el contexto del documento.
     - Bienvenido de nuevo. Escribe tu próxima consulta cuando quieras.
   thanks:
-    - De nada. Puedes seguir buscando cuando lo necesites.
+    - De nada, un gusto ayudarte.
     - Con gusto. Recuerda revisar la fuente antes de usar la información.
     - Gracias a ti. Los resultados siguen disponibles para consultarlos.
-    - Me alegra ayudar. Puedes escribir otra pregunta.
+    - Me alegra que te haya servido. Aquí estoy si necesitas algo más.
     - De nada. Si necesitas más contexto, abre el resultado.
     - Con gusto. Una consulta más concreta puede acercarte al dato que buscas.
     - Gracias. Puedes volver a las fuentes mostradas cuando quieras.
@@ -41,7 +46,7 @@ messages:
     - Con gusto. Puedes buscar otro tema sin salir de esta página.
     - Gracias a ti. Aquí puedes continuar revisando tus documentos.
   farewell:
-    - Hasta luego. Puedes volver a buscar cuando quieras.
+    - Hasta luego. Que tengas un buen día.
     - Adiós. Los documentos estarán aquí para tu próxima consulta.
     - Nos vemos. Recuerda verificar las fuentes que vayas a utilizar.
     - Hasta pronto. Puedes retomar la búsqueda en esta página.
@@ -117,3 +122,31 @@ messages:
     - Prueba con el identificador completo si buscas un producto o registro.
     - No se mostraron fuentes. Divide la consulta en preguntas más breves.
     - Intenta otra búsqueda y comprueba qué documentos están disponibles en el panel.
+  about:
+  - Soy ipsis, tu asistente para consultar los documentos de este proyecto.
+  - Mi punto de partida son los textos cargados aquí. Cada resultado indica de dónde viene.
+  - Presento fragmentos de los documentos junto a su contexto para facilitar la lectura.
+  - Las frases de bienvenida y ayuda son mensajes de interfaz, separados del texto documental.
+  - El título de cada resultado abre su contexto. La ruta de secciones indica dónde aparece el pasaje.
+  - Puedes saludar, dar las gracias o despedirte; también estoy aquí para orientarte.
+  limits:
+  - Mi información proviene de los documentos cargados en este proyecto.
+  - Un resultado relacionado puede aportar contexto sin responder exactamente a tu pregunta.
+  - Si los documentos no incluyen un dato, no puedo completarlo con información inventada.
+  - Los valores de una tabla corresponden al documento y a la versión mostrada.
+  - Localizo texto; los cálculos y las decisiones requieren revisar los datos de origen.
+  - Las preguntas de ejemplo son puntos de partida; adáptalas al contenido de tus documentos.
+  examples:
+  - Para encontrar un procedimiento, pregunta «¿Qué pasos debo seguir?» y añade el nombre del proceso.
+  - Para revisar condiciones, pregunta «¿Qué requisitos se necesitan?» junto con el trámite o producto.
+  - Para localizar una fecha, pregunta «¿Cuál es el plazo?» y especifica la actividad.
+  - Para consultar un responsable, pregunta «¿Quién está a cargo?» y añade la tarea.
+  - Para leer una definición, pregunta «¿Qué significa este término?» y escribe el término concreto.
+  - Para encontrar una excepción, pregunta «¿En qué casos se aplica?» y añade la regla.
+suggestions:
+- ¿Qué pasos debo seguir?
+- ¿Qué requisitos se necesitan?
+- ¿Cuál es el plazo?
+- ¿Quién está a cargo?
+- ¿Qué significa este término?
+- ¿En qué casos se aplica?

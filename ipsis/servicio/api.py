@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from ipsis import __version__
+from ipsis.configuracion.glosario import a_externo
 from ipsis.recursos.mensajes import t
 from ipsis.aplicacion.consulta import (
     Motor,
@@ -269,6 +270,13 @@ class ConfigWidget(BaseModel):
     show_status_label: bool = True
     # Pasajes del documento justificados (con guiones según ``language``) o alineados al inicio.
     text_align: Literal["start", "justify"] = "justify"
+    result_layout: Literal["cards", "lines", "editorial"] = "cards"
+    show_result_numbers: bool = True
+    show_section_path: bool = True
+    expand_context: bool = False
+    show_suggestions: bool = True
+    widget_content: dict[str, str] = {}
+    suggested_questions: list[str] = []
     language: str = "es"  # idioma del asistente: el atributo lang del widget
     interface: dict[str, str] = {}
     # Variantes del tono para welcome, waiting, citations_hint y errores.
@@ -599,6 +607,14 @@ def crear_app(
             citations=citas_presentacion(presentacion["citations"]),
             show_status_label=presentacion["show_status_label"],
             text_align=presentacion["text_align"],
+            result_layout=presentacion["result_layout"],
+            show_result_numbers=presentacion["show_result_numbers"],
+            show_section_path=presentacion["show_section_path"],
+            expand_context=presentacion["expand_context"],
+            show_suggestions=presentacion["show_suggestions"],
+            widget_content=a_externo(
+                {"contenido": estilos.get("contenido") or {}}, "estilos")["content"],
+            suggested_questions=voz["suggestions"],
             language=idioma,
             interface=interfaz,
             microcopy=microcopy,

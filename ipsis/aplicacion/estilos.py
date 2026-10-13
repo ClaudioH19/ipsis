@@ -37,6 +37,10 @@ _COLORES = {
     "aviso": "--rw-aviso",
     "aviso_borde": "--rw-aviso-borde",
     "vivo": "--rw-vivo",
+    "titulo": "--rw-titulo",
+    "seccion": "--rw-seccion",
+    "superficie_resultado": "--rw-superficie-resultado",
+    "borde_resultado": "--rw-borde-resultado",
 }
 _TIPOGRAFIA = {
     "familia": "--rw-fuente",
@@ -45,6 +49,10 @@ _TIPOGRAFIA = {
     "tamano_cita": "--rw-tamano-cita",
     "tamano_etiqueta": "--rw-tamano-etiqueta",
     "interlineado": "--rw-interlineado",
+    "familia_titulo": "--rw-fuente-titulo",
+    "tamano_titulo": "--rw-tamano-titulo",
+    "peso_titulo": "--rw-peso-titulo",
+    "tamano_seccion": "--rw-tamano-seccion",
 }
 _FORMA = {
     "radio_panel": "--rw-radio-panel",
@@ -56,6 +64,9 @@ _FORMA = {
     "tamano_icono": "--rw-tamano-icono",
     "separacion": "--rw-separacion",
     "relleno": "--rw-relleno",
+    "radio_resultado": "--rw-radio-resultado",
+    "separacion_resultado": "--rw-separacion-resultado",
+    "relleno_resultado": "--rw-relleno-resultado",
 }
 _ANIMACIONES = {
     "duracion_panel": "--rw-dur-panel",

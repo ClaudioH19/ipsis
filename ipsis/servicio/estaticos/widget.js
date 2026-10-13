@@ -185,6 +185,11 @@
     voice_results: "Open a source to check its context.",
     voice_continuation: "Review the newly added sources.",
     voice_no_results: "Try different keywords or check the loaded documents.",
+    voice_about: "About the assistant",
+    voice_limits: "Scope",
+    voice_examples: "Examples",
+    suggestions_label: "Try a question",
+    result_number: "Source {n}",
   };
   // Variantes del tono activo (/config::microcopia). El widget rota entre ellas;
   // si /config no responde, usa el texto de TEXTOS.
@@ -212,7 +217,13 @@
     citas: "acordeon",
     mostrarEtiquetaEstado: true,
     alineacion: "justificada",
+    diseno: "cards",
+    mostrarNumeros: true,
+    mostrarRuta: true,
+    expandirContexto: false,
+    mostrarSugerencias: true,
   };
+  var CONTENIDO = {}, SUGERENCIAS = [];
   function emitir(nombre, detalle) {
     host.dispatchEvent(new CustomEvent(nombre, { detail: detalle || {}, bubbles: true }));
   }
@@ -267,6 +278,10 @@
     "  --rw-tamano-cita:12px;",
     "  --rw-tamano-etiqueta:10.5px;",
     "  --rw-interlineado:1.55;",
+    "  --rw-titulo:var(--rw-texto);--rw-seccion:var(--rw-texto-suave);",
+    "  --rw-superficie-resultado:var(--rw-superficie);--rw-borde-resultado:var(--rw-borde);",
+    "  --rw-fuente-titulo:var(--rw-fuente);--rw-tamano-titulo:17px;--rw-peso-titulo:650;--rw-tamano-seccion:12px;",
+    "  --rw-radio-resultado:12px;--rw-separacion-resultado:16px;--rw-relleno-resultado:14px;",
     "  --rw-radio-panel:18px;",
     "  --rw-radio-burbuja:16px;",
     "  --rw-radio-control:12px;",
@@ -398,7 +413,7 @@
     ".rw-avatar-esquina[data-esquina='esquina-superior']{top:calc(var(--rw-avatar-tamano,56px) / -2);}",
     ".rw-avatar-esquina[data-esquina='esquina-inferior']{bottom:72px;}",
     ".rw-cabecera-textos{flex:1;min-width:0;}",
-    ".rw-cabecera h2{margin:0;font-size:calc(var(--rw-tamano-base) + .5px);font-weight:650;",
+    ".rw-cabecera h2{margin:0;font-family:var(--rw-fuente-titulo);color:var(--rw-titulo);font-size:calc(var(--rw-tamano-base) + .5px);font-weight:var(--rw-peso-titulo);",
     "  letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
     ".rw-subtitulo{margin:1px 0 0;font-size:11.5px;color:var(--rw-texto-suave);",
     "  display:flex;align-items:center;gap:5px;}",
@@ -444,27 +459,32 @@
     "  background:var(--rw-superficie);padding:12px var(--rw-relleno);}",
     ".rw-panel[data-modo='busqueda'] .rw-form input{border-radius:24px;min-width:0;}",
     ".rw-panel[data-modo='busqueda'] .rw-enviar{border-radius:50%;}",
-    ".rw-panel[data-modo='busqueda'] .rw-mensajes{gap:0;background:var(--rw-superficie);}",
+    ".rw-panel[data-modo='busqueda'] .rw-mensajes{gap:0;background:var(--rw-fondo);}",
     ".rw-busqueda{width:100%;min-width:0;color:var(--rw-texto);line-height:var(--rw-interlineado);}",
     ".rw-busqueda-contador{font-size:var(--rw-tamano-cita);font-weight:400;color:var(--rw-texto-suave);",
     "  margin:0 0 18px;overflow-wrap:anywhere;}",
     ".rw-busqueda .rw-resultados{list-style:none;margin:0;padding:0;}",
-    ".rw-busqueda .rw-resultado{border:0;border-radius:0;margin:0 0 24px;padding:0;}",
-    ".rw-busqueda .rw-resultado-origen{margin:0 0 3px;line-height:1.4;overflow-wrap:anywhere;}",
-    ".rw-busqueda .rw-resultado-titulo{display:block;font:inherit;font-size:calc(var(--rw-tamano-mensaje) + 3px);",
-    "  text-align:start;background:none;border:0;padding:0;color:var(--rw-acento);cursor:pointer;}",
+    ".rw-busqueda .rw-resultado{border:1px solid var(--rw-borde-resultado);border-radius:var(--rw-radio-resultado);",
+    "  margin:0 0 var(--rw-separacion-resultado);padding:var(--rw-relleno-resultado);background:var(--rw-superficie-resultado);}",
+    ".rw-busqueda .rw-resultado-origen{margin:0 0 8px;line-height:1.4;overflow-wrap:anywhere;}",
+    ".rw-resultado-numero{display:inline-block;border:1px solid var(--rw-borde-resultado);border-radius:4px;",
+    "  padding:1px 6px;margin-inline-end:8px;color:var(--rw-seccion);font-weight:650;font-size:var(--rw-tamano-seccion);}",
+    ".rw-busqueda .rw-resultado-titulo{display:block;font-family:var(--rw-fuente-titulo);font-size:var(--rw-tamano-titulo);",
+    "  font-weight:var(--rw-peso-titulo);line-height:1.4;text-align:start;background:none;border:0;padding:0;color:var(--rw-titulo);cursor:pointer;}",
     ".rw-busqueda .rw-resultado-titulo:hover{text-decoration:underline;}",
-    ".rw-panel[data-preset='search'] .rw-resultado-titulo{font-size:20px;line-height:1.35;}",
-    ".rw-panel[data-preset='search_compact'] .rw-resultado-titulo{font-size:18px;line-height:1.35;}",
+    ".rw-panel[data-diseno='lines'] .rw-busqueda .rw-resultado{border:0;border-bottom:1px solid var(--rw-borde-resultado);",
+    "  border-radius:0;background:transparent;padding:0 0 var(--rw-relleno-resultado);}",
+    ".rw-panel[data-diseno='editorial'] .rw-busqueda .rw-resultado{border:0;border-inline-start:3px solid var(--rw-borde-resultado);",
+    "  border-radius:0;padding:var(--rw-relleno-resultado);}",
     ".rw-busqueda .rw-resultado-titulo:focus-visible,.rw-busqueda summary:focus-visible{",
     "  outline:2px solid var(--rw-acento);outline-offset:3px;}",
     ".rw-panel[data-preset='contrast'] .rw-resultado-titulo,",
-    ".rw-panel[data-preset='contrast'] .rw-busqueda summary{color:var(--rw-texto);text-decoration:underline;}",
+    ".rw-panel[data-preset='contrast'] .rw-busqueda summary{text-decoration:underline;}",
     ".rw-panel[data-preset='contrast'] .rw-seguir{color:var(--rw-texto);border-color:var(--rw-texto);}",
     ".rw-panel[data-preset='contrast'] .rw-busqueda :focus-visible,",
     ".rw-panel[data-preset='contrast'] .rw-form input:focus{outline:2px solid var(--rw-texto);outline-offset:3px;}",
     ".rw-panel[data-modo='busqueda'] .rw-enviando svg{animation:none;}",
-    ".rw-resultado-ruta{margin:3px 0;color:var(--rw-texto-suave);font-size:var(--rw-tamano-cita);overflow-wrap:anywhere;}",
+    ".rw-resultado-ruta{margin:6px 0;color:var(--rw-seccion);font-size:var(--rw-tamano-seccion);overflow-wrap:anywhere;}",
     ".rw-busqueda .rw-resultado-vista{white-space:normal;margin:6px 0;font-size:var(--rw-tamano-mensaje);}",
     ".rw-busqueda .rw-resultado-vista strong{font-weight:700;}",
     ".rw-busqueda .rw-resultado-contexto{font-size:var(--rw-tamano-mensaje);margin:10px 0;}",
@@ -472,7 +492,8 @@
     ".rw-documento{white-space:normal;min-width:0;line-height:max(1.6,var(--rw-interlineado));}",
     ".rw-documento p{margin:0;white-space:pre-line;overflow-wrap:anywhere;}",
     ".rw-documento p + p{margin-top:.85em;}",
-    ".rw-documento h5{margin:1.1em 0 .5em;font-size:1.05em;line-height:1.4;text-align:start;}",
+    ".rw-documento h5{margin:1.1em 0 .5em;padding-bottom:.4em;border-bottom:1px solid var(--rw-borde-resultado);",
+    "  font-family:var(--rw-fuente-titulo);font-weight:var(--rw-peso-titulo);color:var(--rw-seccion);font-size:1.05em;line-height:1.4;text-align:start;}",
     ".rw-documento h5:first-child{margin-top:0;}",
     ".rw-tabla-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;margin:.9em 0;",
     "  border:1px solid var(--rw-borde);border-radius:8px;scrollbar-width:thin;}",
@@ -492,7 +513,12 @@
     ".rw-busqueda-ayuda{font-size:var(--rw-tamano-cita);color:var(--rw-texto-suave);margin:0 0 12px;}",
     ".rw-busqueda-vacia{text-align:center;padding:36px 0;color:var(--rw-texto-suave);}",
     ".rw-busqueda-vacia h3{color:var(--rw-texto);font-size:18px;margin:0 0 10px;}",
-    ".rw-panel[data-densidad='compacta'] .rw-busqueda .rw-resultado{margin-bottom:16px;}",
+    ".rw-sugerencias{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px;}",
+    ".rw-sugerencias button{font:inherit;font-size:var(--rw-tamano-cita);text-align:start;max-width:100%;overflow-wrap:anywhere;",
+    "  border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);background:var(--rw-superficie);color:var(--rw-texto);",
+    "  padding:8px 10px;cursor:pointer;}.rw-sugerencias button:hover{border-color:var(--rw-acento);}",
+    ".rw-sugerencias button:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-panel[data-densidad='compacta'] .rw-busqueda .rw-resultado{margin-bottom:calc(var(--rw-separacion-resultado) * .75);}",
     // Justificado opcional (presentation.text_align): solo el texto del
     // documento, con guiones para que no queden huecos en una burbuja angosta.
     ".rw-panel[data-alineacion='justificada'] .rw-parrafo-pasaje,",
@@ -1054,6 +1080,14 @@
   ayudaVoz.addEventListener("click", function () { hablar(voz("tips", texto("search_instruction")), "tips"); });
   opcionesVoz.addEventListener("click", function () { hablar(voz("capability", texto("search_instruction")), "capability"); });
   accionesVoz.append(ayudaVoz, opcionesVoz);
+  var botonesVoz = {};
+  ["about", "limits", "examples"].forEach(function (categoria) {
+    var accion = document.createElement("button");
+    accion.type = "button";
+    accion.addEventListener("click", function () { hablar(voz(categoria), categoria); });
+    botonesVoz[categoria] = accion;
+    accionesVoz.appendChild(accion);
+  });
   espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz, accionesVoz);
 
   function voz(categoria, repuesto) {
@@ -1107,7 +1141,7 @@
     panel.setAttribute("data-modo", "busqueda");
     boton.setAttribute("aria-label", texto("search_open", { title: tituloEl.textContent }));
     botonCerrar.setAttribute("aria-label", texto("search_close"));
-    subtituloTexto.textContent = texto("search_subtitle");
+    subtituloTexto.textContent = CONTENIDO.subtitle || texto("search_subtitle");
     panel.insertBefore(form, mensajes);
     panel.insertBefore(espacioVoz, mensajes);
     espacioVoz.hidden = false;
@@ -1115,6 +1149,10 @@
     completarVoz.textContent = texto("voice_show_all");
     ayudaVoz.textContent = texto("voice_help");
     opcionesVoz.textContent = texto("voice_options");
+    Object.keys(botonesVoz).forEach(function (categoria) {
+      botonesVoz[categoria].textContent = texto("voice_" + categoria);
+      botonesVoz[categoria].hidden = !(BANCO_VOZ[categoria] && BANCO_VOZ[categoria].length);
+    });
     mensajes.setAttribute("role", "region");
     mensajes.setAttribute("aria-label", texto("search_results_label"));
     mensajes.removeAttribute("aria-live");
@@ -1128,11 +1166,28 @@
     var inicio = document.createElement("div");
     inicio.className = "rw-busqueda-vacia";
     var titulo = document.createElement("h3");
-    titulo.textContent = texto("search_start");
+    titulo.textContent = CONTENIDO.welcome_title || texto("search_start");
     var ayuda = document.createElement("p");
-    ayuda.textContent = texto("search_instruction");
+    ayuda.textContent = CONTENIDO.welcome_text || texto("search_instruction");
     inicio.appendChild(titulo);
     inicio.appendChild(ayuda);
+    if (PRESENTACION.mostrarSugerencias && SUGERENCIAS.length) {
+      var sugerencias = document.createElement("div");
+      sugerencias.className = "rw-sugerencias";
+      sugerencias.setAttribute("role", "group");
+      sugerencias.setAttribute("aria-label", texto("suggestions_label"));
+      SUGERENCIAS.forEach(function (pregunta) {
+        var sugerencia = document.createElement("button");
+        sugerencia.type = "button";
+        sugerencia.textContent = pregunta;
+        sugerencia.addEventListener("click", function () {
+          input.value = pregunta;
+          input.focus();
+        });
+        sugerencias.appendChild(sugerencia);
+      });
+      inicio.appendChild(sugerencias);
+    }
     mensajes.replaceChildren(inicio);
   }
 
@@ -1281,6 +1336,13 @@
       var origen = document.createElement("p");
       origen.className = "rw-resultado-origen";
       origen.textContent = (frag.archivo || frag.doc_titulo) + (frag.version ? " \u00b7 v" + frag.version : "");
+      if (PRESENTACION.mostrarNumeros) {
+        var numero = document.createElement("span");
+        numero.className = "rw-resultado-numero";
+        numero.textContent = String(frag.rango || lista.children.length + 1);
+        numero.setAttribute("aria-label", texto("result_number", { n: numero.textContent }));
+        origen.prepend(numero);
+      }
       item.appendChild(origen);
       var secciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
       if (bloquesVerificados(frag.bloques_fuente, frag.texto || "", frag.offset_inicio).some(function (b) {
@@ -1298,7 +1360,7 @@
       titulo.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
       encabezado.appendChild(titulo);
       item.appendChild(encabezado);
-      if (secciones.length > 1) {
+      if (PRESENTACION.mostrarRuta && secciones.length > 1) {
         var ruta = document.createElement("p");
         ruta.className = "rw-resultado-ruta";
         ruta.textContent = secciones.slice(0, -1).join(" \u203a ");
@@ -1332,7 +1394,9 @@
       resumen.textContent = texto("search_read_document");
       detalles.appendChild(resumen);
       titulo.setAttribute("aria-controls", detalles.id);
-      titulo.setAttribute("aria-expanded", "false");
+      detalles.open = PRESENTACION.expandirContexto;
+      titulo.setAttribute("aria-expanded", String(detalles.open));
+      resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
       titulo.addEventListener("click", function () { detalles.open = !detalles.open; });
       detalles.addEventListener("toggle", function () {
         titulo.setAttribute("aria-expanded", String(detalles.open));
@@ -1487,6 +1551,18 @@
         PRESENTACION.citas = cfg.citations === "list" ? "lista" : "acordeon";
         PRESENTACION.mostrarEtiquetaEstado = cfg.show_status_label !== false;
         PRESENTACION.alineacion = cfg.text_align === "start" ? "inicio" : "justificada";
+        PRESENTACION.diseno = ["cards", "lines", "editorial"].indexOf(cfg.result_layout) >= 0 ? cfg.result_layout
+          : cfg.preset === "editorial" ? "editorial"
+          : ["minimal", "search", "search_compact"].indexOf(cfg.preset) >= 0 ? "lines" : "cards";
+        PRESENTACION.mostrarNumeros = cfg.show_result_numbers !== false;
+        PRESENTACION.mostrarRuta = cfg.show_section_path !== false;
+        PRESENTACION.expandirContexto = cfg.expand_context === true;
+        PRESENTACION.mostrarSugerencias = cfg.show_suggestions !== false;
+        CONTENIDO = cfg.widget_content || {};
+        SUGERENCIAS = (Array.isArray(cfg.suggested_questions) ? cfg.suggested_questions : []).filter(function (s) {
+          return typeof s === "string" && s.trim();
+        }).slice(0, 6);
+        panel.setAttribute("data-diseno", PRESENTACION.diseno);
         panel.setAttribute("data-densidad", PRESENTACION.densidad);
         panel.setAttribute("data-alineacion", PRESENTACION.alineacion);
         // hyphens:auto parte las palabras con las reglas del idioma de lang.
@@ -1515,11 +1591,13 @@
         aplicarUbicacion();
         configurarAvatar(cfg.avatar);
         if (cfg.assistant_name) {
-          tituloEl.textContent = cfg.assistant_name;
-          botonTexto.textContent = cfg.assistant_name;
-          panel.setAttribute("aria-label", cfg.assistant_name);
-          boton.setAttribute("aria-label", texto("open", { title: cfg.assistant_name }));
+          var nombreVisible = CONTENIDO.title || cfg.assistant_name;
+          tituloEl.textContent = nombreVisible;
+          botonTexto.textContent = nombreVisible;
+          panel.setAttribute("aria-label", nombreVisible);
+          boton.setAttribute("aria-label", texto("open", { title: nombreVisible }));
         }
+        if (CONTENIDO.subtitle) subtituloTexto.textContent = CONTENIDO.subtitle;
         var bienvenida = (MICROCOPIA.welcome && MICROCOPIA.welcome.length) ? micro("welcome") : cfg.greeting;
         if (cfg.response_mode === "ranked_sources" || modoBusqueda) {
           activarBusqueda();

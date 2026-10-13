@@ -464,7 +464,7 @@ widget:
   preset_failed: 'No se pudo aplicar el preset: {error}'
   preset_applied: Preset {preset!r} aplicado en {path}
   preset_view: 'Vista activa: inicia el servicio y abre /widget/demo.html'
-  preview_help: Genera un mockup HTML sin iniciar la API.
+  preview_help: Genera una vista interactiva del widget real con fuentes de ejemplo, sin iniciar la API.
   opt_preview_styles: Archivo de estilos que se desea previsualizar.
   opt_html: Archivo HTML de salida.
   preview_failed: 'No se pudo generar la vista previa: {error}'
@@ -892,6 +892,7 @@ panel:
   animation: Animación o expresión
   try: Probar
   widget_title: Widget
+  result_layout: Presentación de resultados
   preset: Preset visual
   apply_preset: Aplicar preset
   accent: Color de acento
@@ -958,6 +959,9 @@ panel:
   source_project: "proyecto (engine.yaml)"
   source_profile: "perfil"
 presets:
+  ocean: Paleta turquesa, tarjetas redondeadas y títulos en tonos oceánicos.
+  forest: Paleta verde, títulos serif y secciones con margen editorial.
+  midnight: Tema oscuro violeta con tarjetas y títulos de alto contraste.
   search: Buscador amplio, extractos visibles y enlaces a las fuentes.
   search_compact: Buscador compacto para paneles y listas de resultados.
   classic: Azul neutro, cómodo y equivalente al diseño de fábrica.
@@ -966,11 +970,10 @@ presets:
   contrast: Contraste alto, controles marcados y animaciones desactivadas.
 runtime:
   preview_search_heading: Busca en tus documentos
+  preview_show_results: Ver resultados de ejemplo
   preview_search_button: Buscar
-  preview_search_results: resultados para revisar
   preview_search_source: manual.txt
   preview_search_read: Leer contexto completo
-  preview_search_more: Mostrar más resultados
   preview_search_note: Vista de ejemplo del template; no ejecuta búsquedas ni representa documentos cargados.
   preview_search_result_1: Requisitos para iniciar el trámite
   preview_search_excerpt_1: Para iniciar el trámite debes presentar el formulario y los documentos indicados en el manual.
@@ -998,21 +1001,14 @@ runtime:
   log_query_log: 'no se pudo escribir el registro de consultas: {error}'
   preview_lang: es
   preview_title: Vista previa del widget — {preset}
-  preview_label: Mockup del widget
   preview_header: Asistente documental · preset {preset}
   preview_question: ¿Cada cuánto debo cambiar el filtro?
-  preview_direct: Respuesta directa
-  preview_answer: El filtro se cambia cada 6 meses.
-  preview_citation_title: Manual · Filtros
-  preview_citation: El filtro de sedimentos se cambia cada 6 meses.
-  preview_related_label: Información relacionada
-  preview_related: El documento describe la garantía, pero no confirma ese supuesto.
-  preview_no_answer: No encontré una respuesta respaldada por los documentos.
-  preview_conversational: Hola, puedo ayudarte a consultar la documentación.
   preview_heading: Vista previa
-  preview_text: Este mockup no consulta el índice. Permite revisar paleta, tipografía, forma, estados y citas antes de publicar.
   preview_preset: 'Preset activo:'
 styles:
+  result_layout: presentation.result_layout debe ser cards, lines o editorial
+  content_text: content solo admite title, subtitle, welcome_title y welcome_text como
+    texto
   not_object: el tema debe ser un objeto YAML
   section_object: '{section} debe ser un objeto'
   no_booleans: '{key} no admite booleanos'

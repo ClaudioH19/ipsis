@@ -1,4 +1,9 @@
 interface:
+  voice_about: About the assistant
+  voice_limits: Scope
+  voice_examples: Examples
+  suggestions_label: Try a question
+  result_number: Source {n}
   voice_label: Guidance from ipsis
   voice_help: Search tips
   voice_options: What I can do
@@ -19,9 +24,9 @@ messages:
     - Hello. Try a specific question or a product identifier.
     - Your documents are the starting point. Enter a query to explore them.
   greeting:
-    - Hello. What would you like to find in your documents?
+    - Hello, how can I help you today?
     - Good morning. You can start with a question or keywords.
-    - Hi. Enter the topic you need to look up.
+    - Hi. Tell me what you need and we can get started.
     - Welcome. What information would you like to review?
     - Hello. I am ready to search the sources in your project.
     - Hi there. You can look up a name, code or topic.
@@ -30,10 +35,10 @@ messages:
     - Hi. Open a result to see its document context.
     - Welcome back. Enter your next query whenever you are ready.
   thanks:
-    - You are welcome. You can keep searching whenever you need to.
+    - You are welcome. It was a pleasure to help.
     - Glad to help. Remember to check the source before using the information.
     - Thank you. The results are still available for you to review.
-    - Happy to help. You can enter another question.
+    - I am glad that was useful. I am here if you need anything else.
     - You are welcome. Open a result if you need more context.
     - Glad to help. A more specific query can bring you closer to the information you need.
     - Thanks. You can return to the sources shown whenever you like.
@@ -41,7 +46,7 @@ messages:
     - Glad to help. You can search another topic on this page.
     - Thank you. You can continue exploring your documents here.
   farewell:
-    - Goodbye. Come back to search whenever you like.
+    - Goodbye. Have a good day.
     - Bye. Your documents will be here for your next query.
     - See you. Remember to check the sources you plan to use.
     - See you soon. You can resume your search on this page.
@@ -117,3 +122,31 @@ messages:
     - Try the full identifier if you are searching for a product or record.
     - No sources were shown. Split the query into shorter questions.
     - Try another search and check the available documents in the panel.
+  about:
+  - I am ipsis, your assistant for exploring this project's documents.
+  - I work with the texts loaded here. Each result shows where it comes from.
+  - I present document passages alongside their context to make them easier to read.
+  - Welcome and help messages are interface text, separate from the document content.
+  - Select a result title to open its context. The section path shows where the passage appears.
+  - You can say hello, thank me or say goodbye; I can also help you get started.
+  limits:
+  - My information comes from the documents loaded in this project.
+  - A related result can offer context without answering your exact question.
+  - If a value is missing from the documents, I cannot fill it in with invented information.
+  - Table values belong to the document and version shown with the source.
+  - I locate text; calculations and decisions require checking the original data.
+  - Example questions are starting points; adapt them to your documents.
+  examples:
+  - To find a procedure, ask “What steps should I follow?” and add the process name.
+  - To check conditions, ask “What are the requirements?” alongside the procedure or product.
+  - To find a date, ask “What is the deadline?” and specify the activity.
+  - To find a responsible person, ask “Who is in charge?” and add the task.
+  - For a definition, ask “What does this term mean?” and enter the specific term.
+  - To find an exception, ask “When does this apply?” and add the rule.
+suggestions:
+- What steps should I follow?
+- What are the requirements?
+- What is the deadline?
+- Who is in charge?
+- What does this term mean?
+- When does this apply?

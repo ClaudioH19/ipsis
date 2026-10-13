@@ -430,3 +430,92 @@ def test_cerrar_anima_la_salida_y_luego_oculta(navegador, servidor_widget, movim
     page.wait_for_timeout(700)
     expect(dialogo).to_be_visible()
     page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("preset", ["classic", "minimal", "editorial", "contrast", "search", "search_compact",
+                                    "ocean", "forest", "midnight"])
+@pytest.mark.parametrize("modo", ["light", "dark"])
+def test_temas_reales_demarcadores_y_titulos_personalizables(navegador, servidor_widget, tmp_path, preset, modo):
+    from ipsis.aplicacion.estilos import render_css
+    from ipsis.aplicacion.widget import aplicar_preset, presentacion_publica
+
+    tema = aplicar_preset(preset, str(tmp_path / "styles.yaml"))
+    page = navegador.new_page(viewport={"width": 375, "height": 800}, color_scheme=modo)
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+               **presentacion_publica(tema)}))
+    page.route("**/styles.css", lambda r: r.fulfill(body=render_css(tema), content_type="text/css"))
+    page.route("**/ask", lambda r: r.fulfill(json=_pagina_fuentes(continuar=False)))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-resultado-numero")).to_have_text(["1", "2", "3"])
+    tarjeta = page.locator(".rw-resultado").first
+    assert tarjeta.evaluate("e => parseFloat(getComputedStyle(e).borderBottomWidth)") > 0 or tarjeta.evaluate(
+        "e => parseFloat(getComputedStyle(e).borderInlineStartWidth)") > 0
+    titulo = tarjeta.locator(".rw-resultado-titulo")
+    assert titulo.evaluate("e => getComputedStyle(e).color") == titulo.evaluate(
+        "e => { var x=document.createElement('span');x.style.color='var(--rw-titulo)';e.append(x);"
+        "var c=getComputedStyle(x).color;x.remove();return c; }")
+    assert tarjeta.evaluate("e => e.getBoundingClientRect().right") <= 375
+    if preset in {"ocean", "forest", "midnight"}:
+        page.screenshot(path=str(tmp_path / f"{preset}-{modo}.png"), full_page=True)
+    # Una asignación personalizada gana incluso en search/search_compact/contrast.
+    page.evaluate("document.querySelector('ipsis-chat').shadowRoot.querySelector('.rw-raiz').style.setProperty('--rw-tamano-titulo','23px')")
+    assert titulo.evaluate("e => getComputedStyle(e).fontSize") == "23px"
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_preguntas_y_mensajes_localizados_sin_consultas_automaticas(navegador, servidor_widget, tmp_path, idioma):
+    from ipsis.aplicacion.proyecto import interfaz_del_idioma
+    from ipsis.lenguaje.voz import voz_del_widget
+
+    voz = voz_del_widget(idioma)
+    interfaz = {**interfaz_del_idioma(idioma), **voz["interface"]}
+    page = navegador.new_page(viewport={"width": 375, "height": 667}, reduced_motion="reduce")
+    consultas = []
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+               "language": idioma, "interface": interfaz, "assistant_messages": voz["messages"],
+               "suggested_questions": voz["suggestions"], "widget_content": {"welcome_title": "Mi biblioteca"}}))
+    page.on("request", lambda r: consultas.append(r.url) if r.url.endswith('/ask') else None)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name=interfaz["search_open"].replace("{title}", "Biblioteca")).click()
+    expect(page.get_by_role("heading", name="Mi biblioteca")).to_be_visible()
+    expect(page.locator(".rw-sugerencias button")).to_have_count(6)
+    page.locator(".rw-sugerencias button").first.click()
+    expect(page.locator("#rw-input")).to_have_value(voz["suggestions"][0])
+    expect(page.locator("#rw-input")).to_be_focused()
+    for categoria in ("about", "limits", "examples"):
+        page.get_by_role("button", name=interfaz["voice_" + categoria], exact=True).click()
+        assert page.locator(".rw-voz-texto").inner_text() in voz["messages"][categoria]
+    assert consultas == []
+    if idioma == "es":
+        page.screenshot(path=str(tmp_path / "bienvenida-es.png"), full_page=True)
+    page.close()
+
+
+@pytest.mark.browser
+def test_vista_previa_autonoma_renderiza_widget_real_y_texto_seguro(navegador, tmp_path):
+    from ipsis.aplicacion.widget import aplicar_preset, cambiar_estilo, generar_vista_previa
+
+    ruta = str(tmp_path / "styles.yaml")
+    aplicar_preset("forest", ruta)
+    cambiar_estilo(['content.title=</script><img src=x onerror=alert(1)>', 'presentation.expand_context=true',
+                    'presentation.show_result_numbers=false', 'presentation.show_section_path=false'], ruta)
+    vista = generar_vista_previa(str(tmp_path / "preview.html"), ruta)
+    page = navegador.new_page(viewport={"width": 1000, "height": 1000}, reduced_motion="reduce")
+    errores = []
+    page.on('pageerror', lambda e: errores.append(str(e)))
+    page.goto(vista.as_uri())
+    expect(page.locator('.rw-sugerencias button')).to_have_count(6)
+    page.locator('#mostrar').click()
+    expect(page.locator('.rw-resultado')).to_have_count(3)
+    expect(page.locator('.rw-resultado-contexto').first).to_be_visible()
+    assert page.locator('.rw-resultado-numero').count() == page.locator('.rw-resultado-ruta').count() == 0
+    expect(page.locator('#rw-titulo')).to_have_text('</script><img src=x onerror=alert(1)>')
+    assert page.locator('img').count() == 0 and errores == []
+    page.close()

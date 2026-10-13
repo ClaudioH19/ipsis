@@ -8,6 +8,17 @@ presentation:
   citations: "accordion"       # accordion | list (citations are always shown)
   show_status_label: true
   text_align: "justify"        # justify | start (document passages, hyphenated by language)
+  result_layout: "cards"       # cards | lines | editorial
+  show_result_numbers: true
+  show_section_path: true
+  expand_context: false
+  show_suggestions: true
+# Empty text uses the assistant's language. Titles are plain text.
+content:
+  title: ""                   # overrides assistant_name in the widget header
+  subtitle: ""
+  welcome_title: ""
+  welcome_text: ""
 # Where and how the widget appears on your site. Attributes on the <script> or
 # <ipsis-chat> tag (position, size, launcher…) take precedence.
 placement:
@@ -28,14 +39,24 @@ colors:
   warning: "#b4801f"
   warning_border: "#d9a441"
   live: "#22c55e"
+  heading: "var(--rw-texto)"
+  section: "var(--rw-texto-suave)"
+  result_surface: "var(--rw-superficie)"
+  result_border: "var(--rw-borde)"
 
 dark_colors:
+  accent: "#93c5fd"
+  accent_text: "#172554"
   surface: "#1b1f27"
   background: "#12151b"
   text: "#eceff4"
   muted_text: "#9aa4b2"
   border: "#2b323d"
   warning: "#e0b055"
+  heading: "var(--rw-texto)"
+  section: "var(--rw-texto-suave)"
+  result_surface: "var(--rw-superficie)"
+  result_border: "var(--rw-borde)"
 
 typography:
   family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
@@ -44,6 +65,10 @@ typography:
   citation_size: "12px"
   label_size: "10.5px"
   line_height: "1.55"
+  heading_family: "var(--rw-fuente)"
+  heading_size: "17px"
+  heading_weight: "650"
+  section_size: "12px"
 
 shape:
   panel_radius: "18px"
@@ -55,6 +80,9 @@ shape:
   icon_size: "26px"
   gap: "12px"
   padding: "16px"
+  result_radius: "12px"
+  result_gap: "16px"
+  result_padding: "14px"
 
 shadows:
   panel: "0 12px 40px rgba(16,24,40,.18), 0 2px 8px rgba(16,24,40,.08)"

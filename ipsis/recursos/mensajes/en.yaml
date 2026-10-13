@@ -464,7 +464,7 @@ widget:
   preset_failed: 'Could not apply the preset: {error}'
   preset_applied: Preset {preset!r} applied to {path}
   preset_view: 'Live view: start the service and open /widget/demo.html'
-  preview_help: Generate an HTML mockup without starting the API.
+  preview_help: Generate an interactive preview of the real widget with sample sources, without starting the API.
   opt_preview_styles: Styles file to preview.
   opt_html: Output HTML file.
   preview_failed: 'Could not generate the preview: {error}'
@@ -892,6 +892,7 @@ panel:
   animation: Animation or expression
   try: Try
   widget_title: Widget
+  result_layout: Result layout
   preset: Visual preset
   apply_preset: Apply preset
   accent: Accent color
@@ -958,6 +959,9 @@ panel:
   source_project: "project (engine.yaml)"
   source_profile: "profile"
 presets:
+  ocean: Teal palette, rounded cards and ocean tones for headings.
+  forest: Green palette, serif headings and editorial section borders.
+  midnight: Dark violet theme with cards and contrasting headings.
   search: Wide search layout with visible excerpts and source links.
   search_compact: Compact search layout for panels and result lists.
   classic: Neutral blue, comfortable, the same as the factory design.
@@ -966,11 +970,10 @@ presets:
   contrast: High contrast, marked controls and animations off.
 runtime:
   preview_search_heading: Search your documents
+  preview_show_results: View sample results
   preview_search_button: Search
-  preview_search_results: results to review
   preview_search_source: manual.txt
   preview_search_read: Read full context
-  preview_search_more: Show more results
   preview_search_note: Sample template preview; it does not search or represent uploaded documents.
   preview_search_result_1: Requirements to start the procedure
   preview_search_excerpt_1: To start the procedure, submit the form and the documents listed in the manual.
@@ -998,21 +1001,14 @@ runtime:
   log_query_log: 'could not write the query log: {error}'
   preview_lang: en
   preview_title: Widget preview — {preset}
-  preview_label: Widget mockup
   preview_header: Document assistant · preset {preset}
   preview_question: How often should I replace the filter?
-  preview_direct: Direct answer
-  preview_answer: The filter is replaced every 6 months.
-  preview_citation_title: Manual · Filters
-  preview_citation: The sediment filter is replaced every 6 months.
-  preview_related_label: Related information
-  preview_related: The document describes the warranty, but does not confirm that case.
-  preview_no_answer: I found no answer backed by the documents.
-  preview_conversational: Hi, I can help you look things up in the documentation.
   preview_heading: Preview
-  preview_text: This mockup does not query the index. It lets you review the palette, typography, shape, states and citations before publishing.
   preview_preset: 'Active preset:'
 styles:
+  result_layout: presentation.result_layout must be cards, lines or editorial
+  content_text: content accepts only title, subtitle, welcome_title and welcome_text
+    as text
   not_object: the theme must be a YAML object
   section_object: '{section} must be an object'
   no_booleans: '{key} does not accept booleans'

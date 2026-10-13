@@ -29,9 +29,10 @@ PRESETS: dict[str, dict[str, Any]] = {
     "minimal": {
         "tema": {
             "colores": {"acento": "#334155", "fondo": "#f8fafc", "borde": "#e2e8f0"},
+            "colores_oscuro": {"acento": "#cbd5e1", "acento_texto": "#0f172a"},
             "forma": {"radio_panel": "12px", "radio_burbuja": "10px", "radio_control": "8px"},
             "sombras": {"panel": "0 8px 28px rgba(15,23,42,.12)", "boton": "0 5px 16px rgba(15,23,42,.2)"},
-            "presentacion": {"densidad": "compacta", "citas": "acordeon"},
+            "presentacion": {"densidad": "compacta", "citas": "acordeon", "diseno_resultados": "lineas"},
         },
     },
     "editorial": {
@@ -41,9 +42,11 @@ PRESETS: dict[str, dict[str, Any]] = {
                 "fondo": "#f5efe5", "texto": "#29231f", "texto_suave": "#70655c",
                 "borde": "#ded2c4", "aviso": "#8a5a18", "aviso_borde": "#b9812d",
             },
-            "tipografia": {"familia": "Georgia, 'Times New Roman', serif", "interlineado": "1.65"},
+            "colores_oscuro": {"acento": "#f2a6af", "acento_texto": "#29231f", "superficie": "#24201e",
+                                "fondo": "#191614", "texto": "#f5efe5", "texto_suave": "#c0b4a8", "borde": "#4c4037"},
+            "tipografia": {"familia": "Georgia, 'Times New Roman', serif", "interlineado": "1.65", "tamano_titulo": "20px"},
             "forma": {"radio_panel": "8px", "radio_burbuja": "6px", "radio_control": "4px"},
-            "presentacion": {"densidad": "comoda", "citas": "lista"},
+            "presentacion": {"densidad": "comoda", "citas": "lista", "diseno_resultados": "editorial"},
         },
     },
     "contraste": {
@@ -58,21 +61,21 @@ PRESETS: dict[str, dict[str, Any]] = {
                 "fondo": "#000000", "texto": "#ffffff", "texto_suave": "#ffffff",
                 "borde": "#ffffff", "aviso": "#ffe600", "aviso_borde": "#ffe600",
             },
-            "forma": {"radio_panel": "0px", "radio_burbuja": "0px", "radio_control": "0px"},
+            "forma": {"radio_panel": "0px", "radio_burbuja": "0px", "radio_control": "0px", "radio_resultado": "0px"},
             "animaciones": {"activadas": False},
             "presentacion": {"mostrar_etiqueta_estado": True},
         },
     },
     "buscador": {
         "tema": {
-            "colores": {"acento": "#1a0dab", "fondo": "#ffffff", "superficie": "#ffffff",
-                        "texto": "#202124", "texto_suave": "#5f6368", "borde": "#dadce0"},
             "colores_oscuro": {"acento": "#a8c7fa", "acento_texto": "#202124",
-                               "texto": "#e8eaed", "texto_suave": "#bdc1c6"},
-            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.5"},
+                               "texto": "#e8eaed", "texto_suave": "#bdc1c6", "titulo": "var(--rw-acento)"},
+            "colores": {"acento": "#1a0dab", "fondo": "#ffffff", "superficie": "#ffffff",
+                        "texto": "#202124", "texto_suave": "#5f6368", "borde": "#dadce0", "titulo": "var(--rw-acento)"},
+            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.5", "tamano_titulo": "20px", "peso_titulo": "400"},
             "forma": {"radio_panel": "12px", "radio_control": "24px"},
             "ubicacion": {"tamano": "amplio"},
-            "presentacion": {"densidad": "comoda", "alineacion": "justificada", "citas": "acordeon"},
+            "presentacion": {"densidad": "comoda", "alineacion": "justificada", "citas": "acordeon", "diseno_resultados": "lineas"},
         },
     },
     "buscador_compacto": {
@@ -80,9 +83,41 @@ PRESETS: dict[str, dict[str, Any]] = {
             "colores": {"acento": "#1a0dab", "fondo": "#ffffff", "superficie": "#ffffff",
                         "texto": "#202124", "texto_suave": "#5f6368", "borde": "#dadce0"},
             "colores_oscuro": {"acento": "#a8c7fa", "acento_texto": "#202124"},
-            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.45"},
+            "tipografia": {"familia": "Arial, sans-serif", "interlineado": "1.45", "tamano_titulo": "18px"},
             "forma": {"radio_panel": "8px", "radio_control": "20px"},
-            "presentacion": {"densidad": "compacta", "alineacion": "justificada", "citas": "acordeon"},
+            "presentacion": {"densidad": "compacta", "alineacion": "justificada", "citas": "acordeon", "diseno_resultados": "lineas"},
+        },
+    },
+    "oceano": {
+        "tema": {
+            "colores": {"acento": "#0e7490", "fondo": "#ecfeff", "superficie": "#ffffff",
+                        "titulo": "#155e75", "seccion": "#0e7490", "borde": "#a5d5de", "borde_resultado": "#a5d5de"},
+            "colores_oscuro": {"acento": "#67e8f9", "acento_texto": "#082f49", "fondo": "#08202b",
+                               "superficie": "#0c2e3b", "titulo": "#a5f3fc", "seccion": "#67e8f9", "borde": "#286070",
+                               "borde_resultado": "#286070"},
+            "forma": {"radio_resultado": "18px", "radio_panel": "22px"},
+        },
+    },
+    "bosque": {
+        "tema": {
+            "colores": {"acento": "#166534", "fondo": "#f0f7ee", "superficie": "#fffef8",
+                        "titulo": "#14532d", "seccion": "#3f6544", "borde": "#c4d8bd", "borde_resultado": "#c4d8bd"},
+            "colores_oscuro": {"acento": "#86efac", "acento_texto": "#102518", "fondo": "#101e16",
+                               "superficie": "#1b2c20", "titulo": "#bbf7d0", "seccion": "#a4ccab", "borde": "#395c40",
+                               "borde_resultado": "#395c40"},
+            "tipografia": {"familia_titulo": "Georgia, 'Times New Roman', serif", "tamano_titulo": "19px"},
+            "presentacion": {"diseno_resultados": "editorial"},
+        },
+    },
+    "medianoche": {
+        "tema": {
+            "colores": {"acento": "#c4b5fd", "acento_texto": "#1e1b4b", "superficie": "#222039",
+                        "fondo": "#151325", "texto": "#f5f3ff", "texto_suave": "#c1bdd6", "borde": "#4c4669",
+                        "titulo": "#ddd6fe", "seccion": "#c4b5fd"},
+            "colores_oscuro": {"acento": "#c4b5fd", "acento_texto": "#1e1b4b", "superficie": "#222039",
+                               "fondo": "#151325", "texto": "#f5f3ff", "texto_suave": "#c1bdd6", "borde": "#4c4669",
+                               "titulo": "#ddd6fe", "seccion": "#c4b5fd"},
+            "tipografia": {"familia": "'Segoe UI', Helvetica, Arial, sans-serif", "peso_titulo": "700"},
         },
     },
 }
@@ -143,6 +178,17 @@ def validar_tema(tema: dict) -> None:
         raise ValueError(t("styles.status_label"))
     if presentacion.get("alineacion", "justificada") not in {"inicio", "justificada"}:
         raise ValueError(t("styles.text_align"))
+    if presentacion.get("diseno_resultados", "tarjetas") not in {"tarjetas", "lineas", "editorial"}:
+        raise ValueError(t("styles.result_layout"))
+    for clave in ("mostrar_numeros", "mostrar_ruta", "expandir_contexto", "mostrar_sugerencias"):
+        if not isinstance(presentacion.get(clave, True), bool):
+            raise ValueError(t("styles.expected_boolean", value=_externo("presentacion." + clave)))
+    contenido = tema.get("contenido", {})
+    if not isinstance(contenido, dict):
+        raise ValueError(t("styles.section_object", section="content"))
+    for clave, valor in contenido.items():
+        if clave not in {"titulo", "subtitulo", "titulo_inicio", "texto_inicio"} or not isinstance(valor, str):
+            raise ValueError(t("styles.content_text"))
     ubicacion_widget(tema)  # valida tema.ubicacion
     render_css(tema=tema)
 
@@ -202,10 +248,18 @@ def presentacion_publica(tema: dict) -> dict:
     externo = a_externo({"preset": tema.get("preset") or "clasico", "presentacion": tema.get("presentacion") or {}},
                         "estilos")
     presentacion = externo.get("presentation") or {}
+    diseno_defecto = PRESETS.get(tema.get("preset"), {}).get("tema", {}).get("presentacion", {}).get(
+        "diseno_resultados", "tarjetas")
+    diseno_defecto = {"tarjetas": "cards", "lineas": "lines", "editorial": "editorial"}[diseno_defecto]
     return {"preset": externo["preset"], "density": presentacion.get("density", "comfortable"),
             "citations": presentacion.get("citations", "accordion"),
             "show_status_label": presentacion.get("show_status_label", True),
-            "text_align": presentacion.get("text_align", "justify")}
+            "text_align": presentacion.get("text_align", "justify"),
+            "result_layout": presentacion.get("result_layout", diseno_defecto),
+            "show_result_numbers": presentacion.get("show_result_numbers", True),
+            "show_section_path": presentacion.get("show_section_path", True),
+            "expand_context": presentacion.get("expand_context", False),
+            "show_suggestions": presentacion.get("show_suggestions", True)}
 
 
 def snippet_widget(api: str, *, componente: bool = False, clave_widget: str | None = None) -> str:
@@ -236,6 +290,8 @@ def aplicar_preset(nombre: str, ruta: str = RUTA_ESTILOS) -> dict:
     # Cada preset parte de fábrica para no heredar accidentalmente valores de
     # otro preset. Se preservan CSS explícito y extensiones ajenas al esquema.
     tema = _fusionar(base, PRESETS[nombre]["tema"])
+    if "contenido" in actual:
+        tema["contenido"] = deepcopy(actual["contenido"])
     if "css_extra" in actual:
         tema["css_extra"] = actual["css_extra"]
     for clave, valor in actual.items():
@@ -251,101 +307,18 @@ def generar_vista_previa(
     salida: str = rutas.VISTA_PREVIA,
     ruta_estilos: str = RUTA_ESTILOS,
 ) -> Path:
-    """Genera un mockup autónomo, sin API ni índice, con todos los estados."""
+    """Genera una vista autónoma del widget real con datos de ejemplo, sin API ni índice."""
     tema = cargar_estilos(ruta_estilos)
     validar_tema(tema)
     css_tema = render_css(tema=tema)
-    preset = str(tema.get("preset") or "custom")
+    from ipsis.aplicacion.vista_widget import vista_widget
+
     if "</style" in css_tema.lower():
         raise ValueError(t("styles.custom_css_style"))
-    preset_html = html.escape(preset)
-    if preset in {"buscador", "buscador_compacto"}:
-        destino = Path(salida)
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        destino.write_text(_vista_busqueda(css_tema, preset_html), encoding="utf-8")
-        return destino
-    contenido_html = f"""<!doctype html>
-<html lang="{t('runtime.preview_lang')}"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(t('runtime.preview_title', preset=preset))}</title>
-<style>
-{css_tema}
-*{{box-sizing:border-box}} body{{margin:0;padding:32px;background:#dfe3e8;font-family:Arial,sans-serif}}
-.preview{{max-width:920px;margin:auto;display:grid;grid-template-columns:minmax(280px,390px) 1fr;gap:28px;align-items:start}}
-.rw-raiz{{position:static;background:var(--rw-fondo,#f4f5f7);color:var(--rw-texto,#15181d);font-family:var(--rw-fuente,Arial,sans-serif);border:1px solid var(--rw-borde,#ddd);border-radius:var(--rw-radio-panel,18px);box-shadow:var(--rw-sombra-panel);overflow:hidden}}
-.cabecera{{padding:16px;background:var(--rw-superficie,#fff);border-bottom:1px solid var(--rw-borde,#ddd);font-weight:700}}
-.mensajes{{padding:16px;display:flex;flex-direction:column;gap:12px}}
-.rw-msg{{padding:10px 13px;border-radius:var(--rw-radio-burbuja,16px);font-size:var(--rw-tamano-mensaje,13.5px);line-height:var(--rw-interlineado,1.55)}}
-.rw-msg-usuario{{align-self:flex-end;background:var(--rw-acento,#2563eb);color:var(--rw-acento-texto,#fff)}}
-.rw-msg-ok,.rw-msg-relacionado,.rw-msg-conversacional{{background:var(--rw-superficie,#fff);border:1px solid var(--rw-borde,#ddd)}}
-.rw-msg-relacionado{{border-left:4px solid var(--rw-aviso-borde,#d9a441)}}
-.rw-msg-sin_respuesta{{color:var(--rw-texto-suave,#666);text-align:center}}
-.etiqueta{{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--rw-aviso,#9a6500);margin-bottom:5px}}
-.rw-citas{{margin-top:10px;border-top:1px solid var(--rw-borde,#ddd);padding-top:8px}}
-.rw-citas details{{background:var(--rw-fondo,#f4f5f7);border:1px solid var(--rw-borde,#ddd);padding:8px;border-radius:8px}}
-.rw-citas summary{{cursor:pointer;font-weight:700}} .rw-cita-texto{{font-size:var(--rw-tamano-cita,12px)}}
-.info{{background:white;padding:22px;border-radius:12px}} code{{background:#eef1f4;padding:2px 5px}}
-@media(max-width:720px){{body{{padding:14px}}.preview{{grid-template-columns:1fr}}}}
-</style></head><body><main class="preview">
-<section class="rw-raiz" aria-label="{t('runtime.preview_label')}">
-  <div class="cabecera">{html.escape(t('runtime.preview_header', preset=preset))}</div>
-  <div class="mensajes">
-    <div class="rw-msg rw-msg-usuario">{t('runtime.preview_question')}</div>
-    <div class="rw-msg rw-msg-ok"><div class="etiqueta">{t('runtime.preview_direct')}</div>{t('runtime.preview_answer')}
-      <div class="rw-citas"><details open><summary>{t('runtime.preview_citation_title')}</summary><p class="rw-cita-texto">{t('runtime.preview_citation')}</p></details></div>
-    </div>
-    <div class="rw-msg rw-msg-relacionado"><div class="etiqueta">{t('runtime.preview_related_label')}</div>{t('runtime.preview_related')}</div>
-    <div class="rw-msg rw-msg-sin_respuesta">{t('runtime.preview_no_answer')}</div>
-    <div class="rw-msg rw-msg-conversacional">{t('runtime.preview_conversational')}</div>
-  </div>
-</section>
-<aside class="info"><h1>{t('runtime.preview_heading')}</h1><p>{t('runtime.preview_text')}</p><p>{t('runtime.preview_preset')} <code>{preset_html}</code></p></aside>
-</main></body></html>"""
     destino = Path(salida)
     destino.parent.mkdir(parents=True, exist_ok=True)
-    destino.write_text(contenido_html, encoding="utf-8")
+    destino.write_text(vista_widget(tema, css_tema, presentacion_publica(tema)), encoding="utf-8")
     return destino
-
-
-def _vista_busqueda(css_tema: str, preset: str) -> str:
-    """Buscador de ejemplo, sin API ni consultas reales."""
-    def texto(clave):
-        return html.escape(t("runtime." + clave))
-
-    resultados = "".join(f"""<article>
-      <p class="origen">{texto('preview_search_source')} · v1</p>
-      <h2><a href="#contexto-{i}">{texto('preview_search_result_' + str(i))}</a></h2>
-      <p>{texto('preview_search_excerpt_' + str(i))}</p>
-      <details id="contexto-{i}"><summary>{texto('preview_search_read')}</summary>
-        <p class="contexto">{texto('preview_search_excerpt_' + str(i))}</p></details>
-    </article>""" for i in range(1, 4))
-    return f"""<!doctype html><html lang="{texto('preview_lang')}"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{texto('preview_heading')} · {preset}</title><style>{css_tema}
-*{{box-sizing:border-box}}body{{margin:0;padding:24px;font-family:var(--rw-fuente,Arial,sans-serif);
-background:var(--rw-fondo);color:var(--rw-texto)}}main{{max-width:800px;margin:auto}}
-form{{display:flex;gap:8px;padding:18px 0;border-bottom:1px solid var(--rw-borde)}}
-input{{flex:1;min-width:0;padding:12px 18px;border:1px solid var(--rw-borde);border-radius:24px;
-background:var(--rw-superficie);color:var(--rw-texto);font:inherit}}
-button{{padding:10px 18px;border:1px solid var(--rw-borde);border-radius:24px;font:inherit;
-background:var(--rw-superficie);color:var(--rw-acento)}}.contador,.origen,.nota{{color:var(--rw-texto-suave);font-size:13px}}
-article{{margin:24px 0}}h2{{font-size:20px;font-weight:400;margin:4px 0}}a{{color:var(--rw-acento);text-decoration:none}}
-main[data-densidad="compacta"] article{{margin:16px 0}}main[data-densidad="compacta"] h2{{font-size:18px}}
-a:hover{{text-decoration:underline}}p{{line-height:1.5;overflow-wrap:anywhere}}summary{{color:var(--rw-acento);cursor:pointer}}
-.contexto{{white-space:pre-wrap}}@media(max-width:480px){{body{{padding:16px}}}}
-</style></head><body><main data-densidad="{'compacta' if preset == 'buscador_compacto' else 'comoda'}">
-<h1>{texto('preview_search_heading')}</h1>
-<form><label for="consulta" hidden>{texto('preview_search_heading')}</label>
-<input id="consulta" value="{texto('preview_question')}" readonly>
-<button type="button" disabled>{texto('preview_search_button')}</button></form>
-<p class="contador">3 {texto('preview_search_results')} · {preset}</p>{resultados}
-<button type="button" disabled>{texto('preview_search_more')}</button>
-<p class="nota">{texto('preview_search_note')}</p>
-</main><script>
-document.querySelectorAll('h2 a').forEach(function(a){{a.addEventListener('click',function(e){{
-e.preventDefault();var d=document.getElementById(a.getAttribute('href').slice(1));d.open=!d.open;
-d.querySelector('summary').focus();}});}});
-</script></body></html>"""
 
 
 __all__ = [
@@ -419,7 +392,7 @@ def actualizar_estilos(cambios: dict, ruta: str = RUTA_ESTILOS) -> dict:
 
 # --- estilo clave por clave (ipsis widget style, panel /admin) ---------------------------------
 # Con los nombres del archivo (inglés): es lo que el usuario escribe y ve.
-SECCIONES_EDITABLES = ("presentation", "placement", "colors", "dark_colors", "typography", "shape", "shadows",
+SECCIONES_EDITABLES = ("presentation", "content", "placement", "colors", "dark_colors", "typography", "shape", "shadows",
                        "animations")
 
 

@@ -118,13 +118,16 @@ MOTOR = {
 
 _COLORES = {"acento": _c("accent"), "acento_texto": _c("accent_text"), "superficie": _c("surface"),
             "fondo": _c("background"), "texto": _c("text"), "texto_suave": _c("muted_text"), "borde": _c("border"),
-            "aviso": _c("warning"), "aviso_borde": _c("warning_border"), "vivo": _c("live")}
+            "aviso": _c("warning"), "aviso_borde": _c("warning_border"), "vivo": _c("live"),
+            "titulo": _c("heading"), "seccion": _c("section"),
+            "superficie_resultado": _c("result_surface"), "borde_resultado": _c("result_border")}
 POSICIONES = {"abajo-derecha": "bottom-right", "abajo-izquierda": "bottom-left", "arriba-derecha": "top-right",
               "arriba-izquierda": "top-left", "incrustado": "embedded"}
 TAMANOS = {"compacto": "compact", "normal": "normal", "amplio": "wide"}
 LANZADORES = {"burbuja": "bubble", "pestana": "tab", "oculto": "hidden"}
 PRESETS = {"clasico": "classic", "contraste": "contrast", "minimal": "minimal", "editorial": "editorial",
-           "buscador": "search", "buscador_compacto": "search_compact"}
+           "buscador": "search", "buscador_compacto": "search_compact",
+           "oceano": "ocean", "bosque": "forest", "medianoche": "midnight"}
 
 ESTILOS = {
     "preset": _c("preset", valores=PRESETS),
@@ -133,7 +136,14 @@ ESTILOS = {
         "citas": _c("citations", valores={"acordeon": "accordion", "lista": "list"}),
         "mostrar_etiqueta_estado": _c("show_status_label"),
         "alineacion": _c("text_align", valores={"inicio": "start", "justificada": "justify"}),
+        "diseno_resultados": _c("result_layout", valores={"tarjetas": "cards", "lineas": "lines", "editorial": "editorial"}),
+        "mostrar_numeros": _c("show_result_numbers"),
+        "mostrar_ruta": _c("show_section_path"),
+        "expandir_contexto": _c("expand_context"),
+        "mostrar_sugerencias": _c("show_suggestions"),
     }),
+    "contenido": _c("content", {"titulo": _c("title"), "subtitulo": _c("subtitle"),
+        "titulo_inicio": _c("welcome_title"), "texto_inicio": _c("welcome_text")}),
     "ubicacion": _c("placement", {
         "posicion": _c("position", valores=POSICIONES), "desplazamiento_x": _c("offset_x"),
         "desplazamiento_y": _c("offset_y"), "z_index": _c("z_index"), "tamano": _c("size", valores=TAMANOS),
@@ -144,11 +154,15 @@ ESTILOS = {
     "tipografia": _c("typography", {
         "familia": _c("family"), "tamano_base": _c("base_size"), "tamano_mensaje": _c("message_size"),
         "tamano_cita": _c("citation_size"), "tamano_etiqueta": _c("label_size"), "interlineado": _c("line_height"),
+        "familia_titulo": _c("heading_family"), "tamano_titulo": _c("heading_size"),
+        "peso_titulo": _c("heading_weight"), "tamano_seccion": _c("section_size"),
     }),
     "forma": _c("shape", {
         "radio_panel": _c("panel_radius"), "radio_burbuja": _c("bubble_radius"), "radio_control": _c("control_radius"),
         "ancho_panel": _c("panel_width"), "alto_panel": _c("panel_height"), "tamano_boton": _c("button_size"),
         "tamano_icono": _c("icon_size"), "separacion": _c("gap"), "relleno": _c("padding"),
+        "radio_resultado": _c("result_radius"), "separacion_resultado": _c("result_gap"),
+        "relleno_resultado": _c("result_padding"),
     }),
     "sombras": _c("shadows", {"panel": _c("panel"), "boton": _c("button"), "panel_oscuro": _c("panel_dark"),
                               "boton_oscuro": _c("button_dark")}),

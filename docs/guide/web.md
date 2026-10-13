@@ -29,15 +29,16 @@ a token is configured. The API and widget assets remain available. Run
 ## Guidance separate from search results
 
 With engine v2, a guidance section sits above the ranked sources. It uses a
-fixed catalog of 100 messages for each of Spanish, English and Portuguese,
+fixed catalog of 118 messages for each of Spanish, English and Portuguese,
 selected using the project's document language. Other languages use English
-guidance as a fallback. The ten categories are `welcome`, `greeting`, `thanks`,
+guidance as a fallback. The thirteen categories are `welcome`, `greeting`, `thanks`,
 `farewell`, `capability`, `tips`, `searching`, `results`, `continuation` and
-`no_results`. The YAML catalogs live in `ipsis/recursos/voz/`, independently
+`no_results`, `about`, `limits` and `examples`. The YAML catalogs live in `ipsis/recursos/voz/`, independently
 of the existing tones and source templates. This is interface text, never
 documentary evidence or generated answers.
 
-**Search tips** and **What I can do** rotate through their messages locally,
+**Search tips**, **What I can do**, **About the assistant**, **Scope** and
+**Examples** rotate through their messages locally,
 without sending a search request. Typed greetings, thanks and farewells go to
 this section too, preserving expanded sources and the continuation button.
 Only complete courtesy expressions bypass document retrieval; a mixed query
@@ -52,8 +53,8 @@ Screen readers receive the complete message once instead of character updates.
 Search errors appear in guidance and leave existing results available.
 
 `GET /config` adds `assistant_messages` (category → list of fixed strings),
-`animations_enabled`, and the labels `voice_label`, `voice_help`, `voice_options`
-and `voice_show_all` in `interface`. Engine v1 retains its existing chat flow.
+`suggested_questions`, `animations_enabled`, and localized guidance labels in
+`interface`. Engine v1 retains its existing chat flow.
 
 ## Add it
 
@@ -200,8 +201,8 @@ they show:
 - **From the active tone** (see [personality.md](personality.md)): the
   v1 welcome, "searching…", the invitation to the citations and the error
   messages come from `/config` in 7 variants, and the widget rotates them.
-- **v2 guidance:** its separate fixed catalog has 100 messages per supported
-  language; the visible source cards retain their existing presentation.
+- **v2 guidance:** its separate fixed catalog has 118 messages per supported
+  language, with examples and information about the assistant and its scope.
 - **Interface texts** (button labels, placeholder…) come from the language
   pack of the project.
 - **Accessibility:** "searching…" and the errors are announced to screen
@@ -210,6 +211,43 @@ they show:
   `textContent`.
 
 ## Style
+
+Results use cards (`cards`), dividers (`lines`) or an editorial margin
+(`editorial`). The `classic`, `minimal`, `editorial`, `contrast`, `search`,
+`search_compact`, `ocean`, `forest` and `midnight` presets combine these layouts
+with distinct palettes and typography.
+
+Headings have their own color, font, size and weight. Section colors, result
+backgrounds and dividers can be adjusted independently of button colors:
+
+```bash
+ipsis widget theme apply forest
+ipsis widget style set presentation.result_layout=cards colors.heading="#14532d" typography.heading_family="Georgia, serif" typography.heading_size=20px
+ipsis widget style set shape.result_radius=12px shape.result_gap=18px
+ipsis widget style set content.title="Help center" content.welcome_title="What would you like to review?"
+ipsis widget theme preview --output preview.html
+```
+
+| `styles.yaml` key | Effect |
+|---|---|
+| `colors.heading`, `colors.section` | Heading and section colors |
+| `colors.result_surface`, `colors.result_border` | Result backgrounds and dividers |
+| `typography.heading_family`, `heading_size`, `heading_weight`, `section_size` | Heading and section typography |
+| `shape.result_radius`, `result_gap`, `result_padding` | Corners, spacing and padding |
+| `presentation.show_result_numbers`, `show_section_path` | Numbering and section paths |
+| `presentation.expand_context` | Opens full contexts by default |
+| `presentation.show_suggestions` | Displays example questions |
+| `content.title`, `subtitle`, `welcome_title`, `welcome_text` | Header and welcome text; empty uses the project language |
+
+These settings are also available in **Widget → Full style** in
+`/admin/panel`. Changing presets preserves `content` text and custom CSS.
+The standalone preview uses the real widget with sample sources and works
+without a service or index.
+
+In Spanish, English and Portuguese, six example questions fill the input
+without submitting it. **About the assistant**, **Scope** and **Examples**
+offer additional fixed messages. These interface messages are separate from
+document sources and do not execute searches.
 
 The whole look lives in `config/styles.yaml` and applies without restarting
 the service:

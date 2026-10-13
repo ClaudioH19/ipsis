@@ -297,6 +297,11 @@ def test_estilo_completo_desde_el_panel(servidor, pagina, proyecto):
     assert page.get_attribute("input[data-clave='animations.enabled']", "type") == "checkbox"
     page.fill("input[data-clave='colors.accent']", "#0ea5e9")
     page.fill("input[data-clave='shape.panel_radius']", "10px")
+    page.select_option("select[data-clave='presentation.result_layout']", "editorial")
+    page.uncheck("input[data-clave='presentation.show_result_numbers']")
+    page.fill("input[data-clave='colors.heading']", "#14532d")
+    page.fill("input[data-clave='typography.heading_family']", "Georgia, serif")
+    page.fill("input[data-clave='content.title']", "Centro de ayuda")
     page.uncheck("input[data-clave='animations.enabled']")
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.click("#guardar-estilo")
@@ -304,6 +309,11 @@ def test_estilo_completo_desde_el_panel(servidor, pagina, proyecto):
     estilos = leer_proyecto(proyecto / "config/styles.yaml")
     assert estilos["colores"]["acento"] == "#0ea5e9" and estilos["forma"]["radio_panel"] == "10px"
     assert estilos["animaciones"]["activadas"] is False
+    assert estilos["presentacion"]["diseno_resultados"] == "editorial"
+    assert estilos["presentacion"]["mostrar_numeros"] is False
+    assert estilos["colores"]["titulo"] == "#14532d"
+    assert estilos["tipografia"]["familia_titulo"] == "Georgia, serif"
+    assert estilos["contenido"]["titulo"] == "Centro de ayuda"
     page.evaluate("document.getElementById('estado').textContent = ''")
     page.click("#guardar-estilo")  # sin cambios: no escribe y lo dice
     _esperar(page, "document.getElementById('estado').textContent.includes('No hay cambios')")

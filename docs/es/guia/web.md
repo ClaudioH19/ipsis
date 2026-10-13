@@ -169,6 +169,44 @@ comprobarla:
 
 ## Estilo
 
+Los resultados se distinguen con tarjetas (`cards`), separadores (`lines`) o
+un margen editorial (`editorial`). Los presets `classic`, `minimal`,
+`editorial`, `contrast`, `search`, `search_compact`, `ocean`, `forest` y
+`midnight` combinan estos diseños con sus colores y tipografías.
+
+Los títulos tienen color, fuente, tamaño y peso propios. Puedes ajustar las
+secciones, los bordes y el fondo de los resultados sin cambiar el color de los
+botones. Por ejemplo:
+
+```bash
+ipsis widget theme apply forest
+ipsis widget style set presentation.result_layout=cards colors.heading="#14532d" typography.heading_family="Georgia, serif" typography.heading_size=20px
+ipsis widget style set shape.result_radius=12px shape.result_gap=18px
+ipsis widget style set content.title="Centro de ayuda" content.welcome_title="¿Qué necesitas revisar?"
+ipsis widget theme preview --output preview.html
+```
+
+| Clave de `styles.yaml` | Qué cambia |
+|---|---|
+| `colors.heading`, `colors.section` | Colores de títulos y secciones |
+| `colors.result_surface`, `colors.result_border` | Fondo y demarcadores de los resultados |
+| `typography.heading_family`, `heading_size`, `heading_weight`, `section_size` | Tipografía de títulos y secciones |
+| `shape.result_radius`, `result_gap`, `result_padding` | Radios, separación y relleno |
+| `presentation.show_result_numbers`, `show_section_path` | Numeración y ruta de secciones |
+| `presentation.expand_context` | Abre los contextos desde el inicio |
+| `presentation.show_suggestions` | Muestra las preguntas de ejemplo |
+| `content.title`, `subtitle`, `welcome_title`, `welcome_text` | Cabecera y presentación inicial; vacío usa el idioma del proyecto |
+
+El panel `/admin/panel` incluye estas opciones en **Widget → Estilo completo**.
+Cambiar de preset conserva los textos de `content` y el CSS personalizado.
+La vista previa usa el widget real con datos de ejemplo y funciona sin servicio
+ni índice.
+
+En español, inglés y portugués, la bienvenida ofrece seis preguntas que
+rellenan el campo sin enviarlo. Los botones **Sobre el asistente**, **Alcance**
+y **Ejemplos** amplían los mensajes fijos. Estos textos de interfaz se muestran
+separados de las fuentes documentales y no ejecutan consultas.
+
 Todo el aspecto vive en `config/styles.yaml` y se aplica sin reiniciar el
 servicio:
 

@@ -486,6 +486,7 @@
     if (u.size) $("tamano").value = u.size;
     if (u.launcher) $("lanzador").value = u.launcher;
     if (p.citations) $("citas").value = p.citations;
+    $("diseno-resultados").value = p.result_layout || "cards";
   }
 
   $("aplicar-preset").addEventListener("click", function () {
@@ -496,13 +497,22 @@
     api("PUT", "/styles", {
       colors: { accent: $("color-acento").value },
       placement: { position: $("posicion").value, size: $("tamano").value, launcher: $("lanzador").value },
-      presentation: { citations: $("citas").value }
+      presentation: { citations: $("citas").value, result_layout: $("diseno-resultados").value }
     }).then(function () { return guardado(); }, fallo);
   });
 
   // --- estilo completo: un campo por cada «seccion.clave» de styles.yaml ----
   var HEX = /^#[0-9a-fA-F]{6}$/;
   var originales = {};
+  var OPCIONES_ESTILO = {
+    "presentation.density": ["comfortable", "compact"],
+    "presentation.citations": ["accordion", "list"],
+    "presentation.text_align": ["justify", "start"],
+    "presentation.result_layout": ["cards", "lines", "editorial"],
+    "placement.position": ["bottom-right", "bottom-left", "top-right", "top-left", "embedded"],
+    "placement.size": ["compact", "normal", "wide"],
+    "placement.launcher": ["bubble", "tab", "hidden"]
+  };
 
   function pintarEstilo(campos) {
     var caja = $("campos-estilo");
@@ -518,7 +528,11 @@
       var valor = campo.value;
       var etiqueta = elemento("label", campo.key.split(".")[1] + " ");
       var entrada = elemento("input", null, { "data-clave": campo.key });
-      if (typeof valor === "boolean") {
+      if (OPCIONES_ESTILO[campo.key]) {
+        entrada = elemento("select", null, { "data-clave": campo.key });
+        opciones(entrada, OPCIONES_ESTILO[campo.key].map(function (v) { return { valor: v, texto: v }; }), valor);
+        originales[campo.key] = entrada.value;
+      } else if (typeof valor === "boolean") {
         entrada.type = "checkbox";
         entrada.checked = valor;
         originales[campo.key] = String(valor);
@@ -538,7 +552,7 @@
 
   $("guardar-estilo").addEventListener("click", function () {
     var asignaciones = [];
-    Array.prototype.forEach.call($("campos-estilo").querySelectorAll("input[data-clave]"), function (entrada) {
+    Array.prototype.forEach.call($("campos-estilo").querySelectorAll("[data-clave]"), function (entrada) {
       var clave = entrada.getAttribute("data-clave");
       var valor = entrada.type === "checkbox" ? String(entrada.checked) : entrada.value;
       if (valor !== originales[clave]) asignaciones.push(clave + "=" + valor);

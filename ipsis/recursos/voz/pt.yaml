@@ -1,4 +1,9 @@
 interface:
+  voice_about: Sobre o assistente
+  voice_limits: Alcance
+  voice_examples: Exemplos
+  suggestions_label: Experimente uma pergunta
+  result_number: Fonte {n}
   voice_label: Orientação do ipsis
   voice_help: Como pesquisar
   voice_options: O que posso fazer
@@ -19,9 +24,9 @@ messages:
     - Olá. Tente uma pergunta específica ou o identificador de um produto.
     - Seus documentos são o ponto de partida. Escreva uma consulta para explorá-los.
   greeting:
-    - Olá. O que você quer encontrar nos seus documentos?
+    - Olá, como posso ajudar hoje?
     - Bom dia. Você pode começar com uma pergunta ou palavras-chave.
-    - Oi. Escreva o tema que precisa consultar.
+    - Oi. Conte o que precisa e podemos começar.
     - Bem-vindo. Qual informação gostaria de conferir?
     - Olá. Estou pronto para pesquisar as fontes do seu projeto.
     - Oi. Você pode consultar um nome, código ou tema.
@@ -30,10 +35,10 @@ messages:
     - Oi. Abra um resultado para ver o contexto do documento.
     - Bem-vindo de volta. Escreva sua próxima consulta quando quiser.
   thanks:
-    - De nada. Você pode continuar pesquisando quando precisar.
+    - De nada, foi um prazer ajudar.
     - Foi um prazer. Confira a fonte antes de usar a informação.
     - Obrigado. Os resultados continuam disponíveis para consulta.
-    - Fico feliz em ajudar. Você pode escrever outra pergunta.
+    - Que bom que foi útil. Estou aqui se precisar de mais alguma coisa.
     - De nada. Abra o resultado se precisar de mais contexto.
     - Foi um prazer. Uma consulta mais específica pode aproximar você do dado que procura.
     - Obrigado. Você pode voltar às fontes mostradas quando quiser.
@@ -41,7 +46,7 @@ messages:
     - Foi um prazer. Você pode pesquisar outro tema nesta página.
     - Obrigado. Continue explorando seus documentos por aqui.
   farewell:
-    - Até logo. Volte para pesquisar quando quiser.
+    - Até logo. Tenha um bom dia.
     - Tchau. Os documentos estarão aqui para sua próxima consulta.
     - Até mais. Confira as fontes que pretende utilizar.
     - Até breve. Você pode retomar a pesquisa nesta página.
@@ -117,3 +122,31 @@ messages:
     - Tente o identificador completo se procura um produto ou registro.
     - Nenhuma fonte foi mostrada. Divida a consulta em perguntas mais curtas.
     - Tente outra pesquisa e confira os documentos disponíveis no painel.
+  about:
+  - Sou o ipsis, seu assistente para consultar os documentos deste projeto.
+  - Trabalho com os textos carregados aqui. Cada resultado mostra de onde vem.
+  - Apresento trechos dos documentos junto com o contexto para facilitar a leitura.
+  - As mensagens de boas-vindas e ajuda são textos da interface, separados do conteúdo documental.
+  - Selecione o título para abrir o contexto. O caminho das seções mostra onde o trecho aparece.
+  - Você pode cumprimentar, agradecer ou se despedir; também posso ajudar a começar.
+  limits:
+  - Minhas informações vêm dos documentos carregados neste projeto.
+  - Um resultado relacionado pode oferecer contexto sem responder exatamente à sua pergunta.
+  - Se um dado não aparece nos documentos, não posso completá-lo com informações inventadas.
+  - Os valores de uma tabela pertencem ao documento e à versão indicados na fonte.
+  - Localizo textos; cálculos e decisões exigem conferir os dados de origem.
+  - As perguntas de exemplo são pontos de partida; adapte-as aos seus documentos.
+  examples:
+  - Para encontrar um procedimento, pergunte “Quais passos devo seguir?” e acrescente o nome do processo.
+  - Para conferir condições, pergunte “Quais são os requisitos?” junto com o procedimento ou produto.
+  - Para encontrar uma data, pergunte “Qual é o prazo?” e especifique a atividade.
+  - Para localizar um responsável, pergunte “Quem está encarregado?” e acrescente a tarefa.
+  - Para ler uma definição, pergunte “O que significa este termo?” e escreva o termo específico.
+  - Para encontrar uma exceção, pergunte “Em quais casos se aplica?” e acrescente a regra.
+suggestions:
+- Quais passos devo seguir?
+- Quais são os requisitos?
+- Qual é o prazo?
+- Quem está encarregado?
+- O que significa este termo?
+- Em quais casos se aplica?

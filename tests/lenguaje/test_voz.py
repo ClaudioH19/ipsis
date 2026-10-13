@@ -13,11 +13,15 @@ from tests.consulta.test_motor_v2 import motor
 def test_banco_completo_y_copias_independientes(idioma):
     voz = voz_del_widget(idioma)
     mensajes = [texto for lista in voz["messages"].values() for texto in lista]
-    assert len(mensajes) == len(set(mensajes)) == 100
+    assert len(mensajes) == len(set(mensajes)) == 118
+    assert all(len(voz["messages"][categoria]) == 6 for categoria in ("about", "limits", "examples"))
+    assert len(voz["suggestions"]) == len(set(voz["suggestions"])) == 6
     assert all(isinstance(texto, str) and texto.strip() for texto in mensajes)
     assert voz_del_widget(idioma + "-XX") == voz
     voz["messages"]["greeting"].clear()
     assert len(voz_del_widget(idioma)["messages"]["greeting"]) == 10
+    voz["suggestions"].clear()
+    assert len(voz_del_widget(idioma)["suggestions"]) == 6
 
 
 @pytest.mark.parametrize("idioma,saludo,consulta", [
