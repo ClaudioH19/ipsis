@@ -196,12 +196,14 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
         rec["modelo"] = args.modelo_denso
     if args.modelo_reranker:
         cfg.setdefault("ajustes_perfil", {}).setdefault("modelos", {})["reranker"] = args.modelo_reranker
+    if args.rerank_candidatos:
+        v2["rerank_candidatos"] = args.rerank_candidatos
     if args.reranker_max_tokens:
         v2["max_tokens_reranker"] = args.reranker_max_tokens
     v2["resultados_n"] = max(args.resultados, 1)  # solo cambia cuántas fuentes se publican, no su orden
     return {"estrategia": rec.get("estrategia_chunking"), "con_cabecera": rec.get("con_header"), "detalle_cabecera": rec.get("detalle_cabecera", "basico"),
             "preparacion": rec.get("preparacion", {}).get("modo", "legacy"),
-            "modo": rec.get("modo"), "modelo_denso": rec.get("modelo"), "reranker_max_tokens": v2.get("max_tokens_reranker"),
+            "modo": rec.get("modo"), "modelo_denso": rec.get("modelo"), "reranker_max_tokens": v2.get("max_tokens_reranker"), "rerank_candidatos": v2.get("rerank_candidatos"),
             "modelo_reranker": (cfg.get("ajustes_perfil") or {}).get("modelos", {}).get("reranker"),
             "resultados": v2["resultados_n"]}
 
@@ -258,6 +260,8 @@ def construir_parser() -> argparse.ArgumentParser:
                    help="retrieval.mode: solo vector denso, híbrido (por defecto) o solo BM25")
     p.add_argument("--modelo-denso")
     p.add_argument("--modelo-reranker", dest="modelo_reranker", help="id del reranker del catálogo (solo medium)")
+    p.add_argument("--rerank-candidatos", type=int, dest="rerank_candidatos",
+                   help="v2.rerank_candidates: cuántos candidatos del recuperador puntúa el reranker")
     p.add_argument("--reranker-max-tokens", type=int, dest="reranker_max_tokens")
     p.add_argument("--resultados", type=int, default=5,
                    help="fuentes publicadas por el motor (para medir hit@5); no cambia el orden")
