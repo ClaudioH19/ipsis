@@ -19,7 +19,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F1.5 | ⚠ | | | Decidir (a) o (b). |
 | F2.1 | 🔶 | 2026-10-15 | (ver git log) | `CH-F256S` implementada y probada (16 pruebas nuevas). Sobre el corpus del banco de pasajes: `CH-F256` 97 fragmentos, 56 cruzan sección, máx. 307 palabras; `CH-F256S` 122 fragmentos, 0 cruzan, máx. 255. Falta `MEDIR` en `dev` frente a F0.4/F1 (sin modelos en este entorno). |
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
-| F2.3 | ⬜ | | | |
+| F2.3 | 🔶 | 2026-10-15 | (ver git log) | `preparar_markdown` y `preparar_texto` (reutilizan `parsear_markdown`/`parsear_texto_plano`), despacho por extensión, huella con la versión de cada parser, `ipsis prepare` y la ingesta estructural funcionan sobre `.md` (9 pruebas). Falta `MEDIR` con `preparacion.modo: estructural_v1` en `dev` (sin modelos). Además corregí que `hash_archivos` del manifiesto omitía `header_detail` (F3.1). |
 | F2.4 | ⬜ | | | Solo si F2.3 mejora. |
 | F3.1 | 🔶 | 2026-10-15 | (ver git log) | `header_detail: extended` implementado (cabecera en es/en/pt, entidades y marcas calculadas una vez, huella solo cambia con `extended`) con 11 pruebas. Falta `MEDIR` en `dev` (sin modelos en este entorno). Ojo regla 9: como `hash_corpus` legacy no incluye `texto_embebido`, no invalida la calibración; depende de F1.5. |
 | F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |

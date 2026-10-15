@@ -158,9 +158,15 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
 
         digest.update(json.dumps({"preparacion": preparacion, "parser": PARSER_VERSION,
             "chunker": CHUNKER_VERSION}, sort_keys=True).encode("utf-8"))
+    estructural_texto = preparacion.get("modo", "legacy") != "legacy"
     for entrada in sorted(entradas_vigentes(), key=lambda e: e["doc_id"]):
-        if Path(entrada["archivo"]).suffix.lower() in EXTENSIONES:
+        sufijo = Path(entrada["archivo"]).suffix.lower()
+        if sufijo in EXTENSIONES:
             digest.update(VERSION_TABULAR.encode("utf-8"))
+        elif estructural_texto and sufijo in {".md", ".markdown", ".txt"}:
+            from ipsis.ingesta.preparacion import PARSER_VERSION_MARKDOWN, PARSER_VERSION_TEXTO
+
+            digest.update((PARSER_VERSION_TEXTO if sufijo == ".txt" else PARSER_VERSION_MARKDOWN).encode("utf-8"))
         contenido = (Path(carpeta_corpus) / entrada["archivo"]).read_bytes()
         digest.update(f"\n{entrada['doc_id']}|{entrada['doc_titulo']}|{entrada['version']}|".encode("utf-8"))
         digest.update(hashlib.sha256(contenido).digest())
@@ -279,6 +285,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
             coleccion=nombre_col, modelo_denso=modelo, dimension=_codificador.dimension,
             stemmer=estadisticas_lexicas.stemmer, hash_corpus=huella, n_chunks=len(payloads),
             hash_archivos=huella_archivos(carpeta_corpus, {"estrategia_chunking": estrategia, "con_header": con_header,
+                                                       "detalle_cabecera": cfg_rec.get("detalle_cabecera", "basico"),
                                                        "preparacion": opciones}),
             inventario_entidades=inventario,
             preparacion=metadata_preparacion,

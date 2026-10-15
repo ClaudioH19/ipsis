@@ -8,6 +8,9 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- Structural preparation (`retrieval.preparation.mode: structural_v1`) now accepts Markdown and plain
+  text, reusing the existing parsers' headings and offsets (parsers `markdown-estructura-1` and
+  `texto-estructura-1`). Markdown tables stay as paragraphs, with a warning. PDF is still legacy-only.
 - `retrieval.header_detail: extended` (with `with_header: true`): the embedded header gains a
   second line with the data types (deadline, amount, date...), condition and exception the
   fragment contains, in es/en/pt. Cited text and offsets are unchanged; the default is `basic`.
@@ -16,6 +19,11 @@ a minor change may break compatibility and is marked as such.
   sentences. Opt-in; `CH-F256` and the defaults are unchanged. On the passage
   bank corpus `CH-F256` produces 56 of 97 fragments that span more than one
   section; `CH-F256S` produces none.
+
+### Fixed
+
+- The index manifest fingerprint now includes `header_detail`, so an index built with the extended
+  header is no longer reported as stale.
 
 ## [1.0.0] - 2026-10-13
 

@@ -9,6 +9,8 @@ from ipsis.nucleo.documentos import CeldaPreparada, DocumentoPreparado, Referenc
 from ipsis.nucleo.esquemas import ElementRecord
 
 PARSER_VERSION = "docx-estructura-1"
+PARSER_VERSION_MARKDOWN = "markdown-estructura-1"
+PARSER_VERSION_TEXTO = "texto-estructura-1"
 
 
 def preparar_documento(ruta, *, doc_id, doc_titulo, version="1"):
@@ -18,7 +20,11 @@ def preparar_documento(ruta, *, doc_id, doc_titulo, version="1"):
         return preparar_tabular(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
     if Path(ruta).suffix.lower() == ".docx":
         return preparar_docx(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
-    raise ValueError("estructura-1 soporta DOCX, XLSX, XLS, CSV y TSV; otros formatos siguen en legacy")
+    if Path(ruta).suffix.lower() in {".md", ".markdown"}:
+        return preparar_markdown(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
+    if Path(ruta).suffix.lower() == ".txt":
+        return preparar_texto(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
+    raise ValueError("estructura-1 soporta DOCX, Markdown, texto, XLSX, XLS, CSV y TSV; el PDF sigue en legacy")
 
 
 def _hash(datos):
@@ -190,6 +196,61 @@ def preparar_docx(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparad
         texto_completo=texto, elementos=elementos, tablas=tablas, parser_version=PARSER_VERSION,
         source_hash="sha256:" + hashlib.sha256(Path(ruta).read_bytes()).hexdigest(),
         structure_hash=_hash(datos_estructura), advertencias=sorted(set(avisos)))
+
+
+def _preparar_desde_parseado(parseado, *, parser_version, avisos_extra=()) -> DocumentoPreparado:
+    """Convierte la salida de ``parsear_markdown`` / ``parsear_texto_plano`` en un documento preparado.
+
+    El texto canónico y los offsets son los del parser existente (no se duplica su lectura de
+    encabezados). Los títulos son los declarados por ``#`` (Markdown) o los que ese parser
+    reconoce en texto plano; las filas de tablas Markdown quedan como párrafos."""
+    elementos, avisos = [], list(parseado.advertencias) + list(avisos_extra)
+    pila: list[tuple[int, str]] = []  # (nivel, element_id) de los títulos abiertos
+    seccion: list[str] = []
+    for bloque in parseado.bloques:
+        eid = f"{parseado.doc_id}__e{len(elementos):04d}"
+        if bloque.tipo_contenido == "titulo":
+            nivel = bloque.seccion_nivel
+            pila = [x for x in pila if x[0] < nivel]
+            padre = pila[-1][1] if pila else None
+            pila.append((nivel, eid))
+            seccion = list(bloque.seccion_path)
+            tipo, metadata = "titulo", {"parent_id": padre, "nivel": nivel}
+        else:
+            padre = pila[-1][1] if pila else None
+            # Una fila de tabla Markdown lleva su encabezado en la ruta del parser; aquí la sección
+            # es la del último título, igual que para un párrafo.
+            tipo = "lista" if bloque.tipo_contenido == "lista" else "parrafo"
+            metadata = {"parent_id": padre, "nivel": None}
+            if bloque.tipo_contenido == "tabla":
+                metadata["origen"] = "fila_tabla_markdown"
+        elementos.append(ElementRecord(
+            element_id=eid, tipo=tipo, texto=bloque.texto, offset_inicio=bloque.offset_inicio,
+            offset_fin=bloque.offset_fin, seccion_path=list(seccion),
+            metadata={"orden": len(elementos), **metadata}))
+    if any(e.metadata.get("origen") == "fila_tabla_markdown" for e in elementos):
+        avisos.append("tablas Markdown: cada fila se conserva como párrafo, sin celdas ni encabezados")
+    datos_estructura = {"parser": parser_version, "elementos": [e.model_dump(mode="json") for e in elementos],
+                        "texto": parseado.texto_completo}
+    return DocumentoPreparado(
+        doc_id=parseado.doc_id, titulo=parseado.doc_titulo, version=str(parseado.version),
+        ruta_origen=str(parseado.ruta_origen), texto_completo=parseado.texto_completo, elementos=elementos,
+        parser_version=parser_version, source_hash="sha256:" + hashlib.sha256(Path(parseado.ruta_origen).read_bytes()).hexdigest(),
+        structure_hash=_hash(datos_estructura), advertencias=sorted(set(avisos)))
+
+
+def preparar_markdown(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparado:
+    from ipsis.ingesta.parsear import parsear_markdown
+
+    return _preparar_desde_parseado(parsear_markdown(str(ruta), doc_id, doc_titulo, version),
+                                    parser_version=PARSER_VERSION_MARKDOWN)
+
+
+def preparar_texto(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparado:
+    from ipsis.ingesta.parsear import parsear_texto_plano
+
+    return _preparar_desde_parseado(parsear_texto_plano(str(ruta), doc_id, doc_titulo, version),
+                                    parser_version=PARSER_VERSION_TEXTO)
 
 
 def como_documento_parseado(preparado):
