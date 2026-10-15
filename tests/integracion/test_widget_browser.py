@@ -590,3 +590,62 @@ def test_carga_transicion_ayuda_compacta_y_scrollbar(navegador, servidor_widget,
     assert page.locator(".rw-mensajes").evaluate("e => getComputedStyle(e).scrollbarWidth") == "thin"
     assert page.locator(".rw-mensajes").evaluate("e => getComputedStyle(e).scrollbarColor") != "auto"
     page.close()
+
+
+@pytest.mark.browser
+def test_resultado_muestra_titulo_del_documento_y_archivo_como_dato_secundario(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    publico = _pagina_fuentes(continuar=False)
+    for f in publico["fragments"]:
+        f.update(doc_title="Reglamento de Prácticas (Plan 26)", source_name="Reglamento_Practicas_Plan26_v4.docx")
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda r: r.fulfill(json=publico))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("plazo")
+    page.get_by_role("button", name="Search", exact=True).click()
+    tarjeta = page.locator(".rw-resultado").first
+    expect(tarjeta.locator(".rw-resultado-doc")).to_have_text("Reglamento de Prácticas (Plan 26) · v1")
+    expect(tarjeta.locator(".rw-resultado-archivo")).to_have_text("Reglamento_Practicas_Plan26_v4.docx")
+    page.close()
+
+
+@pytest.mark.browser
+def test_busqueda_muestra_esqueleto_y_los_resultados_entran_en_secuencia(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    pendientes = []
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda ruta: pendientes.append(ruta))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    esqueleto = page.locator(".rw-esqueleto")
+    expect(esqueleto).to_be_visible()
+    expect(esqueleto).to_have_attribute("aria-hidden", "true")
+    expect(esqueleto.locator(".rw-esq-tarjeta")).to_have_count(3)
+    expect(esqueleto.locator(".rw-esqueleto-estado span")).to_have_text("Reading the documents…")
+    expect(page.locator(".rw-busqueda-vacia")).to_be_hidden()
+    pendientes[0].fulfill(json=_pagina_fuentes(continuar=False))
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-esqueleto")).to_have_count(0)
+    indices = page.locator(".rw-resultado").evaluate_all("els => els.map(e => e.style.getPropertyValue('--rw-i'))")
+    assert indices == ["0", "1", "2"]
+    page.close()
+
+
+@pytest.mark.browser
+def test_boton_borrar_limpia_el_buscador_y_solo_aparece_con_texto(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    borrar = page.get_by_role("button", name="Clear search")
+    expect(borrar).to_be_hidden()
+    page.locator("#rw-input").fill("plazo de entrega")
+    expect(borrar).to_be_visible()
+    borrar.click()
+    expect(page.locator("#rw-input")).to_have_value("")
+    expect(borrar).to_be_hidden()
+    expect(page.locator("#rw-input")).to_be_focused()
+    page.close()
