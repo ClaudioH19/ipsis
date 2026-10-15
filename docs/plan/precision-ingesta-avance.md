@@ -8,8 +8,8 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
-| F0.1 | ✅ | 2026-10-15 | (ver commit) | Usuario sin corpus real: banco sintético en `tests/datos/banco_pasajes` (116 respondibles + 15 trampas, 10 documentos). |
-| F0.2 | ⬜ | | | |
+| F0.1 | ✅ | 2026-10-15 | 2d2b536 | Usuario sin corpus real: banco sintético en `tests/datos/banco_pasajes` (116 respondibles + 15 trampas, 10 documentos). |
+| F0.2 | 🔶 | 2026-10-15 | (ver git log) | Script `herramientas/evaluacion/ranking_pasajes.py` y 8 pruebas con motor falso en verde. La corrida de punta a punta no se pudo completar: `ipsis index` falla porque `intfloat/multilingual-e5-small` no está en caché y huggingface.co responde 403 por el proxy. Con `init`, `load` y fragmentado (97 fragmentos con `CH-F256`) sí llegó. Pendiente: correrlo en un entorno con modelos y pasar a ✅. |
 | F0.3 | ⬜ | | | Requiere modelos en caché. |
 | F0.4 | ⬜ | | | Requiere modelos. |
 | F1.1 | ⬜ | | | |

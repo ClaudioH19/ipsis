@@ -127,3 +127,18 @@ El comparador del consejo se retiró junto con su runtime. El
 [informe histórico](../../docs/methodology/consejo-v2.md) conserva las medidas
 y ubicación de sus snapshots privados. El enfoque vigente de v2 entrega
 [fuentes ordenadas con contexto](../../docs/methodology/fuentes-v2.md).
+
+## Ranking de pasajes por etapa
+
+`ranking_pasajes.py` mide, sobre un banco con evidencias
+(`tests/datos/banco_pasajes`), en qué posición aparece la primera fuente correcta
+tras la recuperación híbrida y en el orden final que publica v2, con hit@1/3/5, MRR
+y latencia por perfil. Indexa en un proyecto temporal y admite cambiar una opción
+de ingesta por corrida (`--con-cabecera`, `--estrategia`, `--preparacion`,
+`--reranker-max-tokens`, `--modelo-denso`) y comparar con `--comparar`. Requiere
+modelos en caché. Detalle: [plan de precisión desde la ingesta](../../docs/plan/precision-ingesta-tareas.md).
+
+```bash
+python herramientas/evaluacion/ranking_pasajes.py tests/datos/banco_pasajes/es/manifiesto.json \
+    --perfil light --perfil medium --salida /tmp/linea_base
+```
