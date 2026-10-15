@@ -163,10 +163,11 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
         sufijo = Path(entrada["archivo"]).suffix.lower()
         if sufijo in EXTENSIONES:
             digest.update(VERSION_TABULAR.encode("utf-8"))
-        elif estructural_texto and sufijo in {".md", ".markdown", ".txt"}:
-            from ipsis.ingesta.preparacion import PARSER_VERSION_MARKDOWN, PARSER_VERSION_TEXTO
+        elif estructural_texto and sufijo in {".md", ".markdown", ".txt", ".pdf"}:
+            from ipsis.ingesta.preparacion import PARSER_VERSION_MARKDOWN, PARSER_VERSION_PDF, PARSER_VERSION_TEXTO
 
-            digest.update((PARSER_VERSION_TEXTO if sufijo == ".txt" else PARSER_VERSION_MARKDOWN).encode("utf-8"))
+            digest.update({".txt": PARSER_VERSION_TEXTO, ".pdf": PARSER_VERSION_PDF}.get(
+                sufijo, PARSER_VERSION_MARKDOWN).encode("utf-8"))
         contenido = (Path(carpeta_corpus) / entrada["archivo"]).read_bytes()
         digest.update(f"\n{entrada['doc_id']}|{entrada['doc_titulo']}|{entrada['version']}|".encode("utf-8"))
         digest.update(hashlib.sha256(contenido).digest())

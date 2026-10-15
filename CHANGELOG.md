@@ -10,7 +10,8 @@ a minor change may break compatibility and is marked as such.
 
 - Structural preparation (`retrieval.preparation.mode: structural_v1`) now accepts Markdown and plain
   text, reusing the existing parsers' headings and offsets (parsers `markdown-estructura-1` and
-  `texto-estructura-1`). Markdown tables stay as paragraphs, with a warning. PDF is still legacy-only.
+  `texto-estructura-1`), and PDF (`pdf-estructura-1`, outline or font-size headings, OCR warnings kept).
+  Markdown tables stay as paragraphs, with a warning.
 - `retrieval.header_detail: extended` (with `with_header: true`): the embedded header gains a
   second line with the data types (deadline, amount, date...), condition and exception the
   fragment contains, in es/en/pt. Cited text and offsets are unchanged; the default is `basic`.

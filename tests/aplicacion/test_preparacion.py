@@ -73,9 +73,9 @@ def test_formato_no_soportado_falla_antes_de_crear_destino(tmp_path):
     origen = proyecto(tmp_path)
     catalogo = origen / "documents/catalog.yaml"
     datos = interpretar(catalogo.read_text(encoding="utf-8"), "catalogo")
-    datos["documentos"][0]["archivo"] = "nuevo.pdf"
+    datos["documentos"][0]["archivo"] = "nuevo.rtf"
     catalogo.write_text(volcar(datos, "catalogo"), encoding="utf-8")
-    (origen / "documents/nuevo.pdf").write_text("Datos")
+    (origen / "documents/nuevo.rtf").write_text("Datos")
     destino = tmp_path / "rechazado"
     with pytest.raises(ValueError, match="DOCX"):
         preparar_proyecto(origen, destino)

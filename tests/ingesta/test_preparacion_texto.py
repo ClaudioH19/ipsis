@@ -102,12 +102,12 @@ def test_texto_plano_usa_los_titulos_que_reconoce_el_parser(tmp_path):
     assert len(padres) == 1 and all(h.parent_id in padres for h in hijos)
 
 
-def test_preparar_documento_despacha_por_extension_y_el_pdf_sigue_en_legacy(md, tmp_path):
+def test_preparar_documento_despacha_por_extension_y_rechaza_otros_formatos(md, tmp_path):
     assert preparar_documento(md, doc_id="a", doc_titulo="A").parser_version == "markdown-estructura-1"
     (tmp_path / "x.markdown").write_text(MD, encoding="utf-8")
     assert preparar_documento(tmp_path / "x.markdown", doc_id="b", doc_titulo="B").parser_version == "markdown-estructura-1"
-    with pytest.raises(ValueError, match="PDF"):
-        preparar_documento(tmp_path / "x.pdf", doc_id="c", doc_titulo="C")
+    with pytest.raises(ValueError, match="DOCX"):
+        preparar_documento(tmp_path / "x.rtf", doc_id="c", doc_titulo="C")
 
 
 def test_es_determinista_y_el_hash_cambia_con_el_contenido(md, tmp_path):
@@ -162,3 +162,75 @@ def test_la_ingesta_estructural_arma_payloads_de_markdown_sin_modelos(tmp_path, 
     assert preparados[0].parser_version == "markdown-estructura-1"
     assert all(p["preparacion"]["parser_version"] == "markdown-estructura-1" for p in payloads)
     assert all(p["texto"] == preparados[0].texto_completo[p["offset_inicio"]:p["offset_fin"]] for p in payloads)
+
+
+# ---------------------------------------------------------------------------
+# PDF (F2.4)
+# ---------------------------------------------------------------------------
+from apoyo import _combinar_con_outline, _pdf_pagina_con_lineas, _pdf_pagina_con_texto
+
+from ipsis.ingesta.preparacion import preparar_pdf
+
+
+def test_pdf_con_outline_usa_los_marcadores_como_secciones(tmp_path):
+    ruta = tmp_path / "manual.pdf"
+    ruta.write_bytes(_combinar_con_outline([_pdf_pagina_con_texto("Contenido de la introduccion de prueba."),
+                                            _pdf_pagina_con_texto("Contenido del capitulo dos de prueba.")],
+                                           [("Introduccion", 0), ("Capitulo Dos", 1)]))
+    d = preparar_pdf(ruta, doc_id="m", doc_titulo="M")
+    assert d.parser_version == "pdf-estructura-1" and d.tablas == []
+    assert [e.texto for e in d.elementos if e.tipo == "titulo"] == ["Introduccion", "Capitulo Dos"]
+    cap2 = next(e for e in d.elementos if "capitulo dos de prueba" in e.texto.lower())
+    assert cap2.seccion_path == ["Capitulo Dos"]
+    hijos, padres = unidades_documento(d)
+    assert {tuple(p.seccion_path) for p in padres.values()} == {("Introduccion",), ("Capitulo Dos",)}
+    for h in hijos:
+        assert d.texto_completo[h.offset_inicio:h.offset_fin] == h.texto_fuente
+
+
+def test_pdf_sin_outline_toma_titulos_por_tamano_y_listas(tmp_path):
+    ruta = tmp_path / "manual.pdf"
+    ruta.write_bytes(_pdf_pagina_con_lineas([
+        ("Garantia", 18),
+        ("El equipo tiene una garantia de dos anos desde la fecha de compra del", 11),
+        ("cliente en la tienda.", 11),
+        ("- Cubre las piezas.", 11),
+        ("Mantenimiento", 18),
+        ("Cambie el filtro cada seis meses para conservar la calidad del agua y", 11),
+        ("evitar obstrucciones.", 11),
+    ]))
+    d = preparar_pdf(ruta, doc_id="m", doc_titulo="M")
+    assert [(e.tipo, e.seccion_path) for e in d.elementos] == [
+        ("titulo", ["Garantia"]), ("parrafo", ["Garantia"]), ("lista", ["Garantia"]),
+        ("titulo", ["Mantenimiento"]), ("parrafo", ["Mantenimiento"])]
+    assert d.advertencias == []
+
+
+def test_pdf_sin_estructura_conserva_el_aviso_del_parser(tmp_path):
+    ruta = tmp_path / "plano.pdf"
+    ruta.write_bytes(_pdf_pagina_con_texto("Texto de una pagina cualquiera sin marcadores."))
+    d = preparar_pdf(ruta, doc_id="p", doc_titulo="P")
+    assert all(e.seccion_path == [] for e in d.elementos)
+    assert any("estructura de secciones" in a for a in d.advertencias)
+
+
+def test_pdf_escaneado_sigue_rechazandose(tmp_path):
+    from apoyo import _pdf_pagina_vacia
+    from ipsis.ingesta.parsear import DocumentoEscaneadoError
+
+    ruta = tmp_path / "escaneado.pdf"
+    ruta.write_bytes(_pdf_pagina_vacia())
+    with pytest.raises(DocumentoEscaneadoError):
+        preparar_pdf(ruta, doc_id="e", doc_titulo="E")
+
+
+def test_pdf_real_del_banco_general_se_prepara_con_offsets_literales():
+    from pathlib import Path
+
+    ruta = Path(__file__).resolve().parents[1] / "datos/banco_general/bueno/corpus/compras.pdf"
+    d = preparar_documento(ruta, doc_id="compras", doc_titulo="Compras")
+    assert d.parser_version == "pdf-estructura-1" and len(d.elementos) > 3
+    for e in d.elementos:
+        assert d.texto_completo[e.offset_inicio:e.offset_fin] == e.texto
+    hijos, padres = unidades_documento(d)
+    assert hijos and all(h.parent_id in padres for h in hijos)

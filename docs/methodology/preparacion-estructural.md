@@ -137,7 +137,7 @@ costos de embeddings, búsqueda, cross-encoder y lector se miden por separado.
 | Control de cambios | No resuelto; aviso y revisión de vista previa |
 | Markdown (`.md`, `.markdown`) | Títulos `#`, párrafos y listas con sección y offsets literales; parser `markdown-estructura-1`, que reutiliza el de `parsear.py`. Las tablas Markdown quedan como párrafos (una fila por párrafo, sin celdas ni encabezados), con aviso |
 | Texto plano (`.txt`) | Párrafos bajo los títulos que reconoce el parser de texto; parser `texto-estructura-1` |
-| PDF | Continúa por el recorrido legacy; rechazado por esta preparación |
+| PDF | Secciones desde el outline del PDF o, sin él, desde las líneas en letra claramente mayor que el cuerpo; párrafos y listas como en el parser de PDF; parser `pdf-estructura-1`. Se conservan los avisos de OCR y de falta de estructura; un PDF escaneado sin OCR sigue rechazándose. Sin números de página ni tablas |
 | XLSX, XLS, CSV y TSV | Registros completos con etiquetas y coordenadas; parser `tabular-1`, sin recalcular fórmulas. Ver [inventarios](../guide/inventories.md) |
 
 La tabla expresa capacidades de estructura, no comprensión de manuales,
