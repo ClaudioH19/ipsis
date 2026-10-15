@@ -180,6 +180,43 @@ En `light`: legacy 0,48 (formal 0,68, informal 0,29), estructural 0,71 (formal 0
 - Nota metodológica: una primera corrida salió idéntica en todas las configuraciones porque `ipsis init` ya
   escribía la preparación estructural y `--estrategia` se ignora en ese modo; se repitió con `--preparacion legacy`.
 
+## ¿Más sensibilidad en los vectores o en el reranker? (documentos reales, `medium`, estructural)
+
+Pregunta del usuario: los vectores solo separan por tema, no dentro de un mismo tema. Banco adversarial
+(56 preguntas formales e informales sobre los documentos reales, `todas`), un cambio por fila.
+
+**Qué señal separa.** Recuperador, antes del reranker: la fuente correcta está en el top 20 el 95 a 98 % de las
+veces, pero primera solo 54 a 62 %. Denso solo 0,54 (informal 0,46), BM25 solo 0,41 (informal 0,21), híbrido
+0,55. Con el reranker mMiniLM: 0,79.
+
+| Cambio | hit@1 recuperador | hit@1 final | informal | pares P1/P2 | p95 ms |
+|---|---|---|---|---|---|
+| base (e5-small + mMiniLM, 60 candidatos) | 0,55 | 0,79 | 0,68 | 0,68 | 1 431 |
+| vector e5-base (768) | 0,61 | 0,77 | 0,68 | 0,65 | 1 307 |
+| vector granite-311m (768) | 0,55 | 0,73 | 0,61 | 0,59 | 1 448 |
+| vector harrier-270m (640) | 0,54 | 0,75 | 0,64 | 0,65 | 1 281 |
+| vector embeddinggemma (768) | 0,62 | 0,75 | 0,64 | 0,62 | 1 306 |
+| reranker gte-multilingual-base | 0,55 | 0,71 | 0,50 | 0,62 | 2 216 |
+| reranker bge-v2-m3, 60 candidatos | 0,55 | 0,86 | 0,79 | 0,79 | 2 523 (sobre el presupuesto) |
+| reranker bge-v2-m3, 20 candidatos | 0,55 | 0,86 | 0,79 | 0,79 | 2 458 |
+| **reranker bge-v2-m3, 10 candidatos** | 0,55 | **0,86** | **0,79** | **0,79** | **1 874** |
+| mMiniLM, 20 candidatos | 0,55 | 0,79 | 0,68 | 0,68 | 986 |
+
+Conclusiones: (1) cambiar el vector denso no mejora la discriminación fina (hit@1 del recuperador 0,54 a 0,62 con
+cuatro modelos de hasta 768 dimensiones, y el final queda igual o peor); (2) la discriminación está en el
+reranker, pero no en cualquiera (gte empeora lo informal); (3) bge-v2-m3 sube todo y con 10 candidatos cabe en el
+presupuesto de 2,5 s porque el recuperador ya deja la correcta entre las primeras.
+
+**Validación fuera del banco con que se eligió** (estructural, `medium`, mMiniLM frente a bge-v2-m3 con 10 candidatos):
+
+| Banco | n | hit@1 mMiniLM | hit@1 bge | hit@3 | p95 ms |
+|---|---|---|---|---|---|
+| documentos reales, 33 preguntas formales | 33 | 0,818 | 0,849 | 0,939 → 1,000 | 1 534 → 2 024 |
+| banco de pasajes sintético, `test` | 44 | 0,977 | 1,000 | 1,000 → 1,000 | 992 → 1 192 |
+
+Mejora o iguala en los tres bancos, con un costo de 0,2 a 0,9 s de p95 (4 CPU). Cambiar el reranker de un perfil
+es decisión del usuario; hoy hay que hacerlo con `profile_overrides` en `engine.yaml`.
+
 ## Hallazgos
 
 - 2026-10-15: desde el entorno de nube usado para el análisis no se pudo
