@@ -142,6 +142,20 @@ Headings and tables are rendered only when their structure is verified.
 Empty cells do not become zero. Large tables are read in expanded context;
 their original text remains available.
 
+## 🎬 Demo
+
+Recordings of the widget running on a phone-sized viewport (390×844) over
+public university regulations. Select an image to play its video.
+
+<div align="center">
+<a href="docs/assets/demo/demo-mobile.mp4"><img alt="Mobile demo: formal and informal questions with sources" src="docs/assets/demo/demo-mobile.png" width="30%"></a>
+<a href="docs/assets/demo/themes.mp4"><img alt="The nine built-in themes in light and dark mode" src="docs/assets/demo/themes.png" width="30%"></a>
+<p><sub>Left: one formal and two informal questions. Right: the nine themes, light and dark.</sub></p>
+</div>
+
+Both were recorded with a desktop browser emulating a mobile viewport, not on a
+physical phone, as a sequence of captures: timings are not representative.
+
 ## 🌐 Widget and customization
 
 Paste this tag into your website and authorize its origin in CORS:

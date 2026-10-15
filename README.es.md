@@ -143,6 +143,20 @@ Los encabezados y las tablas solo se representan cuando su estructura está
 verificada. Las celdas vacías no se convierten en cero. Las tablas grandes
 se leen en el contexto; el texto original sigue disponible.
 
+## 🎬 Demostración
+
+Grabaciones del widget en un viewport de tamaño teléfono (390×844) sobre
+reglamentos universitarios públicos. Toca una imagen para ver su video.
+
+<div align="center">
+<a href="docs/assets/demo/demo-mobile.mp4"><img alt="Demostración móvil: preguntas formales e informales con fuentes" src="docs/assets/demo/demo-mobile.png" width="30%"></a>
+<a href="docs/assets/demo/themes.mp4"><img alt="Los nueve temas incluidos en modo claro y oscuro" src="docs/assets/demo/themes.png" width="30%"></a>
+<p><sub>Izquierda: una pregunta formal y dos informales. Derecha: los nueve temas, claro y oscuro.</sub></p>
+</div>
+
+Se grabaron con un navegador de escritorio que emula un viewport móvil, no en un
+teléfono físico, como una secuencia de capturas: los tiempos no son representativos.
+
 ## 🌐 Widget y personalización
 
 Pega esta etiqueta en tu sitio y autoriza su origen en CORS:
