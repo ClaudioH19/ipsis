@@ -16,7 +16,7 @@ así que se corre en un entorno aparte:
 
 Familias de modelo (``familia:id``): ``cross`` (clasificación de secuencias, un logit), ``qwen3``
 (Qwen3-Reranker: probabilidad de «yes»), ``mxbai2`` (paquete mxbai-rerank) y ``lb`` (esperanza de la
-nota 1 a 7 de lightblue/lb-reranker). Los tiempos son de fp32 en CPU y solo ordenan los modelos entre
+nota 1 a 7 de lightblue/lb-reranker) y ``laya`` (modelo de decisión tipada: P(sí) a «¿responde?»). Los tiempos son de fp32 en CPU y solo ordenan los modelos entre
 sí; la latencia que cuenta es la del modelo cuantizado dentro del motor.
 """
 from __future__ import annotations
@@ -164,7 +164,27 @@ def construir_mxbai2(id_hf, torch, max_tokens):
     return puntuar
 
 
-FAMILIAS = {"cross": construir_cross, "qwen3": construir_qwen3, "lb": construir_lb, "mxbai2": construir_mxbai2}
+def construir_laya(id_hf, torch, max_tokens):
+    """Laya (modelo de decisión tipada, no generativo): P(sí) de «¿el pasaje responde la pregunta?»."""
+    import laya
+
+    agente = laya.load(id_hf)
+    preguntas = {"responde": {"type": "choice",
+                              "instructions": "Does `passage` contain the answer to `question`?",
+                              "criteria": {"A": "yes, the passage answers the question",
+                                           "B": "no, the passage does not answer the question"}}}
+
+    def puntuar(pregunta, pasajes):
+        puntajes = []
+        for p in pasajes:
+            r = agente.predict({"question": pregunta, "passage": p}, preguntas)
+            probs = r["answers"]["responde"].get("probabilities") or {}
+            puntajes.append(float(probs.get("A", 0.0)))
+        return puntajes
+    return puntuar
+
+
+FAMILIAS = {"laya": construir_laya, "cross": construir_cross, "qwen3": construir_qwen3, "lb": construir_lb, "mxbai2": construir_mxbai2}
 
 
 def main(argv=None) -> int:
