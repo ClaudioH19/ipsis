@@ -186,6 +186,8 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
         rec["estrategia_chunking"] = args.estrategia
     if args.con_cabecera is not None:
         rec["con_header"] = args.con_cabecera
+    if args.modo:
+        rec["modo"] = args.modo
     if args.detalle_cabecera:
         rec["detalle_cabecera"] = args.detalle_cabecera
     if args.preparacion:
@@ -197,7 +199,7 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
     v2["resultados_n"] = max(args.resultados, 1)  # solo cambia cuántas fuentes se publican, no su orden
     return {"estrategia": rec.get("estrategia_chunking"), "con_cabecera": rec.get("con_header"), "detalle_cabecera": rec.get("detalle_cabecera", "basico"),
             "preparacion": rec.get("preparacion", {}).get("modo", "legacy"),
-            "modelo_denso": rec.get("modelo"), "reranker_max_tokens": v2.get("max_tokens_reranker"),
+            "modo": rec.get("modo"), "modelo_denso": rec.get("modelo"), "reranker_max_tokens": v2.get("max_tokens_reranker"),
             "resultados": v2["resultados_n"]}
 
 
@@ -249,6 +251,8 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--detalle-cabecera", dest="detalle_cabecera", choices=["basico", "extendido"],
                    help="header_detail; con --con-cabecera")
     p.add_argument("--preparacion", choices=["legacy", "estructural_v1"])
+    p.add_argument("--modo", choices=["vectorial", "hibrida", "dispersa"],
+                   help="retrieval.mode: solo vector denso, híbrido (por defecto) o solo BM25")
     p.add_argument("--modelo-denso")
     p.add_argument("--reranker-max-tokens", type=int, dest="reranker_max_tokens")
     p.add_argument("--resultados", type=int, default=5,
