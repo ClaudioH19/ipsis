@@ -7,7 +7,7 @@ pipeline: v2
 v2:
   results_limit: 3              # ranked source dropdowns per page
   retrieve_n: 60               # candidate pool; "Keep searching" reuses its ranking
-  rerank_candidates: 60
+  rerank_candidates: 60         # 60 = the profile's number for the project language (medium: 10 for es and pt)
   query_budget_ms: 2500         # total work budget; running inference cannot be interrupted
   reranker_batch_size: 2
   reranker_max_tokens: 256

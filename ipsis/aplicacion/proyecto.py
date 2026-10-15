@@ -403,10 +403,13 @@ def perfil_de_instalacion(nombre: str):
     calibración: lo que importa para modelos, índice y presupuesto. Valida los
     ajustes (``ValueError`` si no sirven para ese perfil)."""
     from ipsis.configuracion import rutas
-    from ipsis.configuracion.carga import cargar_proyecto
-    from ipsis.configuracion.perfiles import perfil_efectivo
+    from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
+    from ipsis.configuracion.perfiles import ajustes_de_idioma, perfil_efectivo
 
-    ajustes = cargar_proyecto().get("ajustes_perfil") if Path(rutas.MOTOR).is_file() else None
+    motor = cargar_proyecto() if Path(rutas.MOTOR).is_file() else {}
+    ajustes = motor.get("ajustes_perfil")
+    if motor.get("pipeline", "v2") == "v2":  # el reranker propio del idioma es de v2
+        ajustes, _ = ajustes_de_idioma(nombre, ajustes, cargar_dominio().get("idioma"))
     return perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
 
 

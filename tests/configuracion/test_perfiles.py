@@ -120,3 +120,58 @@ def test_proyecto_con_heavy_se_carga_como_medium():
 def test_migracion_v2_asigna_light():
     v2 = {"config_version": 2, "nombre_asistente": "X", "perfil": "_generico"}
     assert validar_asistente(v2)["perfil"] == "light"
+
+
+# --- reranker propio de cada idioma (medium) ----------------------------------------------------------
+from ipsis.configuracion.perfiles import ajustes_de_idioma
+
+BGE = "onnx-community/bge-reranker-v2-m3-ONNX"
+MMARCO = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+
+
+def test_medium_usa_bge_con_10_candidatos_en_espanol_y_portugues():
+    for idioma in ("es", "pt", "es-CL", "PT"):
+        ajustes, candidatos = ajustes_de_idioma("medium", None, idioma)
+        assert ajustes == {"modelos": {"reranker": BGE}} and candidatos == 10
+        assert perfil_efectivo("medium", ajustes, ruta_calibracion=None).modelos.reranker == BGE
+
+
+def test_otros_idiomas_y_light_conservan_el_reranker_del_perfil():
+    assert ajustes_de_idioma("medium", None, "en") == (None, None)
+    assert ajustes_de_idioma("medium", None, None) == (None, None)
+    assert ajustes_de_idioma("light", None, "es") == (None, None)
+    assert perfil_efectivo("medium", None, ruta_calibracion=None).modelos.reranker == MMARCO
+
+
+def test_un_proyecto_que_fija_su_reranker_lo_conserva_sin_candidatos_del_idioma():
+    propio = {"modelos": {"reranker": "Horizon-Labs/multilingual-reranker-small"}}
+    assert ajustes_de_idioma("medium", propio, "es") == (propio, None)
+
+
+def test_los_ajustes_del_proyecto_se_fusionan_con_el_reranker_del_idioma():
+    ajustes, _ = ajustes_de_idioma("medium", {"umbrales_por_defecto": {"ok": 0.7}}, "es")
+    efectivo = perfil_efectivo("medium", ajustes, ruta_calibracion=None)
+    assert efectivo.modelos.reranker == BGE and efectivo.umbrales_por_defecto["ok"] == 0.7
+
+
+def test_el_perfil_declara_un_modelo_del_catalogo_por_idioma():
+    from ipsis.modelos.catalogo import CATALOGO
+
+    perfil = perfil_efectivo("medium", None, ruta_calibracion=None)
+    assert set(perfil.reranker_por_idioma) == set(perfil.rerank_candidatos_por_idioma) == {"es", "pt"}
+    assert all(modelo in CATALOGO and CATALOGO[modelo].tarea == "reranker"
+               for modelo in perfil.reranker_por_idioma.values())
+
+
+def test_perfil_de_instalacion_resuelve_el_idioma_del_proyecto(tmp_path, monkeypatch):
+    import re
+    from ipsis.aplicacion.proyecto import perfil_de_instalacion
+    from ipsis.cli import main
+
+    monkeypatch.chdir(tmp_path)
+    assert main(["init", "--profile", "medium", "--language", "es"]) == 0
+    assert perfil_de_instalacion("medium").modelos.reranker == BGE
+    asistente = (tmp_path / "config/assistant.yaml")
+    asistente.write_text(re.sub(r"(?m)^language: .*", "language: en", asistente.read_text(encoding="utf-8")),
+                         encoding="utf-8")
+    assert perfil_de_instalacion("medium").modelos.reranker == MMARCO

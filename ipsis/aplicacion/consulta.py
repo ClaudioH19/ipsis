@@ -75,7 +75,16 @@ def construir_motor(
             registro.obtener(tipo, nombre)
 
     cfg_dominio = cfg_dominio or cargar_dominio()
-    perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), cfg.get("ajustes_perfil"),
+    ajustes_perfil, candidatos_idioma = cfg.get("ajustes_perfil"), None
+    if pipeline == "v2":
+        from ipsis.configuracion.perfiles import ajustes_de_idioma
+
+        ajustes_perfil, candidatos_idioma = ajustes_de_idioma(
+            cfg_dominio.get("perfil", "light"), ajustes_perfil, cfg_dominio.get("idioma"))
+        # 60 es el valor por defecto de v2: significa «el del perfil para este idioma».
+        if candidatos_idioma and opciones_v2["rerank_candidatos"] == 60:
+            opciones_v2["rerank_candidatos"] = min(candidatos_idioma, opciones_v2["recuperar_n"])
+    perfil_instalacion = perfil_efectivo(cfg_dominio.get("perfil", "light"), ajustes_perfil,
         **({"ruta_calibracion": None} if pipeline == "v2" else {}))
     for nombre_etapa in (perfil_instalacion.etapas if pipeline == "v1" else []):
         try:

@@ -58,6 +58,8 @@ PERFIL = {
     "lexico": _c("lexical", {"k1": _c("k1"), "b": _c("b"), "max_terminos_foco": _c("max_focus_terms")}),
     "umbrales_por_defecto": _c("default_thresholds", UMBRALES),
     "recuperacion_modo": _c("retrieval_mode", valores=MODOS_RECUPERACION),
+    "reranker_por_idioma": _c("language_rerankers"),
+    "rerank_candidatos_por_idioma": _c("language_rerank_candidates"),
     "alternativas": _c("alternatives", {"umbral": _c("threshold"), "pesos": _c("weights", SENALES_ALTERNATIVA)}),
 }
 

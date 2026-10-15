@@ -81,6 +81,10 @@ class PerfilInstalacion(_Estricto):
     # Modo de recuperación propio del perfil; si falta, el de engine.yaml.
     recuperacion_modo: Literal["vectorial", "hibrida", "dispersa"] | None = None
     alternativas: AlternativasPerfil = Field(default_factory=AlternativasPerfil)
+    # Reranker propio de cada idioma del proyecto (código de idioma → modelo) y cuántos candidatos puntúa
+    # (v2). Un proyecto que fija ``modelos.reranker`` en sus ajustes no los usa.
+    reranker_por_idioma: dict[str, str] = Field(default_factory=dict)
+    rerank_candidatos_por_idioma: dict[str, int] = Field(default_factory=dict)
     # Lo agrega la fusión: de dónde salieron los umbrales.
     origen_umbrales: Literal["perfil", "calibracion"] = "perfil"
 
@@ -106,6 +110,23 @@ def _datos_perfil(nombre: str) -> dict[str, Any]:
 
 def cargar_perfil_instalacion(nombre: str) -> PerfilInstalacion:
     return PerfilInstalacion.model_validate(_datos_perfil(nombre))
+
+
+def ajustes_de_idioma(nombre: str, ajustes: dict[str, Any] | None, idioma: str | None) -> tuple[dict[str, Any] | None, int | None]:
+    """Agrega a los ajustes del proyecto el reranker que el perfil define para ``idioma`` (``"es"``, ``"pt"``…).
+
+    Devuelve ``(ajustes, candidatos)``: ``candidatos`` es cuántos candidatos puntúa ese reranker, o ``None``.
+    Un proyecto que ya fija ``modelos.reranker`` conserva el suyo y no recibe ni modelo ni candidatos del perfil.
+    """
+    if not idioma:
+        return ajustes, None
+    datos = _datos_perfil(nombre)
+    codigo = idioma.lower().split("-")[0]
+    modelo = (datos.get("reranker_por_idioma") or {}).get(codigo)
+    if modelo is None or ((ajustes or {}).get("modelos") or {}).get("reranker"):
+        return ajustes, None
+    candidatos = (datos.get("rerank_candidatos_por_idioma") or {}).get(codigo)
+    return _fusionar(dict(ajustes or {}), {"modelos": {"reranker": modelo}}), candidatos
 
 
 def perfil_efectivo(
@@ -145,5 +166,5 @@ def perfil_efectivo(
 
 
 __all__ = [
-    "PERFILES_INSTALABLES", "PerfilInstalacion", "cargar_perfil_instalacion", "perfil_efectivo",
+    "PERFILES_INSTALABLES", "PerfilInstalacion", "ajustes_de_idioma", "cargar_perfil_instalacion", "perfil_efectivo",
 ]

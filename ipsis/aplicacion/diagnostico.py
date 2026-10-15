@@ -234,6 +234,10 @@ def _perfil(ctx: _Contexto) -> ChequeoDoctor:
         return _chequeo("perfil", Estado.ERROR, f"{nombre}: {e}", [_PERFIL_CAMBIAR], perfil=nombre)
     ajustes = (ctx.motor or {}).get("ajustes_perfil")
     try:
+        if (ctx.motor or {}).get("pipeline", "v2") == "v2":
+            from ipsis.configuracion.perfiles import ajustes_de_idioma
+
+            ajustes, _ = ajustes_de_idioma(nombre, ajustes, ctx.dominio.get("idioma"))
         ctx.instalacion = perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
     except Exception as e:  # noqa: BLE001
         return _chequeo("perfil", Estado.ERROR,
