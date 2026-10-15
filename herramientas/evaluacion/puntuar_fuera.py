@@ -16,7 +16,8 @@ así que se corre en un entorno aparte:
 
 Familias de modelo (``familia:id``): ``cross`` (clasificación de secuencias, un logit), ``qwen3``
 (Qwen3-Reranker: probabilidad de «yes»), ``mxbai2`` (paquete mxbai-rerank) y ``lb`` (esperanza de la
-nota 1 a 7 de lightblue/lb-reranker) y ``laya`` (modelo de decisión tipada: P(sí) a «¿responde?»). Los tiempos son de fp32 en CPU y solo ordenan los modelos entre
+nota 1 a 7 de lightblue/lb-reranker) ``laya`` (modelo de decisión tipada: P(sí) a «¿responde?») y ``propio`` (cross-encoder con
+código propio, ``trust_remote_code``). Los tiempos son de fp32 en CPU y solo ordenan los modelos entre
 sí; la latencia que cuenta es la del modelo cuantizado dentro del motor.
 """
 from __future__ import annotations
@@ -184,7 +185,25 @@ def construir_laya(id_hf, torch, max_tokens):
     return puntuar
 
 
-FAMILIAS = {"laya": construir_laya, "cross": construir_cross, "qwen3": construir_qwen3, "lb": construir_lb, "mxbai2": construir_mxbai2}
+def construir_modelo_propio(id_hf, torch, max_tokens):
+    """Cross-encoder con código propio en el repositorio (``trust_remote_code``), un logit por par."""
+    from transformers import AutoModel, AutoTokenizer
+
+    tok = AutoTokenizer.from_pretrained(id_hf)
+    modelo = AutoModel.from_pretrained(id_hf, trust_remote_code=True).eval()
+
+    def puntuar(pregunta, pasajes):
+        puntajes = []
+        for i in range(0, len(pasajes), 8):
+            lote = tok([pregunta] * len(pasajes[i:i + 8]), pasajes[i:i + 8], padding=True, truncation=True,
+                       max_length=max_tokens, return_tensors="pt")
+            with torch.no_grad():
+                puntajes.extend(modelo(**lote).logits.flatten().tolist())
+        return puntajes
+    return puntuar
+
+
+FAMILIAS = {"propio": construir_modelo_propio, "laya": construir_laya, "cross": construir_cross, "qwen3": construir_qwen3, "lb": construir_lb, "mxbai2": construir_mxbai2}
 
 
 def main(argv=None) -> int:
