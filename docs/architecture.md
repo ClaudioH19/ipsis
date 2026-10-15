@@ -124,7 +124,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 | `catalogo.py` | `documents/catalog.yaml`: what is loaded and active |
 | `parsear.py` | PDF, DOCX, Markdown and TXT to text with structure and offsets |
 | `ocr.py` | Optional OCR of PDF pages without text (Tesseract), with cache and confidence per page |
-| `chunking.py` | Fragments that never cross sections (`CH-F256` by default) |
+| `chunking.py` | Fixed-size strategies (`CH-F256`, and `CH-F256S`, which never crosses sections); new projects use the structural preparation instead (`preparacion.py`, `unidades.py`, [ADR 0009](decisions/0009-structural-preparation-by-default.md)) |
 | `metadata.py` | Entities, TF-IDF keywords and a deterministic category |
 | `ingesta.py` | The full `ipsis index` sequence |
 

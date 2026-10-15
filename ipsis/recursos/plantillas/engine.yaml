@@ -24,6 +24,13 @@ retrieval:
   collection_base: "{coleccion_base}"
   qdrant_path: ".ipsis/index/qdrant"
   collection_version: 1
+  # Structural preparation (DOCX, PDF, Markdown, text, spreadsheets): small searchable children
+  # with title and section, expanded to the whole source unit for ranking and citation. Index
+  # names get a "_estructura1" suffix. Use `mode: legacy` (or delete this block) for fixed-size chunks.
+  preparation:
+    mode: structural_v1
+    max_unit_words: 400
+    child_words: 80
 
 components:
   parser: "builtin"

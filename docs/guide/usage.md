@@ -26,7 +26,11 @@ ipsis golden template → (a person fills in golden.csv) → ipsis golden import
 
 ## What the assistant answers
 
-To inspect experimental structural DOCX preparation in a separate project:
+New projects (`ipsis init`) already use the structural preparation
+([ADR 0009](../decisions/0009-structural-preparation-by-default.md)). An existing
+project keeps its fixed-size chunks until you opt in: add `retrieval.preparation.mode:
+structural_v1` to `config/engine.yaml` and run `ipsis index`, or inspect it first in a separate
+project:
 
 ```bash
 ipsis prepare --project /path/project --output /path/new-copy
@@ -37,8 +41,8 @@ ipsis index
 `ipsis prepare --index` also builds the index during preparation. The output
 folder must be new and outside the source project. The copy uses v2 and a
 separate structural index; the source keeps its configuration. This variant
-supports DOCX body structures and XLSX/XLS/CSV/TSV records with explicit
-extraction warnings. Preparation does not guarantee better answers. See
+supports DOCX body structures, PDF, Markdown, plain text and XLSX/XLS/CSV/TSV records with explicit
+extraction warnings (Markdown tables stay as paragraphs; PDF has no tables or page numbers). Preparation does not guarantee better answers. See
 [structural preparation](../methodology/preparacion-estructural.md).
 
 Every answer has a status, and the widget renders each one differently:

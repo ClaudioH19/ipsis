@@ -6,6 +6,15 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Changed
+
+- **New projects use the structural preparation by default** (`retrieval.preparation.mode:
+  structural_v1` in the `engine.yaml` written by `ipsis init`; see
+  [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). It indexes small children with
+  title and section and expands to the whole unit for ranking, which raised top-1 accuracy in the passage
+  bank and on real documents. Existing projects keep their configuration and index; to switch, add the
+  block (or run `ipsis prepare`) and run `ipsis index`.
+
 ### Added
 
 - Structural preparation (`retrieval.preparation.mode: structural_v1`) now accepts Markdown and plain

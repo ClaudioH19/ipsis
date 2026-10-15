@@ -26,7 +26,11 @@ ipsis golden template → (una persona completa golden.csv) → ipsis golden imp
 
 ## Qué responde el asistente
 
-Para revisar la preparación estructural experimental de DOCX en un proyecto separado:
+Los proyectos nuevos (`ipsis init`) ya usan la preparación estructural
+([ADR 0009](../../decisions/0009-structural-preparation-by-default.md)). Un proyecto existente conserva
+sus fragmentos de tamaño fijo hasta que lo decidas: agrega `retrieval.preparation.mode: structural_v1`
+a `config/engine.yaml` y ejecuta `ipsis index`, o revísala
+antes en un proyecto separado:
 
 ```bash
 ipsis prepare --project /ruta/proyecto --output /ruta/copia-nueva
@@ -38,8 +42,9 @@ ipsis index
 `ipsis prepare --index` construye además el índice durante la preparación.
 La carpeta destino debe ser nueva y estar fuera del proyecto original. La copia
 usa v2 y un índice estructural distinto; el original conserva su configuración.
-Esta variante soporta estructura del cuerpo de DOCX y registros XLSX/XLS/CSV/TSV,
-y publica avisos de extracción. No garantiza mejor calidad de respuesta.
+Esta variante soporta estructura del cuerpo de DOCX, PDF, Markdown, texto plano y registros
+XLSX/XLS/CSV/TSV, y publica avisos de extracción (las tablas Markdown quedan como párrafos; el PDF no
+conserva tablas ni números de página). No garantiza mejor calidad de respuesta.
 Ver [preparación estructural](../../methodology/preparacion-estructural.md).
 
 Cada respuesta tiene un estado, que el widget pinta distinto:
