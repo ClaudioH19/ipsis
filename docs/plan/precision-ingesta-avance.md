@@ -17,7 +17,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F1.3 | ⬜ | | | |
 | F1.4 | ⬜ | | | |
 | F1.5 | ⚠ | | | Decidir (a) o (b). |
-| F2.1 | ⬜ | | | |
+| F2.1 | 🔶 | 2026-10-15 | (ver git log) | `CH-F256S` implementada y probada (16 pruebas nuevas). Sobre el corpus del banco de pasajes: `CH-F256` 97 fragmentos, 56 cruzan sección, máx. 307 palabras; `CH-F256S` 122 fragmentos, 0 cruzan, máx. 255. Falta `MEDIR` en `dev` frente a F0.4/F1 (sin modelos en este entorno). |
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
 | F2.3 | ⬜ | | | |
 | F2.4 | ⬜ | | | Solo si F2.3 mejora. |

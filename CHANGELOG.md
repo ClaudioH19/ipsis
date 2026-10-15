@@ -6,6 +6,14 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Added
+
+- `CH-F256S` chunking strategy: fixed size that never crosses a section, never
+  exceeds 256 words (except a single longer sentence) and overlaps by whole
+  sentences. Opt-in; `CH-F256` and the defaults are unchanged. On the passage
+  bank corpus `CH-F256` produces 56 of 97 fragments that span more than one
+  section; `CH-F256S` produces none.
+
 ## [1.0.0] - 2026-10-13
 
 ### Fixed

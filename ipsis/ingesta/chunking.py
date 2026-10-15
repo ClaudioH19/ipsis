@@ -17,6 +17,7 @@ determinista.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from ipsis.ingesta.parsear import Bloque, DocumentoParseado
@@ -248,9 +249,127 @@ def chunking_por_oraciones(doc: DocumentoParseado, umbral_jaccard: float = 0.08,
     return chunks
 
 
+# ---------------------------------------------------------------------------
+# CH-F256S: tamaño fijo que respeta secciones y oraciones
+# ---------------------------------------------------------------------------
+# Abreviaturas (en minúsculas, sin el punto final) tras las cuales una mayúscula
+# no abre una oración nueva.
+_ABREVIATURAS = frozenset({
+    "art", "arts", "sr", "sra", "srta", "sres", "dr", "dra", "prof", "lic", "ing", "no", "nº", "n°", "núm", "num",
+    "p", "pp", "pág", "pag", "cap", "inc", "fig", "tel", "av", "ud", "uds", "dpto", "ref", "aprox", "máx", "mín",
+    "vs", "e.g", "i.e", "p.ej", "mr", "mrs", "ms", "st", "dept", "approx", "sec", "vol", "ed", "cf", "dto", "sto",
+})
+_FIN_ORACION = re.compile(r"[.?!;]+(?=\s+[A-ZÁÉÍÓÚÑÜ¿¡\"«(])")
+
+
+def _es_abreviatura(texto: str, fin_signo: int) -> bool:
+    """``texto[:fin_signo]`` termina en una abreviatura o en una inicial («J.»)."""
+    palabra = texto[:fin_signo].split()[-1].rstrip(".?!;") if texto[:fin_signo].split() else ""
+    if texto[fin_signo - 1] != ".":
+        return False
+    if len(palabra) == 1 and palabra.isalpha() and palabra.isupper():
+        return True
+    return palabra.lower() in _ABREVIATURAS
+
+
+def _oraciones(texto: str, base: int = 0) -> list[tuple[int, int]]:
+    """Rangos absolutos ``[inicio, fin)`` de las oraciones de un bloque, sin espacios en los bordes.
+
+    Corta en ``. ? ! ;`` seguidos de espacio y mayúscula (salvo tras una abreviatura) y
+    en cada salto de línea. Para todo rango, ``texto[inicio - base:fin - base]`` es literal.
+    """
+    rangos: list[tuple[int, int]] = []
+    pos = 0
+    for linea in texto.split("\n"):
+        ini_linea = pos
+        pos += len(linea) + 1
+        corte = 0
+        for m in _FIN_ORACION.finditer(linea):
+            if _es_abreviatura(linea, m.end()) and m.group().endswith("."):
+                continue
+            rangos.append((ini_linea + corte, ini_linea + m.end()))
+            corte = m.end()
+        rangos.append((ini_linea + corte, ini_linea + len(linea)))
+    salida = []
+    for ini, fin in rangos:
+        while ini < fin and texto[ini].isspace():
+            ini += 1
+        while fin > ini and texto[fin - 1].isspace():
+            fin -= 1
+        if fin > ini:
+            salida.append((base + ini, base + fin))
+    return salida
+
+
+def _unidades_oracion(doc: DocumentoParseado) -> list[tuple[int, int, Bloque]]:
+    """Oraciones de cada bloque de contenido; una tabla es una sola unidad."""
+    unidades = []
+    for b in _bloques_contenido(doc):
+        if b.tipo_contenido == "tabla":
+            unidades.append((b.offset_inicio, b.offset_fin, b))
+            continue
+        # El bloque puede terminar en un separador: solo cuenta su texto.
+        texto = doc.texto_completo[b.offset_inicio:b.offset_fin]
+        for ini, fin in _oraciones(texto, b.offset_inicio):
+            unidades.append((ini, fin, b))
+    return unidades
+
+
+def _chunk_desde_unidades(doc: DocumentoParseado, unidades: list[tuple[int, int, Bloque]], orden: int,
+                          estrategia: str) -> Chunk:
+    inicio, fin = unidades[0][0], unidades[-1][1]
+    bloques: list[Bloque] = []
+    for _, _, b in unidades:
+        if not bloques or bloques[-1].indice != b.indice:
+            bloques.append(b)
+    tipos = {b.tipo_contenido for b in bloques}
+    return Chunk(
+        chunk_id=f"{doc.doc_id}__c{orden:04d}", doc_id=doc.doc_id, orden=orden,
+        seccion_path=bloques[0].seccion_path, seccion_nivel=bloques[0].seccion_nivel,
+        tipo_contenido="tabla" if tipos == {"tabla"} else "narrativo",
+        texto=doc.texto_completo[inicio:fin], offset_inicio=inicio, offset_fin=fin, estrategia=estrategia,
+        bloques_origen=[b.indice for b in bloques], secciones=[(inicio, fin, list(bloques[0].seccion_path))],
+    )
+
+
+def chunking_tamano_fijo_secciones(doc: DocumentoParseado, tamano_tokens: int, solape_pct: float = 0.15) -> list[Chunk]:
+    """Como ``CH-F*`` pero un fragmento nunca cruza de sección, nunca pasa de ``tamano_tokens``
+    (salvo una única oración o tabla más larga) y el solape es en oraciones completas."""
+    unidades = _unidades_oracion(doc)
+    solape_tokens = max(1, int(tamano_tokens * solape_pct))
+    chunks: list[Chunk] = []
+    i = 0
+    while i < len(unidades):
+        ruta = unidades[i][2].seccion_path
+        grupo, tokens = [], 0
+        j = i
+        while j < len(unidades) and unidades[j][2].seccion_path == ruta:
+            n = _n_tokens(doc.texto_completo[unidades[j][0]:unidades[j][1]])
+            if grupo and tokens + n > tamano_tokens:
+                break
+            grupo.append(unidades[j])
+            tokens += n
+            j += 1
+        chunks.append(_chunk_desde_unidades(doc, grupo, len(chunks), f"CH-F{tamano_tokens}S"))
+        if j >= len(unidades) or unidades[j][2].seccion_path != ruta:
+            i = j  # fin de sección: no se solapa con la siguiente
+            continue
+        # Retrocede oraciones completas hasta ~solape_tokens, dejando siempre avance.
+        k, acumulado = j, 0
+        while k - 1 > i:
+            n = _n_tokens(doc.texto_completo[unidades[k - 1][0]:unidades[k - 1][1]])
+            if acumulado + n > solape_tokens:
+                break
+            acumulado += n
+            k -= 1
+        i = k
+    return chunks
+
+
 ESTRATEGIAS = {
     "CH-F256": lambda doc: chunking_tamano_fijo(doc, 256),
     "CH-F512": lambda doc: chunking_tamano_fijo(doc, 512),
+    "CH-F256S": lambda doc: chunking_tamano_fijo_secciones(doc, 256),
     "CH-PAR": lambda doc: chunking_por_parrafo(doc),
     "CH-SEC": lambda doc: chunking_por_seccion(doc),
     "CH-ORA": lambda doc: chunking_por_oraciones(doc),
