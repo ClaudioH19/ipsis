@@ -27,7 +27,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F4.1 | ⬜ | | | |
 | F4.2 | ⬜ | | | Condicional. |
 | F4.3 | ⚠ | | | Requiere aprobación. |
-| F5.1 | ⬜ | | | Valores por defecto: aprobación del usuario. |
+| F5.1 | ⚠ | 2026-10-15 | (ver git log) | Candidata medida una vez en `test` y verificada (abajo). Espera la aprobación del usuario para cambiar valores por defecto. |
 | F5.2 | ⬜ | | | |
 
 ## Línea base (F0.4)
@@ -98,6 +98,40 @@ de serlo en el orden final.
 Cautelas: el banco es sintético, lo generé yo y su corpus es muy regular; `light` ya está casi saturado y
 varias diferencias son de 1 a 3 casos sobre 72. Nada de esto sustituye una medición en `test` (F5.1) ni en un
 corpus real. La latencia de `medium` aquí está acotada por el presupuesto en una CPU de 4 núcleos.
+
+## F5.1: candidata medida en `test`
+
+Partición `test` (44 preguntas), medida una sola vez por configuración; hit@1 final.
+
+| Configuración | Perfil | hit@1 | hit@3 | hit@5 | MRR | p95 ms | ganados / perdidos |
+|---|---|---|---|---|---|---|---|
+| base `CH-F256` | light | 0,864 | 0,977 | 1,000 | 0,926 | 175 | |
+| base `CH-F256` | medium | 0,727 | 0,818 | 0,886 | 0,785 | 2 417 | |
+| **estructural (Markdown)** | light | **1,000** | 1,000 | 1,000 | 1,000 | 88 | 6 / 0 |
+| **estructural (Markdown)** | medium | **0,977** | 1,000 | 1,000 | 0,989 | 1 104 | 11 / 0 |
+| `CH-SEC` + `reranker_max_tokens: 512` | medium | 0,955 | 1,000 | 1,000 | 0,977 | 2 329 | 11 / 1 |
+
+Verificaciones con los valores por defecto actuales (no se cambió ninguno):
+
+- `general.py --no-baseline`: 0 fallos, 6 bancos (light y medium × bueno/medio/malo).
+- Suite completa con modelos: 1 493 pasan. Fallan 44 pruebas que **también fallan en el commit de release
+  `2390901` sin ningún cambio de este plan**: `test_caracterizacion` (snapshots anteriores al motor v2 por
+  defecto), `test_banco_universal::test_falsos_ok_no_superan_la_linea_base`, `test_general_regresion`,
+  `test_tono_no_cambia_estados` y `test_portabilidad_pythonioencoding_cp1252_no_falla`. No son regresiones de
+  este plan, pero conviene corregirlas aparte.
+
+### Propuesta (no aplicada)
+
+Dos opciones, de menor a mayor alcance. Ninguna cambia nada hasta que el usuario apruebe.
+
+- **A. Preparación estructural por defecto** (`retrieval.preparation.mode: structural_v1`). Mejor resultado y menor
+  latencia, pero cambia colección e índice (`_estructura1`), obliga a reindexar, y hoy el PDF sigue en legacy
+  (F2.4), de modo que un proyecto con PDF fallaría al indexar: habría que degradar por formato o terminar F2.4
+  antes. Requiere migración en `ipsis/configuracion/migraciones.py` (`config_version: 7`) para los proyectos con
+  `config/engine.yaml`.
+- **B. Solo `reranker_max_tokens: 512` y `CH-SEC`**: sin tocar la preparación, mismo formato y latencia que hoy
+  (0,955 en `test`), pero también cambia el fragmentado y exige reindexar.
+- Mínimo y sin reindexar: solo `reranker_max_tokens: 512` (0,861 en `dev`, `medium`).
 
 ## Hallazgos
 
