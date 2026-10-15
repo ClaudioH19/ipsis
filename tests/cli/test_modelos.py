@@ -53,7 +53,7 @@ def _descargas(llamadas) -> list[str]:
 
 
 def _proyecto(perfil: str) -> None:
-    assert main(["init", "--profile", perfil]) == 0
+    assert main(["init", "--profile", perfil, "--language", "en"]) == 0
 
 
 def _perfil_activo() -> str:

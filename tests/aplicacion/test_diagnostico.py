@@ -17,7 +17,7 @@ from ipsis.cli import main
 from apoyo import escribir_proyecto, leer_proyecto
 
 E5_SMALL, E5_BASE = "intfloat/multilingual-e5-small", "intfloat/multilingual-e5-base"
-MMARCO, LECTOR = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"
+RERANKER_ES, LECTOR = "onnx-community/bge-reranker-v2-m3-ONNX", "dewdev/mdeberta-v3-base-squad2-onnx"
 MANUAL = "# Manual\n\n## Filtro\n\nEl filtro de sedimentos se cambia cada 6 meses.\n\n## Garantía\n\nLa garantía dura dos años.\n"
 GOLDEN = ("pregunta,tipo,respuesta_literal,documento\n"
           "¿Cada cuánto se cambia el filtro?,respondible,cada 6 meses,manual\n"
@@ -141,9 +141,10 @@ def estados(r) -> dict[str, str]:
 
 
 def sano(perfil: str = "light") -> str:
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.aplicacion.proyecto import perfil_de_instalacion
 
-    instalar(*(m for m in cargar_perfil_instalacion(perfil).modelos.model_dump().values() if m))
+    # Los modelos efectivos del proyecto (el reranker de medium depende del idioma).
+    instalar(*(m for m in perfil_de_instalacion(perfil).modelos.model_dump().values() if m))
     cargar_manual()
     return indexar()
 
@@ -189,7 +190,7 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
                           "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
                           "personalidad": "ok", "modo": "ok"}
-    assert r.chequeo("modelos").datos["faltantes"] == [MMARCO]
+    assert r.chequeo("modelos").datos["faltantes"] == [RERANKER_ES]
     assert r.chequeo("modelos").acciones == ("ipsis models download",)
     assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis index",)
     assert "obsoleta" in r.chequeo("calibracion").mensaje
@@ -307,12 +308,14 @@ def test_light_solo_requiere_el_denso(proyecto):
 
 def test_default_v2_medium_no_exige_qa_pero_v1_explicito_si(proyecto):
     proyecto("medium")
-    instalar(E5_SMALL, MMARCO)
+    instalar(E5_SMALL, RERANKER_ES)
     assert leer_proyecto(Path("config/engine.yaml"))["pipeline"] == "v2"
     modelos = reporte().chequeo("modelos")
     assert modelos.estado.value == "ok" and len(modelos.detalles) == 2
     editar("config/engine.yaml", pipeline="v1")
-    assert reporte().chequeo("modelos").datos["faltantes"] == [LECTOR]
+    # v1 no usa el reranker propio del idioma: pide el del perfil, además del lector QA.
+    assert reporte().chequeo("modelos").datos["faltantes"] == [
+        "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", LECTOR]
     editar("config/engine.yaml", pipeline="v2", v2={"destacar_fragmentos": True})
     assert reporte().chequeo("modelos").datos["faltantes"] == [LECTOR]
 

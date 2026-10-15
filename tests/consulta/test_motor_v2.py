@@ -212,7 +212,7 @@ def test_migracion_sin_selector_elige_v2_y_es_idempotente(version):
     antigua["config_version"] = version
     nueva = validar_motor(antigua)
     assert nueva["pipeline"] == "v2"
-    assert nueva["config_version"] == 7
+    assert nueva["config_version"] == 8
     assert validar_motor(nueva) == nueva
     assert "pipeline" not in antigua  # no modifica el archivo de entrada
     with pytest.raises(ValueError, match="pipeline"):

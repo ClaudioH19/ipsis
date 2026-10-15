@@ -39,7 +39,7 @@ def _indice(modelo: str, dimension: int | None = None) -> Path:
 
 
 def _calibracion(perfil: str) -> Path:
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.aplicacion.proyecto import perfil_de_instalacion
     from ipsis.lenguaje.paquete import cargar_paquete
     from ipsis.lenguaje.sinonimos import huella_lexica
 
@@ -47,12 +47,20 @@ def _calibracion(perfil: str) -> Path:
     ruta.write_text(yaml.safe_dump({
         "version": 2,
         "estado": "calibrado", "alfa": 0.05, "confianza": 0.95,
-        "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
+        "procedencia": {"perfil": perfil, "modelos": perfil_de_instalacion(perfil).modelos.model_dump(),
                         "hash_corpus": HASH, "banco": "golden@1.0.0", "hash_banco": "x",
                         "hash_lexico": huella_lexica(cargar_paquete("es", proyecto=Path.cwd()))},
         "umbrales": {"ok": 0.9},
     }), encoding="utf-8")
     return ruta
+
+
+def _ajustes_del_proyecto():
+    """Los ajustes con los que el motor resuelve el perfil (incluido el reranker del idioma del proyecto)."""
+    from ipsis.configuracion.carga import cargar_dominio
+    from ipsis.configuracion.perfiles import ajustes_de_idioma
+
+    return ajustes_de_idioma("medium", None, cargar_dominio().get("idioma"))[0]
 
 
 def _perfil_activo() -> str:
@@ -61,12 +69,12 @@ def _perfil_activo() -> str:
 
 # --- mostrar ----------------------------------------------------------------------------
 def test_mostrar_lee_modelos_y_presupuesto_del_perfil(proyecto, capsys):
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
+    from ipsis.aplicacion.proyecto import perfil_de_instalacion
 
     proyecto("medium")
     assert main(["profile", "show"]) == 0
     salida = capsys.readouterr().out
-    medium = cargar_perfil_instalacion("medium")
+    medium = perfil_de_instalacion("medium")  # con el reranker del idioma del proyecto
     assert "Perfil activo: medium" in salida and f"{medium.presupuesto_p95_ms} ms" in salida
     for modelo in medium.modelos.model_dump().values():
         assert modelo in salida
@@ -100,7 +108,7 @@ def test_mostrar_calibracion_vigente_y_obsoleta_con_la_regla_del_motor(proyecto,
     calibracion = _calibracion("medium")
     assert main(["profile", "show"]) == 0
     assert "Calibración: vigente" in capsys.readouterr().out
-    assert perfil_efectivo("medium", hash_corpus=HASH).origen_umbrales == "calibracion"
+    assert perfil_efectivo("medium", _ajustes_del_proyecto(), hash_corpus=HASH).origen_umbrales == "calibracion"
 
     assert main(["profile", "set", "light"]) == 0
     salida = capsys.readouterr().out

@@ -18,6 +18,12 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Reranker per language in `medium`**: Spanish and Portuguese projects (v2) use `bge-reranker-v2-m3` scoring 10
+  candidates; other languages keep the multilingual mMiniLM. The profile declares it
+  (`language_rerankers`, `language_rerank_candidates`); a project that sets `profile_overrides.models.reranker`
+  keeps its own, and `v2.rerank_candidates: 60` (the default) means "the profile's number for this language".
+  On real Spanish documents it raised top-1 accuracy from 0.79 to 0.86 (informal questions 0.68 to 0.79) within
+  the 2.5 s budget (p95 1.7 s). It needs a ~560 MB download instead of ~130 MB: run `ipsis models download`.
 - Structural preparation (`retrieval.preparation.mode: structural_v1`) now accepts Markdown and plain
   text, reusing the existing parsers' headings and offsets (parsers `markdown-estructura-1` and
   `texto-estructura-1`), and PDF (`pdf-estructura-1`, outline or font-size headings, OCR warnings kept).

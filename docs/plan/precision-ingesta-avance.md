@@ -249,6 +249,14 @@ candidatos): con la preparación estructural **todos** los rerankers dan 0,98 a 
 discrimina. Solo `mxbai-rerank-base-v1` (0,991) y mMiniLM en es/pt (0,983) bajan algo. La elección por idioma queda
 sin evidencia fuerte en inglés y portugués porque no hay documentos reales en esos idiomas.
 
+## Decisión: reranker por idioma en `medium` (2026-10-15)
+
+A pedido del usuario, `medium` usa `bge-reranker-v2-m3` con 10 candidatos para español y portugués (v2). Verificado de punta a
+punta con los documentos reales (56 preguntas adversarias): hit@1 0,786 → 0,857 (informal 0,679 → 0,786), p50 1,4 s, p95 1,7 s.
+Costo medido (4 CPU, ONNX int8): 85 ms por pasaje de ~100 palabras (frente a 21 ms), 560 MB en disco y de RAM, carga de 8,8 s.
+El tope pedido después para evaluar modelos nuevos (≤ 0,4 B parámetros) deja fuera a bge (568 M); queda como decisión vigente
+mientras no haya un candidato que lo supere. Se actualizaron las pruebas que asumían mMiniLM en proyectos en español.
+
 ## Hallazgos
 
 - 2026-10-15: desde el entorno de nube usado para el análisis no se pudo
