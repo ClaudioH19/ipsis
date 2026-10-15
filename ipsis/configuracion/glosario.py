@@ -87,6 +87,7 @@ MOTOR = {
                      "destacar_fragmentos": _c("qa_highlights")}),
     "recuperacion": _c("retrieval", {
         "modelo": _c("model"), "estrategia_chunking": _c("chunking_strategy"), "con_header": _c("with_header"),
+        "detalle_cabecera": _c("header_detail", valores={"basico": "basic", "extendido": "extended"}),
         "modo": _c("mode", valores=MODOS_RECUPERACION), "top_k": _c("top_k"),
         "coleccion_base": _c("collection_base"), "qdrant_path": _c("qdrant_path"),
         "version_coleccion": _c("collection_version"),

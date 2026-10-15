@@ -156,16 +156,24 @@ def validar_chunk(chunk_payload: dict, taxonomia: dict) -> list[ErrorValidacion]
     return errores
 
 
-def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool,
-                       taxonomia: dict, texto_embebido: str,
-                       pipeline_version: str = "ingesta-0.1.0", estadisticas=None) -> dict:
-    """Construye el payload completo de un chunk (esquema sección 3.3)."""
-    entidades = extraer_entidades(chunk.texto)
-    cat = clasificar_categoria(chunk.texto, taxonomia)
+def senales_de_texto(texto: str) -> tuple[list[dict], bool, bool]:
+    """``(entidades, tiene_excepcion, tiene_condicion)`` de un texto, con el idioma activo."""
     paquete = idioma_activo()
     marcadores = paquete.marcadores if paquete is not None else None
-    tiene_exc = tiene_marcador(chunk.texto, marcadores.excepcion if marcadores else [])
-    tiene_cond = tiene_marcador(chunk.texto, marcadores.condicion if marcadores else [])
+    return (extraer_entidades(texto),
+            tiene_marcador(texto, marcadores.excepcion if marcadores else []),
+            tiene_marcador(texto, marcadores.condicion if marcadores else []))
+
+
+def construir_payload(chunk: Chunk, doc_titulo: str, version: str, vigente: bool,
+                       taxonomia: dict, texto_embebido: str,
+                       pipeline_version: str = "ingesta-0.1.0", estadisticas=None, senales=None) -> dict:
+    """Construye el payload completo de un chunk (esquema sección 3.3).
+
+    ``senales`` (de :func:`senales_de_texto`) evita recalcular entidades y marcas cuando la
+    cabecera ya las necesitó."""
+    entidades, tiene_exc, tiene_cond = senales if senales is not None else senales_de_texto(chunk.texto)
+    cat = clasificar_categoria(chunk.texto, taxonomia)
     keywords = extraer_keywords(chunk.texto, estadisticas=estadisticas)
     hash_texto = "sha256:" + hashlib.sha256(chunk.texto.encode("utf-8")).hexdigest()
 

@@ -21,7 +21,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
 | F2.3 | ⬜ | | | |
 | F2.4 | ⬜ | | | Solo si F2.3 mejora. |
-| F3.1 | ⬜ | | | |
+| F3.1 | 🔶 | 2026-10-15 | (ver git log) | `header_detail: extended` implementado (cabecera en es/en/pt, entidades y marcas calculadas una vez, huella solo cambia con `extended`) con 11 pruebas. Falta `MEDIR` en `dev` (sin modelos en este entorno). Ojo regla 9: como `hash_corpus` legacy no incluye `texto_embebido`, no invalida la calibración; depende de F1.5. |
 | F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |
 | F3.3 | ⬜ | | | Condicional. |
 | F4.1 | ⬜ | | | |

@@ -603,6 +603,10 @@ mensajes:
   cita_breve: '(Source: {documento})'
   cita_completa: '(Source: {documento}, section: {seccion})'
   cabecera_embebido: 'Document: {documento} | Section: {seccion}'
+  cabecera_contiene: 'Contains: {tipos}'
+  cabecera_condicion: condition
+  cabecera_excepcion: exception
+  etiquetas_entidad: {decimal: decimal, porcentaje: percentage, plazo: deadline, fecha: date, monto: amount, articulo: article}
 interfaz:
   search_send: 'Search'
   search_open: 'Open search of {title}'

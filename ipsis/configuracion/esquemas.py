@@ -59,6 +59,8 @@ class RecuperacionConfig(ConfiguracionEstricta):
     modelo: str | None = None  # si falta, el modelo denso del perfil
     estrategia_chunking: str = Field(min_length=1)
     con_header: bool = False
+    # «extendido» agrega a la cabecera los tipos de dato, la condición y la excepción del fragmento.
+    detalle_cabecera: Literal["basico", "extendido"] = "basico"
     modo: Literal["vectorial", "hibrida", "dispersa"] = "hibrida"
     top_k: int = Field(default=3, ge=1)
     coleccion_base: str = Field(min_length=1)

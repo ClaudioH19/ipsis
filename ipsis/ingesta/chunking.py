@@ -386,12 +386,32 @@ def chunks_tabulares(doc):
             for i, bloques in enumerate(grupos.values())]
 
 
-def construir_texto_embebido(doc_titulo: str, seccion_path: list[str], texto: str, paquete=None) -> str:
+def construir_texto_embebido(doc_titulo: str, seccion_path: list[str], texto: str, paquete=None, *,
+                             tipos_entidad=(), condicion: bool = False, excepcion: bool = False) -> str:
     """Header contextual (sección 3.3, campo texto_embebido) en el idioma de
-    ``paquete`` (sin paquete, en español, como antes)."""
+    ``paquete`` (sin paquete, en español, como antes).
+
+    Con ``tipos_entidad``, ``condicion`` o ``excepcion`` (cabecera extendida) agrega una
+    segunda línea con lo que el fragmento contiene, en orden fijo: tipos de entidad sin
+    repetir y ordenados, condición, excepción. Sin ninguno, la cabecera es la básica."""
     if paquete is None:
         cabecera, sin_seccion = "Documento: {documento} | Sección: {seccion}", "(sin sección)"
+        contiene, marca_cond, marca_exc, etiquetas = "Contiene: {tipos}", "condición", "excepción", {}
     else:
-        cabecera, sin_seccion = paquete.mensajes.cabecera_embebido, paquete.mensajes.sin_seccion
+        m = paquete.mensajes
+        cabecera, sin_seccion = m.cabecera_embebido, m.sin_seccion
+        contiene, marca_cond, marca_exc, etiquetas = (
+            m.cabecera_contiene, m.cabecera_condicion, m.cabecera_excepcion, m.etiquetas_entidad)
     seccion_str = " > ".join(seccion_path) if seccion_path else sin_seccion
-    return f"{cabecera.format(documento=doc_titulo, seccion=seccion_str)}\n{texto}"
+    linea = cabecera.format(documento=doc_titulo, seccion=seccion_str)
+    partes = []
+    tipos = sorted({etiquetas.get(t, t) for t in tipos_entidad})
+    if tipos:
+        partes.append(contiene.format(tipos=", ".join(tipos)))
+    if condicion:
+        partes.append(marca_cond)
+    if excepcion:
+        partes.append(marca_exc)
+    if partes:
+        linea += "\n" + " | ".join(partes)
+    return f"{linea}\n{texto}"

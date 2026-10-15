@@ -8,6 +8,9 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- `retrieval.header_detail: extended` (with `with_header: true`): the embedded header gains a
+  second line with the data types (deadline, amount, date...), condition and exception the
+  fragment contains, in es/en/pt. Cited text and offsets are unchanged; the default is `basic`.
 - `CH-F256S` chunking strategy: fixed size that never crosses a section, never
   exceeds 256 words (except a single longer sentence) and overlaps by whole
   sentences. Opt-in; `CH-F256` and the defaults are unchanged. On the passage

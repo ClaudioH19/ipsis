@@ -50,6 +50,11 @@ class Mensajes(_Estricto):
     cita_completa: str  # {documento}, {seccion}
     # Encabezado del texto que se embebe (``texto_embebido``): cambiarlo exige reindexar.
     cabecera_embebido: str = "Documento: {documento} | Sección: {seccion}"
+    # Segunda línea de la cabecera extendida (``detalle_cabecera: extendido``).
+    cabecera_contiene: str = "Contiene: {tipos}"  # {tipos}
+    cabecera_condicion: str = "condición"
+    cabecera_excepcion: str = "excepción"
+    etiquetas_entidad: dict[str, str] = Field(default_factory=dict)  # tipo de entidad -> palabra del idioma
     conectores: dict[str, list[str]] = Field(default_factory=dict)  # secuencia, contraste_version
 
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from ipsis.configuracion import rutas
 from ipsis.ingesta.parsear import parsear_documento, DocumentoParseado
 from ipsis.ingesta.chunking import ESTRATEGIAS, construir_texto_embebido, Chunk
-from ipsis.ingesta.metadata import cargar_taxonomia, construir_payload, validar_chunk
+from ipsis.ingesta.metadata import cargar_taxonomia, construir_payload, senales_de_texto, validar_chunk
 from ipsis.ingesta.catalogo import entradas_vigentes
 from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto, hash_corpus, inventario_entidades
 from ipsis.indice.qdrant import (
@@ -51,7 +51,8 @@ def parsear_corpus(carpeta_corpus: str, preparacion: str | None = None) -> list[
 
 
 def construir_chunks_y_payloads(docs: list[DocumentoParseado], estrategia: str,
-                                 con_header: bool, taxonomia: dict) -> tuple[list[Chunk], list[dict]]:
+                                 con_header: bool, taxonomia: dict,
+                                 detalle_cabecera: str = "basico") -> tuple[list[Chunk], list[dict]]:
     chunk_fn = ESTRATEGIAS[estrategia]
     todos_chunks: list[Chunk] = []
     payloads: list[dict] = []
@@ -72,11 +73,21 @@ def construir_chunks_y_payloads(docs: list[DocumentoParseado], estrategia: str,
     for chunks, entrada in por_documento:
         todos_chunks.extend(chunks)
         for i, ch in enumerate(chunks):
-            texto_embebido = construir_texto_embebido(entrada["doc_titulo"], ch.seccion_path, ch.texto,
-                                                      idioma_activo()) if con_header else ch.texto
+            senales = None
+            if con_header and detalle_cabecera == "extendido":
+                # Entidades y marcas se calculan una vez: la cabecera y el payload usan las mismas.
+                senales = senales_de_texto(ch.texto)
+                texto_embebido = construir_texto_embebido(
+                    entrada["doc_titulo"], ch.seccion_path, ch.texto, idioma_activo(),
+                    tipos_entidad=[e["tipo"] for e in senales[0]], excepcion=senales[1], condicion=senales[2])
+            elif con_header:
+                texto_embebido = construir_texto_embebido(entrada["doc_titulo"], ch.seccion_path, ch.texto,
+                                                          idioma_activo())
+            else:
+                texto_embebido = ch.texto
             payload = construir_payload(ch, entrada["doc_titulo"], entrada["version"],
                                          entrada["vigente"], taxonomia, texto_embebido,
-                                         estadisticas=estadisticas)
+                                         estadisticas=estadisticas, senales=senales)
             payload["chunk_prev"] = chunks[i - 1].chunk_id if i > 0 else None
             payload["chunk_next"] = chunks[i + 1].chunk_id if i < len(chunks) - 1 else None
 
@@ -137,6 +148,8 @@ def huella_archivos(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None
 
     cfg_rec = cfg_rec if cfg_rec is not None else config_recuperacion()
     digest = hashlib.sha256(f"{cfg_rec['estrategia_chunking']}|{cfg_rec['con_header']}".encode("utf-8"))
+    if cfg_rec.get("detalle_cabecera", "basico") != "basico":
+        digest.update(f"|cabecera={cfg_rec['detalle_cabecera']}".encode("utf-8"))
     preparacion = cfg_rec.get("preparacion", {})
     if preparacion.get("modo", "legacy") != "legacy":
         import json
@@ -168,7 +181,8 @@ def huella_corpus(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None =
         _, payloads, _, _ = construir_payloads_estructurados(docs, cargar_taxonomia(), opciones)
     else:
         _chunks, payloads = construir_chunks_y_payloads(docs, cfg_rec["estrategia_chunking"],
-                                                       cfg_rec["con_header"], cargar_taxonomia())
+                                                       cfg_rec["con_header"], cargar_taxonomia(),
+                                                       cfg_rec.get("detalle_cabecera", "basico"))
     return hash_corpus(payloads)
 
 
@@ -224,7 +238,8 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
         chunks, payloads, padres, preparados = construir_payloads_estructurados(docs, taxonomia, opciones)
         con_header = True
     else:
-        chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia)
+        chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia,
+                                                       cfg_rec.get("detalle_cabecera", "basico"))
     informar("validacion", total=len(payloads))
     errores = validar_payloads(payloads, taxonomia)
 

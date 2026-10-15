@@ -18,6 +18,7 @@ retrieval:
   # model: set by the profile; uncomment to pin it.
   chunking_strategy: "CH-F256"
   with_header: false
+  # header_detail: extended   # with_header: true only; adds data types, condition and exception to the header
   mode: "hybrid"                # hybrid | dense | sparse
   top_k: 3
   collection_base: "{coleccion_base}"

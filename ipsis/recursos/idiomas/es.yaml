@@ -649,6 +649,10 @@ mensajes:
   cita_breve: '(Fuente: {documento})'
   cita_completa: '(Fuente: {documento}, sección: {seccion})'
   cabecera_embebido: 'Documento: {documento} | Sección: {seccion}'
+  cabecera_contiene: 'Contiene: {tipos}'
+  cabecera_condicion: condición
+  cabecera_excepcion: excepción
+  etiquetas_entidad: {decimal: decimal, porcentaje: porcentaje, plazo: plazo, fecha: fecha, monto: monto, articulo: artículo}
 interfaz:
   search_send: 'Buscar'
   search_open: 'Abrir buscador de {title}'
