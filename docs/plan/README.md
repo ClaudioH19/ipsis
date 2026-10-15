@@ -8,6 +8,14 @@ Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
 - [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
   conversión reproducible y activación medida de F2.
 
+## Plan de precisión desde la ingesta
+
+[precision-ingesta.md](precision-ingesta.md) analiza por qué la fuente
+correcta aparece entre las primeras pero no siempre primera, y propone
+experimentos sobre fragmentado, cabecera, metadata y modelo denso. Las
+[tareas](precision-ingesta-tareas.md) están escritas para ejecutarse una por
+sesión; su estado está en el [avance](precision-ingesta-avance.md).
+
 ## Plan de motor v2
 
 [motor-v2.md](motor-v2.md) define el trabajo experimental solicitado el

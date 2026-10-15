@@ -1,6 +1,8 @@
 # Plan: precisión del primer resultado desde la ingesta
 
 Estado: propuesta (2026-10-15). No cambia código ni configuración.
+Tareas ejecutables: [precision-ingesta-tareas.md](precision-ingesta-tareas.md);
+estado: [precision-ingesta-avance.md](precision-ingesta-avance.md).
 
 ## Problema
 
