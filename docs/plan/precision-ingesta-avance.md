@@ -9,19 +9,19 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | F0.1 | ✅ | 2026-10-15 | 2d2b536 | Usuario sin corpus real: banco sintético en `tests/datos/banco_pasajes` (116 respondibles + 15 trampas, 10 documentos). |
-| F0.2 | 🔶 | 2026-10-15 | (ver git log) | Script `herramientas/evaluacion/ranking_pasajes.py` y 8 pruebas con motor falso en verde. La corrida de punta a punta no se pudo completar: `ipsis index` falla porque `intfloat/multilingual-e5-small` no está en caché y huggingface.co responde 403 por el proxy. Con `init`, `load` y fragmentado (97 fragmentos con `CH-F256`) sí llegó. Pendiente: correrlo en un entorno con modelos y pasar a ✅. |
+| F0.2 | ✅ | 2026-10-15 | (ver git log) | Corrió de punta a punta en `light` y `medium` con e5-small y el reranker mMiniLM (modelos descargados al habilitar la red). |
 | F0.3 | ⬜ | | | Requiere modelos en caché. |
-| F0.4 | ⬜ | | | Requiere modelos. |
-| F1.1 | ⬜ | | | |
-| F1.2 | ⬜ | | | |
-| F1.3 | ⬜ | | | |
-| F1.4 | ⬜ | | | |
+| F0.4 | ✅ | 2026-10-15 | (ver git log) | Línea base medida (abajo). Brecha hit@5 − hit@1 tras el reranker en `medium`: 22 puntos (≥ 5): el problema se reproduce. JSON en `/tmp/claude-0/medidas/` del entorno efímero; las tablas de abajo son el registro. |
+| F1.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera: ver tabla. |
+| F1.2 | ✅ | 2026-10-15 | (ver git log) | `CH-PAR` y `CH-SEC`: ver tabla. |
+| F1.3 | ✅ | 2026-10-15 | (ver git log) | `reranker_max_tokens: 512`: ver tabla. |
+| F1.4 | ✅ | 2026-10-15 | (ver git log) | Combinaciones y recomendación abajo. Valores por defecto sin cambiar (F5.1). |
 | F1.5 | ✅ | 2026-10-15 | (ver git log) | Opción (b) aprobada por el usuario: `hash_corpus` legacy incluye `texto_embebido` solo si difiere de `texto`. 4 pruebas en `tests/indice/test_manifiesto.py` y 1 en `tests/ingesta/test_cabecera.py`. Un índice hecho antes con `with_header: true` muestra otra huella y conviene reindexarlo. La regla 9 de las tareas queda resuelta: ya no hace falta correr los experimentos sin calibración. |
-| F2.1 | 🔶 | 2026-10-15 | (ver git log) | `CH-F256S` implementada y probada (16 pruebas nuevas). Sobre el corpus del banco de pasajes: `CH-F256` 97 fragmentos, 56 cruzan sección, máx. 307 palabras; `CH-F256S` 122 fragmentos, 0 cruzan, máx. 255. Falta `MEDIR` en `dev` frente a F0.4/F1 (sin modelos en este entorno). |
+| F2.1 | ✅ | 2026-10-15 | (ver git log) | `CH-F256S` medida: ver tabla. |
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
-| F2.3 | 🔶 | 2026-10-15 | (ver git log) | `preparar_markdown` y `preparar_texto` (reutilizan `parsear_markdown`/`parsear_texto_plano`), despacho por extensión, huella con la versión de cada parser, `ipsis prepare` y la ingesta estructural funcionan sobre `.md` (9 pruebas). Falta `MEDIR` con `preparacion.modo: estructural_v1` en `dev` (sin modelos). Además corregí que `hash_archivos` del manifiesto omitía `header_detail` (F3.1). |
+| F2.3 | ✅ | 2026-10-15 | (ver git log) | Preparación estructural de Markdown medida: ver tabla. Habilita evaluar F2.4. |
 | F2.4 | ⬜ | | | Solo si F2.3 mejora. |
-| F3.1 | 🔶 | 2026-10-15 | (ver git log) | `header_detail: extended` implementado (cabecera en es/en/pt, entidades y marcas calculadas una vez, huella solo cambia con `extended`) con 11 pruebas. Falta `MEDIR` en `dev` (sin modelos en este entorno). Ojo regla 9: como `hash_corpus` legacy no incluye `texto_embebido`, no invalida la calibración; depende de F1.5. |
+| F3.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera extendida medida: ver tabla. |
 | F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |
 | F3.3 | ⬜ | | | Condicional. |
 | F4.1 | ⬜ | | | |
@@ -32,11 +32,72 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 
 ## Línea base (F0.4)
 
-Pendiente.
+Banco `tests/datos/banco_pasajes/es`, partición `dev` (72 preguntas respondibles), `CH-F256`, sin
+cabecera, `reranker_max_tokens: 256`, e5-small, CPU de 4 núcleos, sin calibración. Herramienta:
+`herramientas/evaluacion/ranking_pasajes.py`.
+
+| Perfil | Etapa | hit@1 | hit@3 | hit@5 | MRR | p50 ms | p95 ms |
+|---|---|---|---|---|---|---|---|
+| light | híbrido = final | 0,792 | 0,986 | 1,000 | 0,890 | 97 | 229 |
+| medium | híbrido | 0,792 | 0,986 | 1,000 | 0,890 | | |
+| medium | final (reranker) | 0,736 | 0,875 | 0,958 | 0,816 | 2 322 | 2 402 |
+
+La fuente correcta siempre está entre las 5 primeras del orden híbrido, y en `medium` el reranker la
+empeora. En `medium` el reranker agota el presupuesto de 2 500 ms con 26 a 30 de 60 candidatos
+puntuados en esta CPU (los puntuados van primero), así que la latencia está acotada por el presupuesto.
+F0.3 (tokens por fragmento) aún no se escribió.
 
 ## Resultados por experimento
 
-Pendiente.
+`dev`, un cambio respecto de la base salvo indicación. Ganados/perdidos = casos que pasan a rango 1 o dejan
+de serlo en el orden final.
+
+**Perfil light** (el orden final es el híbrido)
+
+| Experimento | hit@1 | hit@3 | MRR | p95 ms | ganados / perdidos |
+|---|---|---|---|---|---|
+| base `CH-F256` | 0,792 | 0,986 | 0,890 | 229 | |
+| F1.1 cabecera básica | 0,833 | 0,986 | 0,913 | 196 | 8 / 5 |
+| F3.1 cabecera extendida | 0,847 | 1,000 | 0,921 | 224 | 8 / 4 |
+| F1.2 `CH-PAR` | 0,931 | 1,000 | 0,965 | 210 | 11 / 1 |
+| F1.2 `CH-SEC` | 0,972 | 1,000 | 0,986 | 231 | 14 / 1 |
+| F2.1 `CH-F256S` | 0,792 | 1,000 | 0,889 | 114 | 11 / 11 |
+| F2.3 estructural (Markdown) | 1,000 | 1,000 | 1,000 | 65 | 15 / 0 |
+
+**Perfil medium** (el orden final lo da el reranker)
+
+| Experimento | hit@1 | hit@3 | hit@5 | MRR | p95 ms | ganados / perdidos |
+|---|---|---|---|---|---|---|
+| base `CH-F256` | 0,736 | 0,875 | 0,958 | 0,816 | 2 402 | |
+| F1.1 cabecera básica | 0,750 | 0,875 | 0,958 | 0,823 | 2 396 | 1 / 0 |
+| F3.1 cabecera extendida | 0,750 | 0,875 | 0,958 | 0,823 | 2 412 | 1 / 0 |
+| F1.2 `CH-PAR` | 0,694 | 0,792 | 0,833 | 0,739 | 2 475 | 13 / 16 |
+| F1.2 `CH-SEC` | 0,833 | 0,972 | 0,986 | 0,895 | 2 404 | 16 / 9 |
+| F1.3 reranker 512 | 0,861 | 0,986 | 1,000 | 0,922 | 2 361 | 11 / 2 |
+| F2.1 `CH-F256S` | 0,889 | 1,000 | 1,000 | 0,942 | 2 392 | 16 / 5 |
+| F2.3 estructural | 0,986 | 1,000 | 1,000 | 0,991 | 1 063 | 18 / 0 |
+| F1.4 `CH-SEC` + 512 | 0,986 | 1,000 | 1,000 | 0,991 | 2 336 | 19 / 1 |
+| F1.4 `CH-F256S` + 512 | 0,931 | 1,000 | 1,000 | 0,965 | 2 380 | 18 / 4 |
+| F1.4 `CH-F256S` + cabecera extendida + 512 | 0,931 | 1,000 | 1,000 | 0,965 | 2 399 | 18 / 4 |
+| F1.4 estructural + 512 | 0,986 | 1,000 | 1,000 | 0,991 | 1 109 | 18 / 0 |
+
+### Recomendación (F1.4), sin cambiar valores por defecto
+
+1. **Causa dominante en `medium`: el reranker no ve el final del fragmento (C1).** Subir
+   `reranker_max_tokens` a 512 es el cambio más barato y casi cierra la brecha (0,736 → 0,861) sin costo
+   de latencia medible. Con fragmentos de una sola sección se acerca a 0,93 a 0,99.
+2. **La preparación estructural es la mejor opción**: 0,986 en `medium` con p95 de 1,1 s (mitad del
+   presupuesto) y 1,000 en `light`. 512 no le añade nada. Es la candidata para F5.1 y justifica evaluar F2.4
+   (PDF).
+3. **Sin preparación estructural**, la mejor combinación es `CH-SEC` + 512 (0,986 en `medium`), pero en
+   `light` `CH-SEC` solo tiene 0,972 y sus fragmentos llegan a 400 palabras; `CH-F256S` + 512 queda en 0,931.
+4. **La cabecera aporta poco aquí** (+4 a 5 puntos en `light`, +1 caso en `medium`): no se recomienda por sí
+   sola. `CH-PAR` no se recomienda: empeora `medium`.
+5. F3.2 (hermanos) y F3.3 no se justifican todavía: con estos fragmentos el rango 2 a 5 casi desaparece.
+
+Cautelas: el banco es sintético, lo generé yo y su corpus es muy regular; `light` ya está casi saturado y
+varias diferencias son de 1 a 3 casos sobre 72. Nada de esto sustituye una medición en `test` (F5.1) ni en un
+corpus real. La latencia de `medium` aquí está acotada por el presupuesto en una CPU de 4 núcleos.
 
 ## Hallazgos
 
