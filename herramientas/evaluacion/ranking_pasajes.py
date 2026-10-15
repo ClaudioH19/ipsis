@@ -88,9 +88,13 @@ class GrabadorCandidatos:
                     fin = vista.get("offset_fin", c.chunk.offset_fin)
                     from ipsis.consulta.v2.resultados import texto_reranking
 
+                    # ``correcto``: el pasaje que ve la persona (el padre ampliado) toca una evidencia, como en
+                    # el rango final del motor; ``correcto_hijo``: el hijo que representa al pasaje la toca.
                     pasajes.append({"doc_id": c.chunk.doc_id, "inicio": ini, "fin": fin,
                                     "texto": texto_reranking(c),
-                                    "correcto": solapa(c.chunk.doc_id, ini, fin, self.caso.evidencias)})
+                                    "correcto": solapa(c.chunk.doc_id, c.chunk.offset_inicio, c.chunk.offset_fin,
+                                                       self.caso.evidencias),
+                                    "correcto_hijo": solapa(c.chunk.doc_id, ini, fin, self.caso.evidencias)})
                 self.filas.append({"id": self.caso.id, "split": self.caso.split,
                                    "pregunta": self.caso.pregunta, "pasajes": pasajes})
             return puntuar_progresivo(candidatos, pregunta, reranker, opciones, **kw)
