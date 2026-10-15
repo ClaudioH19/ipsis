@@ -8,12 +8,13 @@ a minor change may break compatibility and is marked as such.
 
 ### Changed
 
-- **New projects use the structural preparation by default** (`retrieval.preparation.mode:
-  structural_v1` in the `engine.yaml` written by `ipsis init`; see
-  [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). It indexes small children with
-  title and section and expands to the whole unit for ranking, which raised top-1 accuracy in the passage
-  bank and on real documents. Existing projects keep their configuration and index; to switch, add the
-  block (or run `ipsis prepare`) and run `ipsis index`.
+- **Structural preparation is the default** (`retrieval.preparation.mode: structural_v1`; see
+  [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). It indexes small children with title
+  and section and expands to the whole unit for ranking, which raised top-1 accuracy in the passage bank and on
+  real documents. New projects get it from `ipsis init`; **existing v2 projects are migrated on their next
+  `ipsis` command (`config_version` 8)** and must run `ipsis index` to build the new index (the old one is
+  kept; set `retrieval.preparation.mode: legacy` to go back). Projects that already chose a preparation, and
+  v1 projects, are not changed.
 
 ### Added
 

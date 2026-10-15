@@ -1,6 +1,6 @@
 # Engine settings. Most projects never edit this file: the installation
 # profile (assistant.yaml::profile) sets the CPU models.
-config_version: 7
+config_version: 8
 pipeline: v2
 # Default source router. Set pipeline: v1 explicitly for the legacy engine.
 # These settings apply only to v2; it does not use v1 calibration or focus rules.

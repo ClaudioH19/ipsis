@@ -55,7 +55,7 @@ def test_migracion_retira_consejo_y_preserva_los_presupuestos(clave):
     copia = deepcopy(original)
     cfg = validar_motor(original)
     assert original == copia
-    assert cfg["config_version"] == 7 and clave not in cfg["v2"]
+    assert cfg["config_version"] == 8 and clave not in cfg["v2"]
     assert cfg["v2"]["recuperar_n"] == 80 and cfg["v2"]["resultados_n"] == 3
     assert cfg["v2"]["destacar_fragmentos"] is False
 

@@ -735,6 +735,7 @@ core:
   rewritten_english: '{path}: keys and values in English'
   assistant_v3: '{path}: config_version 3 (without the ''perfil'' key)'
   engine_v3: '{path}: config_version 3'
+  structural_migrated: '{path}: structural preparation enabled (config_version 8). Run ''ipsis index'' to build the new index; the old one is kept and you can go back with retrieval.preparation.mode: legacy'
   languages_removed: config/dominios/idiomas removed (replaced by the language pack)
   file_missing: file {path} does not exist
   unsupported_extension: '{path}: format {extension!r} not supported (supported: {supported})'

@@ -193,6 +193,17 @@ def _reubicar_v5(raiz: Path, cambios: list[str]) -> None:
                 _mover(archivo, archivo.with_name(archivo.name[: -len(viejo)] + nuevo), cambios, raiz)
 
 
+def _activar_estructural_en_disco(externo: dict) -> bool:
+    """v8 (ADR 0009) sobre un ``engine.yaml`` con claves en inglés: v2 sin preparación elegida → estructural."""
+    if externo.get("pipeline", "v2") != "v2":
+        return False
+    recuperacion = externo.setdefault("retrieval", {})
+    if "preparation" in recuperacion:
+        return False
+    recuperacion["preparation"] = {"mode": "structural_v1", "max_unit_words": 400, "child_words": 80}
+    return True
+
+
 def _reescribir_en_ingles(raiz: Path, cambios: list[str]) -> None:
     """Reescribe con claves y valores en inglés los YAML que aún los tienen en español."""
     from ipsis.configuracion.esquemas import CONFIG_VERSION
@@ -204,6 +215,9 @@ def _reescribir_en_ingles(raiz: Path, cambios: list[str]) -> None:
         if not datos:
             continue
         externo = a_externo(datos, archivo)
+        version_previa = int(externo.get("config_version", 0))
+        if archivo == "motor" and 7 <= version_previa < 8 and _activar_estructural_en_disco(externo):
+            cambios.append(t("core.structural_migrated", path=relativa))
         if archivo in ("asistente", "motor") and int(externo.get("config_version", 0)) < CONFIG_VERSION:
             externo["config_version"] = CONFIG_VERSION
         if archivo == "personalidad":

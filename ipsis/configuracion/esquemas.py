@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ipsis.recursos.mensajes import t
 
-CONFIG_VERSION = 7
+CONFIG_VERSION = 8
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
     "fusion", "reranker", "intent_classifier", "answer_extractor",
@@ -168,6 +168,21 @@ class MotorConfig(ConfiguracionEstricta):
     ajustes_perfil: dict[str, Any] = Field(default_factory=dict)
 
 
+PREPARACION_ESTRUCTURAL = {"modo": "estructural_v1", "max_palabras_unidad": 400, "palabras_hijo": 80}
+
+
+def activar_preparacion_estructural(motor: dict[str, Any]) -> bool:
+    """Activa la preparación estructural en un ``engine.yaml`` (claves internas) que usa v2 y no eligió
+    preparación. Una elección explícita, incluida ``legacy``, o el motor v1 se respetan. Devuelve si cambió."""
+    if motor.get("pipeline", "v2") != "v2":
+        return False
+    recuperacion = motor.setdefault("recuperacion", {})
+    if "preparacion" in recuperacion:
+        return False
+    recuperacion["preparacion"] = dict(PREPARACION_ESTRUCTURAL)
+    return True
+
+
 def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
     """Migra una configuración a la versión vigente sin mutar la entrada.
 
@@ -262,6 +277,12 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
                 salida["v2"].pop("council", None)
             salida["config_version"] = 7
             version = 7
+        elif version == 7:
+            # v8: los proyectos con v2 y sin elegir preparación pasan a la estructural (ADR 0009).
+            if nombre == "motor":
+                activar_preparacion_estructural(salida)
+            salida["config_version"] = 8
+            version = 8
         else:  # protección para que añadir versiones futuras no cree bucles
             raise ValueError(t("core.no_migration", name=nombre, version=version))
     if nombre == "asistente" and salida.get("perfil") == "heavy":

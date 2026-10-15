@@ -26,11 +26,10 @@ ipsis golden template → (a person fills in golden.csv) → ipsis golden import
 
 ## What the assistant answers
 
-New projects (`ipsis init`) already use the structural preparation
-([ADR 0009](../decisions/0009-structural-preparation-by-default.md)). An existing
-project keeps its fixed-size chunks until you opt in: add `retrieval.preparation.mode:
-structural_v1` to `config/engine.yaml` and run `ipsis index`, or inspect it first in a separate
-project:
+The structural preparation is the default
+([ADR 0009](../decisions/0009-structural-preparation-by-default.md)): `ipsis init` writes it and an existing
+v2 project is migrated by its next `ipsis` command; run `ipsis index` afterwards. To keep fixed-size chunks,
+set `retrieval.preparation.mode: legacy` in `config/engine.yaml`. To inspect it first in a separate project:
 
 ```bash
 ipsis prepare --project /path/project --output /path/new-copy

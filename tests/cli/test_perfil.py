@@ -26,12 +26,12 @@ def proyecto(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 def _indice(modelo: str, dimension: int | None = None) -> Path:
     """Manifiesto de un índice construido con ``modelo`` (lo que deja ``ipsis index``)."""
-    from ipsis.configuracion.carga import cargar_proyecto
+    from ipsis.configuracion.carga import config_recuperacion
     from ipsis.indice.manifiesto import ManifiestoIndice, guardar_manifiesto
     from ipsis.indice.qdrant import nombre_coleccion_versionada
     from ipsis.modelos.catalogo import obtener
 
-    rec = cargar_proyecto()["recuperacion"]
+    rec = config_recuperacion()
     nombre = nombre_coleccion_versionada(rec["coleccion_base"], modelo, rec["version_coleccion"])
     return guardar_manifiesto(ManifiestoIndice(coleccion=nombre, modelo_denso=modelo,
                                                dimension=dimension or obtener(modelo).dimension,

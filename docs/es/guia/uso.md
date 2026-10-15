@@ -26,10 +26,10 @@ ipsis golden template → (una persona completa golden.csv) → ipsis golden imp
 
 ## Qué responde el asistente
 
-Los proyectos nuevos (`ipsis init`) ya usan la preparación estructural
-([ADR 0009](../../decisions/0009-structural-preparation-by-default.md)). Un proyecto existente conserva
-sus fragmentos de tamaño fijo hasta que lo decidas: agrega `retrieval.preparation.mode: structural_v1`
-a `config/engine.yaml` y ejecuta `ipsis index`, o revísala
+La preparación estructural es la predeterminada
+([ADR 0009](../../decisions/0009-structural-preparation-by-default.md)): `ipsis init` la escribe y un proyecto
+v2 existente se migra con su próximo comando `ipsis`; después ejecuta `ipsis index`. Para conservar los
+fragmentos de tamaño fijo, pon `retrieval.preparation.mode: legacy` en `config/engine.yaml`. Para revisarla
 antes en un proyecto separado:
 
 ```bash

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 from apoyo import leer_proyecto
@@ -51,7 +52,7 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     conf = tmp_path / "config"
     assert not (tmp_path / "configuracion").exists()
     crudo = yaml.safe_load((conf / "assistant.yaml").read_text(encoding="utf-8"))
-    assert crudo["config_version"] == 7 and crudo["profile"] == "light" and crudo["assistant_name"] == "Demo"
+    assert crudo["config_version"] == 8 and crudo["profile"] == "light" and crudo["assistant_name"] == "Demo"
     assert (conf / "assistant.yaml").read_text(encoding="utf-8").startswith("# Identidad")
     assert not (conf / "categorias.yaml").exists()
     assert not (conf / "dominios" / "equipos").exists()
@@ -61,7 +62,7 @@ def test_migra_un_proyecto_v2_y_es_idempotente(tmp_path: Path):
     assert [c["id"] for c in cargar_taxonomia(str(conf / "domain.yaml"))["categorias"]] == ["equipo", "otro"]
     assert "regex_extractors" in yaml.safe_load((conf / "domain.yaml").read_text(encoding="utf-8"))
     motor = leer_proyecto(conf / "engine.yaml")
-    assert motor["config_version"] == 7
+    assert motor["config_version"] == 8
     assert motor["recuperacion"]["qdrant_path"] == ".ipsis/index/qdrant"
     assert (tmp_path / ".ipsis" / "index" / "qdrant" / "meta.json").is_file()
     assert (tmp_path / ".ipsis" / "index" / "demo.json").is_file()
@@ -132,7 +133,7 @@ def test_migra_un_proyecto_v4_a_nombres_en_ingles(tmp_path: Path):
         return yaml.safe_load((tmp_path / relativa).read_text(encoding="utf-8"))
 
     asistente = crudo("config/assistant.yaml")
-    assert asistente == {"config_version": 7, "assistant_name": "Demo", "language": "es", "profile": "medium",
+    assert asistente == {"config_version": 8, "assistant_name": "Demo", "language": "es", "profile": "medium",
                          "query_log": {"enabled": True}}
     assert (tmp_path / "config/assistant.yaml").read_text(encoding="utf-8").startswith("# Identidad.")
     motor = crudo("config/engine.yaml")
@@ -181,3 +182,60 @@ def test_textos_personalizados_pasan_a_idioma_yaml(tmp_path: Path):
     idioma = yaml.safe_load((tmp_path / "config" / "language.yaml").read_text(encoding="utf-8"))
     assert idioma == {"mensajes": {"sin_respuesta": "Nada por aquí."}}
     assert any("language.yaml" in c for c in cambios)
+
+
+# --- v8: preparación estructural para los proyectos que no eligieron (ADR 0009) -------------------
+def _motor_v7(tmp_path, extra=""):
+    (tmp_path / "config").mkdir(exist_ok=True)
+    ruta = tmp_path / "config" / "engine.yaml"
+    ruta.write_text("config_version: 7\npipeline: v2\nretrieval:\n  chunking_strategy: CH-F256\n"
+                    "  collection_base: demo\n" + extra, encoding="utf-8")
+    return ruta
+
+
+def test_v8_activa_la_preparacion_estructural_en_disco_y_es_idempotente(tmp_path):
+    from ipsis.configuracion.migraciones import migrar_proyecto
+
+    ruta = _motor_v7(tmp_path)
+    cambios = migrar_proyecto(tmp_path)
+    assert any("ipsis index" in c for c in cambios)
+    crudo = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert crudo["config_version"] == 8
+    assert crudo["retrieval"]["preparation"] == {"mode": "structural_v1", "max_unit_words": 400, "child_words": 80}
+    assert migrar_proyecto(tmp_path) == []  # sin más cambios la segunda vez
+
+
+@pytest.mark.parametrize("extra", ["  preparation:\n    mode: legacy\n",
+                                   "  preparation:\n    mode: structural_v1\n    max_unit_words: 200\n    child_words: 40\n"])
+def test_v8_respeta_una_preparacion_elegida(tmp_path, extra):
+    from ipsis.configuracion.migraciones import migrar_proyecto
+
+    ruta = _motor_v7(tmp_path, extra)
+    antes = yaml.safe_load(ruta.read_text(encoding="utf-8"))["retrieval"]["preparation"]
+    assert not any("ipsis index" in c for c in migrar_proyecto(tmp_path))
+    crudo = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert crudo["retrieval"]["preparation"] == antes and crudo["config_version"] == 8
+
+
+def test_v8_no_toca_los_proyectos_con_el_motor_v1(tmp_path):
+    from ipsis.configuracion.migraciones import migrar_proyecto
+
+    ruta = _motor_v7(tmp_path)
+    ruta.write_text(ruta.read_text(encoding="utf-8").replace("pipeline: v2", "pipeline: v1"), encoding="utf-8")
+    migrar_proyecto(tmp_path)
+    crudo = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    assert "preparation" not in crudo["retrieval"] and crudo["config_version"] == 8
+
+
+def test_v8_en_memoria_coincide_con_el_disco():
+    from ipsis.configuracion.esquemas import validar_motor
+
+    cfg = validar_motor({"config_version": 7, "pipeline": "v2",
+                         "recuperacion": {"estrategia_chunking": "CH-F256", "coleccion_base": "demo"}})
+    assert cfg["recuperacion"]["preparacion"]["modo"] == "estructural_v1" and cfg["config_version"] == 8
+    explicito = validar_motor({"config_version": 7, "pipeline": "v2", "recuperacion": {
+        "estrategia_chunking": "CH-F256", "coleccion_base": "demo", "preparacion": {"modo": "legacy"}}})
+    assert explicito["recuperacion"]["preparacion"]["modo"] == "legacy"
+    v1 = validar_motor({"config_version": 7, "pipeline": "v1",
+                        "recuperacion": {"estrategia_chunking": "CH-F256", "coleccion_base": "demo"}})
+    assert v1["recuperacion"]["preparacion"]["modo"] == "legacy"

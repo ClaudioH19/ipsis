@@ -1,4 +1,4 @@
-# ADR 0009: structural preparation is the default for new projects
+# ADR 0009: structural preparation is the default
 
 Status: accepted (2026-10-15).
 
@@ -18,11 +18,14 @@ hybrid order). Details and tables: `docs/plan/precision-ingesta-avance.md`.
   `config/engine.yaml` (small children with title and section, expanded to the whole
   source unit for ranking and citation). It now covers DOCX, PDF, Markdown, text and
   spreadsheets.
-- The schema default stays `legacy`. A project whose `engine.yaml` has no
-  `preparation` block keeps fixed-size chunks and its existing index; nothing is
-  migrated or reindexed behind the user's back. Switching is opt-in: add the block
-  (or run `ipsis prepare`) and run `ipsis index`. The structural index lives in its
-  own collection (`<name>_estructura1`).
+- **Existing projects migrate** (`config_version` 7 -> 8, run by any `ipsis` command): a
+  v2 project whose `engine.yaml` has no `retrieval.preparation` block gets the structural
+  block written to disk, and the command prints that `ipsis index` must be run. The old
+  index is not touched: it lives in another collection, so going back is one line
+  (`retrieval.preparation.mode: legacy`). An explicit choice (including `legacy`) and
+  v1 projects are left alone. The schema default itself stays `legacy`.
+- Until `ipsis index` runs, a migrated project has no index for the new collection and the
+  service reports it as not ready (the usual "run `ipsis index`" message).
 - `CH-F256S`, `header_detail: extended` and the corpus fingerprint change (the
   embedded text now counts when the header is on) ship as opt-in options.
 
@@ -44,9 +47,8 @@ the synthetic test partition, slower, no gain on real documents), `CH-PAR`
 
 ## Consequences
 
-- New projects index with the structural preparation: a different collection name and
-  directory, and `ipsis index` required after changing the setting on an existing project.
-- Migrating an existing project does not change its answers until it opts in.
+- Every v2 project that did not choose a preparation must run `ipsis index` after upgrading
+  (new collection name and directory). Nothing else changes: same documents, same answers format.
 - Calibrations stay valid for projects that do not change their header.
 - Known residuals: Markdown tables stay as paragraphs; PDF has no page numbers or
   tables; a few real-document questions still rank 3 to 4 (small sample).

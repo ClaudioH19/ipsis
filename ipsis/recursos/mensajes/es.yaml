@@ -735,6 +735,7 @@ core:
   rewritten_english: '{path}: claves y valores en inglés'
   assistant_v3: '{path}: config_version 3 (sin la clave ''perfil'')'
   engine_v3: '{path}: config_version 3'
+  structural_migrated: '{path}: preparación estructural activada (config_version 8). Ejecuta ''ipsis index'' para construir el índice nuevo; el anterior se conserva y puedes volver con retrieval.preparation.mode: legacy'
   languages_removed: config/dominios/idiomas eliminado (lo reemplaza el paquete de idioma)
   file_missing: no existe el archivo {path}
   unsupported_extension: '{path}: formato {extension!r} no soportado (soportados: {supported})'
