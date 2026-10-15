@@ -217,6 +217,38 @@ presupuesto de 2,5 s porque el recuperador ya deja la correcta entre las primera
 Mejora o iguala en los tres bancos, con un costo de 0,2 a 0,9 s de p95 (4 CPU). Cambiar el reranker de un perfil
 es decisión del usuario; hoy hay que hacerlo con `profile_overrides` en `engine.yaml`.
 
+## Búsqueda de un reranker mejor para español (y comparación por idioma)
+
+Criterio: licencia compatible (Apache-2.0/MIT), multilingüe con español, ONNX o exportable, y latencia viable en CPU.
+Se descartaron por licencia `jina-reranker-v2/v3/v3.5` (CC-BY-NC) y por tamaño `Qwen3-Reranker-4B/8B`, `bge-reranker-v2-gemma`
+(2 a 9 B). `onebrain-rerank-v1` es solo una cuantización int8 de bge-v2-m3. No hay un reranker monolingüe de español con
+métricas publicadas ni ONNX (el único, basado en BETO, tiene 15 descargas y ninguna evaluación).
+
+**Puntuación offline** (`herramientas/evaluacion/puntuar_fuera.py`, fp32 en CPU de 4 núcleos), documentos reales,
+89 preguntas (56 adversarias formales/informales + 33 formales), los mismos 20 candidatos del orden híbrido estructural
+para todos; hit@1 sobre el pasaje ampliado que ve la persona. Orden híbrido sin reranker: 0,663.
+
+| Modelo | Todo | Formal | Informal | hit@3 | s/pregunta (fp32) |
+|---|---|---|---|---|---|
+| mMiniLM mmarco (actual) | 0,730 | 0,853 | 0,464 | 0,944 | 0,7 |
+| bge-reranker-v2-m3 | 0,798 | 0,853 | 0,679 | 0,955 | 6,7 |
+| Qwen3-Reranker-0.6B | 0,775 | 0,836 | 0,643 | 0,955 | 19,6 |
+| lb-reranker-0.5B | 0,809 | 0,869 | 0,679 | 0,989 | 13,8 |
+| mxbai-rerank-base-v2 | **0,843** | **0,918** | 0,679 | 0,944 | 25,9 |
+
+Con n = 89 un caso son 1,1 puntos: las diferencias entre bge, lb y mxbai (0,798 a 0,843) caben en el ruido; la
+brecha frente al reranker actual (0,730) sí es consistente en lo informal (0,464 a 0,64-0,68).
+Los tres últimos son modelos de lenguaje decodificadores (Qwen2.5/Qwen3 de 0,5 a 0,6 B): puntúan con el logit de un token
+(«yes», 1 a 7), no con una cabeza de clasificación, así que el runtime ONNX actual no los ejecuta tal cual; exigirían
+exportarlos, un scorer propio y evaluar la latencia cuantizada. `bge-reranker-v2-m3` ya está integrado (ONNX int8,
+10 candidatos: p95 de 1,9 s, ver arriba).
+
+**Matriz sintética en tres idiomas** (banco de pasajes es/en/pt, 131 casos por idioma, `medium`, estructural, 20
+candidatos): con la preparación estructural **todos** los rerankers dan 0,98 a 1,00 de hit@1 en los tres idiomas, incluso
+`ms-marco-MiniLM-L6` en inglés (p95 324 ms, frente a 620-900 ms de mMiniLM y 2,0-2,2 s de bge): el banco sintético ya no
+discrimina. Solo `mxbai-rerank-base-v1` (0,991) y mMiniLM en es/pt (0,983) bajan algo. La elección por idioma queda
+sin evidencia fuerte en inglés y portugués porque no hay documentos reales en esos idiomas.
+
 ## Hallazgos
 
 - 2026-10-15: desde el entorno de nube usado para el análisis no se pudo
