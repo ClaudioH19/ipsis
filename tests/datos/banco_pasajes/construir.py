@@ -31,7 +31,7 @@ from ipsis.evaluacion.golden import oracion_de, ubicar_respuesta
 from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parent
-IDIOMAS = ("es",)
+IDIOMAS = ("es", "en", "pt")
 VERSION = "1.0.0"
 CATEGORIAS = {
     "segunda": CategoriaPregunta.EXACTA,

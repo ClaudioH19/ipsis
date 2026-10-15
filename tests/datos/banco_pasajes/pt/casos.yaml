@@ -1,0 +1,773 @@
+# Banco de pasajes, pt (fuente generada por generar_fuentes.py). La clase sale del id: segunda,
+# hermana, parafrasis y trampa. construir.py calcula evidencias, offsets y particiones.
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Servidores efetivos
+  pregunta: Em quantos dias úteis é pago o reembolso para servidores efetivos?
+  respuesta: Para servidores efetivos, o reembolso é pago em no máximo 10 dias úteis
+  id: pt-segunda-001
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Servidores contratados
+  pregunta: Qual é o limite por prestação de contas para servidores contratados?
+  respuesta: Para servidores contratados, o limite por prestação de contas é de 250.000 pesos
+  id: pt-segunda-002
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Prestadores de serviço
+  pregunta: Como é pago o reembolso para prestadores de serviço?
+  respuesta: Para prestadores de serviço, o pagamento é feito por transferência para a conta bancária informada no contrato
+  id: pt-segunda-003
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Estagiários
+  pregunta: Em quantos dias úteis é pago o reembolso para estagiários?
+  respuesta: Para estagiários, o reembolso é pago em no máximo 15 dias úteis
+  id: pt-segunda-004
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Professores horistas
+  pregunta: Qual é o limite por prestação de contas para professores horistas?
+  respuesta: Para professores horistas, o limite por prestação de contas é de 200.000 pesos
+  id: pt-segunda-005
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Convidados externos
+  pregunta: Como é pago o reembolso para convidados externos?
+  respuesta: Para convidados externos, o pagamento é feito por cheque nominal emitido pela tesouraria
+  id: pt-segunda-006
+- clase: segunda
+  documento: regulamento_reembolsos.md
+  seccion: Servidores efetivos
+  pregunta: Qual é o limite por prestação de contas para servidores efetivos?
+  respuesta: Para servidores efetivos, o limite por prestação de contas é de 350.000 pesos
+  id: pt-segunda-007
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Notebooks
+  pregunta: O que a garantia não cobre para notebooks?
+  respuesta: Para notebooks, a garantia não cobre derramamento de líquidos e golpes
+  id: pt-segunda-008
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Impressoras
+  pregunta: Onde atende o serviço técnico para impressoras?
+  respuesta: Para impressoras, o serviço técnico atende na oficina do prédio de oficinas
+  id: pt-segunda-009
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Projetores
+  pregunta: Em quantos dias úteis é entregue o equipamento de reposição para projetores?
+  respuesta: Para projetores, o equipamento de reposição é entregue em até 7 dias úteis
+  id: pt-segunda-010
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Tablets
+  pregunta: O que a garantia não cobre para tablets?
+  respuesta: Para tablets, a garantia não cobre telas quebradas por quedas
+  id: pt-segunda-011
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Monitores
+  pregunta: Onde atende o serviço técnico para monitores?
+  respuesta: Para monitores, o serviço técnico atende no depósito de audiovisual
+  id: pt-segunda-012
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Roteadores
+  pregunta: Em quantos dias úteis é entregue o equipamento de reposição para roteadores?
+  respuesta: Para roteadores, o equipamento de reposição é entregue em até 2 dias úteis
+  id: pt-segunda-013
+- clase: segunda
+  documento: garantia_equipamentos.md
+  seccion: Notebooks
+  pregunta: Onde atende o serviço técnico para notebooks?
+  respuesta: Para notebooks, o serviço técnico atende na oficina do prédio central
+  id: pt-segunda-014
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença-casamento
+  pregunta: Que documento se exige como comprovante para a licença-casamento?
+  respuesta: Para a licença-casamento, exige-se como comprovante a certidão de casamento
+  id: pt-segunda-015
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença pelo nascimento de um filho
+  pregunta: Quem autoriza a licença pelo nascimento de um filho?
+  respuesta: Para a licença pelo nascimento de um filho, a licença é autorizada pela chefia direta
+  id: pt-segunda-016
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença por falecimento de um familiar
+  pregunta: O tempo de licença é descontado para a licença por falecimento de um familiar?
+  respuesta: Para a licença por falecimento de um familiar, o tempo de licença não é descontado
+  id: pt-segunda-017
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença para estudos
+  pregunta: Que documento se exige como comprovante para a licença para estudos?
+  respuesta: Para a licença para estudos, exige-se como comprovante o comprovante de matrícula
+  id: pt-segunda-018
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença por doença de um filho menor
+  pregunta: Quem autoriza a licença por doença de um filho menor?
+  respuesta: Para a licença por doença de um filho menor, a licença é autorizada pela chefia direta
+  id: pt-segunda-019
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença para trâmites pessoais
+  pregunta: O tempo de licença é descontado para a licença para trâmites pessoais?
+  respuesta: Para a licença para trâmites pessoais, o tempo de licença é descontado das férias
+  id: pt-segunda-020
+- clase: segunda
+  documento: regulamento_licencas.md
+  seccion: Licença-casamento
+  pregunta: Quem autoriza a licença-casamento?
+  respuesta: Para a licença-casamento, a licença é autorizada pela diretoria de pessoas
+  id: pt-segunda-021
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Compras menores
+  pregunta: Quantas cotações se exigem no mínimo para compras menores?
+  respuesta: Para compras menores, exigem-se no mínimo 1 cotações
+  id: pt-segunda-022
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Compras diretas
+  pregunta: Qual é o prazo máximo do processo para compras diretas?
+  respuesta: Para compras diretas, o prazo máximo do processo é de 7 dias úteis
+  id: pt-segunda-023
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Cotação formal
+  pregunta: Qual é o documento de encerramento para compras por cotação formal?
+  respuesta: Para compras por cotação formal, o documento de encerramento é o quadro comparativo de cotações
+  id: pt-segunda-024
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Licitação privada
+  pregunta: Quantas cotações se exigem no mínimo para licitações privadas?
+  respuesta: Para licitações privadas, exigem-se no mínimo 3 cotações
+  id: pt-segunda-025
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Licitação pública
+  pregunta: Qual é o prazo máximo do processo para licitações públicas?
+  respuesta: Para licitações públicas, o prazo máximo do processo é de 60 dias úteis
+  id: pt-segunda-026
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Compras de emergência
+  pregunta: Qual é o documento de encerramento para compras de emergência?
+  respuesta: Para compras de emergência, o documento de encerramento é o relatório de justificativa da emergência
+  id: pt-segunda-027
+- clase: segunda
+  documento: manual_compras.md
+  seccion: Compras menores
+  pregunta: Qual é o prazo máximo do processo para compras menores?
+  respuesta: Para compras menores, o prazo máximo do processo é de 3 dias úteis
+  id: pt-segunda-028
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de química
+  pregunta: Que equipamento de proteção é obrigatório para o laboratório de química?
+  respuesta: Para o laboratório de química, o equipamento de proteção obrigatório inclui jaleco, óculos de proteção e luvas de nitrila
+  id: pt-segunda-029
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de biologia
+  pregunta: Quem é o responsável pela segurança para o laboratório de biologia?
+  respuesta: Para o laboratório de biologia, o responsável pela segurança é o encarregado de biossegurança
+  id: pt-segunda-030
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de física
+  pregunta: Com quantas horas de antecedência se reserva o laboratório de física?
+  respuesta: Para o laboratório de física, a reserva deve ser feita com 24 horas de antecedência
+  id: pt-segunda-031
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de eletrônica
+  pregunta: Que equipamento de proteção é obrigatório para o laboratório de eletrônica?
+  respuesta: Para o laboratório de eletrônica, o equipamento de proteção obrigatório inclui pulseira antiestática e óculos de segurança
+  id: pt-segunda-032
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de informática
+  pregunta: Quem é o responsável pela segurança para o laboratório de informática?
+  respuesta: Para o laboratório de informática, o responsável pela segurança é o administrador de redes
+  id: pt-segunda-033
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de materiais
+  pregunta: Com quantas horas de antecedência se reserva o laboratório de materiais?
+  respuesta: Para o laboratório de materiais, a reserva deve ser feita com 96 horas de antecedência
+  id: pt-segunda-034
+- clase: segunda
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de química
+  pregunta: Quem é o responsável pela segurança para o laboratório de química?
+  respuesta: Para o laboratório de química, o responsável pela segurança é a técnica do laboratório de química
+  id: pt-segunda-035
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de ônibus
+  pregunta: Quem autoriza viagens nacionais de ônibus?
+  respuesta: Para viagens nacionais de ônibus, a viagem é autorizada pela chefia direta
+  id: pt-segunda-036
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de avião
+  pregunta: Que seguro a instituição contrata para viagens nacionais de avião?
+  respuesta: Para viagens nacionais de avião, a instituição contrata seguro de acidentes pessoais e de bagagem
+  id: pt-segunda-037
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Viagens internacionais
+  pregunta: Em quantos dias úteis deve ser entregue a prestação de contas para viagens internacionais?
+  respuesta: Para viagens internacionais, a prestação de contas da viagem deve ser entregue em até 15 dias úteis
+  id: pt-segunda-038
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Congressos e seminários
+  pregunta: Quem autoriza congressos e seminários?
+  respuesta: Para congressos e seminários, a viagem é autorizada pela direção de pesquisa
+  id: pt-segunda-039
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Missões de serviço de um dia
+  pregunta: Que seguro a instituição contrata para missões de serviço de um dia?
+  respuesta: Para missões de serviço de um dia, a instituição contrata seguro de acidentes pessoais
+  id: pt-segunda-040
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Trabalho de campo
+  pregunta: Em quantos dias úteis deve ser entregue a prestação de contas para trabalho de campo?
+  respuesta: Para trabalho de campo, a prestação de contas da viagem deve ser entregue em até 7 dias úteis
+  id: pt-segunda-041
+- clase: segunda
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de ônibus
+  pregunta: Que seguro a instituição contrata para viagens nacionais de ônibus?
+  respuesta: Para viagens nacionais de ônibus, a instituição contrata seguro de acidentes pessoais
+  id: pt-segunda-042
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Servidores efetivos
+  pregunta: Quantos dias úteis existem para apresentar o pedido de reembolso para servidores efetivos?
+  respuesta: Para servidores efetivos, o pedido de reembolso deve ser apresentado em até 30 dias úteis
+  id: pt-hermana-001
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Servidores contratados
+  pregunta: Quem aprova o pedido de reembolso para servidores contratados?
+  respuesta: Para servidores contratados, o pedido é aprovado pela chefia direta
+  id: pt-hermana-002
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Prestadores de serviço
+  pregunta: Quantos dias úteis existem para apresentar o pedido de reembolso para prestadores de serviço?
+  respuesta: Para prestadores de serviço, o pedido de reembolso deve ser apresentado em até 15 dias úteis
+  id: pt-hermana-003
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Estagiários
+  pregunta: Quem aprova o pedido de reembolso para estagiários?
+  respuesta: Para estagiários, o pedido é aprovado pelo tutor do estágio
+  id: pt-hermana-004
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Professores horistas
+  pregunta: Quantos dias úteis existem para apresentar o pedido de reembolso para professores horistas?
+  respuesta: Para professores horistas, o pedido de reembolso deve ser apresentado em até 45 dias úteis
+  id: pt-hermana-005
+- clase: hermana
+  documento: regulamento_reembolsos.md
+  seccion: Convidados externos
+  pregunta: Quem aprova o pedido de reembolso para convidados externos?
+  respuesta: Para convidados externos, o pedido é aprovado pela unidade que fez o convite
+  id: pt-hermana-006
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Notebooks
+  pregunta: Quantos meses dura a garantia para notebooks?
+  respuesta: Para notebooks, a garantia dura 24 meses
+  id: pt-hermana-007
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Impressoras
+  pregunta: O que a garantia cobre para impressoras?
+  respuesta: Para impressoras, a garantia cobre falhas do mecanismo de tração do papel
+  id: pt-hermana-008
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Projetores
+  pregunta: Quantos meses dura a garantia para projetores?
+  respuesta: Para projetores, a garantia dura 18 meses
+  id: pt-hermana-009
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Tablets
+  pregunta: O que a garantia cobre para tablets?
+  respuesta: Para tablets, a garantia cobre falhas da tela sensível ao toque e do carregamento
+  id: pt-hermana-010
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Monitores
+  pregunta: Quantos meses dura a garantia para monitores?
+  respuesta: Para monitores, a garantia dura 36 meses
+  id: pt-hermana-011
+- clase: hermana
+  documento: garantia_equipamentos.md
+  seccion: Roteadores
+  pregunta: O que a garantia cobre para roteadores?
+  respuesta: Para roteadores, a garantia cobre falhas da fonte de alimentação e das portas
+  id: pt-hermana-012
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença-casamento
+  pregunta: Quantos dias de licença são concedidos para a licença-casamento?
+  respuesta: Para a licença-casamento, são concedidos 5 dias de licença
+  id: pt-hermana-013
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença pelo nascimento de um filho
+  pregunta: Com quantos dias de antecedência se solicita a licença pelo nascimento de um filho?
+  respuesta: Para a licença pelo nascimento de um filho, o pedido deve ser apresentado com 15 dias de antecedência
+  id: pt-hermana-014
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença por falecimento de um familiar
+  pregunta: Quantos dias de licença são concedidos para a licença por falecimento de um familiar?
+  respuesta: Para a licença por falecimento de um familiar, são concedidos 7 dias de licença
+  id: pt-hermana-015
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença para estudos
+  pregunta: Com quantos dias de antecedência se solicita a licença para estudos?
+  respuesta: Para a licença para estudos, o pedido deve ser apresentado com 60 dias de antecedência
+  id: pt-hermana-016
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença por doença de um filho menor
+  pregunta: Quantos dias de licença são concedidos para a licença por doença de um filho menor?
+  respuesta: Para a licença por doença de um filho menor, são concedidos 10 dias de licença
+  id: pt-hermana-017
+- clase: hermana
+  documento: regulamento_licencas.md
+  seccion: Licença para trâmites pessoais
+  pregunta: Com quantos dias de antecedência se solicita a licença para trâmites pessoais?
+  respuesta: Para a licença para trâmites pessoais, o pedido deve ser apresentado com 5 dias de antecedência
+  id: pt-hermana-018
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Compras menores
+  pregunta: Qual é o valor máximo para compras menores?
+  respuesta: Para compras menores, o valor máximo é de 10 UF
+  id: pt-hermana-019
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Compras diretas
+  pregunta: Quem aprova a compra para compras diretas?
+  respuesta: Para compras diretas, a compra é aprovada pela direção administrativa
+  id: pt-hermana-020
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Cotação formal
+  pregunta: Qual é o valor máximo para compras por cotação formal?
+  respuesta: Para compras por cotação formal, o valor máximo é de 500 UF
+  id: pt-hermana-021
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Licitação privada
+  pregunta: Quem aprova a compra para licitações privadas?
+  respuesta: Para licitações privadas, a compra é aprovada pelo comitê de compras
+  id: pt-hermana-022
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Licitação pública
+  pregunta: Qual é o valor máximo para licitações públicas?
+  respuesta: Para licitações públicas, o valor máximo é de 5000 UF
+  id: pt-hermana-023
+- clase: hermana
+  documento: manual_compras.md
+  seccion: Compras de emergência
+  pregunta: Quem aprova a compra para compras de emergência?
+  respuesta: Para compras de emergência, a compra é aprovada pela reitoria
+  id: pt-hermana-024
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de química
+  pregunta: Qual é a lotação máxima para o laboratório de química?
+  respuesta: Para o laboratório de química, a lotação máxima é de 20 pessoas
+  id: pt-hermana-025
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de biologia
+  pregunta: Qual é o horário de atendimento para o laboratório de biologia?
+  respuesta: Para o laboratório de biologia, o horário de atendimento é das 8h00 às 17h30
+  id: pt-hermana-026
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de física
+  pregunta: Qual é a lotação máxima para o laboratório de física?
+  respuesta: Para o laboratório de física, a lotação máxima é de 30 pessoas
+  id: pt-hermana-027
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de eletrônica
+  pregunta: Qual é o horário de atendimento para o laboratório de eletrônica?
+  respuesta: Para o laboratório de eletrônica, o horário de atendimento é das 9h00 às 20h00
+  id: pt-hermana-028
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de informática
+  pregunta: Qual é a lotação máxima para o laboratório de informática?
+  respuesta: Para o laboratório de informática, a lotação máxima é de 40 pessoas
+  id: pt-hermana-029
+- clase: hermana
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de materiais
+  pregunta: Qual é o horário de atendimento para o laboratório de materiais?
+  respuesta: Para o laboratório de materiais, o horário de atendimento é das 8h30 às 17h00
+  id: pt-hermana-030
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de ônibus
+  pregunta: Com quantos dias úteis de antecedência se solicita viagens nacionais de ônibus?
+  respuesta: Para viagens nacionais de ônibus, o pedido deve ser apresentado com 5 dias úteis de antecedência
+  id: pt-hermana-031
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de avião
+  pregunta: De quanto é a diária para viagens nacionais de avião?
+  respuesta: Para viagens nacionais de avião, a diária é de 65.000
+  id: pt-hermana-032
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Viagens internacionais
+  pregunta: Com quantos dias úteis de antecedência se solicita viagens internacionais?
+  respuesta: Para viagens internacionais, o pedido deve ser apresentado com 30 dias úteis de antecedência
+  id: pt-hermana-033
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Congressos e seminários
+  pregunta: De quanto é a diária para congressos e seminários?
+  respuesta: Para congressos e seminários, a diária é de 120 dólares
+  id: pt-hermana-034
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Missões de serviço de um dia
+  pregunta: Com quantos dias úteis de antecedência se solicita missões de serviço de um dia?
+  respuesta: Para missões de serviço de um dia, o pedido deve ser apresentado com 3 dias úteis de antecedência
+  id: pt-hermana-035
+- clase: hermana
+  documento: politica_viagens.md
+  seccion: Trabalho de campo
+  pregunta: De quanto é a diária para trabalho de campo?
+  respuesta: Para trabalho de campo, a diária é de 55.000
+  id: pt-hermana-036
+- clase: hermana
+  documento: regulamento_biblioteca_ciencias.md
+  seccion: Empréstimo de livros
+  pregunta: Quantos dias dura o empréstimo de livros na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, o empréstimo de livros dura 14 dias corridos
+  id: pt-hermana-037
+- clase: hermana
+  documento: regulamento_biblioteca_ciencias.md
+  seccion: Salas de estudo
+  pregunta: De quantas horas são os blocos de reserva das salas de estudo na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, as salas de estudo são reservadas em blocos de 2 horas
+  id: pt-hermana-038
+- clase: hermana
+  documento: regulamento_biblioteca_ciencias.md
+  seccion: Multas por atraso
+  pregunta: Em que valor é suspensa a multa acumulada na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, a multa acumulada é suspensa ao chegar a 6.000 pesos
+  id: pt-hermana-039
+- clase: hermana
+  documento: regulamento_biblioteca_ciencias.md
+  seccion: Reserva de material
+  pregunta: Quantos dias úteis é guardado o material reservado na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, o material reservado é guardado por 5 dias úteis
+  id: pt-hermana-040
+- clase: hermana
+  documento: regulamento_biblioteca_engenharia.md
+  seccion: Empréstimo de livros
+  pregunta: Quantos dias dura o empréstimo de livros na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, o empréstimo de livros dura 21 dias corridos
+  id: pt-hermana-041
+- clase: hermana
+  documento: regulamento_biblioteca_engenharia.md
+  seccion: Salas de estudo
+  pregunta: De quantas horas são os blocos de reserva das salas de estudo na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, as salas de estudo são reservadas em blocos de 3 horas
+  id: pt-hermana-042
+- clase: hermana
+  documento: regulamento_biblioteca_engenharia.md
+  seccion: Multas por atraso
+  pregunta: Em que valor é suspensa a multa acumulada na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, a multa acumulada é suspensa ao chegar a 10.000 pesos
+  id: pt-hermana-043
+- clase: hermana
+  documento: regulamento_biblioteca_engenharia.md
+  seccion: Reserva de material
+  pregunta: Quantos dias úteis é guardado o material reservado na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, o material reservado é guardado por 7 dias úteis
+  id: pt-hermana-044
+- clase: hermana
+  documento: regulamento_titulacao_ciencias.md
+  seccion: Inscrição do tema
+  pregunta: Quantos meses de vigência tem o tema inscrito na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, o tema inscrito tem vigência de 12 meses
+  id: pt-hermana-045
+- clase: hermana
+  documento: regulamento_titulacao_ciencias.md
+  seccion: Defesa
+  pregunta: Qual é a nota mínima para aprovar a defesa na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, a nota mínima para aprovar a defesa é 5,0
+  id: pt-hermana-046
+- clase: hermana
+  documento: regulamento_titulacao_ciencias.md
+  seccion: Entrega final
+  pregunta: Em quantos dias úteis é entregue a versão final depois da defesa na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, a versão final do trabalho é entregue em até 15 dias úteis
+  id: pt-hermana-047
+- clase: hermana
+  documento: regulamento_titulacao_ciencias.md
+  seccion: Certificado de titulação
+  pregunta: Quanto custa o certificado de titulação na Faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, o certificado de titulação custa 8.000 pesos
+  id: pt-hermana-048
+- clase: hermana
+  documento: regulamento_titulacao_engenharia.md
+  seccion: Inscrição do tema
+  pregunta: Quantos meses de vigência tem o tema inscrito na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, o tema inscrito tem vigência de 18 meses
+  id: pt-hermana-049
+- clase: hermana
+  documento: regulamento_titulacao_engenharia.md
+  seccion: Defesa
+  pregunta: Qual é a nota mínima para aprovar a defesa na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, a nota mínima para aprovar a defesa é 5,5
+  id: pt-hermana-050
+- clase: hermana
+  documento: regulamento_titulacao_engenharia.md
+  seccion: Entrega final
+  pregunta: Em quantos dias úteis é entregue a versão final depois da defesa na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, a versão final do trabalho é entregue em até 20 dias úteis
+  id: pt-hermana-051
+- clase: hermana
+  documento: regulamento_titulacao_engenharia.md
+  seccion: Certificado de titulação
+  pregunta: Quanto custa o certificado de titulação na Faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, o certificado de titulação custa 12.000 pesos
+  id: pt-hermana-052
+- clase: parafrasis
+  documento: regulamento_reembolsos.md
+  seccion: Servidores efetivos
+  pregunta: quem tem q aprovar meu reembolso sendo servidores efetivos?
+  respuesta: Para servidores efetivos, o pedido é aprovado pela chefia direta
+  id: pt-parafrasis-001
+- clase: parafrasis
+  documento: regulamento_reembolsos.md
+  seccion: Prestadores de serviço
+  pregunta: qual o máximo q posso prestar de uma vez como prestadores de serviço?
+  respuesta: Para prestadores de serviço, o limite por prestação de contas é de 150.000 pesos
+  id: pt-parafrasis-002
+- clase: parafrasis
+  documento: regulamento_reembolsos.md
+  seccion: Convidados externos
+  pregunta: até quantos dias depois da compra dá pra pedir o reembolso sendo convidados externos?
+  respuesta: Para convidados externos, o pedido de reembolso deve ser apresentado em até 10 dias úteis
+  id: pt-parafrasis-003
+- clase: parafrasis
+  documento: garantia_equipamentos.md
+  seccion: Notebooks
+  pregunta: q problemas consertam de graça em notebooks?
+  respuesta: Para notebooks, a garantia cobre falhas de placa, tela e bateria
+  id: pt-parafrasis-004
+- clase: parafrasis
+  documento: garantia_equipamentos.md
+  seccion: Projetores
+  pregunta: pra onde levo projetores pra consertar?
+  respuesta: Para projetores, o serviço técnico atende no depósito de audiovisual
+  id: pt-parafrasis-005
+- clase: parafrasis
+  documento: garantia_equipamentos.md
+  seccion: Roteadores
+  pregunta: por quanto tempo roteadores ficam na garantia?
+  respuesta: Para roteadores, a garantia dura 48 meses
+  id: pt-parafrasis-006
+- clase: parafrasis
+  documento: regulamento_licencas.md
+  seccion: Licença-casamento
+  pregunta: com quanta antecedência tenho q pedir a licença-casamento?
+  respuesta: Para a licença-casamento, o pedido deve ser apresentado com 30 dias de antecedência
+  id: pt-parafrasis-007
+- clase: parafrasis
+  documento: regulamento_licencas.md
+  seccion: Licença por falecimento de um familiar
+  pregunta: quem tem q dar o ok pra a licença por falecimento de um familiar?
+  respuesta: Para a licença por falecimento de um familiar, a licença é autorizada pela chefia direta
+  id: pt-parafrasis-008
+- clase: parafrasis
+  documento: regulamento_licencas.md
+  seccion: Licença para trâmites pessoais
+  pregunta: quantos dias eu ganho em a licença para trâmites pessoais?
+  respuesta: Para a licença para trâmites pessoais, são concedidos 3 dias de licença
+  id: pt-parafrasis-009
+- clase: parafrasis
+  documento: manual_compras.md
+  seccion: Compras menores
+  pregunta: quem assina as compras menores?
+  respuesta: Para compras menores, a compra é aprovada pela chefia da unidade
+  id: pt-parafrasis-010
+- clase: parafrasis
+  documento: manual_compras.md
+  seccion: Cotação formal
+  pregunta: quanto demora o trâmite todo para compras por cotação formal?
+  respuesta: Para compras por cotação formal, o prazo máximo do processo é de 15 dias úteis
+  id: pt-parafrasis-011
+- clase: parafrasis
+  documento: manual_compras.md
+  seccion: Compras de emergência
+  pregunta: até quantas UF posso gastar em compras de emergência?
+  respuesta: Para compras de emergência, o valor máximo é de 300 UF
+  id: pt-parafrasis-012
+- clase: parafrasis
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de química
+  pregunta: q horas abre e fecha o laboratório de química?
+  respuesta: Para o laboratório de química, o horário de atendimento é das 8h30 às 18h00
+  id: pt-parafrasis-013
+- clase: parafrasis
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de física
+  pregunta: com quem falo se rolar algum problema em o laboratório de física?
+  respuesta: Para o laboratório de física, o responsável pela segurança é o monitor do laboratório de física
+  id: pt-parafrasis-014
+- clase: parafrasis
+  documento: protocolo_laboratorios.md
+  seccion: Laboratório de materiais
+  pregunta: quantas pessoas podem ficar ao mesmo tempo para o laboratório de materiais?
+  respuesta: Para o laboratório de materiais, a lotação máxima é de 15 pessoas
+  id: pt-parafrasis-015
+- clase: parafrasis
+  documento: politica_viagens.md
+  seccion: Viagens nacionais de ônibus
+  pregunta: quanto me dão por dia em viagens nacionais de ônibus?
+  respuesta: Para viagens nacionais de ônibus, a diária é de 45.000
+  id: pt-parafrasis-016
+- clase: parafrasis
+  documento: politica_viagens.md
+  seccion: Viagens internacionais
+  pregunta: q seguro me fazem pra viagens internacionais?
+  respuesta: Para viagens internacionais, a instituição contrata seguro de assistência em viagem com cobertura médica
+  id: pt-parafrasis-017
+- clase: parafrasis
+  documento: politica_viagens.md
+  seccion: Trabalho de campo
+  pregunta: com quanto tempo antes tenho q pedir trabalho de campo?
+  respuesta: Para trabalho de campo, o pedido deve ser apresentado com 15 dias úteis de antecedência
+  id: pt-parafrasis-018
+- clase: parafrasis
+  documento: regulamento_biblioteca_ciencias.md
+  seccion: Empréstimo de livros
+  pregunta: quantas renovações deixam fazer de um livro na biblioteca de Ciências?
+  respuesta: Na Faculdade de Ciências, cada estudante pode renovar um livro até 2 vezes
+  id: pt-parafrasis-019
+- clase: parafrasis
+  documento: regulamento_biblioteca_engenharia.md
+  seccion: Empréstimo de livros
+  pregunta: quantas renovações deixam fazer de um livro na biblioteca de Engenharia?
+  respuesta: Na Faculdade de Engenharia, cada estudante pode renovar um livro até 3 vezes
+  id: pt-parafrasis-020
+- clase: parafrasis
+  documento: regulamento_titulacao_ciencias.md
+  seccion: Inscrição do tema
+  pregunta: aonde vou pra inscrever meu tema de TCC na faculdade de Ciências?
+  respuesta: Na Faculdade de Ciências, o tema de titulação é inscrito perante a coordenação de titulação
+  id: pt-parafrasis-021
+- clase: parafrasis
+  documento: regulamento_titulacao_engenharia.md
+  seccion: Inscrição do tema
+  pregunta: aonde vou pra inscrever meu tema de TCC na faculdade de Engenharia?
+  respuesta: Na Faculdade de Engenharia, o tema de titulação é inscrito perante a chefia do curso
+  id: pt-parafrasis-022
+- id: pt-trampa-001
+  clase: trampa
+  documento: regulamento_reembolsos.md
+  par: pt-hermana-001
+  pregunta: Qual é o limite por prestação de contas para voluntários?
+- id: pt-trampa-002
+  clase: trampa
+  documento: regulamento_reembolsos.md
+  par: pt-hermana-001
+  pregunta: Qual é a diária para estagiários?
+- id: pt-trampa-003
+  clase: trampa
+  documento: regulamento_reembolsos.md
+  par: pt-hermana-001
+  pregunta: Quantos dias úteis têm os estagiários para recorrer da rejeição de um reembolso?
+- id: pt-trampa-004
+  clase: trampa
+  documento: garantia_equipamentos.md
+  par: pt-hermana-007
+  pregunta: Quantos meses dura a garantia para celulares?
+- id: pt-trampa-005
+  clase: trampa
+  documento: garantia_equipamentos.md
+  par: pt-hermana-007
+  pregunta: O que a garantia cobre para scanners?
+- id: pt-trampa-006
+  clase: trampa
+  documento: garantia_equipamentos.md
+  par: pt-hermana-007
+  pregunta: Onde atende o serviço técnico para servidores?
+- id: pt-trampa-007
+  clase: trampa
+  documento: regulamento_licencas.md
+  par: pt-hermana-013
+  pregunta: Quantos dias de licença são concedidos para a licença por mudança de residência?
+- id: pt-trampa-008
+  clase: trampa
+  documento: regulamento_licencas.md
+  par: pt-hermana-013
+  pregunta: Quem autoriza a licença por mudança de casa?
+- id: pt-trampa-009
+  clase: trampa
+  documento: manual_compras.md
+  par: pt-hermana-019
+  pregunta: Qual é o valor máximo para compras de aluguel de imóveis?
+- id: pt-trampa-010
+  clase: trampa
+  documento: manual_compras.md
+  par: pt-hermana-019
+  pregunta: Quantas cotações se exigem no mínimo para compras internacionais?
+- id: pt-trampa-011
+  clase: trampa
+  documento: protocolo_laboratorios.md
+  par: pt-hermana-025
+  pregunta: Qual é a lotação máxima do laboratório de astronomia?
+- id: pt-trampa-012
+  clase: trampa
+  documento: protocolo_laboratorios.md
+  par: pt-hermana-025
+  pregunta: Que equipamento de proteção é obrigatório no laboratório de geologia?
+- id: pt-trampa-013
+  clase: trampa
+  documento: politica_viagens.md
+  par: pt-hermana-031
+  pregunta: De quanto é a diária para viagens nacionais de trem?
+- id: pt-trampa-014
+  clase: trampa
+  documento: politica_viagens.md
+  par: pt-hermana-031
+  pregunta: Com quantos dias úteis de antecedência se solicita uma viagem de navio?
+- id: pt-trampa-015
+  clase: trampa
+  documento: regulamento_biblioteca_ciencias.md
+  par: pt-hermana-037
+  pregunta: Quantos dias dura o empréstimo de livros na Faculdade de Medicina?

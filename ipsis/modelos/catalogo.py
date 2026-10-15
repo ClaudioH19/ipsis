@@ -150,6 +150,34 @@ CATALOGO: dict[str, ModeloSpec] = {
             revision="4fd96cc3b19fd47e790cf923879b193d3ebf0bc9",
             archivos_onnx={"*": "onnx/model_quantized.onnx"}, max_tokens=384, pad_token_id=0,
         ),
+        ModeloSpec(
+            id_hf="cross-encoder/ms-marco-MiniLM-L6-v2",
+            tarea="reranker", licencia="Apache-2.0", parametros=22_700_000, idiomas="en",
+            revision="233902d25c440f23af6f7d6e94d2946bac0bee0a",
+            archivos_onnx={"x86_64": "onnx/model_quint8_avx2.onnx", "arm64": "onnx/model_qint8_arm64.onnx",
+                           "*": "onnx/model.onnx"},
+            max_tokens=512, pad_token_id=0,
+        ),
+        ModeloSpec(
+            id_hf="cross-encoder/ms-marco-MiniLM-L12-v2",
+            tarea="reranker", licencia="Apache-2.0", parametros=33_400_000, idiomas="en",
+            revision="7b0235231ca2674cb8ca8f022859a6eba2b1c968",
+            archivos_onnx={"x86_64": "onnx/model_quint8_avx2.onnx", "arm64": "onnx/model_qint8_arm64.onnx",
+                           "*": "onnx/model.onnx"},
+            max_tokens=512, pad_token_id=0,
+        ),
+        ModeloSpec(
+            id_hf="mixedbread-ai/mxbai-rerank-xsmall-v1",
+            tarea="reranker", licencia="Apache-2.0", parametros=70_800_000, idiomas="en",
+            revision="b5c6e9da73abc3711f593f705371cdbe9e0fe422",
+            archivos_onnx={"*": "onnx/model_quantized.onnx"}, max_tokens=512, pad_token_id=0,
+        ),
+        ModeloSpec(
+            id_hf="mixedbread-ai/mxbai-rerank-base-v1",
+            tarea="reranker", licencia="Apache-2.0", parametros=184_000_000, idiomas="en",
+            revision="800f24c113213a187e65bde9db00c15a2bb12738",
+            archivos_onnx={"*": "onnx/model_quantized.onnx"}, max_tokens=512, pad_token_id=0,
+        ),
     ]
 }
 

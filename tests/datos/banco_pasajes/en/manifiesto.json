@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "dataset_id": "pasajes_en",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "equipment_warranty.md",
+        "doc_id": "equipment-warranty"
+      },
+      {
+        "ruta": "graduation_rules_engineering.md",
+        "doc_id": "graduation-rules-engineering"
+      },
+      {
+        "ruta": "graduation_rules_science.md",
+        "doc_id": "graduation-rules-science"
+      },
+      {
+        "ruta": "laboratory_protocol.md",
+        "doc_id": "laboratory-protocol"
+      },
+      {
+        "ruta": "leave_rules.md",
+        "doc_id": "leave-rules"
+      },
+      {
+        "ruta": "library_rules_engineering.md",
+        "doc_id": "library-rules-engineering"
+      },
+      {
+        "ruta": "library_rules_science.md",
+        "doc_id": "library-rules-science"
+      },
+      {
+        "ruta": "purchasing_manual.md",
+        "doc_id": "purchasing-manual"
+      },
+      {
+        "ruta": "reimbursement_rules.md",
+        "doc_id": "reimbursement-rules"
+      },
+      {
+        "ruta": "travel_policy.md",
+        "doc_id": "travel-policy"
+      }
+    ],
+    "sha256": "5e08a6593dced3e50088d963315cfe79d5c8b5943fe68cbcc23a9a447439a1db"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "en"
+}

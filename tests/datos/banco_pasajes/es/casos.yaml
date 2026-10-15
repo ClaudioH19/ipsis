@@ -1,4 +1,4 @@
-# Banco de pasajes (fuente generada por generar_fuentes.py). La clase sale del id: segunda,
+# Banco de pasajes, es (fuente generada por generar_fuentes.py). La clase sale del id: segunda,
 # hermana, parafrasis y trampa. construir.py calcula evidencias, offsets y particiones.
 - clase: segunda
   documento: reglamento_reembolsos.md

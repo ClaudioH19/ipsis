@@ -17,10 +17,19 @@ from ipsis.ingesta.chunking import ESTRATEGIAS
 from ipsis.ingesta.parsear import parsear_documento
 
 BANCO = Path(__file__).resolve().parents[1] / "datos" / "banco_pasajes"
-PRINCIPALES = {
-    "reglamento-reembolsos", "garantia-equipos", "reglamento-permisos",
-    "manual-compras", "protocolo-laboratorios", "politica-viajes",
-}
+IDIOMAS = ("es", "en", "pt")
+
+
+def _generador():
+    spec = importlib.util.spec_from_file_location("banco_pasajes_generar", BANCO / "generar_fuentes.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def _principales(idioma):
+    """doc_id de los 6 documentos principales de ese idioma."""
+    return {Path(d["archivo"]).stem.replace("_", "-") for d in _generador().cargar_contenido(idioma).DOCS}
 
 
 def _construir():
@@ -30,22 +39,39 @@ def _construir():
     return modulo
 
 
-@pytest.fixture(scope="module")
-def banco():
-    return cargar_banco(BANCO / "es" / "manifiesto.json")
+@pytest.fixture(scope="module", params=IDIOMAS)
+def idioma(request):
+    return request.param
 
 
 @pytest.fixture(scope="module")
-def documentos(banco):
-    carpeta = BANCO / "es" / "corpus"
+def banco(idioma):
+    return cargar_banco(BANCO / idioma / "manifiesto.json")
+
+
+@pytest.fixture(scope="module")
+def documentos(banco, idioma):
+    carpeta = BANCO / idioma / "corpus"
     return {a.doc_id: parsear_documento(str(carpeta / a.ruta), doc_id=a.doc_id, doc_titulo=a.doc_id, version="1")
             for a in banco.manifiesto.corpus.archivos}
 
 
-def test_los_derivados_estan_al_dia():
-    manifiesto, casos = _construir().construir("es")
-    assert (BANCO / "es" / "manifiesto.json").read_text(encoding="utf-8") == manifiesto
-    assert (BANCO / "es" / "banco.jsonl").read_text(encoding="utf-8") == casos
+def test_los_derivados_estan_al_dia(idioma):
+    manifiesto, casos = _construir().construir(idioma)
+    assert (BANCO / idioma / "manifiesto.json").read_text(encoding="utf-8") == manifiesto
+    assert (BANCO / idioma / "banco.jsonl").read_text(encoding="utf-8") == casos
+
+
+def test_los_ids_llevan_el_idioma_y_las_fuentes_estan_al_dia(idioma, banco, tmp_path):
+    assert all(c.id.startswith(f"{idioma}-") for c in banco.casos)
+    gen = _generador()
+    # Regenerar en un directorio temporal produce las mismas fuentes que las versionadas.
+    gen.RAIZ = tmp_path
+    (tmp_path / f"contenido_{idioma}.py").write_text((BANCO / f"contenido_{idioma}.py").read_text(encoding="utf-8"),
+                                                      encoding="utf-8")
+    gen.generar(idioma)
+    for ruta in sorted((tmp_path / idioma / "corpus").glob("*.md")):
+        assert ruta.read_text(encoding="utf-8") == (BANCO / idioma / "corpus" / ruta.name).read_text(encoding="utf-8")
 
 
 def test_conteos_por_tipo(banco):
@@ -84,14 +110,14 @@ def test_la_respuesta_es_unica_en_su_documento(banco, documentos):
             assert texto.count(caso.respuesta_literal) == 1, caso.id
 
 
-def test_los_documentos_principales_son_largos(documentos):
-    for doc_id in PRINCIPALES:
+def test_los_documentos_principales_son_largos(documentos, idioma):
+    for doc_id in _principales(idioma):
         assert len(documentos[doc_id].texto_completo.split()) > 1500, doc_id
 
 
 def test_las_preguntas_de_segunda_mitad_caen_en_secciones_largas(banco, documentos):
     for caso in banco.casos:
-        if not caso.id.startswith("es-segunda-"):
+        if "-segunda-" not in caso.id:
             continue
         ev = caso.evidencias[0]
         doc = documentos[ev.doc_id]

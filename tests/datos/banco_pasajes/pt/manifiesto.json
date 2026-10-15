@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "dataset_id": "pasajes_pt",
+  "dataset_version": "1.0.0",
+  "tipo": "sintetico",
+  "estado": "estable",
+  "casos": "banco.jsonl",
+  "corpus": {
+    "directorio": "corpus",
+    "archivos": [
+      {
+        "ruta": "garantia_equipamentos.md",
+        "doc_id": "garantia-equipamentos"
+      },
+      {
+        "ruta": "manual_compras.md",
+        "doc_id": "manual-compras"
+      },
+      {
+        "ruta": "politica_viagens.md",
+        "doc_id": "politica-viagens"
+      },
+      {
+        "ruta": "protocolo_laboratorios.md",
+        "doc_id": "protocolo-laboratorios"
+      },
+      {
+        "ruta": "regulamento_biblioteca_ciencias.md",
+        "doc_id": "regulamento-biblioteca-ciencias"
+      },
+      {
+        "ruta": "regulamento_biblioteca_engenharia.md",
+        "doc_id": "regulamento-biblioteca-engenharia"
+      },
+      {
+        "ruta": "regulamento_licencas.md",
+        "doc_id": "regulamento-licencas"
+      },
+      {
+        "ruta": "regulamento_reembolsos.md",
+        "doc_id": "regulamento-reembolsos"
+      },
+      {
+        "ruta": "regulamento_titulacao_ciencias.md",
+        "doc_id": "regulamento-titulacao-ciencias"
+      },
+      {
+        "ruta": "regulamento_titulacao_engenharia.md",
+        "doc_id": "regulamento-titulacao-engenharia"
+      }
+    ],
+    "sha256": "8f40fe42ab1c2c98b32cd8ad5188ac88f7f393f5c9a42cb10509ae776bf29e2a"
+  },
+  "categorias_requeridas": [
+    "exacta",
+    "parafrasis",
+    "sin_respuesta"
+  ],
+  "uso": "regresion",
+  "idioma": "pt"
+}
