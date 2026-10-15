@@ -20,7 +20,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F2.1 | ✅ | 2026-10-15 | (ver git log) | `CH-F256S` medida: ver tabla. |
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
 | F2.3 | ✅ | 2026-10-15 | (ver git log) | Preparación estructural de Markdown medida: ver tabla. Habilita evaluar F2.4. |
-| F2.4 | ⬜ | | | Solo si F2.3 mejora. |
+| F2.4 | ✅ | 2026-10-15 | (ver git log) | `preparar_pdf` (outline o tamaño de letra, listas, avisos de OCR; escaneado sin OCR sigue rechazado). Medido con `banco_general` (abajo): la estructural ya indexa el corpus mixto md/pdf/docx/txt, que antes fallaba por el PDF. |
 | F3.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera extendida medida: ver tabla. |
 | F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |
 | F3.3 | ⬜ | | | Condicional. |
@@ -132,6 +132,26 @@ Dos opciones, de menor a mayor alcance. Ninguna cambia nada hasta que el usuario
 - **B. Solo `reranker_max_tokens: 512` y `CH-SEC`**: sin tocar la preparación, mismo formato y latencia que hoy
   (0,955 en `test`), pero también cambia el fragmentado y exige reindexar.
 - Mínimo y sin reindexar: solo `reranker_max_tokens: 512` (0,861 en `dev`, `medium`).
+
+## F2.4: preparación estructural con PDF (banco general)
+
+`tests/datos/banco_general/{bueno,medio,malo}` (12 preguntas respondibles cada uno, 4 documentos:
+Markdown, PDF, DOCX y texto), partición `todas`, legacy frente a `estructural_v1`. Antes de F2.4 la
+estructural no podía indexar este corpus por el PDF.
+
+| Calidad | Perfil | hit@1 legacy | hit@1 estructural | hit@3 | Ganados / perdidos |
+|---|---|---|---|---|---|
+| bueno | light | 1,000 | 0,917 | 1,000 | 0 / 1 (`logistica-2`, `.txt`: rango 2) |
+| bueno | medium | 1,000 | 1,000 | 1,000 | 0 / 0 |
+| medio | light | 1,000 | 1,000 | 1,000 | 0 / 0 |
+| medio | medium | 1,000 | 1,000 | 1,000 | 0 / 0 |
+| malo | light | 1,000 | 1,000 | 1,000 | 0 / 0 |
+| malo | medium | 1,000 | 1,000 | 1,000 | 0 / 0 |
+
+Este banco está saturado (un documento por tema, 12 preguntas): no puede mostrar mejoras, solo regresiones.
+No hubo ninguna en `medium`; en `light`/bueno un caso de un `.txt` bajó del rango 1 al 2, sin afectar hit@3.
+La latencia de `medium` bajó (p95 545 → 310 ms en "bueno"). Para el PDF en sí (outline, tamaño de letra,
+listas, escaneado) la evidencia son las pruebas unitarias; falta un corpus real con PDF largos.
 
 ## Hallazgos
 
