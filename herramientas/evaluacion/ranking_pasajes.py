@@ -70,6 +70,41 @@ def rango_correcto(items: list[tuple[str, int, int]], evidencias) -> int | None:
     return None
 
 
+class GrabadorCandidatos:
+    """Registra, por pregunta, los pasajes exactos que ve el reranker (en el orden híbrido) y si cada
+    uno toca una evidencia. Sirve para puntuar rerankers fuera del motor (``--volcar-candidatos``)."""
+
+    def __init__(self, ruta, maximo: int = 30):
+        self.ruta, self.maximo, self.caso, self.filas = Path(ruta), maximo, None, []
+
+    def envolver(self, puntuar_progresivo):
+        def grabando(candidatos, pregunta, reranker, opciones, **kw):
+            if self.caso is not None:
+                pendientes = [c for c in candidatos if c.signals.reranker_score is None][:self.maximo]
+                pasajes = []
+                for c in pendientes:
+                    vista = c.chunk.metadata.get("vista_reranking") or {}
+                    ini = vista.get("offset_inicio", c.chunk.offset_inicio)
+                    fin = vista.get("offset_fin", c.chunk.offset_fin)
+                    from ipsis.consulta.v2.resultados import texto_reranking
+
+                    pasajes.append({"doc_id": c.chunk.doc_id, "inicio": ini, "fin": fin,
+                                    "texto": texto_reranking(c),
+                                    "correcto": solapa(c.chunk.doc_id, ini, fin, self.caso.evidencias)})
+                self.filas.append({"id": self.caso.id, "split": self.caso.split,
+                                   "pregunta": self.caso.pregunta, "pasajes": pasajes})
+            return puntuar_progresivo(candidatos, pregunta, reranker, opciones, **kw)
+        return grabando
+
+    def guardar(self):
+        self.ruta.parent.mkdir(parents=True, exist_ok=True)
+        self.ruta.write_text("\n".join(json.dumps(f, ensure_ascii=False) for f in self.filas) + "\n",
+                             encoding="utf-8")
+
+
+GRABADOR: GrabadorCandidatos | None = None
+
+
 def observar_caso(motor, caso, k_hibrido: int | None = None) -> dict:
     """Pregunta ``caso.pregunta`` al motor v2 y devuelve ambos rangos y la latencia."""
     from ipsis.nucleo.esquemas import QueryAnalysis
@@ -80,6 +115,8 @@ def observar_caso(motor, caso, k_hibrido: int | None = None) -> dict:
     candidatos = motor.retriever.recuperar(consulta, k)
     hibrido = [(c.chunk.doc_id, c.chunk.offset_inicio, c.chunk.offset_fin) for c in candidatos]
     por_id = {c.chunk.chunk_id: (c.chunk.doc_id, c.chunk.offset_inicio, c.chunk.offset_fin) for c in candidatos}
+    if GRABADOR is not None:
+        GRABADOR.caso = caso
     inicio = time.perf_counter()
     resultado = motor.consultar(caso.pregunta, f"ranking:{caso.id}")
     latencia = (time.perf_counter() - inicio) * 1000
@@ -231,6 +268,12 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
                 raise RuntimeError("ipsis index falló")
             motor = construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
             observaciones = []
+            global GRABADOR
+            if args.volcar_candidatos:
+                import ipsis.consulta.v2.motor as motor_v2
+
+                GRABADOR = GrabadorCandidatos(args.volcar_candidatos)
+                motor_v2.puntuar_progresivo = GRABADOR.envolver(motor_v2.puntuar_progresivo)
             try:
                 motor.calentar()
                 casos = [c for c in banco.casos if c.respondible and args.particion in (c.split, "todas")]
@@ -238,6 +281,8 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
                     observaciones.append(observar_caso(motor, caso))
             finally:
                 motor.cerrar()
+                if GRABADOR is not None:
+                    GRABADOR.guardar()
         finally:
             os.chdir(anterior)
     return observaciones, configuracion
@@ -259,6 +304,8 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--modo", choices=["vectorial", "hibrida", "dispersa"],
                    help="retrieval.mode: solo vector denso, híbrido (por defecto) o solo BM25")
     p.add_argument("--modelo-denso")
+    p.add_argument("--volcar-candidatos", dest="volcar_candidatos",
+                   help="escribe en este JSONL los pasajes que ve el reranker, para puntuarlos fuera del motor")
     p.add_argument("--modelo-reranker", dest="modelo_reranker", help="id del reranker del catálogo (solo medium)")
     p.add_argument("--rerank-candidatos", type=int, dest="rerank_candidatos",
                    help="v2.rerank_candidates: cuántos candidatos del recuperador puntúa el reranker")
