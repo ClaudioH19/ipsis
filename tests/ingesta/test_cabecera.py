@@ -120,3 +120,17 @@ def test_la_opcion_se_acepta_en_la_configuracion_con_su_nombre_publico():
     cfg = RecuperacionConfig(estrategia_chunking="CH-F256", coleccion_base="c", detalle_cabecera="extendido")
     assert cfg.detalle_cabecera == "extendido"
     assert RecuperacionConfig(estrategia_chunking="CH-F256", coleccion_base="c").detalle_cabecera == "basico"
+
+
+def test_la_huella_del_corpus_cambia_con_la_cabecera_y_no_sin_ella(idioma, tmp_path, monkeypatch):
+    from ipsis.indice.manifiesto import hash_corpus
+
+    idioma("es")
+    _, (_, basicos) = _payloads(tmp_path, monkeypatch, "basico")
+    _, (_, extendidos) = _payloads(tmp_path, monkeypatch, "extendido")
+    doc = parsear_documento(str(tmp_path / "doc.md"), doc_id="d", doc_titulo="Manual", version="1")
+    _, sin_cabecera = ing.construir_chunks_y_payloads([doc], "CH-SEC", False, cargar_taxonomia())
+    solo_texto = hash_corpus([{"hash_texto": p["hash_texto"]} for p in sin_cabecera])
+    assert hash_corpus(sin_cabecera) == solo_texto  # configuración por defecto: huella intacta
+    assert hash_corpus(basicos) != solo_texto  # activar la cabecera invalida la calibración
+    assert hash_corpus(extendidos) != hash_corpus(basicos)  # y también enriquecerla

@@ -48,3 +48,32 @@ def test_compatibilidad():
     assert es_compatible(manifiesto, "intfloat/multilingual-e5-small", "spanish")
     assert not es_compatible(manifiesto, "intfloat/multilingual-e5-base")
     assert not es_compatible(manifiesto, "intfloat/multilingual-e5-small", "english")
+
+
+def _p(texto, embebido=None):
+    import hashlib
+
+    p = {"hash_texto": "sha256:" + hashlib.sha256(texto.encode()).hexdigest(), "texto": texto}
+    if embebido is not None:
+        p["texto_embebido"] = embebido
+    return p
+
+
+def test_sin_cabecera_la_huella_no_cambia_con_texto_embebido_igual_al_texto():
+    # Misma huella que antes de incluir el texto embebido: las calibraciones existentes siguen valiendo.
+    antiguo = [{"hash_texto": p["hash_texto"]} for p in (_p("uno"), _p("dos"))]
+    nuevo = [_p("uno", "uno"), _p("dos", "dos")]
+    assert hash_corpus(nuevo) == hash_corpus(antiguo) == hash_corpus([_p("uno"), _p("dos")])
+
+
+def test_activar_la_cabecera_cambia_la_huella():
+    sin = [_p("uno", "uno"), _p("dos", "dos")]
+    con = [_p("uno", "Documento: D | Sección: S\nuno"), _p("dos", "Documento: D | Sección: S\ndos")]
+    assert hash_corpus(con) != hash_corpus(sin)
+
+
+def test_cambiar_la_cabecera_cambia_la_huella():
+    a = [_p("uno", "Documento: D | Sección: S\nuno")]
+    b = [_p("uno", "Documento: D | Sección: S\nContiene: plazo\nuno")]
+    assert hash_corpus(a) != hash_corpus(b)
+    assert hash_corpus(a) == hash_corpus([_p("uno", "Documento: D | Sección: S\nuno")])

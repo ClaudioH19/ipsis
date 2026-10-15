@@ -16,7 +16,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F1.2 | ⬜ | | | |
 | F1.3 | ⬜ | | | |
 | F1.4 | ⬜ | | | |
-| F1.5 | ⚠ | | | Decidir (a) o (b). |
+| F1.5 | ✅ | 2026-10-15 | (ver git log) | Opción (b) aprobada por el usuario: `hash_corpus` legacy incluye `texto_embebido` solo si difiere de `texto`. 4 pruebas en `tests/indice/test_manifiesto.py` y 1 en `tests/ingesta/test_cabecera.py`. Un índice hecho antes con `with_header: true` muestra otra huella y conviene reindexarlo. La regla 9 de las tareas queda resuelta: ya no hace falta correr los experimentos sin calibración. |
 | F2.1 | 🔶 | 2026-10-15 | (ver git log) | `CH-F256S` implementada y probada (16 pruebas nuevas). Sobre el corpus del banco de pasajes: `CH-F256` 97 fragmentos, 56 cruzan sección, máx. 307 palabras; `CH-F256S` 122 fragmentos, 0 cruzan, máx. 255. Falta `MEDIR` en `dev` frente a F0.4/F1 (sin modelos en este entorno). |
 | F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
 | F2.3 | 🔶 | 2026-10-15 | (ver git log) | `preparar_markdown` y `preparar_texto` (reutilizan `parsear_markdown`/`parsear_texto_plano`), despacho por extensión, huella con la versión de cada parser, `ipsis prepare` y la ingesta estructural funcionan sobre `.md` (9 pruebas). Falta `MEDIR` con `preparacion.modo: estructural_v1` en `dev` (sin modelos). Además corregí que `hash_archivos` del manifiesto omitía `header_detail` (F3.1). |

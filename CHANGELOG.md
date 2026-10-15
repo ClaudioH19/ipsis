@@ -20,6 +20,13 @@ a minor change may break compatibility and is marked as such.
   bank corpus `CH-F256` produces 56 of 97 fragments that span more than one
   section; `CH-F256S` produces none.
 
+### Changed
+
+- The corpus fingerprint (`hash_corpus`) of legacy indexes now includes the embedded text when it
+  differs from the cited text (contextual header on), so changing the header invalidates an older
+  calibration. Projects without a header keep the same fingerprint and their calibration. An index
+  built earlier with `with_header: true` reports a different fingerprint and should be rebuilt.
+
 ### Fixed
 
 - The index manifest fingerprint now includes `header_detail`, so an index built with the extended
