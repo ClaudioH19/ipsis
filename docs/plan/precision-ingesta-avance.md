@@ -8,7 +8,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
-| F0.1 | ⚠ | | | Preguntar si hay corpus real con preguntas. |
+| F0.1 | ✅ | 2026-10-15 | (ver commit) | Usuario sin corpus real: banco sintético en `tests/datos/banco_pasajes` (116 respondibles + 15 trampas, 10 documentos). |
 | F0.2 | ⬜ | | | |
 | F0.3 | ⬜ | | | Requiere modelos en caché. |
 | F0.4 | ⬜ | | | Requiere modelos. |
