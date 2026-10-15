@@ -136,7 +136,9 @@ tras la recuperación híbrida y en el orden final que publica v2, con hit@1/3/5
 y latencia por perfil. Indexa en un proyecto temporal y admite cambiar una opción
 de ingesta por corrida (`--con-cabecera`, `--estrategia`, `--preparacion`,
 `--reranker-max-tokens`, `--modelo-denso`) y comparar con `--comparar`. Requiere
-modelos en caché. Detalle: [plan de precisión desde la ingesta](../../docs/plan/precision-ingesta-tareas.md).
+modelos en caché. Desde que `ipsis init` escribe la preparación estructural, la corrida sin flags mide
+*esa* configuración: para medir el fragmentado de tamaño fijo hay que pasar `--preparacion legacy`
+(`--estrategia` y `--con-cabecera` no tienen efecto en modo estructural). Detalle: [plan de precisión desde la ingesta](../../docs/plan/precision-ingesta-tareas.md).
 
 ```bash
 python herramientas/evaluacion/ranking_pasajes.py tests/datos/banco_pasajes/es/manifiesto.json \

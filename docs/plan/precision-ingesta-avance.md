@@ -153,6 +153,33 @@ No hubo ninguna en `medium`; en `light`/bueno un caso de un `.txt` bajó del ran
 La latencia de `medium` bajó (p95 545 → 310 ms en "bueno"). Para el PDF en sí (outline, tamaño de letra,
 listas, escaneado) la evidencia son las pruebas unitarias; falta un corpus real con PDF largos.
 
+## Banco adversarial con documentos reales (formal e informal)
+
+Tres documentos institucionales reales (un reglamento de prácticas con tablas P1/P2 y dos versiones de una
+rúbrica), que **no** están en el repositorio. 28 objetivos, cada uno con una pregunta formal y otra informal
+(`pa que semana tengo q subir el portfolio?`), 56 preguntas: pares P1/P2 (misma estructura, otra columna u otro
+artículo), reglas sueltas y la rúbrica. Partición `todas` (exploratoria, no se ajustó nada mirándola).
+hit@1 / hit@3 del orden final en `medium`; legacy = `CH-F256` fijado con `--preparacion legacy`.
+
+| Configuración | Formal | Informal | Pares P1/P2 | Reglas | Rúbrica | Todo | p95 ms |
+|---|---|---|---|---|---|---|---|
+| legacy `CH-F256` | 0,64 / 0,82 | 0,43 / 0,75 | 0,38 / 0,74 | 0,79 / 0,86 | 0,75 / 0,88 | 0,54 / 0,79 | 2 388 |
+| legacy + reranker 512 | 0,64 / 0,89 | 0,36 / 0,79 | 0,35 / 0,76 | 0,86 / 1,00 | 0,50 / 0,88 | 0,50 / 0,84 | 2 444 |
+| legacy `CH-SEC` + 512 | 0,61 / 0,75 | 0,43 / 0,75 | 0,29 / 0,62 | 0,86 / 1,00 | 0,88 / 0,88 | 0,52 / 0,75 | 2 572 |
+| legacy `CH-F256S` | 0,57 / 0,75 | 0,39 / 0,57 | 0,26 / 0,47 | 0,86 / 1,00 | 0,75 / 0,88 | 0,48 / 0,66 | 2 415 |
+| **estructural** | **0,89 / 1,00** | **0,68 / 0,82** | **0,68 / 0,88** | **1,00 / 1,00** | 0,88 / 0,88 | **0,79 / 0,91** | **1 431** |
+
+En `light`: legacy 0,48 (formal 0,68, informal 0,29), estructural 0,71 (formal 0,82, informal 0,61).
+
+- Con preguntas difíciles y coloquiales **la ventaja de la estructural es mayor** que en los otros bancos
+  (0,54 → 0,79 en `medium`) y las alternativas de fragmentado fijo no la igualan; ahí el reranker a 512 no ayuda.
+- Lo coloquial cuesta mucho: informal 0,68 frente a formal 0,89 incluso con la estructural. Los fallos restantes
+  son sobre todo informales con brecha léxica (`cuanto vale la bitacora en la nota final` frente a
+  «Ponderación»; hit@1 híbrido en rango 15 y 25), y dos pares P1/P2 donde el reranker baja al rango 2 el artículo
+  correcto. Eso es vocabulario, no fragmentado: corresponde al plan de sinónimos y de intención (V4).
+- Nota metodológica: una primera corrida salió idéntica en todas las configuraciones porque `ipsis init` ya
+  escribía la preparación estructural y `--estrategia` se ignora en ese modo; se repitió con `--preparacion legacy`.
+
 ## Hallazgos
 
 - 2026-10-15: desde el entorno de nube usado para el análisis no se pudo
