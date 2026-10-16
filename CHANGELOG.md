@@ -23,14 +23,13 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
-- **Widget search experience** (visual only; no change to ranking). While a search runs, skeleton cards take the
-  place of the results: a highlighter sweeps their lines as if Folio were reading, and a status line moves through
-  "reading / comparing / sorting" (`search_stage_*` messages in es/en/pt). Results then enter one at a time, each
-  title marked as it lands; "show more results" adds a single skeleton card below the list. The search box has a
-  clear button (`clear_input`) and a larger touch target, the guidance area is a card with an accent rail and pill
-  buttons, and the chips, "read full context" and "more results" controls are larger and clearer. It respects
-  `prefers-reduced-motion` and `animations.enabled: false`. Chosen from four prototypes (scan, leafing,
-  highlighter, paper plane).
+- **Widget search experience** (visual only; no change to ranking). While a search runs, grey "sheet" skeleton
+  cards fall into place one after another in the results area, with a status line that moves through
+  "reading / comparing / sorting" (`search_stage_*` messages in es/en/pt). The results then enter one at a time
+  like sheets landing; "show more results" adds a single skeleton card below the list. The search box has a
+  clear button (`clear_input`) and a larger touch target, and the chips, "read full context" and "more results"
+  controls are larger and clearer. It respects `prefers-reduced-motion` and `animations.enabled: false`.
+  Chosen from four prototypes (scan, leafing, highlighter, paper plane): the leafing one.
 - **Reranker per language in `medium`**: Spanish and Portuguese projects (v2) use `bge-reranker-v2-m3` scoring 10
   candidates; other languages keep the multilingual mMiniLM. The profile declares it
   (`language_rerankers`, `language_rerank_candidates`); a project that sets `profile_overrides.models.reranker`

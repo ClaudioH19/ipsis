@@ -683,20 +683,6 @@
     ".rw-form .rw-enviar:disabled{box-shadow:none;}",
     ".rw-panel[data-modo='busqueda'] .rw-form{padding-block:12px;}",
     ".rw-panel[data-modo='busqueda'] .rw-form input{background:var(--rw-fondo);}",
-    // Orientación de ipsis: tarjeta con acento, no una franja de texto.
-    ".rw-voz{padding:8px var(--rw-separacion) 2px;border-bottom:0;background:var(--rw-fondo);}",
-    ".rw-voz-tarjeta{padding:6px 11px 8px;background:var(--rw-superficie);border:1px solid var(--rw-borde);",
-    "  border-inline-start:3px solid var(--rw-acento);border-radius:var(--rw-radio-control);",
-    "  box-shadow:0 1px 2px rgba(16,24,40,.05);}",
-    ".rw-voz h3{display:flex;align-items:center;gap:6px;}",
-    ".rw-voz h3::before{content:'';flex:none;width:7px;height:7px;border-radius:50%;background:var(--rw-vivo);}",
-    ".rw-voz-texto{margin-top:3px;font-size:calc(var(--rw-tamano-cita) + .5px);color:var(--rw-texto);}",
-    ".rw-voz-menu summary,.rw-voz button{display:inline-flex;align-items:center;min-height:26px;padding:2px 10px;border:1px solid var(--rw-borde);",
-    "  border-radius:99px;background:var(--rw-fondo);color:var(--rw-texto-suave);font-size:var(--rw-tamano-etiqueta);font-weight:600;",
-    "  list-style:none;cursor:pointer;transition:border-color var(--rw-dur-control) ease,color var(--rw-dur-control) ease;}",
-    ".rw-voz-menu summary::-webkit-details-marker{display:none;}",
-    ".rw-voz-menu summary:hover,.rw-voz button:hover{border-color:var(--rw-acento);color:var(--rw-acento);}",
-    ".rw-voz-menu summary:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
     // Botones y chips.
     ".rw-sugerencias button{min-height:40px;padding:9px 14px;border-radius:99px;box-shadow:0 1px 2px rgba(16,24,40,.05);",
     "  transition:border-color var(--rw-dur-control) ease,transform var(--rw-dur-control) ease,box-shadow var(--rw-dur-control) ease;}",
@@ -734,38 +720,34 @@
     ".rw-busqueda details > summary:hover{background:color-mix(in srgb,var(--rw-acento) 12%,var(--rw-superficie));border-color:var(--rw-acento);}",
     ".rw-busqueda details[open]{border-left:0;padding-left:0;}",
     ".rw-busqueda details[open] > .rw-resultado-contexto{margin-top:12px;padding-inline-start:12px;border-inline-start:2px solid var(--rw-borde-resultado);}",
-    // Carga secuencial: cada resultado entra a su turno y su título se marca.
+    // Carga secuencial: cada resultado entra a su turno, como una hoja que cae.
     ".rw-busqueda .rw-resultado{animation-delay:calc(var(--rw-i,0) * 320ms);}",
-    "@keyframes rw-resultados-entrar{0%{opacity:0;transform:translateY(-16px) rotate(-1.2deg) scale(.985);}",
-    "  60%{opacity:1;transform:translateY(2px) rotate(.2deg);}100%{opacity:1;transform:none;}}",
-    ".rw-busqueda .rw-resultado-marca{background-image:linear-gradient(color-mix(in srgb,var(--rw-acento) 20%,transparent),color-mix(in srgb,var(--rw-acento) 20%,transparent));",
-    "  background-repeat:no-repeat;background-position:0 88%;background-size:0% 46%;-webkit-box-decoration-break:clone;box-decoration-break:clone;",
-    "  animation:rw-marcar .7s ease-out both;animation-delay:calc(var(--rw-i,0) * 320ms + 280ms);}",
-    "@keyframes rw-marcar{from{background-size:0% 46%;}to{background-size:100% 46%;}}",
-    // Esqueleto de búsqueda: un marcador recorre los renglones, como si Folio leyera.
+    "@keyframes rw-resultados-entrar{0%{opacity:0;transform:translateY(-22px) rotate(-1.8deg) scale(.98);}",
+    "  60%{opacity:1;transform:translateY(2px) rotate(.3deg);}100%{opacity:1;transform:none;}}",
+    // Esqueleto de búsqueda: hojas grises que llegan una tras otra.
     ".rw-esqueleto{padding:2px 0 0;}",
     ".rw-esqueleto-estado{display:flex;align-items:center;gap:8px;min-height:20px;margin:0 2px 14px;font-size:calc(var(--rw-tamano-cita) + .5px);color:var(--rw-texto-suave);}",
     ".rw-esqueleto-estado i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--rw-acento);animation:rw-pulso-esq 1s ease-in-out infinite;}",
     "@keyframes rw-pulso-esq{0%,100%{transform:scale(.7);opacity:.5;}50%{transform:scale(1.25);opacity:1;}}",
-    ".rw-esq-tarjeta{border:1px solid var(--rw-borde-resultado);border-radius:var(--rw-radio-resultado);background:var(--rw-superficie-resultado);",
-    "  padding:var(--rw-relleno-resultado);margin:0 0 var(--rw-separacion-resultado);}",
-    ".rw-esq-l{display:block;height:9px;margin:0 0 8px;border-radius:5px;background-color:var(--rw-borde);",
-    "  background-image:linear-gradient(color-mix(in srgb,var(--rw-acento) 55%,transparent),color-mix(in srgb,var(--rw-acento) 55%,transparent));",
-    "  background-repeat:no-repeat;background-size:0% 100%;animation:rw-marca-esq 3.2s ease-in-out infinite;}",
-    ".rw-esq-n{width:22px;height:22px;border-radius:99px;margin-bottom:10px;}",
+    ".rw-esq-tarjeta{position:relative;border:1px solid var(--rw-borde-resultado);border-radius:var(--rw-radio-resultado);background:var(--rw-superficie-resultado);",
+    "  padding:var(--rw-relleno-resultado);margin:0 0 var(--rw-separacion-resultado);transform-origin:50% 0;",
+    "  animation:rw-hoja 2.4s cubic-bezier(.16,1,.3,1) infinite both;}",
+    ".rw-esq-tarjeta:nth-of-type(2){animation-delay:.35s;}",
+    ".rw-esq-tarjeta:nth-of-type(3){animation-delay:.7s;}",
+    ".rw-esq-tarjeta::before{content:'';position:absolute;top:-1px;inset-inline-end:-1px;width:22px;height:22px;",
+    "  border-start-end-radius:var(--rw-radio-resultado);border-end-start-radius:8px;",
+    "  background:linear-gradient(225deg,var(--rw-fondo) 50%,var(--rw-borde-resultado) 50%);box-shadow:-2px 2px 4px rgba(0,0,0,.08);}",
+    "@keyframes rw-hoja{0%{opacity:0;transform:translateY(-34px) rotate(-4deg) scale(.95);}",
+    "  22%{opacity:1;transform:translateY(2px) rotate(.6deg);}34%,82%{opacity:1;transform:none;}100%{opacity:0;transform:translateY(8px);}}",
+    ".rw-esq-l{display:block;height:9px;margin:0 0 8px;border-radius:5px;background:var(--rw-borde);}",
+    ".rw-esq-n{width:20px;height:20px;border-radius:5px;margin-bottom:10px;background:transparent;border:1px solid var(--rw-borde);}",
     ".rw-esq-t{height:14px;width:70%;margin-bottom:12px;}",
     ".rw-esq-s{width:34%;height:8px;}",
     ".rw-esq-w1{width:100%;}.rw-esq-w2{width:92%;}.rw-esq-w3{width:58%;}",
-    ".rw-esq-tarjeta:nth-of-type(1) .rw-esq-w1{animation-delay:0s;}.rw-esq-tarjeta:nth-of-type(1) .rw-esq-w2{animation-delay:.35s;}",
-    ".rw-esq-tarjeta:nth-of-type(2) .rw-esq-w1{animation-delay:.8s;}.rw-esq-tarjeta:nth-of-type(2) .rw-esq-w2{animation-delay:1.15s;}",
-    ".rw-esq-tarjeta:nth-of-type(3) .rw-esq-w1{animation-delay:1.6s;}.rw-esq-tarjeta:nth-of-type(3) .rw-esq-w2{animation-delay:1.95s;}",
-    ".rw-esq-t,.rw-esq-s,.rw-esq-w3{animation-delay:.2s;}",
-    "@keyframes rw-marca-esq{0%{background-size:0% 100%;}35%,70%{background-size:100% 100%;}100%{background-size:0% 100%;}}",
     ".rw-mensajes.rw-buscando .rw-busqueda{opacity:1;}",
     ".rw-mensajes.rw-buscando .rw-busqueda .rw-resultados{opacity:.55;transition:opacity var(--rw-dur-control) ease;}",
-    ".rw-panel[data-animaciones='false'] .rw-esq-l,.rw-panel[data-animaciones='false'] .rw-esqueleto-estado i,",
-    ".rw-panel[data-animaciones='false'] .rw-resultado-marca{animation:none;}",
-    "@media(prefers-reduced-motion:reduce){.rw-esq-l,.rw-esqueleto-estado i,.rw-busqueda .rw-resultado-marca,.rw-busqueda .rw-resultado,",
+    ".rw-panel[data-animaciones='false'] .rw-esq-tarjeta,.rw-panel[data-animaciones='false'] .rw-esqueleto-estado i{animation:none;}",
+    "@media(prefers-reduced-motion:reduce){.rw-esq-tarjeta,.rw-esqueleto-estado i,.rw-busqueda .rw-resultado,",
     "  .rw-sugerencias button{animation:none;transition:none;}}",
 
     // Teléfono (o apaisado bajo): hoja a pantalla completa. La altura sigue al
@@ -1267,10 +1249,7 @@
   });
   textoVoz.id = "rw-voz-texto";
   completarVoz.setAttribute("aria-controls", textoVoz.id);
-  var tarjetaVoz = document.createElement("div");
-  tarjetaVoz.className = "rw-voz-tarjeta";
-  tarjetaVoz.append(cabeceraVoz, textoVoz);
-  espacioVoz.append(tarjetaVoz, anuncioVoz);
+  espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz);
 
   function voz(categoria, repuesto) {
     var opciones = BANCO_VOZ[categoria];
@@ -1598,10 +1577,7 @@
       var titulo = document.createElement("button");
       titulo.type = "button";
       titulo.className = "rw-resultado-titulo";
-      var marca = document.createElement("span");
-      marca.className = "rw-resultado-marca";
-      marca.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
-      titulo.appendChild(marca);
+      titulo.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
       encabezado.appendChild(titulo);
       item.appendChild(encabezado);
       if (PRESENTACION.mostrarRuta && secciones.length > 1) {
