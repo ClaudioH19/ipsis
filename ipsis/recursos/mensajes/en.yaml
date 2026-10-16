@@ -1157,3 +1157,25 @@ progress:
   stage_descarga: "Downloading {modelo}"
   stage_verificar_modelo: "Testing {modelo}"
   stage_exportacion: "Exporting {modelo} to ONNX"
+media:
+  invalid_id: "{id!r} is not a valid id: use lowercase letters, digits and hyphens (the file name without .yaml)"
+  not_object: the file must be a YAML mapping
+  unreadable: 'cannot read the file: {error}'
+  unknown_key: 'unknown key {key!r}'
+  transcript_unsupported: "'transcript' is not supported yet: remove it"
+  required: '{field} is required'
+  invalid_text: '{field} must be a non-empty text'
+  invalid_kind: "kind must be 'video' or 'audio'"
+  source_exactly_one: "set exactly one of 'url' or 'file'"
+  url_not_https: "url must start with https://"
+  file_outside: "file must be a path inside files/ (for example files/video.mp4), without '..'"
+  file_missing: 'file {file!r} does not exist in the media folder'
+  invalid_keywords: keywords must be a list of non-empty texts
+  invalid_language: "language must be a language code such as 'es', 'en' or 'pt-br'"
+  invalid_version: version must be a text or a number
+  invalid_time: '{field} must be a time like "14:32" or "01:14:32" (put it in quotes)'
+  invalid_active: active must be true or false
+  invalid_chapters: "chapters must be a list of entries with 'at' and 'title'"
+  chapter_not_object: "chapters[{n}] must be a mapping with 'at' and 'title'"
+  chapter_order: 'chapters[{n}].at must be later than the previous chapter'
+  chapter_after_duration: 'chapters[{n}].at is not before the duration'

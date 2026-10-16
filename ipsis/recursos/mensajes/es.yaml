@@ -1157,3 +1157,25 @@ progress:
   stage_descarga: "Descargando {modelo}"
   stage_verificar_modelo: "Probando {modelo}"
   stage_exportacion: "Exportando {modelo} a ONNX"
+media:
+  invalid_id: "{id!r} no es un id válido: usa minúsculas, dígitos y guiones (el nombre del archivo sin .yaml)"
+  not_object: el archivo debe ser un mapa YAML
+  unreadable: 'no se puede leer el archivo: {error}'
+  unknown_key: 'clave desconocida {key!r}'
+  transcript_unsupported: "'transcript' aún no se admite: quítalo"
+  required: '{field} es obligatorio'
+  invalid_text: '{field} debe ser un texto no vacío'
+  invalid_kind: "kind debe ser 'video' o 'audio'"
+  source_exactly_one: "indica exactamente uno de 'url' o 'file'"
+  url_not_https: "url debe empezar con https://"
+  file_outside: "file debe ser una ruta dentro de files/ (por ejemplo files/video.mp4), sin '..'"
+  file_missing: 'el archivo {file!r} no existe en la carpeta media'
+  invalid_keywords: keywords debe ser una lista de textos no vacíos
+  invalid_language: "language debe ser un código de idioma como 'es', 'en' o 'pt-br'"
+  invalid_version: version debe ser un texto o un número
+  invalid_time: '{field} debe ser un tiempo como "14:32" o "01:14:32" (ponlo entre comillas)'
+  invalid_active: active debe ser true o false
+  invalid_chapters: "chapters debe ser una lista de entradas con 'at' y 'title'"
+  chapter_not_object: "chapters[{n}] debe ser un mapa con 'at' y 'title'"
+  chapter_order: 'chapters[{n}].at debe ser posterior al capítulo anterior'
+  chapter_after_duration: 'chapters[{n}].at no es anterior a la duración'
