@@ -11,7 +11,7 @@ your first project. Everyday use and the command reference are in
 - Disk space for the profile's models. It is a global per-user cache shared
   by every project:
 
-  | Profile | Models | Approx. disk | p95 target |
+  | Profile | Models | Approx. disk | p95 target (`ipsis benchmark`) |
   |---|---|---|---|
   | `light` | dense e5-small | 0.5 GB | 150 ms |
   | `medium` | e5-small + reranker (bge-reranker-v2-m3 for Spanish and Portuguese, mMiniLM otherwise) | 1.0 GB (Spanish, Portuguese) · 0.6 GB (other languages) | 1 s |
@@ -25,7 +25,10 @@ your first project. Everyday use and the command reference are in
   Measured latency of a whole `medium` query (v2; synthetic passage bank, 116 questions, 4 CPUs of an Intel Xeon
   2.1 GHz, 2026-10-16): Spanish with bge-reranker-v2-m3, p50 604 ms and p95 749 ms; English with mMiniLM,
   p50 349 ms and p95 620 ms. That bank has short passages: with real Spanish documents the p95 was 1.7 s (see
-  [ADR 0003](../decisions/0003-onnx-and-profiles.md)). The v2 budget is `v2.query_budget_ms` (2500 ms).
+  [ADR 0003](../decisions/0003-onnx-and-profiles.md)).
+  The "p95 target" is the profile's `p95_budget_ms`: the reference `ipsis benchmark` uses to mark whether a
+  profile meets its latency, shown also by `ipsis profile` and the panel. The default engine (v2) does not apply
+  it to queries: a v2 query is bounded by `v2.query_budget_ms` (2500 ms), the same for both profiles.
   `medium` is the recommended default for `ipsis init`.
 - Network only to download the models. Afterwards the service works offline.
 

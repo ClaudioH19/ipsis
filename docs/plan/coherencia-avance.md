@@ -7,7 +7,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | C1 | ✅ | 2026-10-16 | (ver git log) | 7 pruebas nuevas en `tests/test_documentacion.py` (28 casos con las existentes); 12 casos `xfail(strict=True)` que la tarea indicada debe quitar. Detalle abajo. |
-| C2 | 🔶 | 2026-10-16 | (ver git log) | Hecho: tablas de perfiles (README e instalación, EN/ES), tamaños medidos, `medium.yaml::description`, `--perfil heavy`, nota en ADR 0003 y `xfail` de perfiles quitado. Pendiente: ⚠ presupuesto de `medium` (celda «p95 objetivo») y cifra de latencia medida. Ver «C2» abajo. |
+| C2 | ✅ | 2026-10-16 | (ver git log) | Tablas de perfiles, tamaños y latencia medidos, descripción del perfil, `heavy` fuera de `ranking_pasajes.py`, nota en ADR 0003. Decisiones del usuario: presupuesto = opción (a) (solo documentar); sin ADR 0010. Ver «C2» abajo. |
 | C3 | ⬜ | | | |
 | C4 | ⬜ | | | |
 | C5 | ⬜ | | | |
@@ -64,7 +64,7 @@ Ninguna lleva la marca `modelos(...)`, así que no se omiten cuando la caché es
 plan). Con el modelo descargado (`ipsis models download --profile light`) deberían pasar; si no se puede descargar,
 anotarlo como ⛔ y no como regresión.
 
-## C2: perfiles, modelos y cifras (en curso)
+## C2: perfiles, modelos y cifras
 
 **Hecho.** Tablas de perfiles de `README.md`, `README.es.md`, `docs/guide/installation.md` y
 `docs/es/guia/instalacion.md`: `medium` = e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en
@@ -100,10 +100,16 @@ midió) y la de inglés con documentos reales (no hay).
 `heavy` (I13). ADR 0003: nota de que la tabla de «1 s» es de v1. **No se creó un ADR 0010**: el ADR 0003 ya tiene la
 sección «Update 2026-10-15: reranker per language» con sus mediciones; ⚠ confirmar con el usuario.
 
-**Pendiente (⚠).** La columna «p95 objetivo» de las guías de instalación sigue en «1 s» para `medium`: es el
-`p95_budget_ms` de v1; v2 se rige por `v2.query_budget_ms` (2500) y el panel muestra el de v1
-(`ipsis/aplicacion/panel.py:143`). Opciones: (a) solo documentarlo; (b) que el panel muestre el de v2 (cambio de código).
-Recomendación: (a). No se tocó la celda hasta recibir respuesta.
+**Decisiones del usuario (2026-10-16).** (1) Presupuesto de `medium`: **opción (a)**, solo documentación. La columna
+pasa a llamarse «p95 objetivo (`ipsis benchmark`)` y las guías de instalación explican que `p95_budget_ms` es la
+referencia con que `ipsis benchmark` marca si un perfil cumple (también lo muestran `ipsis profile` y el panel), que v2
+no lo aplica a las consultas y que una consulta v2 se acota con `v2.query_budget_ms` (2500 ms) para los dos perfiles.
+El código no cambió. (2) No se crea un ADR 0010: lo cubre la sección «Update 2026-10-15» del ADR 0003.
+
+**Observación (no es de este plan).** Como `ipsis benchmark` compara contra `p95_budget_ms` (1000 ms en `medium`), su
+columna «Meets» seguirá marcando que `medium` no cumple con documentos reales (p95 de 1,7 s) aunque dentro de v2 sí
+cabe en 2500 ms. Si se quiere que el benchmark use el presupuesto de v2, es un cambio de código aparte (la opción (b)
+descartada).
 
 **Entorno.** Con los modelos descargados, las dos fallas de la suite de C1 (`test_crear_app_aisla_estado…` y
 `test_portabilidad_init_cargar_indexar_subprocesos`) pasan: era solo la caché vacía.

@@ -11,7 +11,7 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 - Disco para los modelos del perfil. Es una caché global por usuario, que
   comparten todos los proyectos:
 
-  | Perfil | Modelos | Disco aprox. | p95 objetivo |
+  | Perfil | Modelos | Disco aprox. | p95 objetivo (`ipsis benchmark`) |
   |---|---|---|---|
   | `light` | denso e5-small | 0,5 GB | 150 ms |
   | `medium` | e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en otros idiomas) | 1,0 GB (español, portugués) · 0,6 GB (otros idiomas) | 1 s |
@@ -24,7 +24,10 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
   Latencia medida de una consulta completa de `medium` (v2; banco sintético de pasajes, 116 preguntas, 4 CPU de un
   Intel Xeon a 2,1 GHz, 2026-10-16): español con bge-reranker-v2-m3, p50 604 ms y p95 749 ms; inglés con mMiniLM,
   p50 349 ms y p95 620 ms. Ese banco tiene pasajes cortos: con documentos reales en español el p95 fue de 1,7 s
-  (ver el [ADR 0003](../../decisions/0003-onnx-and-profiles.md)). El presupuesto de v2 es `v2.query_budget_ms` (2500 ms).
+  (ver el [ADR 0003](../../decisions/0003-onnx-and-profiles.md)).
+  El «p95 objetivo» es el `p95_budget_ms` del perfil: la referencia con que `ipsis benchmark` marca si un perfil
+  cumple su latencia, que también muestran `ipsis profile` y el panel. El motor predeterminado (v2) no lo aplica a
+  las consultas: una consulta v2 se acota con `v2.query_budget_ms` (2500 ms), igual para los dos perfiles.
   `medium` es la opción recomendada y el valor por defecto de `ipsis init`.
 - Red solo para descargar los modelos. Después el servicio funciona sin red.
 
