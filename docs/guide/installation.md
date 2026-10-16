@@ -22,6 +22,10 @@ your first project. Everyday use and the command reference are in
   470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). The extractive QA reader (mDeBERTa) belongs to
   the optional `pipeline: v1` engine: the default engine (v2) neither loads nor downloads it, and
   `ipsis models list` shows what the active engine uses.
+  Measured latency of a whole `medium` query (v2; synthetic passage bank, 116 questions, 4 CPUs of an Intel Xeon
+  2.1 GHz, 2026-10-16): Spanish with bge-reranker-v2-m3, p50 604 ms and p95 749 ms; English with mMiniLM,
+  p50 349 ms and p95 620 ms. That bank has short passages: with real Spanish documents the p95 was 1.7 s (see
+  [ADR 0003](../decisions/0003-onnx-and-profiles.md)). The v2 budget is `v2.query_budget_ms` (2500 ms).
   `medium` is the recommended default for `ipsis init`.
 - Network only to download the models. Afterwards the service works offline.
 

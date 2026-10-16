@@ -82,6 +82,20 @@ reranker. La prueba `test_tabla_de_perfiles_nombra_los_modelos_vigentes` ya no e
 Totales: `light` 0,47 GB; `medium` español/portugués 1,04 GB; `medium` otros idiomas 0,59 GB. La guía decía 1,7 GB
 porque contaba el lector mDeBERTa (1,1 GB), que v2 no descarga.
 
+**Latencia medida** (2026-10-16, `herramientas/evaluacion/ranking_pasajes.py --perfil medium --particion todas`, banco
+sintético `banco_pasajes`, 116 preguntas respondibles, preparación estructural, Intel Xeon 2,1 GHz de 4 CPU, un solo
+proceso, `light`/`medium` sin calibración). Se verificó que español resuelve a `bge-reranker-v2-m3` con 10 candidatos
+(`ajustes_de_idioma("medium", None, "es")`, usado en `ipsis/aplicacion/consulta.py:80`) e inglés a mMiniLM.
+
+| Idioma | Reranker | hit@1 final | p50 ms | p95 ms | Reranking p50 / p95 ms |
+|---|---|---|---|---|---|
+| es | bge-reranker-v2-m3 | 0,991 | 604 | 749 | 555 / 707 |
+| en | mMiniLM | 1,000 | 349 | 620 | 316 / 575 |
+
+El banco tiene pasajes cortos y los dos idiomas rozan el techo de hit@1; sirve para latencia, no para comparar
+calidad. Con documentos reales en español el p95 medido fue de 1,7 s (ADR 0003). Falta la cifra de portugués (no se
+midió) y la de inglés con documentos reales (no hay).
+
 **Otros cambios.** `medium.yaml::description` ya no promete el lector. `ranking_pasajes.py --perfil` ya no acepta
 `heavy` (I13). ADR 0003: nota de que la tabla de «1 s» es de v1. **No se creó un ADR 0010**: el ADR 0003 ya tiene la
 sección «Update 2026-10-15: reranker per language» con sus mediciones; ⚠ confirmar con el usuario.

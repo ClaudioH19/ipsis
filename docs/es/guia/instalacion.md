@@ -21,6 +21,10 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
   470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). El lector QA extractivo (mDeBERTa) pertenece al motor
   opcional `pipeline: v1`: el motor predeterminado (v2) no lo carga ni lo descarga, y `ipsis models list`
   muestra lo que usa el motor activo.
+  Latencia medida de una consulta completa de `medium` (v2; banco sintético de pasajes, 116 preguntas, 4 CPU de un
+  Intel Xeon a 2,1 GHz, 2026-10-16): español con bge-reranker-v2-m3, p50 604 ms y p95 749 ms; inglés con mMiniLM,
+  p50 349 ms y p95 620 ms. Ese banco tiene pasajes cortos: con documentos reales en español el p95 fue de 1,7 s
+  (ver el [ADR 0003](../decisions/0003-onnx-and-profiles.md)). El presupuesto de v2 es `v2.query_budget_ms` (2500 ms).
   `medium` es la opción recomendada y el valor por defecto de `ipsis init`.
 - Red solo para descargar los modelos. Después el servicio funciona sin red.
 
