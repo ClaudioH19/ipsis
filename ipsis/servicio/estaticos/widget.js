@@ -712,6 +712,7 @@
     ".rw-resultado-alcance{display:inline-flex;align-items:center;max-width:100%;padding:1px 9px;border-radius:99px;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;",
     "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
     "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-resultado-padre{color:var(--rw-seccion);background:var(--rw-fondo);border-color:var(--rw-borde-resultado);font-weight:600;}",
     ".rw-resultado-rasgos{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
     ".rw-busqueda .rw-resultado-vista{margin:8px 0 4px;}",
@@ -1555,11 +1556,15 @@
       docTitulo.className = "rw-resultado-doc";
       docTitulo.textContent = nombreDoc + (frag.version ? " \u00b7 v" + frag.version : "");
       origen.appendChild(docTitulo);
-      if (frag.alcance) {
-        // Qué parte del documento es (p. ej. «Práctica Profesional II»): se ve de un vistazo sin leer la ruta.
+      // Contexto de un vistazo: el alcance de la unidad («Práctica Profesional II») y, si el documento no declara
+      // uno, el título de la sección que la contiene. Sin ninguno de los dos (documento sin estructura) no hay etiqueta.
+      var rutaSecciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
+      var tituloPadre = rutaSecciones.length > 1 ? rutaSecciones[rutaSecciones.length - 2] : "";
+      var contexto = frag.alcance || tituloPadre;
+      if (contexto) {
         var alcance = document.createElement("span");
-        alcance.className = "rw-resultado-alcance";
-        alcance.textContent = frag.alcance;
+        alcance.className = "rw-resultado-alcance" + (frag.alcance ? "" : " rw-resultado-padre");
+        alcance.textContent = contexto;
         origen.appendChild(alcance);
       }
       if (frag.rasgos && frag.rasgos.length) {
@@ -1600,10 +1605,13 @@
       titulo.textContent = secciones.length ? secciones[secciones.length - 1] : frag.doc_titulo || frag.archivo;
       encabezado.appendChild(titulo);
       item.appendChild(encabezado);
-      if (PRESENTACION.mostrarRuta && secciones.length > 1) {
+      // La ruta no repite el título de la sección que ya muestra la etiqueta de contexto.
+      var rutaPartes = secciones.slice(0, -1);
+      if (!frag.alcance && tituloPadre) rutaPartes = rutaPartes.slice(0, -1);
+      if (PRESENTACION.mostrarRuta && rutaPartes.length) {
         var ruta = document.createElement("p");
         ruta.className = "rw-resultado-ruta";
-        ruta.textContent = secciones.slice(0, -1).join(" \u203a ");
+        ruta.textContent = rutaPartes.join(" \u203a ");
         item.appendChild(ruta);
       }
       var completo = frag.texto || "";

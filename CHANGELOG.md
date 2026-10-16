@@ -42,6 +42,11 @@ a minor change may break compatibility and is marked as such.
   but gave no more than TF-IDF (0.893 at cosine 0.97, worse below) and costs one more encoding pass. Existing projects
   that already have a `preparation` block keep it; new indexes need `ipsis index` into a new `collection_version`.
   `herramientas/evaluacion/ranking_pasajes.py` gets `--alcance`, `--rasgos` and `--umbral-hermanos`.
+- **Context label on every result**: when a unit has no scope, the label shows the title of the section that contains it
+  (the heading above the unit's own), and the path no longer repeats it. For documents without headings (forms,
+  templates), short title-like lines ("III. Escala de niveles") now give the scope and open a new unit, so units do not
+  cross visual sections; this changed no metric on the real documents. A document with no recognisable structure shows no
+  label rather than an invented one.
 - **Search box at the bottom**: in search mode the box sits at the bottom of the panel (like a chat) and the
   results scroll above it, on desktop and on phones. The demo page (`/widget/demo.html`) takes the whole
   screen on phones (no page header; the access-key form is at `#clave-acceso`) and fits the window on desktop.

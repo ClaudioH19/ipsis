@@ -72,9 +72,12 @@ anterior conserva conjuntamente configuración e índice anteriores.
 Dos unidades casi iguales (la tabla de ponderaciones de la Práctica I y la de la II) se confunden porque
 lo que las separa es poco. La preparación estructural guarda dos señales para distinguirlas:
 
-- **Alcance** (`scope` en la API): la etiqueta corta que encabeza la unidad dentro de su sección, por
-  ejemplo «Práctica Profesional II», tomada del párrafo previo a una tabla o del párrafo en énfasis que abre
-  el grupo (como máximo 80 caracteres y 10 palabras; se reinicia al cambiar de sección o de título). **Siempre se
+- **Alcance** (`scope` en la API): la etiqueta corta que encabeza la unidad, por ejemplo «Práctica Profesional II».
+  Se toma del párrafo previo a una tabla o del párrafo en énfasis que abre el grupo (como máximo 80 caracteres y 10
+  palabras; se reinicia al cambiar de sección o de título). **En documentos sin encabezados** (formularios, plantillas,
+  texto con estilos manuales) sirve cualquier línea corta que parezca un título (hasta 8 palabras y 60 caracteres, sin
+  punto final ni marca de lista, como «III. Escala de niveles») y además abre una unidad nueva, de modo que una unidad
+  no cruza secciones visuales. Medido sobre los documentos reales, estos cortes no cambian ninguna métrica. **Siempre se
   calcula y se muestra** en el resultado del widget como una etiqueta junto al título del documento, para que quien
   lee sepa de qué parte del documento viene. No cambia el orden. La opción `scope: true` además la agrega al texto
   que se indexa y puntúa; **no se recomienda** (ver abajo).
@@ -86,6 +89,12 @@ lo que las separa es poco. La preparación estructural guarda dos señales para 
   `distinctive_terms: 5` y `sibling_threshold: 0,6`** en proyectos nuevos y en los migrados a `config_version` 8; un
   proyecto con su propio bloque `preparation` conserva lo que tiene. Cambiarlo obliga a reindexar en una colección nueva.
   Los términos también se muestran en cada resultado («Se distingue por: …», `distinctive_terms` en la API).
+
+**Contexto en el resultado.** Cada resultado muestra una etiqueta de contexto junto al título del documento: el alcance de la
+unidad si lo tiene y, si no, el **título de la sección que la contiene** (el encabezado que está sobre el de la propia unidad;
+la ruta no repite lo que ya dice la etiqueta). Un documento sin estructura ni títulos reconocibles no muestra etiqueta: no se
+inventa contexto. Así la escala de estructura se degrada sin romperse: documentos con encabezados y tablas (alcance +
+sección padre + términos), formularios con líneas-título (alcance por línea corta) y texto plano (solo título del documento).
 
 ```yaml
 retrieval:

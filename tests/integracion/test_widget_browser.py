@@ -683,3 +683,28 @@ def test_resultado_muestra_los_terminos_que_lo_distinguen(navegador, servidor_wi
     expect(page.locator(".rw-resultado").first.locator(".rw-resultado-rasgos")).to_have_text("Distinguished by: II · 45% · Defensa")
     expect(page.locator(".rw-resultado-rasgos")).to_have_count(1)
     page.close()
+
+
+@pytest.mark.browser
+def test_sin_alcance_la_etiqueta_es_el_titulo_de_la_seccion_que_contiene_la_unidad(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    publico = _pagina_fuentes(continuar=False)
+    publico["fragments"][0].update(section="CAPÍTULO IV > Artículo 14. Proceso")
+    publico["fragments"][1].update(section="Productos")           # sin sección padre ni alcance: sin etiqueta
+    publico["fragments"][2].update(section="A > B > C", scope="Práctica Profesional I")
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda r: r.fulfill(json=publico))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("proceso")
+    page.get_by_role("button", name="Search", exact=True).click()
+    tarjetas = page.locator(".rw-resultado")
+    expect(tarjetas).to_have_count(3)
+    expect(tarjetas.nth(0).locator(".rw-resultado-alcance")).to_have_text("CAPÍTULO IV")
+    expect(tarjetas.nth(0).locator(".rw-resultado-padre")).to_have_count(1)
+    expect(tarjetas.nth(0).locator(".rw-resultado-ruta")).to_have_count(0)        # no repite lo que dice la etiqueta
+    expect(tarjetas.nth(1).locator(".rw-resultado-alcance")).to_have_count(0)
+    expect(tarjetas.nth(2).locator(".rw-resultado-alcance")).to_have_text("Práctica Profesional I")
+    expect(tarjetas.nth(2).locator(".rw-resultado-padre")).to_have_count(0)
+    expect(tarjetas.nth(2).locator(".rw-resultado-ruta")).to_have_text("A › B")
+    page.close()

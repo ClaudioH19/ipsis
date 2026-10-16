@@ -8,6 +8,15 @@ from ipsis.nucleo.esquemas import ChunkRecord
 
 CHUNKER_VERSION = "unidades-estructura-1.2"
 
+_MARCA_LISTA = re.compile(r"^\s*(?:[-•*·]\s|\(?[a-z]\)|\d+\))", re.IGNORECASE)
+
+
+def parece_titulo_corto(texto: str) -> bool:
+    """Línea corta que hace de título sin serlo (formularios, plantillas, documentos sin estilos de encabezado):
+    hasta 8 palabras y 60 caracteres, sin puntuación final ni marca de lista."""
+    texto = " ".join((texto or "").split())
+    return bool(texto) and len(texto) <= 60 and len(texto.split()) <= 8 and texto[-1] not in ".;,:" and not _MARCA_LISTA.match(texto)
+
 
 def unidades_documento(documento: DocumentoPreparado, max_palabras=400, palabras_hijo=80):
     if max_palabras < 1 or palabras_hijo < 1:
@@ -59,12 +68,17 @@ def unidades_documento(documento: DocumentoPreparado, max_palabras=400, palabras
             cerrar()
             etiqueta = None
         elif e.texto.strip():
-            if actual and (e.metadata.get("enfasis_parrafo") or actual[-1].seccion_path != e.seccion_path or
+            # Sin encabezados, una línea corta que parece título abre una unidad nueva (no cruza «secciones» visuales).
+            titulo_visual = not e.seccion_path and parece_titulo_corto(e.texto)
+            if actual and (e.metadata.get("enfasis_parrafo") or titulo_visual or actual[-1].seccion_path != e.seccion_path or
                     sum(len(x.texto.split()) for x in actual) + len(e.texto.split()) > max_palabras):
                 cerrar()
             if list(ruta_etiqueta or []) != list(e.seccion_path):
                 etiqueta = None
-            if e.metadata.get("enfasis_parrafo") and etiqueta_corta(e.texto):
+            # Con encabezados, la etiqueta es una línea en énfasis; sin ellos (la sección está vacía) sirve cualquier
+            # línea corta que parezca un título: así el alcance también existe en documentos poco estructurados.
+            if etiqueta_corta(e.texto) and (e.metadata.get("enfasis_parrafo") or
+                    (not e.seccion_path and parece_titulo_corto(e.texto))):
                 etiqueta, ruta_etiqueta = etiqueta_corta(e.texto), list(e.seccion_path)
             if not actual:
                 etiqueta_grupo = etiqueta

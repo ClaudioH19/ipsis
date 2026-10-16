@@ -119,3 +119,27 @@ def test_los_rasgos_no_repiten_variantes_de_una_misma_raiz():
     r = rasgos_distintivos(textos, umbral=0.05, maximo=5)
     rasgos = [x.casefold() for x in r["a"]["rasgos_distintivos"]]
     assert sum(x.startswith("bitác") for x in rasgos) <= 1
+
+
+def test_parece_titulo_corto_distingue_titulos_de_frases_y_listas():
+    from ipsis.ingesta.unidades import parece_titulo_corto
+
+    for si in ("III. Escala de niveles", "Datos de la empresa", "VIII Impresión General"):
+        assert parece_titulo_corto(si)
+    for no in ("Este párrafo es una oración completa con punto final.", "a) primer elemento de una lista", "- viñeta",
+               "1) paso uno", "Una línea que acaba en coma,", "x " * 40, ""):
+        assert not parece_titulo_corto(no)
+
+
+def test_documento_sin_encabezados_toma_el_alcance_de_las_lineas_cortas(tmp_path):
+    d = Document()
+    d.add_paragraph("II. Antes de evaluar")
+    d.add_paragraph("Estas preguntas no otorgan puntaje y sirven para interpretar el resto del formulario completo de evaluación.")
+    d.add_paragraph("III. Escala de niveles")
+    d.add_paragraph("A continuación se presentan las competencias que esperamos que el estudiante logre durante la práctica.")
+    archivo = tmp_path / "f.docx"
+    d.save(archivo)
+    _, padres = unidades_documento(preparar_docx(archivo, doc_id="f", doc_titulo="Formulario", version="1"))
+    etiquetas = [p.metadata.get("alcance") for p in padres.values()]
+    assert "II. Antes de evaluar" in etiquetas and "III. Escala de niveles" in etiquetas
+    assert all(p.metadata["alcance"] for p in padres.values())
