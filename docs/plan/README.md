@@ -7,7 +7,7 @@ de avance de cada plan:
 | Plan | Estado | Documentos |
 |---|---|---|
 | Coherencia entre código y documentación | terminado (C1–C8); queda una acción del usuario: el tag `v1.1.0` | [coherencia.md](coherencia.md), [tareas](coherencia-tareas.md), [avance](coherencia-avance.md) |
-| Presentación por forma de resultados | P0–P3 hechos (la forma de la página y los dos caminos de corrección, apagados por defecto); queda P4 (⚠ activación por defecto) | [presentacion.md](presentacion.md), [tareas](presentacion-tareas.md), [avance](presentacion-avance.md) |
+| Presentación por forma de resultados | terminado salvo P5 (opcional, solo a pedido): la forma de la página y los caminos de corrección están activos en los proyectos nuevos (ADR 0010) | [presentacion.md](presentacion.md), [tareas](presentacion-tareas.md), [avance](presentacion-avance.md) |
 | Multimedia | M0.1, M1, M2.1 y M3 hechos (carril apagado); quedan M0.2, M2.2, M4 y M5 (⚠ esperan al usuario) | [multimedia.md](multimedia.md), [tareas](multimedia-tareas.md), [avance](multimedia-avance.md) |
 | Precisión desde la ingesta | casi cerrado: quedan F3.3 (condicional, sin iniciar) y F4.3 (⚠ espera al usuario) | [precision-ingesta.md](precision-ingesta.md), [tareas](precision-ingesta-tareas.md), [avance](precision-ingesta-avance.md) |
 | Motor v2 | v2 es el predeterminado desde el 2026-10-12; faltan la evaluación general y el retiro de v1 | [motor-v2.md](motor-v2.md), [avance](motor-v2-avance.md) |

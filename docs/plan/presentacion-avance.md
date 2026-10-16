@@ -14,7 +14,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | P2.2 | ✅ | 2026-10-16 | (ver git log) | `variants`: fila «Elige tu caso»; `documents`: marca de grupo por documento. Sin `clear`. |
 | P3.1 | ✅ | 2026-10-16 | (ver git log) | Aprobado por el usuario. Fuente abierta → `opened_source`, una vez por tarjeta. |
 | P3.2 | ✅ | 2026-10-16 | (ver git log) | Botón «No es esto» → `results_retry` y tarjetas anteriores compactas. |
-| P4 | ⚠ | | | Espera al usuario: activación por defecto con las cifras de P0.2 (ver abajo). |
+| P4 | ✅ | 2026-10-16 | (ver git log) | Aprobado por el usuario (recomendación: `clara` apagada). `ipsis init` escribe `v2.presentation.enabled: true`; ADR 0010; sin migración ni `config_version` nueva. |
 | P5 | ⬜ | | | Opcional; solo a pedido |
 
 ## P0.1: volcar las fuentes publicadas
@@ -206,3 +206,11 @@ Ambos caminos viven solo cuando la API informa `result_shape` (es decir, con `v2
   compacta, «Mostrar más» no compacta, sin más páginas no hay botón, banco sin las plantillas); 3 del banco. Verifiqué por mutación que las pruebas
   detectan quitar la compactación y quitar la condición de la forma.
 - Guías web EN/ES: viñeta «Correction paths / Caminos de corrección».
+
+## P4: activación por defecto (aprobada por el usuario)
+
+- La plantilla `engine.yaml` de los proyectos nuevos trae `v2.presentation.enabled: true`; `clear_margin` no se configura (opción 1).
+- **Sin migración y sin subir `config_version`** (desviación del plan, que la pedía «si cambia la plantilla»): el valor por defecto del esquema
+  sigue siendo `false`, así que los proyectos existentes no cambian de conducta; se enciende agregando el bloque. El plan solo pedía activarla en
+  los proyectos migrados si el usuario lo solicitaba, y no lo solicitó. Prueba: `tests/configuracion/test_presentacion_por_defecto.py`.
+- ADR 0010 `presentation-by-result-shape`, guías web (EN/ES), `docs/methodology/fuentes-v2.md` (sección «Forma de la página») y CHANGELOG `[Unreleased]`.

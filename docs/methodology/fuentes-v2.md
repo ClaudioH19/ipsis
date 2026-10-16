@@ -19,6 +19,12 @@ nuevos y en los v2 que no habían elegido preparación, que pasan a
 `ipsis index` ([ADR 0009](../decisions/0009-structural-preparation-by-default.md)).
 `retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
 
+## Forma de la página
+
+Con `v2.presentation.enabled` la primera página trae `result_shape` (`variants`, `documents` o `neutral`): describe cómo se
+parecen las dos primeras fuentes y deja que el widget elija mensaje y disposición. No cambia qué se publica ni su orden
+([ADR 0010](../decisions/0010-presentation-by-result-shape.md)).
+
 ## Configuración
 
 ```yaml
@@ -32,10 +38,13 @@ v2:
   query_budget_ms: 2500
   reranker_batch_size: 2
   reranker_max_tokens: 256
+  presentation:
+    enabled: true
 ```
 
 Los proyectos nuevos ya incluyen estas opciones; los existentes reciben sus
-valores por defecto al cargar. `results_limit`
+valores por defecto al cargar (`presentation.enabled` es `false` en ellos: se
+enciende agregando ese bloque, [ADR 0010](../decisions/0010-presentation-by-result-shape.md)). `results_limit`
 controla la publicación y es independiente de `retrieval.top_k` de v1 y
 `read_m` del lector. Se muestran hasta tres coincidencias distintas por página de los sesenta
 candidatos recuperados. La puntuación es progresiva: `rerank_candidates` limita

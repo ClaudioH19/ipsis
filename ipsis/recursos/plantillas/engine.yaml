@@ -14,6 +14,11 @@ v2:
   qa_highlights: false
   max_result_chars: 16000
   context_neighbors: 1
+  # Page shape (ADR 0010): the API reports `result_shape` and the widget picks its messages and layout ("It depends on your
+  # case", "Found in several documents", "This isn't it"). It never changes which sources are shown or their order.
+  # false turns it off. `clear_margin` (a "clear answer" page) stays off: it is not proven; see ADR 0010.
+  presentation:
+    enabled: true
 retrieval:
   # model: set by the profile; uncomment to pin it.
   chunking_strategy: "CH-F256"

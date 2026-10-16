@@ -6,6 +6,21 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Added
+
+- **Presentation by result shape** ([ADR 0010](docs/decisions/0010-presentation-by-result-shape.md)), on in new projects
+  (`v2.presentation.enabled: true` in `config/engine.yaml`; existing projects keep it off until the block is added, and no
+  `config_version` change). The engine describes the first page (`result_shape` in `POST /ask`: `variants`, `documents` or
+  `neutral`) without changing which sources are shown or their order. The widget uses it: "It depends on your case" with a
+  "Choose your case" row of shortcuts, "Found in several documents" with a mark at each document change, and two correction
+  paths (opening a source that is not the first says where it is from; a "This isn't it" button asks for the next page and
+  compacts the earlier cards). The assistant message catalog grows from 118 to 142 messages (17 categories).
+  The "clear answer" form is not used.
+- **Multimedia records, off by default** (`media.enabled`): human-written audio and video records in `media/*.yaml`
+  (`ipsis/ingesta/fichas.py`), indexed in their own collection by `ipsis index` and `ipsis sync`, searched after the document
+  sources and published as a separate `media` field and a separate card in the widget, never mixed with the sources. They
+  are only shown above a measured `media.min_score`. Nothing is transcribed or generated.
+
 ## [1.1.0] - 2026-10-16
 
 **Upgrading from 1.0.0:** the first `ipsis` command migrates a v2 project to `config_version` 8 and, if it had not chosen
