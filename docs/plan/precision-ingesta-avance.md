@@ -257,6 +257,34 @@ Costo medido (4 CPU, ONNX int8): 85 ms por pasaje de ~100 palabras (frente a 21 
 El tope pedido después para evaluar modelos nuevos (≤ 0,4 B parámetros) deja fuera a bge (568 M); queda como decisión vigente
 mientras no haya un candidato que lo supere. Se actualizaron las pruebas que asumían mMiniLM en proyectos en español.
 
+## Candidatos de reranker ≤ 0,6 B con pesos ONNX (2026-10-16): ninguno supera a bge
+
+Reglas dadas: ≤ 0,6 B parámetros, con ONNX, sin modelos Qwen, se descarta el que no mejore. Puntuación fuera de línea sobre 89
+preguntas reales (20 candidatos por pregunta, hit@1; fp32 en CPU; no incluye el recorte de candidatos del motor):
+
+| Modelo | hit@1 | formal | informal | s/pregunta | Resultado |
+|---|---|---|---|---|---|
+| mMiniLM (actual en otros idiomas) | 0,730 | | 0,464 | | referencia |
+| bge-reranker-v2-m3 (568 M) | 0,798 | | | 6,7 | vigente en es/pt |
+| Horizon small (mmBERT) | 0,730 | 0,853 | 0,464 | 1,5 | descartado: no mejora |
+| Horizon base (307 M, ONNX cuantizado) | 0,843 | 0,934 | 0,643 | 2,8 | medido en el motor, ver abajo |
+| Vela 1.0 (307 M) | 0,832 | 0,918 | 0,643 | 4,5 | descartado: peor que Horizon base y más lento |
+
+Horizon base dentro del motor (ONNX cuantizado, estructural, mismo presupuesto de 2,5 s):
+
+| Banco | Candidatos | Horizon base hit@1 (p95) | bge hit@1 (p95) |
+|---|---|---|---|
+| 56 adversarias | 10 | 0,786 (2,4 s) | 0,857 (1,7 s) |
+| 56 adversarias | 20 | 0,804 (2,4 s) | 0,857 (2,5 s) |
+| 33 formales | 10 | 0,849 (2,6 s) | 0,849 (2,0 s) |
+
+La ventaja fuera de línea de Horizon base no se sostuvo con la cuantización y los candidatos del motor; no supera a bge y en
+las adversarias queda por debajo, con p95 por encima del presupuesto. **Decisión: se mantiene bge con 10 candidatos para es/pt
+y se descartan Horizon (small y base) y Vela.** Otros modelos evaluados antes y no adoptados: lb-reranker-0.5B (0,809) y
+mxbai-rerank-base-v2 (0,843), sin pesos ONNX utilizables y lentos (hasta 26 s por pregunta en fp32); Laya se descartó por
+fallos en cero disparos; Jev (TypeSafe AI) es una API cerrada, sin pesos ni ONNX. Las medias fuera de línea y las del motor no
+son comparables entre sí; la comparación válida es la del motor.
+
 ## Hallazgos
 
 - 2026-10-15: desde el entorno de nube usado para el análisis no se pudo
