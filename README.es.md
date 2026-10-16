@@ -44,7 +44,7 @@ de certeza a partir del ranking.
 - **Documentos e inventarios:** PDF con texto, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV y TSV. Conserva registros y campos; no suma stock ni recalcula fórmulas.
 - **Ayuda en español, inglés y portugués:** al menos 100 preguntas reconocidas
-  por idioma en diez temas, además de 130 variantes de mensajes de interfaz.
+  por idioma en diez temas, además de 142 variantes de mensajes de interfaz.
   Una pregunta mixta sobre documentos sigue usando la búsqueda.
 - **Nueve temas visuales:** classic, minimal, editorial, contrast, search,
   search_compact, ocean, forest y midnight. Colores, fuentes, títulos y secciones editables.

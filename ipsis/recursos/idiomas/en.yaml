@@ -631,6 +631,7 @@ interfaz:
   search_results_count_one: '1 result for “{query}”'
   search_more: 'Show more results'
   search_variants_label: 'Choose your case'
+  search_not_this: "This isn't it"
   media_also_video: 'There is also a video about this'
   media_also_audio: 'There is also an audio about this'
   media_also_mixed: 'There is also audio and video about this'

@@ -677,6 +677,7 @@ interfaz:
   search_results_count_one: '1 resultado para «{query}»'
   search_more: 'Mostrar más resultados'
   search_variants_label: 'Elige tu caso'
+  search_not_this: "No es esto"
   media_also_video: 'También hay un video sobre esto'
   media_also_audio: 'También hay un audio sobre esto'
   media_also_mixed: 'También hay audio y video sobre esto'

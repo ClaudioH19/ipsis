@@ -918,6 +918,129 @@ def test_audio_y_mezcla_usan_su_propio_encabezado(navegador, servidor_widget):
     page.close()
 
 
+BANCO_CORRECCION = {"results": ["Standard."], "continuation": ["Added {count}."],
+                    "opened_source": ["Source of {doc}{scope_suffix}."], "results_retry": ["Then maybe this. {count} now."]}
+
+
+def _buscar_para_corregir(page, servidor_widget, forma="variants", banco=None, continuar=True):
+    """Primera página con (o sin) forma y, si se pide, una continuación de tres fuentes más."""
+    peticiones = []
+
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        if cuerpo.get("continuation"):
+            ruta.fulfill(json=_pagina_fuentes(3, False))
+            return
+        pagina = _pagina_fuentes(continuar=continuar)
+        for fragmento, alcance in zip(pagina["fragments"], ("Práctica I", "Práctica II", "Práctica III")):
+            fragmento["scope"] = alcance
+        if forma:
+            pagina["result_shape"] = forma
+        ruta.fulfill(json=pagina)
+
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+                                                       "assistant_messages": banco or BANCO_CORRECCION}))
+    page.route("**/ask", responder)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.", timeout=8000)
+    return peticiones
+
+
+@pytest.mark.browser
+def test_abrir_una_fuente_que_no_es_la_primera_dice_de_donde_es_una_sola_vez(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    peticiones = _buscar_para_corregir(page, servidor_widget)
+    voz = page.locator(".rw-voz-texto")
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(0).click()                # la primera: no cambia el mensaje
+    page.wait_for_timeout(300)
+    expect(voz).to_have_text("3 results. Standard.")
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    expect(voz).to_have_text("Source of Inventory, Práctica II.", timeout=8000)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(2).click()                # otra tarjeta: su propio mensaje
+    expect(voz).to_have_text("Source of Inventory, Práctica III.", timeout=8000)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()                # cerrar
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()                # y volver a abrir: ya se dijo
+    page.wait_for_timeout(300)
+    expect(voz).to_have_text("Source of Inventory, Práctica III.")
+    assert len(peticiones) == 1                                                      # nada va al servidor
+    page.close()
+
+
+@pytest.mark.browser
+def test_abrir_con_el_resumen_tambien_lo_dice(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget)
+    page.locator(".rw-resultado summary").nth(2).click()
+    expect(page.locator(".rw-voz-texto")).to_have_text("Source of Inventory, Práctica III.", timeout=8000)
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_forma_no_hay_caminos_de_correccion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, forma=None)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    page.wait_for_timeout(300)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.")
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_no_es_esto_pide_la_continuacion_responde_con_su_mensaje_y_compacta_las_anteriores(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    peticiones = _buscar_para_corregir(page, servidor_widget)
+    page.get_by_role("button", name="This isn't it").click()
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    assert len(peticiones) == 2 and peticiones[1]["continuation"] == "pagina-2"
+    expect(page.locator(".rw-voz-texto")).to_have_text("Then maybe this. 6 results now.", timeout=8000)
+    tarjetas = page.locator(".rw-resultado")
+    assert [tarjetas.nth(i).get_attribute("data-compacta") for i in range(6)] == ["si"] * 3 + [None] * 3
+    expect(tarjetas.nth(0).locator(".rw-resultado-vista")).to_be_hidden()        # compactas, no borradas
+    expect(tarjetas.nth(0).locator(".rw-resultado-titulo")).to_be_visible()
+    expect(tarjetas.nth(4).locator(".rw-resultado-vista")).to_be_visible()
+    tarjetas.nth(0).locator(".rw-resultado-titulo").click()                      # abrir el contexto la vuelve a mostrar
+    expect(tarjetas.nth(0).locator(".rw-resultado-vista")).to_be_visible()
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_mostrar_mas_no_compacta_y_usa_el_mensaje_de_continuacion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget)
+    page.get_by_role("button", name="Show more results").click()
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    expect(page.locator(".rw-voz-texto")).to_have_text("Added 6 results.", timeout=8000)
+    assert page.locator(".rw-resultado[data-compacta]").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mas_paginas_no_hay_no_es_esto(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, continuar=False)
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mensajes_de_correccion_en_el_banco_no_se_rompe_nada(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, banco={"results": ["Standard."], "continuation": ["Added {count}."]})
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    page.wait_for_timeout(300)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.")          # sin plantilla, no dice nada
+    page.get_by_role("button", name="This isn't it").click()
+    expect(page.locator(".rw-voz-texto")).to_have_text("Added 6 results.", timeout=8000)  # cae en «continuation»
+    page.close()
+
+
 @pytest.mark.browser
 def test_sin_mensaje_propio_para_la_forma_se_usa_el_de_siempre(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})

@@ -131,6 +131,20 @@ messages:
     - Continúa revisando las fuentes o cambia la consulta si necesitas otro enfoque.
     - Las opciones nuevas aparecen después de las anteriores.
     - Revisa estos pasajes adicionales con sus referencias.
+  results_retry:
+    - "Entonces quizás buscabas alguna de estas. Ahora hay {count} en la lista."
+    - "Entonces quizás buscabas otra cosa: sumé más opciones, {count} en total."
+    - "Entonces quizás buscabas alguna de las nuevas opciones, ahora {count}. Abre la que se parezca más a tu caso."
+    - "Entonces quizás buscabas esto otro. Hay {count} y las anteriores siguen en la lista."
+    - "Sigamos buscando: agregué más fuentes, {count} en total. Revisa si alguna es la que necesitas."
+    - "Entonces quizás buscabas algo distinto. Te dejo más fuentes, {count} en total."
+  opened_source:
+    - "Esto es de {doc}{scope_suffix}. Revisa si es lo que buscas."
+    - "Abriste una fuente de {doc}{scope_suffix}. No es necesariamente la respuesta; compárala con las demás."
+    - "Esta fuente es de {doc}{scope_suffix}. Compara su contexto con las otras opciones."
+    - "Estás leyendo {doc}{scope_suffix}. Comprueba si corresponde a tu caso."
+    - "Esto viene de {doc}{scope_suffix}. Si no es lo que buscabas, prueba con otra fuente."
+    - "Fuente de {doc}{scope_suffix}. Revisa el contexto antes de usar la información."
   no_results:
     - No hay fuentes para mostrar en esta búsqueda. Prueba con otras palabras clave.
     - No se recuperaron opciones. Comprueba el nombre o código que escribiste.

@@ -44,7 +44,7 @@ into confidence percentages.
 - **Documents and inventories:** text PDFs, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV and TSV. Records retain their fields; it does not sum stock or recalculate formulas.
 - **Spanish, English and Portuguese help:** at least 100 recognized questions
-  per language across ten topics, alongside 130 interface message variants.
+  per language across ten topics, alongside 142 interface message variants.
   Mixed document queries still go through search.
 - **Nine visual themes:** classic, minimal, editorial, contrast, search,
   search_compact, ocean, forest and midnight. Editable colors, fonts, headings and sections.

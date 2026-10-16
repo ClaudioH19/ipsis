@@ -188,3 +188,21 @@ configuración siguen existiendo, así que activarla más adelante (opción 2 o 
 - Pruebas de navegador (`test_widget_browser.py`): atajos y foco, sin atajos si hay una sola etiqueta o la forma es `neutral`/ausente, marcas de grupo y
   orden; `test_widget_browser.py` + `test_widget_responsive.py`: 92 pasan. Capturas revisadas a mano a 420 px (variantes y documentos).
 - Guías web EN/ES: viñeta «Page shape / Forma de la página» en «Search layout».
+
+## P3: caminos de corrección (aprobados por el usuario)
+
+Ambos caminos viven solo cuando la API informa `result_shape` (es decir, con `v2.presentation.enabled`); sin la señal el widget se comporta como siempre.
+
+- **P3.1:** al abrir el contexto de una fuente que no es la primera, el asistente dice la plantilla `opened_source` («Esto es de {doc}{scope_suffix}…»),
+  sin afirmar que sea la respuesta. Una vez **por tarjeta** (no una sola vez por búsqueda: abrir la 2 y luego la 3 dice algo de cada una), por
+  clic en el título o en «Leer el contexto completo». No envía nada al servidor. El alcance (o el título de la sección padre) va tras el
+  documento con su coma (`{scope_suffix}`, vacío si no hay).
+- **P3.2:** botón «No es esto» (`search_not_this`) junto a «Mostrar más resultados» en la primera página, solo si hay continuación. Pide la misma
+  página siguiente; el mensaje sale de `results_retry` («Entonces quizás buscabas…», siempre con `{count}`) y las tarjetas anteriores quedan
+  compactas (`data-compacta`: su extracto se oculta hasta abrir su contexto; con CSS `:has`, así que un navegador sin él las muestra completas).
+  Si el banco no trae `results_retry` se usa `continuation`.
+- Banco de voz: 142 mensajes en 17 categorías (+`results_retry`, `opened_source`, 6 por idioma). Textos de interfaz: `search_not_this` en en/es/pt.
+- Pruebas: 7 de navegador (mensaje por fuente y una vez por tarjeta, por resumen, sin forma no hay caminos, «No es esto» pide la continuación y
+  compacta, «Mostrar más» no compacta, sin más páginas no hay botón, banco sin las plantillas); 3 del banco. Verifiqué por mutación que las pruebas
+  detectan quitar la compactación y quitar la condición de la forma.
+- Guías web EN/ES: viñeta «Correction paths / Caminos de corrección».

@@ -131,6 +131,20 @@ messages:
     - Keep reviewing sources or change the query if you need another approach.
     - The new options appear after the earlier results.
     - Review these additional passages with their references.
+  results_retry:
+    - "Then maybe you were looking for one of these. There are now {count} in the list."
+    - "Then maybe you were looking for something else: I added more options, {count} in all."
+    - "Then maybe you were looking for one of the new options, now {count}. Open the one closest to your case."
+    - "Then maybe you were looking for this other one. There are {count}, and the earlier ones stay in the list."
+    - "Let's keep looking: I added more sources, {count} in all. Check whether one is what you need."
+    - "Then maybe you were looking for something different. Here are more sources, {count} in all."
+  opened_source:
+    - "This is from {doc}{scope_suffix}. Check whether it is what you are looking for."
+    - "You opened a source from {doc}{scope_suffix}. It is not necessarily the answer; compare it with the others."
+    - "This source is from {doc}{scope_suffix}. Compare its context with the other options."
+    - "You are reading {doc}{scope_suffix}. Check whether it applies to your case."
+    - "This comes from {doc}{scope_suffix}. If it is not what you wanted, try another source."
+    - "Source from {doc}{scope_suffix}. Review the context before using the information."
   no_results:
     - No sources are available for this search. Try different keywords.
     - No options were retrieved. Check the name or code you entered.

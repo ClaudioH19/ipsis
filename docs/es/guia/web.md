@@ -31,11 +31,11 @@ disponibles. Ejecuta `ipsis help serve` para ver todas las opciones.
 ## Orientación separada de los resultados
 
 Con el motor v2, una sección de orientación se ubica sobre las fuentes
-ordenadas. Usa un catálogo fijo de 130 mensajes para cada uno de español,
+ordenadas. Usa un catálogo fijo de 142 mensajes para cada uno de español,
 inglés y portugués, elegido según el idioma de los documentos del proyecto. Los
-demás idiomas usan la orientación en inglés como respaldo. Las quince categorías
+demás idiomas usan la orientación en inglés como respaldo. Las diecisiete categorías
 son `welcome`, `greeting`, `thanks`, `farewell`, `capability`, `tips`,
-`searching`, `results`, `results_variants`, `results_documents`, `continuation`,
+`searching`, `results`, `results_variants`, `results_documents`, `results_retry`, `opened_source`, `continuation`,
 `no_results`, `about`, `limits` y `examples`. Los catálogos YAML están en `ipsis/recursos/voz/` y son
 independientes de los tonos y de las plantillas de fuentes existentes. Es texto
 de interfaz: nunca evidencia documental ni respuestas generadas.
@@ -45,7 +45,7 @@ su sustantivo, ya en singular o plural del idioma: «3 resultados», «1
 resultado»), `{n}` (el número solo) y `{query}` (lo que se buscó). Una
 plantilla que no usa ninguno recibe el conteo al inicio («3 resultados. …»), de
 modo que el conteo siempre llega a quien lee sin ocupar una línea propia (el
-encabezado «N resultados para …» se conserva solo para lectores de pantalla). `results_variants` («depende de tu caso») y `results_documents` («lo encontré en varios documentos») reemplazan a `results` en la primera página cuando la API informa `result_shape: variants` o `documents` (tabla de `/ask`, más abajo, y `v2.presentation.enabled`); describen la página y nunca dicen cuál fuente responde. `results_documents` puede usar además `{n_docs}`, la cantidad de documentos distintos entre las fuentes que se ven. Con la forma `neutral`, o con un banco de mensajes sin estas dos categorías, se usa `results` como siempre. El
+encabezado «N resultados para …» se conserva solo para lectores de pantalla). `results_variants` («depende de tu caso») y `results_documents` («lo encontré en varios documentos») reemplazan a `results` en la primera página cuando la API informa `result_shape: variants` o `documents` (tabla de `/ask`, más abajo, y `v2.presentation.enabled`); describen la página y nunca dicen cuál fuente responde. `results_documents` puede usar además `{n_docs}`, la cantidad de documentos distintos entre las fuentes que se ven. Con la forma `neutral`, o con un banco de mensajes sin estas dos categorías, se usa `results` como siempre. Los dos caminos de corrección de más abajo usan `opened_source` (`{doc}` y `{scope_suffix}`, este último ya con su coma inicial o vacío) y `results_retry` (con `{count}`). El
 menú de ayuda es un icono «?» en el encabezado del asistente. Mientras el
 asistente no está hablando, o aún no empezó, un punto aparece y se desvanece
 después de su mensaje para indicar que espera.
@@ -227,6 +227,11 @@ Con el motor v2 (`response_mode: ranked_sources` en `GET /config`) el widget usa
   texto de la propia ficha (tipo, duración, capítulo y minuto, descripción, «Según la descripción del video») y un botón que abre el
   enlace en otra pestaña. En YouTube y Vimeo el enlace incluye el minuto del capítulo. No hay reproductor incrustado (ni iframe) y los
   enlaces que no son `http`/`https` nunca se muestran.
+- **Caminos de corrección** (solo cuando la API informa `result_shape`): al abrir el contexto de una fuente que no es la
+  primera, el asistente dice de dónde es («Esto es de *Reglamento*, Práctica Profesional II»), una vez por tarjeta, sin afirmar
+  que sea la respuesta y sin enviar nada al servidor. Bajo la lista, junto a «Mostrar más resultados», un botón «No es esto»
+  pide la misma página siguiente, el asistente responde «Entonces quizás buscabas…» y las tarjetas anteriores se compactan
+  (su extracto se oculta hasta que abres su contexto; no se borra nada). No aparece si no hay más resultados.
 - **Página de prueba:** `/widget/demo.html` ocupa toda la pantalla en teléfonos (sin encabezado de página;
   el formulario de la clave de acceso está en `#clave-acceso`) y se ajusta a la ventana en escritorio.
 
@@ -250,7 +255,7 @@ comprobarla:
 - **Del tono activo** (ver [personalidad.md](personalidad.md)): la
   bienvenida, «buscando…», la invitación a las citas y los mensajes de error
   vienen de `/config` en 7 variantes, y el widget rota entre ellas.
-- **Orientación de v2:** su catálogo fijo y separado tiene 130 mensajes por
+- **Orientación de v2:** su catálogo fijo y separado tiene 142 mensajes por
   idioma admitido, con ejemplos e información sobre el asistente y su alcance.
 - **Textos de la interfaz** (etiquetas de botones, placeholder…): vienen del
   paquete de idioma del proyecto.
@@ -302,7 +307,7 @@ separados de las fuentes documentales y no ejecutan consultas.
 **Preguntas frecuentes** permite explorar al menos 100 preguntas completas
 por idioma, repartidas en diez temas. `/config::default_questions` publica
 pregunta y tema; la respuesta fija se resuelve en el servicio. Las consultas
-con información documental añadida siguen consultando el índice. Las 130
+con información documental añadida siguen consultando el índice. Las 142
 variantes de mensajes son un catálogo distinto de las preguntas reconocidas.
 
 La orientación ocupa dos líneas por defecto. **Mostrar completo** permite

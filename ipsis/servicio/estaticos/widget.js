@@ -183,6 +183,7 @@
     source_table_hint: "Open full context to read the table with its columns.",
     search_more: "Show more results",
     search_variants_label: "Choose your case",
+    search_not_this: "This isn't it",
     media_also_video: "There is also a video about this",
     media_also_audio: "There is also an audio about this",
     media_also_mixed: "There is also audio and video about this",
@@ -769,6 +770,8 @@
     "  background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));border:1px solid color-mix(in srgb,var(--rw-acento) 38%,var(--rw-borde));}",
     ".rw-media-abrir:hover{background:color-mix(in srgb,var(--rw-acento) 18%,var(--rw-superficie));}",
     ".rw-media-abrir:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-no-es{font-weight:500;color:var(--rw-texto-suave);}",
+    ".rw-resultados[data-corregir='si'] > .rw-resultado[data-compacta='si']:not(:has(details[open])) .rw-resultado-vista{display:none;}",
     ".rw-atajos{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 12px;}",
     ".rw-atajos-etiqueta{font-size:calc(var(--rw-tamano-cita) - .5px);color:var(--rw-texto-suave);}",
     ".rw-atajo{padding:3px 11px;border-radius:99px;font:inherit;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;cursor:pointer;",
@@ -1616,6 +1619,18 @@
     return validos.some(function (b) { return b.kind === "table"; });
   }
 
+  // Corrección 1: al abrir el contexto de una fuente que no es la primera, el asistente dice de dónde es, sin afirmar que
+  // sea la correcta (plantilla ``opened_source``). Una vez por tarjeta, sin enviar nada al servidor, y solo si la API
+  // informó la forma de la página (``v2.presentation.enabled``).
+  function anunciarFuenteAbierta(lista, item, doc, contexto) {
+    if (lista.dataset.corregir !== "si" || item.dataset.anunciada === "si") return;
+    if (Array.prototype.indexOf.call(lista.children, item) < 1) return;
+    if (!BANCO_VOZ.opened_source || !BANCO_VOZ.opened_source.length) return;
+    item.dataset.anunciada = "si";
+    hablar(voz("opened_source").replace(/\{doc\}/g, doc).replace(/\{scope_suffix\}/g, contexto ? ", " + contexto : ""),
+           "opened_source");
+  }
+
   function agregarResultados(lista, fragmentos, pregunta) {
     var primero = null, nuevos = 0;
     fragmentos.forEach(function (frag, indice) {
@@ -1639,6 +1654,7 @@
       var rutaSecciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
       var tituloPadre = rutaSecciones.length > 1 ? rutaSecciones[rutaSecciones.length - 2] : "";
       var contexto = frag.alcance || tituloPadre;
+      var etiquetaFuente = contexto;  // ``contexto`` se reutiliza más abajo para el cuerpo de la tarjeta
       if (contexto) {
         var alcance = document.createElement("span");
         alcance.className = "rw-resultado-alcance" + (frag.alcance ? "" : " rw-resultado-padre");
@@ -1723,7 +1739,13 @@
       detalles.open = PRESENTACION.expandirContexto;
       titulo.setAttribute("aria-expanded", String(detalles.open));
       resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
-      titulo.addEventListener("click", function () { detalles.open = !detalles.open; });
+      titulo.addEventListener("click", function () {
+        detalles.open = !detalles.open;
+        if (detalles.open) anunciarFuenteAbierta(lista, item, nombreDoc, etiquetaFuente);
+      });
+      resumen.addEventListener("click", function () {  // el clic cambia el estado después de este manejador
+        if (!detalles.open) anunciarFuenteAbierta(lista, item, nombreDoc, etiquetaFuente);
+      });
       detalles.addEventListener("toggle", function () {
         titulo.setAttribute("aria-expanded", String(detalles.open));
         resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
@@ -1909,7 +1931,13 @@
       mensajes.scrollTop = 0;
     }
     var cantidadAnterior = paginaBusqueda.lista.children.length;
-    if (!respuesta.continuando) paginaBusqueda.lista.dataset.forma = respuesta.forma || "neutral";
+    if (!respuesta.continuando) {
+      paginaBusqueda.lista.dataset.forma = respuesta.forma || "neutral";
+      if (respuesta.forma) paginaBusqueda.lista.dataset.corregir = "si";  // caminos de corrección (P3)
+    }
+    if (respuesta.continuando && respuesta.reintento) {  // «No es esto»: las tarjetas anteriores se compactan, no se borran
+      Array.prototype.forEach.call(paginaBusqueda.lista.children, function (item) { item.dataset.compacta = "si"; });
+    }
     var primero = agregarResultados(paginaBusqueda.lista, respuesta.fragmentos, respuesta.pregunta);
     var cantidad = paginaBusqueda.lista.children.length;
     // La forma de la página cambia cómo se ve, nunca qué se ve ni en qué orden.
@@ -1931,12 +1959,23 @@
       mas.textContent = texto("search_more");
       mas.addEventListener("click", function () { enviarPregunta(respuesta.pregunta, respuesta.continuation, mas); });
       paginaBusqueda.acciones.appendChild(mas);
+      if (!respuesta.continuando && paginaBusqueda.lista.dataset.corregir === "si") {
+        // Corrección 2: pide la misma página siguiente, pero el asistente responde «Entonces quizás buscabas…».
+        var no = document.createElement("button");
+        no.type = "button";
+        no.className = "rw-seguir rw-no-es";
+        no.dataset.activo = "si";
+        no.textContent = texto("search_not_this");
+        no.addEventListener("click", function () { enviarPregunta(respuesta.pregunta, respuesta.continuation, no, true); });
+        paginaBusqueda.acciones.appendChild(no);
+      }
     }
     anunciador.textContent = respuesta.continuando
       ? texto("search_added", { n: cantidad - cantidadAnterior }) : paginaBusqueda.contador.textContent;
     if (!respuesta.continuando) agregarMedia(paginaBusqueda.seccion, respuesta.media);
     if (respuesta.continuando && primero) primero.focus({ preventScroll: true });
     var categoriaVoz = cantidad === 0 ? "no_results" : respuesta.continuando ? "continuation" : "results";
+    var bancoReintento = respuesta.continuando && respuesta.reintento && BANCO_VOZ.results_retry && BANCO_VOZ.results_retry.length;
     // El conteo va en el mensaje del asistente (no en una línea aparte). Las plantillas pueden ubicarlo con
     // {count} («3 resultados», ya en singular o plural del idioma), {n} y {query}; si no usan ninguno, el conteo
     // se antepone («3 resultados.»). Sin resultados no hay conteo.
@@ -1944,7 +1983,7 @@
     // variantes de lo mismo, «en varios documentos» si vienen de documentos distintos. Describen la página y no dicen
     // cuál responde. Si el banco no lo tiene, o la forma es neutral, vale el mensaje de siempre. {n_docs} cuenta los
     // documentos distintos de las fuentes que se ven.
-    var bancoVoz = categoriaVoz;
+    var bancoVoz = bancoReintento ? "results_retry" : categoriaVoz;
     if (categoriaVoz === "results" && !respuesta.continuando) {
       var propio = respuesta.forma === "variants" ? "results_variants" : respuesta.forma === "documents" ? "results_documents" : null;
       if (propio && BANCO_VOZ[propio] && BANCO_VOZ[propio].length) bancoVoz = propio;
@@ -2182,7 +2221,7 @@
   }
 
   var peticionPendiente = false;
-  function enviarPregunta(pregunta, cursor, botonMas) {
+  function enviarPregunta(pregunta, cursor, botonMas, reintento) {
     if (peticionPendiente) return;
     peticionPendiente = true;
     var exito = false;
@@ -2226,6 +2265,7 @@
         var respuesta = respuestaInterna(publica);
         respuesta.pregunta = pregunta;
         respuesta.continuando = !!cursor;
+        respuesta.reintento = !!reintento;
         if (botonMas) botonMas.dataset.activo = "no";
         agregarMensajeAsistente(respuesta);
         exito = true;
