@@ -203,7 +203,7 @@ conserva los textos personalizados y el CSS extra.
 Las seis preguntas sugeridas rellenan el campo sin enviarlo. **Preguntas
 frecuentes** permite explorar el catálogo por tema: uso, fuentes, inventarios,
 alcance, privacidad, apariencia, documentos, servicio y mantenimiento.
-El menú **Ayuda** reúne los mensajes de orientación. Puedes expandirlos cuando
+El menú **Ayuda**, que se abre con el icono «?» del encabezado, reúne los mensajes de orientación. Puedes expandirlos cuando
 necesites leerlos completos; una búsqueda nueva los vuelve a compactar.
 
 | Ruta | Uso |

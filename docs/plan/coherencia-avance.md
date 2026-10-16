@@ -9,7 +9,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | C1 | ✅ | 2026-10-16 | (ver git log) | 7 pruebas nuevas en `tests/test_documentacion.py` (28 casos con las existentes); 12 casos `xfail(strict=True)` que la tarea indicada debe quitar. Detalle abajo. |
 | C2 | ✅ | 2026-10-16 | (ver git log) | Tablas de perfiles, tamaños y latencia medidos, descripción del perfil, `heavy` fuera de `ranking_pasajes.py`, nota en ADR 0003. Decisiones del usuario: presupuesto = opción (a) (solo documentar); sin ADR 0010. Ver «C2» abajo. |
 | C3 | ✅ | 2026-10-16 | (ver git log) | Ejemplos en `config_version: 8`; tabla de versiones completa (6, 7, 8); preparación estructural descrita como predeterminada; se quitaron los 5 `xfail` de C3. Ver «C3» abajo. |
-| C4 | ⬜ | | | |
+| C4 | ✅ | 2026-10-16 | (ver git log) | Guía del widget en español con las mismas 14 secciones que la inglesa; 8 capturas regeneradas; README aclara que el menú se abre con el «?». Ver «C4» abajo. |
 | C5 | ⬜ | | | |
 | C6 | ⬜ | | | ⚠ número de versión |
 | C7 | ⬜ | | | ⚠ cierre de F5.1 del plan V4 |
@@ -134,3 +134,32 @@ descartada).
 - Pruebas: quitados los `xfail` de `test_ejemplos_usan_la_config_version_vigente` (3 casos) y de
   `test_la_guia_de_configuracion_describe_la_version_vigente` (2). Quedan 3 `xfail`: web (C4), deployment y
   README.es (C5).
+
+## C4: widget en español
+
+- `docs/es/guia/web.md` pasa de 12 a 14 secciones `##`, igual que `docs/guide/web.md`: se tradujeron «Probar el widget y
+  configurar el proyecto» y «Orientación separada de los resultados» (con las etiquetas reales del pack de voz en
+  español: «Cómo buscar», «Qué puedo hacer», «Sobre el asistente», «Alcance», «Mostrar completo», «Contraer»; el conteo
+  se escribe «3 resultados» / «1 resultado», como en `ipsis/recursos/idiomas/es.yaml`). Además: la fila de
+  `GET /config` con `response_mode`, `assistant_messages` y `animations_enabled`, el punto de «Orientación de v2» en
+  «Textos» y la mención del icono «?» en el párrafo del menú.
+- **Corrección a I8.** El menú «Ayuda» **no se eliminó**: el icono «?» del encabezado lo abre (`widget.js:1362`). Los
+  README conservan «menú Ayuda» y ahora dicen cómo se abre.
+- **Corrección a I9.** `avatar.placement` sí está documentado, en inglés y en español, en
+  `docs/guide/personality.md:35` y `docs/es/guia/personalidad.md:34`. Lo que falta, **en los dos idiomas**, está solo en el
+  CHANGELOG: ver I16.
+- **Capturas.** Las 8 `docs/assets/widget-{sources,sources-dark,mobile,faq}-{en,es}.png` eran del 2026-10-13, anteriores
+  al icono «?», al mensaje del asistente sobre el buscador y al buscador abajo. Se regeneraron con
+  `herramientas/capturas_widget.py` (sin modificarlo) usando el Chromium preinstalado en `/opt/pw-browsers/chromium`,
+  porque la versión de Playwright del proyecto espera otro build. No se regeneraron `widget-mobile.png`, `widget-answer.png` y `widget-answer-dark.png` (del 2026-10-10): ese
+  script no las produce y **ningún documento las referencia** (comprobado con `grep`); quedaron huérfanas y se dejan para
+  que el usuario decida si borrarlas.
+- Prueba: quitado el `xfail` de `web` en `test_guias_en_y_es_tienen_las_mismas_secciones`; queda el de `deployment` (C5).
+
+### Hallazgo nuevo
+
+- **I16.** `docs/guide/web.md` y `docs/es/guia/web.md` no describen el diseño de búsqueda del [Unreleased]: buscador abajo
+  como un chat con los resultados desplazándose encima, mensaje del asistente sobre el buscador con el avatar a su derecha
+  (`avatar.placement: message`, ya documentado en las guías de personalidad), esqueletos de carga y la página de demostración
+  a pantalla completa en teléfonos. Es contenido nuevo para los dos idiomas, no una traducción, así que no se agregó en C4.
+  ⚠ Recomendación: una sección corta «Diseño de búsqueda» en ambas guías, tomada del CHANGELOG, en C5 o aparte.

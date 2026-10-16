@@ -209,7 +209,7 @@ PARES_DE_GUIAS = [("configuration", "configuracion"), ("deployment", "despliegue
                   ("installation", "instalacion"), ("integrations", "integraciones"),
                   ("inventories", "inventarios"), ("personality", "personalidad"), ("usage", "uso"), ("web", "web")]
 DIFERENCIAS_PERMITIDAS: dict[str, tuple[int, str]] = {}
-GUIAS_POR_ACTUALIZAR = {"web": "C4: I9", "deployment": "C5: I10"}
+GUIAS_POR_ACTUALIZAR = {"deployment": "C5: I10"}
 
 
 def _secciones(ruta: Path) -> int:

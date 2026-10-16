@@ -13,6 +13,65 @@ configuración y cómo conservar el widget al navegar entre rutas.
 
 ![Widget v2 con fuentes numeradas y contexto literal](../../assets/widget-sources-es.png)
 
+## Probar el widget y configurar el proyecto
+
+Desde la carpeta de un proyecto, ejecuta `ipsis serve`. Abre
+`/widget/demo.html` con el tema que ya tiene el proyecto y habilita
+`/admin/panel`; la página de prueba enlaza al panel y `/` redirige a la página
+de prueba. Pega en el panel el token de administración que se muestra en la
+terminal. Si ya existe `IPSIS_ADMIN_TOKEN`, se reutiliza; si no, se crea un
+token temporal para esta ejecución, sin guardarlo. Se conserva el modo de
+producción, incluido HTTPS para el acceso remoto de administración.
+
+Usa `ipsis serve --no-open` para no abrir el navegador. `--no-demo` desactiva
+la página de prueba y evita que se abra; `--no-admin` desactiva el panel aunque
+haya un token configurado. La API y los archivos del widget siguen
+disponibles. Ejecuta `ipsis help serve` para ver todas las opciones.
+
+## Orientación separada de los resultados
+
+Con el motor v2, una sección de orientación se ubica sobre las fuentes
+ordenadas. Usa un catálogo fijo de 118 mensajes para cada uno de español,
+inglés y portugués, elegido según el idioma de los documentos del proyecto. Los
+demás idiomas usan la orientación en inglés como respaldo. Las trece categorías
+son `welcome`, `greeting`, `thanks`, `farewell`, `capability`, `tips`,
+`searching`, `results`, `continuation`, `no_results`, `about`, `limits` y
+`examples`. Los catálogos YAML están en `ipsis/recursos/voz/` y son
+independientes de los tonos y de las plantillas de fuentes existentes. Es texto
+de interfaz: nunca evidencia documental ni respuestas generadas.
+
+Las plantillas `results` y `continuation` pueden usar `{count}` (el número con
+su sustantivo, ya en singular o plural del idioma: «3 resultados», «1
+resultado»), `{n}` (el número solo) y `{query}` (lo que se buscó). Una
+plantilla que no usa ninguno recibe el conteo al inicio («3 resultados. …»), de
+modo que el conteo siempre llega a quien lee sin ocupar una línea propia (el
+encabezado «N resultados para …» se conserva solo para lectores de pantalla). El
+menú de ayuda es un icono «?» en el encabezado del asistente. Mientras el
+asistente no está hablando, o aún no empezó, un punto aparece y se desvanece
+después de su mensaje para indicar que espera.
+
+**Cómo buscar**, **Qué puedo hacer**, **Sobre el asistente**, **Alcance** y
+**Ejemplos** rotan entre sus mensajes de forma local, sin enviar una consulta
+de búsqueda. Los saludos, agradecimientos y despedidas escritos también van a
+esta sección, y conservan las fuentes desplegadas y el botón de continuación.
+Solo las expresiones de cortesía completas evitan la recuperación documental;
+una consulta mixta como «hola, ¿cuál es el stock del producto A?» sigue
+consultando el corpus.
+
+La orientación se revela carácter por carácter, sin retrasar las peticiones de
+red ni mostrar las fuentes carácter por carácter. **Mostrar completo** termina
+la animación de inmediato. Un mensaje nuevo cancela la animación anterior. Las
+preferencias de movimiento reducido, incluso si cambian mientras se escribe,
+muestran el texto completo; `ipsis widget style set animations.enabled=false`
+también desactiva la escritura. Los lectores de pantalla reciben el mensaje
+completo una sola vez, en lugar de actualizaciones por carácter. Los errores de
+búsqueda aparecen en la orientación y dejan disponibles los resultados
+existentes.
+
+`GET /config` agrega `assistant_messages` (categoría → lista de textos fijos),
+`suggested_questions`, `animations_enabled` y las etiquetas de orientación
+localizadas en `interface`. El motor v1 conserva su flujo de chat actual.
+
 ## Insertarlo
 
 La forma más simple: pide el código ya armado y pégalo antes de `</body>`.
@@ -109,7 +168,7 @@ El widget usa tres endpoints públicos; también puedes llamarlos tú:
 | Endpoint | Qué devuelve |
 |---|---|
 | `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` cuando la pregunta no tiene tema: el asistente lo pide), `confidence_level` (`high`: respuesta directa leída por el lector QA, 96,6 % correcta en los bancos medidos; `medium`: respuesta directa sin lector, 85 %; `low`: pasaje relacionado; ausente si no hay respuesta), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, `alternatives` (solo en `no_answer` con la postura proactiva: pasajes literales parecidos, con los campos de `fragments`; no responden la pregunta) y `conversational_category` |
-| `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `placement` y `avatar` |
+| `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `response_mode`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `assistant_messages`, `animations_enabled`, `placement` y `avatar` |
 | `GET /health`, `GET /ready` | Vida y preparación (con el mismo diagnóstico que `ipsis doctor` en `project`) |
 
 Con claves de widget configuradas, `POST /ask` exige el encabezado
@@ -160,6 +219,8 @@ comprobarla:
 - **Del tono activo** (ver [personalidad.md](personalidad.md)): la
   bienvenida, «buscando…», la invitación a las citas y los mensajes de error
   vienen de `/config` en 7 variantes, y el widget rota entre ellas.
+- **Orientación de v2:** su catálogo fijo y separado tiene 118 mensajes por
+  idioma admitido, con ejemplos e información sobre el asistente y su alcance.
 - **Textos de la interfaz** (etiquetas de botones, placeholder…): vienen del
   paquete de idioma del proyecto.
 - **Accesibilidad:** «buscando…» y los errores se anuncian a los lectores
@@ -215,7 +276,8 @@ variantes de mensajes son un catálogo distinto de las preguntas reconocidas.
 
 La orientación ocupa dos líneas por defecto. **Mostrar completo** permite
 leerla en un área desplazable; **Contraer** devuelve el espacio a las fuentes.
-El menú **Ayuda** muestra las acciones sobre la lista, sin cambiar su altura.
+El menú **Ayuda** (el icono «?» del encabezado) muestra las acciones sobre la
+lista, sin cambiar su altura.
 La barra de carga y las transiciones de las tarjetas hacen visibles las
 consultas nuevas; respetan `animations.enabled` y el movimiento reducido.
 

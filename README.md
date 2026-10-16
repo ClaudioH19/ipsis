@@ -202,7 +202,7 @@ content text and extra CSS.
 Six suggested questions fill the input without submitting it. **Frequently
 asked questions** lets users explore topics covering search, sources,
 inventories, scope, privacy, appearance, documents, service and maintenance.
-The **Help** menu groups guidance messages. Expand them when you need the full
+The **Help** menu, opened with the "?" icon in the header, groups guidance messages. Expand them when you need the full
 text; a new query returns them to their compact view.
 
 | Route | Purpose |
