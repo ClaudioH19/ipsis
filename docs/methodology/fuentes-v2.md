@@ -1,5 +1,7 @@
 # V2 como enrutador de fuentes
 
+Estado: vigente. Describe el motor v2, predeterminado desde el 2026-10-12.
+
 V2 entrega varias fuentes ordenadas para que la persona revise y lea la
 información. Usa búsqueda híbrida, corrección ortográfica optativa y hasta un
 reranker del perfil. No genera una respuesta ni interpreta una votación como

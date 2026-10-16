@@ -1,5 +1,8 @@
 # V4 evaluation: conversation memory, local synonyms and intent fallback
 
+Status: historical. It measures the v1 engine. Since 2026-10-12 the default engine is v2, which does not
+run conversation memory or the answer policy (see [ranked sources](fuentes-v2.md)).
+
 This report describes the initial V4 snapshot (`b23ad8a`). Subsequent
 [conversation and intent corrections](mediciones/v4-correcciones/README.md)
 retain this comparison as their baseline and report verification separately.

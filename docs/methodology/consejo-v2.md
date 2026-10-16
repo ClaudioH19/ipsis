@@ -1,5 +1,7 @@
 # Consejo de reranking: experimento retirado
 
+Estado: histórico. El experimento se retiró y ya no existe en el código (`config_version` 7).
+
 El consejo, su configuración, factory y comparador se eliminaron. Esta nota
 conserva la evidencia de la decisión; no describe una opción disponible.
 La configuración 7 retira `v2.council` de los archivos anteriores y conserva

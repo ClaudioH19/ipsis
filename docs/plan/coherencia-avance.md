@@ -12,7 +12,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | C4 | ✅ | 2026-10-16 | (ver git log) | Guía del widget en español con las mismas 14 secciones que la inglesa; 8 capturas regeneradas; README aclara que el menú se abre con el «?». Ver «C4» abajo. |
 | C5 | ✅ | 2026-10-16 | (ver git log) | LaTeX en `README.es.md`; sección «Integración continua» en la guía de despliegue en español; `ipsis sync` y la migración a `config_version` 8 en los README (EN/ES); I15 e I17 corregidos con pruebas. Todas las pruebas de coherencia en verde, sin `xfail`. Ver «C5» abajo. |
 | C6 | ⬜ | | | ⚠ número de versión |
-| C7 | ⬜ | | | ⚠ cierre de F5.1 del plan V4 |
+| C7 | 🔶 | 2026-10-16 | (ver git log) | Hecho: estado de 6 notas, §14 de `motor-v2.md` e índice de `docs/plan/README.md`. Pendiente: ⚠ lista de notas dudosas y ⚠ cierre del plan V4 (F5.1). Ver «C7» abajo. |
 | C8 | ✅ | 2026-10-16 | (ver git log) | Dos casillas en la plantilla de PR y la sección «Documentation follows the code» en `CONTRIBUTING.md`, con las pruebas por nombre. |
 
 ## C1: pruebas de coherencia
@@ -201,3 +201,39 @@ descartada).
   `CONFIG_VERSION`, `EXTENSIONES_SOPORTADAS`, `pyproject.toml`), cada prueba de `tests/test_documentacion.py` por su
   nombre y qué hacer con un modelo o formato nuevo (`ALIAS_DE_MODELOS`, `NOMBRE_DE_FORMATO`). Se comprobó que todas las
   pruebas citadas existen. La viñeta de «Style» que describía a mano lo que verificaba la prueba ahora remite a la sección.
+
+## C7: historia y planes (en curso)
+
+**Hecho.**
+
+- Estado añadido o corregido en las notas donde la propia nota decide (cada afirmación se respaldó con algo comprobado):
+  `fuentes-v2.md` (vigente), `consejo-v2.md` (histórico: experimento retirado con `config_version` 7),
+  `motor-v2-diagnostico.md` y `motor-v2-mejoras-lectura.md` (histórico, 2026-10-11: decían «se conserva v1 como motor por
+  defecto»), `v4-results.md` (histórico: mide v1; v2 no ejecuta memoria de conversación ni la política de respuestas, según
+  `docs/guide/configuration.md`) y la sección «14. Estado» de `motor-v2.md` (decía «implementación experimental»).
+  `preparacion-estructural.md` ya se había corregido en C3.
+- `docs/plan/README.md` pasa de «Plan V4 … vigente» a un índice de los seis planes con su estado, tomado de la tabla de
+  avance de cada uno. El texto completo del plan V4 se conserva debajo, bajado de nivel, hasta su cierre.
+
+**⚠ Para el usuario: notas de metodología donde no hay evidencia suficiente.** Las notas numeradas (plantilla de 14 puntos)
+ya tienen su sección «14. Status» y dicen «Stable», lo que es cierto para el motor v1 pero puede leerse como si rigieran el
+motor predeterminado (v2). Propuesta, sin aplicar:
+
+| Nota | Dice hoy | Propuesta |
+|---|---|---|
+| `policy.md` (política `cascade_v1`) | Stable | Estable, **solo motor v1**: v2 no aplica la política de respuestas |
+| `calibration.md` | Stable | Estable, **solo motor v1**: la calibración no controla el ranking de v2 (README, «Compatibilidad: motor v1») |
+| `reader.md` (lector QA) | Stable | Estable, motor v1; v2 no lo carga por defecto (`qa_highlights` opcional) |
+| `lexical.md` (señales `s_oov`, `s_foco`…) | Stable | Estable; las señales son de v1, el BM25 lo comparten v1 y v2 |
+| `retrieval.md` | Stable | Vigente: la búsqueda híbrida la usa v2; los umbrales con `s_ret` son de v1 |
+| `reranker.md` | Stable | Vigente, pero su tabla de `medium` (mMiniLM, 4 candidatos) no recoge el reranker por idioma (ADR 0003) |
+| `evaluation.md` | Stable | Vigente para los bancos de regresión; las métricas de «respuesta directa» son de v1 |
+| `multilingual.md` | Stable | Vigente |
+| `informal-paraphrases.md` | informe fechado 2026-10-08 | Histórico (medición), con los recursos léxicos aún en uso |
+
+¿Aplico la propuesta tal cual, o prefieres otra redacción o dejar alguna sin cambio?
+
+**⚠ Para el usuario: cierre del plan V4.** La tabla de avance de `docs/plan/avance.md` tiene todo en ✅ salvo F5.1
+(«espera al usuario»). Si se aprueba, la regla del plan manda resumir lo valioso en `CHANGELOG.md`, los ADR y
+`docs/methodology/`, y borrar `tareas.md`, `avance.md`, `sinonimos.md` y la última sección de `docs/plan/README.md`
+(más los enlaces rotos que queden, que la prueba de enlaces detecta). No lo hice sin tu aprobación.

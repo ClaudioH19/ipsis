@@ -1,12 +1,17 @@
-# Plan V4: bancos, memoria de conversación, sinónimos e intención
+# Planes de trabajo
 
-Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
-`CHANGELOG.md`, los ADR y `docs/methodology/` (como el plan V3).
+Cada plan se borra al cerrarse; lo que quede vale se resume en `CHANGELOG.md`, los
+ADR y `docs/methodology/` (como el plan V3). Estado al 2026-10-16, tomado de la tabla
+de avance de cada plan:
 
-- [tareas.md](tareas.md): cada tarea con sus pasos y su criterio de aceptación.
-- [avance.md](avance.md): estado, fecha, commit y medición de cada tarea.
-- [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
-  conversión reproducible y activación medida de F2.
+| Plan | Estado | Documentos |
+|---|---|---|
+| Coherencia entre código y documentación | en curso: C1–C5 y C8 hechas; C7 en curso y C6 pendientes (⚠) | [coherencia.md](coherencia.md), [tareas](coherencia-tareas.md), [avance](coherencia-avance.md) |
+| Presentación por forma de resultados | pendiente: empieza con la medición P0 | [presentacion.md](presentacion.md), [tareas](presentacion-tareas.md), [avance](presentacion-avance.md) |
+| Multimedia | pendiente: empieza con M0 | [multimedia.md](multimedia.md), [tareas](multimedia-tareas.md), [avance](multimedia-avance.md) |
+| Precisión desde la ingesta | casi cerrado: quedan F3.3 (condicional, sin iniciar) y F4.3 (⚠ espera al usuario) | [precision-ingesta.md](precision-ingesta.md), [tareas](precision-ingesta-tareas.md), [avance](precision-ingesta-avance.md) |
+| Motor v2 | v2 es el predeterminado desde el 2026-10-12; faltan la evaluación general y el retiro de v1 | [motor-v2.md](motor-v2.md), [avance](motor-v2-avance.md) |
+| V4: bancos, memoria, sinónimos e intención | terminado salvo el cierre F5.1 (⚠ espera la aprobación del usuario) | [tareas.md](tareas.md), [avance.md](avance.md), [sinonimos.md](sinonimos.md) y la última sección de este archivo |
 
 ## Plan de coherencia
 
@@ -47,10 +52,19 @@ comparación con casos reales, preparación estructurada y reemplazo limpio
 condicionado a resultados. La primera implementación está en curso; consultar
 el [avance del motor v2](motor-v2-avance.md). Desde el 2026-10-12, v2 es el
 motor predeterminado; la evaluación general y el retiro de v1 siguen pendientes.
-Este documento conserva el
-historial y los criterios del plan V4.
+La última sección de este archivo conserva el historial y los criterios del plan V4.
 
-## Objetivo
+## Plan V4: bancos, memoria de conversación, sinónimos e intención
+
+Estado: terminado, a la espera del cierre F5.1. Se conserva su texto para que el cierre
+pueda resumirlo en `CHANGELOG.md`, los ADR y `docs/methodology/`.
+
+- [tareas.md](tareas.md): cada tarea con sus pasos y su criterio de aceptación.
+- [avance.md](avance.md): estado, fecha, commit y medición de cada tarea.
+- [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
+  conversión reproducible y activación medida de F2.
+
+### Objetivo
 
 Que la comprensión de la pregunta y la conversación se apoyen en evidencia
 medida y no en reglas validadas con pocos casos:
@@ -63,7 +77,7 @@ medida y no en reglas validadas con pocos casos:
 4. reconocimiento de la intención con un respaldo por similitud cuando los
    patrones no alcanzan.
 
-## Reglas de ejecución
+### Reglas de ejecución
 
 1. **Medir antes y después.** Ningún cambio de comportamiento entra sin
    medirse contra la línea base de F1.4 en los bancos de consultas, de
@@ -80,7 +94,7 @@ medida y no en reglas validadas con pocos casos:
 7. **Tareas marcadas ⚠** requieren la aprobación del usuario antes de
    ejecutarse.
 
-## Requisitos (lo que pidió el usuario)
+### Requisitos (lo que pidió el usuario)
 
 | ID | Requisito | Origen |
 |---|---|---|
@@ -95,7 +109,7 @@ medida y no en reglas validadas con pocos casos:
 | R9 | Respaldo por similitud para la intención | 2026-10-06 |
 | R10 | Documentación y diagramas al día en cada cambio | 2026-10-06 |
 
-## Decisiones
+### Decisiones
 
 | ID | Decisión | Quién / cuándo |
 |---|---|---|
@@ -106,7 +120,7 @@ medida y no en reglas validadas con pocos casos:
 | D5 | Para D2, el widget usa un `session_id` nuevo en cada carga de página y el servidor olvida por vencimiento. Un aviso de salida (`sendBeacon`) no puede llevar la clave del widget. Consecuencia: **navegar a otra página del mismo sitio también empieza una conversación nueva** | Usuario, 2026-10-06 |
 | D6 | El trabajo sigue en `v2/ruta`: los commits del plan se suman al PR #7 | Usuario, 2026-10-06 |
 
-## Trazabilidad
+### Trazabilidad
 
 | Requisito | Tareas | Cómo se verifica |
 |---|---|---|
@@ -121,7 +135,7 @@ medida y no en reglas validadas con pocos casos:
 | R9 | F3.1–F3.5 | Intenciones reconocidas por similitud en el diagnóstico; medición |
 | R10 | todas | Revisión del commit; `tests/test_documentacion.py` |
 
-## Métricas
+### Métricas
 
 - **Correcta:** respuesta directa que muestra el texto literal esperado.
 - **Directa errónea:** falso ok (directa en un caso sin respuesta) o directa
@@ -130,7 +144,7 @@ medida y no en reglas validadas con pocos casos:
   (no heredó en un seguimiento), sobre los turnos con `hereda`.
 - **Latencia:** media de light por idioma en el banco universal.
 
-## Criterios globales de aceptación
+### Criterios globales de aceptación
 
 | ID | Criterio |
 |---|---|
@@ -141,7 +155,7 @@ medida y no en reglas validadas con pocos casos:
 | G5 | Latencia media de light ≤ línea base + 10 % (el ruido medido es de ese orden) |
 | G6 | Caracterización: cada cambio de estado explicado en el commit |
 
-## Riesgos
+### Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
@@ -153,7 +167,7 @@ medida y no en reglas validadas con pocos casos:
 | La similitud de intención acierta poco con preguntas muy cortas | Solo actúa si ningún patrón reconoce; umbral y margen elegidos en `dev`, reportados en `test` |
 | 60 casos por idioma no certifican α por idioma | Se dice así en la documentación (D1) |
 
-## Fuera de alcance (pendiente aparte)
+### Fuera de alcance (pendiente aparte)
 
 - P5 de la propuesta original: expansión a pasajes padre y vecinos.
 - En light: «cuando parte la compra?», «¿Quién firma la Resolución de
