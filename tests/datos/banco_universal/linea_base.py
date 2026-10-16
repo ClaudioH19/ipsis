@@ -58,6 +58,11 @@ def evaluar_artefacto(idioma: str, perfil: str):
             os.chdir(temporal)
             with contextlib.redirect_stdout(io.StringIO()):
                 assert main(["init", "--profile", perfil, "--language", idioma]) == 0
+                # La línea base registra los falsos ok de la cascada de v1 con fragmentos de tamaño fijo (v2 no decide «ok» y
+                # la preparación estructural es posterior, ADR 0009): se fijan esas condiciones.
+                motor = Path("config/engine.yaml")
+                motor.write_text(motor.read_text(encoding="utf-8").replace("\npipeline: v2", "\npipeline: v1", 1)
+                                 .replace("mode: structural_v1", "mode: legacy", 1), encoding="utf-8")
                 assert main(["load", str(RAIZ / idioma / "corpus")]) == 0
                 assert main(["index"]) == 0
                 artefacto = evaluar_backend_activo(str(manifiesto))
