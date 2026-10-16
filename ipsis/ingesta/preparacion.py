@@ -12,6 +12,7 @@ PARSER_VERSION = "docx-estructura-1"
 PARSER_VERSION_MARKDOWN = "markdown-estructura-1"
 PARSER_VERSION_TEXTO = "texto-estructura-1"
 PARSER_VERSION_PDF = "pdf-estructura-1"
+PARSER_VERSION_LATEX = "latex-estructura-1"
 
 
 def preparar_documento(ruta, *, doc_id, doc_titulo, version="1"):
@@ -23,11 +24,13 @@ def preparar_documento(ruta, *, doc_id, doc_titulo, version="1"):
         return preparar_docx(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
     if Path(ruta).suffix.lower() in {".md", ".markdown"}:
         return preparar_markdown(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
+    if Path(ruta).suffix.lower() == ".tex":
+        return preparar_latex(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
     if Path(ruta).suffix.lower() == ".txt":
         return preparar_texto(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
     if Path(ruta).suffix.lower() == ".pdf":
         return preparar_pdf(ruta, doc_id=doc_id, doc_titulo=doc_titulo, version=version)
-    raise ValueError("estructura-1 soporta DOCX, Markdown, texto, PDF, XLSX, XLS, CSV y TSV")
+    raise ValueError("estructura-1 soporta DOCX, Markdown, LaTeX, texto, PDF, XLSX, XLS, CSV y TSV")
 
 
 def _hash(datos):
@@ -201,7 +204,7 @@ def preparar_docx(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparad
         structure_hash=_hash(datos_estructura), advertencias=sorted(set(avisos)))
 
 
-def _preparar_desde_parseado(parseado, *, parser_version, avisos_extra=()) -> DocumentoPreparado:
+def _preparar_desde_parseado(parseado, *, parser_version, avisos_extra=(), formato="Markdown") -> DocumentoPreparado:
     """Convierte la salida de ``parsear_markdown`` / ``parsear_texto_plano`` en un documento preparado.
 
     El texto canónico y los offsets son los del parser existente (no se duplica su lectura de
@@ -232,7 +235,7 @@ def _preparar_desde_parseado(parseado, *, parser_version, avisos_extra=()) -> Do
             offset_fin=bloque.offset_fin, seccion_path=list(seccion),
             metadata={"orden": len(elementos), **metadata}))
     if any(e.metadata.get("origen") == "fila_tabla_markdown" for e in elementos):
-        avisos.append("tablas Markdown: cada fila se conserva como párrafo, sin celdas ni encabezados")
+        avisos.append(f"tablas {formato}: cada fila se conserva como párrafo, sin celdas ni encabezados")
     datos_estructura = {"parser": parser_version, "elementos": [e.model_dump(mode="json") for e in elementos],
                         "texto": parseado.texto_completo}
     return DocumentoPreparado(
@@ -247,6 +250,15 @@ def preparar_markdown(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPrep
 
     return _preparar_desde_parseado(parsear_markdown(str(ruta), doc_id, doc_titulo, version),
                                     parser_version=PARSER_VERSION_MARKDOWN)
+
+
+def preparar_latex(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparado:
+    """LaTeX: se convierte a Markdown legible (títulos, listas, tablas y fórmulas como texto fuente) y se prepara
+    como Markdown; las tablas quedan como filas-párrafo con su pie como párrafo previo."""
+    from ipsis.ingesta.parsear import parsear_latex
+
+    return _preparar_desde_parseado(parsear_latex(str(ruta), doc_id, doc_titulo, version),
+                                    parser_version=PARSER_VERSION_LATEX, formato="LaTeX")
 
 
 def preparar_pdf(ruta, *, doc_id, doc_titulo, version="1") -> DocumentoPreparado:

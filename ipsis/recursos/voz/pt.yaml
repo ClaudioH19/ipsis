@@ -96,10 +96,10 @@ messages:
     - Pesquisando nos documentos carregados…
     - Recuperando opções com seu contexto…
   results:
-    - Confira estas opções. Abra cada fonte para verificar se responde à pergunta.
-    - As fontes estão ordenadas por relevância. A primeira opção também precisa ser verificada.
-    - Você já pode ler os resultados. O contexto ajuda a distinguir dados semelhantes.
-    - Abra o trecho que interessa e confira seu documento de origem.
+    - "{count} para conferir. Abra cada fonte para verificar se responde à pergunta."
+    - "{count}. As fontes estão ordenadas por relevância e a primeira também precisa ser verificada."
+    - "Você já pode ler {count}. O contexto ajuda a distinguir dados semelhantes."
+    - "{count}. Abra o trecho que interessa e confira seu documento de origem."
     - Compare as opções antes de escolher qual informação utilizar.
     - Estas são possíveis fontes. Reformule a consulta para procurar outras opções.
     - Se o dado estiver em uma tabela, confira também os cabeçalhos das colunas.
@@ -107,8 +107,8 @@ messages:
     - Continue lendo as fontes ou escreva uma consulta mais específica.
     - Confira o documento e sua versão ao verificar a informação encontrada.
   continuation:
-    - Novas opções foram adicionadas à lista. Compare com os resultados anteriores.
-    - Aqui estão mais fontes da mesma pesquisa para conferir.
+    - "Agora há {count} na lista. Compare as novas opções com as anteriores."
+    - "A pesquisa continua: {count} até agora. Abra as novas opções para ler o contexto."
     - A pesquisa continua. Abra as novas opções para ler o contexto.
     - Confira os resultados adicionados; as opções anteriores continuam na lista.
     - Compare estes trechos com as primeiras fontes mostradas.

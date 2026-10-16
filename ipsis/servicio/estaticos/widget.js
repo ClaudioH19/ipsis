@@ -172,6 +172,8 @@
     search_read_document: "Read full context",
     search_close_document: "Close context",
     result_distinguished: "Distinguished by",
+    voice_count_phrase: "{n} results",
+    voice_count_phrase_one: "1 result",
     search_stage_read: "Reading the documents…",
     search_stage_compare: "Comparing sources…",
     search_stage_rank: "Sorting by relevance…",
@@ -652,24 +654,42 @@
     ".rw-voz{flex:none;padding:8px var(--rw-separacion);border-bottom:1px solid var(--rw-borde);",
     "  background:var(--rw-fondo);color:var(--rw-texto);text-align:start;}",
     ".rw-voz[hidden]{display:none;}",
-    ".rw-voz-cabecera{display:flex;align-items:center;gap:8px;}",
-    ".rw-voz h3{flex:1;min-width:0;margin:0;font-size:var(--rw-tamano-etiqueta);font-weight:600;color:var(--rw-texto-suave);",
-    "  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
-    ".rw-voz-texto{margin:6px 0 0;min-height:0;font-size:var(--rw-tamano-cita);line-height:1.45;overflow-wrap:anywhere;",
+    // El título es solo para lectores de pantalla; el menú de ayuda vive en el encabezado como un «?».
+    ".rw-voz h3{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}",
+    ".rw-voz-texto{margin:0;min-height:0;font-size:var(--rw-tamano-cita);line-height:1.45;overflow-wrap:anywhere;",
     "  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}",
     ".rw-voz[data-expandido='true'] .rw-voz-texto{display:block;max-height:min(120px,25dvh);overflow:auto;}",
-    ".rw-voz-menu{position:relative;flex:none;margin-inline-start:auto;}",
-    ".rw-voz-menu summary{cursor:pointer;font-size:var(--rw-tamano-etiqueta);color:var(--rw-texto);}",
-    ".rw-voz-menu .rw-voz-acciones{position:absolute;inset-inline-end:0;top:calc(100% + 8px);z-index:4;",
-    "  width:220px;max-width:calc(100vw - 32px);padding:10px;display:flex;flex-direction:column;",
+    ".rw-voz-menu{position:relative;flex:none;}",
+    ".rw-voz-menu summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;",
+    "  border-radius:50%;color:var(--rw-texto-suave);transition:background var(--rw-dur-control) ease,color var(--rw-dur-control) ease;}",
+    ".rw-voz-menu summary::-webkit-details-marker{display:none;}",
+    ".rw-voz-menu summary svg{width:19px;height:19px;}",
+    ".rw-voz-menu summary:hover,.rw-voz-menu[open] summary{background:var(--rw-fondo);color:var(--rw-texto);}",
+    ".rw-voz-menu summary:focus-visible{outline:2px solid var(--rw-acento);outline-offset:1px;}",
+    ".rw-voz-menu .rw-voz-acciones{position:absolute;inset-inline-end:0;top:calc(100% + 8px);z-index:6;",
+    "  width:220px;max-width:calc(100vw - 32px);padding:6px;display:flex;flex-direction:column;gap:2px;",
     "  background:var(--rw-superficie);border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);box-shadow:var(--rw-sombra-panel);}",
     ".rw-voz-menu:not([open]) .rw-voz-acciones{display:none;}",
-    ".rw-voz-menu .rw-voz-acciones button{text-align:start;width:100%;}",
+    ".rw-voz-menu .rw-voz-acciones button{display:block;width:100%;text-align:start;font:inherit;font-size:var(--rw-tamano-cita);",
+    "  color:var(--rw-texto);background:transparent;border:0;border-radius:8px;padding:9px 10px;cursor:pointer;}",
+    ".rw-voz-menu .rw-voz-acciones button:hover{background:var(--rw-fondo);}",
+    ".rw-voz-menu .rw-voz-acciones button:focus-visible{outline:2px solid var(--rw-acento);outline-offset:-2px;}",
     ".rw-voz-acciones{display:flex;flex-wrap:wrap;gap:8px;}",
     ".rw-voz button{font:inherit;font-size:var(--rw-tamano-etiqueta);color:var(--rw-texto);",
     "  background:var(--rw-superficie);border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);",
     "  padding:5px 10px;cursor:pointer;}",
     ".rw-voz button:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    // «Mostrar completo» / «Contraer»: un enlace discreto bajo el texto, no un botón.
+    ".rw-voz .rw-voz-mas{display:block;margin:3px 0 0;padding:0;border:0;background:none;color:var(--rw-acento);font-weight:600;",
+    "  font-size:calc(var(--rw-tamano-etiqueta) + .5px);}",
+    ".rw-voz .rw-voz-mas[hidden]{display:none;}",
+    // Espera: un punto que aparece y desaparece mientras el asistente no habla (o aún no empieza).
+    ".rw-voz-texto::after{content:'';display:inline-block;width:9px;height:9px;margin-inline-start:7px;border-radius:50%;",
+    "  background:var(--rw-acento);vertical-align:middle;opacity:0;animation:rw-espera 1.7s ease-in-out infinite;}",
+    ".rw-voz[data-typing='true'] .rw-voz-texto::after{display:none;}",
+    "@keyframes rw-espera{0%,100%{opacity:0;transform:scale(.45);}50%{opacity:1;transform:scale(1);}}",
+    ".rw-panel[data-animaciones='false'] .rw-voz-texto::after{animation:none;opacity:.55;}",
+    "@media(prefers-reduced-motion:reduce){.rw-voz-texto::after{animation:none;opacity:.55;}}",
 
     // Pulido visual: buscador, botones, orientación, resultados y esqueleto de búsqueda.
     ".rw-campo{position:relative;flex:1;min-width:0;display:flex;align-items:center;}",
@@ -698,8 +718,8 @@
     ".rw-busqueda-acciones{text-align:center;}",
     ".rw-busqueda-ayuda{margin-bottom:12px;}",
     // Resultados.
-    ".rw-busqueda-contador{margin:2px 2px 14px;padding-inline-start:10px;border-inline-start:3px solid var(--rw-acento);",
-    "  font-size:calc(var(--rw-tamano-cita) + .5px);font-weight:500;line-height:1.4;}",
+    // El conteo («3 resultados para …») lo dice el asistente en su mensaje; la línea queda solo para lectores de pantalla.
+    ".rw-busqueda-contador{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}",
     ".rw-panel:not([data-diseno='lines']):not([data-diseno='editorial']) .rw-busqueda .rw-resultado{",
     "  box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 16px -8px rgba(16,24,40,.14);",
     "  transition:box-shadow var(--rw-dur-control) ease,border-color var(--rw-dur-control) ease;}",
@@ -797,7 +817,8 @@
   var TRAZOS = {
     cerrar: "M18 6 6 18M6 6l12 12",
     enviar: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z",
-    buscar: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"
+    buscar: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
+    ayuda: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"
   };
 
   function icono(nombre, clase) {
@@ -1210,19 +1231,17 @@
   var espacioVoz = document.createElement("section");
   espacioVoz.className = "rw-voz";
   espacioVoz.hidden = true;
-  var cabeceraVoz = document.createElement("div");
-  cabeceraVoz.className = "rw-voz-cabecera";
   var tituloVoz = document.createElement("h3");
   tituloVoz.id = "rw-voz-titulo";
   espacioVoz.setAttribute("aria-labelledby", tituloVoz.id);
   var completarVoz = document.createElement("button");
   completarVoz.type = "button";
+  completarVoz.className = "rw-voz-mas";
   completarVoz.hidden = true;
   completarVoz.addEventListener("click", function () {
     espacioVoz.dataset.expandido = espacioVoz.dataset.expandido === "true" ? "false" : "true";
     finalizarVoz();
   });
-  cabeceraVoz.append(tituloVoz, completarVoz);
   var textoVoz = document.createElement("p");
   textoVoz.className = "rw-voz-texto";
   textoVoz.setAttribute("aria-hidden", "true");
@@ -1237,7 +1256,6 @@
   var menuVoz = document.createElement("details"), resumenMenuVoz = document.createElement("summary");
   menuVoz.className = "rw-voz-menu";
   menuVoz.append(resumenMenuVoz, accionesVoz);
-  cabeceraVoz.appendChild(menuVoz);
   accionesVoz.addEventListener("click", function (e) {
     if (e.target.closest("button")) { menuVoz.open = false; resumenMenuVoz.focus(); }
   });
@@ -1257,7 +1275,7 @@
   });
   textoVoz.id = "rw-voz-texto";
   completarVoz.setAttribute("aria-controls", textoVoz.id);
-  espacioVoz.append(cabeceraVoz, textoVoz, anuncioVoz);
+  espacioVoz.append(tituloVoz, textoVoz, completarVoz, anuncioVoz);
 
   function voz(categoria, repuesto) {
     var opciones = BANCO_VOZ[categoria];
@@ -1324,7 +1342,11 @@
     completarVoz.textContent = texto("voice_show_all");
     ayudaVoz.textContent = texto("voice_help");
     opcionesVoz.textContent = texto("voice_options");
-    resumenMenuVoz.textContent = texto("voice_menu");
+    // Ayuda: un «?» en el encabezado (junto al nombre del asistente) que abre el menú de ayuda.
+    resumenMenuVoz.replaceChildren(icono("ayuda"));
+    resumenMenuVoz.setAttribute("aria-label", texto("voice_menu"));
+    resumenMenuVoz.title = texto("voice_menu");
+    cabecera.insertBefore(menuVoz, botonCerrar);
     Object.keys(botonesVoz).forEach(function (categoria) {
       botonesVoz[categoria].textContent = texto("voice_" + categoria);
       botonesVoz[categoria].hidden = !(BANCO_VOZ[categoria] && BANCO_VOZ[categoria].length);
@@ -1721,7 +1743,20 @@
       ? texto("search_added", { n: cantidad - cantidadAnterior }) : paginaBusqueda.contador.textContent;
     if (respuesta.continuando && primero) primero.focus({ preventScroll: true });
     var categoriaVoz = cantidad === 0 ? "no_results" : respuesta.continuando ? "continuation" : "results";
-    hablar(voz(categoriaVoz, texto("voice_" + categoriaVoz)), categoriaVoz);
+    // El conteo va en el mensaje del asistente (no en una línea aparte). Las plantillas pueden ubicarlo con
+    // {count} («3 resultados», ya en singular o plural del idioma), {n} y {query}; si no usan ninguno, el conteo
+    // se antepone («3 resultados.»). Sin resultados no hay conteo.
+    var mensajeVoz = voz(categoriaVoz, texto("voice_" + categoriaVoz));
+    if (cantidad > 0) {
+      var frase = texto(cantidad === 1 ? "voice_count_phrase_one" : "voice_count_phrase", { n: cantidad });
+      if (/\{(count|n|query)\}/.test(mensajeVoz)) {
+        mensajeVoz = mensajeVoz.replace(/\{count\}/g, frase).replace(/\{n\}/g, String(cantidad))
+          .replace(/\{query\}/g, respuesta.pregunta || "");
+      } else {
+        mensajeVoz = frase + ". " + mensajeVoz;
+      }
+    }
+    hablar(mensajeVoz, categoriaVoz);
   }
 
   // Indicador de "escribiendo": sin el, el widget se queda mudo entre que

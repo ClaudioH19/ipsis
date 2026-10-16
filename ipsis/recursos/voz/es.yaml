@@ -96,10 +96,10 @@ messages:
     - Buscando información en el corpus cargado…
     - Recuperando opciones con su contexto…
   results:
-    - Revisa estas opciones. Abre cada fuente para comprobar si responde a tu pregunta.
-    - Las fuentes están ordenadas por relevancia. La primera opción también necesita verificación.
-    - Ya puedes leer los resultados. El contexto ayuda a distinguir datos parecidos.
-    - Abre el pasaje que te interese y revisa su documento de origen.
+    - "{count} para revisar. Abre cada fuente para comprobar si responde a tu pregunta."
+    - "{count}. Las fuentes están ordenadas por relevancia; la primera opción también necesita verificación."
+    - "Ya puedes leer {count}. El contexto ayuda a distinguir datos parecidos."
+    - "{count}. Abre el pasaje que te interese y revisa su documento de origen."
     - Compara las opciones antes de elegir qué información utilizar.
     - Estas son posibles fuentes. Puedes reformular la consulta para buscar otras.
     - Si el dato está en una tabla, revisa también los encabezados de sus columnas.
@@ -107,8 +107,8 @@ messages:
     - Puedes seguir leyendo las fuentes o escribir una consulta más específica.
     - Revisa el documento y su versión al comprobar la información encontrada.
   continuation:
-    - Las nuevas opciones se añadieron a la lista. Puedes compararlas con las anteriores.
-    - Aquí hay más fuentes del mismo ranking para revisar.
+    - "Ahora hay {count} en la lista. Compara las nuevas opciones con las anteriores."
+    - "La búsqueda continúa: {count} hasta ahora. Abre las opciones nuevas para leer su contexto."
     - La búsqueda continúa. Abre las opciones nuevas para leer su contexto.
     - Revisa los resultados añadidos; conservamos los que ya estaban en la lista.
     - Puedes comparar estos pasajes con las primeras fuentes mostradas.

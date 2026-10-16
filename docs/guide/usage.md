@@ -40,7 +40,7 @@ ipsis index
 `ipsis prepare --index` also builds the index during preparation. The output
 folder must be new and outside the source project. The copy uses v2 and a
 separate structural index; the source keeps its configuration. This variant
-supports DOCX body structures, PDF, Markdown, plain text and XLSX/XLS/CSV/TSV records with explicit
+supports DOCX body structures, PDF, Markdown, LaTeX, plain text and XLSX/XLS/CSV/TSV records with explicit
 extraction warnings (Markdown tables stay as paragraphs; PDF has no tables or page numbers). Preparation does not guarantee better answers. See
 [structural preparation](../methodology/preparacion-estructural.md).
 

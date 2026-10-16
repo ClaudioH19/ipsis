@@ -708,3 +708,56 @@ def test_sin_alcance_la_etiqueta_es_el_titulo_de_la_seccion_que_contiene_la_unid
     expect(tarjetas.nth(2).locator(".rw-resultado-padre")).to_have_count(0)
     expect(tarjetas.nth(2).locator(".rw-resultado-ruta")).to_have_text("A › B")
     page.close()
+
+
+def _abrir_busqueda(page, servidor_widget, mensajes=None):
+    config = {"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}
+    if mensajes:
+        config["assistant_messages"] = mensajes
+    page.route("**/config", lambda r: r.fulfill(json=config))
+    page.route("**/ask", lambda r: r.fulfill(json=_pagina_fuentes(continuar=False)))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+
+
+@pytest.mark.browser
+def test_la_ayuda_es_un_icono_en_el_encabezado_y_el_conteo_va_en_el_mensaje(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _abrir_busqueda(page, servidor_widget, {"results": ["Review the sources."]})
+    ayuda = page.locator(".rw-cabecera .rw-voz-menu summary")
+    expect(ayuda).to_be_visible()
+    expect(ayuda).to_have_attribute("aria-label", "Help")
+    assert page.locator(".rw-voz .rw-voz-menu").count() == 0              # ya no hay una fila de ayuda bajo el encabezado
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Review the sources.", timeout=8000)   # conteo antepuesto
+    contador = page.locator(".rw-busqueda-contador")
+    assert contador.evaluate("e => e.getBoundingClientRect().height") <= 2          # solo para lectores de pantalla
+    page.close()
+
+
+@pytest.mark.browser
+def test_las_plantillas_ubican_el_conteo_con_count_n_y_query(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _abrir_busqueda(page, servidor_widget, {"results": ["{count} for «{query}» ({n} in all). Open one."]})
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results for «stock» (3 in all). Open one.", timeout=8000)
+    page.close()
+
+
+@pytest.mark.browser
+def test_punto_de_espera_parpadea_cuando_no_habla_y_se_oculta_al_escribir(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _abrir_busqueda(page, servidor_widget, {"results": ["Review the sources. " * 4]})
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    voz = page.locator(".rw-voz")
+    expect(voz).to_have_attribute("data-typing", "false", timeout=8000)
+    estilo = "e => { const s = getComputedStyle(e, '::after'); return [s.animationName, s.display, s.borderRadius]; }"
+    nombre, mostrar, _ = page.locator(".rw-voz-texto").evaluate(estilo)
+    assert nombre == "rw-espera" and mostrar == "inline-block"
+    page.evaluate("document.querySelector('ipsis-chat').shadowRoot.querySelector('.rw-voz').dataset.typing = 'true'")
+    assert page.locator(".rw-voz-texto").evaluate(estilo)[1] == "none"
+    page.close()

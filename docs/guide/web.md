@@ -37,6 +37,12 @@ guidance as a fallback. The thirteen categories are `welcome`, `greeting`, `than
 of the existing tones and source templates. This is interface text, never
 documentary evidence or generated answers.
 
+The `results` and `continuation` templates can use `{count}` (the number with its noun, already singular or plural in the
+language: "3 resultados", "1 result"), `{n}` (the bare number) and `{query}` (what was searched). A template that uses none
+of them gets the count prepended ("3 resultados. …"), so the count always reaches the reader without taking a line of its own
+(the "N results for …" heading is kept only for screen readers). The help menu is a "?" icon in the assistant's header. While
+the assistant is not speaking, or has not started yet, a dot fades in and out after its message to show it is waiting.
+
 **Search tips**, **What I can do**, **About the assistant**, **Scope** and
 **Examples** rotate through their messages locally,
 without sending a search request. Typed greetings, thanks and farewells go to

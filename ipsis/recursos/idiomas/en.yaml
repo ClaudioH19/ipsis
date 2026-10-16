@@ -619,6 +619,8 @@ interfaz:
   search_read_document: 'Read full context'
   search_close_document: 'Close context'
   result_distinguished: 'Distinguished by'
+  voice_count_phrase: '{n} results'
+  voice_count_phrase_one: '1 result'
   search_stage_read: 'Reading the documents…'
   search_stage_compare: 'Comparing sources…'
   search_stage_rank: 'Sorting by relevance…'

@@ -41,7 +41,7 @@ into confidence percentages.
   `medium` adds a semantic reranker. Scores are not probabilities.
 - **Verifiable reading:** literal text and offsets, expandable context,
   document paragraphs and headings, tables with columns and horizontal scrolling.
-- **Documents and inventories:** text PDFs, DOCX, Markdown, TXT, XLSX, XLS,
+- **Documents and inventories:** text PDFs, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV and TSV. Records retain their fields; it does not sum stock or recalculate formulas.
 - **Spanish, English and Portuguese help:** at least 100 recognized questions
   per language across ten topics, alongside 118 interface message variants.

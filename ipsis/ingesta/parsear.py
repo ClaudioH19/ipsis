@@ -55,7 +55,7 @@ from ipsis.recursos.mensajes import t
 SEPARADOR_BLOQUE = "\n"
 
 # Formatos que reconoce el despacho de `parsear_documento`.
-EXTENSIONES_SOPORTADAS = {".docx", ".pdf", ".md", ".markdown", ".txt", ".xlsx", ".xls", ".csv", ".tsv"}
+EXTENSIONES_SOPORTADAS = {".docx", ".pdf", ".md", ".markdown", ".tex", ".txt", ".xlsx", ".xls", ".csv", ".tsv"}
 
 
 class DocumentoEscaneadoError(ValueError):
@@ -402,7 +402,21 @@ def parsear_markdown(ruta: str, doc_id: str, doc_titulo: str, version: str) -> D
     consecutivas, sin encabezado) son contenido narrativo. Igual que en
     ``.docx``, un documento sin ningún encabezado queda sin ``seccion_path``
     -- se advierte, porque degrada los filtros deterministas por sección."""
-    texto = _leer_texto_archivo(ruta)
+    return _parsear_markdown_texto(_leer_texto_archivo(ruta), ruta, doc_id, doc_titulo, version)
+
+
+def parsear_latex(ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
+    """Parsea un ``.tex``: lo convierte a Markdown legible (``ipsis/ingesta/latex.py``: títulos, listas, tablas,
+    fórmulas como texto fuente) y lo lee con el parser de Markdown. Los offsets son los del texto canónico."""
+    from ipsis.ingesta.latex import latex_a_markdown
+
+    markdown, avisos = latex_a_markdown(_leer_texto_archivo(ruta))
+    doc = _parsear_markdown_texto(markdown, ruta, doc_id, doc_titulo, version)
+    doc.advertencias = list(doc.advertencias) + avisos
+    return doc
+
+
+def _parsear_markdown_texto(texto: str, ruta: str, doc_id: str, doc_titulo: str, version: str) -> DocumentoParseado:
     lineas = texto.split("\n")
 
     eventos: list[Evento] = []
@@ -748,6 +762,8 @@ def parsear_documento(ruta: str, doc_id: str, doc_titulo: str, version: str) -> 
         return parsear_pdf(ruta, doc_id, doc_titulo, version)
     if ext in (".md", ".markdown"):
         return parsear_markdown(ruta, doc_id, doc_titulo, version)
+    if ext == ".tex":
+        return parsear_latex(ruta, doc_id, doc_titulo, version)
     if ext == ".txt":
         return parsear_texto_plano(ruta, doc_id, doc_titulo, version)
     raise ValueError(t("core.unsupported_format", extension=ext, path=ruta, supported=sorted(EXTENSIONES_SOPORTADAS)))

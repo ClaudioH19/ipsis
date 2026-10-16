@@ -96,10 +96,10 @@ messages:
     - Searching the loaded corpus…
     - Retrieving options with their context…
   results:
-    - Review these options. Open each source to check whether it answers your question.
-    - Sources are ranked by relevance. The first option still needs verification.
-    - You can now read the results. Context helps distinguish similar values.
-    - Open the passage you need and check its source document.
+    - "{count} to review. Open each source to check whether it answers your question."
+    - "{count}, ranked by relevance. The first option still needs verification."
+    - "You can now read {count}. Context helps distinguish similar values."
+    - "{count}. Open the passage you need and check its source document."
     - Compare the options before choosing which information to use.
     - These are possible sources. Rephrase the query to look for different options.
     - If the value is in a table, check the column headers too.
@@ -107,8 +107,8 @@ messages:
     - Keep reading the sources or enter a more specific query.
     - Check the document and its version when verifying the information you found.
   continuation:
-    - New options were added to the list. Compare them with the earlier results.
-    - Here are more sources from the same ranking for review.
+    - "{count} in the list now. Compare the new options with the earlier ones."
+    - "The search continues: {count} so far. Open the new options to read their context."
     - The search continues. Open the new options to read their context.
     - Review the added results; the earlier options remain in the list.
     - Compare these passages with the first sources shown.

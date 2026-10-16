@@ -665,6 +665,8 @@ interfaz:
   search_read_document: 'Leer contexto completo'
   search_close_document: 'Cerrar contexto'
   result_distinguished: 'Se distingue por'
+  voice_count_phrase: '{n} resultados'
+  voice_count_phrase_one: '1 resultado'
   search_stage_read: 'Leyendo los documentos…'
   search_stage_compare: 'Comparando fuentes…'
   search_stage_rank: 'Ordenando por relevancia…'

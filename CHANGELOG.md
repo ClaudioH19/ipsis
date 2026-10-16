@@ -42,6 +42,16 @@ a minor change may break compatibility and is marked as such.
   but gave no more than TF-IDF (0.893 at cosine 0.97, worse below) and costs one more encoding pass. Existing projects
   that already have a `preparation` block keep it; new indexes need `ipsis index` into a new `collection_version`.
   `herramientas/evaluacion/ranking_pasajes.py` gets `--alcance`, `--rasgos` and `--umbral-hermanos`.
+- **LaTeX (`.tex`) is a supported document format** (legacy and structural preparation): sections, lists, tables
+  with their caption, theorem-like environments and inline formatting are kept; formulas are kept as source text so
+  they can be searched. Markdown and PDF were re-checked with the structural preparation (units per section; the
+  label and parent-section context work on them too).
+- **Assistant message instead of a results line**: the "N results for …" heading no longer takes a line (it stays for
+  screen readers); the count is spoken by the assistant. Response templates (`results`, `continuation`) can use `{count}`
+  ("3 resultados", already singular/plural), `{n}` and `{query}` in Spanish, English and Portuguese; templates without
+  them get the count prepended.
+- **Help as a "?" icon** in the assistant's header (the "Orientación de ipsis / Ayuda" row is gone), and a dot that
+  fades in and out after the assistant's message while it is not speaking (or has not started).
 - **Context label on every result**: when a unit has no scope, the label shows the title of the section that contains it
   (the heading above the unit's own), and the path no longer repeats it. For documents without headings (forms,
   templates), short title-like lines ("III. Escala de niveles") now give the scope and open a new unit, so units do not

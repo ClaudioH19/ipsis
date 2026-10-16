@@ -42,7 +42,7 @@ ipsis index
 `ipsis prepare --index` construye además el índice durante la preparación.
 La carpeta destino debe ser nueva y estar fuera del proyecto original. La copia
 usa v2 y un índice estructural distinto; el original conserva su configuración.
-Esta variante soporta estructura del cuerpo de DOCX, PDF, Markdown, texto plano y registros
+Esta variante soporta estructura del cuerpo de DOCX, PDF, Markdown, LaTeX, texto plano y registros
 XLSX/XLS/CSV/TSV, y publica avisos de extracción (las tablas Markdown quedan como párrafos; el PDF no
 conserva tablas ni números de página). No garantiza mejor calidad de respuesta.
 Ver [preparación estructural](../../methodology/preparacion-estructural.md).
