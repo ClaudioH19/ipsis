@@ -10,7 +10,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 |---|---|---|---|---|
 | F0.1 | ✅ | 2026-10-15 | 2d2b536 | Usuario sin corpus real: banco sintético en `tests/datos/banco_pasajes` (116 respondibles + 15 trampas, 10 documentos). |
 | F0.2 | ✅ | 2026-10-15 | (ver git log) | Corrió de punta a punta en `light` y `medium` con e5-small y el reranker mMiniLM (modelos descargados al habilitar la red). |
-| F0.3 | ⬜ | | | Requiere modelos en caché. |
+| F0.3 | ✅ | 2026-10-16 | (ver git log) | `herramientas/evaluacion/tokens_fragmentos.py` (con pruebas): longitud en tokens y posición de la evidencia. Resultados abajo. |
 | F0.4 | ✅ | 2026-10-15 | (ver git log) | Línea base medida (abajo). Brecha hit@5 − hit@1 tras el reranker en `medium`: 22 puntos (≥ 5): el problema se reproduce. JSON en `/tmp/claude-0/medidas/` del entorno efímero; las tablas de abajo son el registro. |
 | F1.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera: ver tabla. |
 | F1.2 | ✅ | 2026-10-15 | (ver git log) | `CH-PAR` y `CH-SEC`: ver tabla. |
@@ -18,17 +18,17 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F1.4 | ✅ | 2026-10-15 | (ver git log) | Combinaciones y recomendación abajo. Valores por defecto sin cambiar (F5.1). |
 | F1.5 | ✅ | 2026-10-15 | (ver git log) | Opción (b) aprobada por el usuario: `hash_corpus` legacy incluye `texto_embebido` solo si difiere de `texto`. 4 pruebas en `tests/indice/test_manifiesto.py` y 1 en `tests/ingesta/test_cabecera.py`. Un índice hecho antes con `with_header: true` muestra otra huella y conviene reindexarlo. La regla 9 de las tareas queda resuelta: ya no hace falta correr los experimentos sin calibración. |
 | F2.1 | ✅ | 2026-10-15 | (ver git log) | `CH-F256S` medida: ver tabla. |
-| F2.2 | ⚠ | | | Decidir (a), (b) o (c) tras F0.3 y F1.3. |
+| F2.2 | ✅ | 2026-10-16 | (ver git log) | Decidida la opción (c) por medición: subir la ventana del reranker (384/512) no mejora hit@1 con la preparación estructural. Detalle abajo; no cambia el comportamiento. |
 | F2.3 | ✅ | 2026-10-15 | (ver git log) | Preparación estructural de Markdown medida: ver tabla. Habilita evaluar F2.4. |
 | F2.4 | ✅ | 2026-10-15 | (ver git log) | `preparar_pdf` (outline o tamaño de letra, listas, avisos de OCR; escaneado sin OCR sigue rechazado). Medido con `banco_general` (abajo): la estructural ya indexa el corpus mixto md/pdf/docx/txt, que antes fallaba por el PDF. |
 | F3.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera extendida medida: ver tabla. |
 | F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |
-| F3.3 | ⬜ | | | Condicional. |
-| F4.1 | ⬜ | | | |
-| F4.2 | ⬜ | | | Condicional. |
+| F3.3 | ⬜ | 2026-10-16 | (ver git log) | No iniciada: es condicional (errores de rango 2–5 en la misma categoría que el acierto) y esa condición no se analizó. Con hit@3 0,946 y hit@5 0,982 sobre documentos reales queda poco margen. |
+| F4.1 | ✅ | 2026-10-16 | (ver git log) | Modelos densos comparados en el banco adversarial con documentos reales (sección «¿Más sensibilidad en los vectores…?»): ninguno supera a e5-small; no se cambia el modelo denso. |
+| F4.2 | ✅ | 2026-10-16 | (ver git log) | No aplica: granite-311m no queda entre los mejores en F4.1. |
 | F4.3 | ⚠ | | | Requiere aprobación. |
-| F5.1 | ⚠ | 2026-10-15 | (ver git log) | Candidata medida una vez en `test` y verificada (abajo). Espera la aprobación del usuario para cambiar valores por defecto. |
-| F5.2 | ⬜ | | | |
+| F5.1 | ✅ | 2026-10-16 | (ver git log) | Valores por defecto aprobados y aplicados por el usuario: preparación estructural (ADR 0009, migración `config_version` 8) y reranker por idioma en `medium` (bge, 10 candidatos para es/pt). |
+| F5.2 | ✅ | 2026-10-16 | (ver git log) | `retrieval.md` corregido (el fragmento cruza secciones solo con `CH-F256`), estrategias/opciones nuevas, banco de pasajes, `CHANGELOG` y ADR 0009. |
 
 ## Línea base (F0.4)
 
@@ -256,6 +256,41 @@ punta con los documentos reales (56 preguntas adversarias): hit@1 0,786 → 0,85
 Costo medido (4 CPU, ONNX int8): 85 ms por pasaje de ~100 palabras (frente a 21 ms), 560 MB en disco y de RAM, carga de 8,8 s.
 El tope pedido después para evaluar modelos nuevos (≤ 0,4 B parámetros) deja fuera a bge (568 M); queda como decisión vigente
 mientras no haya un candidato que lo supere. Se actualizaron las pruebas que asumían mMiniLM en proyectos en español.
+
+## F0.3: longitud en tokens y posición de la evidencia (2026-10-16)
+
+`herramientas/evaluacion/tokens_fragmentos.py` indexa en memoria (sin Qdrant) y mide, con los tokenizadores reales (denso
+`multilingual-e5-small`, ventana 512; reranker `bge-reranker-v2-m3`, ventana del motor `reranker_max_tokens: 256`), qué porcentaje de
+los casos respondibles deja su evidencia **después del corte** del reranker. El pasaje del reranker es el que publica el motor: el
+fragmento en el modo legacy y la unidad padre con su sección en la preparación estructural.
+
+Banco sintético (es, 116 casos), evidencia cortada con la ventana de 256 tokens:
+
+| Estrategia | Palabras p50 | Denso p95 / truncados | Pasaje reranker p50 / p95 | Evidencia cortada @256 | @384 | @512 |
+|---|---|---|---|---|---|---|
+| CH-F256 | 275 | 432 / 0 % | 369 / 401 | 44,0 % | 1,7 % | 0 % |
+| CH-PAR | 375 | 555 / 64,1 % | 495 / 531 | 72,4 % | 45,7 % | 0,9 % |
+| CH-SEC | 361 | 549 / 43,6 % | 478 / 519 | 54,3 % | 30,2 % | 0 % |
+| CH-F256S | 198 | 372 / 0 % | 264 / 340 | 13,8 % | 0 % | 0 % |
+| estructural_v1 | 368 | 96 / 0 % | 491 / 531 | 62,9 % | 31,9 % | 0 % |
+
+Documentos reales (56 preguntas adversarias): `CH-F256` 53,6 % / 25,0 % / 0 % (@256 / @384 / @512), `CH-F256S` 7,1 % / 3,6 % / 0 %,
+`estructural_v1` **22,2 % / 14,8 % / 7,4 %**. El denso casi no trunca (el padre no se codifica: se codifican los hijos de ~80 palabras).
+
+### F2.2: presupuesto en tokens (decisión (c))
+
+Con la ventana de 256 tokens la evidencia queda fuera del corte en el 22 % de las preguntas reales con la preparación estructural. Para ver
+si importaba se midió el motor completo (`medium`, es, bge con 10 candidatos, documentos reales, 56 preguntas):
+
+| `reranker_max_tokens` | hit@1 | hit@3 | hit@5 | MRR |
+|---|---|---|---|---|
+| 256 (actual) | 0,857 | 0,946 | 0,982 | 0,910 |
+| 384 | 0,839 | 0,946 | 0,982 | 0,902 |
+| 512 | 0,839 | 0,946 | 0,982 | 0,902 |
+
+Una ventana mayor no mejora y cuesta más por pasaje. La búsqueda por hijos ya elige la unidad correcta y al reranker le basta el inicio del
+padre. **Se elige (c): no se implementa un presupuesto en tokens** ni se cambia `reranker_max_tokens`; el diagnóstico queda como
+herramienta para revisar el caso si cambian los modelos o los documentos.
 
 ## Candidatos de reranker ≤ 0,6 B con pesos ONNX (2026-10-16): ninguno supera a bge
 

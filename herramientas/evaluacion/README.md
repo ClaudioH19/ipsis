@@ -144,3 +144,15 @@ modelos en caché. Desde que `ipsis init` escribe la preparación estructural, l
 python herramientas/evaluacion/ranking_pasajes.py tests/datos/banco_pasajes/es/manifiesto.json \
     --perfil light --perfil medium --salida /tmp/linea_base
 ```
+
+## Diagnóstico de longitud en tokens
+
+`tokens_fragmentos.py` indexa en memoria (parseo y fragmentado, sin Qdrant ni codificación) con cada estrategia y mide, con
+los tokenizadores reales del modelo denso y del reranker, cuántos fragmentos se truncan y en cuántos casos del banco la
+evidencia queda después del corte del reranker (`reranker_max_tokens` del motor, 384 y 512). Con la preparación estructural
+el pasaje del reranker es la unidad padre con su sección.
+
+```bash
+python herramientas/evaluacion/tokens_fragmentos.py --perfil medium --idioma es --salida tokens_es
+python herramientas/evaluacion/tokens_fragmentos.py --banco ruta/al/manifiesto.json --estrategias CH-F256S estructural_v1
+```

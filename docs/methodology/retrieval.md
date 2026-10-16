@@ -46,7 +46,10 @@ anything.
 ## 5. Assumptions
 
 - The corpus is in a single language, the project's.
-- Fragments keep their section: a fragment never crosses sections.
+- With the default structural preparation (`structural_v1`), and with `CH-SEC` and `CH-F256S`, a fragment
+  never crosses sections and keeps its section path. `CH-F256` (and the older fixed-size strategies) joins
+  whole blocks until about 256 words and **can cross sections**; its overlap (15 %) repeats text from the
+  neighbouring fragment. Use `CH-F256S` or the structural preparation when sibling sections must stay apart.
 
 ## 6. Invariants
 
