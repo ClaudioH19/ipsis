@@ -92,7 +92,7 @@ language uses `IPSIS_LANG`; document language is configured with `--language`.
 | Profile | Models used by v2 | Purpose |
 |---|---|---|
 | `light` | e5-small + hybrid BM25 search | Prioritizes latency |
-| `medium` | e5-small + mMiniLM reranker + hybrid search | Adds semantic candidate comparison |
+| `medium` | e5-small + reranker (bge-reranker-v2-m3 for Spanish and Portuguese, mMiniLM otherwise) + hybrid search | Adds semantic candidate comparison |
 
 V2 does not load the QA reader by default. `ipsis models list` shows the
 models used by the active engine. See [installation](docs/guide/installation.md)

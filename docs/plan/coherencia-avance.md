@@ -7,7 +7,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | C1 | ✅ | 2026-10-16 | (ver git log) | 7 pruebas nuevas en `tests/test_documentacion.py` (28 casos con las existentes); 12 casos `xfail(strict=True)` que la tarea indicada debe quitar. Detalle abajo. |
-| C2 | ⬜ | | | ⚠ presupuesto de `medium`; ⚠ ADR 0003 o 0010 |
+| C2 | 🔶 | 2026-10-16 | (ver git log) | Hecho: tablas de perfiles (README e instalación, EN/ES), tamaños medidos, `medium.yaml::description`, `--perfil heavy`, nota en ADR 0003 y `xfail` de perfiles quitado. Pendiente: ⚠ presupuesto de `medium` (celda «p95 objetivo») y cifra de latencia medida. Ver «C2» abajo. |
 | C3 | ⬜ | | | |
 | C4 | ⬜ | | | |
 | C5 | ⬜ | | | |
@@ -63,3 +63,33 @@ caché (`/root/.cache/ipsis/models`), y fallan igual sin los cambios de C1 (comp
 Ninguna lleva la marca `modelos(...)`, así que no se omiten cuando la caché está vacía. No se tocaron (regla 1 del
 plan). Con el modelo descargado (`ipsis models download --profile light`) deberían pasar; si no se puede descargar,
 anotarlo como ⛔ y no como regresión.
+
+## C2: perfiles, modelos y cifras (en curso)
+
+**Hecho.** Tablas de perfiles de `README.md`, `README.es.md`, `docs/guide/installation.md` y
+`docs/es/guia/instalacion.md`: `medium` = e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en
+los demás idiomas), sin lector. `ipsis models list` y `ipsis models download` confirman que v2 solo baja el denso y el
+reranker. La prueba `test_tabla_de_perfiles_nombra_los_modelos_vigentes` ya no es `xfail` y pasa en los cuatro archivos.
+
+**Tamaños medidos** (2026-10-16, `ipsis models download`, tamaño del `.onnx` en disco con `find -L`):
+
+| Modelo | Archivo | Bytes | MB |
+|---|---|---|---|
+| intfloat/multilingual-e5-small | `onnx/model.onnx` | 470 268 510 | 470 |
+| onnx-community/bge-reranker-v2-m3-ONNX | `onnx/model_int8.onnx` | 570 727 094 | 571 |
+| cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 | `onnx/model_quint8_avx2.onnx` | 118 620 016 | 119 |
+
+Totales: `light` 0,47 GB; `medium` español/portugués 1,04 GB; `medium` otros idiomas 0,59 GB. La guía decía 1,7 GB
+porque contaba el lector mDeBERTa (1,1 GB), que v2 no descarga.
+
+**Otros cambios.** `medium.yaml::description` ya no promete el lector. `ranking_pasajes.py --perfil` ya no acepta
+`heavy` (I13). ADR 0003: nota de que la tabla de «1 s» es de v1. **No se creó un ADR 0010**: el ADR 0003 ya tiene la
+sección «Update 2026-10-15: reranker per language» con sus mediciones; ⚠ confirmar con el usuario.
+
+**Pendiente (⚠).** La columna «p95 objetivo» de las guías de instalación sigue en «1 s» para `medium`: es el
+`p95_budget_ms` de v1; v2 se rige por `v2.query_budget_ms` (2500) y el panel muestra el de v1
+(`ipsis/aplicacion/panel.py:143`). Opciones: (a) solo documentarlo; (b) que el panel muestre el de v2 (cambio de código).
+Recomendación: (a). No se tocó la celda hasta recibir respuesta.
+
+**Entorno.** Con los modelos descargados, las dos fallas de la suite de C1 (`test_crear_app_aisla_estado…` y
+`test_portabilidad_init_cargar_indexar_subprocesos`) pasan: era solo la caché vacía.

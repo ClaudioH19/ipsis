@@ -14,9 +14,13 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
   | Perfil | Modelos | Disco aprox. | p95 objetivo |
   |---|---|---|---|
   | `light` | denso e5-small | 0,5 GB | 150 ms |
-  | `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s |
+  | `medium` | e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en otros idiomas) | 1,0 GB (español, portugués) · 0,6 GB (otros idiomas) | 1 s |
 
   `bm25` es solo de diagnóstico para `ipsis benchmark`: no se instala.
+  Los tamaños son los de los archivos ONNX en disco (medidos el 2026-10-16 tras `ipsis models download`: e5-small
+  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). El lector QA extractivo (mDeBERTa) pertenece al motor
+  opcional `pipeline: v1`: el motor predeterminado (v2) no lo carga ni lo descarga, y `ipsis models list`
+  muestra lo que usa el motor activo.
   `medium` es la opción recomendada y el valor por defecto de `ipsis init`.
 - Red solo para descargar los modelos. Después el servicio funciona sin red.
 

@@ -310,7 +310,7 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
 def construir_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("banco", help="manifiesto.json del banco")
-    p.add_argument("--perfil", action="append", choices=["light", "medium", "heavy"],
+    p.add_argument("--perfil", action="append", choices=["light", "medium"],
                    help="perfil de instalación (repetible; por defecto light y medium)")
     p.add_argument("--particion", choices=["dev", "test", "todas"], default="dev")
     p.add_argument("--idioma", default="es")

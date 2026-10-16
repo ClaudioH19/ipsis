@@ -93,7 +93,7 @@ consola en español usa `export IPSIS_LANG=es`; en PowerShell,
 | Perfil | Modelos usados por v2 | Uso |
 |---|---|---|
 | `light` | e5-small + búsqueda híbrida con BM25 | Prioriza la latencia |
-| `medium` | e5-small + reranker mMiniLM + búsqueda híbrida | Añade comparación semántica de candidatos |
+| `medium` | e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en otros idiomas) + búsqueda híbrida | Añade comparación semántica de candidatos |
 
 V2 no carga el lector QA por defecto. `ipsis models list` muestra los modelos
 que usa el motor activo. Consulta [instalación](docs/es/guia/instalacion.md)

@@ -102,12 +102,8 @@ def _nombre_en_la_documentacion(id_modelo: str) -> str:
     return ALIAS_DE_MODELOS.get(corto, corto)
 
 
-@pytest.mark.parametrize("archivo", [
-    pytest.param(README_EN, id="README.md", marks=pytest.mark.xfail(strict=True, reason="coherencia C2: I1")),
-    pytest.param(README_ES, id="README.es.md", marks=pytest.mark.xfail(strict=True, reason="coherencia C2: I1")),
-    pytest.param(INSTALACION_EN, id="installation.md", marks=pytest.mark.xfail(strict=True, reason="coherencia C2: I2")),
-    pytest.param(INSTALACION_ES, id="instalacion.md", marks=pytest.mark.xfail(strict=True, reason="coherencia C2: I2")),
-])
+@pytest.mark.parametrize("archivo", [README_EN, README_ES, INSTALACION_EN, INSTALACION_ES],
+                         ids=["README.md", "README.es.md", "installation.md", "instalacion.md"])
 def test_tabla_de_perfiles_nombra_los_modelos_vigentes(archivo):
     """La fila de cada perfil nombra sus modelos (``models.dense``, ``models.reranker`` y los reranker por idioma).
 

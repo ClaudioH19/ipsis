@@ -15,6 +15,10 @@ the 2.5 s v2 budget (4 CPUs). Details: `docs/plan/precision-ingesta-avance.md`. 
 discriminates between rerankers once the structural preparation is on (all reach 0.98 to 1.00). English keeps
 mMiniLM until real English documents can be measured. v1 is unchanged.
 
+The `1 s` target and the measured p95 in the profile table of the Decision section below are figures of the v1
+engine (2026-09). In v2, a query is bounded by `v2.query_budget_ms` (2500 ms), and v2 does not load the QA
+reader that the profile still declares for v1.
+
 ## Context
 
 The assistant is installed on its user's server (a server without a GPU).
