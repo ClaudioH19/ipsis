@@ -9,7 +9,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | M0.1 | ✅ | 2026-10-16 | (ver git log) | `ipsis/ingesta/fichas.py`: lee y valida `media/*.yaml`; 82 pruebas; 21 mensajes en EN/ES. Ver «M0.1» abajo. |
 | M0.2 | ⬜ | | | ⚠ ¿fichas y preguntas reales? |
 | M1 | ✅ | 2026-10-16 | (ver git log) | Las fichas se indexan en `…_v{n}__media` con su manifiesto; `ipsis index` y `ipsis sync` lo integran; el índice de documentos no cambia. La condición ⚠ (que cambie `hash_corpus` sin `media/`) **no se cumplió**. Ver «M1» abajo. |
-| M2.1 | ⬜ | | | |
+| M2.1 | ✅ | 2026-10-16 | (ver git log) | `BuscadorMedia` (`ipsis/consulta/media.py`), bloque `media` del motor (apagado) y carril en `MotorV2`; las fuentes de documentos no cambian. Una desviación de la regla ficha/capítulo. Ver «M2.1» abajo. |
 | M2.2 | ⬜ | | | ⚠ objetivo de fichas mostradas sin corresponder |
 | M3 | ⬜ | | | |
 | M4.1 | ⬜ | | | ⚠ tipos, tamaño y control de acceso |
@@ -76,3 +76,40 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 Al correr las carpetas con pruebas lentas, `tests/integracion/test_portabilidad.py::test_portabilidad_preguntar_de_punta_a_punta[v1]`
 («el servicio no quedó listo en 90 s») y `::test_portabilidad_pythonioencoding_cp1252_no_falla` (`UnicodeDecodeError`) fallan igual
 sobre `bd6c24e`. Pueden depender de este entorno (CPU, codificación de la terminal); no se investigaron.
+
+## M2.1: búsqueda del carril y contrato interno
+
+- **Configuración** (`ipsis/configuracion/esquemas.py::MediaConfig`, nombres en inglés en `engine.yaml` vía `glosario.py`): bloque
+  `media` con `enabled: false`, `max_results: 1`, `min_score: null` y `budget_ms: 150`. Es un campo opcional con valor por
+  defecto: no sube `config_version` ni se añadió a la plantilla de `engine.yaml`. `min_score: null` significa «no se publica
+  nada»: la búsqueda corre y queda en el diagnóstico, pero ninguna ficha sale.
+- **Buscador** (`ipsis/consulta/media.py::BuscadorMedia`): reutiliza el cliente Qdrant, el codificador y los vectores ya
+  memoizados del recuperador de documentos (el Qdrant local toma un candado exclusivo). Busca en híbrido (RRF) para el **orden** y
+  calcula el **coseno denso** de cada candidata (filtro por id en Qdrant) para el **puntaje**: el RRF es relativo a la consulta
+  (el primero siempre vale lo mismo) y no sirve para decidir «no mostrar videos que no corresponden». Acepta la variante
+  ortográfica. `candidatos_agrupados()` devuelve todo sin umbral (es lo que medirá M2.2) y `buscar()` aplica `min_score` y
+  `max_results`.
+- **Contrato interno** (`contrato_http["multimedia"]`): `media_id`, `title`, `kind`, `url`, `file`, `start_seconds`,
+  `chapter_title`, `chapter_description`, `description`, `duration`, `version`, `score` (coseno) y `fusion_rank`; todo texto de
+  la ficha, literal. **Todavía no sale por la API pública** (eso es M3): `respuesta_publica` ignora la clave.
+- **Motor** (`MotorV2._anadir_multimedia`): corre **después** de publicar las fuentes, solo en la primera página (`continuar` no
+  lo llama), omite el carril con una advertencia si no queda `budget_ms` del presupuesto de la consulta, y atrapa cualquier error
+  del carril (advertencia `carril multimedia falló: …`): nunca tumba una consulta de documentos. `construir_motor` lo abre solo si
+  `media.enabled` y la colección existe.
+- **Las fuentes de documentos no cambian** (regla 3), comprobado de dos formas: con dobles (fragmentos, evidencias y bloques
+  idénticos con el carril encendido, apagado, fallando o sin presupuesto) y de punta a punta con e5-small (mismos `chunk_id`,
+  rango, score y offsets con `enabled: false`, `enabled: true` sin umbral y con umbral).
+- **Desviación de la regla del plan (a confirmar con M2.2).** El plan decía «si coinciden la ficha y un capítulo, quedarse con el
+  capítulo de mayor puntaje». Eso manda al minuto de un capítulo cualquiera una pregunta sobre el video entero. Se implementó:
+  entre las unidades de la ficha que aparecen, se muestra la de **mayor coseno** (el capítulo si la pregunta es sobre él, la
+  ficha —sin minuto— si es sobre todo el video). Dos mutantes (siempre ficha; siempre capítulo, la regla literal) rompen
+  pruebas distintas. M2.2 mide el acierto del capítulo y puede ajustar la regla (por ejemplo, con un margen).
+- **Primera mirada a los cosenos de e5-small (8 preguntas y 4 fichas; NO es una medición):** preguntas pertinentes 0,87–0,91;
+  ajenas al dominio 0,76–0,80; pero una pregunta del mismo dominio **sin** ficha («¿Cómo solicito un certificado de notas?»)
+  dio 0,853, casi igual a una pertinente informal (0,867). Un umbral de coseno por sí solo tendrá ese compromiso; M2.2 debe
+  medirlo con el banco de M0.2 y, si hace falta, probar señales adicionales (términos de la pregunta presentes en la ficha, o
+  el reranker sobre las 3 mejores).
+- **Pruebas:** `tests/consulta/test_media.py` (24: buscador con Qdrant local y un codificador falso, configuración, y el motor con
+  dobles) y una prueba más en `tests/integracion/test_media_indexacion.py` (3 en total, `slow` + `modelos`). Tres mutantes
+  iniciales (publicar sin umbral, no atrapar errores, regla de capítulo) y dos de la regla final: los cinco rompen pruebas.
+  Carpetas tocadas con modelo real: **1048 aprobadas, 0 fallidas**; suite rápida completa: **1729 aprobadas, 0 fallidas, 2 omitidas**.

@@ -159,10 +159,24 @@ class PipelineV2Config(ConfiguracionEstricta):
         return self
 
 
+class MediaConfig(ConfiguracionEstricta):
+    """Carril multimedia (``docs/plan/multimedia.md``): apagado por defecto y sin umbral hasta medirlo (M2.2).
+
+    ``puntaje_minimo`` es un coseno denso (absoluto); ``None`` significa «no se muestra nada»: la búsqueda corre y queda
+    en el diagnóstico, pero ninguna ficha se publica.
+    """
+
+    activo: bool = False
+    max_resultados: int = Field(default=1, ge=1, le=5)
+    puntaje_minimo: float | None = Field(default=None, ge=-1.0, le=1.0)
+    presupuesto_ms: int = Field(default=150, ge=1, le=5000)
+
+
 class MotorConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     pipeline: Literal["v1", "v2"] = "v2"
     v2: PipelineV2Config = Field(default_factory=PipelineV2Config)
+    media: MediaConfig = Field(default_factory=MediaConfig)
     recuperacion: RecuperacionConfig
     componentes: ComponentesConfig = Field(default_factory=ComponentesConfig)
     qdrant: QdrantConfig = Field(default_factory=QdrantConfig)

@@ -96,3 +96,49 @@ def test_sync_reindexa_cuando_cambian_las_fichas_y_poda_las_dos_series(tmp_path,
     quedan = set(_manifiestos(carpeta))
     assert quedan == {n for n in quedan if "_v3" in n} and len(quedan) == 2 and any(n.endswith("__media") for n in quedan)
     assert t("sync.pruned", names=", ".join(sorted((v1 | v2) - quedan))) in salida
+
+
+def _motor_del_proyecto():
+    from ipsis.aplicacion.consulta import construir_motor
+    from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
+
+    return construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
+
+
+def _configurar_carril(**media) -> None:
+    from ipsis.configuracion import rutas
+    from ipsis.configuracion.archivos import escribir, leer
+
+    cfg = leer(rutas.MOTOR, "motor")
+    cfg["media"] = media
+    escribir(rutas.MOTOR, cfg, "motor")
+
+
+def test_el_motor_publica_la_ficha_y_las_mismas_fuentes_que_sin_carril(tmp_path, monkeypatch):
+    _proyecto(tmp_path / "p", True, monkeypatch)
+    assert main(["index"]) == 0
+    pregunta = "¿Cómo inscribo asignaturas?"
+
+    def consultar(**media):
+        _configurar_carril(**media)
+        motor = _motor_del_proyecto()
+        try:
+            motor.calentar()
+            return motor.consultar(pregunta, "s")
+        finally:
+            motor.cerrar()
+
+    apagado = consultar(activo=False)
+    sin_umbral = consultar(activo=True)                       # encendido pero sin puntaje_minimo: no se publica nada
+    con_umbral = consultar(activo=True, puntaje_minimo=-1.0, max_resultados=2)
+
+    assert "multimedia" not in apagado.contrato_http
+    assert sin_umbral.contrato_http["multimedia"] == []
+    fichas = con_umbral.contrato_http["multimedia"]
+    assert [f["media_id"] for f in fichas] == ["induccion"] and fichas[0]["kind"] == "video"
+    assert fichas[0]["url"] == FICHA["url"] and fichas[0]["description"] == FICHA["description"]
+    assert isinstance(fichas[0]["score"], float) and fichas[0]["score"] > 0.5
+    # las fuentes de documentos no se enteran del carril
+    documentos = lambda r: [(f["chunk_id"], f["rango"], f["score"], f["offset_inicio"], f["offset_fin"])
+                            for f in r.contrato_http["fragmentos"]]
+    assert documentos(apagado) and documentos(apagado) == documentos(sin_umbral) == documentos(con_umbral)

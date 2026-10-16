@@ -138,6 +138,14 @@ def construir_motor(
             opciones=opciones_v2,
         )
         motor.backend = componentes["retriever"]
+        from ipsis.configuracion.esquemas import MediaConfig
+
+        opciones_media = MediaConfig.model_validate(cfg.get("media") or {}).model_dump()
+        if opciones_media["activo"]:
+            from ipsis.consulta.media import BuscadorMedia
+
+            motor.buscador_media = BuscadorMedia.desde_recuperador(retriever, cfg_rec, opciones_media)
+            motor.opciones_media = {"presupuesto_ms": opciones_media["presupuesto_ms"]}
     else:
         analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
         # La calibración solo vale para el corpus con que se calibró: se vuelve a

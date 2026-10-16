@@ -87,6 +87,8 @@ MOTOR = {
                      "max_caracteres_resultado": _c("max_result_chars"),
                      "vecinos_contexto": _c("context_neighbors"),
                      "destacar_fragmentos": _c("qa_highlights")}),
+    "media": _c("media", {"activo": _c("enabled"), "max_resultados": _c("max_results"),
+                           "puntaje_minimo": _c("min_score"), "presupuesto_ms": _c("budget_ms")}),
     "recuperacion": _c("retrieval", {
         "modelo": _c("model"), "estrategia_chunking": _c("chunking_strategy"), "con_header": _c("with_header"),
         "detalle_cabecera": _c("header_detail", valores={"basico": "basic", "extendido": "extended"}),
