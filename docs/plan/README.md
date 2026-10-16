@@ -8,6 +8,13 @@ Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
 - [sinonimos.md](sinonimos.md): propuesta concreta de fuentes, formato,
   conversión reproducible y activación medida de F2.
 
+## Plan de coherencia
+
+[coherencia.md](coherencia.md) inventaría las contradicciones entre código,
+perfiles y documentación que dejaron los cambios de octubre, y propone pruebas
+que las detecten antes de corregirlas. Estado en el
+[avance](coherencia-avance.md).
+
 ## Plan de precisión desde la ingesta
 
 [precision-ingesta.md](precision-ingesta.md) analiza por qué la fuente
