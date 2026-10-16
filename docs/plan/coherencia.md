@@ -40,6 +40,8 @@ una documentación que contradice al código debilita esa misma promesa.
 | I11 | README (ambos) | Inicio rápido y «Actualizar» no mencionan `ipsis sync`; badge y tag 1.0.0 | `ipsis sync` es la vía soportada; `[Unreleased]` trae migración a `config_version` 8 y reindexación |
 | I12 | `docs/plan/` | Plan V4 con F5.1 ⚠ abierto; `README.md` del plan dice «Plan de trabajo vigente» | El motor v2 y la precisión desde la ingesta ya reemplazaron ese foco |
 | I13 | `herramientas/evaluacion/ranking_pasajes.py:313` | `--perfil heavy` aceptado | El perfil `heavy` se retiró el 2026-10-08 |
+| I14 | `docs/guide/configuration.md`, `docs/es/guia/configuracion.md` (tabla de versiones y frase «versión vigente») | Termina en la versión 5; dice que la vigente es la 7 | `CONFIG_VERSION = 8`; faltan las versiones 6, 7 y 8 |
+| I15 | `docs/guide/usage.md:166`, `docs/es/guia/uso.md:169` (fila de `ipsis load`) | Formatos sin LaTeX | `.tex` soportado |
 
 El inventario no es exhaustivo: la tarea C1 existe para que las pruebas
 encuentren el resto.
