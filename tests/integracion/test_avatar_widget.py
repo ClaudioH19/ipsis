@@ -92,10 +92,11 @@ def _app(estado: dict):
 
     @app.get("/config")
     def config():
+        extra = {"response_mode": "ranked_sources"} if estado.get("busqueda") else {}
         return {"assistant_name": "Ayuda", "domain_description": "manual", "greeting": "Hola.",
-                "interface": {}, "microcopy": {}, "placement": {},
+                "interface": {}, "microcopy": {}, "placement": {}, **extra,
                 "avatar": {"enabled": True, "name": "prueba", "definition_url": "/avatars/prueba.avatar.json",
-                           "engine_url": "/avatar.js", "placement": "header", "size": 48,
+                           "engine_url": "/avatar.js", "placement": estado.get("ubicacion", "header"), "size": 48,
                            "in_launcher": estado.get("en_lanzador", False), "gaze": {"enabled": False},
                            "idle_minutes": 2, "events": {"idle": "idle"}}}
 
@@ -157,6 +158,18 @@ def _esperar_evento(page, limite_s: float = 10.0) -> dict:
             return eventos[0]
         time.sleep(0.05)
     raise AssertionError("no llegó ipsis:avatar")
+
+
+@pytest.mark.browser
+def test_avatar_junto_al_mensaje_oculta_el_icono_fijo_de_la_cabecera(navegador, servidor):
+    base, estado = servidor
+    estado.update(busqueda=True, ubicacion="message")
+    page = _pagina(navegador, f"{base}/?csp=permisiva")
+    page.evaluate("window.Ipsis.open()")
+    assert _esperar_evento(page) == {"state": "ready", "name": "prueba"}
+    assert _sombra(page, "!!r.querySelector('.rw-voz-avatar .rw-avatar-lienzo svg path')")
+    assert _sombra(page, "getComputedStyle(r.querySelector('.rw-cabecera .rw-avatar')).display") == "none"
+    page.close()
 
 
 @pytest.mark.browser

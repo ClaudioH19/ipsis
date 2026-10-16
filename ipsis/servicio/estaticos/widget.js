@@ -2324,6 +2324,9 @@
     destino.appendChild(lienzo);
     espacioVoz.dataset.avatar = destino === lugarAvatarVoz ? "si" : "no";
     var enCabecera = destino === avatar;
+    // Con el avatar junto al mensaje, el ícono fijo de la cabecera sobra:
+    // el mismo personaje no debe verse dos veces en pantalla.
+    avatar.style.display = destino === lugarAvatarVoz ? "none" : "";
     avatar.classList.toggle("rw-avatar-vivo", enCabecera);
     Array.prototype.forEach.call(avatar.children, function (hijo) {
       if (hijo !== lienzo) hijo.style.display = enCabecera ? "none" : "";
