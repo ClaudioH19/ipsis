@@ -11,7 +11,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | M1 | ✅ | 2026-10-16 | (ver git log) | Las fichas se indexan en `…_v{n}__media` con su manifiesto; `ipsis index` y `ipsis sync` lo integran; el índice de documentos no cambia. La condición ⚠ (que cambie `hash_corpus` sin `media/`) **no se cumplió**. Ver «M1» abajo. |
 | M2.1 | ✅ | 2026-10-16 | (ver git log) | `BuscadorMedia` (`ipsis/consulta/media.py`), bloque `media` del motor (apagado) y carril en `MotorV2`; las fuentes de documentos no cambian. Una desviación de la regla ficha/capítulo. Ver «M2.1» abajo. |
 | M2.2 | ⬜ | | | ⚠ objetivo de fichas mostradas sin corresponder |
-| M3 | ⬜ | | | |
+| M3 | ✅ | 2026-10-16 | (ver git log) | API pública `media` y tarjeta del widget (apagado: solo con `media.enabled` y `min_score`). Hecha sin M2.2 porque no cambia ninguna conducta por defecto. Ver «M3» abajo. |
 | M4.1 | ⬜ | | | ⚠ tipos, tamaño y control de acceso |
 | M4.2 | ⬜ | | | |
 | M5 | ⬜ | | | ⚠ activación por defecto |
@@ -113,3 +113,18 @@ sobre `bd6c24e`. Pueden depender de este entorno (CPU, codificación de la termi
   dobles) y una prueba más en `tests/integracion/test_media_indexacion.py` (3 en total, `slow` + `modelos`). Tres mutantes
   iniciales (publicar sin umbral, no atrapar errores, regla de capítulo) y dos de la regla final: los cinco rompen pruebas.
   Carpetas tocadas con modelo real: **1048 aprobadas, 0 fallidas**; suite rápida completa: **1729 aprobadas, 0 fallidas, 2 omitidas**.
+
+## M3: API pública y tarjeta del widget
+
+- `ipsis/servicio/api.py`: `FichaMedia` y `RespuestaConsulta.media` (opcional). `respuesta_publica` lo llena desde el contrato interno
+  `multimedia` solo en la primera página y solo con fichas que tengan `url` (las de `file` esperan a M4). Campos: `media_id`, `title`,
+  `kind`, `url`, `start_seconds`, `chapter_title`, `chapter_description`, `description`, `duration`, `version`. Sin `score` (desviación leve del
+  plan: añade `chapter_description`, que es texto literal de la ficha, y no expone el puntaje). Sin fichas, la clave no existe.
+- `widget.js`: bloque `.rw-media` después de las fuentes y de «Mostrar más resultados»: encabezado por tipo («También hay un video/audio sobre esto»,
+  «audio y video» si hay mezcla), tarjeta con tipo, duración, versión, título, capítulo y minuto, descripción (la del capítulo si la ficha salió
+  por un capítulo), «Según la descripción del video» y un botón que abre el enlace en otra pestaña (`noopener noreferrer`, `aria-label` con el
+  aviso de pestaña nueva). YouTube (`t=…s`) y Vimeo (`#t=…s`) llevan el minuto; el resto, el enlace tal cual. Sin iframe ni reproductor, y solo
+  enlaces `http`/`https` (un `javascript:` o `data:` no se muestra). 12 textos de interfaz nuevos en en/es/pt.
+- Se muestra también si no hay fuentes de documentos (una ficha publicada ya superó su umbral por sí misma).
+- Pruebas: 4 de API en `tests/consulta/test_media.py` y 10 de navegador (`test_widget_browser.py`). Capturas revisadas en claro y oscuro a 420 px.
+- Guías web EN/ES: campo `media` en la tabla de `/ask` y viñeta «Multimedia lane / Carril multimedia».

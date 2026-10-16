@@ -827,6 +827,97 @@ def test_sin_forma_los_documentos_no_se_marcan(navegador, servidor_widget):
     page.close()
 
 
+def _ficha(**extra):
+    return {"media_id": "m1", "title": "Orientation video", "kind": "video", "url": "https://example.org/watch",
+            "description": "How to enroll.", "duration": 872, "version": "2026-03", **extra}
+
+
+def _buscar_con_media(page, servidor_widget, media):
+    pagina = _pagina_fuentes(continuar=False)
+    if media is not None:
+        pagina["media"] = media
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda r: r.fulfill(json=pagina))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+
+
+@pytest.mark.browser
+def test_la_ficha_multimedia_va_aparte_despues_de_las_fuentes_con_texto_literal(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(chapter_title="Enroll in courses", start_seconds=410,
+                                                     chapter_description="Pick sections and confirm.")])
+    bloque = page.locator(".rw-media")
+    expect(bloque.locator(".rw-media-titulo")).to_have_text("There is also a video about this")
+    tarjeta = bloque.locator(".rw-media-tarjeta")
+    expect(tarjeta).to_have_count(1)
+    expect(tarjeta.locator(".rw-media-tipo")).to_have_text("Video")
+    expect(tarjeta.locator(".rw-media-meta")).to_contain_text("Duration 14:32")
+    expect(tarjeta.locator(".rw-media-nombre")).to_have_text("Orientation video")
+    expect(tarjeta.locator(".rw-media-capitulo")).to_have_text("Enroll in courses \u00b7 From 6:50")
+    expect(tarjeta.locator(".rw-media-descripcion")).to_have_text("Pick sections and confirm.")  # la del capítulo, literal
+    expect(tarjeta.locator(".rw-media-origen")).to_have_text("According to the video description")
+    # después de las tres fuentes, sin tocarlas ni su orden
+    ultima = page.locator(".rw-resultado").nth(2)
+    assert bloque.evaluate("(m, u) => !!(u.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING)", ultima.element_handle())
+    assert page.locator(".rw-media").evaluate("e => e.getBoundingClientRect().right") <= 375
+    assert tarjeta.locator("iframe, video, audio").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("media", [None, []])
+def test_sin_fichas_no_hay_bloque_multimedia(navegador, servidor_widget, media):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, media)
+    assert page.locator(".rw-media").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("url, segundos, esperado", [
+    ("https://www.youtube.com/watch?v=abc", 90, "https://www.youtube.com/watch?v=abc&t=90s"),
+    ("https://youtu.be/abc", 90, "https://youtu.be/abc?t=90s"),
+    ("https://vimeo.com/123", 90, "https://vimeo.com/123#t=90s"),
+    ("https://example.org/video", 90, "https://example.org/video"),
+    ("https://www.youtube.com/watch?v=abc", None, "https://www.youtube.com/watch?v=abc")])
+def test_el_enlace_lleva_al_minuto_solo_en_youtube_y_vimeo(navegador, servidor_widget, url, segundos, esperado):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(url=url, start_seconds=segundos, chapter_title="Cap" if segundos else None)])
+    enlace = page.locator(".rw-media-abrir")
+    expect(enlace).to_have_attribute("href", esperado)
+    expect(enlace).to_have_attribute("target", "_blank")
+    expect(enlace).to_have_attribute("rel", "noopener noreferrer")
+    expect(enlace).to_have_attribute("aria-label", "Open the video: Orientation video (opens in a new tab)")
+    page.close()
+
+
+@pytest.mark.browser
+def test_un_enlace_que_no_es_http_no_se_muestra(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(url="javascript:alert(1)"), _ficha(media_id="m2", url="data:text/html,x")])
+    assert page.locator(".rw-media").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_audio_y_mezcla_usan_su_propio_encabezado(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(kind="audio", title="Welcome talk", duration=None, version=None)])
+    expect(page.locator(".rw-media-titulo")).to_have_text("There is also an audio about this")
+    expect(page.locator(".rw-media-origen")).to_have_text("According to the audio description")
+    expect(page.locator(".rw-media-abrir")).to_have_text("Open the audio")
+    page.close()
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(), _ficha(media_id="m2", kind="audio", title="Talk")])
+    expect(page.locator(".rw-media-titulo")).to_have_text("There is also audio and video about this")
+    expect(page.locator(".rw-media-tarjeta")).to_have_count(2)
+    page.close()
+
+
 @pytest.mark.browser
 def test_sin_mensaje_propio_para_la_forma_se_usa_el_de_siempre(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})

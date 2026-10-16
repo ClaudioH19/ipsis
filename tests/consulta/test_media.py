@@ -282,3 +282,46 @@ def test_pedir_mas_resultados_no_vuelve_a_buscar_fichas():
     assert cursor and len(buscador.llamadas) == 1
     segunda = motor.continuar("¿Cómo me matriculo?", "s", cursor)
     assert len(buscador.llamadas) == 1 and "multimedia" not in segunda.contrato_http
+
+
+# --- la API pública (M3) ----------------------------------------------------------
+
+FICHA_PUBLICA = {"media_id": "induccion", "title": "Inducción", "kind": "video", "url": "https://example.org/v",
+                 "file": None, "start_seconds": 410, "chapter_title": "Inscribir asignaturas",
+                 "chapter_description": "Elegir secciones.", "description": "Cómo ingresar.", "duration": 872,
+                 "version": "2026-03", "score": 0.83, "fusion_rank": 1}
+
+
+def _publica(fichas):
+    from ipsis.servicio.api import RespuestaConsulta, respuesta_publica
+
+    contrato = _motor(buscador_media=BuscadorFalso(fichas=fichas)).consultar("¿Cómo me matriculo?", "s").contrato_http
+    salida = respuesta_publica(contrato)
+    RespuestaConsulta.model_validate(salida)
+    return salida
+
+
+def test_la_api_publica_las_fichas_con_los_campos_de_la_ficha_y_sin_puntaje():
+    salida = _publica([FICHA_PUBLICA])
+    assert salida["media"] == [{"media_id": "induccion", "title": "Inducción", "kind": "video",
+        "url": "https://example.org/v", "start_seconds": 410, "chapter_title": "Inscribir asignaturas",
+        "chapter_description": "Elegir secciones.", "description": "Cómo ingresar.", "duration": 872, "version": "2026-03"}]
+
+
+def test_las_fichas_sin_enlace_no_se_publican_hasta_servir_archivos():
+    assert "media" not in _publica([{**FICHA_PUBLICA, "url": None, "file": "induccion.mp4"}])
+
+
+def test_sin_fichas_publicables_no_hay_clave_media_y_los_fragmentos_no_cambian():
+    sin_carril = _publica([])
+    con_carril = _publica([FICHA_PUBLICA])
+    assert "media" not in sin_carril
+    assert con_carril["fragments"] == sin_carril["fragments"] and con_carril["answer_blocks"] == sin_carril["answer_blocks"]
+
+
+def test_la_api_no_publica_media_en_paginas_siguientes():
+    from ipsis.servicio.api import respuesta_publica
+
+    motor = _motor(n=5, buscador_media=BuscadorFalso(fichas=[FICHA_PUBLICA]))
+    cursor = motor.consultar("¿Cómo me matriculo?", "s").contrato_http["continuation"]
+    assert "media" not in respuesta_publica(motor.continuar("¿Cómo me matriculo?", "s", cursor).contrato_http)
