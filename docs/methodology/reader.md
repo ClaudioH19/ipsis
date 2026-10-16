@@ -1,5 +1,7 @@
 # Extractive QA reader
 
+Status: stable, engine v1. V2 does not load the reader by default (`v2.qa_highlights` is optional).
+
 ## 1. Purpose
 
 Mark, within a passage, the literal span that answers the question, or say
@@ -149,4 +151,5 @@ Local inference.
 
 ## 14. Status
 
-Stable; `τ_ok` pending calibration per project.
+Stable; `τ_ok` pending calibration per project. Used by the v1 engine; v2 does not load the reader by
+default.

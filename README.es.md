@@ -6,7 +6,7 @@
 
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
 [![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/es/guia/instalacion.md)
-[![Versión 1.0.0](https://img.shields.io/badge/versi%C3%B3n-1.0.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.0.0)
+[![Versión 1.1.0](https://img.shields.io/badge/versi%C3%B3n-1.1.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.1.0)
 [![Sin LLM](https://img.shields.io/badge/LLM-ninguno-16a34a)](docs/decisions/0001-non-generative-answers.md)
 [![Solo CPU](https://img.shields.io/badge/GPU-no%20necesaria-64748b)](docs/decisions/0003-onnx-and-profiles.md)
 
@@ -15,7 +15,7 @@
 **[Documentación](#-documentación)** · **[English](README.md)**
 </div>
 
-**ipsis 1.0** es un asistente autoalojado que **encuentra y ordena fuentes de tus
+**ipsis 1.1** es un asistente autoalojado que **encuentra y ordena fuentes de tus
 propios documentos**. Muestra extractos literales, el archivo y su versión, la
 ruta de secciones y un contexto que puedes abrir para verificar la información.
 Funciona en CPU, sin un LLM generativo; después de descargar los modelos puede
@@ -124,7 +124,7 @@ para construir el índice nuevo: hasta entonces el servicio informa que no está
 conserva y `retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
 
 La instalación anterior sigue la rama predeterminada. Para fijar esta release,
-instala con `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;
+instala con `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`;
 una instalación fijada a un tag necesita cambiar ese tag para otra release.
 Si tu sitio guarda una copia exportada del widget, vuelve a exportar `widget.js`.
 

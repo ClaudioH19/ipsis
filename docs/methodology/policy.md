@@ -1,5 +1,7 @@
 # The `cascade_v1` policy
 
+Status: stable, engine v1 only. The default engine (v2) does not run the answer policy.
+
 ## 1. Purpose
 
 Decide the status of every answer (`ok`, `related` or `no_answer`) with all
@@ -170,4 +172,5 @@ regex guards (see [ADR 0004](../decisions/0004-lexical-cascade-and-removal-of-re
 
 ## 14. Status
 
-Stable; thresholds pending calibration per project.
+Stable; thresholds pending calibration per project. Applies to the v1 engine only: v2 does not run
+the answer policy.

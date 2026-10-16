@@ -11,8 +11,8 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | C3 | ✅ | 2026-10-16 | (ver git log) | Ejemplos en `config_version: 8`; tabla de versiones completa (6, 7, 8); preparación estructural descrita como predeterminada; se quitaron los 5 `xfail` de C3. Ver «C3» abajo. |
 | C4 | ✅ | 2026-10-16 | (ver git log) | Guía del widget en español con las mismas 14 secciones que la inglesa; 8 capturas regeneradas; README aclara que el menú se abre con el «?». Ver «C4» abajo. |
 | C5 | ✅ | 2026-10-16 | (ver git log) | LaTeX en `README.es.md`; sección «Integración continua» en la guía de despliegue en español; `ipsis sync` y la migración a `config_version` 8 en los README (EN/ES); I15 e I17 corregidos con pruebas. Todas las pruebas de coherencia en verde, sin `xfail`. Ver «C5» abajo. |
-| C6 | ⬜ | | | ⚠ número de versión |
-| C7 | 🔶 | 2026-10-16 | (ver git log) | Hecho: estado de 6 notas, §14 de `motor-v2.md` e índice de `docs/plan/README.md`. Pendiente: ⚠ lista de notas dudosas y ⚠ cierre del plan V4 (F5.1). Ver «C7» abajo. |
+| C6 | ✅ | 2026-10-16 | (ver git log) | Versión 1.1.0 (elegida por el usuario) en `pyproject.toml`, `uv.lock`, badges, textos de instalación fijada, CHANGELOG y `SECURITY.md`. **El tag `v1.1.0` no se creó.** Ver «C6» abajo. |
+| C7 | ✅ | 2026-10-16 | (ver git log) | Estado de 15 notas de metodología (6 por evidencia propia, 9 según la propuesta aprobada), §14 de `motor-v2.md` e índice de planes. El plan V4 **no se cierra** (decisión del usuario). Ver «C7» abajo. |
 | C8 | ✅ | 2026-10-16 | (ver git log) | Dos casillas en la plantilla de PR y la sección «Documentation follows the code» en `CONTRIBUTING.md`, con las pruebas por nombre. |
 
 ## C1: pruebas de coherencia
@@ -202,7 +202,7 @@ descartada).
   nombre y qué hacer con un modelo o formato nuevo (`ALIAS_DE_MODELOS`, `NOMBRE_DE_FORMATO`). Se comprobó que todas las
   pruebas citadas existen. La viñeta de «Style» que describía a mano lo que verificaba la prueba ahora remite a la sección.
 
-## C7: historia y planes (en curso)
+## C7: historia y planes
 
 **Hecho.**
 
@@ -237,3 +237,40 @@ motor predeterminado (v2). Propuesta, sin aplicar:
 («espera al usuario»). Si se aprueba, la regla del plan manda resumir lo valioso en `CHANGELOG.md`, los ADR y
 `docs/methodology/`, y borrar `tareas.md`, `avance.md`, `sinonimos.md` y la última sección de `docs/plan/README.md`
 (más los enlaces rotos que queden, que la prueba de enlaces detecta). No lo hice sin tu aprobación.
+
+### C7: decisiones del usuario y cierre (2026-10-16)
+
+- **Notas dudosas: se aplicó la propuesta tal cual.** `policy.md`, `calibration.md`, `reader.md` y `lexical.md` quedan como
+  «estable, solo motor v1» (la de léxico: las señales son de v1 y el BM25 lo comparten v1 y v2); `retrieval.md`,
+  `reranker.md` (con aviso de que su tabla de `medium` es anterior al reranker por idioma, ADR 0003), `evaluation.md` y
+  `multilingual.md` quedan como vigentes; `informal-paraphrases.md` como histórico. Se añadió una línea de estado bajo cada
+  título y se ajustó su sección «14. Status». No se tocó el contenido técnico.
+- **Plan V4: no se cierra por ahora.** Se conservan `tareas.md`, `avance.md`, `sinonimos.md` y su sección en
+  `docs/plan/README.md` hasta que el usuario lo apruebe; el índice ya lo marca «terminado, a la espera del cierre F5.1».
+- **I16 resuelto.** Las dos guías del widget ganan la sección «Search layout» / «Diseño de búsqueda» (buscador abajo,
+  mensaje del asistente con `avatar.placement: message`, esqueletos de carga con los textos reales de
+  `search_stage_*`, etiqueta de alcance y página de demostración a pantalla completa en teléfonos), tomada del CHANGELOG
+  y de `widget.js` (el modo búsqueda lo activa `response_mode: ranked_sources`). Siguen teniendo las mismas secciones:
+  15 y 15.
+
+## C6: versión 1.1.0
+
+- **Número elegido por el usuario: 1.1.0** (cambios de comportamiento por defecto y una migración automática compatible
+  con 1.0.0, con la reindexación destacada).
+- `pyproject.toml` y `uv.lock` en 1.1.0 (`uv lock --check` resuelve sin cambios; `importlib.metadata` informa 1.1.0).
+  Badges y titular («ipsis 1.1») de los dos README, y la instalación fijada `@v1.1.0` en los README y en las guías de
+  instalación (EN/ES).
+- `CHANGELOG.md`: `[Unreleased]` queda vacío y se abre `[1.1.0] - 2026-10-16` con una nota «Upgrading from 1.0.0» que
+  pide ejecutar `ipsis index` tras el primer comando, más las entradas de documentación y de las pruebas de coherencia.
+- **I18 (nuevo, resuelto).** `SECURITY.md` listaba como soportada solo la serie 0.9.x, sin la 1.0 ni la 1.1. Se siguió su
+  propio patrón (solo la última serie): `1.1.x ✅` y `< 1.1 ❌`. ⚠ Es una política del mantenedor: si 1.0.x también debe
+  recibir correcciones, hay que agregarla.
+- **No se creó el tag ni la release.** Los badges enlazan a `releases/tag/v1.1.0`, que dará 404 hasta que el usuario lo
+  cree tras revisar.
+- Suite rápida: **1596 aprobadas, 0 fallidas, 2 omitidas**.
+
+## Cierre del plan
+
+Con C1–C8 hechas, el plan de coherencia está terminado. Pendiente solo lo que es del usuario: crear el tag `v1.1.0`,
+decidir si 1.0.x sigue soportada en `SECURITY.md`, y cerrar el plan V4 (F5.1). Siguiendo la regla de los planes, este
+puede borrarse al cerrarse (resumido en el CHANGELOG, que ya lo recoge).

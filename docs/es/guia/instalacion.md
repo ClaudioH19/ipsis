@@ -80,8 +80,8 @@ adoptar opciones nuevas. Recarga el navegador y reemplaza las copias exportadas
 de `widget.js` si tu sitio las utiliza.
 
 Una instalación desde una rama Git se actualiza a un commit nuevo de esa rama.
-Para fijar la release 1.0, usa `ipsis @
-git+https://github.com/ClaudioH19/ipsis.git@v1.0.0` al instalar. Si fijaste un
+Para fijar la release 1.1, usa `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.1.0` al instalar. Si fijaste un
 tag o commit, debes cambiar esa referencia para actualizar a otra release.
 
 **En Docker:** `ipsis deploy prepare` genera la imagen de tu proyecto;

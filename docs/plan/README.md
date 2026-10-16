@@ -6,7 +6,7 @@ de avance de cada plan:
 
 | Plan | Estado | Documentos |
 |---|---|---|
-| Coherencia entre código y documentación | en curso: C1–C5 y C8 hechas; C7 en curso y C6 pendientes (⚠) | [coherencia.md](coherencia.md), [tareas](coherencia-tareas.md), [avance](coherencia-avance.md) |
+| Coherencia entre código y documentación | terminado (C1–C8); quedan acciones del usuario: tag `v1.1.0` y cierre del plan V4 | [coherencia.md](coherencia.md), [tareas](coherencia-tareas.md), [avance](coherencia-avance.md) |
 | Presentación por forma de resultados | pendiente: empieza con la medición P0 | [presentacion.md](presentacion.md), [tareas](presentacion-tareas.md), [avance](presentacion-avance.md) |
 | Multimedia | pendiente: empieza con M0 | [multimedia.md](multimedia.md), [tareas](multimedia-tareas.md), [avance](multimedia-avance.md) |
 | Precisión desde la ingesta | casi cerrado: quedan F3.3 (condicional, sin iniciar) y F4.3 (⚠ espera al usuario) | [precision-ingesta.md](precision-ingesta.md), [tareas](precision-ingesta-tareas.md), [avance](precision-ingesta-avance.md) |

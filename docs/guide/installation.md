@@ -80,8 +80,8 @@ preset or edit individual settings to adopt new options. Reload the browser
 and replace exported `widget.js` copies if your website uses them.
 
 Git branch installations update to a new commit on that branch. To pin the
-1.0 release, install `ipsis @
-git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`. Tag or commit installations
+1.1 release, install `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`. Tag or commit installations
 need a changed reference to move to another release.
 
 **In Docker:** `ipsis deploy prepare` generates your project's image;

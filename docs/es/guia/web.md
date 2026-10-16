@@ -199,6 +199,27 @@ en lugar del ícono:
 - **Preferencias del sistema:** modo oscuro, `prefers-reduced-motion` (sin
   animaciones) y contraste alto (`forced-colors`).
 
+## Diseño de búsqueda
+
+Con el motor v2 (`response_mode: ranked_sources` en `GET /config`) el widget usa un diseño de búsqueda:
+
+- **Buscador abajo**, como un chat: los resultados se desplazan encima, en escritorio y en teléfono. El
+  campo tiene un botón para borrar.
+- **Mensaje del asistente sobre el buscador**, donde está la atención: dice cuántos resultados hay (ver las
+  plantillas con `{count}` más arriba). Con `avatar.placement: message` (el valor por defecto de los
+  proyectos nuevos) el avatar queda a su derecha; `header`, `top-corner` y `bottom-corner` siguen
+  disponibles ([personalidad.md](personalidad.md)). Mientras el teclado del teléfono está abierto, el
+  avatar se oculta para ahorrar espacio.
+- **Carga:** mientras se busca, tarjetas grises de esqueleto van cayendo una tras otra, con una línea de
+  estado que pasa por «Leyendo los documentos…», «Comparando fuentes…» y «Ordenando por relevancia…»;
+  luego los resultados entran de a uno. «Mostrar más resultados» agrega una sola tarjeta de esqueleto bajo
+  la lista. Respeta `prefers-reduced-motion` y `animations.enabled: false`.
+- **Etiqueta de alcance:** cada resultado muestra, junto al título del documento, una etiqueta pequeña con
+  lo que lo distingue de sus unidades hermanas (por ejemplo «Práctica Profesional II»). La API la devuelve
+  como `scope` y los términos que distinguen unidades parecidas como `distinctive_terms`.
+- **Página de prueba:** `/widget/demo.html` ocupa toda la pantalla en teléfonos (sin encabezado de página;
+  el formulario de la clave de acceso está en `#clave-acceso`) y se ajusta a la ventana en escritorio.
+
 ## Citas
 
 Toda respuesta con evidencia muestra, **debajo**, un bloque de citas para

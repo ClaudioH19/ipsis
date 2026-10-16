@@ -6,7 +6,7 @@
 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-2563eb)](LICENSE)
 [![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/guide/installation.md)
-[![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.0.0)
+[![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.1.0)
 [![No LLM](https://img.shields.io/badge/LLM-none-16a34a)](docs/decisions/0001-non-generative-answers.md)
 [![CPU only](https://img.shields.io/badge/GPU-not%20required-64748b)](docs/decisions/0003-onnx-and-profiles.md)
 
@@ -15,7 +15,7 @@
 **[Documentation](#-documentation)** · **[Español](README.es.md)**
 </div>
 
-**ipsis 1.0** is a self-hosted assistant that **finds and ranks sources from
+**ipsis 1.1** is a self-hosted assistant that **finds and ranks sources from
 your own documents**. It shows literal excerpts, filenames and versions,
 section paths and expandable context for checking the information. It runs
 on CPU without a generative LLM; after downloading models, a local deployment
@@ -123,7 +123,7 @@ to build the new index: until then the service reports it is not ready. The old 
 `retrieval.preparation.mode: legacy` goes back to fixed-size chunks.
 
 The installation above follows the default branch. To pin this release,
-install `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;
+install `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`;
 tag-pinned installations need a changed tag to move to another release.
 If your website keeps an exported widget, export and replace `widget.js` again.
 

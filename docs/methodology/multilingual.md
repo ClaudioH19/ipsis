@@ -1,5 +1,7 @@
 # Multilingual: language packs
 
+Status: current.
+
 ## 1. Purpose
 
 Make the library work in any language with no language text in the Python

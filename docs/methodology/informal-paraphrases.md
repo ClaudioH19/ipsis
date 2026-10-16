@@ -1,5 +1,7 @@
 # Informal paraphrases (2026-10-08)
 
+Status: historical. A measurement report dated 2026-10-08.
+
 Users do not write like documents. They paraphrase, drop accents and
 question marks, abbreviate ("q", "pra", "wfh"), use slang ("refri", "der
 pau") and make typos ("pasword"). This note records what was measured, what

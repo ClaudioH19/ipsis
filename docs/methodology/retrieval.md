@@ -1,5 +1,7 @@
 # Hybrid retrieval
 
+Status: current. Hybrid retrieval is used by v1 and v2; the thresholds that use `s_ret` belong to v1.
+
 ## 1. Purpose
 
 Find the corpus fragments that may answer the question, combining semantic
@@ -113,5 +115,5 @@ with the real model and the characterization
 
 ## 14. Status
 
-Stable. The thresholds that use `s_ret` depend on each project's
+Stable. The thresholds that use `s_ret` (v1 engine) depend on each project's
 [calibration](calibration.md).

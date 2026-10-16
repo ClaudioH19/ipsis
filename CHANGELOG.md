@@ -6,8 +6,22 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-16
+
+**Upgrading from 1.0.0:** the first `ipsis` command migrates a v2 project to `config_version` 8 and, if it had not chosen
+a preparation, to the structural preparation. **Run `ipsis index`** afterwards: until then the service reports it is not
+ready. The old index is kept; `retrieval.preparation.mode: legacy` goes back. See [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md).
+
 ### Fixed
 
+- Documentation matched neither the code nor itself in several places. The READMEs and the installation guides now name
+  the models each `medium` project really downloads (bge-reranker-v2-m3 for Spanish and Portuguese, mMiniLM otherwise;
+  no QA reader in v2) with measured sizes (470, 571 and 119 MB) and latency; the configuration guides use
+  `config_version: 8` and describe versions 6 to 8; the Spanish widget and deployment guides have the sections of the
+  English ones; the structural preparation and v2 are no longer described as experimental; a duplicated `ipsis sync` row
+  and the missing LaTeX in `ipsis load` were fixed. The widget screenshots were regenerated with the current design.
+- `herramientas/evaluacion/ranking_pasajes.py` no longer accepts the removed `heavy` profile, and the `medium` profile
+  description no longer promises the QA reader.
 - Widget results showed the file name where the document title should be. They now show the title (catalog
   `doc_title`) and version, with the file name as a smaller secondary line.
 
@@ -23,6 +37,9 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Documentation consistency tests** (`tests/test_documentacion.py`): the profile tables, `config_version` in examples and
+  in the version table, the supported formats, the sections of each guide in English and Spanish and the version badge
+  are compared with the code, and the command table cannot repeat a row. See [CONTRIBUTING.md](CONTRIBUTING.md).
 - **Widget search experience** (visual only; no change to ranking). While a search runs, grey "sheet" skeleton
   cards fall into place one after another in the results area, with a status line that moves through
   "reading / comparing / sorting" (`search_stage_*` messages in es/en/pt). The results then enter one at a time

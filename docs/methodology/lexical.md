@@ -1,5 +1,7 @@
 # Lexical layer: BM25, TF-IDF and signals
 
+Status: stable. The signals (`s_oov`, focus, `s_foco`, `s_cov`, `s_lex`) belong to the v1 engine; BM25 is shared by v1 and v2.
+
 ## 1. Purpose
 
 Provide cheap, deterministic and explainable signals for three things:
@@ -113,7 +115,7 @@ evaluation banks ("same topic, missing fact" traps).
 
 ## 14. Status
 
-Stable. `τ_foco` and `τ_oov_ok` are calibrated per project.
+Stable. `τ_foco` and `τ_oov_ok` are calibrated per project (v1 engine). BM25 is shared with v2.
 
 ## Relation words and cues
 

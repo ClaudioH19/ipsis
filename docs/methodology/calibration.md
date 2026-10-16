@@ -1,5 +1,7 @@
 # Calibration with risk control
 
+Status: stable, engine v1 only. Calibration does not control the ranking of v2.
+
 ## 1. Purpose
 
 Choose the thresholds of the [policy](policy.md) for a specific project so
@@ -135,4 +137,5 @@ provenance) and the CLI tests of `ipsis calibrate` with a fake engine.
 
 ## 14. Status
 
-Stable. No project is calibrated by default.
+Stable. No project is calibrated by default. Applies to the v1 engine only: it does not control the
+ranking of v2.

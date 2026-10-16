@@ -186,6 +186,26 @@ instead of the icon:
 - **System preferences:** dark mode, `prefers-reduced-motion` (no
   animations) and high contrast (`forced-colors`).
 
+## Search layout
+
+With engine v2 (`response_mode: ranked_sources` in `GET /config`) the widget uses a search layout:
+
+- **Search box at the bottom**, like a chat: the results scroll above it, on desktop and on phones. The
+  box has a clear button.
+- **Assistant message above the box**, where attention is: it says how many results there are (see the
+  `{count}` templates above). With `avatar.placement: message` (the default for new projects) the avatar
+  sits to its right; `header`, `top-corner` and `bottom-corner` still work
+  ([personality.md](personality.md)). While the phone keyboard is open the avatar is hidden to save space.
+- **Loading:** while a search runs, grey skeleton cards fall into place one after another, with a status
+  line that moves through "Reading the documents…", "Comparing sources…" and "Sorting by relevance…"; the
+  results then enter one at a time. "Show more results" adds a single skeleton card below the list. It
+  respects `prefers-reduced-motion` and `animations.enabled: false`.
+- **Scope label:** each result shows, next to its document title, a small label with what tells it apart
+  from its sibling units (for example "Práctica Profesional II"). The API returns it as `scope`, and the
+  terms that tell similar units apart as `distinctive_terms`.
+- **Test page:** `/widget/demo.html` takes the whole screen on phones (no page header; the access-key
+  form is at `#clave-acceso`) and fits the window on desktop.
+
 ## Citations
 
 Every answer with evidence shows, **underneath**, a block of citations to
