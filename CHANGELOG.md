@@ -42,6 +42,13 @@ a minor change may break compatibility and is marked as such.
   but gave no more than TF-IDF (0.893 at cosine 0.97, worse below) and costs one more encoding pass. Existing projects
   that already have a `preparation` block keep it; new indexes need `ipsis index` into a new `collection_version`.
   `herramientas/evaluacion/ranking_pasajes.py` gets `--alcance`, `--rasgos` and `--umbral-hermanos`.
+- **`ipsis sync`**: one command to bring the catalog and the index up to date when the `documents/` folder changes. It
+  adds new files, follows renames (same content keeps its `doc_id`, title and version), picks up changed content, retires
+  deleted files (`active: false`, reversible; reactivated if they return) and rebuilds the index. `--dry-run` shows the plan,
+  `--no-index` updates only the catalog, `--force` rebuilds anyway and `--prune` deletes older index versions. With the
+  structural preparation it creates the new index as the next `collection_version` instead of failing with "the collection
+  already exists". Deleting a file by hand and running `ipsis index` still fails with "No such file"; `ipsis sync` is the
+  supported way. Subfolder files are reported and ignored (the catalog keeps file names only).
 - **LaTeX (`.tex`) is a supported document format** (legacy and structural preparation): sections, lists, tables
   with their caption, theorem-like environments and inline formatting are kept; formulas are kept as source text so
   they can be searched. Markdown and PDF were re-checked with the structural preparation (units per section; the

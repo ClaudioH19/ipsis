@@ -13,7 +13,7 @@ configuration file is described in [configuration.md](configuration.md).
 ```text
 ipsis init → ipsis models download → ipsis load → ipsis index → ipsis doctor → ipsis chat / ipsis serve
                                          ↑                                │
-                     new or changed documents                             ↓
+       added, renamed, changed or deleted documents → ipsis sync       ↓
                                                  ipsis ask / the widget on your site
 ```
 
@@ -120,6 +120,24 @@ also suppresses opening, and `--no-admin` disables the panel. Pure greetings
 and search guidance appear in a separate section with gradual typing; sources
 remain complete and expandable. See [the widget guide](web.md).
 
+## Keeping the index up to date
+
+The catalog (`documents/catalog.yaml`) is what the index is built from, so deleting or renaming a file by hand makes
+`ipsis index` fail ("No such file") and `ipsis doctor` report an error. Instead of editing the catalog, run:
+
+```bash
+ipsis sync --dry-run   # what would change, touching nothing
+ipsis sync             # update the catalog and rebuild the index
+ipsis sync --prune     # ... and delete the older index versions
+```
+
+It compares the folder with the catalog: **new** files are added; a **renamed** file (same content) keeps its `doc_id`, title
+and version; a file whose content **changed** is picked up; a file that is **gone** is retired (`active: false`; if it comes
+back it is reactivated); exact duplicates are not added twice; files inside subfolders are reported and ignored (the catalog
+keeps file names only). With the structural preparation an existing index is never overwritten: `sync` creates the new one as
+the next `collection_version` and keeps the previous one for rollback until `--prune`. If `ipsis serve` is running on the same
+local index, stop it first.
+
 ## Command reference
 
 ### Project
@@ -146,7 +164,9 @@ remain complete and expandable. See [the widget guide](web.md).
 | Command | What it does |
 |---|---|
 | `ipsis load <file\|folder>` | Copies the documents (PDF with text, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) to `documents/` and catalogs them. A file with the same name as one already loaded but different content is added separately: to retire the old one, set `active: false` in `documents/catalog.yaml` |
-| `ipsis index [--corpus FOLDER]` | Rebuilds the whole index. Run it after every document change or after a profile change that asks for it |
+| `ipsis index [--corpus FOLDER]` | Rebuilds the whole index. Run it after a profile change that asks for it (for document changes, `ipsis sync` is simpler) |
+| `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Brings the catalog and the index up to date with the `documents/` folder (new, renamed, changed and deleted files) and rebuilds the index. See [Keeping the index up to date](#keeping-the-index-up-to-date) |
+| `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Brings the catalog and the index up to date with the `documents/` folder: adds new files, follows renames (same content keeps its `doc_id`), picks up changed content, retires files that were deleted (`active: false`, reversible) and rebuilds the index. See [Keeping the index up to date](#keeping-the-index-up-to-date) |
 
 ### Asking
 

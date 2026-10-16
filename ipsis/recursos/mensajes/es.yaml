@@ -78,16 +78,38 @@ profile:
   dense_changed: 'El modelo denso cambió: {old} → {new}. Hay que reconstruir el índice (el anterior se conserva).'
 load:
   help: Copia un archivo o carpeta al corpus y lo cataloga.
-  arg_path: Archivo o carpeta con DOCX, PDF, Markdown, TXT, XLSX, XLS, CSV o TSV.
-  nothing: 'No se encontró ningún archivo soportado en {path!r} (soportados: .docx, .pdf, .md, .markdown, .txt, .xlsx, .xls, .csv, .tsv).'
+  arg_path: Archivo o carpeta con DOCX, PDF, Markdown, LaTeX, TXT, XLSX, XLS, CSV o TSV.
+  nothing: 'No se encontró ningún archivo soportado en {path!r} (soportados: .docx, .pdf, .md, .markdown, .tex, .txt, .xlsx, .xls, .csv, .tsv).'
   duplicate: '  = {file}: ya estaba cargado como doc_id={doc_id!r} (mismo contenido, se omite)'
   added: '  + {file}: doc_id={doc_id!r}, título={title!r}'
   warning: '      [!] {warning}'
-  homonym: '      [!] ya había un documento con ese nombre ({doc_id!r}) y otro contenido: este se agregó aparte y ambos se indexan. Si lo reemplaza, marca ''active: false'' en la entrada de {doc_id!r} en documents/catalog.yaml y ejecuta ''ipsis index''.'
+  homonym: '      [!] ya había un documento con ese nombre ({doc_id!r}) y otro contenido: este se agregó aparte y ambos se indexan. Si lo reemplaza, borra el archivo antiguo de documents/ y ejecuta ''ipsis sync'', que lo retira y reconstruye el índice.'
   done: '{n} documento(s) nuevo(s) agregado(s) al catálogo (documents/catalog.yaml).'
   rejected: '  x {file}: no se cargó. {reason}'
   rejected_summary: '{n} archivo(s) no se cargaron (ver arriba); el resto sí.'
   next: 'Siguiente paso: ''ipsis index''.'
+sync:
+  help: Pone al día el catálogo y el índice cuando se agregan, renombran, cambian o borran documentos de la carpeta.
+  opt_dry_run: Muestra qué cambiaría y termina, sin tocar nada.
+  opt_no_index: Actualiza solo el catálogo; no reconstruye el índice.
+  opt_force: Reconstruye el índice aunque no haya cambios.
+  opt_prune: Borra las versiones anteriores del índice tras reconstruirlo con éxito.
+  plan_header: 'Cambios en {folder}/:'
+  added: '  + {file} (nuevo)'
+  renamed: '  ~ {old} -> {new} (renombrado: mismo contenido, conserva doc_id={doc_id!r})'
+  modified: '  * {file} (contenido modificado)'
+  removed: '  - {file} (ya no está en la carpeta: doc_id={doc_id!r} queda en active: false)'
+  reactivated: '  + {file} (volvió: reactiva doc_id={doc_id!r})'
+  ignored: '  ? {file}: está en una subcarpeta y se ignora (el catálogo guarda solo nombres de archivo; muévelo a {folder}/ o usa ''ipsis load'')'
+  unchanged: '{n} documento(s) sin cambios.'
+  nothing: 'Todo está al día: no hay nada que hacer. (''ipsis sync --force'' reconstruye el índice igualmente.)'
+  dry_run: 'Simulación: no se cambió ningún archivo.'
+  catalog_only: 'Catálogo actualizado. No se reconstruyó el índice: ejecuta ''ipsis sync'' o ''ipsis index''.'
+  version_bumped: 'El índice anterior se conserva por si hay que volver atrás; el nuevo es collection_version {new} (era {old}). ''ipsis sync --prune'' borra las versiones anteriores.'
+  indexed: 'Índice actualizado: {docs} documento(s), {chunks} fragmento(s) en {collection}.'
+  pruned: 'Versiones anteriores del índice borradas: {names}'
+  failed: 'No se pudo actualizar: {error}'
+  lock_hint: 'Si ''ipsis serve'' (u otro proceso) está usando el índice, deténlo y vuelve a ejecutar ''ipsis sync''.'
 index:
   help: Parsea, fragmenta, vectoriza y persiste el índice.
   opt_corpus: 'Carpeta con los documentos a indexar (por defecto: ''documents'').'

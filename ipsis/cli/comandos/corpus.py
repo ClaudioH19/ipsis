@@ -97,6 +97,72 @@ class ComandoIndexar(Comando):
         return 0
 
 
+class ComandoSincronizar(Comando):
+    nombre = "sync"
+    ayuda = "sync.help"
+
+    def registrar(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--dry-run", action="store_true", help=t("sync.opt_dry_run"))
+        parser.add_argument("--no-index", action="store_true", help=t("sync.opt_no_index"))
+        parser.add_argument("--force", action="store_true", help=t("sync.opt_force"))
+        parser.add_argument("--prune", action="store_true", help=t("sync.opt_prune"))
+
+    def ejecutar(self, args: argparse.Namespace) -> int:
+        from ipsis.aplicacion.sincronizar import sincronizar
+
+        carpeta = "documents"
+        try:
+            with avisos_de_ocr(print):
+                r = sincronizar(solo_plan=args.dry_run, indexar=not args.no_index, forzar=args.force,
+                                podar=args.prune, carpeta=carpeta)
+        except ErrorConfiguracion as e:
+            print(t("index.config_error", error=e))
+            print(t("index.run_doctor"))
+            return 1
+        except Exception as e:  # noqa: BLE001 -- se reporta con contexto, no se oculta
+            print(t("sync.failed", error=e))
+            print(t("sync.lock_hint"))
+            return 1
+        plan = r.plan
+        if plan.hay_cambios or plan.ignorados:
+            print(t("sync.plan_header", folder=carpeta))
+        for nuevo in plan.nuevos:
+            print(t("sync.added", file=nuevo.name))
+        for entrada, nuevo in plan.renombrados:
+            print(t("sync.renamed", old=entrada["archivo"], new=nuevo.name, doc_id=entrada["doc_id"]))
+        for entrada, _ in plan.modificados:
+            print(t("sync.modified", file=entrada["archivo"]))
+        for entrada in plan.retirados:
+            print(t("sync.removed", file=entrada["archivo"], doc_id=entrada["doc_id"]))
+        for entrada, nuevo in plan.reactivados:
+            print(t("sync.reactivated", file=nuevo.name, doc_id=entrada["doc_id"]))
+        for ignorado in plan.ignorados:
+            print(t("sync.ignored", file=ignorado.as_posix(), folder=carpeta))
+        print(t("sync.unchanged", n=plan.sin_cambios))
+        for d in r.agregados:
+            if d.rechazo:
+                print(t("load.rejected", file=d.archivo, reason=d.rechazo))
+            for a in d.advertencias:
+                print(t("load.warning", warning=a))
+        if args.dry_run:
+            print(t("sync.dry_run"))
+            return 0
+        if r.version_nueva is not None:
+            print(t("sync.version_bumped", old=r.version_anterior, new=r.version_nueva))
+        if r.indexado:
+            resumen = r.resumen_indice
+            print(t("sync.indexed", docs=resumen.n_documentos, chunks=resumen.n_chunks, collection=resumen.nombre_coleccion))
+            for a in resumen.advertencias:
+                print(t("index.warning", warning=a))
+        elif not plan.hay_cambios and not args.force:
+            print(t("sync.nothing"))
+        elif args.no_index:
+            print(t("sync.catalog_only"))
+        if r.podadas:
+            print(t("sync.pruned", names=", ".join(r.podadas)))
+        return 1 if any(d.rechazo for d in r.agregados) else 0
+
+
 class ComandoPreparar(Comando):
     nombre = "prepare"
     ayuda = "prepare.help"
@@ -122,4 +188,4 @@ class ComandoPreparar(Comando):
         return 0
 
 
-__all__ = ["ComandoCargar", "ComandoIndexar", "ComandoPreparar"]
+__all__ = ["ComandoCargar", "ComandoIndexar", "ComandoPreparar", "ComandoSincronizar"]

@@ -149,6 +149,41 @@ def _append_entrada_catalogo(ruta_catalogo: str, entrada: dict) -> None:
     ruta.write_text(texto_actual + bloque, encoding="utf-8")
 
 
+_CLAVES_ENTRADA = {"archivo": ("file", "archivo"), "vigente": ("active", "vigente"),
+                   "hash_contenido": ("content_hash", "hash_contenido")}
+
+
+def actualizar_entrada_catalogo(ruta_catalogo: str, doc_id: str, **cambios) -> None:
+    """Cambia ``archivo``, ``vigente`` y/o ``hash_contenido`` de la entrada ``doc_id`` editando solo esas líneas:
+    los comentarios y el resto del archivo quedan intactos (mismo criterio que ``_append_entrada_catalogo``).
+    Entiende las claves en inglés (``file``, ``active``, ``content_hash``) y las antiguas en español."""
+    desconocidas = set(cambios) - set(_CLAVES_ENTRADA)
+    if desconocidas:
+        raise ValueError(f"campos no editables: {sorted(desconocidas)}")
+    ruta = Path(ruta_catalogo)
+    lineas = ruta.read_text(encoding="utf-8").split("\n")
+    marca = next((i for i, l in enumerate(lineas) if re.fullmatch(rf"\s*doc_id:\s*{re.escape(doc_id)}\s*", l)), None)
+    if marca is None:
+        raise KeyError(doc_id)
+    inicio = marca
+    while inicio > 0 and not lineas[inicio].lstrip().startswith("- "):
+        inicio -= 1
+    fin = marca + 1
+    while fin < len(lineas) and not lineas[fin].lstrip().startswith("- "):
+        fin += 1
+    for campo, valor in cambios.items():
+        texto = (("true" if valor else "false") if campo == "vigente" else
+                 _yaml_valor(valor) if campo == "archivo" else str(valor))
+        for i in range(inicio, fin):
+            m = re.match(rf"^(\s*(?:- )?)({'|'.join(_CLAVES_ENTRADA[campo])}):\s*.*$", lineas[i])
+            if m:
+                lineas[i] = f"{m.group(1)}{m.group(2)}: {texto}"
+                break
+        else:
+            raise KeyError(f"{doc_id}: no tiene {_CLAVES_ENTRADA[campo][0]}")
+    ruta.write_text("\n".join(lineas), encoding="utf-8")
+
+
 @dataclass
 class DocumentoCargado:
     archivo: str

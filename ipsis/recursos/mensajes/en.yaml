@@ -78,16 +78,38 @@ profile:
   dense_changed: 'The dense model changed: {old} → {new}. The index must be rebuilt (the previous one is kept).'
 load:
   help: Copy a file or folder into the corpus and catalog it.
-  arg_path: File or folder with DOCX, PDF, Markdown, TXT, XLSX, XLS, CSV or TSV.
-  nothing: 'No supported file found in {path!r} (supported: .docx, .pdf, .md, .markdown, .txt, .xlsx, .xls, .csv, .tsv).'
+  arg_path: File or folder with DOCX, PDF, Markdown, LaTeX, TXT, XLSX, XLS, CSV or TSV.
+  nothing: 'No supported file found in {path!r} (supported: .docx, .pdf, .md, .markdown, .tex, .txt, .xlsx, .xls, .csv, .tsv).'
   duplicate: '  = {file}: already loaded as doc_id={doc_id!r} (same content, skipped)'
   added: '  + {file}: doc_id={doc_id!r}, title={title!r}'
   warning: '      [!] {warning}'
-  homonym: '      [!] there was already a document with that name ({doc_id!r}) and different content: this one was added separately and both are indexed. If it replaces it, set ''active: false'' on the {doc_id!r} entry in documents/catalog.yaml and run ''ipsis index''.'
+  homonym: '      [!] there was already a document with that name ({doc_id!r}) and different content: this one was added separately and both are indexed. If it replaces it, remove the old file from documents/ and run ''ipsis sync'', which retires it and rebuilds the index.'
   done: '{n} new document(s) added to the catalog (documents/catalog.yaml).'
   rejected: '  x {file}: not loaded. {reason}'
   rejected_summary: '{n} file(s) were not loaded (see above); the rest were.'
   next: 'Next step: ''ipsis index''.'
+sync:
+  help: Update the catalog and the index after documents were added, renamed, changed or removed in the folder.
+  opt_dry_run: Show what would change and exit, without touching anything.
+  opt_no_index: Update the catalog only; do not rebuild the index.
+  opt_force: Rebuild the index even if nothing changed.
+  opt_prune: Delete older index versions after a successful rebuild.
+  plan_header: 'Changes in {folder}/:'
+  added: '  + {file} (new)'
+  renamed: '  ~ {old} -> {new} (renamed: same content, keeps doc_id={doc_id!r})'
+  modified: '  * {file} (content changed)'
+  removed: '  - {file} (no longer in the folder: doc_id={doc_id!r} is marked active: false)'
+  reactivated: '  + {file} (back: reactivates doc_id={doc_id!r})'
+  ignored: '  ? {file}: inside a subfolder, ignored (the catalog keeps file names only; move it to {folder}/ or use ''ipsis load'')'
+  unchanged: '{n} document(s) without changes.'
+  nothing: 'Everything is up to date: nothing to do. (''ipsis sync --force'' rebuilds the index anyway.)'
+  dry_run: 'Dry run: no file was changed.'
+  catalog_only: 'Catalog updated. The index was not rebuilt: run ''ipsis sync'' or ''ipsis index''.'
+  version_bumped: 'The previous index is kept as a rollback; the new one is collection_version {new} (it was {old}). ''ipsis sync --prune'' deletes older versions.'
+  indexed: 'Index updated: {docs} document(s), {chunks} chunk(s) in {collection}.'
+  pruned: 'Older index versions deleted: {names}'
+  failed: 'Could not update: {error}'
+  lock_hint: 'If ''ipsis serve'' (or another process) is using the index, stop it and run ''ipsis sync'' again.'
 index:
   help: Parse, chunk, embed and store the index.
   opt_corpus: 'Folder with the documents to index (default: ''documents'').'

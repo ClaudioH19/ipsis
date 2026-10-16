@@ -161,6 +161,10 @@ def paquete_del_indice(est: EstadisticasLexicas):
     return SimpleNamespace(stemmer=est.stemmer)
 
 
+class ColeccionExistente(ValueError):
+    """La colección ya existe y el modo no permite recrearla (preparación estructural): hay que usar otra versión."""
+
+
 def nombre_coleccion_versionada(coleccion_base: str, modelo_nombre: str, n_version: int = 1,
                                  sufijo: str | None = None) -> str:
     """Nombre de colección versionado:
@@ -257,7 +261,7 @@ def indexar_qdrant(payloads: list[dict], modelo_nombre: str, coleccion: str, qdr
         if not permitir_recrear:
             if cliente_propio:
                 client.close()
-            raise ValueError("la colección ya existe; usar otra versión o ubicación para preparar un índice nuevo")
+            raise ColeccionExistente("la colección ya existe; usar otra versión o ubicación para preparar un índice nuevo")
         client.delete_collection(nombre_col)
     client.create_collection(
         collection_name=nombre_col,

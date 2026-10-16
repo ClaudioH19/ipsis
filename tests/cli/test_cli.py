@@ -188,7 +188,7 @@ def test_cargar_avisa_el_homonimo_y_vigente_false_lo_saca_del_indice(proyecto_te
     capsys.readouterr()
     assert main(["load", str(md)]) == 0
     salida = capsys.readouterr().out
-    assert "ya había un documento con ese nombre" in salida and "active: false" in salida
+    assert "ya había un documento con ese nombre" in salida and "ipsis sync" in salida
     assert len(parsear_corpus("documents")) == 2  # mientras no se retire, se indexan ambos
 
     ruta = proyecto_temporal / "documents" / "catalog.yaml"

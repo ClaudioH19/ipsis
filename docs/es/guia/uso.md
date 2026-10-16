@@ -104,6 +104,24 @@ van a stderr y la salida de los comandos a stdout; fuera de una terminal no
 hay animaciones ni códigos de color. `ipsis --help`, `ipsis help` y `/help`
 incluyen la instalación con uv, sin crear ni activar entornos manualmente.
 
+## Mantener el índice al día
+
+El catálogo (`documents/catalog.yaml`) es de donde se construye el índice, así que borrar o renombrar un archivo a mano hace
+que `ipsis index` falle («No such file») y que `ipsis doctor` marque un error. En vez de editar el catálogo, ejecuta:
+
+```bash
+ipsis sync --dry-run   # qué cambiaría, sin tocar nada
+ipsis sync             # actualiza el catálogo y reconstruye el índice
+ipsis sync --prune     # ... y borra las versiones anteriores del índice
+```
+
+Compara la carpeta con el catálogo: los archivos **nuevos** se agregan; uno **renombrado** (mismo contenido) conserva su `doc_id`,
+título y versión; uno cuyo contenido **cambió** se actualiza; uno que **ya no está** se retira (`active: false`; si vuelve, se
+reactiva); los duplicados exactos no se agregan dos veces; los archivos en subcarpetas se informan y se ignoran (el catálogo
+guarda solo nombres de archivo). Con la preparación estructural un índice existente nunca se sobrescribe: `sync` crea el nuevo como
+la siguiente `collection_version` y conserva el anterior por si hay que volver atrás hasta usar `--prune`. Si `ipsis serve` está
+usando el mismo índice local, deténlo antes.
+
 ## Referencia de comandos
 
 ### Proyecto
@@ -149,7 +167,8 @@ cargado y no migra la configuración del proyecto.
 | Comando | Qué hace |
 |---|---|
 | `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |
-| `ipsis index [--corpus CARPETA]` | Reconstruye el índice completo. Ejecútalo después de cada cambio de documentos o de un cambio de perfil que lo pida |
+| `ipsis index [--corpus CARPETA]` | Reconstruye el índice completo. Ejecútalo tras un cambio de perfil que lo pida (para cambios de documentos, `ipsis sync` es más simple) |
+| `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Pone al día el catálogo y el índice con la carpeta `documents/` (archivos nuevos, renombrados, modificados y borrados) y reconstruye el índice. Ver [Mantener el índice al día](#mantener-el-índice-al-día) |
 
 ### Consulta
 
