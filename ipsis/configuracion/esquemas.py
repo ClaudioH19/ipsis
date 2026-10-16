@@ -131,6 +131,25 @@ class RedaccionConfig(ConfiguracionEstricta):
     incluir_apertura: bool = True
 
 
+class PresentacionConfig(ConfiguracionEstricta):
+    """Presentación según la forma de los resultados (``docs/plan/presentacion.md``): apagada por defecto.
+
+    ``margen_claro`` es la separación mínima entre la primera y la segunda fuente para llamar «clara» a una página; ``None``
+    la desactiva (solo quedan ``variantes``, ``documentos`` y ``neutral``). Se mide por perfil, porque la escala del
+    puntaje de ``light`` (recuperación) y la de ``medium`` (logit del reranker) no son comparables.
+    """
+
+    activo: bool = False
+    margen_claro: float | None = Field(default=None, ge=0)
+    margen_claro_por_perfil: dict[str, float] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def margenes_no_negativos(self):
+        if any(v < 0 for v in self.margen_claro_por_perfil.values()):
+            raise ValueError("clear_margin_by_profile requiere márgenes no negativos")
+        return self
+
+
 class PipelineV2Config(ConfiguracionEstricta):
     """Fuentes ordenadas, contexto de lectura y destacado QA optativo."""
 
@@ -149,6 +168,7 @@ class PipelineV2Config(ConfiguracionEstricta):
     destacar_fragmentos: bool = False
     max_tokens_pasaje: int = Field(default=384, ge=64, le=512)
     stride: int = Field(default=128, ge=0, le=256)
+    presentacion: PresentacionConfig = Field(default_factory=PresentacionConfig)
 
     @model_validator(mode="after")
     def presupuestos(self):

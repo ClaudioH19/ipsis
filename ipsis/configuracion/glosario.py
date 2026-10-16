@@ -86,7 +86,10 @@ MOTOR = {
                      "resultados_n": _c("results_limit"),
                      "max_caracteres_resultado": _c("max_result_chars"),
                      "vecinos_contexto": _c("context_neighbors"),
-                     "destacar_fragmentos": _c("qa_highlights")}),
+                     "destacar_fragmentos": _c("qa_highlights"),
+                     "presentacion": _c("presentation", {
+                         "activo": _c("enabled"), "margen_claro": _c("clear_margin"),
+                         "margen_claro_por_perfil": _c("clear_margin_by_profile")})}),
     "media": _c("media", {"activo": _c("enabled"), "max_resultados": _c("max_results"),
                            "puntaje_minimo": _c("min_score"), "presupuesto_ms": _c("budget_ms")}),
     "recuperacion": _c("retrieval", {
