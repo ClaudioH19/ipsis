@@ -217,6 +217,12 @@ Con el motor v2 (`response_mode: ranked_sources` en `GET /config`) el widget usa
 - **Etiqueta de alcance:** cada resultado muestra, junto al título del documento, una etiqueta pequeña con
   lo que lo distingue de sus unidades hermanas (por ejemplo «Práctica Profesional II»). La API la devuelve
   como `scope` y los términos que distinguen unidades parecidas como `distinctive_terms`.
+- **Forma de la página** (con `v2.presentation.enabled`, que hace que la API devuelva `result_shape`): cuando las
+  primeras fuentes son `variants` de lo mismo (por ejemplo la tabla de cada práctica), una fila «Elige tu caso» con
+  atajos lleva a la tarjeta de cada variante; cuando vienen de varios `documents`, la primera tarjeta de cada
+  documento lleva un borde superior más grueso. También cambia el mensaje del asistente (`results_variants`,
+  `results_documents`). Ni las fuentes que se muestran ni su orden cambian, y una página `neutral` se ve igual que
+  sin la opción.
 - **Página de prueba:** `/widget/demo.html` ocupa toda la pantalla en teléfonos (sin encabezado de página;
   el formulario de la clave de acceso está en `#clave-acceso`) y se ajusta a la ventana en escritorio.
 

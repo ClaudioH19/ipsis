@@ -630,6 +630,7 @@ interfaz:
   source_table_hint: 'Abra o contexto completo para ler a tabela com suas colunas.'
   search_results_count_one: '1 resultado para «{query}»'
   search_more: 'Mostrar mais resultados'
+  search_variants_label: 'Escolha o seu caso'
   search_added: 'Foram adicionados {n} resultados.'
   search_start: 'Busque nos seus documentos'
   search_instruction: 'Digite uma pergunta ou palavras-chave para encontrar informação.'

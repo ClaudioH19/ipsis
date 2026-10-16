@@ -747,10 +747,12 @@ def test_las_plantillas_ubican_el_conteo_con_count_n_y_query(navegador, servidor
     page.close()
 
 
-def _buscar_con_forma(page, servidor_widget, mensajes, forma, documentos=("Inventory", "Inventory", "Inventory")):
+def _buscar_con_forma(page, servidor_widget, mensajes, forma, documentos=("Inventory", "Inventory", "Inventory"), alcances=None):
     pagina = _pagina_fuentes(continuar=False)
-    for fragmento, doc in zip(pagina["fragments"], documentos):
+    for i, (fragmento, doc) in enumerate(zip(pagina["fragments"], documentos)):
         fragmento["doc_title"], fragmento["doc_id"] = doc, doc.lower()
+        if alcances:
+            fragmento["scope"] = alcances[i]
     if forma:
         pagina["result_shape"] = forma
     page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
@@ -778,6 +780,50 @@ def test_el_mensaje_sigue_la_forma_de_la_pagina(navegador, servidor_widget, form
     _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, forma, documentos)
     expect(page.locator(".rw-voz-texto")).to_have_text(esperado, timeout=8000)
     expect(page.locator(".rw-voz")).to_have_attribute("data-category", "results")   # la categoría visible no cambia
+    page.close()
+
+
+@pytest.mark.browser
+def test_las_variantes_ofrecen_atajos_por_alcance_sin_cambiar_el_orden(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, "variants", alcances=("Práctica I", "Práctica II", "Práctica I"))
+    atajos = page.locator(".rw-atajos .rw-atajo")
+    expect(atajos).to_have_text(["Práctica I", "Práctica II"])                   # uno por variante distinta
+    expect(page.locator(".rw-resultado-alcance")).to_have_text(["Práctica I", "Práctica II", "Práctica I"])
+    expect(page.locator(".rw-resultado .rw-resultado-titulo")).to_have_count(3)
+    atajos.nth(1).click()
+    expect(page.locator(".rw-resultado").nth(1).locator(".rw-resultado-titulo")).to_be_focused()
+    assert page.locator(".rw-atajos").evaluate("e => e.getBoundingClientRect().right") <= 375
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("forma, alcances", [("variants", ("Práctica I", "Práctica I", "Práctica I")), ("variants", None),
+                                              ("neutral", ("Práctica I", "Práctica II", "Práctica I")), (None, None)])
+def test_sin_variantes_distintas_o_sin_forma_no_hay_atajos(navegador, servidor_widget, forma, alcances):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, forma, alcances=alcances)
+    assert page.locator(".rw-atajos").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_los_documentos_marcan_el_inicio_de_cada_grupo_sin_cambiar_el_orden(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, "documents", documentos=("Inventory", "Orders", "Orders"))
+    tarjetas = page.locator(".rw-resultado")
+    assert [tarjetas.nth(i).get_attribute("data-grupo") for i in range(3)] == ["nuevo", "nuevo", None]
+    expect(page.locator(".rw-resultado-doc")).to_have_text(["Inventory \u00b7 v1", "Orders \u00b7 v1", "Orders \u00b7 v1"])
+    expect(page.locator(".rw-resultados")).to_have_attribute("data-forma", "documents")
+    assert tarjetas.nth(1).evaluate("e => getComputedStyle(e).borderTopWidth") == "3px"
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_forma_los_documentos_no_se_marcan(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, None, documentos=("Inventory", "Orders", "Orders"))
+    assert page.locator(".rw-resultado[data-grupo]").count() == 0
     page.close()
 
 

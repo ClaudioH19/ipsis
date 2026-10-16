@@ -203,6 +203,11 @@ With engine v2 (`response_mode: ranked_sources` in `GET /config`) the widget use
 - **Scope label:** each result shows, next to its document title, a small label with what tells it apart
   from its sibling units (for example "Práctica Profesional II"). The API returns it as `scope`, and the
   terms that tell similar units apart as `distinctive_terms`.
+- **Page shape** (with `v2.presentation.enabled`, which makes the API return `result_shape`): when the first sources
+  are `variants` of the same thing (for example the table of each internship), a "Choose your case" row of shortcuts
+  takes you to each variant's card; when they come from several `documents`, the first card of each document gets a
+  heavier top border. The assistant message changes too (`results_variants`, `results_documents`). Neither the sources
+  shown nor their order change, and a `neutral` page looks as without the setting.
 - **Test page:** `/widget/demo.html` takes the whole screen on phones (no page header; the access-key
   form is at `#clave-acceso`) and fits the window on desktop.
 

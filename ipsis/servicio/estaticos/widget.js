@@ -182,6 +182,7 @@
     source_table: "Source table",
     source_table_hint: "Open full context to read the table with its columns.",
     search_more: "Show more results",
+    search_variants_label: "Choose your case",
     search_added: "Added {n} results.",
     search_start: "Search your documents",
     search_instruction: "Enter a question or keywords to find information.",
@@ -742,6 +743,15 @@
     ".rw-resultado-alcance{display:inline-flex;align-items:center;max-width:100%;padding:1px 9px;border-radius:99px;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;",
     "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
     "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-atajos{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 12px;}",
+    ".rw-atajos-etiqueta{font-size:calc(var(--rw-tamano-cita) - .5px);color:var(--rw-texto-suave);}",
+    ".rw-atajo{padding:3px 11px;border-radius:99px;font:inherit;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;cursor:pointer;",
+    "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
+    "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-atajo:hover{background:color-mix(in srgb,var(--rw-acento) 18%,var(--rw-superficie));}",
+    ".rw-atajo:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-resultados[data-forma='documents'] > .rw-resultado[data-grupo='nuevo']{margin-top:18px;border-top:3px solid color-mix(in srgb,var(--rw-acento) 55%,var(--rw-borde));}",
+    ".rw-resultados[data-forma='documents'] > .rw-resultado[data-grupo='nuevo']:first-child{margin-top:0;}",
     ".rw-resultado-padre{color:var(--rw-seccion);background:var(--rw-fondo);border-color:var(--rw-borde-resultado);font-weight:600;}",
     ".rw-resultado-rasgos{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
@@ -1589,6 +1599,7 @@
       item.className = "rw-resultado";
       item.style.setProperty("--rw-i", String(Math.min(nuevos++, 6)));
       item.value = frag.rango || indice + 1;
+      item.dataset.doc = frag.doc_id || frag.doc_titulo || frag.archivo || "";
       var origen = document.createElement("p");
       origen.className = "rw-resultado-origen";
       var nombreDoc = frag.doc_titulo || frag.archivo || "";
@@ -1719,6 +1730,51 @@
     return primero;
   }
 
+  // «Elige tu caso»: un atajo por variante (la etiqueta de contexto de cada una de las primeras tarjetas) que lleva a la
+  // tarjeta. Solo si hay al menos dos etiquetas distintas; si no, no ayudaría a distinguir nada.
+  function atajosDeVariantes(pagina) {
+    var tarjetas = Array.prototype.slice.call(pagina.lista.children, 0, 3);
+    var etiquetas = tarjetas.map(function (t) {
+      var e = t.querySelector(".rw-resultado-alcance");
+      return e ? e.textContent : "";
+    });
+    var distintas = etiquetas.filter(function (e, i) { return e && etiquetas.indexOf(e) === i; });
+    if (distintas.length < 2) return;
+    var barra = document.createElement("nav");
+    barra.className = "rw-atajos";
+    barra.setAttribute("aria-label", texto("search_variants_label"));
+    var rotulo = document.createElement("span");
+    rotulo.className = "rw-atajos-etiqueta";
+    rotulo.textContent = texto("search_variants_label") + ":";
+    barra.appendChild(rotulo);
+    etiquetas.forEach(function (etiqueta, i) {
+      if (!etiqueta || etiquetas.indexOf(etiqueta) !== i) return;
+      var atajo = document.createElement("button");
+      atajo.type = "button";
+      atajo.className = "rw-atajo";
+      atajo.textContent = etiqueta;
+      atajo.addEventListener("click", function () {
+        var tarjeta = tarjetas[i];
+        tarjeta.scrollIntoView({ block: "nearest" });
+        var titulo = tarjeta.querySelector(".rw-resultado-titulo");
+        if (titulo) titulo.focus({ preventScroll: true });
+      });
+      barra.appendChild(atajo);
+    });
+    pagina.seccion.insertBefore(barra, pagina.lista);
+  }
+
+  // “Lo encontré en varios documentos”: la primera tarjeta de cada documento lleva una marca (solo estilo): el orden
+  // sigue siendo el del ranking y la lista no cambia de estructura.
+  function marcarGruposDeDocumento(lista) {
+    var anterior = null;
+    Array.prototype.forEach.call(lista.children, function (item) {
+      if (item.dataset.doc !== anterior) item.dataset.grupo = "nuevo";
+      else delete item.dataset.grupo;
+      anterior = item.dataset.doc;
+    });
+  }
+
   function renderizarBusqueda(respuesta) {
     activarBusqueda();
     if (!respuesta.continuando || !paginaBusqueda) {
@@ -1738,8 +1794,12 @@
       mensajes.scrollTop = 0;
     }
     var cantidadAnterior = paginaBusqueda.lista.children.length;
+    if (!respuesta.continuando) paginaBusqueda.lista.dataset.forma = respuesta.forma || "neutral";
     var primero = agregarResultados(paginaBusqueda.lista, respuesta.fragmentos, respuesta.pregunta);
     var cantidad = paginaBusqueda.lista.children.length;
+    // La forma de la página cambia cómo se ve, nunca qué se ve ni en qué orden.
+    if (!respuesta.continuando && paginaBusqueda.lista.dataset.forma === "variants") atajosDeVariantes(paginaBusqueda);
+    if (paginaBusqueda.lista.dataset.forma === "documents") marcarGruposDeDocumento(paginaBusqueda.lista);
     paginaBusqueda.contador.textContent = texto(cantidad === 1 ? "search_results_count_one" : "search_results_count",
       { n: cantidad, query: respuesta.pregunta });
     paginaBusqueda.acciones.replaceChildren();

@@ -177,3 +177,14 @@ configuración siguen existiendo, así que activarla más adelante (opción 2 o 
 - Entorno: los tests de navegador necesitan el enlace `/opt/pw-browsers/chromium_headless_shell-1243/…/chrome-headless-shell` → el Chromium
   instalado (creado fuera del repo). `test_demo_browser.py` tiene 6 fallos que ya existían (la página de demostración ya no tiene el
   encabezado «Explora tus documentos»).
+
+## P2.2: disposición del widget por forma
+
+- `variants`: fila «Elige tu caso» (`search_variants_label`, en/es/pt) con un atajo por etiqueta de alcance distinta entre las tres primeras tarjetas;
+  el atajo desplaza y enfoca el título de la tarjeta. Solo aparece con al menos dos etiquetas distintas.
+- `documents`: la primera tarjeta de cada documento recibe `data-grupo="nuevo"` (borde superior más grueso). Se resolvió así, y no con separadores
+  `<li>`, para no cambiar la estructura de la lista (el conteo, los ids `rw-documento-N` y la numeración dependen de ella).
+- `neutral` o sin forma: igual que antes. `clear` no se implementa (opción 1). El orden y el contenido no cambian en ningún caso.
+- Pruebas de navegador (`test_widget_browser.py`): atajos y foco, sin atajos si hay una sola etiqueta o la forma es `neutral`/ausente, marcas de grupo y
+  orden; `test_widget_browser.py` + `test_widget_responsive.py`: 92 pasan. Capturas revisadas a mano a 420 px (variantes y documentos).
+- Guías web EN/ES: viñeta «Page shape / Forma de la página» en «Search layout».
