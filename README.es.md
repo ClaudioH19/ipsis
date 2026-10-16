@@ -41,7 +41,7 @@ de certeza a partir del ranking.
   `medium` añade un reranker semántico. Los scores no son probabilidades.
 - **Lectura verificable:** texto y posiciones literales, contexto desplegable,
   párrafos y encabezados del documento, tablas con columnas y desplazamiento horizontal.
-- **Documentos e inventarios:** PDF con texto, DOCX, Markdown, TXT, XLSX, XLS,
+- **Documentos e inventarios:** PDF con texto, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV y TSV. Conserva registros y campos; no suma stock ni recalcula fórmulas.
 - **Ayuda en español, inglés y portugués:** al menos 100 preguntas reconocidas
   por idioma en diez temas, además de 118 variantes de mensajes de interfaz.
@@ -86,6 +86,9 @@ Escribe una pregunta, revisa las fuentes y abre su contexto. **Mostrar más
 resultados** añade otras opciones de la misma consulta. Una consulta nueva
 reemplaza la lista; no hereda automáticamente el tema de la pregunta anterior.
 
+Cuando cambien los archivos de `documents/` (nuevos, renombrados o borrados), ejecuta `ipsis sync`:
+actualiza el catálogo y reconstruye el índice (ver [mantener el índice al día](docs/es/guia/uso.md#mantener-el-índice-al-día)).
+
 `ipsis` sin argumentos abre la terminal interactiva. Para la interfaz de
 consola en español usa `export IPSIS_LANG=es`; en PowerShell,
 `$env:IPSIS_LANG = "es"`. El idioma documental se configura con `--language`.
@@ -113,6 +116,12 @@ Los documentos, la configuración y el índice se conservan. Los cambios de
 presentación no requieren reindexar; `config/styles.yaml` existente no se
 reemplaza automáticamente. Elige un preset para adoptar su diseño completo,
 o ajusta valores individuales para conservar tu personalización.
+
+Hay un cambio que sí requiere una acción. Un proyecto v2 creado con `config_version` 7 o anterior se migra
+en su siguiente comando `ipsis` a `config_version` 8 y, si no había elegido preparación, a la preparación
+estructural ([ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). Ejecuta `ipsis index`
+para construir el índice nuevo: hasta entonces el servicio informa que no está listo. El índice anterior se
+conserva y `retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
 
 La instalación anterior sigue la rama predeterminada. Para fijar esta release,
 instala con `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;

@@ -187,10 +187,7 @@ NOMBRE_DE_FORMATO = {".docx": "DOCX", ".pdf": "PDF", ".md": "Markdown", ".markdo
                      ".txt": "TXT", ".xlsx": "XLSX", ".xls": "XLS", ".csv": "CSV", ".tsv": "TSV"}
 
 
-@pytest.mark.parametrize("readme", [
-    pytest.param(README_EN, id="en"),
-    pytest.param(README_ES, id="es", marks=pytest.mark.xfail(strict=True, reason="coherencia C5: I7")),
-])
+@pytest.mark.parametrize("readme", [README_EN, README_ES], ids=["en", "es"])
 def test_formatos_soportados_en_los_readme(readme):
     """Cada extensión de ``EXTENSIONES_SOPORTADAS`` se nombra en el README."""
     from ipsis.ingesta.parsear import EXTENSIONES_SOPORTADAS
@@ -209,17 +206,13 @@ PARES_DE_GUIAS = [("configuration", "configuracion"), ("deployment", "despliegue
                   ("installation", "instalacion"), ("integrations", "integraciones"),
                   ("inventories", "inventarios"), ("personality", "personalidad"), ("usage", "uso"), ("web", "web")]
 DIFERENCIAS_PERMITIDAS: dict[str, tuple[int, str]] = {}
-GUIAS_POR_ACTUALIZAR = {"deployment": "C5: I10"}
 
 
 def _secciones(ruta: Path) -> int:
     return len(re.findall(r"^## ", _sin_codigo(_leer(ruta)), flags=re.M))
 
 
-@pytest.mark.parametrize("en, es", [
-    pytest.param(en, es, id=en, marks=[pytest.mark.xfail(strict=True, reason=f"coherencia {GUIAS_POR_ACTUALIZAR[en]}")]
-                 if en in GUIAS_POR_ACTUALIZAR else [])
-    for en, es in PARES_DE_GUIAS])
+@pytest.mark.parametrize("en, es", PARES_DE_GUIAS, ids=[en for en, _ in PARES_DE_GUIAS])
 def test_guias_en_y_es_tienen_las_mismas_secciones(en, es):
     """Cada guía de ``docs/guide/`` y su par de ``docs/es/guia/`` tienen las mismas secciones ``##``."""
     ruta_en, ruta_es = RAIZ / "docs" / "guide" / f"{en}.md", RAIZ / "docs" / "es" / "guia" / f"{es}.md"
@@ -247,3 +240,49 @@ def test_badge_de_version_coincide_con_pyproject(readme):
     badge = re.search(r"img\.shields\.io/badge/(?:version|versi%C3%B3n)-([0-9][0-9A-Za-z.]*)-", _leer(readme))
     assert badge, f"{readme.name}: no se encontró el badge de versión"
     assert badge.group(1) == version, f"{readme.name} dice {badge.group(1)}; pyproject.toml dice {version}"
+
+
+GUIAS_DE_USO = [pytest.param(GUIA, id="en"), pytest.param(GUIA_ES, id="es")]
+
+
+def _filas_de_comandos(guia: Path) -> list[str]:
+    """Las filas de la tabla de referencia de comandos: la tabla (líneas seguidas que empiezan con ``|``) que contiene
+    la fila de ``ipsis load``. Otras tablas de la guía, como la de problemas frecuentes, también citan comandos."""
+    bloques, actual = [], []
+    for linea in _leer(guia).splitlines():
+        if linea.startswith("|"):
+            actual.append(linea)
+        elif actual:
+            bloques.append(actual)
+            actual = []
+    bloques.append(actual)
+    tabla = next(b for b in bloques if any(f.startswith("| `ipsis load") for f in b))
+    return [f for f in tabla if f.startswith("| `ipsis ")]
+
+
+@pytest.mark.parametrize("guia", GUIAS_DE_USO)
+def test_la_fila_de_ipsis_load_lista_todos_los_formatos(guia):
+    """La tabla de comandos dice qué formatos carga ``ipsis load``: los mismos que ``EXTENSIONES_SOPORTADAS``.
+
+    En esa fila Markdown se abrevia «MD»; el resto de los nombres es el de ``NOMBRE_DE_FORMATO``.
+    """
+    from ipsis.ingesta.parsear import EXTENSIONES_SOPORTADAS
+
+    fila = next(f for f in _filas_de_comandos(guia) if f.startswith("| `ipsis load"))
+    nombres = {**NOMBRE_DE_FORMATO, ".md": "MD", ".markdown": "MD"}
+    sin_nombre = sorted(EXTENSIONES_SOPORTADAS - nombres.keys())
+    assert not sin_nombre, f"agrega a NOMBRE_DE_FORMATO cómo se llama {sin_nombre}"
+    faltan = sorted({nombres[e] for e in EXTENSIONES_SOPORTADAS if not re.search(rf"\b{nombres[e]}\b", fila)})
+    assert not faltan, f"{guia.name}: la fila de `ipsis load` no lista {faltan}"
+
+
+@pytest.mark.parametrize("guia", GUIAS_DE_USO)
+def test_la_tabla_de_comandos_no_repite_filas(guia):
+    """Ninguna firma de comando (el primer código de la fila) se repite en la tabla de referencia.
+
+    Un mismo comando puede tener varias filas si su firma cambia (``ipsis ask "<pregunta>"`` con y sin
+    ``--diagnostics``); una fila idéntica ya se coló en la guía en inglés (``ipsis sync``).
+    """
+    firmas = [re.match(r"\| `([^`]+)`", fila).group(1) for fila in _filas_de_comandos(guia)]
+    repetidas = sorted({f for f in firmas if firmas.count(f) > 1})
+    assert not repetidas, f"{guia.name} repite filas de {repetidas}"

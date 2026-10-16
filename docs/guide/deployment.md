@@ -1,5 +1,12 @@
 # Deploying on your own server
 
+How to put the assistant on a server with HTTPS: the service, Caddy, Docker,
+`ipsis deploy prepare` and the run modes. Installation and profiles are in
+[installation.md](installation.md).
+
+ipsis is built for self-hosting: your service, your documents and your
+domain.
+
 ## Continuous integration
 
 `.github/workflows/servicio.yml` runs on pushes, pull requests and manual starts.
@@ -43,13 +50,6 @@ docker compose down --remove-orphans
 Use a fresh output directory when repeating preparation. Port 8000 must be
 available. The check proves packaging, startup and basic interaction with a
 real indexed corpus; it does not certify search quality on every document.
-
-How to put the assistant on a server with HTTPS: the service, Caddy, Docker,
-`ipsis deploy prepare` and the run modes. Installation and profiles are in
-[installation.md](installation.md).
-
-ipsis is built for self-hosting: your service, your documents and your
-domain.
 
 ## 1. Service on loopback
 

@@ -166,7 +166,7 @@ cargado y no migra la configuración del proyecto.
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |
+| `ipsis load <archivo\|carpeta>` | Copia los documentos (PDF con texto, DOCX, MD, LaTeX, TXT, XLSX, XLS, CSV, TSV) a `documents/` y los cataloga. Si un archivo tiene el mismo nombre que otro ya cargado y distinto contenido, se agrega aparte: para retirar el anterior, marca `active: false` en `documents/catalog.yaml` |
 | `ipsis index [--corpus CARPETA]` | Reconstruye el índice completo. Ejecútalo tras un cambio de perfil que lo pida (para cambios de documentos, `ipsis sync` es más simple) |
 | `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Pone al día el catálogo y el índice con la carpeta `documents/` (archivos nuevos, renombrados, modificados y borrados) y reconstruye el índice. Ver [Mantener el índice al día](#mantener-el-índice-al-día) |
 

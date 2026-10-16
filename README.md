@@ -86,6 +86,9 @@ Enter a question, review the sources and open their context. **Show more
 results** adds other options from the same query. A new query replaces the
 list; it does not automatically inherit the previous question's topic.
 
+When files in `documents/` are added, renamed or deleted, run `ipsis sync`: it updates the
+catalog and rebuilds the index (see [keeping the index up to date](docs/guide/usage.md#keeping-the-index-up-to-date)).
+
 Running `ipsis` without arguments opens the interactive terminal. Console
 language uses `IPSIS_LANG`; document language is configured with `--language`.
 
@@ -112,6 +115,12 @@ Documents, configuration and indexes are preserved. Presentation changes do
 not require reindexing; an existing `config/styles.yaml` is not automatically
 replaced. Select a preset to adopt its complete design, or edit individual
 values to keep your customization.
+
+One change does need action. A v2 project created with `config_version` 7 or older is migrated on its
+next `ipsis` command to `config_version` 8 and, if it had not chosen a preparation, to the structural
+preparation ([ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). Run `ipsis index`
+to build the new index: until then the service reports it is not ready. The old index is kept, and
+`retrieval.preparation.mode: legacy` goes back to fixed-size chunks.
 
 The installation above follows the default branch. To pin this release,
 install `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;

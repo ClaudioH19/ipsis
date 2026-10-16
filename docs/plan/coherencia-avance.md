@@ -10,7 +10,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | C2 | ✅ | 2026-10-16 | (ver git log) | Tablas de perfiles, tamaños y latencia medidos, descripción del perfil, `heavy` fuera de `ranking_pasajes.py`, nota en ADR 0003. Decisiones del usuario: presupuesto = opción (a) (solo documentar); sin ADR 0010. Ver «C2» abajo. |
 | C3 | ✅ | 2026-10-16 | (ver git log) | Ejemplos en `config_version: 8`; tabla de versiones completa (6, 7, 8); preparación estructural descrita como predeterminada; se quitaron los 5 `xfail` de C3. Ver «C3» abajo. |
 | C4 | ✅ | 2026-10-16 | (ver git log) | Guía del widget en español con las mismas 14 secciones que la inglesa; 8 capturas regeneradas; README aclara que el menú se abre con el «?». Ver «C4» abajo. |
-| C5 | ⬜ | | | |
+| C5 | ✅ | 2026-10-16 | (ver git log) | LaTeX en `README.es.md`; sección «Integración continua» en la guía de despliegue en español; `ipsis sync` y la migración a `config_version` 8 en los README (EN/ES); I15 e I17 corregidos con pruebas. Todas las pruebas de coherencia en verde, sin `xfail`. Ver «C5» abajo. |
 | C6 | ⬜ | | | ⚠ número de versión |
 | C7 | ⬜ | | | ⚠ cierre de F5.1 del plan V4 |
 | C8 | ⬜ | | | |
@@ -163,3 +163,31 @@ descartada).
   (`avatar.placement: message`, ya documentado en las guías de personalidad), esqueletos de carga y la página de demostración
   a pantalla completa en teléfonos. Es contenido nuevo para los dos idiomas, no una traducción, así que no se agregó en C4.
   ⚠ Recomendación: una sección corta «Diseño de búsqueda» en ambas guías, tomada del CHANGELOG, en C5 o aparte.
+
+## C5: README y despliegue
+
+- **I7.** `README.es.md` nombra LaTeX entre los formatos.
+- **I10.** `docs/es/guia/despliegue.md` gana la sección «Integración continua» (traducción de la inglesa) y las dos guías
+  quedan con 7 secciones `##`. En la guía en inglés, esa sección estaba **delante** del párrafo introductorio («How to put
+  the assistant on a server…»), que así parecía pertenecerle; el párrafo pasó arriba, en los dos idiomas.
+- **I11.** Los dos README («Inicio rápido» y «Actualizar un proyecto existente»): `ipsis sync` como forma de reflejar
+  cambios de `documents/`, con enlace a la guía de uso; y un párrafo que explica que un proyecto v2 con `config_version` 7
+  o anterior se migra en su siguiente comando `ipsis` a la 8 y, si no había elegido preparación, a la estructural (ADR 0009):
+  hay que ejecutar `ipsis index`, el servicio informa «no listo» hasta entonces, el índice anterior se conserva y
+  `retrieval.preparation.mode: legacy` vuelve atrás. Se redactó sin número de versión del paquete: C6 aún no fija cuál es.
+- **I15 resuelto** (decisión que tomé siguiendo mi recomendación; es un cambio trivial y reversible): la fila de
+  `ipsis load` de `docs/guide/usage.md` y `docs/es/guia/uso.md` ahora lista LaTeX.
+- **I17 (nuevo, resuelto).** La tabla de comandos de `docs/guide/usage.md` tenía **dos filas idénticas de `ipsis sync`**
+  (con descripciones distintas); la española tenía una. Se dejó la primera, que es la equivalente a la española.
+- Pruebas: quitados los últimos `xfail` (README.es en formatos y `deployment`); nuevas
+  `test_la_fila_de_ipsis_load_lista_todos_los_formatos` y `test_la_tabla_de_comandos_no_repite_filas` (comparan la firma
+  completa del comando dentro de la tabla de referencia: `ipsis ask` con y sin `--diagnostics` es legítimo, y `ipsis doctor`
+  también aparece en la tabla de problemas frecuentes). `tests/test_documentacion.py`: **44 aprobadas, 0 `xfail`**.
+- **Suite rápida** (`-m "not slow and not modelos and not browser"`) sobre este cambio: **1596 aprobadas, 0 fallidas,
+  2 omitidas** (78 s), con los modelos de `medium` descargados.
+
+### Pendiente del plan
+
+- **I16 sigue abierto** (⚠ decisión del usuario): `web.md` en inglés y en español no describen el diseño de búsqueda del
+  [Unreleased].
+- C7 (estado de las notas de metodología y cierre del plan V4), C8 (plantilla de PR y CONTRIBUTING) y C6 (versión).
