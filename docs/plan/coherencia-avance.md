@@ -48,3 +48,18 @@ frente a `pyproject.toml` (1.0.0 en ambos).
   como las escriben las guías de instalación. Los nombres de los modelos en la documentación se declaran en
   `ALIAS_DE_MODELOS`; un modelo nuevo sin alias se busca por su nombre corto.
 - Para C2: al quitar el `xfail`, la prueba exigirá que **ninguna** fila de `medium` mencione el lector mDeBERTa.
+
+### Suite rápida al cerrar C1
+
+`pytest -m "not slow and not modelos and not browser"` sobre `c6cb2fc`: **1567 aprobadas, 2 fallidas, 7 omitidas,
+12 xfail** (73 s). Las dos fallas son del entorno de la sesión, que no tiene `intfloat/multilingual-e5-small` en la
+caché (`/root/.cache/ipsis/models`), y fallan igual sin los cambios de C1 (comprobado en la base con `git stash`):
+
+- `tests/consulta/test_motor.py::test_crear_app_aisla_estado_y_lifespan_calienta_y_cierra_motor`: `/ready` devuelve 503
+  porque el diagnóstico del proyecto marca `models: missing from the cache`.
+- `tests/integracion/test_portabilidad.py::test_portabilidad_init_cargar_indexar_subprocesos`: `ipsis index` termina con
+  «el modelo intfloat/multilingual-e5-small no está en la caché».
+
+Ninguna lleva la marca `modelos(...)`, así que no se omiten cuando la caché está vacía. No se tocaron (regla 1 del
+plan). Con el modelo descargado (`ipsis models download --profile light`) deberían pasar; si no se puede descargar,
+anotarlo como ⛔ y no como regresión.
