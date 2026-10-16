@@ -153,7 +153,7 @@ descartada).
   `herramientas/capturas_widget.py` (sin modificarlo) usando el Chromium preinstalado en `/opt/pw-browsers/chromium`,
   porque la versión de Playwright del proyecto espera otro build. No se regeneraron `widget-mobile.png`, `widget-answer.png` y `widget-answer-dark.png` (del 2026-10-10): ese
   script no las produce y **ningún documento las referencia** (comprobado con `grep`); quedaron huérfanas y se dejan para
-  que el usuario decida si borrarlas.
+  que el usuario decidió borrarlas (2026-10-16).
 - Prueba: quitado el `xfail` de `web` en `test_guias_en_y_es_tienen_las_mismas_secciones`; queda el de `deployment` (C5).
 
 ### Hallazgo nuevo
