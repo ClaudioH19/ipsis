@@ -32,7 +32,7 @@ tone:
 avatar:
   enabled: true
   definition: folio
-  placement: header        # header | top-corner | bottom-corner
+  placement: message       # message (beside the assistant message) | header | top-corner | bottom-corner
   size: 56
   in_launcher: true
   gaze: {enabled: true, eye_range: 6, head_range: 8, dead_zone: 24}

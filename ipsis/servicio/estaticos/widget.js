@@ -651,8 +651,18 @@
     "  border:1px solid var(--rw-acento);border-radius:var(--rw-radio-control);padding:.5em .8em;cursor:pointer;}",
     ".rw-seguir:disabled{opacity:.45;cursor:default;}",
     ".rw-sr-solo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}",
-    ".rw-voz{flex:none;padding:8px var(--rw-separacion);border-bottom:1px solid var(--rw-borde);",
-    "  background:var(--rw-fondo);color:var(--rw-texto);text-align:start;}",
+    ".rw-voz{flex:none;display:flex;align-items:flex-end;gap:10px;padding:8px var(--rw-separacion) 10px;",
+    "  border-top:1px solid var(--rw-borde);background:var(--rw-fondo);color:var(--rw-texto);text-align:start;}",
+    ".rw-voz-burbuja{position:relative;flex:1;min-width:0;padding:9px 13px;background:var(--rw-superficie);",
+    "  border:1px solid var(--rw-borde);border-radius:var(--rw-radio-control);box-shadow:0 1px 2px rgba(16,24,40,.05);}",
+    // Con el avatar al lado, la burbuja le apunta con una colita.
+    ".rw-voz[data-avatar='si'] .rw-voz-burbuja::after{content:'';position:absolute;inset-inline-end:-6px;bottom:16px;",
+    "  width:10px;height:10px;background:var(--rw-superficie);border-top:1px solid var(--rw-borde);",
+    "  border-inline-end:1px solid var(--rw-borde);transform:rotate(45deg);}",
+    ".rw-voz[dir='rtl'] .rw-voz-burbuja::after,[dir='rtl'] .rw-voz[data-avatar='si'] .rw-voz-burbuja::after{transform:rotate(-135deg);}",
+    ".rw-voz-avatar{flex:none;width:var(--rw-avatar-tamano,56px);height:var(--rw-avatar-tamano,56px);display:none;}",
+    ".rw-voz-avatar:not(:empty){display:block;}",
+    ".rw-voz-avatar .rw-avatar-lienzo{width:100%;height:100%;display:block;pointer-events:none;}",
     ".rw-voz[hidden]{display:none;}",
     // El título es solo para lectores de pantalla; el menú de ayuda vive en el encabezado como un «?».
     ".rw-voz h3{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}",
@@ -790,7 +800,7 @@
     "  .rw-msg{max-width:92%;}",
     "  .rw-raiz{--rw-avatar-tamano:40px !important;}",
     "  .rw-avatar-esquina[data-esquina='esquina-superior']{top:8px;right:56px;}",
-    "  .rw-raiz.rw-teclado .rw-avatar.rw-avatar-vivo,.rw-raiz.rw-teclado .rw-avatar-esquina{display:none;}}",
+    "  .rw-raiz.rw-teclado .rw-avatar.rw-avatar-vivo,.rw-raiz.rw-teclado .rw-avatar-esquina,.rw-raiz.rw-teclado .rw-voz-avatar{display:none;}}",
     // Contraste alto del sistema (Windows): bordes visibles y el tramo marcado.
     "@media (forced-colors:active){",
     "  .rw-boton,.rw-enviar,.rw-cerrar{border:2px solid ButtonText;}",
@@ -1275,7 +1285,12 @@
   });
   textoVoz.id = "rw-voz-texto";
   completarVoz.setAttribute("aria-controls", textoVoz.id);
-  espacioVoz.append(tituloVoz, textoVoz, completarVoz, anuncioVoz);
+  var burbujaVoz = document.createElement("div");
+  burbujaVoz.className = "rw-voz-burbuja";
+  burbujaVoz.append(textoVoz, completarVoz);
+  var lugarAvatarVoz = document.createElement("div");   // aquí vive el avatar con ubicación «mensaje»
+  lugarAvatarVoz.className = "rw-voz-avatar";
+  espacioVoz.append(tituloVoz, burbujaVoz, lugarAvatarVoz, anuncioVoz);
 
   function voz(categoria, repuesto) {
     var opciones = BANCO_VOZ[categoria];
@@ -1335,9 +1350,11 @@
     boton.setAttribute("aria-label", texto("search_open", { title: tituloEl.textContent }));
     botonCerrar.setAttribute("aria-label", texto("search_close"));
     subtituloTexto.textContent = CONTENIDO.subtitle || texto("search_subtitle");
-    panel.insertBefore(espacioVoz, mensajes);
+    // El mensaje del asistente va abajo, junto al campo de búsqueda (donde está la atención) y con el avatar a su derecha.
+    panel.insertBefore(espacioVoz, form);
     panel.insertBefore(indicadorBusqueda, mensajes);
     espacioVoz.hidden = false;
+    if (AVATAR && AVATAR.lienzo) ubicarAvatar();
     tituloVoz.textContent = texto("voice_label");
     completarVoz.textContent = texto("voice_show_all");
     ayudaVoz.textContent = texto("voice_help");
@@ -2202,7 +2219,7 @@
   }
 
   // /config::avatar (nombres públicos) → los del widget.
-  var UBICACIONES_AVATAR = { "header": "cabecera", "top-corner": "esquina-superior", "bottom-corner": "esquina-inferior" };
+  var UBICACIONES_AVATAR = { "header": "cabecera", "message": "mensaje", "top-corner": "esquina-superior", "bottom-corner": "esquina-inferior" };
   function avatarInterno(c) {
     if (!c || typeof c !== "object") return null;
     var g = c.gaze || {};
@@ -2290,6 +2307,8 @@
     if (!abierto) {
       if (!cfg.en_lanzador) return;
       destino = boton;
+    } else if (cfg.ubicacion === "mensaje" && modoBusqueda) {
+      destino = lugarAvatarVoz;           // junto al mensaje del asistente, abajo a la derecha
     } else if (cfg.ubicacion === "esquina-superior" || cfg.ubicacion === "esquina-inferior") {
       if (!esquinaAvatar) {
         esquinaAvatar = document.createElement("div");
@@ -2303,6 +2322,7 @@
     }
     if (lienzo.parentNode === destino) return;
     destino.appendChild(lienzo);
+    espacioVoz.dataset.avatar = destino === lugarAvatarVoz ? "si" : "no";
     var enCabecera = destino === avatar;
     avatar.classList.toggle("rw-avatar-vivo", enCabecera);
     Array.prototype.forEach.call(avatar.children, function (hijo) {

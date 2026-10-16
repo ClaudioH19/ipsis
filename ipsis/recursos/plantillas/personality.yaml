@@ -7,7 +7,7 @@
 # tone.variety: rotating (no repeats in consecutive turns) | fixed (always the first)
 # tone.templates: your own texts per situation, e.g.
 #   no_answer: ["That is not in the team handbook."]
-# avatar.placement: header | top-corner | bottom-corner
+# avatar.placement: message (beside the assistant's message, bottom right) | header | top-corner | bottom-corner
 # avatar.colors: {body: "#rrggbb", eyes: "#rrggbb"} (does not modify the avatar file)
 # avatar.events: event → animation or expression (`ipsis personality avatar events`)
 # With Folio, empty events uses the built-in defaults: float while closed,
@@ -23,7 +23,7 @@ tone:
 avatar:
   enabled: true
   definition: folio
-  placement: header
+  placement: message
   size: 56
   in_launcher: true
   gaze:

@@ -50,6 +50,10 @@ a minor change may break compatibility and is marked as such.
   screen readers); the count is spoken by the assistant. Response templates (`results`, `continuation`) can use `{count}`
   ("3 resultados", already singular/plural), `{n}` and `{query}` in Spanish, English and Portuguese; templates without
   them get the count prepended.
+- **Assistant message at the bottom, avatar on the right**: in search mode the message sits just above the search box
+  (where attention is) as a bubble with a small tail, and the avatar lives to its right
+  (`avatar.placement: message`, the default for new projects; `header`, `top-corner` and `bottom-corner` still work). The
+  avatar is hidden while the phone keyboard is open to save space.
 - **Help as a "?" icon** in the assistant's header (the "Orientación de ipsis / Ayuda" row is gone), and a dot that
   fades in and out after the assistant's message while it is not speaking (or has not started).
 - **Context label on every result**: when a unit has no scope, the label shows the title of the section that contains it

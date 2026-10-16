@@ -761,3 +761,20 @@ def test_punto_de_espera_parpadea_cuando_no_habla_y_se_oculta_al_escribir(navega
     page.evaluate("document.querySelector('ipsis-chat').shadowRoot.querySelector('.rw-voz').dataset.typing = 'true'")
     assert page.locator(".rw-voz-texto").evaluate(estilo)[1] == "none"
     page.close()
+
+
+@pytest.mark.browser
+def test_el_mensaje_del_asistente_va_abajo_junto_al_campo_con_lugar_para_el_avatar(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _abrir_busqueda(page, servidor_widget)
+    orden = page.evaluate("Array.from(document.querySelector('ipsis-chat').shadowRoot.querySelectorAll("
+                          "'.rw-mensajes,.rw-voz,.rw-form')).map(e => e.className.split(' ')[0])")
+    assert orden == ["rw-mensajes", "rw-voz", "rw-form"]
+    cajas = page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot;
+        const v = r.querySelector('.rw-voz').getBoundingClientRect(), f = r.querySelector('.rw-form').getBoundingClientRect();
+        return [v.bottom, f.top, v.height]; }""")
+    assert abs(cajas[0] - cajas[1]) <= 2 and cajas[2] <= 100             # pegado al campo y compacto
+    assert page.locator(".rw-voz-burbuja .rw-voz-texto").count() == 1
+    assert page.locator(".rw-voz-avatar").count() == 1                    # sin avatar activo está vacío y oculto
+    expect(page.locator(".rw-voz-avatar")).to_be_hidden()
+    page.close()

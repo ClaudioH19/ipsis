@@ -189,7 +189,7 @@ PERSONALIDAD = {
                         "plantillas": _c("templates")}),
     "avatar": _c("avatar", {
         "activo": _c("enabled"), "definicion": _c("definition"),
-        "ubicacion": _c("placement", valores={"cabecera": "header", "esquina-superior": "top-corner",
+        "ubicacion": _c("placement", valores={"cabecera": "header", "mensaje": "message", "esquina-superior": "top-corner",
                                               "esquina-inferior": "bottom-corner"}),
         "tamano": _c("size"), "en_lanzador": _c("in_launcher"),
         "mirada": _c("gaze", {"activa": _c("enabled"), "amplitud_ojos": _c("eye_range"),

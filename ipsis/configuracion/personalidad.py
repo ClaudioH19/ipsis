@@ -135,7 +135,7 @@ class ColoresAvatar(_Estricto):
 class AvatarConfig(_Estricto):
     activo: bool = True
     definicion: str = Field(default="folio", pattern=CLAVE_SEMANTICA, max_length=64)
-    ubicacion: Literal["cabecera", "esquina-superior", "esquina-inferior"] = "cabecera"
+    ubicacion: Literal["cabecera", "mensaje", "esquina-superior", "esquina-inferior"] = "cabecera"
     tamano: int = Field(default=56, ge=32, le=160)
     en_lanzador: bool = True
     mirada: MiradaConfig = Field(default_factory=MiradaConfig)
