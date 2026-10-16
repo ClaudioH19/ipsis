@@ -16,6 +16,21 @@ que las detecten antes de corregirlas. Las [tareas](coherencia-tareas.md)
 están escritas para ejecutarse una por sesión; su estado está en el
 [avance](coherencia-avance.md).
 
+## Plan de presentación
+
+[presentacion.md](presentacion.md) propone que el motor describa la forma de
+cada página de resultados (clara, variantes, documentos) para que el widget
+elija plantillas y disposición, sin cambiar el ranking: así una segunda
+fuente correcta se lee como «depende de tu caso» y no como un error. Empieza
+midiendo; [tareas](presentacion-tareas.md) y [avance](presentacion-avance.md).
+
+## Plan multimedia
+
+[multimedia.md](multimedia.md) agrega fichas de audio y video con metadata
+escrita por personas, indexadas en una colección propia y mostradas en un
+carril aparte cuando superan un umbral medido; no se transcribe ni analiza el
+contenido. [Tareas](multimedia-tareas.md) y [avance](multimedia-avance.md).
+
 ## Plan de precisión desde la ingesta
 
 [precision-ingesta.md](precision-ingesta.md) analiza por qué la fuente
