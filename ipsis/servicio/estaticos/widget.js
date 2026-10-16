@@ -1148,6 +1148,7 @@
       categoria: r.conversational_category,
       continuation: r.continuation,
       has_more: r.has_more,
+      forma: r.result_shape,
       respuesta: r.answer,
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
@@ -1763,11 +1764,23 @@
     // El conteo va en el mensaje del asistente (no en una línea aparte). Las plantillas pueden ubicarlo con
     // {count} («3 resultados», ya en singular o plural del idioma), {n} y {query}; si no usan ninguno, el conteo
     // se antepone («3 resultados.»). Sin resultados no hay conteo.
-    var mensajeVoz = voz(categoriaVoz, texto("voice_" + categoriaVoz));
+    // Con la forma de la página (result_shape) hay un mensaje propio: «depende de tu caso» si las primeras fuentes son
+    // variantes de lo mismo, «en varios documentos» si vienen de documentos distintos. Describen la página y no dicen
+    // cuál responde. Si el banco no lo tiene, o la forma es neutral, vale el mensaje de siempre. {n_docs} cuenta los
+    // documentos distintos de las fuentes que se ven.
+    var bancoVoz = categoriaVoz;
+    if (categoriaVoz === "results" && !respuesta.continuando) {
+      var propio = respuesta.forma === "variants" ? "results_variants" : respuesta.forma === "documents" ? "results_documents" : null;
+      if (propio && BANCO_VOZ[propio] && BANCO_VOZ[propio].length) bancoVoz = propio;
+    }
+    var documentosVistos = {};
+    (respuesta.fragmentos || []).forEach(function (f) { documentosVistos[f.doc_id || f.doc_titulo || ""] = true; });
+    var mensajeVoz = voz(bancoVoz, texto("voice_" + categoriaVoz));
     if (cantidad > 0) {
       var frase = texto(cantidad === 1 ? "voice_count_phrase_one" : "voice_count_phrase", { n: cantidad });
-      if (/\{(count|n|query)\}/.test(mensajeVoz)) {
+      if (/\{(count|n|query|n_docs)\}/.test(mensajeVoz)) {
         mensajeVoz = mensajeVoz.replace(/\{count\}/g, frase).replace(/\{n\}/g, String(cantidad))
+          .replace(/\{n_docs\}/g, String(Object.keys(documentosVistos).length))
           .replace(/\{query\}/g, respuesta.pregunta || "");
       } else {
         mensajeVoz = frase + ". " + mensajeVoz;

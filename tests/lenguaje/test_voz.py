@@ -82,3 +82,17 @@ def test_otros_mensajes_de_cortesia(pregunta, categoria):
     datos = {"conversacional": cargar_paquete("es").conversacional.model_dump()}
     assert categoria_cortesia(pregunta, datos) == categoria
     assert categoria_cortesia(pregunta + " según el manual", datos) is None
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_los_mensajes_por_forma_de_pagina_existen_y_solo_usan_marcadores_conocidos(idioma):
+    import re
+
+    mensajes = voz_del_widget(idioma)["messages"]
+    for categoria in ("results_variants", "results_documents"):
+        assert len(mensajes[categoria]) >= 6
+        for texto in mensajes[categoria]:
+            assert set(re.findall(r"\{(\w+)\}", texto)) <= {"count", "n", "query", "n_docs"}
+            assert "{" not in re.sub(r"\{(count|n|query|n_docs)\}", "", texto)
+    # {n_docs} solo donde hay varios documentos: en las variantes del mismo documento no tiene sentido
+    assert not any("{n_docs}" in t for t in mensajes["results_variants"])

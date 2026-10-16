@@ -162,3 +162,18 @@ configuración siguen existiendo, así que activarla más adelante (opción 2 o 
 - La API pública agrega `result_shape` (`clear`, `variants`, `documents`, `neutral`) a `RespuestaConsulta`, documentado en las dos guías web.
 - Pruebas: `tests/consulta/test_forma_motor.py` (19): formas con dobles de motor, apagada sin claves, encender no cambia contenido ni orden de
   las fuentes, margen por perfil sobre el general, sin forma en páginas siguientes ni sin resultados, traducción a la API.
+
+## P2.1: mensajes del widget por forma
+
+- Dos categorías nuevas en el banco de voz (`ipsis/recursos/voz/{es,en,pt}.yaml`), seis mensajes cada una por idioma: `results_variants`
+  («depende de tu caso») y `results_documents` («lo encontré en {n_docs} documentos»). El banco pasa de 118 a 130 mensajes y de 13 a 15
+  categorías (READMEs y guías web actualizados).
+- `widget.js`: `respuestaInterna` lee `result_shape`; en la primera página, `variants`/`documents` usan su categoría, y si el banco no la
+  tiene (o la forma es `neutral`, o no hay forma) se usa `results` como antes. `{n_docs}` cuenta los documentos distintos de las fuentes
+  mostradas. La categoría visible (`data-category`) sigue siendo `results`.
+- Desviación del plan: no se agregó el marcador `{scopes}` (un alcance vacío dejaría la frase rota) y no pasan por `errores_plantilla`,
+  porque ese linter es de los tonos del asistente y el banco de voz es otro catálogo, con su propia prueba (`tests/lenguaje/test_voz.py`).
+- Pruebas: 5 de navegador (`test_widget_browser.py`: cada forma, sin forma, banco sin la categoría) y 3 del banco.
+- Entorno: los tests de navegador necesitan el enlace `/opt/pw-browsers/chromium_headless_shell-1243/…/chrome-headless-shell` → el Chromium
+  instalado (creado fuera del repo). `test_demo_browser.py` tiene 6 fallos que ya existían (la página de demostración ya no tiene el
+  encabezado «Explora tus documentos»).

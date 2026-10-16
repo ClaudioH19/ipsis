@@ -106,6 +106,20 @@ messages:
     - Results preserve the document text. Review the context around the match.
     - Keep reading the sources or enter a more specific query.
     - Check the document and its version when verifying the information you found.
+  results_variants:
+    - "{count}. It depends on your case: the first sources are variants of the same thing, so check which one fits yours."
+    - "{count}. There are variants of this topic; open each one and check which applies to your situation."
+    - It depends on your case. These sources cover the same thing with differences; compare the context of each.
+    - "{count}. The first options look alike but change by case. Check which one is yours."
+    - Several sources cover the same thing with different nuances. Open the ones you need and compare them.
+    - "{count}. What you are looking for may vary by case; look at each source's heading and context."
+  results_documents:
+    - "{count}. I found this in {n_docs} different documents; open each one to see which applies."
+    - "{count}, spread across {n_docs} documents. Check which one you need the information from."
+    - There are sources in {n_docs} documents. Look at each source's document before choosing.
+    - "{count}. This topic appears in {n_docs} documents; check which one you use."
+    - I found it in more than one document. Compare their titles and versions to see which applies.
+    - "{count}. The first sources come from {n_docs} different documents; open the one that helps."
   continuation:
     - "{count} in the list now. Compare the new options with the earlier ones."
     - "The search continues: {count} so far. Open the new options to read their context."

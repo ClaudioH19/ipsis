@@ -31,12 +31,12 @@ disponibles. Ejecuta `ipsis help serve` para ver todas las opciones.
 ## Orientación separada de los resultados
 
 Con el motor v2, una sección de orientación se ubica sobre las fuentes
-ordenadas. Usa un catálogo fijo de 118 mensajes para cada uno de español,
+ordenadas. Usa un catálogo fijo de 130 mensajes para cada uno de español,
 inglés y portugués, elegido según el idioma de los documentos del proyecto. Los
-demás idiomas usan la orientación en inglés como respaldo. Las trece categorías
+demás idiomas usan la orientación en inglés como respaldo. Las quince categorías
 son `welcome`, `greeting`, `thanks`, `farewell`, `capability`, `tips`,
-`searching`, `results`, `continuation`, `no_results`, `about`, `limits` y
-`examples`. Los catálogos YAML están en `ipsis/recursos/voz/` y son
+`searching`, `results`, `results_variants`, `results_documents`, `continuation`,
+`no_results`, `about`, `limits` y `examples`. Los catálogos YAML están en `ipsis/recursos/voz/` y son
 independientes de los tonos y de las plantillas de fuentes existentes. Es texto
 de interfaz: nunca evidencia documental ni respuestas generadas.
 
@@ -45,7 +45,7 @@ su sustantivo, ya en singular o plural del idioma: «3 resultados», «1
 resultado»), `{n}` (el número solo) y `{query}` (lo que se buscó). Una
 plantilla que no usa ninguno recibe el conteo al inicio («3 resultados. …»), de
 modo que el conteo siempre llega a quien lee sin ocupar una línea propia (el
-encabezado «N resultados para …» se conserva solo para lectores de pantalla). El
+encabezado «N resultados para …» se conserva solo para lectores de pantalla). `results_variants` («depende de tu caso») y `results_documents` («lo encontré en varios documentos») reemplazan a `results` en la primera página cuando la API informa `result_shape: variants` o `documents` (tabla de `/ask`, más abajo, y `v2.presentation.enabled`); describen la página y nunca dicen cuál fuente responde. `results_documents` puede usar además `{n_docs}`, la cantidad de documentos distintos entre las fuentes que se ven. Con la forma `neutral`, o con un banco de mensajes sin estas dos categorías, se usa `results` como siempre. El
 menú de ayuda es un icono «?» en el encabezado del asistente. Mientras el
 asistente no está hablando, o aún no empezó, un punto aparece y se desvanece
 después de su mensaje para indicar que espera.
@@ -240,7 +240,7 @@ comprobarla:
 - **Del tono activo** (ver [personalidad.md](personalidad.md)): la
   bienvenida, «buscando…», la invitación a las citas y los mensajes de error
   vienen de `/config` en 7 variantes, y el widget rota entre ellas.
-- **Orientación de v2:** su catálogo fijo y separado tiene 118 mensajes por
+- **Orientación de v2:** su catálogo fijo y separado tiene 130 mensajes por
   idioma admitido, con ejemplos e información sobre el asistente y su alcance.
 - **Textos de la interfaz** (etiquetas de botones, placeholder…): vienen del
   paquete de idioma del proyecto.
@@ -292,7 +292,7 @@ separados de las fuentes documentales y no ejecutan consultas.
 **Preguntas frecuentes** permite explorar al menos 100 preguntas completas
 por idioma, repartidas en diez temas. `/config::default_questions` publica
 pregunta y tema; la respuesta fija se resuelve en el servicio. Las consultas
-con información documental añadida siguen consultando el índice. Las 118
+con información documental añadida siguen consultando el índice. Las 130
 variantes de mensajes son un catálogo distinto de las preguntas reconocidas.
 
 La orientación ocupa dos líneas por defecto. **Mostrar completo** permite

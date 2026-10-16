@@ -106,6 +106,20 @@ messages:
     - Os resultados preservam o texto do documento. Leia o contexto da correspondência.
     - Continue lendo as fontes ou escreva uma consulta mais específica.
     - Confira o documento e sua versão ao verificar a informação encontrada.
+  results_variants:
+    - "{count}. Depende do seu caso: as primeiras fontes são variantes da mesma coisa, confira qual corresponde ao seu."
+    - "{count}. Há variantes deste tema; abra cada uma e confira qual se aplica à sua situação."
+    - Depende do seu caso. Estas fontes tratam do mesmo assunto com diferenças; compare o contexto de cada uma.
+    - "{count}. As primeiras opções se parecem, mas mudam conforme o caso. Confira qual é o seu."
+    - Várias fontes falam do mesmo assunto com nuances diferentes. Abra as que interessam e compare-as.
+    - "{count}. O que você procura pode variar conforme o caso; veja o título e o contexto de cada fonte."
+  results_documents:
+    - "{count}. Encontrei isto em {n_docs} documentos diferentes; abra cada um para ver qual se aplica."
+    - "{count}, distribuídos em {n_docs} documentos. Confira de qual você precisa da informação."
+    - Há fontes em {n_docs} documentos. Veja o documento de origem de cada uma antes de escolher.
+    - "{count}. Este tema aparece em {n_docs} documentos; confira qual é o que você usa."
+    - Encontrei em mais de um documento. Compare os títulos e as versões para saber qual se aplica.
+    - "{count}. As primeiras fontes vêm de {n_docs} documentos diferentes; abra a que ajudar."
   continuation:
     - "Agora há {count} na lista. Compare as novas opções com as anteriores."
     - "A pesquisa continua: {count} até agora. Abra as novas opções para ler o contexto."

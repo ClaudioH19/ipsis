@@ -747,6 +747,48 @@ def test_las_plantillas_ubican_el_conteo_con_count_n_y_query(navegador, servidor
     page.close()
 
 
+def _buscar_con_forma(page, servidor_widget, mensajes, forma, documentos=("Inventory", "Inventory", "Inventory")):
+    pagina = _pagina_fuentes(continuar=False)
+    for fragmento, doc in zip(pagina["fragments"], documentos):
+        fragmento["doc_title"], fragmento["doc_id"] = doc, doc.lower()
+    if forma:
+        pagina["result_shape"] = forma
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+                                                       "assistant_messages": mensajes}))
+    page.route("**/ask", lambda r: r.fulfill(json=pagina))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+
+
+BANCO_FORMAS = {"results": ["Standard message."], "results_variants": ["{count}. It depends on your case."],
+                "results_documents": ["{count} in {n_docs} documents."]}
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("forma, documentos, esperado", [
+    ("variants", ("Inventory",) * 3, "3 results. It depends on your case."),
+    ("documents", ("Inventory", "Orders", "Orders"), "3 results in 2 documents."),
+    ("neutral", ("Inventory",) * 3, "3 results. Standard message."),
+    (None, ("Inventory",) * 3, "3 results. Standard message.")])
+def test_el_mensaje_sigue_la_forma_de_la_pagina(navegador, servidor_widget, forma, documentos, esperado):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, forma, documentos)
+    expect(page.locator(".rw-voz-texto")).to_have_text(esperado, timeout=8000)
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "results")   # la categoría visible no cambia
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mensaje_propio_para_la_forma_se_usa_el_de_siempre(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, {"results": ["Standard message."]}, "variants")
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard message.", timeout=8000)
+    page.close()
+
+
 @pytest.mark.browser
 def test_punto_de_espera_parpadea_cuando_no_habla_y_se_oculta_al_escribir(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})
