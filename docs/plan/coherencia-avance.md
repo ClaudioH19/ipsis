@@ -274,3 +274,10 @@ motor predeterminado (v2). Propuesta, sin aplicar:
 Con C1–C8 hechas, el plan de coherencia está terminado. Pendiente solo lo que es del usuario: crear el tag `v1.1.0`,
 decidir si 1.0.x sigue soportada en `SECURITY.md`, y cerrar el plan V4 (F5.1). Siguiendo la regla de los planes, este
 puede borrarse al cerrarse (resumido en el CHANGELOG, que ya lo recoge).
+
+### Cierre del plan V4 (2026-10-16)
+
+El usuario pidió cerrarlo. Se borraron `docs/plan/tareas.md`, `avance.md` y `sinonimos.md` y la última sección de `docs/plan/README.md`; lo que
+vale ya estaba en `CHANGELOG.md`, el ADR 0007, `ipsis/recursos/sinonimos/FUENTES.md` y `docs/methodology/v4-results.md`. La nota de
+`docs/methodology/mediciones/v4-correcciones/README.md` ahora dice que F5.1 fue aprobada. Queda sin tocar el script histórico
+`docs/methodology/mediciones/v4/finalizar_documentacion.py`, que cita `docs/plan/avance.md` (ya no existe; no se vuelve a ejecutar).
