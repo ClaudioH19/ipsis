@@ -15,6 +15,9 @@
 - [ ] Requires reindexing
 - [ ] Changes the configuration (`config_version` and its migration)
 - [ ] Updated `docs/guide/` (and `docs/es/guia/`) and `CHANGELOG.md`
+- [ ] Changes a default, a profile or a supported format: the consistency tests in `tests/test_documentacion.py` pass
+      (profile models, `config_version`, formats, EN/ES sections, version badge)
+- [ ] English and Spanish documentation changed in the same commit
 
 ## Principles
 

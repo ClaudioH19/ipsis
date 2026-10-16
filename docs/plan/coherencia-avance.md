@@ -13,7 +13,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | C5 | ✅ | 2026-10-16 | (ver git log) | LaTeX en `README.es.md`; sección «Integración continua» en la guía de despliegue en español; `ipsis sync` y la migración a `config_version` 8 en los README (EN/ES); I15 e I17 corregidos con pruebas. Todas las pruebas de coherencia en verde, sin `xfail`. Ver «C5» abajo. |
 | C6 | ⬜ | | | ⚠ número de versión |
 | C7 | ⬜ | | | ⚠ cierre de F5.1 del plan V4 |
-| C8 | ⬜ | | | |
+| C8 | ✅ | 2026-10-16 | (ver git log) | Dos casillas en la plantilla de PR y la sección «Documentation follows the code» en `CONTRIBUTING.md`, con las pruebas por nombre. |
 
 ## C1: pruebas de coherencia
 
@@ -191,3 +191,13 @@ descartada).
 - **I16 sigue abierto** (⚠ decisión del usuario): `web.md` en inglés y en español no describen el diseño de búsqueda del
   [Unreleased].
 - C7 (estado de las notas de metodología y cierre del plan V4), C8 (plantilla de PR y CONTRIBUTING) y C6 (versión).
+
+## C8: que no vuelva a pasar
+
+- `.github/PULL_REQUEST_TEMPLATE.md`, sección «Impact»: casilla «Changes a default, a profile or a supported format: the
+  consistency tests in `tests/test_documentacion.py` pass (profile models, `config_version`, formats, EN/ES sections,
+  version badge)» y casilla «English and Spanish documentation changed in the same commit».
+- `CONTRIBUTING.md`: nueva sección «Documentation follows the code» con las cuatro fuentes de verdad (perfiles,
+  `CONFIG_VERSION`, `EXTENSIONES_SOPORTADAS`, `pyproject.toml`), cada prueba de `tests/test_documentacion.py` por su
+  nombre y qué hacer con un modelo o formato nuevo (`ALIAS_DE_MODELOS`, `NOMBRE_DE_FORMATO`). Se comprobó que todas las
+  pruebas citadas existen. La viñeta de «Style» que describía a mano lo que verificaba la prueba ahora remite a la sección.
