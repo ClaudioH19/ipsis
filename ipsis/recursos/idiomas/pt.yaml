@@ -604,6 +604,8 @@ mensajes:
   cita_completa: '(Fonte: {documento}, seção: {seccion})'
   cabecera_embebido: 'Documento: {documento} | Seção: {seccion}'
   cabecera_contiene: 'Contém: {tipos}'
+  cabecera_alcance: 'Âmbito: {alcance}'
+  cabecera_rasgos: 'Distingue-se por: {rasgos}'
   cabecera_condicion: condição
   cabecera_excepcion: exceção
   etiquetas_entidad: {decimal: decimal, porcentaje: percentual, plazo: prazo, fecha: data, monto: valor, articulo: artigo}

@@ -52,6 +52,9 @@ class Mensajes(_Estricto):
     cabecera_embebido: str = "Documento: {documento} | Sección: {seccion}"
     # Segunda línea de la cabecera extendida (``detalle_cabecera: extendido``).
     cabecera_contiene: str = "Contiene: {tipos}"  # {tipos}
+    # Líneas que agrega la preparación estructural (``preparation.scope`` / ``distinctive_terms``).
+    cabecera_alcance: str = "Alcance: {alcance}"
+    cabecera_rasgos: str = "Se distingue por: {rasgos}"
     cabecera_condicion: str = "condición"
     cabecera_excepcion: str = "excepción"
     etiquetas_entidad: dict[str, str] = Field(default_factory=dict)  # tipo de entidad -> palabra del idioma

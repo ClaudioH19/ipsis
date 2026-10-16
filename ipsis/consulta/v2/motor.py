@@ -400,6 +400,7 @@ class MotorV2:
             "offset_fin": e.offset_fin, "texto": e.texto, "score": e.score, "doc_id": e.doc_id,
             "rango": por_chunk[e.chunk_id].metadata["rango_resultado"],
             "archivo_fuente": por_chunk[e.chunk_id].metadata["ventana_resultado"].get("archivo_fuente"),
+            "alcance": por_chunk[e.chunk_id].metadata.get("alcance"),
             "offset_coincidencia_inicio": por_chunk[e.chunk_id].metadata["ventana_resultado"]["coincidencia_inicio"],
             "offset_coincidencia_fin": por_chunk[e.chunk_id].metadata["ventana_resultado"]["coincidencia_fin"],
             "truncado": por_chunk[e.chunk_id].metadata["ventana_resultado"]["truncado"],

@@ -67,6 +67,49 @@ reindexarla: usar otra copia o cambiar la versión de colección. Cambiar solo
 `pipeline` permite comparar v1/v2 sobre el mismo índice. Volver al proyecto
 anterior conserva conjuntamente configuración e índice anteriores.
 
+## Alcance y rasgos distintivos de unidades hermanas
+
+Dos unidades casi iguales (la tabla de ponderaciones de la Práctica I y la de la II) se confunden porque
+lo que las separa es poco. La preparación estructural guarda dos señales para distinguirlas:
+
+- **Alcance** (`scope` en la API): la etiqueta corta que encabeza la unidad dentro de su sección, por
+  ejemplo «Práctica Profesional II», tomada del párrafo previo a una tabla o del párrafo en énfasis que abre
+  el grupo (como máximo 80 caracteres y 10 palabras; se reinicia al cambiar de sección o de título). **Siempre se
+  calcula y se muestra** en el resultado del widget como una etiqueta junto al título del documento, para que quien
+  lee sepa de qué parte del documento viene. No cambia el orden. La opción `scope: true` además la agrega al texto
+  que se indexa y puntúa; **no se recomienda** (ver abajo).
+- **Rasgos distintivos** (`distinctive_terms: N`, `sibling_threshold`): se agrupan las unidades por coseno TF-IDF
+  (componentes conexas, determinista, sin modelo ni segunda pasada de codificación) y de cada una se guardan los
+  hasta N términos que más pesan en ella y menos aparecen en el resto de su grupo (cifras, códigos como P2 y
+  numerales como II incluidos). Se agregan como una línea («Se distingue por: …») al texto indexado y a la unidad
+  que ve el reranker, y quedan en el payload (`grupo_similar`, `rasgos_distintivos`). Desactivado por defecto;
+  cambiarlo obliga a reindexar en una colección nueva.
+
+```yaml
+retrieval:
+  preparation:
+    mode: structural_v1
+    distinctive_terms: 5
+    sibling_threshold: 0.6
+```
+
+Medido en `medium` (es, bge con 10 candidatos) sobre las 56 preguntas adversarias con documentos reales:
+
+| Variante | hit@1 | informal | pares P1/P2 |
+|---|---|---|---|
+| sin señales (actual) | 0,857 | 0,786 | 0,794 |
+| `scope: true` | 0,786 | 0,679 | 0,706 |
+| `distinctive_terms: 3`, umbral 0,5 | 0,821 | 0,714 | 0,794 |
+| `distinctive_terms: 5`, umbral 0,4 | 0,875 | 0,786 | 0,853 |
+| `distinctive_terms: 5`, umbral 0,6 | **0,893** | 0,821 | 0,853 |
+| `distinctive_terms: 8`, umbral 0,4 | 0,875 | 0,786 | 0,853 |
+
+Con 5 términos y umbral 0,6 las otras dos mediciones (33 preguntas formales con documentos reales y 116 del banco
+sintético) quedan idénticas (0,849 y 0,991). La ganancia es de 2 casos sobre 56, dentro del ruido de un banco tan
+chico y no monótona con los parámetros: es una tendencia, no una conclusión. Agregar el alcance al texto empeora
+(6 casos pasan a segundo lugar): repite el nombre de la práctica en muchas unidades y refuerza la coincidencia sin
+distinguir a cuál se refiere la pregunta.
+
 ## Contratos e invariantes
 
 `DocumentoPreparado` extiende el contrato documental existente. Cada elemento

@@ -104,6 +104,7 @@ class Fragmento(BaseModel):
     score_kind: Optional[Literal["reranker_logit", "retrieval_score"]] = None
     doc_id: Optional[str] = None
     source_name: Optional[str] = None
+    scope: Optional[str] = None  # alcance (p. ej. «Práctica Profesional II»), si el documento lo declara
     rank: Optional[int] = None
     match_start: Optional[int] = None
     match_end: Optional[int] = None
@@ -205,6 +206,7 @@ def respuesta_publica(contrato: dict) -> dict:
                 "offset_end": f["offset_fin"], "text": f["texto"], "score": f["score"]}
         for interno, externo in (("doc_id", "doc_id"), ("rango", "rank"),
                 ("archivo_fuente", "source_name"),
+                ("alcance", "scope"),
                 ("offset_coincidencia_inicio", "match_start"), ("offset_coincidencia_fin", "match_end"),
                 ("truncado", "truncated"), ("bloques_fuente", "source_blocks")):
             if interno in f:

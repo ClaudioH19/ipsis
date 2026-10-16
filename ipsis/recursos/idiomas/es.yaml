@@ -650,6 +650,8 @@ mensajes:
   cita_completa: '(Fuente: {documento}, sección: {seccion})'
   cabecera_embebido: 'Documento: {documento} | Sección: {seccion}'
   cabecera_contiene: 'Contiene: {tipos}'
+  cabecera_alcance: 'Alcance: {alcance}'
+  cabecera_rasgos: 'Se distingue por: {rasgos}'
   cabecera_condicion: condición
   cabecera_excepcion: excepción
   etiquetas_entidad: {decimal: decimal, porcentaje: porcentaje, plazo: plazo, fecha: fecha, monto: monto, articulo: artículo}

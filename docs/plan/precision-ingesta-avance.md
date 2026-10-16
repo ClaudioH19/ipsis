@@ -22,7 +22,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado ·
 | F2.3 | ✅ | 2026-10-15 | (ver git log) | Preparación estructural de Markdown medida: ver tabla. Habilita evaluar F2.4. |
 | F2.4 | ✅ | 2026-10-15 | (ver git log) | `preparar_pdf` (outline o tamaño de letra, listas, avisos de OCR; escaneado sin OCR sigue rechazado). Medido con `banco_general` (abajo): la estructural ya indexa el corpus mixto md/pdf/docx/txt, que antes fallaba por el PDF. |
 | F3.1 | ✅ | 2026-10-15 | (ver git log) | Cabecera extendida medida: ver tabla. |
-| F3.2 | ⚠ | | | Decidir la similitud; depende de F1.5. |
+| F3.2 | ✅ | 2026-10-16 | (ver git log) | Implementada (opciones desactivadas por defecto) con similitud TF-IDF y alcance heredado de la estructura; medida en documentos reales. Ver «F3.2: alcance y rasgos distintivos». Pendiente: decidir si `distinctive_terms: 5` pasa a ser el valor por defecto y la variante por vectores vecinos. |
 | F3.3 | ⬜ | 2026-10-16 | (ver git log) | No iniciada: es condicional (errores de rango 2–5 en la misma categoría que el acierto) y esa condición no se analizó. Con hit@3 0,946 y hit@5 0,982 sobre documentos reales queda poco margen. |
 | F4.1 | ✅ | 2026-10-16 | (ver git log) | Modelos densos comparados en el banco adversarial con documentos reales (sección «¿Más sensibilidad en los vectores…?»): ninguno supera a e5-small; no se cambia el modelo denso. |
 | F4.2 | ✅ | 2026-10-16 | (ver git log) | No aplica: granite-311m no queda entre los mejores en F4.1. |
@@ -291,6 +291,18 @@ si importaba se midió el motor completo (`medium`, es, bge con 10 candidatos, d
 Una ventana mayor no mejora y cuesta más por pasaje. La búsqueda por hijos ya elige la unidad correcta y al reranker le basta el inicio del
 padre. **Se elige (c): no se implementa un presupuesto en tokens** ni se cambia `reranker_max_tokens`; el diagnóstico queda como
 herramienta para revisar el caso si cambian los modelos o los documentos.
+
+## F3.2: alcance y rasgos distintivos (2026-10-16)
+
+Los 8 errores de primer lugar que quedaban sobre documentos reales eran en su mayoría pares P1/P2 (6 de 8) cuya respuesta es una fila de tabla
+cuyo texto casi no dice a qué práctica pertenece. Se implementaron: el **alcance** (etiqueta heredada de la estructura, siempre guardada y
+mostrada en el widget como `scope`; opcionalmente agregada al texto indexado) y los **rasgos distintivos** por grupo de unidades hermanas
+(coseno TF-IDF; `herramientas/evaluacion/ranking_pasajes.py --rasgos N --umbral-hermanos U`). Resultados completos en
+[preparacion-estructural.md](../methodology/preparacion-estructural.md): agregar el alcance al texto empeora (hit@1 0,786 frente a 0,857);
+los rasgos con 5 términos y umbral 0,6 dan 0,893 en las 56 adversarias y no cambian el banco de 33 formales (0,849) ni el sintético (0,991). Son
+2 casos sobre 56: tendencia, no conclusión. **Variante por vectores vecinos (opción 2 de la propuesta):** no se implementó; los rasgos no
+cambian el vector denso y con TF-IDF el agrupamiento ya separa las tablas P1/P2, así que un agrupamiento por vectores solo cambiaría a qué
+unidades se agregan rasgos. Se retomaría si el usuario quiere seguir por esa línea.
 
 ## Candidatos de reranker ≤ 0,6 B con pesos ONNX (2026-10-16): ninguno supera a bge
 

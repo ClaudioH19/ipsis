@@ -30,6 +30,15 @@ a minor change may break compatibility and is marked as such.
   clear button (`clear_input`) and a larger touch target, and the chips, "read full context" and "more results"
   controls are larger and clearer. It respects `prefers-reduced-motion` and `animations.enabled: false`.
   Chosen from four prototypes (scan, leafing, highlighter, paper plane): the leafing one.
+- **Scope and distinctive terms for sibling units** (structural preparation). Results now show a small **scope**
+  label next to the document title (for example "Práctica Profesional II", taken from the paragraph before a table
+  or the emphasised line that opens the unit) so a reader can tell P1 from P2 at a glance; the public API returns it
+  as `scope`. New opt-in options `preparation.distinctive_terms` (0-8) and `preparation.sibling_threshold` group
+  near-identical units by TF-IDF and add the terms that tell each one apart to what is indexed and ranked
+  (`preparation.scope` also adds the scope text, which measured worse). Off by default; on real documents
+  `distinctive_terms: 5` with `sibling_threshold: 0.6` raised hit@1 from 0.857 to 0.893 (56 questions, a small
+  gain) and left the other banks unchanged. New indexes need `ipsis index` into a new `collection_version`.
+  `herramientas/evaluacion/ranking_pasajes.py` gets `--alcance`, `--rasgos` and `--umbral-hermanos`.
 - **Search box at the bottom**: in search mode the box sits at the bottom of the panel (like a chat) and the
   results scroll above it, on desktop and on phones. The demo page (`/widget/demo.html`) takes the whole
   screen on phones (no page header; the access-key form is at `#clave-acceso`) and fits the window on desktop.

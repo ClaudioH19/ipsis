@@ -94,7 +94,9 @@ MOTOR = {
         "coleccion_base": _c("collection_base"), "qdrant_path": _c("qdrant_path"),
         "version_coleccion": _c("collection_version"),
         "preparacion": _c("preparation", {"modo": _c("mode", valores={"estructural_v1": "structural_v1"}),
-            "max_palabras_unidad": _c("max_unit_words"), "palabras_hijo": _c("child_words")}),
+            "max_palabras_unidad": _c("max_unit_words"), "palabras_hijo": _c("child_words"),
+            "alcance": _c("scope"), "rasgos_distintivos": _c("distinctive_terms"),
+            "umbral_hermanos": _c("sibling_threshold")}),
     }),
     "componentes": _c("components", {
         nombre: _c(nombre) for nombre in ("parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",

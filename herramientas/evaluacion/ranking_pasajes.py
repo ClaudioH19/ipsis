@@ -233,6 +233,14 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
         rec["detalle_cabecera"] = args.detalle_cabecera
     if args.preparacion:
         rec["preparacion"] = {**rec.get("preparacion", {}), "modo": args.preparacion}
+    if args.alcance or args.rasgos or args.umbral_hermanos:
+        prep = rec.setdefault("preparacion", {})
+        if args.alcance:
+            prep["alcance"] = True
+        if args.rasgos:
+            prep["rasgos_distintivos"] = args.rasgos
+        if args.umbral_hermanos:
+            prep["umbral_hermanos"] = args.umbral_hermanos
     if args.modelo_denso:
         rec["modelo"] = args.modelo_denso
     if args.modelo_reranker:
@@ -244,6 +252,9 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
     v2["resultados_n"] = max(args.resultados, 1)  # solo cambia cuántas fuentes se publican, no su orden
     return {"estrategia": rec.get("estrategia_chunking"), "con_cabecera": rec.get("con_header"), "detalle_cabecera": rec.get("detalle_cabecera", "basico"),
             "preparacion": rec.get("preparacion", {}).get("modo", "legacy"),
+            "alcance": rec.get("preparacion", {}).get("alcance", False),
+            "rasgos": rec.get("preparacion", {}).get("rasgos_distintivos", 0),
+            "umbral_hermanos": rec.get("preparacion", {}).get("umbral_hermanos"),
             "modo": rec.get("modo"), "modelo_denso": rec.get("modelo"), "reranker_max_tokens": v2.get("max_tokens_reranker"), "rerank_candidatos": v2.get("rerank_candidatos"),
             "modelo_reranker": (cfg.get("ajustes_perfil") or {}).get("modelos", {}).get("reranker"),
             "resultados": v2["resultados_n"]}
@@ -307,6 +318,9 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--preparacion", choices=["legacy", "estructural_v1"])
     p.add_argument("--modo", choices=["vectorial", "hibrida", "dispersa"],
                    help="retrieval.mode: solo vector denso, híbrido (por defecto) o solo BM25")
+    p.add_argument("--alcance", action="store_true", help="agrega el alcance de la sección a lo que se indexa")
+    p.add_argument("--rasgos", type=int, default=0, help="términos distintivos por unidad hermana (0 = no)")
+    p.add_argument("--umbral-hermanos", type=float, default=0.0, help="coseno TF-IDF para agrupar hermanas (0,5 por defecto)")
     p.add_argument("--modelo-denso")
     p.add_argument("--volcar-candidatos", dest="volcar_candidatos",
                    help="escribe en este JSONL los pasajes que ve el reranker, para puntuarlos fuera del motor")

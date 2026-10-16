@@ -649,3 +649,20 @@ def test_boton_borrar_limpia_el_buscador_y_solo_aparece_con_texto(navegador, ser
     expect(borrar).to_be_hidden()
     expect(page.locator("#rw-input")).to_be_focused()
     page.close()
+
+
+@pytest.mark.browser
+def test_resultado_muestra_el_alcance_para_distinguir_practica_i_de_ii(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    publico = _pagina_fuentes(continuar=False)
+    publico["fragments"][0].update(doc_title="Reglamento de Prácticas", scope="Práctica Profesional II")
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda r: r.fulfill(json=publico))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("defensa oral")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-resultado").first.locator(".rw-resultado-alcance")).to_have_text("Práctica Profesional II")
+    expect(page.locator(".rw-resultado-alcance")).to_have_count(1)
+    page.close()

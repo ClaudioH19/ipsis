@@ -31,6 +31,10 @@ retrieval:
     mode: structural_v1
     max_unit_words: 400
     child_words: 80
+    # Optional (off by default; changing them requires `ipsis index` into a new collection_version):
+    # distinctive_terms: 5     # 0-8 terms that tell sibling units apart (P1 vs P2 tables), added to what is indexed
+    # sibling_threshold: 0.6   # TF-IDF cosine that groups sibling units (0.5 by default)
+    # scope: false             # also adds "Scope: ..." to the indexed text; measured worse on real documents
 
 components:
   parser: "builtin"

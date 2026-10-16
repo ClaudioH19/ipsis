@@ -708,6 +708,9 @@
     ".rw-busqueda .rw-resultado-numero{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;",
     "  margin:0;border:0;border-radius:99px;background:var(--rw-acento);color:var(--rw-acento-texto);font-size:11px;font-weight:700;}",
     ".rw-resultado-doc{min-width:0;font-weight:650;color:var(--rw-texto);overflow-wrap:anywhere;}",
+    ".rw-resultado-alcance{display:inline-flex;align-items:center;max-width:100%;padding:1px 9px;border-radius:99px;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;",
+    "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
+    "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
     ".rw-busqueda .rw-resultado-vista{margin:8px 0 4px;}",
     ".rw-busqueda details{margin-top:10px;}",
@@ -1100,7 +1103,7 @@
     return { chunk_id: f.chunk_id, doc_id: f.doc_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
              offset_inicio: f.offset_start, offset_fin: f.offset_end, version: f.version,
              rango: f.rank, coincidencia_inicio: f.match_start, coincidencia_fin: f.match_end,
-             truncado: f.truncated, archivo: f.source_name, bloques_fuente: f.source_blocks };
+             truncado: f.truncated, archivo: f.source_name, alcance: f.scope, bloques_fuente: f.source_blocks };
   }
   function respuestaInterna(r) {
     r = r || {};
@@ -1550,6 +1553,13 @@
       docTitulo.className = "rw-resultado-doc";
       docTitulo.textContent = nombreDoc + (frag.version ? " \u00b7 v" + frag.version : "");
       origen.appendChild(docTitulo);
+      if (frag.alcance) {
+        // Qué parte del documento es (p. ej. «Práctica Profesional II»): se ve de un vistazo sin leer la ruta.
+        var alcance = document.createElement("span");
+        alcance.className = "rw-resultado-alcance";
+        alcance.textContent = frag.alcance;
+        origen.appendChild(alcance);
+      }
       if (frag.archivo && frag.archivo !== nombreDoc) {
         var archivo = document.createElement("span");
         archivo.className = "rw-resultado-archivo";

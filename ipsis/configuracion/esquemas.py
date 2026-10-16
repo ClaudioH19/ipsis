@@ -53,6 +53,11 @@ class PreparacionConfig(ConfiguracionEstricta):
     modo: Literal["legacy", "estructural_v1"] = "legacy"
     max_palabras_unidad: int = Field(default=400, ge=32, le=4000)
     palabras_hijo: int = Field(default=80, ge=16, le=1000)
+    # Alcance («Práctica Profesional II») y términos que distinguen a unidades hermanas, agregados a lo que se
+    # indexa y puntúa. Desactivados por defecto; cambiarlos obliga a reindexar.
+    alcance: bool = False
+    rasgos_distintivos: int = Field(default=0, ge=0, le=8)
+    umbral_hermanos: float = Field(default=0.5, gt=0.0, le=1.0)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):
