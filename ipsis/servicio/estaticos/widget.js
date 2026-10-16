@@ -171,6 +171,7 @@
     search_results_count_one: "1 result for “{query}”",
     search_read_document: "Read full context",
     search_close_document: "Close context",
+    result_distinguished: "Distinguished by",
     search_stage_read: "Reading the documents…",
     search_stage_compare: "Comparing sources…",
     search_stage_rank: "Sorting by relevance…",
@@ -711,6 +712,7 @@
     ".rw-resultado-alcance{display:inline-flex;align-items:center;max-width:100%;padding:1px 9px;border-radius:99px;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;",
     "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
     "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-resultado-rasgos{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
     ".rw-busqueda .rw-resultado-vista{margin:8px 0 4px;}",
     ".rw-busqueda details{margin-top:10px;}",
@@ -1103,7 +1105,7 @@
     return { chunk_id: f.chunk_id, doc_id: f.doc_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
              offset_inicio: f.offset_start, offset_fin: f.offset_end, version: f.version,
              rango: f.rank, coincidencia_inicio: f.match_start, coincidencia_fin: f.match_end,
-             truncado: f.truncated, archivo: f.source_name, alcance: f.scope, bloques_fuente: f.source_blocks };
+             truncado: f.truncated, archivo: f.source_name, alcance: f.scope, rasgos: f.distinctive_terms, bloques_fuente: f.source_blocks };
   }
   function respuestaInterna(r) {
     r = r || {};
@@ -1559,6 +1561,13 @@
         alcance.className = "rw-resultado-alcance";
         alcance.textContent = frag.alcance;
         origen.appendChild(alcance);
+      }
+      if (frag.rasgos && frag.rasgos.length) {
+        // Lo que distingue a esta fuente de otras casi iguales (p. ej. la tabla de otra práctica).
+        var rasgos = document.createElement("span");
+        rasgos.className = "rw-resultado-rasgos";
+        rasgos.textContent = texto("result_distinguished") + ": " + frag.rasgos.join(" \u00b7 ");
+        origen.appendChild(rasgos);
       }
       if (frag.archivo && frag.archivo !== nombreDoc) {
         var archivo = document.createElement("span");

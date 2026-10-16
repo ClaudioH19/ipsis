@@ -233,7 +233,7 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
         rec["detalle_cabecera"] = args.detalle_cabecera
     if args.preparacion:
         rec["preparacion"] = {**rec.get("preparacion", {}), "modo": args.preparacion}
-    if args.alcance or args.rasgos or args.umbral_hermanos:
+    if args.alcance or args.rasgos or args.umbral_hermanos or args.similitud_hermanos or args.umbral_vectores:
         prep = rec.setdefault("preparacion", {})
         if args.alcance:
             prep["alcance"] = True
@@ -241,6 +241,10 @@ def aplicar_configuracion(cfg: dict, args) -> dict:
             prep["rasgos_distintivos"] = args.rasgos
         if args.umbral_hermanos:
             prep["umbral_hermanos"] = args.umbral_hermanos
+        if args.similitud_hermanos:
+            prep["similitud_hermanos"] = args.similitud_hermanos
+        if args.umbral_vectores:
+            prep["umbral_vectores"] = args.umbral_vectores
     if args.modelo_denso:
         rec["modelo"] = args.modelo_denso
     if args.modelo_reranker:
@@ -321,6 +325,8 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--alcance", action="store_true", help="agrega el alcance de la sección a lo que se indexa")
     p.add_argument("--rasgos", type=int, default=0, help="términos distintivos por unidad hermana (0 = no)")
     p.add_argument("--umbral-hermanos", type=float, default=0.0, help="coseno TF-IDF para agrupar hermanas (0,5 por defecto)")
+    p.add_argument("--similitud-hermanos", choices=["tfidf", "vectores"], help="cómo se agrupan las hermanas")
+    p.add_argument("--umbral-vectores", type=float, default=0.0, help="coseno de vectores para agrupar (0,95 por defecto)")
     p.add_argument("--modelo-denso")
     p.add_argument("--volcar-candidatos", dest="volcar_candidatos",
                    help="escribe en este JSONL los pasajes que ve el reranker, para puntuarlos fuera del motor")

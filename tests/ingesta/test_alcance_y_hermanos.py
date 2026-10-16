@@ -76,3 +76,46 @@ def test_sin_hermanas_no_hay_grupos_ni_rasgos():
     assert agrupar_hermanos(textos, 0.5)[0] == []
     assert rasgos_distintivos(textos, 0.5, 3) == {}
     assert rasgos_distintivos({"a": "x y z", "b": "x y z"}, 0.5, 0) == {}
+
+
+def test_grupos_por_vectores_agrupa_vecinos_y_es_determinista():
+    from ipsis.ingesta.hermanos import grupos_por_vectores
+
+    ids = ["c", "a", "b", "d"]
+    vectores = [[0.0, 1.0], [1.0, 0.0], [0.99, 0.1], [0.0, -1.0]]
+    assert grupos_por_vectores(ids, vectores, 0.95) == [["a", "b"]]
+    assert grupos_por_vectores(ids, vectores, 0.95) == grupos_por_vectores(list(reversed(ids)), list(reversed(vectores)), 0.95)
+    assert grupos_por_vectores(ids, vectores, 0.999) == []
+
+
+def test_rasgos_con_grupos_externos_usa_tfidf_solo_para_elegir_terminos():
+    textos = {"x": "tabla Práctica I defensa 30% rúbrica", "y": "tabla Práctica II defensa 45% rúbrica", "z": "otra cosa"}
+    r = rasgos_distintivos(textos, umbral=0.99, maximo=3, grupos=[["x", "y"]])
+    assert set(r) == {"x", "y"} and "30" in r["x"]["rasgos_distintivos"] and "45" in r["y"]["rasgos_distintivos"]
+
+
+def test_aplicar_senales_por_vectores_necesita_codificador_y_lo_usa(tmp_path):
+    import pytest
+
+    documento = _documento(tmp_path)
+    hijos, padres = unidades_documento(documento)
+    opciones = {"rasgos_distintivos": 3, "similitud_hermanos": "vectores", "umbral_vectores": 0.9}
+    with pytest.raises(ValueError):
+        aplicar_senales(hijos, padres, opciones)
+
+    class Falso:
+        def codificar_documentos(self, textos):
+            return [[1.0, 0.0] if "Peso" in t else [0.0, 1.0] for t in textos]
+
+    aplicar_senales(hijos, padres, opciones, Falso())
+    tablas = [p for p in padres.values() if p.metadata["table_id"]]
+    assert len({p.metadata["grupo_similar"] for p in tablas}) == 1
+    assert all(p.metadata["rasgos_distintivos"] for p in tablas)
+
+
+def test_los_rasgos_no_repiten_variantes_de_una_misma_raiz():
+    textos = {"a": "bitácora bitácoras bitácora entrada defensa defensa oral", "b": "portfolio rúbrica evaluación supervisor",
+              "c": "bitácora portfolio rúbrica evaluación"}
+    r = rasgos_distintivos(textos, umbral=0.05, maximo=5)
+    rasgos = [x.casefold() for x in r["a"]["rasgos_distintivos"]]
+    assert sum(x.startswith("bitác") for x in rasgos) <= 1

@@ -58,6 +58,10 @@ class PreparacionConfig(ConfiguracionEstricta):
     alcance: bool = False
     rasgos_distintivos: int = Field(default=0, ge=0, le=8)
     umbral_hermanos: float = Field(default=0.5, gt=0.0, le=1.0)
+    # Cómo se agrupan las hermanas: «tfidf» (texto, sin modelo) o «vectores» (vecinos del modelo denso sobre cada
+    # unidad: codifica el corpus una vez más al indexar). El umbral de vectores es un coseno alto (e5: 0,93 a 0,97).
+    similitud_hermanos: Literal["tfidf", "vectores"] = "tfidf"
+    umbral_vectores: float = Field(default=0.95, gt=0.0, le=1.0)
 
 
 class RecuperacionConfig(ConfiguracionEstricta):
@@ -173,7 +177,8 @@ class MotorConfig(ConfiguracionEstricta):
     ajustes_perfil: dict[str, Any] = Field(default_factory=dict)
 
 
-PREPARACION_ESTRUCTURAL = {"modo": "estructural_v1", "max_palabras_unidad": 400, "palabras_hijo": 80}
+PREPARACION_ESTRUCTURAL = {"modo": "estructural_v1", "max_palabras_unidad": 400, "palabras_hijo": 80,
+                           "rasgos_distintivos": 5, "umbral_hermanos": 0.6}
 
 
 def activar_preparacion_estructural(motor: dict[str, Any]) -> bool:

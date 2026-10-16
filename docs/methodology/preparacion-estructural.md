@@ -82,8 +82,10 @@ lo que las separa es poco. La preparación estructural guarda dos señales para 
   (componentes conexas, determinista, sin modelo ni segunda pasada de codificación) y de cada una se guardan los
   hasta N términos que más pesan en ella y menos aparecen en el resto de su grupo (cifras, códigos como P2 y
   numerales como II incluidos). Se agregan como una línea («Se distingue por: …») al texto indexado y a la unidad
-  que ve el reranker, y quedan en el payload (`grupo_similar`, `rasgos_distintivos`). Desactivado por defecto;
-  cambiarlo obliga a reindexar en una colección nueva.
+  que ve el reranker, y quedan en el payload (`grupo_similar`, `rasgos_distintivos`). **Activado por defecto con
+  `distinctive_terms: 5` y `sibling_threshold: 0,6`** en proyectos nuevos y en los migrados a `config_version` 8; un
+  proyecto con su propio bloque `preparation` conserva lo que tiene. Cambiarlo obliga a reindexar en una colección nueva.
+  Los términos también se muestran en cada resultado («Se distingue por: …», `distinctive_terms` en la API).
 
 ```yaml
 retrieval:
@@ -92,6 +94,13 @@ retrieval:
     distinctive_terms: 5
     sibling_threshold: 0.6
 ```
+
+**Agrupar por vectores vecinos** (`sibling_similarity: vectors`, `vector_threshold`): en vez de TF-IDF, dos unidades son
+hermanas si el coseno de sus vectores del modelo denso supera el umbral (con e5 los cosenos se comprimen: la tabla de P1 y la
+de P2 dan 0,977 y la mediana del mejor vecino es 0,958, así que los umbrales útiles son 0,93 a 0,97). Codifica las unidades una
+vez más al indexar. Con 5 términos sobre las 56 preguntas adversarias: umbral 0,93 → 0,857; 0,95 → 0,839; **0,97 → 0,893**,
+igual que TF-IDF con 0,6. No aporta más que TF-IDF y cuesta una pasada de codificación, por eso el valor por defecto sigue siendo
+`tfidf`.
 
 Medido en `medium` (es, bge con 10 candidatos) sobre las 56 preguntas adversarias con documentos reales:
 

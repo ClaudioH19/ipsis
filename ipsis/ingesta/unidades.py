@@ -131,7 +131,7 @@ def unidades_documento(documento: DocumentoPreparado, max_palabras=400, palabras
     return hijos, padres
 
 
-def aplicar_senales(hijos, padres, opciones):
+def aplicar_senales(hijos, padres, opciones, codificador=None):
     """Alcance y rasgos distintivos: se guardan en el padre y sus hijos (payload y presentación) y, si
     ``opciones`` lo pide, se agregan como líneas de cabecera al texto que se indexa y se puntúa."""
     from ipsis.ingesta.hermanos import rasgos_distintivos
@@ -146,8 +146,17 @@ def aplicar_senales(hijos, padres, opciones):
     rasgos = {}
     if maximo:
         vacias = frozenset(normalizar(t.casefold()) for t in paquete.stopwords) if paquete is not None else frozenset()
+        grupos = None
+        if opciones.get("similitud_hermanos", "tfidf") == "vectores":
+            if codificador is None:
+                raise ValueError("similitud_hermanos: vectores necesita el codificador denso (solo al indexar)")
+            from ipsis.ingesta.hermanos import grupos_por_vectores
+
+            ids = sorted(padres)
+            grupos = grupos_por_vectores(ids, codificador.codificar_documentos([padres[i].texto_embedding for i in ids]),
+                                         float(opciones.get("umbral_vectores", 0.95)))
         rasgos = rasgos_distintivos({pid: p.texto_fuente for pid, p in padres.items()},
-                                    float(opciones.get("umbral_hermanos", 0.5)), maximo, vacias)
+                                    float(opciones.get("umbral_hermanos", 0.5)), maximo, vacias, grupos)
 
     def con_lineas(registro):
         lineas = []
@@ -169,7 +178,7 @@ def aplicar_senales(hijos, padres, opciones):
         con_lineas(padre)
 
 
-def construir_payloads_estructurados(docs, taxonomia, opciones):
+def construir_payloads_estructurados(docs, taxonomia, opciones, codificador=None):
     from ipsis.ingesta.chunking import Chunk
     from ipsis.ingesta.metadata import construir_payload
     from ipsis.indice.estadisticas import EstadisticasLexicas
@@ -182,7 +191,7 @@ def construir_payloads_estructurados(docs, taxonomia, opciones):
         todos.extend(hijos)
         padres.update(contextos)
         documentos.append(preparado)
-    aplicar_senales(todos, padres, opciones)
+    aplicar_senales(todos, padres, opciones, codificador)
     est = EstadisticasLexicas.construir([c.texto_fuente for c in todos], idioma_activo())
     payloads = []
     por_doc = {d.doc_id: d for d in documentos}

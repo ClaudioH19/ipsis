@@ -52,7 +52,9 @@ def preparar_proyecto(origen, destino, *, indexar=False):
     shutil.copytree(origen / "config", destino / "config")
     shutil.copytree(origen / "documents", destino / "documents")
     cfg["pipeline"] = "v2"
-    cfg["recuperacion"]["preparacion"] = {"modo": "estructural_v1", "max_palabras_unidad": 400, "palabras_hijo": 80}
+    from ipsis.configuracion.esquemas import PREPARACION_ESTRUCTURAL
+
+    cfg["recuperacion"]["preparacion"] = dict(PREPARACION_ESTRUCTURAL)
     # Una copia nunca apunta a servidores ni a rutas de índices del proyecto servido.
     cfg["recuperacion"]["qdrant_path"] = ".ipsis/index/qdrant"
     cfg["qdrant"]["modo"] = "local"

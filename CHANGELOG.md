@@ -35,9 +35,12 @@ a minor change may break compatibility and is marked as such.
   or the emphasised line that opens the unit) so a reader can tell P1 from P2 at a glance; the public API returns it
   as `scope`. New opt-in options `preparation.distinctive_terms` (0-8) and `preparation.sibling_threshold` group
   near-identical units by TF-IDF and add the terms that tell each one apart to what is indexed and ranked
-  (`preparation.scope` also adds the scope text, which measured worse). Off by default; on real documents
-  `distinctive_terms: 5` with `sibling_threshold: 0.6` raised hit@1 from 0.857 to 0.893 (56 questions, a small
-  gain) and left the other banks unchanged. New indexes need `ipsis index` into a new `collection_version`.
+  (`preparation.scope` also adds the scope text, which measured worse). **`distinctive_terms: 5` with
+  `sibling_threshold: 0.6` is now on for new and migrated structural projects**: on real documents it raised hit@1
+  from 0.857 to 0.893 (56 questions, a small gain) and left the other banks unchanged. The terms are also shown with
+  each result (`distinctive_terms` in the API). `sibling_similarity: vectors` (neighbours by the dense model) is available
+  but gave no more than TF-IDF (0.893 at cosine 0.97, worse below) and costs one more encoding pass. Existing projects
+  that already have a `preparation` block keep it; new indexes need `ipsis index` into a new `collection_version`.
   `herramientas/evaluacion/ranking_pasajes.py` gets `--alcance`, `--rasgos` and `--umbral-hermanos`.
 - **Search box at the bottom**: in search mode the box sits at the bottom of the panel (like a chat) and the
   results scroll above it, on desktop and on phones. The demo page (`/widget/demo.html`) takes the whole

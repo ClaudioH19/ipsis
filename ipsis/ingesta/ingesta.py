@@ -185,6 +185,8 @@ def huella_corpus(carpeta_corpus: str = rutas.DOCUMENTOS, cfg_rec: dict | None =
     if opciones["modo"] == "estructural_v1":
         from ipsis.ingesta.unidades import construir_payloads_estructurados
 
+        if opciones.get("similitud_hermanos", "tfidf") == "vectores" and opciones.get("rasgos_distintivos"):
+            return "sin-modelo"  # los grupos dependen de los vectores: se compara por ``huella_archivos``
         _, payloads, _, _ = construir_payloads_estructurados(docs, cargar_taxonomia(), opciones)
     else:
         _chunks, payloads = construir_chunks_y_payloads(docs, cfg_rec["estrategia_chunking"],
@@ -238,11 +240,18 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
     resumen_docs = [ResumenDocumento(d.doc_id, len(d.bloques), len(d.texto_completo)) for d in docs]
 
     informar("fragmentado", total=len(docs))
-    padres, preparados = {}, []
+    padres, preparados, codificador_hermanos = {}, [], None
     if estructural:
         from ipsis.ingesta.unidades import construir_payloads_estructurados
 
-        chunks, payloads, padres, preparados = construir_payloads_estructurados(docs, taxonomia, opciones)
+        if opciones.get("similitud_hermanos", "tfidf") == "vectores" and opciones.get("rasgos_distintivos"):
+            from ipsis.modelos.catalogo import obtener
+            from ipsis.modelos.denso import CodificadorDenso
+
+            informar("modelo")
+            codificador_hermanos = CodificadorDenso(obtener(modelo))
+        chunks, payloads, padres, preparados = construir_payloads_estructurados(
+            docs, taxonomia, opciones, codificador_hermanos)
         con_header = True
     else:
         chunks, payloads = construir_chunks_y_payloads(docs, estrategia, con_header, taxonomia,
@@ -263,7 +272,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
         raise ValueError("preparación estructural inválida: " + "; ".join(errores))
 
     _client, _codificador, estadisticas_lexicas, nombre_col = indexar_qdrant(
-        payloads, modelo, coleccion, qdrant_path, usar_texto_embebido=con_header,
+        payloads, modelo, coleccion, qdrant_path, usar_texto_embebido=con_header, codificador=codificador_hermanos,
         n_version=version_coleccion, sufijo_coleccion=sufijo_coleccion,
         **({"permitir_recrear": False, "modo": "local"} if estructural else {}),
     )

@@ -618,6 +618,7 @@ interfaz:
   search_results_count: '{n} resultados para «{query}»'
   search_read_document: 'Ler contexto completo'
   search_close_document: 'Fechar contexto'
+  result_distinguished: 'Distingue-se por'
   search_stage_read: 'Lendo os documentos…'
   search_stage_compare: 'Comparando fontes…'
   search_stage_rank: 'Ordenando por relevância…'

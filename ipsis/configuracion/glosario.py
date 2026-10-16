@@ -96,7 +96,9 @@ MOTOR = {
         "preparacion": _c("preparation", {"modo": _c("mode", valores={"estructural_v1": "structural_v1"}),
             "max_palabras_unidad": _c("max_unit_words"), "palabras_hijo": _c("child_words"),
             "alcance": _c("scope"), "rasgos_distintivos": _c("distinctive_terms"),
-            "umbral_hermanos": _c("sibling_threshold")}),
+            "umbral_hermanos": _c("sibling_threshold"),
+            "similitud_hermanos": _c("sibling_similarity", valores={"tfidf": "tfidf", "vectores": "vectors"}),
+            "umbral_vectores": _c("vector_threshold")}),
     }),
     "componentes": _c("components", {
         nombre: _c(nombre) for nombre in ("parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",

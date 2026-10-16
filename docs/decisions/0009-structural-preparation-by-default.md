@@ -52,3 +52,12 @@ the synthetic test partition, slower, no gain on real documents), `CH-PAR`
 - Calibrations stay valid for projects that do not change their header.
 - Known residuals: Markdown tables stay as paragraphs; PDF has no page numbers or
   tables; a few real-document questions still rank 3 to 4 (small sample).
+
+## Update (2026-10-16): distinctive terms on by default
+
+The default structural block also turns on `distinctive_terms: 5` with `sibling_threshold: 0.6`: units that are
+nearly identical (the P1 and P2 weighting tables) get the terms that tell them apart added to what is indexed and ranked,
+and shown with each result together with the unit's scope. On the 56 real adversarial questions hit@1 went from 0.857
+to 0.893 (2 cases; informal 0.786 to 0.821); the 33 formal questions and the synthetic bank were unchanged. Adding the scope text
+to the index (`scope: true`) measured worse and stays off. Projects that already had a `preparation` block keep it.
+See [the methodology note](../methodology/preparacion-estructural.md).

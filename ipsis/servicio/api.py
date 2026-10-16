@@ -105,6 +105,7 @@ class Fragmento(BaseModel):
     doc_id: Optional[str] = None
     source_name: Optional[str] = None
     scope: Optional[str] = None  # alcance (p. ej. «Práctica Profesional II»), si el documento lo declara
+    distinctive_terms: Optional[list[str]] = None  # términos que distinguen a esta unidad de sus hermanas
     rank: Optional[int] = None
     match_start: Optional[int] = None
     match_end: Optional[int] = None
@@ -207,6 +208,7 @@ def respuesta_publica(contrato: dict) -> dict:
         for interno, externo in (("doc_id", "doc_id"), ("rango", "rank"),
                 ("archivo_fuente", "source_name"),
                 ("alcance", "scope"),
+                ("rasgos", "distinctive_terms"),
                 ("offset_coincidencia_inicio", "match_start"), ("offset_coincidencia_fin", "match_end"),
                 ("truncado", "truncated"), ("bloques_fuente", "source_blocks")):
             if interno in f:

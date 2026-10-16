@@ -18,3 +18,9 @@ def test_el_alcance_se_publica_como_scope():
 def test_sin_alcance_el_scope_es_nulo():
     publica = respuesta_publica(_contrato())
     assert "scope" not in publica["fragments"][0] or publica["fragments"][0]["scope"] is None
+
+
+def test_los_terminos_distintivos_se_publican():
+    publica = respuesta_publica(_contrato(rasgos=["II", "45%", "Defensa"]))
+    assert publica["fragments"][0]["distinctive_terms"] == ["II", "45%", "Defensa"]
+    Fragmento(**publica["fragments"][0])

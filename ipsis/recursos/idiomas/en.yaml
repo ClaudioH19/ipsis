@@ -618,6 +618,7 @@ interfaz:
   search_results_count: '{n} results for “{query}”'
   search_read_document: 'Read full context'
   search_close_document: 'Close context'
+  result_distinguished: 'Distinguished by'
   search_stage_read: 'Reading the documents…'
   search_stage_compare: 'Comparing sources…'
   search_stage_rank: 'Sorting by relevance…'
