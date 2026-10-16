@@ -146,3 +146,19 @@ escribió el mismo asistente que construye el sistema. La conclusión honesta es
 **Formas resultantes en `medium` con τ = 3,59** (dev / test): `clara` 12 / 9, `variantes` 5 / 5, `documentos` 3 / 1, `neutral` 14 / 7: aun
 con `clara`, ~40 % de las páginas serían `neutral` (mismo documento, otra sección). Entre las páginas `variantes` el primer resultado acierta
 83 % (dev) y 62,5 % (test): el mensaje «Depende de tu caso» es donde más falta hace.
+
+### Decisión del usuario: opción 1
+
+`clara` queda **desactivada**: no se configura ningún `clear_margin` y el widget usa solo «Depende de tu caso» (`variantes`) y «Lo encontré
+en varios documentos» (`documentos`), más el mensaje actual para `neutral`. No hay disposición `clear` en P2. La función y la
+configuración siguen existiendo, así que activarla más adelante (opción 2 o 3) no pide código nuevo, solo medir con más preguntas (P5).
+
+## P1.2: el motor publica la forma
+
+- `MotorV2._anadir_forma` (`ipsis/consulta/v2/motor.py`) calcula la forma de la primera página sobre lo ya publicado y la deja en
+  `contrato_http["forma_resultados"]` y en `diagnostico["forma_resultados"]` (`forma`, `margen`, `relacion`). Solo con
+  `v2.presentation.enabled`; apagada **no deja ninguna clave** (desviación del plan, que decía «`neutral` siempre»: así la salida pública y los
+  contratos de caracterización quedan idénticos). `continuar` no la llama: las páginas siguientes no la traen.
+- La API pública agrega `result_shape` (`clear`, `variants`, `documents`, `neutral`) a `RespuestaConsulta`, documentado en las dos guías web.
+- Pruebas: `tests/consulta/test_forma_motor.py` (19): formas con dobles de motor, apagada sin claves, encender no cambia contenido ni orden de
+  las fuentes, margen por perfil sobre el general, sin forma en páginas siguientes ni sin resultados, traducción a la API.

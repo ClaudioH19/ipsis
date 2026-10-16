@@ -333,7 +333,28 @@ class MotorV2:
         ctx.diagnostico["paginacion"] = {"offset": 0, "ranking_reutilizado": False, "modo": "progresivo"}
         resultado = self._publicar(ctx, todos[:self.top_k], eventos)
         self._anadir_multimedia(resultado, ctx, limite)
+        self._anadir_forma(resultado)
         return self._con_cursor(resultado, cursor if resultado.evidencias else None)
+
+    def _anadir_forma(self, resultado):
+        """Describe la forma de la primera página (``forma_resultados``) para que el widget elija mensaje y disposición.
+
+        Solo si ``v2.presentation.enabled``; apagada no deja ninguna clave. No cambia qué se publica ni su orden
+        (ADR 0001, ``ipsis/consulta/v2/forma.py``). Solo en la primera página: ``continuar`` no la llama."""
+        presentacion = self.opciones["presentacion"]
+        if not presentacion["activo"] or not resultado.evidencias:
+            return
+        from ipsis.consulta.v2.forma import forma_de_pagina, margen, margen_claro_efectivo, relacion
+
+        rutas = {e.chunk_id: list(e.seccion_path) for e in resultado.evidencias}
+        fuentes = [{"score": f["score"], "tipo_puntaje": f["tipo_puntaje"], "doc_id": f["doc_id"],
+                    "alcance": f["alcance"], "seccion_path": rutas.get(f["chunk_id"], [])}
+                   for f in resultado.contrato_http["fragmentos"]]
+        perfil = self.perfil_instalacion.perfil if self.perfil_instalacion else None
+        forma = forma_de_pagina(fuentes, activo=True, margen_claro=margen_claro_efectivo(presentacion, perfil))
+        resultado.contrato_http["forma_resultados"] = forma
+        resultado.diagnostico["forma_resultados"] = {"forma": forma, "margen": margen(fuentes),
+                                                      "relacion": relacion(fuentes)}
 
     def _anadir_multimedia(self, resultado, ctx, limite):
         """Busca fichas multimedia para la pregunta y las deja en el contrato interno (``multimedia``).

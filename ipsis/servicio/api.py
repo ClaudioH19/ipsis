@@ -164,6 +164,9 @@ class RespuestaConsulta(BaseModel):
     response_mode: Optional[Literal["ranked_sources"]] = None
     continuation: Optional[str] = None
     has_more: Optional[bool] = None
+    # Cómo se parecen las primeras fuentes publicadas (solo primera página y con ``v2.presentation.enabled``). Describe la
+    # página, no afirma que la primera fuente responda; ``clear`` solo aparece con un ``clear_margin`` explícito.
+    result_shape: Optional[Literal["clear", "variants", "documents", "neutral"]] = None
     # ``answer`` por párrafos, para pintarlo con estructura: unirlos con una
     # línea en blanco (conector + texto + cita) reproduce ``answer``.
     answer_blocks: list[BloqueRespuesta] = Field(default_factory=list)
@@ -196,6 +199,7 @@ _PLANES = {"definicion": "definition", "procedimiento": "procedure", "requisito"
            "conversacional": "conversational", "aclaracion": "clarification"}
 
 
+_FORMAS = {"clara": "clear", "variantes": "variants", "documentos": "documents", "neutral": "neutral"}
 _BLOQUES = {"encabezado": "lead", "pasaje": "passage", "mensaje": "message"}
 
 
@@ -259,6 +263,8 @@ def respuesta_publica(contrato: dict) -> dict:
         if "continuation" in contrato:
             publica["continuation"] = contrato["continuation"]
             publica["has_more"] = contrato["has_more"]
+        if contrato.get("forma_resultados"):
+            publica["result_shape"] = _FORMAS[contrato["forma_resultados"]]
     return publica
 
 
