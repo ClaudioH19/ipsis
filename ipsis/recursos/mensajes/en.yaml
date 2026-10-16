@@ -110,6 +110,7 @@ sync:
   pruned: 'Older index versions deleted: {names}'
   failed: 'Could not update: {error}'
   lock_hint: 'If ''ipsis serve'' (or another process) is using the index, stop it and run ''ipsis sync'' again.'
+  media_changed: 'The media cards changed since the last index: the index will be rebuilt.'
 index:
   help: Parse, chunk, embed and store the index.
   opt_corpus: 'Folder with the documents to index (default: ''documents'').'
@@ -125,6 +126,9 @@ index:
   indexed: 'Indexed in collection {collection!r}: BM25 ({terms} terms), entity inventory ({entities} values).'
   time: 'Total time: {seconds:.1f}s'
   next: 'Next step: ''ipsis serve'' (or ''ipsis ask "..."'' if it is already serving).'
+  media_indexed: 'Media: {cards} card(s) and {chapters} chapter(s) indexed in {collection}.'
+  media_error: '  [!] media/{id}.yaml: {error}'
+  media_none: 'Media: no usable card found, so nothing was indexed for the media lane.'
 demo:
   lang: en
   title: Explore your documents

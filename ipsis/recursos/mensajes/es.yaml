@@ -110,6 +110,7 @@ sync:
   pruned: 'Versiones anteriores del índice borradas: {names}'
   failed: 'No se pudo actualizar: {error}'
   lock_hint: 'Si ''ipsis serve'' (u otro proceso) está usando el índice, deténlo y vuelve a ejecutar ''ipsis sync''.'
+  media_changed: 'Las fichas multimedia cambiaron desde el último índice: se reconstruirá el índice.'
 index:
   help: Parsea, fragmenta, vectoriza y persiste el índice.
   opt_corpus: 'Carpeta con los documentos a indexar (por defecto: ''documents'').'
@@ -125,6 +126,9 @@ index:
   indexed: 'Indexado en la colección {collection!r}: BM25 ({terms} términos), inventario de entidades ({entities} valores).'
   time: 'Tiempo total: {seconds:.1f}s'
   next: 'Siguiente paso: ''ipsis serve'' (o ''ipsis ask "..."'' si ya está sirviendo).'
+  media_indexed: 'Multimedia: {cards} ficha(s) y {chapters} capítulo(s) indexados en {collection}.'
+  media_error: '  [!] media/{id}.yaml: {error}'
+  media_none: 'Multimedia: no hay ninguna ficha utilizable, así que no se indexó nada del carril multimedia.'
 demo:
   lang: es
   title: Explora tus documentos

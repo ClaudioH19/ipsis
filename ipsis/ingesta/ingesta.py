@@ -132,6 +132,7 @@ class ResumenIngesta:
     nombre_coleccion: str = ""
     n_vocab_bm25: int = 0
     n_entidades_inventario: int = 0
+    media: object | None = None  # ResumenMedia del carril multimedia; None si no hay media/
 
     @property
     def n_documentos(self) -> int:
@@ -200,7 +201,8 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
                       con_header: bool | None = None, modelo: str | None = None,
                       coleccion: str | None = None, qdrant_path: str | None = None,
                       version_coleccion: int | None = None, sufijo_coleccion: str | None = None,
-                      solo_validar: bool = False, cfg_rec: dict | None = None) -> ResumenIngesta:
+                      solo_validar: bool = False, cfg_rec: dict | None = None,
+                      carpeta_media: str = rutas.MEDIA) -> ResumenIngesta:
     """Ingesta completa: parsea el catálogo (con el despacho por extensión
     de `ipsis/ingesta/parsear.py`, cualquier mezcla de `.docx`/`.pdf`/`.md`/`.txt`),
     fragmenta, valida y (salvo `solo_validar`) indexa en Qdrant + persiste
@@ -277,6 +279,7 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
         n_version=version_coleccion, sufijo_coleccion=sufijo_coleccion,
         **({"permitir_recrear": False, "modo": "local"} if estructural else {}),
     )
+    resumen_media = None
     try:
         informar("guardado")
         huella = hash_corpus(payloads)
@@ -301,6 +304,14 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
             inventario_entidades=inventario,
             preparacion=metadata_preparacion,
         ))
+        # El carril multimedia (fichas de media/) va en su propia colección, con el mismo cliente y modelo;
+        # sin media/ no hace nada y el índice de documentos no cambia.
+        from ipsis.ingesta.indice_media import indexar_fichas
+
+        resumen_media = indexar_fichas(
+            modelo=modelo, coleccion=coleccion, qdrant_path=qdrant_path, version_coleccion=version_coleccion,
+            codificador=_codificador, client=_client, permitir_recrear=not estructural,
+            sufijo_coleccion=sufijo_coleccion, carpeta=carpeta_media)
     finally:
         if estructural:
             _client.close()
@@ -308,5 +319,5 @@ def ejecutar_ingesta(carpeta_corpus: str = rutas.DOCUMENTOS, estrategia: str | N
     return ResumenIngesta(
         documentos=resumen_docs, n_chunks=len(chunks), errores_validacion=errores, advertencias=advertencias,
         tiempo_seg=time.perf_counter() - t0, nombre_coleccion=nombre_col, n_vocab_bm25=len(estadisticas_lexicas.df),
-        n_entidades_inventario=len(inventario),
+        n_entidades_inventario=len(inventario), media=resumen_media,
     )
