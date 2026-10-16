@@ -16,10 +16,16 @@ a minor change may break compatibility and is marked as such.
   paths (opening a source that is not the first says where it is from; a "This isn't it" button asks for the next page and
   compacts the earlier cards). The assistant message catalog grows from 118 to 142 messages (17 categories).
   The "clear answer" form is not used.
-- **Multimedia records, off by default** (`media.enabled`): human-written audio and video records in `media/*.yaml`
-  (`ipsis/ingesta/fichas.py`), indexed in their own collection by `ipsis index` and `ipsis sync`, searched after the document
-  sources and published as a separate `media` field and a separate card in the widget, never mixed with the sources. They
-  are only shown above a measured `media.min_score`. Nothing is transcribed or generated.
+- **Audio and video records** ([ADR 0011](docs/decisions/0011-media-records-in-a-separate-lane.md),
+  [guide](docs/guide/media.md)), on in new projects (`media.enabled: true`, `media.min_score: 0.874`; existing projects keep
+  it off until the block is added; no `config_version` change; with no `media/` folder it does nothing). A person writes one
+  YAML record per audio or video in `media/*.yaml` (`ipsis/ingesta/fichas.py`); `ipsis index` and `ipsis sync` index them in
+  their own collection, a query searches them after the document sources, and the API returns the match as `media` and the
+  widget shows it as a separate card (type, duration, chapter and minute, the record's own text and a link that opens in a
+  new tab; the chapter's minute for YouTube and Vimeo). Never mixed with the sources and only above the measured threshold
+  (synthetic Spanish bank: 0 of 36 questions without a record got one in `dev`, 1 of 24 in `test`;
+  `herramientas/evaluacion/carril_multimedia.py` measures your own). Nothing is transcribed or generated, and ipsis does not
+  serve media files (`file:` is not shown; use `url`).
 
 ## [1.1.0] - 2026-10-16
 

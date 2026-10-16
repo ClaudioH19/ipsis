@@ -19,6 +19,13 @@ v2:
   # false turns it off. `clear_margin` (a "clear answer" page) stays off: it is not proven; see ADR 0010.
   presentation:
     enabled: true
+# Audio and video records (media/*.yaml; docs/guide/media.md, ADR 0011): a separate card after the sources, shown only
+# when its dense cosine reaches min_score. With no media/ folder this does nothing. null min_score shows nothing at all.
+media:
+  enabled: true
+  min_score: 0.874
+  max_results: 1
+  budget_ms: 150
 retrieval:
   # model: set by the profile; uncomment to pin it.
   chunking_strategy: "CH-F256"

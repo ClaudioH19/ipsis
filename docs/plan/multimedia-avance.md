@@ -7,14 +7,14 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | M0.1 | ✅ | 2026-10-16 | (ver git log) | `ipsis/ingesta/fichas.py`: lee y valida `media/*.yaml`; 82 pruebas; 21 mensajes en EN/ES. Ver «M0.1» abajo. |
-| M0.2 | ⬜ | | | ⚠ ¿fichas y preguntas reales? |
+| M0.2 | ✅ | 2026-10-16 | (ver git log) | El usuario no tiene fichas ni preguntas reales: banco **sintético** (20 fichas, 90 preguntas) en `tests/datos/banco_multimedia/es/`. Ver «M0.2/M2.2» abajo. |
 | M1 | ✅ | 2026-10-16 | (ver git log) | Las fichas se indexan en `…_v{n}__media` con su manifiesto; `ipsis index` y `ipsis sync` lo integran; el índice de documentos no cambia. La condición ⚠ (que cambie `hash_corpus` sin `media/`) **no se cumplió**. Ver «M1» abajo. |
 | M2.1 | ✅ | 2026-10-16 | (ver git log) | `BuscadorMedia` (`ipsis/consulta/media.py`), bloque `media` del motor (apagado) y carril en `MotorV2`; las fuentes de documentos no cambian. Una desviación de la regla ficha/capítulo. Ver «M2.1» abajo. |
-| M2.2 | ⬜ | | | ⚠ objetivo de fichas mostradas sin corresponder |
+| M2.2 | ✅ | 2026-10-16 | (ver git log) | Objetivo del usuario: ≤ 5 %. `herramientas/evaluacion/carril_multimedia.py`; `min_score` **0,874**: 0/36 en dev y 1/24 (4,2 %) en test. Ver abajo. |
 | M3 | ✅ | 2026-10-16 | (ver git log) | API pública `media` y tarjeta del widget (apagado: solo con `media.enabled` y `min_score`). Hecha sin M2.2 porque no cambia ninguna conducta por defecto. Ver «M3» abajo. |
-| M4.1 | ⬜ | | | ⚠ tipos, tamaño y control de acceso |
-| M4.2 | ⬜ | | | |
-| M5 | ⬜ | | | ⚠ activación por defecto |
+| M4.1 | ⛔ | 2026-10-16 | | **No se hace**: el usuario duda de servir archivos por privacidad. Las fichas con `file` no se muestran; se usa `url` (ADR 0011). |
+| M4.2 | ⬜ | | | Fichas desde el panel: no pedido. Se puede hacer solo con enlaces (sin subir archivos). |
+| M5 | ✅ | 2026-10-16 | (ver git log) | Aprobada por el usuario: `ipsis init` escribe `media.enabled: true` y `min_score: 0.874`; ADR 0011, guías `media.md`/`multimedia.md`, CHANGELOG. Sin migración. |
 
 ## M0.1: esquema y validación de la ficha
 
@@ -128,3 +128,27 @@ sobre `bd6c24e`. Pueden depender de este entorno (CPU, codificación de la termi
 - Se muestra también si no hay fuentes de documentos (una ficha publicada ya superó su umbral por sí misma).
 - Pruebas: 4 de API en `tests/consulta/test_media.py` y 10 de navegador (`test_widget_browser.py`). Capturas revisadas en claro y oscuro a 420 px.
 - Guías web EN/ES: campo `media` en la tabla de `/ask` y viñeta «Multimedia lane / Carril multimedia».
+
+## M0.2 y M2.2: banco sintético y umbral
+
+- **Banco** (`tests/datos/banco_multimedia/es/`, README propio): 20 fichas (14 videos y 6 audios, 10 con capítulos) sobre los 11 documentos de
+  `banco_terminos/validacion/es/corpus/`; 90 preguntas: 30 que llevan a una ficha (cuatro con capítulo), 30 `mismo_tema` (el tema está en un documento pero
+  ninguna ficha lo responde, a propósito con palabras de una ficha cercana) y 30 `fuera`; 10 informales. Particiones 54 `dev` / 36 `test` por orden de id,
+  con los tres tipos repartidos. `tests/evaluacion/test_banco_multimedia.py` (5 pruebas) valida la estructura y que cada ficha tenga una pregunta.
+  Es sintético y lo escribió el mismo asistente que el carril: **las cifras son optimistas**.
+- **Herramienta** `carril_multimedia.py`: proyecto temporal, `ipsis index` con el modelo real y, por pregunta, el mejor candidato de
+  `BuscadorMedia.candidatos_agrupados`. Informa la curva en `dev` y dos umbrales elegidos solo con `dev`, con su resultado en `test`. 6 pruebas de las cuentas.
+- **Hallazgo:** el menor umbral que cumple el 5 % en `dev` (0,857) cae en el borde de un puntaje (1 falsa) y en `test` da 3/24 (12,5 %). Por eso el
+  recomendado es el menor con **cero** falsas en `dev`, redondeado hacia arriba: **0,874** → `dev` 0/36 falsas y 14/18 fichas correctas; `test` 1/24 (4,2 %;
+  Wilson 95 % superior 20 %) y 11/12 correctas; capítulo correcto 4/4 y 4/5. Los cosenos de e5 están comprimidos (0,73 a 0,92), así que el margen entre
+  una ficha buena y una ajena es de centésimas. Sin ficha equivocada en ninguna pregunta que sí tiene ficha. Latencia de la búsqueda del carril: p50 ≈ 11 ms, p95 ≈ 14 ms.
+- Informes: `docs/methodology/mediciones/multimedia/carril.{md,json}`. `light` y `medium` comparten el modelo denso y el carril no rerankea: una sola medición.
+- No cubierto: otros idiomas, fichas reales, ni preguntas escritas por personas. 36 negativas en `dev` no certifican el 5 % (cero errores deja un 9,6 % superior).
+
+## M4 y M5
+
+- **M4.1 no se hace** (decisión del usuario, 2026-10-16: servir archivos puede comprometer la privacidad del asistente). Se aceptan los tipos y el tamaño
+  propuestos (mp4, webm, mp3, m4a, ogg; 500 MB) por si se retoma, pero hoy ipsis no sirve ni muestra archivos: las fichas con solo `file` se indexan y no se publican.
+- **M5:** la plantilla `engine.yaml` de los proyectos nuevos trae `media: enabled: true, min_score: 0.874, max_results: 1, budget_ms: 150`. Sin migración ni `config_version` nueva
+  (el valor por defecto del esquema sigue apagado): un proyecto existente lo enciende agregando el bloque. Con la configuración por defecto, un proyecto nuevo
+  muestra la ficha que corresponde y no una ajena (`tests/integracion/test_media_indexacion.py`, prueba lenta con el modelo real).

@@ -1,0 +1,17 @@
+title: Programar el riego del invernadero
+kind: video
+url: https://videos.example.org/riego-programacion
+description: Cómo se programa el sistema de riego automático del invernadero y cómo ajustarlo con el cambio
+  de estación.
+keywords:
+- riego automático
+- invernadero
+- programación
+language: es
+version: 2026-01
+duration: 06:00
+chapters:
+- at: 01:10
+  title: Configurar los horarios de riego
+- at: 03:00
+  title: Agregar un riego extra en temporada de calor

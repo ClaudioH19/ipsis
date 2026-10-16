@@ -261,6 +261,7 @@ el ranking del enrutador. Consulta [golden](docs/es/guia/golden.md) y la
 | [Widget](docs/es/guia/web.md) | Temas, API, accesibilidad y preguntas frecuentes |
 | [Integraciones](docs/es/guia/integraciones.md) | Frameworks web, CORS y ejemplos |
 | [Inventarios](docs/es/guia/inventarios.md) | Tablas y límites de formatos |
+| [Audio y video](docs/es/guia/multimedia.md) | Fichas, umbral y tarjeta del widget |
 | [Personalidad](docs/es/guia/personalidad.md) | Tonos, Folio y panel |
 | [Despliegue](docs/es/guia/despliegue.md) | Docker, HTTPS y operación |
 | [Golden v1, opcional](docs/es/guia/golden.md) | Evaluación y calibración del motor anterior |

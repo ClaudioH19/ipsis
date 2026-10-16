@@ -142,3 +142,20 @@ def test_el_motor_publica_la_ficha_y_las_mismas_fuentes_que_sin_carril(tmp_path,
     documentos = lambda r: [(f["chunk_id"], f["rango"], f["score"], f["offset_inicio"], f["offset_fin"])
                             for f in r.contrato_http["fragmentos"]]
     assert documentos(apagado) and documentos(apagado) == documentos(sin_umbral) == documentos(con_umbral)
+
+
+def test_un_proyecto_nuevo_muestra_la_ficha_que_corresponde_y_no_una_ajena_sin_tocar_la_configuracion(tmp_path, monkeypatch):
+    """Los valores por defecto de ``ipsis init`` (``media.enabled`` y ``min_score``): el carril ya funciona."""
+    from ipsis.servicio.api import respuesta_publica
+
+    _proyecto(tmp_path / "p", True, monkeypatch)
+    assert main(["index"]) == 0
+    motor = _motor_del_proyecto()
+    try:
+        motor.calentar()
+        propia = respuesta_publica(motor.consultar("¿Cómo inscribo asignaturas en la plataforma?", "s").contrato_http)
+        ajena = respuesta_publica(motor.consultar("¿Cuál es la capital de Australia?", "s").contrato_http)
+    finally:
+        motor.cerrar()
+    assert [f["media_id"] for f in propia["media"]] == ["induccion"] and propia["media"][0]["url"] == FICHA["url"]
+    assert "media" not in ajena

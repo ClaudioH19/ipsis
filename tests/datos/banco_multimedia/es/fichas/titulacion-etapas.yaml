@@ -1,0 +1,20 @@
+title: Las etapas del proceso de titulación
+kind: video
+url: https://videos.example.org/titulacion-etapas
+description: 'Recorrido por todo el proceso para titularse de ingeniería: desde inscribir el primer proyecto
+  hasta la defensa final.'
+keywords:
+- titulación
+- Proyecto de Título
+- defensa
+language: es
+version: 2026-05
+duration: '11:15'
+chapters:
+- at: 01:20
+  title: Inscribir el Proyecto de Título I
+- at: 04:00
+  title: Presentar la propuesta al Comité Académico
+  description: Qué debe incluir la propuesta y cómo se entrega.
+- at: 07:30
+  title: Desarrollar y defender el Proyecto de Título II

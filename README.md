@@ -260,6 +260,7 @@ router ranking. See [golden](docs/guide/golden.md) and the
 | [Widget](docs/guide/web.md) | Themes, API, accessibility and FAQ |
 | [Integrations](docs/guide/integrations.md) | Web frameworks, CORS and examples |
 | [Inventories](docs/guide/inventories.md) | Tables and format limits |
+| [Audio and video](docs/guide/media.md) | Records, threshold and widget card |
 | [Personality](docs/guide/personality.md) | Tones, Folio and panel |
 | [Deployment](docs/guide/deployment.md) | Docker, HTTPS and operations |
 | [Optional v1 golden set](docs/guide/golden.md) | Previous engine evaluation and calibration |

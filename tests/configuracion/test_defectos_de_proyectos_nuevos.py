@@ -1,4 +1,4 @@
-"""La presentación por forma de resultados (ADR 0010) está encendida en los proyectos nuevos y solo en ellos."""
+"""Lo que un proyecto nuevo trae encendido (ADR 0010 y 0011) y que uno existente no recibe."""
 from __future__ import annotations
 
 from ipsis.configuracion.archivos import interpretar
@@ -24,3 +24,14 @@ def test_un_proyecto_existente_sin_el_bloque_sigue_apagado_y_no_se_migra():
 def test_se_puede_apagar_en_el_proyecto():
     cfg = interpretar(leer_plantilla("engine.yaml").replace("    enabled: true", "    enabled: false", 1), "motor")
     assert validar_motor(cfg)["v2"]["presentacion"]["activo"] is False
+
+
+def test_la_plantilla_de_un_proyecto_nuevo_enciende_el_carril_multimedia_con_el_umbral_medido():
+    media = validar_motor(interpretar(leer_plantilla("engine.yaml"), "motor"))["media"]
+    assert media == {"activo": True, "puntaje_minimo": 0.874, "max_resultados": 1, "presupuesto_ms": 150}
+
+
+def test_un_proyecto_existente_sin_bloque_media_sigue_con_el_carril_apagado():
+    existente = validar_motor({"config_version": 8, "pipeline": "v2",
+                               "recuperacion": {"estrategia_chunking": "CH-F256", "coleccion_base": "demo"}})
+    assert existente["media"]["activo"] is False and existente["media"]["puntaje_minimo"] is None

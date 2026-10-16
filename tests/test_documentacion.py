@@ -204,7 +204,8 @@ def test_formatos_soportados_en_los_readme(readme):
 # secciones ``##`` que se acepta entre los dos (``{"web.md": (diferencia, "motivo")}``).
 PARES_DE_GUIAS = [("configuration", "configuracion"), ("deployment", "despliegue"), ("golden", "golden"),
                   ("installation", "instalacion"), ("integrations", "integraciones"),
-                  ("inventories", "inventarios"), ("personality", "personalidad"), ("usage", "uso"), ("web", "web")]
+                  ("inventories", "inventarios"), ("media", "multimedia"), ("personality", "personalidad"), ("usage", "uso"),
+                  ("web", "web")]
 DIFERENCIAS_PERMITIDAS: dict[str, tuple[int, str]] = {}
 
 
