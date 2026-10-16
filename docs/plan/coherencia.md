@@ -1,6 +1,7 @@
 # Plan de coherencia: código, perfiles y documentación
 
-Abierto el 2026-10-16. Estado de cada tarea: [coherencia-avance.md](coherencia-avance.md).
+Abierto el 2026-10-16. Tareas para ejecutar una por sesión:
+[coherencia-tareas.md](coherencia-tareas.md). Estado: [coherencia-avance.md](coherencia-avance.md).
 
 ## Por qué
 
@@ -38,6 +39,7 @@ una documentación que contradice al código debilita esa misma promesa.
 | I10 | `docs/es/guia/despliegue.md` | Sin sección «Integración continua» | Existe en `docs/guide/deployment.md:3` |
 | I11 | README (ambos) | Inicio rápido y «Actualizar» no mencionan `ipsis sync`; badge y tag 1.0.0 | `ipsis sync` es la vía soportada; `[Unreleased]` trae migración a `config_version` 8 y reindexación |
 | I12 | `docs/plan/` | Plan V4 con F5.1 ⚠ abierto; `README.md` del plan dice «Plan de trabajo vigente» | El motor v2 y la precisión desde la ingesta ya reemplazaron ese foco |
+| I13 | `herramientas/evaluacion/ranking_pasajes.py:313` | `--perfil heavy` aceptado | El perfil `heavy` se retiró el 2026-10-08 |
 
 El inventario no es exhaustivo: la tarea C1 existe para que las pruebas
 encuentren el resto.

@@ -12,7 +12,8 @@ Plan de trabajo vigente. Se borra al cerrarse; lo que quede vale se resume en
 
 [coherencia.md](coherencia.md) inventaría las contradicciones entre código,
 perfiles y documentación que dejaron los cambios de octubre, y propone pruebas
-que las detecten antes de corregirlas. Estado en el
+que las detecten antes de corregirlas. Las [tareas](coherencia-tareas.md)
+están escritas para ejecutarse una por sesión; su estado está en el
 [avance](coherencia-avance.md).
 
 ## Plan de precisión desde la ingesta
