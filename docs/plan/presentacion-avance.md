@@ -9,12 +9,12 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | P0.1 | ✅ | 2026-10-16 | (ver git log) | `--volcar-publicados` en `ranking_pasajes.py` (un JSONL por perfil, sin texto de pasajes ni de la pregunta); 5 pruebas nuevas. Ver «P0.1» abajo. |
 | P0.2 | ✅ | 2026-10-16 | (ver git log) | Análisis hecho sobre documentos reales (banco regenerado de 56 preguntas). **`light`: `clara` desactivada** (ningún margen llega a 0,98). **`medium`: τ ≈ 3,6 da 21/21 aciertos pero no demuestra 0,98** (Wilson inf. 0,845): decisión de producto abierta. Ver «P0.2: resultado con documentos reales». ⚠ P1.1 y P4 esperan esa decisión. |
 | P1.1 | ✅ | 2026-10-16 | (ver git log) | `ipsis/consulta/v2/forma.py` (`forma_de_pagina`, `margen`, `relacion`) y bloque `v2.presentation` (apagado, sin `engine.yaml` ni `config_version` nuevos). 22 pruebas. Ver «P1.1» abajo. |
-| P1.2 | ⬜ | | | |
-| P2.1 | ⬜ | | | |
-| P2.2 | ⬜ | | | |
-| P3.1 | ⬜ | | | ⚠ confirmar caminos de corrección |
-| P3.2 | ⬜ | | | |
-| P4 | ⬜ | | | ⚠ activación por defecto |
+| P1.2 | ✅ | 2026-10-16 | (ver git log) | El motor publica `forma_resultados` (solo primera página, solo encendido) y la API `result_shape`. 19 pruebas. `clara` nunca se emite sin `clear_margin` (opción 1). |
+| P2.1 | ✅ | 2026-10-16 | (ver git log) | Mensajes `results_variants` y `results_documents` (en/es/pt); el widget los elige por `result_shape`. |
+| P2.2 | ✅ | 2026-10-16 | (ver git log) | `variants`: fila «Elige tu caso»; `documents`: marca de grupo por documento. Sin `clear`. |
+| P3.1 | ✅ | 2026-10-16 | (ver git log) | Aprobado por el usuario. Fuente abierta → `opened_source`, una vez por tarjeta. |
+| P3.2 | ✅ | 2026-10-16 | (ver git log) | Botón «No es esto» → `results_retry` y tarjetas anteriores compactas. |
+| P4 | ⚠ | | | Espera al usuario: activación por defecto con las cifras de P0.2 (ver abajo). |
 | P5 | ⬜ | | | Opcional; solo a pedido |
 
 ## P0.1: volcar las fuentes publicadas
