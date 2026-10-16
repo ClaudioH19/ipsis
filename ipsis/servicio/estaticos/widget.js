@@ -371,6 +371,8 @@
     ".rw-raiz[data-posicion='incrustado'] .rw-boton{display:none;}",
     ".rw-raiz[data-posicion='incrustado'] .rw-panel{position:relative;inset:auto;width:100%;max-width:100%;",
     "  height:100%;min-height:420px;max-height:none;animation:none;box-shadow:none;}",
+    // Incrustado en un teléfono: de borde a borde, sin esquinas ni marco.
+    "@media (max-width:480px){.rw-raiz[data-posicion='incrustado'] .rw-panel{border-radius:0;border-inline:0;}}",
     // Lanzador: burbuja (por defecto), pestaña con el nombre, u oculto.
     ".rw-raiz[data-lanzador='oculto'] .rw-boton{display:none;}",
     ".rw-raiz[data-lanzador='pestana'] .rw-boton{width:auto;height:44px;border-radius:var(--rw-radio-control);",
@@ -469,7 +471,7 @@
     ".rw-resultado-vista,.rw-resultado-contexto{white-space:pre-wrap;overflow-wrap:anywhere;}",
     ".rw-resultado details{margin-top:.6em;}",
     ".rw-resultado summary{cursor:pointer;color:var(--rw-acento);}",
-    ".rw-panel[data-modo='busqueda'] .rw-form{border-top:0;border-bottom:1px solid var(--rw-borde);",
+    ".rw-panel[data-modo='busqueda'] .rw-form{border-top:1px solid var(--rw-borde);border-bottom:0;",
     "  background:var(--rw-superficie);padding:12px var(--rw-relleno);}",
     ".rw-panel[data-modo='busqueda'] .rw-form input{border-radius:24px;min-width:0;}",
     ".rw-panel[data-modo='busqueda'] .rw-enviar{border-radius:50%;}",
@@ -1309,7 +1311,6 @@
     boton.setAttribute("aria-label", texto("search_open", { title: tituloEl.textContent }));
     botonCerrar.setAttribute("aria-label", texto("search_close"));
     subtituloTexto.textContent = CONTENIDO.subtitle || texto("search_subtitle");
-    panel.insertBefore(form, mensajes);
     panel.insertBefore(espacioVoz, mensajes);
     panel.insertBefore(indicadorBusqueda, mensajes);
     espacioVoz.hidden = false;

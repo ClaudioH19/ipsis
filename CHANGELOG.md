@@ -30,6 +30,9 @@ a minor change may break compatibility and is marked as such.
   clear button (`clear_input`) and a larger touch target, and the chips, "read full context" and "more results"
   controls are larger and clearer. It respects `prefers-reduced-motion` and `animations.enabled: false`.
   Chosen from four prototypes (scan, leafing, highlighter, paper plane): the leafing one.
+- **Search box at the bottom**: in search mode the box sits at the bottom of the panel (like a chat) and the
+  results scroll above it, on desktop and on phones. The demo page (`/widget/demo.html`) takes the whole
+  screen on phones (no page header; the access-key form is at `#clave-acceso`) and fits the window on desktop.
 - **Reranker per language in `medium`**: Spanish and Portuguese projects (v2) use `bge-reranker-v2-m3` scoring 10
   candidates; other languages keep the multilingual mMiniLM. The profile declares it
   (`language_rerankers`, `language_rerank_candidates`); a project that sets `profile_overrides.models.reranker`

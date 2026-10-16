@@ -378,7 +378,7 @@ mostrar más resultados; no ejecutan modelos ni llamadas al servicio:
 
 El comando de vista previa de esos presets muestra tres resultados de
 **ejemplo**, identificados como tales, con contexto accesible. Las pruebas
-de navegador verifican los seis temas, barra arriba, extractos visibles,
+de navegador verifican los seis temas, barra de búsqueda (abajo), extractos visibles,
 destacados literales, teclado, seguridad de texto, continuación y reemplazo
 al reformular. La recuperación y el presupuesto del motor no cambian en esta
 entrega de presentación.

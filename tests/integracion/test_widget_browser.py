@@ -326,7 +326,7 @@ def test_continuacion_expirada_o_reintento_de_error_temporal(navegador, servidor
 
 @pytest.mark.browser
 @pytest.mark.parametrize("preset", ["classic", "minimal", "editorial", "contrast", "search", "search_compact"])
-def test_busqueda_tiene_barra_arriba_extractos_visibles_y_teclado(navegador, servidor_widget, preset):
+def test_busqueda_tiene_barra_abajo_extractos_visibles_y_teclado(navegador, servidor_widget, preset):
     page = navegador.new_page(viewport={"width": 375, "height": 667}, color_scheme="dark" if preset == "contrast" else "light")
     page.route("**/config", lambda r: r.fulfill(json={
         "assistant_name": "Library", "response_mode": "ranked_sources", "greeting": "Hello",
@@ -339,7 +339,7 @@ def test_busqueda_tiene_barra_arriba_extractos_visibles_y_teclado(navegador, ser
     page.get_by_role("button", name="Open search of Library").click()
     entrada = page.get_by_label("Search your documents")
     expect(page.get_by_text("Enter a question or keywords to find information.")).to_be_visible()
-    assert page.evaluate("Array.from(document.querySelector('ipsis-chat').shadowRoot.querySelectorAll('.rw-form,.rw-mensajes')).map(e => e.className)") == ["rw-form", "rw-mensajes"]
+    assert page.evaluate("Array.from(document.querySelector('ipsis-chat').shadowRoot.querySelectorAll('.rw-form,.rw-mensajes')).map(e => e.className)") == ["rw-mensajes", "rw-form"]
     entrada.fill("practica stock")
     page.get_by_role("button", name="Search", exact=True).click()
     resultados = page.get_by_role("region", name="Search results")
