@@ -1,9 +1,14 @@
 # Preparación documental estructurada
 
-Estado: experimental. Versión documental `estructura-1`, parser
-`docx-estructura-1`, fragmentación `unidades-estructura-1.2` y lectura `campos-1`.
-No cambia la configuración de proyectos existentes ni demuestra todavía una
-mejora general de respuestas. Es independiente del selector de motor.
+Estado: vigente. Es la preparación predeterminada desde el 2026-10-15
+([ADR 0009](../decisions/0009-structural-preparation-by-default.md)): los
+proyectos nuevos la reciben con `ipsis init` y los v2 que no habían elegido
+preparación se migran a `config_version: 8` y deben ejecutar `ipsis index`;
+`retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo. Versión
+documental `estructura-1`, parser `docx-estructura-1`, fragmentación
+`unidades-estructura-1.2` y lectura `campos-1`. Es independiente del selector de
+motor. La nota se escribió cuando la preparación era experimental; la evidencia de su
+mejora está en el ADR 0009 y esta nota no la demuestra por sí sola.
 
 ## Propósito y recorrido
 
@@ -224,5 +229,8 @@ combinadas y filas con posiciones omitidas:
 pero todavía no se ha ejecutado una comparación local equivalente de fidelidad,
 dependencias y CPU. No se afirma superioridad de este parser frente a Docling.
 
-El índice anterior y ambos motores permanecen disponibles. La preparación y
-el motor v2 siguen experimentales; la promoción requiere la evaluación de F6.
+El índice anterior y ambos motores permanecen disponibles. Cuando se escribió esta
+nota la preparación y el motor v2 eran experimentales y su promoción requería la
+evaluación de F6; desde entonces v2 es el motor predeterminado (2026-10-12) y la
+estructural la preparación predeterminada ([ADR 0009](../decisions/0009-structural-preparation-by-default.md),
+2026-10-15).

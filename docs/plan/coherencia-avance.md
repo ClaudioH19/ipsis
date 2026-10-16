@@ -8,7 +8,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 |---|---|---|---|---|
 | C1 | ✅ | 2026-10-16 | (ver git log) | 7 pruebas nuevas en `tests/test_documentacion.py` (28 casos con las existentes); 12 casos `xfail(strict=True)` que la tarea indicada debe quitar. Detalle abajo. |
 | C2 | ✅ | 2026-10-16 | (ver git log) | Tablas de perfiles, tamaños y latencia medidos, descripción del perfil, `heavy` fuera de `ranking_pasajes.py`, nota en ADR 0003. Decisiones del usuario: presupuesto = opción (a) (solo documentar); sin ADR 0010. Ver «C2» abajo. |
-| C3 | ⬜ | | | |
+| C3 | ✅ | 2026-10-16 | (ver git log) | Ejemplos en `config_version: 8`; tabla de versiones completa (6, 7, 8); preparación estructural descrita como predeterminada; se quitaron los 5 `xfail` de C3. Ver «C3» abajo. |
 | C4 | ⬜ | | | |
 | C5 | ⬜ | | | |
 | C6 | ⬜ | | | ⚠ número de versión |
@@ -113,3 +113,24 @@ descartada).
 
 **Entorno.** Con los modelos descargados, las dos fallas de la suite de C1 (`test_crear_app_aisla_estado…` y
 `test_portabilidad_init_cargar_indexar_subprocesos`) pasan: era solo la caché vacía.
+
+## C3: versión de configuración y preparación estructural
+
+- `config_version: 7` → `8` en `docs/guide/configuration.md` (2 bloques), `docs/es/guia/configuracion.md` (2) y
+  `docs/methodology/fuentes-v2.md` (1). El bloque `v2:` de `fuentes-v2.md` es un subconjunto exacto del de
+  `ipsis/recursos/plantillas/engine.yaml`, así que no necesitó más cambios.
+- **I14 resuelto.** La frase «versión vigente» pasa a `8` y la tabla de versiones de las dos guías añade las filas 6, 7 y 8,
+  tomadas de las ramas de migración de `ipsis/configuracion/esquemas.py:279-297` (no del historial, que está aplastado
+  en un commit): 6 = `engine.yaml` sin `pipeline` pasa a `pipeline: v2`; 7 = se elimina `v2.council`; 8 = los v2 sin
+  preparación elegida pasan a la estructural y piden `ipsis index` (ADR 0009).
+- **I6 resuelto.** `fuentes-v2.md` ya no dice «optativa y experimental»: la estructural es la predeterminada (ADR 0009),
+  con `retrieval.preparation.mode: legacy` como vuelta atrás.
+- Otras menciones vigentes encontradas con `grep experimental` y corregidas (paso 3 de la tarea):
+  `docs/methodology/preparacion-estructural.md` (estado y última frase: decía que v2 y la preparación seguían
+  experimentales y que no cambiaba proyectos existentes) y `docs/methodology/README.md` (decía «v1 remains the default»).
+  Se dejó dicho que la nota se escribió cuando era experimental. Quedan sin tocar, para C7 (estado de cada nota de
+  metodología): `motor-v2.md`, `motor-v2-diagnostico.md`, `motor-v2-mejoras-lectura.md`, `reranker.md`,
+  `multilingual.md`, `modelos-heavy-2026-10-08/`.
+- Pruebas: quitados los `xfail` de `test_ejemplos_usan_la_config_version_vigente` (3 casos) y de
+  `test_la_guia_de_configuracion_describe_la_version_vigente` (2). Quedan 3 `xfail`: web (C4), deployment y
+  README.es (C5).

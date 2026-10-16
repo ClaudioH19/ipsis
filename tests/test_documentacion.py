@@ -136,7 +136,6 @@ CONFIG_VERSION_AJENA = {
 }
 CON_EJEMPLOS_DE_CONFIGURACION = [*sorted((RAIZ / "docs" / "guide").glob("*.md")),
                                  *sorted((RAIZ / "docs" / "es" / "guia").glob("*.md")), FUENTES_V2]
-CONFIG_VERSION_DESACTUALIZADA = {"configuration.md": "C3: I5", "configuracion.md": "C3: I5", "fuentes-v2.md": "C3: I5"}
 
 
 def _parametros_de_config_version() -> list:
@@ -144,9 +143,7 @@ def _parametros_de_config_version() -> list:
     for ruta in CON_EJEMPLOS_DE_CONFIGURACION:
         if ruta.relative_to(RAIZ).as_posix() in CONFIG_VERSION_AJENA:
             continue
-        motivo = CONFIG_VERSION_DESACTUALIZADA.get(ruta.name)
-        marcas = [pytest.mark.xfail(strict=True, reason=f"coherencia {motivo}")] if motivo else []
-        parametros.append(pytest.param(ruta, id=ruta.relative_to(RAIZ / "docs").as_posix(), marks=marcas))
+        parametros.append(pytest.param(ruta, id=ruta.relative_to(RAIZ / "docs").as_posix()))
     return parametros
 
 
@@ -165,10 +162,8 @@ def test_ejemplos_usan_la_config_version_vigente(ruta):
 
 
 @pytest.mark.parametrize("ruta, patron", [
-    pytest.param(RAIZ / "docs" / "guide" / "configuration.md", r"current\s+version\s+is\s+`(\d+)`", id="en",
-                 marks=pytest.mark.xfail(strict=True, reason="coherencia C3: I5, I14")),
-    pytest.param(RAIZ / "docs" / "es" / "guia" / "configuracion.md", r"versión\s+vigente\s+es\s+la\s+`(\d+)`", id="es",
-                 marks=pytest.mark.xfail(strict=True, reason="coherencia C3: I5, I14")),
+    pytest.param(RAIZ / "docs" / "guide" / "configuration.md", r"current\s+version\s+is\s+`(\d+)`", id="en"),
+    pytest.param(RAIZ / "docs" / "es" / "guia" / "configuracion.md", r"versión\s+vigente\s+es\s+la\s+`(\d+)`", id="es"),
 ])
 def test_la_guia_de_configuracion_describe_la_version_vigente(ruta, patron):
     """La frase «la versión vigente es N» y la tabla «Versión / Qué cambió» llegan hasta ``CONFIG_VERSION``."""

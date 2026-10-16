@@ -10,13 +10,17 @@ configuraciones antiguas. Una selección explícita `pipeline: v1` se conserva.
 Para cambiar un proyecto existente, escribe `pipeline: v2` en
 `config/engine.yaml` y reinicia el servicio. Para volver, selecciona `v1`.
 Cambiar solo el motor reutiliza el índice actual; cambiar la preparación
-documental requiere su propia reindexación. La preparación estructural de
-DOCX continúa siendo optativa y experimental.
+documental requiere su propia reindexación. La preparación estructural (DOCX,
+PDF, Markdown, texto y hojas de cálculo) es la predeterminada en los proyectos
+nuevos y en los v2 que no habían elegido preparación, que pasan a
+`config_version: 8` con el siguiente comando `ipsis` y deben ejecutar
+`ipsis index` ([ADR 0009](../decisions/0009-structural-preparation-by-default.md)).
+`retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
 
 ## Configuración
 
 ```yaml
-config_version: 7
+config_version: 8
 pipeline: v2
 v2:
   results_limit: 3
