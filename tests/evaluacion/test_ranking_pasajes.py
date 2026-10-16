@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -114,3 +115,68 @@ def test_markdown_incluye_etapas_y_comparacion(rp):
         "light": {"resumen": rp.resumir(obs), "observaciones": obs}}}
     texto = rp.a_markdown(informe, {"light": {"ganados": [], "perdidos": [{"id": "a", "antes": 1, "ahora": 2}]}})
     assert "| híbrido |" in texto and "| final |" in texto and "perdido `a`" in texto
+
+
+class MotorConFuentes(MotorFalso):
+    """Como ``MotorFalso`` pero con el contrato HTTP que publica el motor real (puntaje, tipo, alcance, texto)."""
+
+    def consultar(self, pregunta, sesion):
+        ev = lambda cid, ini, fin, sec: SimpleNamespace(chunk_id=cid, doc_id="d", offset_inicio=ini, offset_fin=fin,
+                                                         seccion_path=sec, score=1.0)
+        evidencias = [ev("b", 0, 300, ["Reglamento", "Plazos"]), ev("c", 0, 300, ["Reglamento", "Plazos"]),
+                      ev("a", 0, 300, ["Anexo"])]
+        fragmentos = [
+            {"chunk_id": "b", "score": 3.5, "tipo_puntaje": "logit_reranker", "alcance": "Práctica I",
+             "rasgos": ["planta"], "texto": "TEXTO SECRETO B"},
+            {"chunk_id": "c", "score": 1.25, "tipo_puntaje": "logit_reranker", "alcance": "Práctica II",
+             "rasgos": None, "texto": "TEXTO SECRETO C"},
+            {"chunk_id": "a", "score": -2.0, "tipo_puntaje": "logit_reranker", "alcance": None, "rasgos": None,
+             "texto": "TEXTO SECRETO A"}]
+        return SimpleNamespace(evidencias=evidencias, diagnostico={"etapas": {}, "contrato_http": {"fragmentos": fragmentos}})
+
+
+def test_grabador_publicados_registra_orden_puntaje_y_si_es_correcto(rp, tmp_path, monkeypatch):
+    grabador = rp.GrabadorPublicados(tmp_path / "p.jsonl", "medium")
+    monkeypatch.setattr(rp, "PUBLICADOS", grabador)
+    rp.observar_caso(MotorConFuentes(), _caso(210, 220, cid="caso-7"))
+    fila, = grabador.filas
+    assert (fila["id"], fila["split"], fila["perfil"], fila["rango_final"]) == ("caso-7", "dev", "medium", 2)
+    assert [p["chunk_id"] for p in fila["publicadas"]] == ["b", "c", "a"]
+    assert [p["rango"] for p in fila["publicadas"]] == [1, 2, 3]
+    # c es la única que toca la evidencia: se usan los offsets del fragmento recuperado, no los de la ventana ampliada
+    assert [p["correcto"] for p in fila["publicadas"]] == [False, True, False]
+    b = fila["publicadas"][0]
+    assert b["score"] == 3.5 and b["tipo_puntaje"] == "logit_reranker" and b["alcance"] == "Práctica I"
+    assert b["rasgos"] == ["planta"] and b["seccion_path"] == ["Reglamento", "Plazos"] and b["doc_id"] == "d"
+
+
+def test_grabador_publicados_no_escribe_ni_el_texto_ni_la_pregunta(rp, tmp_path, monkeypatch):
+    grabador = rp.GrabadorPublicados(tmp_path / "salida" / "p.jsonl", "light")
+    monkeypatch.setattr(rp, "PUBLICADOS", grabador)
+    rp.observar_caso(MotorConFuentes(), _caso(0, 10))
+    grabador.guardar()
+    contenido = (tmp_path / "salida" / "p.jsonl").read_text(encoding="utf-8")
+    assert "TEXTO SECRETO" not in contenido and "¿algo?" not in contenido
+    filas = [json.loads(linea) for linea in contenido.splitlines()]
+    assert len(filas) == 1 and "pregunta" not in filas[0] and "texto" not in filas[0]["publicadas"][0]
+
+
+def test_grabador_publicados_tolera_un_resultado_sin_contrato(rp, tmp_path, monkeypatch):
+    grabador = rp.GrabadorPublicados(tmp_path / "p.jsonl", "light")
+    monkeypatch.setattr(rp, "PUBLICADOS", grabador)
+    rp.observar_caso(MotorFalso(), _caso(210, 220))
+    publicada = grabador.filas[0]["publicadas"][0]
+    assert publicada["score"] is None and publicada["tipo_puntaje"] is None and publicada["seccion_path"] == []
+
+
+def test_sin_grabador_observar_caso_no_registra_nada(rp):
+    assert rp.PUBLICADOS is None
+    assert rp.observar_caso(MotorConFuentes(), _caso(210, 220))["rango_final"] == 2
+
+
+def test_cada_perfil_escribe_su_propio_archivo_de_publicados(rp, tmp_path):
+    assert rp.ruta_publicados(tmp_path / "publicados.jsonl", "medium").name == "publicados-medium.jsonl"
+    assert rp.ruta_publicados(tmp_path / "x" / "p.json", "light") == tmp_path / "x" / "p-light.json"
+    args = rp.construir_parser().parse_args(["b.json", "--salida", "s", "--volcar-publicados", "p.jsonl"])
+    assert args.volcar_publicados == "p.jsonl"
+
