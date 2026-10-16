@@ -7,7 +7,7 @@ Estados: ✅ hecho · 🔶 en curso · ⬜ pendiente · ⛔ bloqueado · ⚠ esp
 | Tarea | Estado | Fecha | Commit | Notas |
 |---|---|---|---|---|
 | P0.1 | ✅ | 2026-10-16 | (ver git log) | `--volcar-publicados` en `ranking_pasajes.py` (un JSONL por perfil, sin texto de pasajes ni de la pregunta); 5 pruebas nuevas. Ver «P0.1» abajo. |
-| P0.2 | 🔶 | 2026-10-16 | (ver git log) | Herramienta `forma_resultados.py` lista y probada (13 pruebas). **El análisis sobre documentos reales lo corre el usuario en su máquina** (los documentos no están en este entorno): ver «P0.2» abajo. ⚠ precisión objetivo (0,98 por defecto). |
+| P0.2 | ✅ | 2026-10-16 | (ver git log) | Análisis hecho sobre documentos reales (banco regenerado de 56 preguntas). **`light`: `clara` desactivada** (ningún margen llega a 0,98). **`medium`: τ ≈ 3,6 da 21/21 aciertos pero no demuestra 0,98** (Wilson inf. 0,845): decisión de producto abierta. Ver «P0.2: resultado con documentos reales». ⚠ P1.1 y P4 esperan esa decisión. |
 | P1.1 | ✅ | 2026-10-16 | (ver git log) | `ipsis/consulta/v2/forma.py` (`forma_de_pagina`, `margen`, `relacion`) y bloque `v2.presentation` (apagado, sin `engine.yaml` ni `config_version` nuevos). 22 pruebas. Ver «P1.1» abajo. |
 | P1.2 | ⬜ | | | |
 | P2.1 | ⬜ | | | |
@@ -97,3 +97,52 @@ modelos se omiten, por eso no se veían. No se tocaron (fuera del alcance).
   muestra es chica: mirar el límite de Wilson y los errores de `dev` (el informe avisa si son menos de 10). Si el resultado es
   «ningún τ cumple», la forma `clara` queda desactivada y el producto usa solo `variantes`, `documentos` y `neutral`.
 - Pruebas: `tests/evaluacion/test_forma_resultados.py` (13, con escenarios cuya respuesta se calcula a mano).
+
+## P0.2: resultado con documentos reales
+
+**El banco.** Los documentos que usó la sesión anterior se perdieron con su contenedor. El usuario volvió a subir los tres originales
+(el reglamento de prácticas y las dos versiones de la rúbrica del supervisor, que son casi gemelas) y se **regeneró** un banco
+adversarial de 56 preguntas: 28 objetivos × (formal + informal), con cada evidencia como texto literal con offsets calculados por el
+programa sobre el texto estructural (el cargador oficial lo valida). Grupos: pares P1/P2 (26), reglas sueltas (22) y rúbricas gemelas
+(8). Partición fijada por objetivo: dev 34, test 22. **No es el banco anterior**: las preguntas son otras y más difíciles, por lo que
+sus cifras **no son comparables** con el 0,893 de hit@1 de antes. Vive fuera del repositorio (privado); el usuario recibió el paquete
+(banco, constructor y LEEME) para reusarlo. Aquí solo hay cifras agregadas e IDs.
+
+**Calidad del primer resultado en este banco** (todas las particiones; el banco sintético daba 1,000 y 0,991):
+
+| Perfil | hit@1 | hit@3 | hit@5 | formal hit@1 / hit@3 | informal hit@1 / hit@3 | p50 / p95 ms |
+|---|---|---|---|---|---|---|
+| light | 0,661 | 0,875 | 0,893 | 0,75 / 0,96 | 0,57 / 0,79 | 77 / 166 |
+| medium (bge) | 0,643 | 0,875 | 0,946 | 0,86 / 1,00 | 0,43 / 0,75 | 819 / 969 |
+
+Por grupo (`medium`): pares P1/P2 0,58 / 0,92; reglas 0,77 / 0,86; rúbricas gemelas 0,50 / 0,75. **Lo informal es el problema grande**:
+en `medium` solo el 43 % de las preguntas informales tiene la fuente correcta primera y el 25 % ni siquiera la tiene entre las tres.
+Eso es de recuperación y no lo arregla ninguna presentación.
+
+**¿Separa el margen aciertos de errores?** Depende del perfil.
+
+- **`light`: no.** La precisión del primer resultado sube con el margen, pero con la cobertura mínima pedida (0,30) el máximo en `dev` es
+  ~0,92; solo llega a 1,0 con coberturas de ~0,12 o menos (4 preguntas). **`clara` queda desactivada en `light`.**
+- **`medium`: sí, y con una curva monótona** (dev + test juntos, n = 56): margen ≥ 2,0 → 31/35 (0,886); ≥ 3,07 → 23/24 (0,958);
+  **≥ 3,59 → 21/21 (1,000; Wilson inf. 0,845; cobertura 0,38)**; ≥ 4,45 → 18/18; ≥ 5,18 → 15/15. El único error con margen ≥ 3,07 es una
+  pregunta formal cuya fuente correcta salió tercera (margen 3,44).
+- **Con el procedimiento del plan** (menor τ que cumple 0,98 en `dev`, informado en `test`): **τ = 3,59** para `medium`: dev 12/12
+  (cobertura 0,35) y test 9/9 (cobertura 0,41).
+
+**Por qué NO se puede afirmar que se cumple el 0,98.** 21 aciertos de 21 son compatibles con una tasa de error real de hasta ~15 % (límite
+inferior de Wilson al 95 % = 0,845); para sostener 0,98 con ese intervalo harían falta del orden de 190 preguntas sin error. Además, τ
+se eligió como el menor valor que no falla en `dev`, lo que es optimista (en `test` aguanta, pero son 9 preguntas), y las preguntas las
+escribió el mismo asistente que construye el sistema. La conclusión honesta es «señal real y prometedora, no demostrada».
+
+**Decisión de producto abierta (⚠ del usuario).**
+
+1. `clara` **desactivada** (recomendado para empezar): el widget usa solo `variantes`, `documentos` y `neutral`, que no afirman cuál es la
+   correcta. No necesita umbral.
+2. `clara` **solo en `medium`, con τ conservador (≈ 4,5)**: 18/18 observados, cobertura ~32 %. Riesgo: algún «Esto dice…» equivocado
+   (hasta ~15 % de esas páginas con el 95 % de confianza). Mitigable con una redacción que afirme la procedencia y no la corrección
+   («Esto dice *X*, abajo hay otras fuentes por si tu caso es distinto»).
+3. Esperar a medir con más preguntas (idealmente de personas reales, P5) antes de decidir.
+
+**Formas resultantes en `medium` con τ = 3,59** (dev / test): `clara` 12 / 9, `variantes` 5 / 5, `documentos` 3 / 1, `neutral` 14 / 7: aun
+con `clara`, ~40 % de las páginas serían `neutral` (mismo documento, otra sección). Entre las páginas `variantes` el primer resultado acierta
+83 % (dev) y 62,5 % (test): el mensaje «Depende de tu caso» es donde más falta hace.
