@@ -43,8 +43,8 @@ v2:
 ```
 
 Los proyectos nuevos ya incluyen estas opciones; los existentes reciben sus
-valores por defecto al cargar (`presentation.enabled` es `false` en ellos: se
-enciende agregando ese bloque, [ADR 0010](../decisions/0010-presentation-by-result-shape.md)). `results_limit`
+valores por defecto al cargar (`presentation.enabled` es `true` por defecto, también en
+ellos: se apaga con `enabled: false`, [ADR 0010](../decisions/0010-presentation-by-result-shape.md)). `results_limit`
 controla la publicación y es independiente de `retrieval.top_k` de v1 y
 `read_m` del lector. Se muestran hasta tres coincidencias distintas por página de los sesenta
 candidatos recuperados. La puntuación es progresiva: `rerank_candidates` limita

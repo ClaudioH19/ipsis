@@ -101,9 +101,10 @@ def test_no_modifica_las_fuentes():
 
 # --- configuración -----------------------------------------------------------
 
-def test_la_presentacion_esta_apagada_por_defecto():
-    assert PresentacionConfig().model_dump() == {"activo": False, "margen_claro": None, "margen_claro_por_perfil": {}}
-    assert PipelineV2Config().model_dump()["presentacion"]["activo"] is False
+def test_la_presentacion_esta_encendida_por_defecto_y_sin_margen_claro():
+    assert PresentacionConfig().model_dump() == {"activo": True, "margen_claro": None, "margen_claro_por_perfil": {}}
+    assert PipelineV2Config().model_dump()["presentacion"]["activo"] is True
+    assert PipelineV2Config.model_validate({"presentacion": {"activo": False}}).presentacion.activo is False
 
 
 def test_se_lee_con_los_nombres_en_ingles_del_archivo():

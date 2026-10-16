@@ -23,9 +23,9 @@ questions never leave the server. The plan is in `docs/plan/multimedia*.md`.
 - **Only if it is close enough.** The shown unit (record or chapter) is the one with the highest dense cosine, and it is
   published only if that cosine reaches `media.min_score`. Without `min_score` nothing is shown. The fused hybrid order
   only orders candidates: it is relative to the query and says nothing about relevance.
-- **On in new projects, no migration.** `ipsis init` writes `media: enabled: true, min_score: 0.874`. The schema default stays
-  off and `config_version` stays 8, so an existing project gets the lane by adding that block. With no `media/` folder
-  nothing happens.
+- **On by default, no migration.** The schema default is `media.enabled: true` and `media.min_score: 0.874` (and `ipsis init`
+  writes them in the new `config/engine.yaml` so they are visible). `config_version` stays 8: an existing v2 project receives
+  them when it loads. With no `media/` folder indexed nothing happens, and `media: enabled: false` turns the lane off.
 - **ipsis does not serve media files.** `file:` is accepted by the record format but is neither served nor shown; a record
   needs a `url`. Serving files over HTTP would make the institution's media reachable by anyone who can reach the service,
   which does not fit "documents and questions never leave the server" and would need its own access control. Chosen with

@@ -22,9 +22,9 @@ answer). The plan is in `docs/plan/presentacion*.md`.
   a source that is not the first says where it is from (`opened_source`), and a "This isn't it" button
   asks for the next page (`results_retry`) and compacts the earlier cards. Everything is interface text
   or literal fields the API already publishes.
-- **`v2.presentation.enabled: true` is written by `ipsis init`** in the new `config/engine.yaml`. The
-  schema default stays `false` and there is **no migration** (`config_version` stays 8): an existing
-  project gets it by adding `v2: presentation: enabled: true`. Turning it off is one line.
+- **On by default.** The schema default is `v2.presentation.enabled: true` (and `ipsis init` writes it in the new
+  `config/engine.yaml` so it is visible). There is **no migration** (`config_version` stays 8): an existing v2 project
+  receives it when it loads, with nothing to add. Turning it off is `v2: presentation: enabled: false`.
 - **`clear` is not used.** A "clear answer" page (first source far ahead of the second) would be the only
   shape that hints "this is it". It stays off: `clear_margin` is unset and the widget has no `clear`
   layout.

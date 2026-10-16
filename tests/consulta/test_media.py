@@ -164,9 +164,10 @@ def test_con_coleccion_el_buscador_hereda_las_opciones(carril, tmp_path):
 
 # --- la configuración --------------------------------------------------------
 
-def test_la_configuracion_del_carril_esta_apagada_por_defecto():
-    assert MediaConfig().model_dump() == {"activo": False, "max_resultados": 1, "puntaje_minimo": None,
+def test_la_configuracion_del_carril_esta_encendida_por_defecto_con_el_umbral_medido():
+    assert MediaConfig().model_dump() == {"activo": True, "max_resultados": 1, "puntaje_minimo": 0.874,
                                           "presupuesto_ms": 150}
+    assert MediaConfig.model_validate({"activo": False}).activo is False
 
 
 def test_la_configuracion_se_lee_con_los_nombres_en_ingles_del_archivo():

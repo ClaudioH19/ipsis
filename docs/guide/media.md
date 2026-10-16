@@ -45,7 +45,7 @@ with or without `media/`.
 ```yaml
 # config/engine.yaml
 media:
-  enabled: true      # new projects have it on; with no media/ folder it does nothing
+  enabled: true      # on by default; with no media/ folder it does nothing
   min_score: 0.874   # nothing is shown below this dense cosine; null shows nothing at all
   max_results: 1     # records per page (1 to 5)
   budget_ms: 150     # the lane is skipped if the query has less time left

@@ -129,7 +129,7 @@ def test_el_motor_publica_la_ficha_y_las_mismas_fuentes_que_sin_carril(tmp_path,
             motor.cerrar()
 
     apagado = consultar(activo=False)
-    sin_umbral = consultar(activo=True)                       # encendido pero sin puntaje_minimo: no se publica nada
+    sin_umbral = consultar(activo=True, puntaje_minimo=None)  # encendido pero sin puntaje_minimo: no se publica nada
     con_umbral = consultar(activo=True, puntaje_minimo=-1.0, max_resultados=2)
 
     assert "multimedia" not in apagado.contrato_http

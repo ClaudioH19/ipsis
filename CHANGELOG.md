@@ -9,16 +9,16 @@ a minor change may break compatibility and is marked as such.
 ### Added
 
 - **Presentation by result shape** ([ADR 0010](docs/decisions/0010-presentation-by-result-shape.md)), on in new projects
-  (`v2.presentation.enabled: true` in `config/engine.yaml`; existing projects keep it off until the block is added, and no
-  `config_version` change). The engine describes the first page (`result_shape` in `POST /ask`: `variants`, `documents` or
+  (`v2.presentation.enabled`, true by default in the schema and written by `ipsis init`; existing projects receive it
+  with no change to `config_version`; `enabled: false` turns it off). The engine describes the first page (`result_shape` in `POST /ask`: `variants`, `documents` or
   `neutral`) without changing which sources are shown or their order. The widget uses it: "It depends on your case" with a
   "Choose your case" row of shortcuts, "Found in several documents" with a mark at each document change, and two correction
   paths (opening a source that is not the first says where it is from; a "This isn't it" button asks for the next page and
   compacts the earlier cards). The assistant message catalog grows from 118 to 142 messages (17 categories).
   The "clear answer" form is not used.
 - **Audio and video records** ([ADR 0011](docs/decisions/0011-media-records-in-a-separate-lane.md),
-  [guide](docs/guide/media.md)), on in new projects (`media.enabled: true`, `media.min_score: 0.874`; existing projects keep
-  it off until the block is added; no `config_version` change; with no `media/` folder it does nothing). A person writes one
+  [guide](docs/guide/media.md)), on by default (`media.enabled: true`, `media.min_score: 0.874` in the schema and in `ipsis init`;
+  existing projects receive them with no `config_version` change; with no `media/` folder it does nothing). A person writes one
   YAML record per audio or video in `media/*.yaml` (`ipsis/ingesta/fichas.py`); `ipsis index` and `ipsis sync` index them in
   their own collection, a query searches them after the document sources, and the API returns the match as `media` and the
   widget shows it as a separate card (type, duration, chapter and minute, the record's own text and a link that opens in a

@@ -150,5 +150,5 @@ sobre `bd6c24e`. Pueden depender de este entorno (CPU, codificación de la termi
 - **M4.1 no se hace** (decisión del usuario, 2026-10-16: servir archivos puede comprometer la privacidad del asistente). Se aceptan los tipos y el tamaño
   propuestos (mp4, webm, mp3, m4a, ogg; 500 MB) por si se retoma, pero hoy ipsis no sirve ni muestra archivos: las fichas con solo `file` se indexan y no se publican.
 - **M5:** la plantilla `engine.yaml` de los proyectos nuevos trae `media: enabled: true, min_score: 0.874, max_results: 1, budget_ms: 150`. Sin migración ni `config_version` nueva
-  (el valor por defecto del esquema sigue apagado): un proyecto existente lo enciende agregando el bloque. Con la configuración por defecto, un proyecto nuevo
+  (el valor por defecto **del esquema** es encendido con `min_score` 0,874, a pedido del usuario: los proyectos existentes lo reciben al cargar y se apaga con `enabled: false`). Con la configuración por defecto, un proyecto nuevo
   muestra la ficha que corresponde y no una ajena (`tests/integracion/test_media_indexacion.py`, prueba lenta con el modelo real).

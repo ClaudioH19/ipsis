@@ -63,6 +63,10 @@ def _forma(candidatos, **kwargs):
     return resultado.contrato_http.get("forma_resultados")
 
 
+def test_sin_opciones_la_forma_se_publica_porque_esta_encendida_por_defecto():
+    assert _motor(HERMANAS).consultar(PREGUNTA, "s").contrato_http["forma_resultados"] == "variantes"
+
+
 @pytest.mark.parametrize("candidatos, esperada", [
     (HERMANAS, "variantes"), (ALCANCES, "variantes"), (DOS_DOCUMENTOS, "documentos"), (OTRA_SECCION, "neutral")])
 def test_la_forma_sale_de_lo_publicado(candidatos, esperada):
@@ -73,8 +77,11 @@ def test_una_sola_fuente_es_neutral():
     assert _forma(HERMANAS[:1]) == "neutral"
 
 
+APAGADA = {"activo": False}
+
+
 def test_apagada_no_deja_ninguna_clave():
-    resultado = _motor(HERMANAS).consultar(PREGUNTA, "s")
+    resultado = _motor(HERMANAS, presentacion=APAGADA).consultar(PREGUNTA, "s")
     assert "forma_resultados" not in resultado.contrato_http and "forma_resultados" not in resultado.diagnostico
     assert "result_shape" not in respuesta_publica(resultado.contrato_http)
 
@@ -86,7 +93,7 @@ def test_encenderla_no_cambia_ni_el_contenido_ni_el_orden(candidatos):
                 [{k: v for k, v in f.items()} for f in resultado.contrato_http["fragmentos"]],
                 resultado.contrato_http.get("bloques"))
 
-    apagado = _motor(candidatos).consultar(PREGUNTA, "s")
+    apagado = _motor(candidatos, presentacion=APAGADA).consultar(PREGUNTA, "s")
     encendido = _motor(candidatos, presentacion={"activo": True}).consultar(PREGUNTA, "s")
     assert publicado(encendido) == publicado(apagado)
 

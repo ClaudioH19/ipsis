@@ -16,10 +16,10 @@ v2:
   context_neighbors: 1
   # Page shape (ADR 0010): the API reports `result_shape` and the widget picks its messages and layout ("It depends on your
   # case", "Found in several documents", "This isn't it"). It never changes which sources are shown or their order.
-  # false turns it off. `clear_margin` (a "clear answer" page) stays off: it is not proven; see ADR 0010.
+  # On by default (these lines only make it visible); false turns it off. `clear_margin` (a "clear answer" page) stays off: it is not proven; see ADR 0010.
   presentation:
     enabled: true
-# Audio and video records (media/*.yaml; docs/guide/media.md, ADR 0011): a separate card after the sources, shown only
+# Audio and video records (media/*.yaml; docs/guide/media.md, ADR 0011), on by default: a separate card after the sources, shown only
 # when its dense cosine reaches min_score. With no media/ folder this does nothing. null min_score shows nothing at all.
 media:
   enabled: true

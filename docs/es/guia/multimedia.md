@@ -44,7 +44,7 @@ imprime las inválidas con lo que falla (`[!] media/induccion.yaml: …`). El í
 ```yaml
 # config/engine.yaml
 media:
-  enabled: true      # los proyectos nuevos lo traen encendido; sin carpeta media/ no hace nada
+  enabled: true      # encendido por defecto; sin carpeta media/ no hace nada
   min_score: 0.874   # bajo este coseno denso no se muestra nada; null no muestra nada en absoluto
   max_results: 1     # fichas por página (1 a 5)
   budget_ms: 150     # el carril se omite si a la consulta le queda menos tiempo

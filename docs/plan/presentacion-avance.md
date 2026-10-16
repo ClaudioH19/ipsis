@@ -210,7 +210,7 @@ Ambos caminos viven solo cuando la API informa `result_shape` (es decir, con `v2
 ## P4: activación por defecto (aprobada por el usuario)
 
 - La plantilla `engine.yaml` de los proyectos nuevos trae `v2.presentation.enabled: true`; `clear_margin` no se configura (opción 1).
-- **Sin migración y sin subir `config_version`** (desviación del plan, que la pedía «si cambia la plantilla»): el valor por defecto del esquema
-  sigue siendo `false`, así que los proyectos existentes no cambian de conducta; se enciende agregando el bloque. El plan solo pedía activarla en
-  los proyectos migrados si el usuario lo solicitaba, y no lo solicitó. Prueba: `tests/configuracion/test_presentacion_por_defecto.py`.
+- **Sin migración y sin subir `config_version`** (desviación del plan, que la pedía «si cambia la plantilla»): el valor por defecto **del esquema** es `true` (pedido
+  del usuario: «déjalas por defecto para no estar activando en el repositorio»), así que los proyectos existentes lo reciben al cargar, sin bloque ni migración, y se apaga con
+  `enabled: false`. Prueba: `tests/configuracion/test_defectos_de_proyectos_nuevos.py`.
 - ADR 0010 `presentation-by-result-shape`, guías web (EN/ES), `docs/methodology/fuentes-v2.md` (sección «Forma de la página») y CHANGELOG `[Unreleased]`.
