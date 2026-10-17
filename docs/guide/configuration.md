@@ -32,7 +32,7 @@ my-assistant/
 ### `assistant.yaml`
 
 ```yaml
-config_version: 7
+config_version: 8
 assistant_name: "Support assistant"
 domain_description: "the product manuals"
 language: en              # ISO 639 code: es, en, pt, pt-br...
@@ -49,7 +49,7 @@ posture:
 ## Versioning
 
 `assistant.yaml` and `engine.yaml` declare `config_version`. The current
-version is `7`.
+version is `8`.
 
 - Any `ipsis` command migrates an older project when it starts: files without
   `config_version` count as version 0 and move up step by step.
@@ -61,6 +61,9 @@ version is `7`.
 | 3 | `domain.yaml` replaces domain profiles; `profile` becomes the installation profile (v2 projects end up on `light`); no torch; `.cache/` moves to `.ipsis/` |
 | 4 | The `cascade_v1` policy replaces the previous one; thresholds move to the profile and to `calibration.yaml` |
 | 5 | Folders, files, keys and values in English (`config/`, `documents/`, `assistant.yaml`, `assistant_name`…). Projects created with Spanish names are moved and rewritten automatically, keeping their comments |
+| 6 | `engine.yaml` without `pipeline` selects `pipeline: v2`; an explicit `pipeline: v1` is kept |
+| 7 | The `v2.council` experiment is removed from `engine.yaml`; the other v2 budgets are kept |
+| 8 | v2 projects that had not chosen a preparation move to the structural one (`retrieval.preparation.mode: structural_v1`); run `ipsis index` to build the new index ([ADR 0009](../decisions/0009-structural-preparation-by-default.md)) |
 
 The validated configuration can be loaded from Python:
 
@@ -81,7 +84,7 @@ use the English names shown in this guide.
 New projects and configurations without a selector use v2:
 
 ```yaml
-config_version: 7
+config_version: 8
 pipeline: v2
 ```
 

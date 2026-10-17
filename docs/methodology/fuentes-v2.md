@@ -1,5 +1,7 @@
 # V2 como enrutador de fuentes
 
+Estado: vigente. Describe el motor v2, predeterminado desde el 2026-10-12.
+
 V2 entrega varias fuentes ordenadas para que la persona revise y lea la
 información. Usa búsqueda híbrida, corrección ortográfica optativa y hasta un
 reranker del perfil. No genera una respuesta ni interpreta una votación como
@@ -10,13 +12,23 @@ configuraciones antiguas. Una selección explícita `pipeline: v1` se conserva.
 Para cambiar un proyecto existente, escribe `pipeline: v2` en
 `config/engine.yaml` y reinicia el servicio. Para volver, selecciona `v1`.
 Cambiar solo el motor reutiliza el índice actual; cambiar la preparación
-documental requiere su propia reindexación. La preparación estructural de
-DOCX continúa siendo optativa y experimental.
+documental requiere su propia reindexación. La preparación estructural (DOCX,
+PDF, Markdown, texto y hojas de cálculo) es la predeterminada en los proyectos
+nuevos y en los v2 que no habían elegido preparación, que pasan a
+`config_version: 8` con el siguiente comando `ipsis` y deben ejecutar
+`ipsis index` ([ADR 0009](../decisions/0009-structural-preparation-by-default.md)).
+`retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
+
+## Forma de la página
+
+Con `v2.presentation.enabled` la primera página trae `result_shape` (`variants`, `documents` o `neutral`): describe cómo se
+parecen las dos primeras fuentes y deja que el widget elija mensaje y disposición. No cambia qué se publica ni su orden
+([ADR 0010](../decisions/0010-presentation-by-result-shape.md)).
 
 ## Configuración
 
 ```yaml
-config_version: 7
+config_version: 8
 pipeline: v2
 v2:
   results_limit: 3
@@ -26,10 +38,13 @@ v2:
   query_budget_ms: 2500
   reranker_batch_size: 2
   reranker_max_tokens: 256
+  presentation:
+    enabled: true
 ```
 
 Los proyectos nuevos ya incluyen estas opciones; los existentes reciben sus
-valores por defecto al cargar. `results_limit`
+valores por defecto al cargar (`presentation.enabled` es `true` por defecto, también en
+ellos: se apaga con `enabled: false`, [ADR 0010](../decisions/0010-presentation-by-result-shape.md)). `results_limit`
 controla la publicación y es independiente de `retrieval.top_k` de v1 y
 `read_m` del lector. Se muestran hasta tres coincidencias distintas por página de los sesenta
 candidatos recuperados. La puntuación es progresiva: `rerank_candidates` limita

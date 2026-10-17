@@ -223,7 +223,8 @@ podemos procesar. Las primeras comparaciones reales están en el
 
 ## 14. Estado
 
-Implementación experimental. El mapa histórico de v1 sigue describiendo sus
+Histórico (2026-10-11). Desde el 2026-10-12 v2 es el motor predeterminado y su contrato
+vigente está en [fuentes ordenadas](fuentes-v2.md). El mapa histórico de v1 sigue describiendo sus
 capas. El motor v2, la preparación DOCX y el comparador offline están
 implementados; las primeras corridas A/B/C/D incluyen regresiones de relación.
 La [preparación estructural](preparacion-estructural.md) detalla el recorrido

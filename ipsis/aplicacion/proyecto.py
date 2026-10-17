@@ -348,6 +348,7 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
     from ipsis.configuracion.carga import cargar_proyecto, config_recuperacion
     from ipsis.indice.manifiesto import ManifiestoIndice, es_compatible, ruta_manifiesto
     from ipsis.indice.qdrant import nombre_coleccion_versionada
+    from ipsis.ingesta.indice_media import es_coleccion_media
     from ipsis.modelos.catalogo import obtener
 
     cfg_rec = config_recuperacion(cargar_proyecto(), perfil=perfil)
@@ -364,7 +365,7 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
     otros = []
     for ruta in sorted(Path(rutas.INDICE).glob("*.manifest.json")):
         manifiesto = ManifiestoIndice.model_validate(json.loads(ruta.read_text(encoding="utf-8")))
-        if manifiesto.coleccion.startswith(base + "_"):
+        if manifiesto.coleccion.startswith(base + "_") and not es_coleccion_media(manifiesto.coleccion):
             otros.append(manifiesto)
     if not otros:
         return EstadoIndice("sin_indice", modelo)

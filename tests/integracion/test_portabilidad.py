@@ -257,6 +257,9 @@ def test_portabilidad_pythonioencoding_cp1252_no_falla(proyecto_externo: Path):
         return subprocess.run(
             [PYTHON, "-m", "ipsis.cli", *args], cwd=str(proyecto_externo), capture_output=True, text=True,
             timeout=timeout, env=entorno,
+            # El hijo escribe en cp1252: decodificarlo con la codificación de esta consola (utf-8 en Linux) fallaría
+            # al leer «ahí» o «diseño», y no es lo que se prueba.
+            encoding="cp1252", errors="replace",
         )
 
     docs = _construir_documentos(proyecto_externo)

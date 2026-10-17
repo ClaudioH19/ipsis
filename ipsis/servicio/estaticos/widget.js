@@ -182,6 +182,20 @@
     source_table: "Source table",
     source_table_hint: "Open full context to read the table with its columns.",
     search_more: "Show more results",
+    search_variants_label: "Choose your case",
+    search_not_this: "This isn't it",
+    media_also_video: "There is also a video about this",
+    media_also_audio: "There is also an audio about this",
+    media_also_mixed: "There is also audio and video about this",
+    media_kind_video: "Video",
+    media_kind_audio: "Audio",
+    media_by_description_video: "According to the video description",
+    media_by_description_audio: "According to the audio description",
+    media_open_video: "Open the video",
+    media_open_audio: "Open the audio",
+    media_new_tab: "opens in a new tab",
+    media_chapter_at: "From {time}",
+    media_duration: "Duration {time}",
     search_added: "Added {n} results.",
     search_start: "Search your documents",
     search_instruction: "Enter a question or keywords to find information.",
@@ -742,6 +756,31 @@
     ".rw-resultado-alcance{display:inline-flex;align-items:center;max-width:100%;padding:1px 9px;border-radius:99px;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;",
     "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
     "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-media{margin:18px 0 6px;padding-top:14px;border-top:1px solid var(--rw-borde-resultado);}",
+    ".rw-media-titulo{margin:0 0 10px;font-size:calc(var(--rw-tamano-cita) + .5px);font-weight:650;color:var(--rw-texto);}",
+    ".rw-media-tarjeta{padding:13px 14px;margin:0 0 10px;border:1px solid var(--rw-borde-resultado);border-radius:12px;background:var(--rw-superficie);}",
+    ".rw-media-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:0 0 6px;font-size:calc(var(--rw-tamano-cita) - .5px);color:var(--rw-texto-suave);}",
+    ".rw-media-tipo{display:inline-flex;align-items:center;padding:1px 9px;border-radius:99px;font-weight:650;color:var(--rw-acento);",
+    "  background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));}",
+    ".rw-media-nombre{margin:0 0 4px;font-size:1.05em;font-weight:650;color:var(--rw-texto);overflow-wrap:anywhere;}",
+    ".rw-media-capitulo{margin:0 0 4px;font-weight:600;color:var(--rw-seccion);overflow-wrap:anywhere;}",
+    ".rw-media-descripcion{margin:0 0 4px;color:var(--rw-texto);overflow-wrap:anywhere;}",
+    ".rw-media-origen{margin:0 0 10px;font-size:calc(var(--rw-tamano-cita) - .5px);color:var(--rw-texto-suave);}",
+    ".rw-media-abrir{display:inline-block;padding:8px 14px;border-radius:99px;font-weight:650;text-decoration:none;color:var(--rw-acento);",
+    "  background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));border:1px solid color-mix(in srgb,var(--rw-acento) 38%,var(--rw-borde));}",
+    ".rw-media-abrir:hover{background:color-mix(in srgb,var(--rw-acento) 18%,var(--rw-superficie));}",
+    ".rw-media-abrir:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-no-es{font-weight:500;color:var(--rw-texto-suave);}",
+    ".rw-resultados[data-corregir='si'] > .rw-resultado[data-compacta='si']:not(:has(details[open])) .rw-resultado-vista{display:none;}",
+    ".rw-atajos{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 12px;}",
+    ".rw-atajos-etiqueta{font-size:calc(var(--rw-tamano-cita) - .5px);color:var(--rw-texto-suave);}",
+    ".rw-atajo{padding:3px 11px;border-radius:99px;font:inherit;font-size:calc(var(--rw-tamano-cita) - .5px);font-weight:650;cursor:pointer;",
+    "  color:var(--rw-acento);background:color-mix(in srgb,var(--rw-acento) 10%,var(--rw-superficie));",
+    "  border:1px solid color-mix(in srgb,var(--rw-acento) 30%,var(--rw-borde));overflow-wrap:anywhere;}",
+    ".rw-atajo:hover{background:color-mix(in srgb,var(--rw-acento) 18%,var(--rw-superficie));}",
+    ".rw-atajo:focus-visible{outline:2px solid var(--rw-acento);outline-offset:2px;}",
+    ".rw-resultados[data-forma='documents'] > .rw-resultado[data-grupo='nuevo']{margin-top:18px;border-top:3px solid color-mix(in srgb,var(--rw-acento) 55%,var(--rw-borde));}",
+    ".rw-resultados[data-forma='documents'] > .rw-resultado[data-grupo='nuevo']:first-child{margin-top:0;}",
     ".rw-resultado-padre{color:var(--rw-seccion);background:var(--rw-fondo);border-color:var(--rw-borde-resultado);font-weight:600;}",
     ".rw-resultado-rasgos{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
@@ -1148,6 +1187,8 @@
       categoria: r.conversational_category,
       continuation: r.continuation,
       has_more: r.has_more,
+      forma: r.result_shape,
+      media: r.media || [],
       respuesta: r.answer,
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
@@ -1578,6 +1619,18 @@
     return validos.some(function (b) { return b.kind === "table"; });
   }
 
+  // Corrección 1: al abrir el contexto de una fuente que no es la primera, el asistente dice de dónde es, sin afirmar que
+  // sea la correcta (plantilla ``opened_source``). Una vez por tarjeta, sin enviar nada al servidor, y solo si la API
+  // informó la forma de la página (``v2.presentation.enabled``).
+  function anunciarFuenteAbierta(lista, item, doc, contexto) {
+    if (lista.dataset.corregir !== "si" || item.dataset.anunciada === "si") return;
+    if (Array.prototype.indexOf.call(lista.children, item) < 1) return;
+    if (!BANCO_VOZ.opened_source || !BANCO_VOZ.opened_source.length) return;
+    item.dataset.anunciada = "si";
+    hablar(voz("opened_source").replace(/\{doc\}/g, doc).replace(/\{scope_suffix\}/g, contexto ? ", " + contexto : ""),
+           "opened_source");
+  }
+
   function agregarResultados(lista, fragmentos, pregunta) {
     var primero = null, nuevos = 0;
     fragmentos.forEach(function (frag, indice) {
@@ -1588,6 +1641,7 @@
       item.className = "rw-resultado";
       item.style.setProperty("--rw-i", String(Math.min(nuevos++, 6)));
       item.value = frag.rango || indice + 1;
+      item.dataset.doc = frag.doc_id || frag.doc_titulo || frag.archivo || "";
       var origen = document.createElement("p");
       origen.className = "rw-resultado-origen";
       var nombreDoc = frag.doc_titulo || frag.archivo || "";
@@ -1600,6 +1654,7 @@
       var rutaSecciones = (frag.seccion || "").split(/\s*>\s*/).filter(Boolean);
       var tituloPadre = rutaSecciones.length > 1 ? rutaSecciones[rutaSecciones.length - 2] : "";
       var contexto = frag.alcance || tituloPadre;
+      var etiquetaFuente = contexto;  // ``contexto`` se reutiliza más abajo para el cuerpo de la tarjeta
       if (contexto) {
         var alcance = document.createElement("span");
         alcance.className = "rw-resultado-alcance" + (frag.alcance ? "" : " rw-resultado-padre");
@@ -1684,7 +1739,13 @@
       detalles.open = PRESENTACION.expandirContexto;
       titulo.setAttribute("aria-expanded", String(detalles.open));
       resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
-      titulo.addEventListener("click", function () { detalles.open = !detalles.open; });
+      titulo.addEventListener("click", function () {
+        detalles.open = !detalles.open;
+        if (detalles.open) anunciarFuenteAbierta(lista, item, nombreDoc, etiquetaFuente);
+      });
+      resumen.addEventListener("click", function () {  // el clic cambia el estado después de este manejador
+        if (!detalles.open) anunciarFuenteAbierta(lista, item, nombreDoc, etiquetaFuente);
+      });
       detalles.addEventListener("toggle", function () {
         titulo.setAttribute("aria-expanded", String(detalles.open));
         resumen.textContent = texto(detalles.open ? "search_close_document" : "search_read_document");
@@ -1718,6 +1779,139 @@
     return primero;
   }
 
+  // «Elige tu caso»: un atajo por variante (la etiqueta de contexto de cada una de las primeras tarjetas) que lleva a la
+  // tarjeta. Solo si hay al menos dos etiquetas distintas; si no, no ayudaría a distinguir nada.
+  function atajosDeVariantes(pagina) {
+    var tarjetas = Array.prototype.slice.call(pagina.lista.children, 0, 3);
+    var etiquetas = tarjetas.map(function (t) {
+      var e = t.querySelector(".rw-resultado-alcance");
+      return e ? e.textContent : "";
+    });
+    var distintas = etiquetas.filter(function (e, i) { return e && etiquetas.indexOf(e) === i; });
+    if (distintas.length < 2) return;
+    var barra = document.createElement("nav");
+    barra.className = "rw-atajos";
+    barra.setAttribute("aria-label", texto("search_variants_label"));
+    var rotulo = document.createElement("span");
+    rotulo.className = "rw-atajos-etiqueta";
+    rotulo.textContent = texto("search_variants_label") + ":";
+    barra.appendChild(rotulo);
+    etiquetas.forEach(function (etiqueta, i) {
+      if (!etiqueta || etiquetas.indexOf(etiqueta) !== i) return;
+      var atajo = document.createElement("button");
+      atajo.type = "button";
+      atajo.className = "rw-atajo";
+      atajo.textContent = etiqueta;
+      atajo.addEventListener("click", function () {
+        var tarjeta = tarjetas[i];
+        tarjeta.scrollIntoView({ block: "nearest" });
+        var titulo = tarjeta.querySelector(".rw-resultado-titulo");
+        if (titulo) titulo.focus({ preventScroll: true });
+      });
+      barra.appendChild(atajo);
+    });
+    pagina.seccion.insertBefore(barra, pagina.lista);
+  }
+
+  // “Lo encontré en varios documentos”: la primera tarjeta de cada documento lleva una marca (solo estilo): el orden
+  // sigue siendo el del ranking y la lista no cambia de estructura.
+  function marcarGruposDeDocumento(lista) {
+    var anterior = null;
+    Array.prototype.forEach.call(lista.children, function (item) {
+      if (item.dataset.doc !== anterior) item.dataset.grupo = "nuevo";
+      else delete item.dataset.grupo;
+      anterior = item.dataset.doc;
+    });
+  }
+
+  // Segundos → «14:32» o «1:02:05».
+  function horaDeSegundos(total) {
+    var h = Math.floor(total / 3600), m = Math.floor((total % 3600) / 60), s = total % 60;
+    var dos = function (n) { return (n < 10 ? "0" : "") + n; };
+    return h ? h + ":" + dos(m) + ":" + dos(s) : m + ":" + dos(s);
+  }
+
+  // Solo enlaces http(s). Para YouTube y Vimeo se añade el minuto del capítulo; para el resto, el enlace tal cual.
+  function enlaceDeMedia(url, segundos) {
+    var u;
+    try { u = new URL(url); } catch (e) { return null; }
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    if (segundos > 0) {
+      var host = u.hostname.replace(/^(www|m)\./, "");
+      if (host === "youtube.com" || host === "youtu.be") u.searchParams.set("t", segundos + "s");
+      else if (host === "vimeo.com" || host === "player.vimeo.com") u.hash = "t=" + segundos + "s";
+    }
+    return u.href;
+  }
+
+  // Carril aparte de multimedia: fichas de audio y video escritas por una persona. Texto literal de la ficha, sin
+  // reproductor ni iframe; el botón abre el enlace en otra pestaña.
+  function agregarMedia(seccion, fichas) {
+    var validas = (fichas || []).filter(function (f) { return f && enlaceDeMedia(f.url, 0); });
+    if (!validas.length) return null;
+    var tipos = validas.map(function (f) { return f.kind === "audio" ? "audio" : "video"; });
+    var mismo = tipos.every(function (t) { return t === tipos[0]; });
+    var bloque = document.createElement("section");
+    bloque.className = "rw-media";
+    var encabezado = document.createElement("h4");
+    encabezado.className = "rw-media-titulo";
+    encabezado.textContent = texto(mismo ? "media_also_" + tipos[0] : "media_also_mixed");
+    bloque.setAttribute("aria-label", encabezado.textContent);
+    bloque.appendChild(encabezado);
+    validas.forEach(function (ficha, i) {
+      var tipo = tipos[i];
+      var tarjeta = document.createElement("article");
+      tarjeta.className = "rw-media-tarjeta";
+      var meta = document.createElement("p");
+      meta.className = "rw-media-meta";
+      var etiqueta = document.createElement("span");
+      etiqueta.className = "rw-media-tipo";
+      etiqueta.textContent = texto("media_kind_" + tipo);
+      meta.appendChild(etiqueta);
+      if (ficha.duration > 0) {
+        var duracion = document.createElement("span");
+        duracion.textContent = texto("media_duration", { time: horaDeSegundos(ficha.duration) });
+        meta.appendChild(duracion);
+      }
+      if (ficha.version) {
+        var version = document.createElement("span");
+        version.textContent = "v" + ficha.version;
+        meta.appendChild(version);
+      }
+      tarjeta.appendChild(meta);
+      var nombre = document.createElement("h5");
+      nombre.className = "rw-media-nombre";
+      nombre.textContent = ficha.title || "";
+      tarjeta.appendChild(nombre);
+      if (ficha.chapter_title) {
+        var capitulo = document.createElement("p");
+        capitulo.className = "rw-media-capitulo";
+        capitulo.textContent = ficha.chapter_title + (ficha.start_seconds > 0
+          ? " \u00b7 " + texto("media_chapter_at", { time: horaDeSegundos(ficha.start_seconds) }) : "");
+        tarjeta.appendChild(capitulo);
+      }
+      var descripcion = document.createElement("p");
+      descripcion.className = "rw-media-descripcion";
+      descripcion.textContent = ficha.chapter_description || ficha.description || "";
+      tarjeta.appendChild(descripcion);
+      var origen = document.createElement("p");
+      origen.className = "rw-media-origen";
+      origen.textContent = texto("media_by_description_" + tipo);
+      tarjeta.appendChild(origen);
+      var abrir = document.createElement("a");
+      abrir.className = "rw-media-abrir";
+      abrir.href = enlaceDeMedia(ficha.url, ficha.start_seconds || 0);
+      abrir.target = "_blank";
+      abrir.rel = "noopener noreferrer";
+      abrir.textContent = texto("media_open_" + tipo);
+      abrir.setAttribute("aria-label", texto("media_open_" + tipo) + ": " + (ficha.title || "") + " (" + texto("media_new_tab") + ")");
+      tarjeta.appendChild(abrir);
+      bloque.appendChild(tarjeta);
+    });
+    seccion.appendChild(bloque);
+    return bloque;
+  }
+
   function renderizarBusqueda(respuesta) {
     activarBusqueda();
     if (!respuesta.continuando || !paginaBusqueda) {
@@ -1737,8 +1931,18 @@
       mensajes.scrollTop = 0;
     }
     var cantidadAnterior = paginaBusqueda.lista.children.length;
+    if (!respuesta.continuando) {
+      paginaBusqueda.lista.dataset.forma = respuesta.forma || "neutral";
+      if (respuesta.forma) paginaBusqueda.lista.dataset.corregir = "si";  // caminos de corrección (P3)
+    }
+    if (respuesta.continuando && respuesta.reintento) {  // «No es esto»: las tarjetas anteriores se compactan, no se borran
+      Array.prototype.forEach.call(paginaBusqueda.lista.children, function (item) { item.dataset.compacta = "si"; });
+    }
     var primero = agregarResultados(paginaBusqueda.lista, respuesta.fragmentos, respuesta.pregunta);
     var cantidad = paginaBusqueda.lista.children.length;
+    // La forma de la página cambia cómo se ve, nunca qué se ve ni en qué orden.
+    if (!respuesta.continuando && paginaBusqueda.lista.dataset.forma === "variants") atajosDeVariantes(paginaBusqueda);
+    if (paginaBusqueda.lista.dataset.forma === "documents") marcarGruposDeDocumento(paginaBusqueda.lista);
     paginaBusqueda.contador.textContent = texto(cantidad === 1 ? "search_results_count_one" : "search_results_count",
       { n: cantidad, query: respuesta.pregunta });
     paginaBusqueda.acciones.replaceChildren();
@@ -1755,19 +1959,43 @@
       mas.textContent = texto("search_more");
       mas.addEventListener("click", function () { enviarPregunta(respuesta.pregunta, respuesta.continuation, mas); });
       paginaBusqueda.acciones.appendChild(mas);
+      if (!respuesta.continuando && paginaBusqueda.lista.dataset.corregir === "si") {
+        // Corrección 2: pide la misma página siguiente, pero el asistente responde «Entonces quizás buscabas…».
+        var no = document.createElement("button");
+        no.type = "button";
+        no.className = "rw-seguir rw-no-es";
+        no.dataset.activo = "si";
+        no.textContent = texto("search_not_this");
+        no.addEventListener("click", function () { enviarPregunta(respuesta.pregunta, respuesta.continuation, no, true); });
+        paginaBusqueda.acciones.appendChild(no);
+      }
     }
     anunciador.textContent = respuesta.continuando
       ? texto("search_added", { n: cantidad - cantidadAnterior }) : paginaBusqueda.contador.textContent;
+    if (!respuesta.continuando) agregarMedia(paginaBusqueda.seccion, respuesta.media);
     if (respuesta.continuando && primero) primero.focus({ preventScroll: true });
     var categoriaVoz = cantidad === 0 ? "no_results" : respuesta.continuando ? "continuation" : "results";
+    var bancoReintento = respuesta.continuando && respuesta.reintento && BANCO_VOZ.results_retry && BANCO_VOZ.results_retry.length;
     // El conteo va en el mensaje del asistente (no en una línea aparte). Las plantillas pueden ubicarlo con
     // {count} («3 resultados», ya en singular o plural del idioma), {n} y {query}; si no usan ninguno, el conteo
     // se antepone («3 resultados.»). Sin resultados no hay conteo.
-    var mensajeVoz = voz(categoriaVoz, texto("voice_" + categoriaVoz));
+    // Con la forma de la página (result_shape) hay un mensaje propio: «depende de tu caso» si las primeras fuentes son
+    // variantes de lo mismo, «en varios documentos» si vienen de documentos distintos. Describen la página y no dicen
+    // cuál responde. Si el banco no lo tiene, o la forma es neutral, vale el mensaje de siempre. {n_docs} cuenta los
+    // documentos distintos de las fuentes que se ven.
+    var bancoVoz = bancoReintento ? "results_retry" : categoriaVoz;
+    if (categoriaVoz === "results" && !respuesta.continuando) {
+      var propio = respuesta.forma === "variants" ? "results_variants" : respuesta.forma === "documents" ? "results_documents" : null;
+      if (propio && BANCO_VOZ[propio] && BANCO_VOZ[propio].length) bancoVoz = propio;
+    }
+    var documentosVistos = {};
+    (respuesta.fragmentos || []).forEach(function (f) { documentosVistos[f.doc_id || f.doc_titulo || ""] = true; });
+    var mensajeVoz = voz(bancoVoz, texto("voice_" + categoriaVoz));
     if (cantidad > 0) {
       var frase = texto(cantidad === 1 ? "voice_count_phrase_one" : "voice_count_phrase", { n: cantidad });
-      if (/\{(count|n|query)\}/.test(mensajeVoz)) {
+      if (/\{(count|n|query|n_docs)\}/.test(mensajeVoz)) {
         mensajeVoz = mensajeVoz.replace(/\{count\}/g, frase).replace(/\{n\}/g, String(cantidad))
+          .replace(/\{n_docs\}/g, String(Object.keys(documentosVistos).length))
           .replace(/\{query\}/g, respuesta.pregunta || "");
       } else {
         mensajeVoz = frase + ". " + mensajeVoz;
@@ -1993,7 +2221,7 @@
   }
 
   var peticionPendiente = false;
-  function enviarPregunta(pregunta, cursor, botonMas) {
+  function enviarPregunta(pregunta, cursor, botonMas, reintento) {
     if (peticionPendiente) return;
     peticionPendiente = true;
     var exito = false;
@@ -2037,6 +2265,7 @@
         var respuesta = respuestaInterna(publica);
         respuesta.pregunta = pregunta;
         respuesta.continuando = !!cursor;
+        respuesta.reintento = !!reintento;
         if (botonMas) botonMas.dataset.activo = "no";
         agregarMensajeAsistente(respuesta);
         exito = true;

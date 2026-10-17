@@ -87,6 +87,12 @@ def url_servicio(perfil):
     try:
         _rag(["init", "--assistant-name", "Asistente Aqualis",
               "--domain-description", "los manuales del purificador Aqualis", "--profile", perfil], proyecto)
+        # El archivo esperado congela la cascada de v1 con fragmentos de tamaño fijo, como se capturó el 2026-10-10: hoy el
+        # motor por defecto es v2 (publica fuentes) y la preparación por defecto es la estructural (ADR 0009). Se fijan
+        # las condiciones originales para que siga protegiendo ese camino.
+        motor = proyecto / "config" / "engine.yaml"
+        motor.write_text(motor.read_text(encoding="utf-8").replace("\npipeline: v2", "\npipeline: v1", 1)
+                         .replace("mode: structural_v1", "mode: legacy", 1), encoding="utf-8")
         _rag(["load", str(CORPUS)], proyecto)
         _rag(["index"], proyecto)
 

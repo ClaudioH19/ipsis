@@ -33,7 +33,7 @@ mi-asistente/
 ### `assistant.yaml`
 
 ```yaml
-config_version: 7
+config_version: 8
 assistant_name: "Asistente de soporte"
 domain_description: "los manuales del producto"
 language: es              # código ISO 639: es, en, pt, pt-br...
@@ -50,7 +50,7 @@ posture:
 ## Versionado
 
 `assistant.yaml` y `engine.yaml` declaran `config_version`. La versión vigente
-es la `7`.
+es la `8`.
 
 - Cualquier comando `ipsis` migra un proyecto anterior al cargar: un archivo
   sin `config_version` se lee como versión 0 y sube paso a paso.
@@ -63,6 +63,9 @@ es la `7`.
 | 3 | `domain.yaml` reemplaza a los perfiles de dominio; `profile` pasa a ser el perfil de instalación (los proyectos v2 quedan en `light`); sin torch; `.cache/` pasa a `.ipsis/` |
 | 4 | La política `cascade_v1` reemplaza a la anterior; los umbrales pasan al perfil y a `calibration.yaml` |
 | 5 | Carpetas, archivos, claves y valores en inglés (`config/`, `documents/`, `assistant.yaml`, `assistant_name`…). Los proyectos creados con nombres en español se mueven y reescriben solos, conservando sus comentarios |
+| 6 | `engine.yaml` sin `pipeline` pasa a `pipeline: v2`; una selección explícita `pipeline: v1` se conserva |
+| 7 | Se elimina el experimento `v2.council` de `engine.yaml`; los demás presupuestos de v2 se conservan |
+| 8 | Los proyectos v2 que no habían elegido preparación pasan a la estructural (`retrieval.preparation.mode: structural_v1`); ejecuta `ipsis index` para construir el índice nuevo ([ADR 0009](../../decisions/0009-structural-preparation-by-default.md)) |
 
 La configuración ya validada puede cargarse desde Python:
 
@@ -83,7 +86,7 @@ archivos en disco usan los nombres en inglés de esta guía.
 Proyectos nuevos y configuraciones sin selector usan v2:
 
 ```yaml
-config_version: 7
+config_version: 8
 pipeline: v2
 ```
 

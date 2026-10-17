@@ -11,13 +11,24 @@ your first project. Everyday use and the command reference are in
 - Disk space for the profile's models. It is a global per-user cache shared
   by every project:
 
-  | Profile | Models | Approx. disk | p95 target |
+  | Profile | Models | Approx. disk | p95 target (`ipsis benchmark`) |
   |---|---|---|---|
   | `light` | dense e5-small | 0.5 GB | 150 ms |
-  | `medium` | e5-small + mMiniLM reranker + mDeBERTa reader | 1.7 GB | 1 s |
+  | `medium` | e5-small + reranker (bge-reranker-v2-m3 for Spanish and Portuguese, mMiniLM otherwise) | 1.0 GB (Spanish, Portuguese) · 0.6 GB (other languages) | 1 s |
 
   `bm25` is a diagnostic profile for `ipsis benchmark` only: it cannot be
   installed.
+  Sizes are the ONNX files on disk (measured on 2026-10-16 after `ipsis models download`: e5-small
+  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). The extractive QA reader (mDeBERTa) belongs to
+  the optional `pipeline: v1` engine: the default engine (v2) neither loads nor downloads it, and
+  `ipsis models list` shows what the active engine uses.
+  Measured latency of a whole `medium` query (v2; synthetic passage bank, 116 questions, 4 CPUs of an Intel Xeon
+  2.1 GHz, 2026-10-16): Spanish with bge-reranker-v2-m3, p50 604 ms and p95 749 ms; English with mMiniLM,
+  p50 349 ms and p95 620 ms. That bank has short passages: with real Spanish documents the p95 was 1.7 s (see
+  [ADR 0003](../decisions/0003-onnx-and-profiles.md)).
+  The "p95 target" is the profile's `p95_budget_ms`: the reference `ipsis benchmark` uses to mark whether a
+  profile meets its latency, shown also by `ipsis profile` and the panel. The default engine (v2) does not apply
+  it to queries: a v2 query is bounded by `v2.query_budget_ms` (2500 ms), the same for both profiles.
   `medium` is the recommended default for `ipsis init`.
 - Network only to download the models. Afterwards the service works offline.
 
@@ -69,8 +80,8 @@ preset or edit individual settings to adopt new options. Reload the browser
 and replace exported `widget.js` copies if your website uses them.
 
 Git branch installations update to a new commit on that branch. To pin the
-1.0 release, install `ipsis @
-git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`. Tag or commit installations
+1.1 release, install `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`. Tag or commit installations
 need a changed reference to move to another release.
 
 **In Docker:** `ipsis deploy prepare` generates your project's image;

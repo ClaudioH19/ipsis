@@ -1,5 +1,8 @@
 # Reranker (cross-encoder)
 
+Status: current. The `medium` table below predates the per-language reranker: Spanish and Portuguese projects use
+`bge-reranker-v2-m3` with 10 candidates in v2 ([ADR 0003](../decisions/0003-onnx-and-profiles.md)).
+
 ## 1. Purpose
 
 Reorder the retrieval candidates by reading the question and the passage
@@ -92,4 +95,5 @@ answers; no larger reranker fixed that in the measured banks.
 
 ## 14. Status
 
-Stable.
+Stable. The per-language reranker of `medium` is recorded in
+[ADR 0003](../decisions/0003-onnx-and-profiles.md).

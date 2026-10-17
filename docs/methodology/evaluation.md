@@ -1,5 +1,7 @@
 # Evaluation banks and metrics
 
+Status: current for the regression banks; the direct-answer metrics belong to the v1 engine.
+
 ## 1. Purpose
 
 Separate expected quality from current behavior. Characterization detects
@@ -136,4 +138,5 @@ squad2`).
 
 ## 14. Status
 
-Stable.
+Stable. The banks detect regressions for both engines; the direct-answer metrics apply to v1 (v2 returns
+ranked sources).

@@ -1,7 +1,9 @@
 # V2: lectura por campos y separación de ranking/QA
 
-Estado: experimental, 2026-10-11. Implementación posterior al
-[diagnóstico](motor-v2-diagnostico.md). Se conserva v1 como motor por defecto.
+Estado: histórico, 2026-10-11. Implementación posterior al
+[diagnóstico](motor-v2-diagnostico.md), cuando v1 era el motor por defecto; desde el
+2026-10-12 lo es v2 ([fuentes ordenadas](fuentes-v2.md)). La lectura `campos-1` sigue
+formando parte de la [preparación estructural](preparacion-estructural.md).
 
 ## Cambios aplicados
 

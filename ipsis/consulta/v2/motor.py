@@ -50,7 +50,8 @@ class MotorV2:
     abstencion_calibrada = False
 
     def __init__(self, *, retriever, verificador, idioma=None, perfil=None, plantillas=None,
-                 control_admision=None, top_k=None, opciones=None, reranker=None, lector=None):
+                 control_admision=None, top_k=None, opciones=None, reranker=None, lector=None,
+                 buscador_media=None, opciones_media=None):
         if top_k is not None and top_k < 1:
             raise ValueError("top_k debe ser positivo")
         self.retriever, self.verificador = retriever, verificador
@@ -62,6 +63,9 @@ class MotorV2:
         self.opciones = PipelineV2Config.model_validate(opciones or {}).model_dump()
         self.top_k = self.opciones["resultados_n"] if top_k is None else top_k
         self.reranker, self.lector = reranker, lector
+        # Carril multimedia (fichas de media/): opcional y siempre después de publicar las fuentes de documentos.
+        self.buscador_media = buscador_media
+        self.opciones_media = {"presupuesto_ms": 150, **(opciones_media or {})}
         self.backend = type(retriever).__name__
         self.metadatos_auditoria = {}
         self._rankings = RankingsTemporales()
@@ -328,7 +332,50 @@ class MotorV2:
         cursor = self._rankings.guardar(pregunta, id_sesion, ctx, todos, eventos, self.top_k)
         ctx.diagnostico["paginacion"] = {"offset": 0, "ranking_reutilizado": False, "modo": "progresivo"}
         resultado = self._publicar(ctx, todos[:self.top_k], eventos)
+        self._anadir_multimedia(resultado, ctx, limite)
+        self._anadir_forma(resultado)
         return self._con_cursor(resultado, cursor if resultado.evidencias else None)
+
+    def _anadir_forma(self, resultado):
+        """Describe la forma de la primera página (``forma_resultados``) para que el widget elija mensaje y disposición.
+
+        Solo si ``v2.presentation.enabled``; apagada no deja ninguna clave. No cambia qué se publica ni su orden
+        (ADR 0001, ``ipsis/consulta/v2/forma.py``). Solo en la primera página: ``continuar`` no la llama."""
+        presentacion = self.opciones["presentacion"]
+        if not presentacion["activo"] or not resultado.evidencias:
+            return
+        from ipsis.consulta.v2.forma import forma_de_pagina, margen, margen_claro_efectivo, relacion
+
+        rutas = {e.chunk_id: list(e.seccion_path) for e in resultado.evidencias}
+        fuentes = [{"score": f["score"], "tipo_puntaje": f["tipo_puntaje"], "doc_id": f["doc_id"],
+                    "alcance": f["alcance"], "seccion_path": rutas.get(f["chunk_id"], [])}
+                   for f in resultado.contrato_http["fragmentos"]]
+        perfil = self.perfil_instalacion.perfil if self.perfil_instalacion else None
+        forma = forma_de_pagina(fuentes, activo=True, margen_claro=margen_claro_efectivo(presentacion, perfil))
+        resultado.contrato_http["forma_resultados"] = forma
+        resultado.diagnostico["forma_resultados"] = {"forma": forma, "margen": margen(fuentes),
+                                                      "relacion": relacion(fuentes)}
+
+    def _anadir_multimedia(self, resultado, ctx, limite):
+        """Busca fichas multimedia para la pregunta y las deja en el contrato interno (``multimedia``).
+
+        Corre después de publicar las fuentes y sin cambiarlas; si no queda presupuesto se omite y se avisa. Solo
+        en la primera página: ``continuar`` no la llama."""
+        if self.buscador_media is None:
+            return
+        presupuesto_s = self.opciones_media["presupuesto_ms"] / 1000
+        if limite - time.perf_counter() < presupuesto_s:
+            resultado.diagnostico.setdefault("advertencias", []).append("carril multimedia omitido por presupuesto")
+            return
+        inicio = time.perf_counter()
+        try:
+            fichas = self.buscador_media.buscar(ctx.variantes)
+        except Exception as error:  # noqa: BLE001 -- el carril nunca tumba una consulta de documentos
+            resultado.diagnostico.setdefault("advertencias", []).append(f"carril multimedia falló: {type(error).__name__}")
+            return
+        resultado.contrato_http["multimedia"] = fichas
+        resultado.diagnostico["multimedia"] = {"publicadas": len(fichas),
+                                                "ms": round((time.perf_counter() - inicio) * 1000, 1)}
 
     def _publicar(self, ctx, elegidos, eventos):
         perfil = self.perfil_instalacion

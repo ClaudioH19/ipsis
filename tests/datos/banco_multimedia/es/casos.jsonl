@@ -1,0 +1,90 @@
+{"id": "mm-es-001", "pregunta": "¿Cómo puedo pedir un libro prestado y renovarlo?", "tipo": "ficha", "media_id": "biblioteca-prestamos", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-002", "pregunta": "¿A qué hora abre la biblioteca los sábados?", "tipo": "mismo_tema", "documento": "biblioteca", "informal": false, "particion": "dev"}
+{"id": "mm-es-003", "pregunta": "¿Cuál es la capital de Australia?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-004", "pregunta": "quiero renovar mi préstamo de la biblioteca, cómo se hace", "tipo": "ficha", "media_id": "biblioteca-prestamos", "capitulo_segundos": 210, "informal": true, "particion": "test"}
+{"id": "mm-es-005", "pregunta": "¿En qué piso queda la biblioteca?", "tipo": "mismo_tema", "documento": "biblioteca", "informal": false, "particion": "test"}
+{"id": "mm-es-006", "pregunta": "¿Cómo se prepara una tortilla de papas?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-007", "pregunta": "¿Dónde busco un libro en el catálogo de la biblioteca?", "tipo": "ficha", "media_id": "biblioteca-prestamos", "capitulo_segundos": 40, "informal": false, "particion": "dev"}
+{"id": "mm-es-008", "pregunta": "¿Abre la biblioteca los domingos?", "tipo": "mismo_tema", "documento": "biblioteca", "informal": false, "particion": "dev"}
+{"id": "mm-es-009", "pregunta": "¿Quién ganó el último mundial de fútbol?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-010", "pregunta": "¿Cómo busco artículos científicos en las bases de datos?", "tipo": "ficha", "media_id": "biblioteca-bases-de-datos", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-011", "pregunta": "¿Cuánto es el viático diario en el extranjero?", "tipo": "mismo_tema", "documento": "politica_viaticos", "informal": false, "particion": "dev"}
+{"id": "mm-es-012", "pregunta": "¿Cuántos planetas tiene el sistema solar?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-013", "pregunta": "¿Cómo rindo los gastos de mi viaje al volver de una comisión?", "tipo": "ficha", "media_id": "viaticos-rendicion", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-014", "pregunta": "¿Quién compra los pasajes aéreos de los funcionarios?", "tipo": "mismo_tema", "documento": "politica_viaticos", "informal": false, "particion": "test"}
+{"id": "mm-es-015", "pregunta": "¿Qué películas se estrenan este fin de semana?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-016", "pregunta": "¿Qué boletas debo guardar cuando viajo por comisión de servicio?", "tipo": "ficha", "media_id": "viaticos-rendicion", "capitulo_segundos": 30, "informal": false, "particion": "dev"}
+{"id": "mm-es-017", "pregunta": "¿Puedo viajar en clase ejecutiva?", "tipo": "mismo_tema", "documento": "politica_viaticos", "informal": false, "particion": "dev"}
+{"id": "mm-es-018", "pregunta": "¿Cómo se dice «gracias» en japonés?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-019", "pregunta": "¿Cómo preparo una comisión de servicio con tiempo?", "tipo": "ficha", "media_id": "viaticos-planificar", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-020", "pregunta": "¿Cuánto se paga si el viaje dura menos de doce horas?", "tipo": "mismo_tema", "documento": "politica_viaticos", "informal": false, "particion": "test"}
+{"id": "mm-es-021", "pregunta": "¿Cuál es la mejor época para viajar a Europa?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-022", "pregunta": "¿Cómo pido autorización para teletrabajar?", "tipo": "ficha", "media_id": "teletrabajo-solicitud", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-023", "pregunta": "¿De cuánto es la asignación mensual para gastos de conexión?", "tipo": "mismo_tema", "documento": "reglamento_teletrabajo", "informal": false, "particion": "dev"}
+{"id": "mm-es-024", "pregunta": "¿Cómo funciona una vacuna?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-025", "pregunta": "¿Qué requisitos necesito para pedir teletrabajo?", "tipo": "ficha", "media_id": "teletrabajo-solicitud", "capitulo_segundos": 60, "informal": false, "particion": "test"}
+{"id": "mm-es-026", "pregunta": "¿Cuánta velocidad de internet necesito para teletrabajar?", "tipo": "mismo_tema", "documento": "reglamento_teletrabajo", "informal": false, "particion": "dev"}
+{"id": "mm-es-027", "pregunta": "¿Quién pintó La noche estrellada?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-028", "pregunta": "como relleno el formulario de teletrabajo", "tipo": "ficha", "media_id": "teletrabajo-solicitud", "capitulo_segundos": 180, "informal": true, "particion": "dev"}
+{"id": "mm-es-029", "pregunta": "¿Cuándo puede suspender la jefatura mi teletrabajo?", "tipo": "mismo_tema", "documento": "reglamento_teletrabajo", "informal": false, "particion": "test"}
+{"id": "mm-es-030", "pregunta": "¿Cuánto mide el monte Everest?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-031", "pregunta": "¿Cómo organizo mi día trabajando desde casa?", "tipo": "ficha", "media_id": "teletrabajo-jornada", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-032", "pregunta": "¿Cuánto vale la defensa pública en la nota del PT2?", "tipo": "mismo_tema", "documento": "reglamento_titulacion", "informal": false, "particion": "dev"}
+{"id": "mm-es-033", "pregunta": "¿Cómo declaro mis impuestos personales?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-034", "pregunta": "¿Cuáles son las etapas para titularme de ingeniería?", "tipo": "ficha", "media_id": "titulacion-etapas", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-035", "pregunta": "¿Cada cuánto revisa los avances el profesor guía?", "tipo": "mismo_tema", "documento": "reglamento_titulacion", "informal": false, "particion": "test"}
+{"id": "mm-es-036", "pregunta": "¿Dónde puedo comprar un auto usado?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-037", "pregunta": "¿Cómo inscribo el Proyecto de Título I?", "tipo": "ficha", "media_id": "titulacion-etapas", "capitulo_segundos": 80, "informal": false, "particion": "dev"}
+{"id": "mm-es-038", "pregunta": "¿Qué significa la sigla CAT?", "tipo": "mismo_tema", "documento": "reglamento_titulacion", "informal": false, "particion": "dev"}
+{"id": "mm-es-039", "pregunta": "¿Cómo se hace una rutina de ejercicios en casa?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-040", "pregunta": "¿Cómo presento mi propuesta al Comité Académico de Titulación?", "tipo": "ficha", "media_id": "titulacion-etapas", "capitulo_segundos": 240, "informal": false, "particion": "test"}
+{"id": "mm-es-041", "pregunta": "¿En cuántos días paga Finanzas las facturas?", "tipo": "mismo_tema", "documento": "manual_adquisiciones", "informal": false, "particion": "dev"}
+{"id": "mm-es-042", "pregunta": "¿Cuáles son los síntomas de la gripe?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-043", "pregunta": "¿Cómo me preparo para la defensa pública de mi proyecto?", "tipo": "ficha", "media_id": "titulacion-defensa", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-044", "pregunta": "¿Cuántos días tiene Compras para emitir la Orden de Compra?", "tipo": "mismo_tema", "documento": "manual_adquisiciones", "informal": false, "particion": "test"}
+{"id": "mm-es-045", "pregunta": "¿Qué es el cambio climático?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-046", "pregunta": "¿Cómo pedimos que compren algo para nuestra unidad?", "tipo": "ficha", "media_id": "compras-solicitud", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-047", "pregunta": "¿Qué horario tiene la Mesa de Ayuda?", "tipo": "mismo_tema", "documento": "preguntas_frecuentes_ti", "informal": false, "particion": "dev"}
+{"id": "mm-es-048", "pregunta": "¿Cómo se cultiva el tomate en una maceta?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-049", "pregunta": "¿Cómo se llena el Formulario de Requerimiento?", "tipo": "ficha", "media_id": "compras-solicitud", "capitulo_segundos": 60, "informal": false, "particion": "test"}
+{"id": "mm-es-050", "pregunta": "¿Puedo instalar programas en mi computador?", "tipo": "mismo_tema", "documento": "preguntas_frecuentes_ti", "informal": false, "particion": "test"}
+{"id": "mm-es-051", "pregunta": "¿Qué libro me recomiendas para este verano?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-052", "pregunta": "¿Cómo compro algo del catálogo de ChileCompra Express?", "tipo": "ficha", "media_id": "compras-chilecompra", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-053", "pregunta": "¿En cuánto tiempo entregan un equipo nuevo?", "tipo": "mismo_tema", "documento": "preguntas_frecuentes_ti", "informal": false, "particion": "dev"}
+{"id": "mm-es-054", "pregunta": "¿Cómo se juega al ajedrez?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-055", "pregunta": "me olvidé la clave del computador, cómo la recupero", "tipo": "ficha", "media_id": "ti-contrasena", "capitulo_segundos": null, "informal": true, "particion": "test"}
+{"id": "mm-es-056", "pregunta": "¿Cuántas horas se guardan las muestras de sangre?", "tipo": "mismo_tema", "documento": "laboratorio", "informal": false, "particion": "dev"}
+{"id": "mm-es-057", "pregunta": "¿Cuántos habitantes tiene Chile?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-058", "pregunta": "¿Cómo me conecto a la VPN desde mi casa?", "tipo": "ficha", "media_id": "ti-vpn", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-059", "pregunta": "¿Quién es la responsable del registro de muestras?", "tipo": "mismo_tema", "documento": "laboratorio", "informal": false, "particion": "test"}
+{"id": "mm-es-060", "pregunta": "¿Cómo puedo aprender inglés rápido?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-061", "pregunta": "no puedo conectarme a la vpn, qué hago", "tipo": "ficha", "media_id": "ti-vpn", "capitulo_segundos": 220, "informal": true, "particion": "dev"}
+{"id": "mm-es-062", "pregunta": "¿Cuánto es la Beca de Movilización?", "tipo": "mismo_tema", "documento": "reglamento_beneficios", "informal": false, "particion": "dev"}
+{"id": "mm-es-063", "pregunta": "¿Cuál es el mejor teléfono del mercado?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-064", "pregunta": "¿Cómo debo etiquetar un tubo antes de procesarlo?", "tipo": "ficha", "media_id": "lab-muestras", "capitulo_segundos": 50, "informal": false, "particion": "test"}
+{"id": "mm-es-065", "pregunta": "¿Qué porcentaje de créditos debo aprobar para mantener la BAE?", "tipo": "mismo_tema", "documento": "reglamento_beneficios", "informal": false, "particion": "test"}
+{"id": "mm-es-066", "pregunta": "¿Cómo se arregla una llave que gotea?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-067", "pregunta": "¿Qué normas de seguridad hay que seguir al entrar al laboratorio?", "tipo": "ficha", "media_id": "lab-bienvenida", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-068", "pregunta": "¿Cuántos meses dura la garantía de la cafetera Brío C2?", "tipo": "mismo_tema", "documento": "garantia_cafetera", "informal": false, "particion": "dev"}
+{"id": "mm-es-069", "pregunta": "¿Quién escribió Cien años de soledad?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-070", "pregunta": "¿Cómo postulo a la beca de alimentación?", "tipo": "ficha", "media_id": "beneficios-alimentacion", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-071", "pregunta": "¿Cuántos litros por hora entrega cada gotero?", "tipo": "mismo_tema", "documento": "riego_invernadero", "informal": false, "particion": "dev"}
+{"id": "mm-es-072", "pregunta": "¿Cómo se calcula el área de un círculo?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-073", "pregunta": "¿Cuándo y cómo pido la ayuda de emergencia?", "tipo": "ficha", "media_id": "beneficios-emergencia", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-074", "pregunta": "¿Cuándo se apaga automáticamente la bomba del invernadero?", "tipo": "mismo_tema", "documento": "riego_invernadero", "informal": false, "particion": "test"}
+{"id": "mm-es-075", "pregunta": "¿Cuál es la receta del pan amasado?", "tipo": "fuera", "informal": false, "particion": "test"}
+{"id": "mm-es-076", "pregunta": "¿Cómo reclamo la garantía de mi cafetera?", "tipo": "ficha", "media_id": "garantia-reclamo", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-077", "pregunta": "¿Se pueden devolver los productos de higiene personal?", "tipo": "mismo_tema", "documento": "reembolsos", "informal": false, "particion": "dev"}
+{"id": "mm-es-078", "pregunta": "¿Qué es la inteligencia artificial?", "tipo": "fuera", "informal": false, "particion": "dev"}
+{"id": "mm-es-079", "pregunta": "¿Cómo programo el riego del invernadero?", "tipo": "ficha", "media_id": "riego-programacion", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-080", "pregunta": "¿En cuántos días hábiles se paga un reembolso aprobado?", "tipo": "mismo_tema", "documento": "reembolsos", "informal": false, "particion": "test"}
+{"id": "mm-es-081", "pregunta": "oye y tú sabes cómo se cocina el arroz", "tipo": "fuera", "informal": true, "particion": "dev"}
+{"id": "mm-es-082", "pregunta": "¿Cómo limpio los goteros que se tapan?", "tipo": "ficha", "media_id": "riego-goteros", "capitulo_segundos": null, "informal": false, "particion": "dev"}
+{"id": "mm-es-083", "pregunta": "cuanto me dan de viatico si viajo afuera", "tipo": "mismo_tema", "documento": "politica_viaticos", "informal": true, "particion": "dev"}
+{"id": "mm-es-084", "pregunta": "q tiempo va a hacer mañana", "tipo": "fuera", "informal": true, "particion": "test"}
+{"id": "mm-es-085", "pregunta": "¿Cómo pido que me devuelvan el dinero de una compra?", "tipo": "ficha", "media_id": "reembolsos-solicitud", "capitulo_segundos": null, "informal": false, "particion": "test"}
+{"id": "mm-es-086", "pregunta": "hasta que hora esta abierta la biblio", "tipo": "mismo_tema", "documento": "biblioteca", "informal": true, "particion": "dev"}
+{"id": "mm-es-087", "pregunta": "cual es el mejor equipo de futbol", "tipo": "fuera", "informal": true, "particion": "dev"}
+{"id": "mm-es-088", "pregunta": "¿Cómo anoto una muestra en el registro del laboratorio?", "tipo": "ficha", "media_id": "lab-muestras", "capitulo_segundos": 150, "informal": false, "particion": "dev"}
+{"id": "mm-es-089", "pregunta": "cuanto es la beca de comida", "tipo": "mismo_tema", "documento": "reglamento_beneficios", "informal": true, "particion": "test"}
+{"id": "mm-es-090", "pregunta": "¿Cuál es el sentido de la vida?", "tipo": "fuera", "informal": false, "particion": "test"}

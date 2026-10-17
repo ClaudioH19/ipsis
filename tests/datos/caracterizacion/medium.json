@@ -25,7 +25,7 @@
     "status": "ok",
     "service_level": "normal",
     "plan": "extractive",
-    "answer": "Según el texto cargado:\n\nEl filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "answer": "Según el texto cargado:\n\nEl equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
       "top1": 0.85422,
       "margin": 0.02035
@@ -97,7 +97,7 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nProduce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\n¿Coincide con lo que necesitabas? Con otro detalle puedo afinar la búsqueda.",
+    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\n¿Coincide con lo que necesitabas? Con otro detalle puedo afinar la búsqueda.",
     "confidence": {
       "top1": 0.88395,
       "margin": 0.04861
@@ -110,7 +110,7 @@
         "offset_start": 989,
         "offset_end": 1041,
         "text": "Produce hasta 190 litros de agua purificada por día.",
-        "score": 0.25453
+        "score": 0.25455
       }
     ]
   },
@@ -220,7 +220,7 @@
     "status": "ok",
     "service_level": "normal",
     "plan": "extractive",
-    "answer": "Según el texto cargado:\n\nSi la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "answer": "Según el texto cargado:\n\nEl purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).",
     "confidence": {
       "top1": 0.82911,
       "margin": 0.03318

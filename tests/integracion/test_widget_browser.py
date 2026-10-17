@@ -747,6 +747,308 @@ def test_las_plantillas_ubican_el_conteo_con_count_n_y_query(navegador, servidor
     page.close()
 
 
+def _buscar_con_forma(page, servidor_widget, mensajes, forma, documentos=("Inventory", "Inventory", "Inventory"), alcances=None):
+    pagina = _pagina_fuentes(continuar=False)
+    for i, (fragmento, doc) in enumerate(zip(pagina["fragments"], documentos)):
+        fragmento["doc_title"], fragmento["doc_id"] = doc, doc.lower()
+        if alcances:
+            fragmento["scope"] = alcances[i]
+    if forma:
+        pagina["result_shape"] = forma
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+                                                       "assistant_messages": mensajes}))
+    page.route("**/ask", lambda r: r.fulfill(json=pagina))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+
+
+BANCO_FORMAS = {"results": ["Standard message."], "results_variants": ["{count}. It depends on your case."],
+                "results_documents": ["{count} in {n_docs} documents."]}
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("forma, documentos, esperado", [
+    ("variants", ("Inventory",) * 3, "3 results. It depends on your case."),
+    ("documents", ("Inventory", "Orders", "Orders"), "3 results in 2 documents."),
+    ("neutral", ("Inventory",) * 3, "3 results. Standard message."),
+    (None, ("Inventory",) * 3, "3 results. Standard message.")])
+def test_el_mensaje_sigue_la_forma_de_la_pagina(navegador, servidor_widget, forma, documentos, esperado):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, forma, documentos)
+    expect(page.locator(".rw-voz-texto")).to_have_text(esperado, timeout=8000)
+    expect(page.locator(".rw-voz")).to_have_attribute("data-category", "results")   # la categoría visible no cambia
+    page.close()
+
+
+@pytest.mark.browser
+def test_las_variantes_ofrecen_atajos_por_alcance_sin_cambiar_el_orden(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, "variants", alcances=("Práctica I", "Práctica II", "Práctica I"))
+    atajos = page.locator(".rw-atajos .rw-atajo")
+    expect(atajos).to_have_text(["Práctica I", "Práctica II"])                   # uno por variante distinta
+    expect(page.locator(".rw-resultado-alcance")).to_have_text(["Práctica I", "Práctica II", "Práctica I"])
+    expect(page.locator(".rw-resultado .rw-resultado-titulo")).to_have_count(3)
+    atajos.nth(1).click()
+    expect(page.locator(".rw-resultado").nth(1).locator(".rw-resultado-titulo")).to_be_focused()
+    assert page.locator(".rw-atajos").evaluate("e => e.getBoundingClientRect().right") <= 375
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("forma, alcances", [("variants", ("Práctica I", "Práctica I", "Práctica I")), ("variants", None),
+                                              ("neutral", ("Práctica I", "Práctica II", "Práctica I")), (None, None)])
+def test_sin_variantes_distintas_o_sin_forma_no_hay_atajos(navegador, servidor_widget, forma, alcances):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, forma, alcances=alcances)
+    assert page.locator(".rw-atajos").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_los_documentos_marcan_el_inicio_de_cada_grupo_sin_cambiar_el_orden(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, "documents", documentos=("Inventory", "Orders", "Orders"))
+    tarjetas = page.locator(".rw-resultado")
+    assert [tarjetas.nth(i).get_attribute("data-grupo") for i in range(3)] == ["nuevo", "nuevo", None]
+    expect(page.locator(".rw-resultado-doc")).to_have_text(["Inventory \u00b7 v1", "Orders \u00b7 v1", "Orders \u00b7 v1"])
+    expect(page.locator(".rw-resultados")).to_have_attribute("data-forma", "documents")
+    assert tarjetas.nth(1).evaluate("e => getComputedStyle(e).borderTopWidth") == "3px"
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_forma_los_documentos_no_se_marcan(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, BANCO_FORMAS, None, documentos=("Inventory", "Orders", "Orders"))
+    assert page.locator(".rw-resultado[data-grupo]").count() == 0
+    page.close()
+
+
+def _ficha(**extra):
+    return {"media_id": "m1", "title": "Orientation video", "kind": "video", "url": "https://example.org/watch",
+            "description": "How to enroll.", "duration": 872, "version": "2026-03", **extra}
+
+
+def _buscar_con_media(page, servidor_widget, media):
+    pagina = _pagina_fuentes(continuar=False)
+    if media is not None:
+        pagina["media"] = media
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources"}))
+    page.route("**/ask", lambda r: r.fulfill(json=pagina))
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+
+
+@pytest.mark.browser
+def test_la_ficha_multimedia_va_aparte_despues_de_las_fuentes_con_texto_literal(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(chapter_title="Enroll in courses", start_seconds=410,
+                                                     chapter_description="Pick sections and confirm.")])
+    bloque = page.locator(".rw-media")
+    expect(bloque.locator(".rw-media-titulo")).to_have_text("There is also a video about this")
+    tarjeta = bloque.locator(".rw-media-tarjeta")
+    expect(tarjeta).to_have_count(1)
+    expect(tarjeta.locator(".rw-media-tipo")).to_have_text("Video")
+    expect(tarjeta.locator(".rw-media-meta")).to_contain_text("Duration 14:32")
+    expect(tarjeta.locator(".rw-media-nombre")).to_have_text("Orientation video")
+    expect(tarjeta.locator(".rw-media-capitulo")).to_have_text("Enroll in courses \u00b7 From 6:50")
+    expect(tarjeta.locator(".rw-media-descripcion")).to_have_text("Pick sections and confirm.")  # la del capítulo, literal
+    expect(tarjeta.locator(".rw-media-origen")).to_have_text("According to the video description")
+    # después de las tres fuentes, sin tocarlas ni su orden
+    ultima = page.locator(".rw-resultado").nth(2)
+    assert bloque.evaluate("(m, u) => !!(u.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING)", ultima.element_handle())
+    assert page.locator(".rw-media").evaluate("e => e.getBoundingClientRect().right") <= 375
+    assert tarjeta.locator("iframe, video, audio").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("media", [None, []])
+def test_sin_fichas_no_hay_bloque_multimedia(navegador, servidor_widget, media):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, media)
+    assert page.locator(".rw-media").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("url, segundos, esperado", [
+    ("https://www.youtube.com/watch?v=abc", 90, "https://www.youtube.com/watch?v=abc&t=90s"),
+    ("https://youtu.be/abc", 90, "https://youtu.be/abc?t=90s"),
+    ("https://vimeo.com/123", 90, "https://vimeo.com/123#t=90s"),
+    ("https://example.org/video", 90, "https://example.org/video"),
+    ("https://www.youtube.com/watch?v=abc", None, "https://www.youtube.com/watch?v=abc")])
+def test_el_enlace_lleva_al_minuto_solo_en_youtube_y_vimeo(navegador, servidor_widget, url, segundos, esperado):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(url=url, start_seconds=segundos, chapter_title="Cap" if segundos else None)])
+    enlace = page.locator(".rw-media-abrir")
+    expect(enlace).to_have_attribute("href", esperado)
+    expect(enlace).to_have_attribute("target", "_blank")
+    expect(enlace).to_have_attribute("rel", "noopener noreferrer")
+    expect(enlace).to_have_attribute("aria-label", "Open the video: Orientation video (opens in a new tab)")
+    page.close()
+
+
+@pytest.mark.browser
+def test_un_enlace_que_no_es_http_no_se_muestra(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(url="javascript:alert(1)"), _ficha(media_id="m2", url="data:text/html,x")])
+    assert page.locator(".rw-media").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_audio_y_mezcla_usan_su_propio_encabezado(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(kind="audio", title="Welcome talk", duration=None, version=None)])
+    expect(page.locator(".rw-media-titulo")).to_have_text("There is also an audio about this")
+    expect(page.locator(".rw-media-origen")).to_have_text("According to the audio description")
+    expect(page.locator(".rw-media-abrir")).to_have_text("Open the audio")
+    page.close()
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_media(page, servidor_widget, [_ficha(), _ficha(media_id="m2", kind="audio", title="Talk")])
+    expect(page.locator(".rw-media-titulo")).to_have_text("There is also audio and video about this")
+    expect(page.locator(".rw-media-tarjeta")).to_have_count(2)
+    page.close()
+
+
+BANCO_CORRECCION = {"results": ["Standard."], "continuation": ["Added {count}."],
+                    "opened_source": ["Source of {doc}{scope_suffix}."], "results_retry": ["Then maybe this. {count} now."]}
+
+
+def _buscar_para_corregir(page, servidor_widget, forma="variants", banco=None, continuar=True):
+    """Primera página con (o sin) forma y, si se pide, una continuación de tres fuentes más."""
+    peticiones = []
+
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        if cuerpo.get("continuation"):
+            ruta.fulfill(json=_pagina_fuentes(3, False))
+            return
+        pagina = _pagina_fuentes(continuar=continuar)
+        for fragmento, alcance in zip(pagina["fragments"], ("Práctica I", "Práctica II", "Práctica III")):
+            fragmento["scope"] = alcance
+        if forma:
+            pagina["result_shape"] = forma
+        ruta.fulfill(json=pagina)
+
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Biblioteca", "response_mode": "ranked_sources",
+                                                       "assistant_messages": banco or BANCO_CORRECCION}))
+    page.route("**/ask", responder)
+    page.goto(servidor_widget)
+    page.get_by_role("button", name="Open search of Biblioteca").click()
+    page.locator("#rw-input").fill("stock")
+    page.get_by_role("button", name="Search", exact=True).click()
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.", timeout=8000)
+    return peticiones
+
+
+@pytest.mark.browser
+def test_abrir_una_fuente_que_no_es_la_primera_dice_de_donde_es_una_sola_vez(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    peticiones = _buscar_para_corregir(page, servidor_widget)
+    voz = page.locator(".rw-voz-texto")
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(0).click()                # la primera: no cambia el mensaje
+    page.wait_for_timeout(300)
+    expect(voz).to_have_text("3 results. Standard.")
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    expect(voz).to_have_text("Source of Inventory, Práctica II.", timeout=8000)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(2).click()                # otra tarjeta: su propio mensaje
+    expect(voz).to_have_text("Source of Inventory, Práctica III.", timeout=8000)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()                # cerrar
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()                # y volver a abrir: ya se dijo
+    page.wait_for_timeout(300)
+    expect(voz).to_have_text("Source of Inventory, Práctica III.")
+    assert len(peticiones) == 1                                                      # nada va al servidor
+    page.close()
+
+
+@pytest.mark.browser
+def test_abrir_con_el_resumen_tambien_lo_dice(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget)
+    page.locator(".rw-resultado summary").nth(2).click()
+    expect(page.locator(".rw-voz-texto")).to_have_text("Source of Inventory, Práctica III.", timeout=8000)
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_forma_no_hay_caminos_de_correccion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, forma=None)
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    page.wait_for_timeout(300)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.")
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_no_es_esto_pide_la_continuacion_responde_con_su_mensaje_y_compacta_las_anteriores(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    peticiones = _buscar_para_corregir(page, servidor_widget)
+    page.get_by_role("button", name="This isn't it").click()
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    assert len(peticiones) == 2 and peticiones[1]["continuation"] == "pagina-2"
+    expect(page.locator(".rw-voz-texto")).to_have_text("Then maybe this. 6 results now.", timeout=8000)
+    tarjetas = page.locator(".rw-resultado")
+    assert [tarjetas.nth(i).get_attribute("data-compacta") for i in range(6)] == ["si"] * 3 + [None] * 3
+    expect(tarjetas.nth(0).locator(".rw-resultado-vista")).to_be_hidden()        # compactas, no borradas
+    expect(tarjetas.nth(0).locator(".rw-resultado-titulo")).to_be_visible()
+    expect(tarjetas.nth(4).locator(".rw-resultado-vista")).to_be_visible()
+    tarjetas.nth(0).locator(".rw-resultado-titulo").click()                      # abrir el contexto la vuelve a mostrar
+    expect(tarjetas.nth(0).locator(".rw-resultado-vista")).to_be_visible()
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_mostrar_mas_no_compacta_y_usa_el_mensaje_de_continuacion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget)
+    page.get_by_role("button", name="Show more results").click()
+    expect(page.locator(".rw-resultado")).to_have_count(6)
+    expect(page.locator(".rw-voz-texto")).to_have_text("Added 6 results.", timeout=8000)
+    assert page.locator(".rw-resultado[data-compacta]").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mas_paginas_no_hay_no_es_esto(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, continuar=False)
+    assert page.get_by_role("button", name="This isn't it").count() == 0
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mensajes_de_correccion_en_el_banco_no_se_rompe_nada(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_para_corregir(page, servidor_widget, banco={"results": ["Standard."], "continuation": ["Added {count}."]})
+    page.locator(".rw-resultado .rw-resultado-titulo").nth(1).click()
+    page.wait_for_timeout(300)
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard.")          # sin plantilla, no dice nada
+    page.get_by_role("button", name="This isn't it").click()
+    expect(page.locator(".rw-voz-texto")).to_have_text("Added 6 results.", timeout=8000)  # cae en «continuation»
+    page.close()
+
+
+@pytest.mark.browser
+def test_sin_mensaje_propio_para_la_forma_se_usa_el_de_siempre(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 375, "height": 667})
+    _buscar_con_forma(page, servidor_widget, {"results": ["Standard message."]}, "variants")
+    expect(page.locator(".rw-voz-texto")).to_have_text("3 results. Standard message.", timeout=8000)
+    page.close()
+
+
 @pytest.mark.browser
 def test_punto_de_espera_parpadea_cuando_no_habla_y_se_oculta_al_escribir(navegador, servidor_widget):
     page = navegador.new_page(viewport={"width": 375, "height": 667})

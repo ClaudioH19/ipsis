@@ -157,6 +157,23 @@ class BloqueRespuesta(BaseModel):
     highlights: list[DestacadoRespuesta] = Field(default_factory=list)
 
 
+class FichaMedia(BaseModel):
+    """Una ficha de audio o video que corresponde a la pregunta (carril aparte de las fuentes de documentos).
+
+    Todo es texto de la ficha, escrito por una persona; nada se transcribe ni se genera (ADR 0001)."""
+
+    media_id: str
+    title: str
+    kind: Literal["audio", "video"]
+    url: str
+    start_seconds: Optional[int] = None
+    chapter_title: Optional[str] = None
+    chapter_description: Optional[str] = None
+    description: str
+    duration: Optional[int] = None
+    version: Optional[str] = None
+
+
 class RespuestaConsulta(BaseModel):
     status: Literal["ok", "related", "conversational", "no_answer", "degraded", "saturated"]
     service_level: Literal["normal", "medium", "high"]
@@ -164,6 +181,12 @@ class RespuestaConsulta(BaseModel):
     response_mode: Optional[Literal["ranked_sources"]] = None
     continuation: Optional[str] = None
     has_more: Optional[bool] = None
+    # Cómo se parecen las primeras fuentes publicadas (solo primera página y con ``v2.presentation.enabled``). Describe la
+    # página, no afirma que la primera fuente responda; ``clear`` solo aparece con un ``clear_margin`` explícito.
+    result_shape: Optional[Literal["clear", "variants", "documents", "neutral"]] = None
+    # Solo en la primera página y con ``media.enabled`` y ``min_score``: fichas multimedia que corresponden a la pregunta.
+    # No cambia ``fragments``. Ausente si no hay ninguna publicable.
+    media: Optional[list[FichaMedia]] = None
     # ``answer`` por párrafos, para pintarlo con estructura: unirlos con una
     # línea en blanco (conector + texto + cita) reproduce ``answer``.
     answer_blocks: list[BloqueRespuesta] = Field(default_factory=list)
@@ -196,6 +219,9 @@ _PLANES = {"definicion": "definition", "procedimiento": "procedure", "requisito"
            "conversacional": "conversational", "aclaracion": "clarification"}
 
 
+_FORMAS = {"clara": "clear", "variantes": "variants", "documentos": "documents", "neutral": "neutral"}
+_CAMPOS_MEDIA = ("media_id", "title", "kind", "url", "start_seconds", "chapter_title", "chapter_description",
+                 "description", "duration", "version")
 _BLOQUES = {"encabezado": "lead", "pasaje": "passage", "mensaje": "message"}
 
 
@@ -259,6 +285,12 @@ def respuesta_publica(contrato: dict) -> dict:
         if "continuation" in contrato:
             publica["continuation"] = contrato["continuation"]
             publica["has_more"] = contrato["has_more"]
+        if contrato.get("forma_resultados"):
+            publica["result_shape"] = _FORMAS[contrato["forma_resultados"]]
+        # Hasta que haya archivos locales servidos (plan multimedia, M4) solo se publican las fichas con enlace.
+        fichas = [f for f in contrato.get("multimedia") or [] if f.get("url")]
+        if fichas:
+            publica["media"] = [{k: f.get(k) for k in _CAMPOS_MEDIA} for f in fichas]
     return publica
 
 

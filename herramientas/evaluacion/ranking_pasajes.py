@@ -109,6 +109,46 @@ class GrabadorCandidatos:
 GRABADOR: GrabadorCandidatos | None = None
 
 
+class GrabadorPublicados:
+    """Registra, por pregunta, las fuentes que publica el motor v2, en su orden y sin su texto
+    (``--volcar-publicados``): puntaje y su tipo, documento, ruta de sección, alcance, términos distintivos y si cada
+    una toca una evidencia. Alimenta ``forma_resultados.py`` (plan de presentación, P0). El banco real es privado:
+    no se escribe ni el texto de los pasajes ni el de la pregunta, solo el ``id`` del caso."""
+
+    def __init__(self, ruta, perfil: str):
+        self.ruta, self.perfil, self.filas = Path(ruta), perfil, []
+
+    def registrar(self, caso, resultado, final: list[tuple[str, int, int]]) -> None:
+        """``final`` son los ``(doc_id, inicio, fin)`` de las evidencias, alineados con ``resultado.evidencias``."""
+        contrato = getattr(resultado, "contrato_http", None) or resultado.diagnostico.get("contrato_http") or {}
+        fragmentos = {f["chunk_id"]: f for f in contrato.get("fragmentos") or []}
+        publicadas = []
+        for rango, (evidencia, huella) in enumerate(zip(resultado.evidencias, final), start=1):
+            fragmento = fragmentos.get(evidencia.chunk_id, {})
+            publicadas.append({
+                "rango": rango, "chunk_id": evidencia.chunk_id, "doc_id": evidencia.doc_id,
+                "seccion_path": list(getattr(evidencia, "seccion_path", None) or []),
+                "score": fragmento.get("score", getattr(evidencia, "score", None)),
+                "tipo_puntaje": fragmento.get("tipo_puntaje"),
+                "alcance": fragmento.get("alcance"), "rasgos": fragmento.get("rasgos"),
+                "correcto": solapa(*huella, caso.evidencias)})
+        self.filas.append({"id": caso.id, "split": caso.split, "perfil": self.perfil,
+                           "rango_final": rango_correcto(final, caso.evidencias), "publicadas": publicadas})
+
+    def guardar(self) -> None:
+        self.ruta.parent.mkdir(parents=True, exist_ok=True)
+        self.ruta.write_text("".join(json.dumps(f, ensure_ascii=False) + "\n" for f in self.filas), encoding="utf-8")
+
+
+PUBLICADOS: GrabadorPublicados | None = None
+
+
+def ruta_publicados(ruta, perfil: str) -> Path:
+    """``publicados.jsonl`` → ``publicados-medium.jsonl``: un archivo por perfil, para que no se pisen."""
+    ruta = Path(ruta)
+    return ruta.with_name(f"{ruta.stem}-{perfil}{ruta.suffix}")
+
+
 def observar_caso(motor, caso, k_hibrido: int | None = None) -> dict:
     """Pregunta ``caso.pregunta`` al motor v2 y devuelve ambos rangos y la latencia."""
     from ipsis.nucleo.esquemas import QueryAnalysis
@@ -125,6 +165,8 @@ def observar_caso(motor, caso, k_hibrido: int | None = None) -> dict:
     resultado = motor.consultar(caso.pregunta, f"ranking:{caso.id}")
     latencia = (time.perf_counter() - inicio) * 1000
     final = [por_id.get(e.chunk_id, (e.doc_id, e.offset_inicio, e.offset_fin)) for e in resultado.evidencias]
+    if PUBLICADOS is not None:
+        PUBLICADOS.registrar(caso, resultado, final)
     etapas = {nombre.removesuffix("_ms"): ms
               for nombre, ms in (resultado.diagnostico.get("etapas") or {}).items()}
     return {
@@ -287,7 +329,10 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
                 raise RuntimeError("ipsis index falló")
             motor = construir_motor(cargar_proyecto(), cfg_dominio=cargar_dominio())
             observaciones = []
-            global GRABADOR
+            global GRABADOR, PUBLICADOS
+            PUBLICADOS = None
+            if args.volcar_publicados:
+                PUBLICADOS = GrabadorPublicados(ruta_publicados(args.volcar_publicados, perfil), perfil)
             if args.volcar_candidatos:
                 import ipsis.consulta.v2.motor as motor_v2
 
@@ -302,6 +347,9 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
                 motor.cerrar()
                 if GRABADOR is not None:
                     GRABADOR.guardar()
+                if PUBLICADOS is not None:
+                    PUBLICADOS.guardar()
+                    PUBLICADOS = None
         finally:
             os.chdir(anterior)
     return observaciones, configuracion
@@ -310,7 +358,7 @@ def medir_perfil(banco, directorio_corpus: Path, perfil: str, args) -> tuple[dic
 def construir_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("banco", help="manifiesto.json del banco")
-    p.add_argument("--perfil", action="append", choices=["light", "medium", "heavy"],
+    p.add_argument("--perfil", action="append", choices=["light", "medium"],
                    help="perfil de instalación (repetible; por defecto light y medium)")
     p.add_argument("--particion", choices=["dev", "test", "todas"], default="dev")
     p.add_argument("--idioma", default="es")
@@ -330,6 +378,9 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--modelo-denso")
     p.add_argument("--volcar-candidatos", dest="volcar_candidatos",
                    help="escribe en este JSONL los pasajes que ve el reranker, para puntuarlos fuera del motor")
+    p.add_argument("--volcar-publicados", dest="volcar_publicados",
+                   help="escribe en un JSONL por perfil (RUTA-perfil.jsonl) las fuentes publicadas por pregunta, sin texto, "
+                        "para forma_resultados.py")
     p.add_argument("--modelo-reranker", dest="modelo_reranker", help="id del reranker del catálogo (solo medium)")
     p.add_argument("--rerank-candidatos", type=int, dest="rerank_candidatos",
                    help="v2.rerank_candidates: cuántos candidatos del recuperador puntúa el reranker")

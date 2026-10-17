@@ -18,6 +18,9 @@ AVATARES = "config/avatars"
 DOCUMENTOS = "documents"
 CATALOGO = "documents/catalog.yaml"
 
+MEDIA = "media"  # fichas de audio y video (un YAML por ficha)
+MEDIA_ARCHIVOS = "media/files"  # archivos locales a los que apuntan las fichas
+
 GOLDEN = "golden"
 GOLDEN_BANCO = "golden/bank"
 GOLDEN_MANIFIESTO = "golden/bank/manifest.json"

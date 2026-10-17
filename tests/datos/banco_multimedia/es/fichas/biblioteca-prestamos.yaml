@@ -1,0 +1,21 @@
+title: Cómo pedir libros prestados y renovarlos
+kind: video
+url: https://videos.example.org/biblioteca-prestamos
+description: 'Paso a paso para sacar un libro de la biblioteca: buscarlo en el catálogo, retirarlo en
+  el mesón y renovar el préstamo antes de que venza.'
+keywords:
+- préstamo de libros
+- catálogo
+- renovación
+language: es
+version: 2026-03
+duration: 05:10
+chapters:
+- at: 00:40
+  title: Buscar un libro en el catálogo
+  description: Cómo usar el buscador del catálogo y leer si el ejemplar está disponible.
+- at: 02:10
+  title: Retirar el libro en el mesón
+- at: 03:30
+  title: Renovar un préstamo
+  description: Cómo extender el plazo de un libro sin ir a la biblioteca.

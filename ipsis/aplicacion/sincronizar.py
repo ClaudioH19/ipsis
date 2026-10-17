@@ -17,6 +17,7 @@ class ResultadoSync:
     version_nueva: int | None = None
     podadas: list[str] = field(default_factory=list)
     indexado: bool = False
+    media_cambio: bool = False  # las fichas de media/ cambiaron desde el último índice
 
 
 def subir_version_coleccion(ruta_motor: str = rutas.MOTOR) -> tuple[int, int]:
@@ -69,14 +70,17 @@ def sincronizar(*, solo_plan: bool = False, indexar: bool = True, forzar: bool =
     from ipsis.configuracion.carga import config_recuperacion
     from ipsis.indice.qdrant import ColeccionExistente
     from ipsis.ingesta import sincronizar as nucleo
+    from ipsis.ingesta.indice_media import huella_fichas, media_desactualizado
 
     plan = nucleo.planificar(carpeta)
     resultado = ResultadoSync(plan=plan)
+    # Sin media/ no se lee configuración alguna: ``sync`` sigue funcionando como antes en un proyecto mínimo.
+    resultado.media_cambio = huella_fichas() is not None and media_desactualizado(config_recuperacion())
     if solo_plan:
         return resultado
     if plan.hay_cambios:
         resultado.agregados = nucleo.aplicar(plan, carpeta).agregados
-    if not indexar or not (plan.hay_cambios or forzar):
+    if not indexar or not (plan.hay_cambios or forzar or resultado.media_cambio):
         return resultado
     try:
         resultado.resumen_indice = indexar_proyecto(carpeta)
@@ -85,7 +89,11 @@ def sincronizar(*, solo_plan: bool = False, indexar: bool = True, forzar: bool =
         resultado.resumen_indice = indexar_proyecto(carpeta)
     resultado.indexado = True
     if podar and resultado.resumen_indice is not None:
-        resultado.podadas = podar_versiones_antiguas(resultado.resumen_indice.nombre_coleccion, config_recuperacion())
+        cfg = config_recuperacion()
+        resultado.podadas = podar_versiones_antiguas(resultado.resumen_indice.nombre_coleccion, cfg)
+        media = resultado.resumen_indice.media
+        if media is not None and media.nombre_coleccion:  # la serie del carril es aparte: se poda aparte
+            resultado.podadas = sorted(resultado.podadas + podar_versiones_antiguas(media.nombre_coleccion, cfg))
     return resultado
 
 

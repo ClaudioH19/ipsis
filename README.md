@@ -6,7 +6,7 @@
 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-2563eb)](LICENSE)
 [![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/guide/installation.md)
-[![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.0.0)
+[![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.1.0)
 [![No LLM](https://img.shields.io/badge/LLM-none-16a34a)](docs/decisions/0001-non-generative-answers.md)
 [![CPU only](https://img.shields.io/badge/GPU-not%20required-64748b)](docs/decisions/0003-onnx-and-profiles.md)
 
@@ -15,7 +15,7 @@
 **[Documentation](#-documentation)** · **[Español](README.es.md)**
 </div>
 
-**ipsis 1.0** is a self-hosted assistant that **finds and ranks sources from
+**ipsis 1.1** is a self-hosted assistant that **finds and ranks sources from
 your own documents**. It shows literal excerpts, filenames and versions,
 section paths and expandable context for checking the information. It runs
 on CPU without a generative LLM; after downloading models, a local deployment
@@ -44,7 +44,7 @@ into confidence percentages.
 - **Documents and inventories:** text PDFs, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV and TSV. Records retain their fields; it does not sum stock or recalculate formulas.
 - **Spanish, English and Portuguese help:** at least 100 recognized questions
-  per language across ten topics, alongside 118 interface message variants.
+  per language across ten topics, alongside 142 interface message variants.
   Mixed document queries still go through search.
 - **Nine visual themes:** classic, minimal, editorial, contrast, search,
   search_compact, ocean, forest and midnight. Editable colors, fonts, headings and sections.
@@ -86,13 +86,16 @@ Enter a question, review the sources and open their context. **Show more
 results** adds other options from the same query. A new query replaces the
 list; it does not automatically inherit the previous question's topic.
 
+When files in `documents/` are added, renamed or deleted, run `ipsis sync`: it updates the
+catalog and rebuilds the index (see [keeping the index up to date](docs/guide/usage.md#keeping-the-index-up-to-date)).
+
 Running `ipsis` without arguments opens the interactive terminal. Console
 language uses `IPSIS_LANG`; document language is configured with `--language`.
 
 | Profile | Models used by v2 | Purpose |
 |---|---|---|
 | `light` | e5-small + hybrid BM25 search | Prioritizes latency |
-| `medium` | e5-small + mMiniLM reranker + hybrid search | Adds semantic candidate comparison |
+| `medium` | e5-small + reranker (bge-reranker-v2-m3 for Spanish and Portuguese, mMiniLM otherwise) + hybrid search | Adds semantic candidate comparison |
 
 V2 does not load the QA reader by default. `ipsis models list` shows the
 models used by the active engine. See [installation](docs/guide/installation.md)
@@ -113,8 +116,14 @@ not require reindexing; an existing `config/styles.yaml` is not automatically
 replaced. Select a preset to adopt its complete design, or edit individual
 values to keep your customization.
 
+One change does need action. A v2 project created with `config_version` 7 or older is migrated on its
+next `ipsis` command to `config_version` 8 and, if it had not chosen a preparation, to the structural
+preparation ([ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). Run `ipsis index`
+to build the new index: until then the service reports it is not ready. The old index is kept, and
+`retrieval.preparation.mode: legacy` goes back to fixed-size chunks.
+
 The installation above follows the default branch. To pin this release,
-install `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;
+install `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`;
 tag-pinned installations need a changed tag to move to another release.
 If your website keeps an exported widget, export and replace `widget.js` again.
 
@@ -202,7 +211,7 @@ content text and extra CSS.
 Six suggested questions fill the input without submitting it. **Frequently
 asked questions** lets users explore topics covering search, sources,
 inventories, scope, privacy, appearance, documents, service and maintenance.
-The **Help** menu groups guidance messages. Expand them when you need the full
+The **Help** menu, opened with the "?" icon in the header, groups guidance messages. Expand them when you need the full
 text; a new query returns them to their compact view.
 
 | Route | Purpose |
@@ -251,6 +260,7 @@ router ranking. See [golden](docs/guide/golden.md) and the
 | [Widget](docs/guide/web.md) | Themes, API, accessibility and FAQ |
 | [Integrations](docs/guide/integrations.md) | Web frameworks, CORS and examples |
 | [Inventories](docs/guide/inventories.md) | Tables and format limits |
+| [Audio and video](docs/guide/media.md) | Records, threshold and widget card |
 | [Personality](docs/guide/personality.md) | Tones, Folio and panel |
 | [Deployment](docs/guide/deployment.md) | Docker, HTTPS and operations |
 | [Optional v1 golden set](docs/guide/golden.md) | Previous engine evaluation and calibration |

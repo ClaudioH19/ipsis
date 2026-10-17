@@ -1,0 +1,20 @@
+title: Cómo solicitar el teletrabajo
+kind: video
+url: https://videos.example.org/teletrabajo-solicitud
+description: 'Explica cómo pedir autorización para trabajar a distancia: qué debes cumplir, cómo se completa
+  el formulario y qué responde tu jefatura.'
+keywords:
+- trabajo remoto
+- solicitud
+- formulario de teletrabajo
+language: es
+version: 2026-01
+duration: 07:20
+chapters:
+- at: 01:00
+  title: Requisitos para pedir teletrabajo
+- at: 03:00
+  title: Completar el formulario de teletrabajo
+  description: Cada campo del formulario y los errores más comunes.
+- at: 05:30
+  title: Qué responde la jefatura y cuándo

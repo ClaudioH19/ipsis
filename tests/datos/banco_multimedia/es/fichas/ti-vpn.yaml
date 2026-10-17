@@ -1,0 +1,19 @@
+title: Conectarte a la red de la institución desde tu casa
+kind: video
+url: https://videos.example.org/ti-vpn
+description: Instalación y uso de la VPN para trabajar desde fuera de la oficina y llegar a los sistemas
+  internos.
+keywords:
+- VPN
+- acceso remoto
+- red interna
+language: es
+version: 2026-06
+duration: 05:50
+chapters:
+- at: 00:30
+  title: Instalar el programa de conexión
+- at: 02:00
+  title: Iniciar sesión por primera vez
+- at: 03:40
+  title: Qué hacer si no logras conectarte

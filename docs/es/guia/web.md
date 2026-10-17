@@ -13,6 +13,65 @@ configuración y cómo conservar el widget al navegar entre rutas.
 
 ![Widget v2 con fuentes numeradas y contexto literal](../../assets/widget-sources-es.png)
 
+## Probar el widget y configurar el proyecto
+
+Desde la carpeta de un proyecto, ejecuta `ipsis serve`. Abre
+`/widget/demo.html` con el tema que ya tiene el proyecto y habilita
+`/admin/panel`; la página de prueba enlaza al panel y `/` redirige a la página
+de prueba. Pega en el panel el token de administración que se muestra en la
+terminal. Si ya existe `IPSIS_ADMIN_TOKEN`, se reutiliza; si no, se crea un
+token temporal para esta ejecución, sin guardarlo. Se conserva el modo de
+producción, incluido HTTPS para el acceso remoto de administración.
+
+Usa `ipsis serve --no-open` para no abrir el navegador. `--no-demo` desactiva
+la página de prueba y evita que se abra; `--no-admin` desactiva el panel aunque
+haya un token configurado. La API y los archivos del widget siguen
+disponibles. Ejecuta `ipsis help serve` para ver todas las opciones.
+
+## Orientación separada de los resultados
+
+Con el motor v2, una sección de orientación se ubica sobre las fuentes
+ordenadas. Usa un catálogo fijo de 142 mensajes para cada uno de español,
+inglés y portugués, elegido según el idioma de los documentos del proyecto. Los
+demás idiomas usan la orientación en inglés como respaldo. Las diecisiete categorías
+son `welcome`, `greeting`, `thanks`, `farewell`, `capability`, `tips`,
+`searching`, `results`, `results_variants`, `results_documents`, `results_retry`, `opened_source`, `continuation`,
+`no_results`, `about`, `limits` y `examples`. Los catálogos YAML están en `ipsis/recursos/voz/` y son
+independientes de los tonos y de las plantillas de fuentes existentes. Es texto
+de interfaz: nunca evidencia documental ni respuestas generadas.
+
+Las plantillas `results` y `continuation` pueden usar `{count}` (el número con
+su sustantivo, ya en singular o plural del idioma: «3 resultados», «1
+resultado»), `{n}` (el número solo) y `{query}` (lo que se buscó). Una
+plantilla que no usa ninguno recibe el conteo al inicio («3 resultados. …»), de
+modo que el conteo siempre llega a quien lee sin ocupar una línea propia (el
+encabezado «N resultados para …» se conserva solo para lectores de pantalla). `results_variants` («depende de tu caso») y `results_documents` («lo encontré en varios documentos») reemplazan a `results` en la primera página cuando la API informa `result_shape: variants` o `documents` (tabla de `/ask`, más abajo, y `v2.presentation.enabled`); describen la página y nunca dicen cuál fuente responde. `results_documents` puede usar además `{n_docs}`, la cantidad de documentos distintos entre las fuentes que se ven. Con la forma `neutral`, o con un banco de mensajes sin estas dos categorías, se usa `results` como siempre. Los dos caminos de corrección de más abajo usan `opened_source` (`{doc}` y `{scope_suffix}`, este último ya con su coma inicial o vacío) y `results_retry` (con `{count}`). El
+menú de ayuda es un icono «?» en el encabezado del asistente. Mientras el
+asistente no está hablando, o aún no empezó, un punto aparece y se desvanece
+después de su mensaje para indicar que espera.
+
+**Cómo buscar**, **Qué puedo hacer**, **Sobre el asistente**, **Alcance** y
+**Ejemplos** rotan entre sus mensajes de forma local, sin enviar una consulta
+de búsqueda. Los saludos, agradecimientos y despedidas escritos también van a
+esta sección, y conservan las fuentes desplegadas y el botón de continuación.
+Solo las expresiones de cortesía completas evitan la recuperación documental;
+una consulta mixta como «hola, ¿cuál es el stock del producto A?» sigue
+consultando el corpus.
+
+La orientación se revela carácter por carácter, sin retrasar las peticiones de
+red ni mostrar las fuentes carácter por carácter. **Mostrar completo** termina
+la animación de inmediato. Un mensaje nuevo cancela la animación anterior. Las
+preferencias de movimiento reducido, incluso si cambian mientras se escribe,
+muestran el texto completo; `ipsis widget style set animations.enabled=false`
+también desactiva la escritura. Los lectores de pantalla reciben el mensaje
+completo una sola vez, en lugar de actualizaciones por carácter. Los errores de
+búsqueda aparecen en la orientación y dejan disponibles los resultados
+existentes.
+
+`GET /config` agrega `assistant_messages` (categoría → lista de textos fijos),
+`suggested_questions`, `animations_enabled` y las etiquetas de orientación
+localizadas en `interface`. El motor v1 conserva su flujo de chat actual.
+
 ## Insertarlo
 
 La forma más simple: pide el código ya armado y pégalo antes de `</body>`.
@@ -108,8 +167,8 @@ El widget usa tres endpoints públicos; también puedes llamarlos tú:
 
 | Endpoint | Qué devuelve |
 |---|---|
-| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` cuando la pregunta no tiene tema: el asistente lo pide), `confidence_level` (`high`: respuesta directa leída por el lector QA, 96,6 % correcta en los bancos medidos; `medium`: respuesta directa sin lector, 85 %; `low`: pasaje relacionado; ausente si no hay respuesta), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, `alternatives` (solo en `no_answer` con la postura proactiva: pasajes literales parecidos, con los campos de `fragments`; no responden la pregunta) y `conversational_category` |
-| `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `placement` y `avatar` |
+| `POST /ask` con `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` por párrafo: `type` es `lead`, `passage` o `message`, con `text`, `connector`, `citation` y `chunk_id`; el texto de `passage` es literal del documento), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` cuando la pregunta no tiene tema: el asistente lo pide), `confidence_level` (`high`: respuesta directa leída por el lector QA, 96,6 % correcta en los bancos medidos; `medium`: respuesta directa sin lector, 85 %; `low`: pasaje relacionado; ausente si no hay respuesta), `confidence`, `latency_ms`, `exact_answer` cuando el lector marcó un tramo, `alternatives` (solo en `no_answer` con la postura proactiva: pasajes literales parecidos, con los campos de `fragments`; no responden la pregunta) y `conversational_category` Con el motor v2 y `v2.presentation.enabled`, la primera página trae además `result_shape`: `variants` (las dos primeras fuentes son variantes de lo mismo), `documents` (vienen de documentos distintos) o `neutral`. Describe la página, no si la primera fuente responde; `clear` solo aparece con un `clear_margin` explícito, que no se recomienda. Las páginas siguientes (`continuation`) nunca la traen. También en la primera página, con el carril multimedia encendido (`media.enabled` y un `media.min_score`), `media`: fichas de audio y video escritas por una persona (`media_id`, `title`, `kind`, `url`, `start_seconds`, `chapter_title`, `chapter_description`, `description`, `duration`, `version`). Nunca cambia `fragments`; por ahora solo se publican las fichas con enlace web. |
+| `GET /config` | Lo que necesita el widget: `assistant_name`, `greeting`, `response_mode`, `preset`, `density`, `citations`, los textos de `interface`, la `microcopy` del tono, `assistant_messages`, `animations_enabled`, `placement` y `avatar` |
 | `GET /health`, `GET /ready` | Vida y preparación (con el mismo diagnóstico que `ipsis doctor` en `project`) |
 
 Con claves de widget configuradas, `POST /ask` exige el encabezado
@@ -140,6 +199,42 @@ en lugar del ícono:
 - **Preferencias del sistema:** modo oscuro, `prefers-reduced-motion` (sin
   animaciones) y contraste alto (`forced-colors`).
 
+## Diseño de búsqueda
+
+Con el motor v2 (`response_mode: ranked_sources` en `GET /config`) el widget usa un diseño de búsqueda:
+
+- **Buscador abajo**, como un chat: los resultados se desplazan encima, en escritorio y en teléfono. El
+  campo tiene un botón para borrar.
+- **Mensaje del asistente sobre el buscador**, donde está la atención: dice cuántos resultados hay (ver las
+  plantillas con `{count}` más arriba). Con `avatar.placement: message` (el valor por defecto de los
+  proyectos nuevos) el avatar queda a su derecha; `header`, `top-corner` y `bottom-corner` siguen
+  disponibles ([personalidad.md](personalidad.md)). Mientras el teclado del teléfono está abierto, el
+  avatar se oculta para ahorrar espacio.
+- **Carga:** mientras se busca, tarjetas grises de esqueleto van cayendo una tras otra, con una línea de
+  estado que pasa por «Leyendo los documentos…», «Comparando fuentes…» y «Ordenando por relevancia…»;
+  luego los resultados entran de a uno. «Mostrar más resultados» agrega una sola tarjeta de esqueleto bajo
+  la lista. Respeta `prefers-reduced-motion` y `animations.enabled: false`.
+- **Etiqueta de alcance:** cada resultado muestra, junto al título del documento, una etiqueta pequeña con
+  lo que lo distingue de sus unidades hermanas (por ejemplo «Práctica Profesional II»). La API la devuelve
+  como `scope` y los términos que distinguen unidades parecidas como `distinctive_terms`.
+- **Forma de la página** (`v2.presentation.enabled`, encendido por defecto, hace que la API devuelva `result_shape`; [ADR 0010](../../decisions/0010-presentation-by-result-shape.md)): cuando las
+  primeras fuentes son `variants` de lo mismo (por ejemplo la tabla de cada práctica), una fila «Elige tu caso» con
+  atajos lleva a la tarjeta de cada variante; cuando vienen de varios `documents`, la primera tarjeta de cada
+  documento lleva un borde superior más grueso. También cambia el mensaje del asistente (`results_variants`,
+  `results_documents`). Ni las fuentes que se muestran ni su orden cambian, y una página `neutral` se ve igual que
+  sin la opción.
+- **Carril multimedia** (solo con `media.enabled`): tras las fuentes, un bloque aparte «También hay un video sobre esto» muestra el
+  texto de la propia ficha (tipo, duración, capítulo y minuto, descripción, «Según la descripción del video») y un botón que abre el
+  enlace en otra pestaña. En YouTube y Vimeo el enlace incluye el minuto del capítulo. No hay reproductor incrustado (ni iframe) y los
+  enlaces que no son `http`/`https` nunca se muestran.
+- **Caminos de corrección** (solo cuando la API informa `result_shape`): al abrir el contexto de una fuente que no es la
+  primera, el asistente dice de dónde es («Esto es de *Reglamento*, Práctica Profesional II»), una vez por tarjeta, sin afirmar
+  que sea la respuesta y sin enviar nada al servidor. Bajo la lista, junto a «Mostrar más resultados», un botón «No es esto»
+  pide la misma página siguiente, el asistente responde «Entonces quizás buscabas…» y las tarjetas anteriores se compactan
+  (su extracto se oculta hasta que abres su contexto; no se borra nada). No aparece si no hay más resultados.
+- **Página de prueba:** `/widget/demo.html` ocupa toda la pantalla en teléfonos (sin encabezado de página;
+  el formulario de la clave de acceso está en `#clave-acceso`) y se ajusta a la ventana en escritorio.
+
 ## Citas
 
 Toda respuesta con evidencia muestra, **debajo**, un bloque de citas para
@@ -160,6 +255,8 @@ comprobarla:
 - **Del tono activo** (ver [personalidad.md](personalidad.md)): la
   bienvenida, «buscando…», la invitación a las citas y los mensajes de error
   vienen de `/config` en 7 variantes, y el widget rota entre ellas.
+- **Orientación de v2:** su catálogo fijo y separado tiene 142 mensajes por
+  idioma admitido, con ejemplos e información sobre el asistente y su alcance.
 - **Textos de la interfaz** (etiquetas de botones, placeholder…): vienen del
   paquete de idioma del proyecto.
 - **Accesibilidad:** «buscando…» y los errores se anuncian a los lectores
@@ -210,12 +307,13 @@ separados de las fuentes documentales y no ejecutan consultas.
 **Preguntas frecuentes** permite explorar al menos 100 preguntas completas
 por idioma, repartidas en diez temas. `/config::default_questions` publica
 pregunta y tema; la respuesta fija se resuelve en el servicio. Las consultas
-con información documental añadida siguen consultando el índice. Las 118
+con información documental añadida siguen consultando el índice. Las 142
 variantes de mensajes son un catálogo distinto de las preguntas reconocidas.
 
 La orientación ocupa dos líneas por defecto. **Mostrar completo** permite
 leerla en un área desplazable; **Contraer** devuelve el espacio a las fuentes.
-El menú **Ayuda** muestra las acciones sobre la lista, sin cambiar su altura.
+El menú **Ayuda** (el icono «?» del encabezado) muestra las acciones sobre la
+lista, sin cambiar su altura.
 La barra de carga y las transiciones de las tarjetas hacen visibles las
 consultas nuevas; respetan `animations.enabled` y el movimiento reducido.
 

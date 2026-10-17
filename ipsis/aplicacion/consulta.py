@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -138,6 +139,20 @@ def construir_motor(
             opciones=opciones_v2,
         )
         motor.backend = componentes["retriever"]
+        from ipsis.configuracion.esquemas import MediaConfig
+
+        opciones_media = MediaConfig.model_validate(cfg.get("media") or {}).model_dump()
+        if opciones_media["activo"]:
+            from ipsis.consulta.media import BuscadorMedia
+
+            # El carril es opcional: un recuperador sin colección Qdrant o un fallo al abrirla no impiden servir documentos.
+            try:
+                motor.buscador_media = (BuscadorMedia.desde_recuperador(retriever, cfg_rec, opciones_media)
+                                        if hasattr(retriever, "coleccion") else None)
+            except Exception as error:  # noqa: BLE001
+                logging.getLogger(__name__).warning("carril multimedia no disponible: %s", type(error).__name__)
+                motor.buscador_media = None
+            motor.opciones_media = {"presupuesto_ms": opciones_media["presupuesto_ms"]}
     else:
         analizador = registro.crear("intent_classifier", componentes["intent_classifier"])
         # La calibración solo vale para el corpus con que se calibró: se vuelve a

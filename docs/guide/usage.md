@@ -163,10 +163,9 @@ local index, stop it first.
 
 | Command | What it does |
 |---|---|
-| `ipsis load <file\|folder>` | Copies the documents (PDF with text, DOCX, MD, TXT, XLSX, XLS, CSV, TSV) to `documents/` and catalogs them. A file with the same name as one already loaded but different content is added separately: to retire the old one, set `active: false` in `documents/catalog.yaml` |
+| `ipsis load <file\|folder>` | Copies the documents (PDF with text, DOCX, MD, LaTeX, TXT, XLSX, XLS, CSV, TSV) to `documents/` and catalogs them. A file with the same name as one already loaded but different content is added separately: to retire the old one, set `active: false` in `documents/catalog.yaml` |
 | `ipsis index [--corpus FOLDER]` | Rebuilds the whole index. Run it after a profile change that asks for it (for document changes, `ipsis sync` is simpler) |
 | `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Brings the catalog and the index up to date with the `documents/` folder (new, renamed, changed and deleted files) and rebuilds the index. See [Keeping the index up to date](#keeping-the-index-up-to-date) |
-| `ipsis sync [--dry-run] [--no-index] [--force] [--prune]` | Brings the catalog and the index up to date with the `documents/` folder: adds new files, follows renames (same content keeps its `doc_id`), picks up changed content, retires files that were deleted (`active: false`, reversible) and rebuilds the index. See [Keeping the index up to date](#keeping-the-index-up-to-date) |
 
 ### Asking
 

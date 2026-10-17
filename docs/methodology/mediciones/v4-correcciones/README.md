@@ -22,8 +22,8 @@ La suite completa termina con **1.072 aprobadas, 2 omitidas, cero fallos y
 cero errores** en 907,23 s (15 min 7 s). También comprueba la reconstrucción
 de los datos originales sin red. Los [26 criterios de validación](validacion.json)
 pasan, incluida la igualdad del código medido con el actual y las
-comparaciones por caso frente a ambas bases. F5.1 sigue pendiente de
-revisión y aprobación del usuario; se conserva el plan hasta ese cierre.
+comparaciones por caso frente a ambas bases. F5.1 fue aprobada por el usuario
+y el plan V4 se cerró el 2026-10-16.
 
 - [Tablas contra F1 y V4 inicial](tablas.md).
 - [Comparación por caso](vigente-comparacion.json) y

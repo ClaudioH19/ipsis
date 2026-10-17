@@ -29,18 +29,18 @@ a token is configured. The API and widget assets remain available. Run
 ## Guidance separate from search results
 
 With engine v2, a guidance section sits above the ranked sources. It uses a
-fixed catalog of 118 messages for each of Spanish, English and Portuguese,
+fixed catalog of 142 messages for each of Spanish, English and Portuguese,
 selected using the project's document language. Other languages use English
-guidance as a fallback. The thirteen categories are `welcome`, `greeting`, `thanks`,
-`farewell`, `capability`, `tips`, `searching`, `results`, `continuation` and
-`no_results`, `about`, `limits` and `examples`. The YAML catalogs live in `ipsis/recursos/voz/`, independently
+guidance as a fallback. The seventeen categories are `welcome`, `greeting`, `thanks`,
+`farewell`, `capability`, `tips`, `searching`, `results`, `results_variants`,
+`results_documents`, `results_retry`, `opened_source`, `continuation`, `no_results`, `about`, `limits` and `examples`. The YAML catalogs live in `ipsis/recursos/voz/`, independently
 of the existing tones and source templates. This is interface text, never
 documentary evidence or generated answers.
 
 The `results` and `continuation` templates can use `{count}` (the number with its noun, already singular or plural in the
 language: "3 resultados", "1 result"), `{n}` (the bare number) and `{query}` (what was searched). A template that uses none
 of them gets the count prepended ("3 resultados. …"), so the count always reaches the reader without taking a line of its own
-(the "N results for …" heading is kept only for screen readers). The help menu is a "?" icon in the assistant's header. While
+(the "N results for …" heading is kept only for screen readers). `results_variants` ("it depends on your case") and `results_documents` ("I found it in several documents") replace `results` on the first page when the API reports `result_shape: variants` or `documents` (see the `/ask` table below, and `v2.presentation.enabled`); they describe the page and never say which source answers. `results_documents` can also use `{n_docs}`, the number of distinct documents among the sources shown. With a `neutral` shape, or an assistant-messages bank without these two categories, `results` is used as always. The two correction paths below use `opened_source` (`{doc}` and `{scope_suffix}`, the latter already with its leading comma or empty) and `results_retry` (with `{count}`). The help menu is a "?" icon in the assistant's header. While
 the assistant is not speaking, or has not started yet, a dot fades in and out after its message to show it is waiting.
 
 **Search tips**, **What I can do**, **About the assistant**, **Scope** and
@@ -154,7 +154,7 @@ The widget uses three public endpoints; you can call them too:
 
 | Endpoint | What it returns |
 |---|---|
-| `POST /ask` with `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` by paragraph: `type` is `lead`, `passage` or `message`, with `text`, `connector`, `citation` and `chunk_id`; `passage` text is literal from the document), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` when the question has no topic: the assistant asks for it), `confidence_level` (`high`: direct answer read by the QA reader, 96.6 % correct on the measured banks; `medium`: direct answer without a reader, 85 %; `low`: related passage; absent when there is no answer), `confidence`, `latency_ms`, `exact_answer` when the reader marked a span, `alternatives` (only in `no_answer` with the proactive posture: similar literal passages, same fields as `fragments`; they do not answer the question) and `conversational_category` |
+| `POST /ask` with `{"question": "...", "session_id": "..."}` | `status` (`ok`, `related`, `no_answer`, `conversational`, `degraded`, `saturated`), `answer`, `answer_blocks` (`answer` by paragraph: `type` is `lead`, `passage` or `message`, with `text`, `connector`, `citation` and `chunk_id`; `passage` text is literal from the document), `fragments` (`doc_title`, `section`, `offset_start`, `offset_end`, `text`, `score`…), `plan` (`clarification` when the question has no topic: the assistant asks for it), `confidence_level` (`high`: direct answer read by the QA reader, 96.6 % correct on the measured banks; `medium`: direct answer without a reader, 85 %; `low`: related passage; absent when there is no answer), `confidence`, `latency_ms`, `exact_answer` when the reader marked a span, `alternatives` (only in `no_answer` with the proactive posture: similar literal passages, same fields as `fragments`; they do not answer the question) and `conversational_category` With engine v2 and `v2.presentation.enabled` the first page also carries `result_shape`: `variants` (the first two sources are variants of the same thing), `documents` (they come from different documents) or `neutral`. It describes the page, not whether the first source answers; `clear` only appears with an explicit `clear_margin`, which is not recommended. Further pages (`continuation`) never carry it. Also on the first page, with the multimedia lane on (`media.enabled` and a `media.min_score`), `media`: audio and video records written by a person (`media_id`, `title`, `kind`, `url`, `start_seconds`, `chapter_title`, `chapter_description`, `description`, `duration`, `version`). It never changes `fragments`; only records with a web link are published for now. |
 | `GET /config` | What the widget needs: `assistant_name`, `greeting`, `response_mode`, `preset`, `density`, `citations`, `interface` texts, `microcopy` of the tone, `assistant_messages`, `animations_enabled`, `placement` and `avatar` |
 | `GET /health`, `GET /ready` | Liveness and readiness (with the same diagnosis as `ipsis doctor` under `project`) |
 
@@ -186,6 +186,40 @@ instead of the icon:
 - **System preferences:** dark mode, `prefers-reduced-motion` (no
   animations) and high contrast (`forced-colors`).
 
+## Search layout
+
+With engine v2 (`response_mode: ranked_sources` in `GET /config`) the widget uses a search layout:
+
+- **Search box at the bottom**, like a chat: the results scroll above it, on desktop and on phones. The
+  box has a clear button.
+- **Assistant message above the box**, where attention is: it says how many results there are (see the
+  `{count}` templates above). With `avatar.placement: message` (the default for new projects) the avatar
+  sits to its right; `header`, `top-corner` and `bottom-corner` still work
+  ([personality.md](personality.md)). While the phone keyboard is open the avatar is hidden to save space.
+- **Loading:** while a search runs, grey skeleton cards fall into place one after another, with a status
+  line that moves through "Reading the documents…", "Comparing sources…" and "Sorting by relevance…"; the
+  results then enter one at a time. "Show more results" adds a single skeleton card below the list. It
+  respects `prefers-reduced-motion` and `animations.enabled: false`.
+- **Scope label:** each result shows, next to its document title, a small label with what tells it apart
+  from its sibling units (for example "Práctica Profesional II"). The API returns it as `scope`, and the
+  terms that tell similar units apart as `distinctive_terms`.
+- **Page shape** (`v2.presentation.enabled`, on by default, makes the API return `result_shape`; [ADR 0010](../decisions/0010-presentation-by-result-shape.md)): when the first sources
+  are `variants` of the same thing (for example the table of each internship), a "Choose your case" row of shortcuts
+  takes you to each variant's card; when they come from several `documents`, the first card of each document gets a
+  heavier top border. The assistant message changes too (`results_variants`, `results_documents`). Neither the sources
+  shown nor their order change, and a `neutral` page looks as without the setting.
+- **Multimedia lane** (only with `media.enabled`): after the sources, a separate block "There is also a video about this" shows the
+  record's own text (type, duration, chapter and minute, description, "According to the video description") and a button that opens
+  the link in a new tab. For YouTube and Vimeo the link includes the chapter's minute. There is no embedded player (no iframe), and
+  links that are not `http`/`https` are never shown.
+- **Correction paths** (only when the API reports `result_shape`): opening the context of a source that is not the first
+  makes the assistant say where it is from ("This is from *Rules*, Internship II"), once per card, without claiming it is
+  the answer and without sending anything to the server. Under the list, next to "Show more results", a "This isn't it" button
+  requests the same next page, the assistant answers "Then maybe you were looking for…" and the earlier cards compact (their
+  excerpt is hidden until you open their context; nothing is removed). It does not appear when there are no more results.
+- **Test page:** `/widget/demo.html` takes the whole screen on phones (no page header; the access-key
+  form is at `#clave-acceso`) and fits the window on desktop.
+
 ## Citations
 
 Every answer with evidence shows, **underneath**, a block of citations to
@@ -207,7 +241,7 @@ they show:
 - **From the active tone** (see [personality.md](personality.md)): the
   v1 welcome, "searching…", the invitation to the citations and the error
   messages come from `/config` in 7 variants, and the widget rotates them.
-- **v2 guidance:** its separate fixed catalog has 118 messages per supported
+- **v2 guidance:** its separate fixed catalog has 142 messages per supported
   language, with examples and information about the assistant and its scope.
 - **Interface texts** (button labels, placeholder…) come from the language
   pack of the project.
@@ -258,7 +292,7 @@ document sources and do not execute searches.
 **Frequently asked questions** exposes at least 100 complete questions per
 language across ten topics. `/config::default_questions` publishes questions
 and topics; the service resolves each fixed answer. Queries with added document
-information still search the index. The 118 message variants form a separate
+information still search the index. The 142 message variants form a separate
 catalog from the recognized questions.
 
 Guidance occupies two lines by default. **Show full message** expands a

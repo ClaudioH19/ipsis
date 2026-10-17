@@ -106,6 +106,20 @@ messages:
     - Los resultados conservan el texto del documento. Revisa el contexto de la coincidencia.
     - Puedes seguir leyendo las fuentes o escribir una consulta más específica.
     - Revisa el documento y su versión al comprobar la información encontrada.
+  results_variants:
+    - "{count}. Depende de tu caso: las primeras fuentes son variantes de lo mismo, revisa cuál corresponde a la tuya."
+    - "{count}. Hay variantes de este tema; abre cada una y comprueba cuál aplica a tu situación."
+    - Depende de tu caso. Estas fuentes tratan lo mismo con diferencias; compara el contexto de cada una.
+    - "{count}. Las primeras opciones se parecen, pero cambian según el caso. Revisa cuál es el tuyo."
+    - Varias fuentes hablan de lo mismo con matices distintos. Abre las que te interesen y compáralas.
+    - "{count}. Lo que buscas puede variar según el caso; mira el encabezado y el contexto de cada fuente."
+  results_documents:
+    - "{count}. Lo encontré en {n_docs} documentos distintos; abre cada uno para ver cuál corresponde."
+    - "{count}, repartidos en {n_docs} documentos. Revisa de cuál necesitas la información."
+    - Hay fuentes en {n_docs} documentos. Mira el documento de origen de cada una antes de elegir.
+    - "{count}. Este tema aparece en {n_docs} documentos; comprueba cuál es el que usas."
+    - Lo encontré en más de un documento. Compara su título y versión para saber cuál aplica.
+    - "{count}. Las primeras fuentes vienen de {n_docs} documentos diferentes; abre la que te sirva."
   continuation:
     - "Ahora hay {count} en la lista. Compara las nuevas opciones con las anteriores."
     - "La búsqueda continúa: {count} hasta ahora. Abre las opciones nuevas para leer su contexto."
@@ -117,6 +131,20 @@ messages:
     - Continúa revisando las fuentes o cambia la consulta si necesitas otro enfoque.
     - Las opciones nuevas aparecen después de las anteriores.
     - Revisa estos pasajes adicionales con sus referencias.
+  results_retry:
+    - "Entonces quizás buscabas alguna de estas. Ahora hay {count} en la lista."
+    - "Entonces quizás buscabas otra cosa: sumé más opciones, {count} en total."
+    - "Entonces quizás buscabas alguna de las nuevas opciones, ahora {count}. Abre la que se parezca más a tu caso."
+    - "Entonces quizás buscabas esto otro. Hay {count} y las anteriores siguen en la lista."
+    - "Sigamos buscando: agregué más fuentes, {count} en total. Revisa si alguna es la que necesitas."
+    - "Entonces quizás buscabas algo distinto. Te dejo más fuentes, {count} en total."
+  opened_source:
+    - "Esto es de {doc}{scope_suffix}. Revisa si es lo que buscas."
+    - "Abriste una fuente de {doc}{scope_suffix}. No es necesariamente la respuesta; compárala con las demás."
+    - "Esta fuente es de {doc}{scope_suffix}. Compara su contexto con las otras opciones."
+    - "Estás leyendo {doc}{scope_suffix}. Comprueba si corresponde a tu caso."
+    - "Esto viene de {doc}{scope_suffix}. Si no es lo que buscabas, prueba con otra fuente."
+    - "Fuente de {doc}{scope_suffix}. Revisa el contexto antes de usar la información."
   no_results:
     - No hay fuentes para mostrar en esta búsqueda. Prueba con otras palabras clave.
     - No se recuperaron opciones. Comprueba el nombre o código que escribiste.

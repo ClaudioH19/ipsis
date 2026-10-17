@@ -98,9 +98,22 @@ def _acuerdo_por_caso(banco) -> tuple[dict[str, float], dict[str, float]]:
         motor.cerrar()
 
 
+def _mezclar(destino: dict, origen: dict) -> None:
+    """Mezcla ``origen`` en ``destino`` (recursivo en los diccionarios; lo demás reemplaza)."""
+    for clave, valor in origen.items():
+        if isinstance(valor, dict) and isinstance(destino.get(clave), dict):
+            _mezclar(destino[clave], valor)
+        else:
+            destino[clave] = valor
+
+
 def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimentos: bool,
-                         ajustes: dict | None = None):
-    """Proyecto temporal del perfil para un banco: artefacto, indexado y acuerdo."""
+                         ajustes: dict | None = None, condiciones: dict | None = None):
+    """Proyecto temporal del perfil para un banco: artefacto, indexado y acuerdo.
+
+    ``condiciones`` (opcional) se mezcla en ``config/engine.yaml`` del proyecto, con las claves internas, antes de
+    indexar: sirve para medir un motor que ya no es el predeterminado (p. ej. ``{"pipeline": "v1"}``).
+    """
     from ipsis.aplicacion.evaluacion import evaluar_backend_activo
     from ipsis.lenguaje.entidades import configurar_idioma, configurar_perfil, idioma_activo, perfil_activo
 
@@ -119,12 +132,14 @@ def _evaluar_en_proyecto(perfil: str, manifiesto: Path, banco, main, experimento
                     raise RuntimeError(t("app.init_failed_for", profile=perfil))
                 if perfil == "bm25":
                     _fijar_perfil("bm25")
-                if ajustes:
+                if ajustes or condiciones:
                     from ipsis.configuracion import rutas
                     from ipsis.configuracion.archivos import leer, escribir
 
                     config = leer(rutas.MOTOR, "motor")
-                    config["ajustes_perfil"] = ajustes
+                    if ajustes:
+                        config["ajustes_perfil"] = ajustes
+                    _mezclar(config, condiciones or {})
                     escribir(rutas.MOTOR, config, "motor")
                 for archivo in banco.manifiesto.corpus.archivos:
                     if main(["load", str(corpus / archivo.ruta)]) != 0:

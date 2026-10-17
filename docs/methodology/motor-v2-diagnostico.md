@@ -1,9 +1,10 @@
 # Diagnóstico de calidad del motor v2
 
-Fecha: 2026-10-11. Estado: investigación experimental sobre tres DOCX reales.
-El proyecto original continúa configurado con v1 e ingesta legacy; v2 y la
-preparación estructural se ejecutaron en copias. No se cambió el motor para
-hacer pasar los casos.
+Fecha: 2026-10-11. Estado: histórico. Investigación sobre tres DOCX reales,
+anterior a que v2 fuera el motor predeterminado (2026-10-12) y a que lo fuera la
+preparación estructural (2026-10-15). El proyecto original seguía configurado con
+v1 e ingesta legacy; v2 y la preparación estructural se ejecutaron en copias. No se
+cambió el motor para hacer pasar los casos.
 
 ## Conclusión
 

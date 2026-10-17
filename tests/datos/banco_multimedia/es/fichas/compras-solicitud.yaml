@@ -1,0 +1,20 @@
+title: Cómo pedir una compra al Departamento de Compras
+kind: video
+url: https://videos.example.org/compras-solicitud
+description: 'Tutorial para las unidades que necesitan adquirir un bien o un servicio: cómo pedirlo, qué
+  revisa Compras y cómo recibir lo comprado.'
+keywords:
+- adquisiciones
+- unidad requirente
+- formulario
+language: es
+version: 2026-03
+duration: 09:45
+chapters:
+- at: 01:00
+  title: Llenar el Formulario de Requerimiento
+  description: Descripción, cantidad, presupuesto y justificación.
+- at: 03:20
+  title: Qué revisa el Departamento de Compras
+- at: 06:00
+  title: Recibir lo comprado y firmar la recepción conforme

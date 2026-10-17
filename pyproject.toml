@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ipsis"
-version = "1.0.0"
+version = "1.1.0"
 description = "Find and review ranked literal sources from your documents: a self-hosted, CPU-only assistant without a generative LLM."
 requires-python = ">=3.11"
 readme = "README.md"

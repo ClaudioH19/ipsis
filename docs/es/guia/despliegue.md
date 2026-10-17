@@ -7,6 +7,55 @@ perfiles están en [instalacion.md](instalacion.md).
 El proyecto está pensado para self-hosting: tu servicio, tus documentos y tu
 dominio.
 
+## Integración continua
+
+`.github/workflows/servicio.yml` se ejecuta en cada push, pull request e inicio
+manual. Su job de contrato comprueba el motor y la frontera HTTP sin descargar
+modelos. Su job de contenedor construye un wheel desde el checkout actual, crea
+un proyecto en español con el perfil light que contiene un registro de
+inventario conocido, descarga el modelo de CPU necesario, carga e indexa el
+documento y luego ejecuta `ipsis deploy prepare --wheel`. El Dockerfile
+generado instala ese wheel, de modo que la comprobación prueba el commit en
+cuestión y no otra rama ni una versión publicada.
+
+Docker Compose construye con el UID/GID del runner para que las carpetas
+montadas de configuración e índice sean escribibles, inicia el servicio y
+espera su healthcheck `/ready`. Luego `herramientas/ci/comprobar_servicio.py`
+verifica un índice v2 no vacío, el modo producción, el catálogo del widget,
+cuatro tipos de conversación y la recuperación de fuentes literales con offsets
+correctos. Una pregunta con el prefijo «hola» debe seguir recuperando el valor
+de inventario conocido. Las respuestas con HTTP 200 pero con cuerpo vacío o
+incorrecto fallan. El script guarda un informe JSON incluso si falla; Actions
+además sube el estado y los logs de los contenedores y, al final, detiene solo
+su propio despliegue de prueba.
+
+El workflow manual `.github/workflows/regresion-general.yml` conserva la
+evaluación histórica de respuestas directas y sus artefactos. Su entrada
+opcional `comparar_referencia` activa la comparación con la línea base
+congelada. Esas métricas de respuesta y abstención no son métricas de ranking:
+v2 devuelve fuentes para revisar a propósito. Esta evaluación es independiente
+de la puerta automática de arranque del servicio; la línea base no se reescribió
+para ocultar esa diferencia.
+
+Para reproducir la comprobación del contenedor en Linux con Docker Compose y uv:
+
+```bash
+uv sync --locked --extra test
+uv build --wheel --out-dir .cache/ci/wheels
+uv run python herramientas/ci/preparar_contenedor.py --output .cache/ci --wheels .cache/ci/wheels
+export COMPOSE_FILE="$PWD/.cache/ci/deploy/docker-compose.yml"
+export COMPOSE_PROJECT_NAME=ipsis-ci
+docker compose build --build-arg APP_UID="$(id -u)" --build-arg APP_GID="$(id -g)"
+docker compose up -d --no-build --wait --wait-timeout 180
+uv run python herramientas/ci/comprobar_servicio.py --url http://127.0.0.1:8000 --output .cache/ci/reporte.json
+docker compose down --remove-orphans
+```
+
+Usa una carpeta de salida nueva al repetir la preparación. El puerto 8000 debe
+estar libre. La comprobación demuestra el empaquetado, el arranque y la
+interacción básica con un corpus real indexado; no certifica la calidad de la
+búsqueda en todos los documentos.
+
 ## 1. Servicio en loopback
 
 `ipsis serve` escucha en `127.0.0.1:8000` por defecto. Déjalo así y pon un

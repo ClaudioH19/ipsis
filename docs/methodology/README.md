@@ -73,11 +73,14 @@ rules such as `ok_lector`), because they describe the implementation.
 
 [Motor v2 layer map and proposal](motor-v2.md) documents the current request
 path and a CPU-only, non-generative comparison design with fewer semantic
-heuristics. The experimental engine is implemented; v1 remains the default.
+heuristics. V2 is implemented and, since 2026-10-12, the default engine; v1 stays
+available by explicit selection (`pipeline: v1`).
 
 [Structured document preparation](preparacion-estructural.md) describes the
-experimental DOCX representation, parent/child retrieval, isolated indexes,
-preview command and supported structures. It does not imply better answer quality.
+structural preparation, the default since 2026-10-15
+([ADR 0009](../decisions/0009-structural-preparation-by-default.md)): the DOCX
+representation, parent/child retrieval, isolated indexes, preview command and
+supported structures. It does not imply better answer quality by itself.
 
 [V2 quality diagnosis](motor-v2-diagnostico.md) traces losses in retrieval,
 reranking and QA with controlled budgets, oracle passages, table representations

@@ -6,7 +6,7 @@
 
 [![Licencia: AGPL-3.0](https://img.shields.io/badge/licencia-AGPL--3.0-2563eb)](LICENSE)
 [![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776ab?logo=python&logoColor=white)](docs/es/guia/instalacion.md)
-[![Versión 1.0.0](https://img.shields.io/badge/versi%C3%B3n-1.0.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.0.0)
+[![Versión 1.1.0](https://img.shields.io/badge/versi%C3%B3n-1.1.0-0f172a)](https://github.com/ClaudioH19/ipsis/releases/tag/v1.1.0)
 [![Sin LLM](https://img.shields.io/badge/LLM-ninguno-16a34a)](docs/decisions/0001-non-generative-answers.md)
 [![Solo CPU](https://img.shields.io/badge/GPU-no%20necesaria-64748b)](docs/decisions/0003-onnx-and-profiles.md)
 
@@ -15,7 +15,7 @@
 **[Documentación](#-documentación)** · **[English](README.md)**
 </div>
 
-**ipsis 1.0** es un asistente autoalojado que **encuentra y ordena fuentes de tus
+**ipsis 1.1** es un asistente autoalojado que **encuentra y ordena fuentes de tus
 propios documentos**. Muestra extractos literales, el archivo y su versión, la
 ruta de secciones y un contexto que puedes abrir para verificar la información.
 Funciona en CPU, sin un LLM generativo; después de descargar los modelos puede
@@ -41,10 +41,10 @@ de certeza a partir del ranking.
   `medium` añade un reranker semántico. Los scores no son probabilidades.
 - **Lectura verificable:** texto y posiciones literales, contexto desplegable,
   párrafos y encabezados del documento, tablas con columnas y desplazamiento horizontal.
-- **Documentos e inventarios:** PDF con texto, DOCX, Markdown, TXT, XLSX, XLS,
+- **Documentos e inventarios:** PDF con texto, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,
   CSV y TSV. Conserva registros y campos; no suma stock ni recalcula fórmulas.
 - **Ayuda en español, inglés y portugués:** al menos 100 preguntas reconocidas
-  por idioma en diez temas, además de 118 variantes de mensajes de interfaz.
+  por idioma en diez temas, además de 142 variantes de mensajes de interfaz.
   Una pregunta mixta sobre documentos sigue usando la búsqueda.
 - **Nueve temas visuales:** classic, minimal, editorial, contrast, search,
   search_compact, ocean, forest y midnight. Colores, fuentes, títulos y secciones editables.
@@ -86,6 +86,9 @@ Escribe una pregunta, revisa las fuentes y abre su contexto. **Mostrar más
 resultados** añade otras opciones de la misma consulta. Una consulta nueva
 reemplaza la lista; no hereda automáticamente el tema de la pregunta anterior.
 
+Cuando cambien los archivos de `documents/` (nuevos, renombrados o borrados), ejecuta `ipsis sync`:
+actualiza el catálogo y reconstruye el índice (ver [mantener el índice al día](docs/es/guia/uso.md#mantener-el-índice-al-día)).
+
 `ipsis` sin argumentos abre la terminal interactiva. Para la interfaz de
 consola en español usa `export IPSIS_LANG=es`; en PowerShell,
 `$env:IPSIS_LANG = "es"`. El idioma documental se configura con `--language`.
@@ -93,7 +96,7 @@ consola en español usa `export IPSIS_LANG=es`; en PowerShell,
 | Perfil | Modelos usados por v2 | Uso |
 |---|---|---|
 | `light` | e5-small + búsqueda híbrida con BM25 | Prioriza la latencia |
-| `medium` | e5-small + reranker mMiniLM + búsqueda híbrida | Añade comparación semántica de candidatos |
+| `medium` | e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en otros idiomas) + búsqueda híbrida | Añade comparación semántica de candidatos |
 
 V2 no carga el lector QA por defecto. `ipsis models list` muestra los modelos
 que usa el motor activo. Consulta [instalación](docs/es/guia/instalacion.md)
@@ -114,8 +117,14 @@ presentación no requieren reindexar; `config/styles.yaml` existente no se
 reemplaza automáticamente. Elige un preset para adoptar su diseño completo,
 o ajusta valores individuales para conservar tu personalización.
 
+Hay un cambio que sí requiere una acción. Un proyecto v2 creado con `config_version` 7 o anterior se migra
+en su siguiente comando `ipsis` a `config_version` 8 y, si no había elegido preparación, a la preparación
+estructural ([ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). Ejecuta `ipsis index`
+para construir el índice nuevo: hasta entonces el servicio informa que no está listo. El índice anterior se
+conserva y `retrieval.preparation.mode: legacy` vuelve a los fragmentos de tamaño fijo.
+
 La instalación anterior sigue la rama predeterminada. Para fijar esta release,
-instala con `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.0.0`;
+instala con `ipsis @ git+https://github.com/ClaudioH19/ipsis.git@v1.1.0`;
 una instalación fijada a un tag necesita cambiar ese tag para otra release.
 Si tu sitio guarda una copia exportada del widget, vuelve a exportar `widget.js`.
 
@@ -203,7 +212,7 @@ conserva los textos personalizados y el CSS extra.
 Las seis preguntas sugeridas rellenan el campo sin enviarlo. **Preguntas
 frecuentes** permite explorar el catálogo por tema: uso, fuentes, inventarios,
 alcance, privacidad, apariencia, documentos, servicio y mantenimiento.
-El menú **Ayuda** reúne los mensajes de orientación. Puedes expandirlos cuando
+El menú **Ayuda**, que se abre con el icono «?» del encabezado, reúne los mensajes de orientación. Puedes expandirlos cuando
 necesites leerlos completos; una búsqueda nueva los vuelve a compactar.
 
 | Ruta | Uso |
@@ -252,6 +261,7 @@ el ranking del enrutador. Consulta [golden](docs/es/guia/golden.md) y la
 | [Widget](docs/es/guia/web.md) | Temas, API, accesibilidad y preguntas frecuentes |
 | [Integraciones](docs/es/guia/integraciones.md) | Frameworks web, CORS y ejemplos |
 | [Inventarios](docs/es/guia/inventarios.md) | Tablas y límites de formatos |
+| [Audio y video](docs/es/guia/multimedia.md) | Fichas, umbral y tarjeta del widget |
 | [Personalidad](docs/es/guia/personalidad.md) | Tonos, Folio y panel |
 | [Despliegue](docs/es/guia/despliegue.md) | Docker, HTTPS y operación |
 | [Golden v1, opcional](docs/es/guia/golden.md) | Evaluación y calibración del motor anterior |

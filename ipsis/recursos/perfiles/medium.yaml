@@ -2,7 +2,7 @@
 # (profile_overrides) and `ipsis calibrate` replaces the default thresholds.
 # See docs/decisions/0003-onnx-and-profiles.md.
 profile: medium
-description: Light plus a cross-encoder reranker and an extractive QA reader.
+description: Light plus a cross-encoder reranker (a larger one for Spanish and Portuguese); the extractive QA reader is used only by the optional v1 engine.
 p95_budget_ms: 1000
 models:
   dense: intfloat/multilingual-e5-small

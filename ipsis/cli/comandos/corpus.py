@@ -61,6 +61,19 @@ class ComandoCargar(Comando):
         return 1 if rechazados else 0
 
 
+def _imprimir_media(media) -> None:
+    """Lo que dijo el carril multimedia al indexar (``ResumenMedia``); sin ``media/`` no se imprime nada."""
+    if media is None:
+        return
+    for ficha_id, errores in sorted(media.errores.items()):
+        for error in errores:
+            print(t("index.media_error", id=ficha_id, error=error))
+    if media.nombre_coleccion:
+        print(t("index.media_indexed", cards=media.n_fichas, chapters=media.n_capitulos, collection=media.nombre_coleccion))
+    else:
+        print(t("index.media_none"))
+
+
 class ComandoIndexar(Comando):
     nombre = "index"
     ayuda = "index.help"
@@ -92,6 +105,7 @@ class ComandoIndexar(Comando):
             print(t("index.warning", warning=a))
         print(t("index.indexed", collection=resumen.nombre_coleccion, terms=resumen.n_vocab_bm25,
                 entities=resumen.n_entidades_inventario))
+        _imprimir_media(resumen.media)
         print(t("index.time", seconds=resumen.tiempo_seg))
         print(t("index.next"))
         return 0
@@ -139,6 +153,8 @@ class ComandoSincronizar(Comando):
         for ignorado in plan.ignorados:
             print(t("sync.ignored", file=ignorado.as_posix(), folder=carpeta))
         print(t("sync.unchanged", n=plan.sin_cambios))
+        if r.media_cambio:
+            print(t("sync.media_changed"))
         for d in r.agregados:
             if d.rechazo:
                 print(t("load.rejected", file=d.archivo, reason=d.rechazo))
@@ -154,7 +170,8 @@ class ComandoSincronizar(Comando):
             print(t("sync.indexed", docs=resumen.n_documentos, chunks=resumen.n_chunks, collection=resumen.nombre_coleccion))
             for a in resumen.advertencias:
                 print(t("index.warning", warning=a))
-        elif not plan.hay_cambios and not args.force:
+            _imprimir_media(resumen.media)
+        elif not plan.hay_cambios and not args.force and not r.media_cambio:
             print(t("sync.nothing"))
         elif args.no_index:
             print(t("sync.catalog_only"))

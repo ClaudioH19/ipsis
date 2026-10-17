@@ -82,3 +82,33 @@ def test_otros_mensajes_de_cortesia(pregunta, categoria):
     datos = {"conversacional": cargar_paquete("es").conversacional.model_dump()}
     assert categoria_cortesia(pregunta, datos) == categoria
     assert categoria_cortesia(pregunta + " según el manual", datos) is None
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_los_mensajes_por_forma_de_pagina_existen_y_solo_usan_marcadores_conocidos(idioma):
+    import re
+
+    mensajes = voz_del_widget(idioma)["messages"]
+    for categoria in ("results_variants", "results_documents"):
+        assert len(mensajes[categoria]) >= 6
+        for texto in mensajes[categoria]:
+            assert set(re.findall(r"\{(\w+)\}", texto)) <= {"count", "n", "query", "n_docs"}
+            assert "{" not in re.sub(r"\{(count|n|query|n_docs)\}", "", texto)
+    # {n_docs} solo donde hay varios documentos: en las variantes del mismo documento no tiene sentido
+    assert not any("{n_docs}" in t for t in mensajes["results_variants"])
+
+
+@pytest.mark.parametrize("idioma", ["es", "en", "pt"])
+def test_los_mensajes_de_correccion_existen_y_usan_los_marcadores_de_su_situacion(idioma):
+    import re
+
+    mensajes = voz_del_widget(idioma)["messages"]
+    assert len(mensajes["results_retry"]) >= 6 and len(mensajes["opened_source"]) >= 6
+    # «No es esto» ya sabe cuántas fuentes hay: cada mensaje lo dice con {count}, para que no se le anteponga el conteo
+    assert all("{count}" in t for t in mensajes["results_retry"])
+    for t in mensajes["results_retry"]:
+        assert set(re.findall(r"\{(\w+)\}", t)) == {"count"}
+    # al abrir una fuente: el documento siempre, y el alcance detrás de él con su coma; nada más
+    for t in mensajes["opened_source"]:
+        assert "{doc}{scope_suffix}" in t and set(re.findall(r"\{(\w+)\}", t)) == {"doc", "scope_suffix"}
+        assert not re.search(r"\b(correct\w*|respuesta correcta|resposta correta|right answer)\b", t, re.I)

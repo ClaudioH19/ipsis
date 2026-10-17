@@ -11,12 +11,23 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 - Disco para los modelos del perfil. Es una caché global por usuario, que
   comparten todos los proyectos:
 
-  | Perfil | Modelos | Disco aprox. | p95 objetivo |
+  | Perfil | Modelos | Disco aprox. | p95 objetivo (`ipsis benchmark`) |
   |---|---|---|---|
   | `light` | denso e5-small | 0,5 GB | 150 ms |
-  | `medium` | e5-small + reranker mMiniLM + lector mDeBERTa | 1,7 GB | 1 s |
+  | `medium` | e5-small + reranker (bge-reranker-v2-m3 en español y portugués, mMiniLM en otros idiomas) | 1,0 GB (español, portugués) · 0,6 GB (otros idiomas) | 1 s |
 
   `bm25` es solo de diagnóstico para `ipsis benchmark`: no se instala.
+  Los tamaños son los de los archivos ONNX en disco (medidos el 2026-10-16 tras `ipsis models download`: e5-small
+  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). El lector QA extractivo (mDeBERTa) pertenece al motor
+  opcional `pipeline: v1`: el motor predeterminado (v2) no lo carga ni lo descarga, y `ipsis models list`
+  muestra lo que usa el motor activo.
+  Latencia medida de una consulta completa de `medium` (v2; banco sintético de pasajes, 116 preguntas, 4 CPU de un
+  Intel Xeon a 2,1 GHz, 2026-10-16): español con bge-reranker-v2-m3, p50 604 ms y p95 749 ms; inglés con mMiniLM,
+  p50 349 ms y p95 620 ms. Ese banco tiene pasajes cortos: con documentos reales en español el p95 fue de 1,7 s
+  (ver el [ADR 0003](../../decisions/0003-onnx-and-profiles.md)).
+  El «p95 objetivo» es el `p95_budget_ms` del perfil: la referencia con que `ipsis benchmark` marca si un perfil
+  cumple su latencia, que también muestran `ipsis profile` y el panel. El motor predeterminado (v2) no lo aplica a
+  las consultas: una consulta v2 se acota con `v2.query_budget_ms` (2500 ms), igual para los dos perfiles.
   `medium` es la opción recomendada y el valor por defecto de `ipsis init`.
 - Red solo para descargar los modelos. Después el servicio funciona sin red.
 
@@ -69,8 +80,8 @@ adoptar opciones nuevas. Recarga el navegador y reemplaza las copias exportadas
 de `widget.js` si tu sitio las utiliza.
 
 Una instalación desde una rama Git se actualiza a un commit nuevo de esa rama.
-Para fijar la release 1.0, usa `ipsis @
-git+https://github.com/ClaudioH19/ipsis.git@v1.0.0` al instalar. Si fijaste un
+Para fijar la release 1.1, usa `ipsis @
+git+https://github.com/ClaudioH19/ipsis.git@v1.1.0` al instalar. Si fijaste un
 tag o commit, debes cambiar esa referencia para actualizar a otra release.
 
 **En Docker:** `ipsis deploy prepare` genera la imagen de tu proyecto;

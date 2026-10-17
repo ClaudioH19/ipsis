@@ -1,0 +1,20 @@
+title: Cómo rotular y registrar las muestras
+kind: video
+url: https://videos.example.org/lab-muestras
+description: 'Demostración del manejo de las muestras que llegan al laboratorio: etiquetado, anotación
+  en el registro y motivos por los que una muestra no se puede analizar.'
+keywords:
+- muestras
+- etiquetado
+- registro
+- laboratorio
+language: es
+version: 2026-02
+duration: 06:15
+chapters:
+- at: 00:50
+  title: Rotular el tubo antes de procesarlo
+- at: 02:30
+  title: Anotar la muestra en el registro
+- at: 04:10
+  title: Cuándo no se puede analizar una muestra
