@@ -11,6 +11,7 @@ de avance de cada plan:
 | Multimedia | terminado salvo M4 (no se hace: no se sirven archivos) y M4.2 (panel, no pedido); activo por defecto (ADR 0011) | [multimedia.md](multimedia.md), [tareas](multimedia-tareas.md), [avance](multimedia-avance.md) |
 | Precisión desde la ingesta | casi cerrado: quedan F3.3 (condicional, sin iniciar) y F4.3 (⚠ espera al usuario) | [precision-ingesta.md](precision-ingesta.md), [tareas](precision-ingesta-tareas.md), [avance](precision-ingesta-avance.md) |
 | Motor v2 | v2 es el predeterminado desde el 2026-10-12; faltan la evaluación general y el retiro de v1 | [motor-v2.md](motor-v2.md), [avance](motor-v2-avance.md) |
+| Fuentes tabulares | propuesta, sin implementar: solo cambió el texto de la ayuda (asistente multipropósito) | [fuentes-tabulares.md](fuentes-tabulares.md) |
 
 ## Plan de coherencia
 

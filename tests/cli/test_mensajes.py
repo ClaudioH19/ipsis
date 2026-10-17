@@ -70,7 +70,7 @@ def test_init_usa_el_idioma_de_la_interfaz_y_sus_nombres(monkeypatch, tmp_path, 
     monkeypatch.delenv("IPSIS_LANG")
     assert main(["init", "--profile", "light"]) == 0
     asistente = leer_proyecto(tmp_path / "config" / "assistant.yaml")
-    assert asistente["idioma"] == "en" and asistente["nombre_asistente"] == "Document assistant"
+    assert asistente["idioma"] == "en" and asistente["nombre_asistente"] == "Assistant"
     assert "Next step: 'ipsis load <file|folder>', then 'ipsis index'." in capsys.readouterr().out
 
     otro = tmp_path / "otro"
@@ -79,4 +79,4 @@ def test_init_usa_el_idioma_de_la_interfaz_y_sus_nombres(monkeypatch, tmp_path, 
     monkeypatch.setenv("IPSIS_LANG", "es")
     assert main(["init", "--profile", "light"]) == 0
     asistente = leer_proyecto(otro / "config" / "assistant.yaml")
-    assert asistente["idioma"] == "es" and asistente["nombre_asistente"] == "Asistente documental"
+    assert asistente["idioma"] == "es" and asistente["nombre_asistente"] == "Asistente"

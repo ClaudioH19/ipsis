@@ -23,7 +23,7 @@ taxonomy:
   domain: "{descripcion_dominio}"
   categories:
     - id: contenido
-      description: "General content of the loaded documents."
+      description: "General content of the loaded sources."
       trigger_words: []
     - id: otro
       description: "Does not fit any previous category."

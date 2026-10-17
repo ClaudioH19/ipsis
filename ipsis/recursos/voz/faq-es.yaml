@@ -2,13 +2,13 @@
 questions:
 - topic: Sobre el asistente
   question: ¿Qué es ipsis?
-  answer: Ipsis es un asistente autoalojado que busca y ordena fuentes de tus documentos.
+  answer: Ipsis es un asistente multipropósito autoalojado que recupera información de las fuentes indexadas, como documentos y tablas.
 - topic: Sobre el asistente
   question: ¿Quién eres?
-  answer: Soy un asistente para consultar documentos y ayudarte a revisar sus fuentes.
+  answer: Soy un asistente para localizar información en las fuentes disponibles aquí y ayudarte a revisar su procedencia.
 - topic: Sobre el asistente
   question: ¿Eres una persona?
-  answer: Soy software; los mensajes de ayuda son respuestas fijas y las fuentes provienen de documentos.
+  answer: Soy software; los mensajes de ayuda son respuestas fijas y los resultados provienen de las fuentes indexadas.
 - topic: Sobre el asistente
   question: ¿Qué significa el nombre ipsis?
   answer: El nombre alude a ipsissima verba, las palabras mismas del documento.
@@ -20,10 +20,10 @@ questions:
   answer: Ipsis ejecuta sus modelos en CPU; no requiere una GPU para el flujo predeterminado.
 - topic: Sobre el asistente
   question: ¿Necesitas internet para cada consulta?
-  answer: Después de descargar los modelos, un despliegue local puede consultar sus documentos sin internet.
+  answer: Después de descargar los modelos, un despliegue local puede consultar sus fuentes sin internet.
 - topic: Sobre el asistente
   question: ¿De dónde sale tu información?
-  answer: Las fuentes salen de los documentos indexados en este proyecto; la ayuda sale de un catálogo fijo.
+  answer: La información sale de las fuentes indexadas aquí; la ayuda sale de un catálogo fijo.
 - topic: Sobre el asistente
   question: ¿Qué idiomas soporta ipsis?
   answer: Español, inglés y portugués tienen mensajes y reglas propios; otros idiomas usan reglas universales y
@@ -33,7 +33,7 @@ questions:
   answer: El enrutador ofrece distintas fuentes para que puedas comparar su contenido y comprobar cuál sirve.
 - topic: Buscar información
   question: ¿Cómo empiezo a usar el buscador?
-  answer: Escribe una pregunta sobre tus documentos, envíala y abre el contexto de los resultados.
+  answer: Escribe una consulta sobre la información que necesitas, envíala y abre el contexto de los resultados.
 - topic: Buscar información
   question: ¿Puedo buscar con palabras clave?
   answer: Sí. Puedes usar palabras clave, nombres o identificadores en lugar de una pregunta completa.
@@ -42,7 +42,7 @@ questions:
   answer: Añade el tema, producto, proceso o código concreto y consulta una cosa por vez.
 - topic: Buscar información
   question: ¿Cómo busco un código de producto?
-  answer: Escribe el código tal como aparece en el inventario y añade el campo que necesitas, como stock o precio.
+  answer: Escribe el código tal como aparece en la fuente y añade el nombre del campo que necesitas, como stock o precio.
 - topic: Buscar información
   question: ¿Puedo hacer varias preguntas juntas?
   answer: Puedes escribirlas, pero separar las preguntas facilita comparar las fuentes de cada tema.
@@ -54,13 +54,13 @@ questions:
   answer: Añade otras fuentes del conjunto recuperado para la misma consulta, conservando las que ya ves.
 - topic: Buscar información
   question: ¿Qué pasa cuando envío otra consulta?
-  answer: Una consulta documental nueva reemplaza la lista de resultados de la búsqueda anterior.
+  answer: Una consulta nueva reemplaza la lista de resultados de la búsqueda anterior.
 - topic: Buscar información
   question: ¿Recuerdas el tema de mi pregunta anterior?
   answer: El enrutador busca usando la consulta actual; incluye el nombre o tema en cada nueva pregunta.
 - topic: Buscar información
   question: ¿Qué hago si mi pregunta es demasiado amplia?
-  answer: Indica el documento, producto o actividad que te interesa y el dato que quieres localizar.
+  answer: Indica el tema, producto o actividad que te interesa y el dato que quieres localizar.
 - topic: Leer fuentes
   question: ¿Cómo se ordenan las fuentes en ipsis?
   answer: La búsqueda recupera candidatos y, según el perfil, un reranker ayuda a ordenar su relevancia.
@@ -124,14 +124,14 @@ questions:
   answer: La vista no inventa columnas; si la extracción perdió la estructura, hay que mejorar la extracción del
     documento.
 - topic: Alcance
-  question: ¿Puedes inventar un dato que no está en los documentos?
-  answer: No. Las fuentes documentales deben conservar texto que exista en los documentos indexados.
+  question: ¿Puedes inventar un dato que no está en las fuentes?
+  answer: No. Los resultados deben conservar contenido que exista en las fuentes indexadas.
 - topic: Alcance
   question: ¿Una búsqueda vacía demuestra que el dato no existe?
-  answer: No. Puede deberse a la consulta o al índice; prueba otras palabras y comprueba qué documentos están cargados.
+  answer: No. Puede deberse a la consulta o al índice; prueba otras palabras y comprueba qué contenido está cargado.
 - topic: Alcance
-  question: ¿Puedes corregir un dato incorrecto del documento?
-  answer: Muestro el texto de origen. Para corregirlo, modifica el documento y vuelve a cargarlo e indexarlo.
+  question: ¿Puedes corregir un dato incorrecto de la fuente?
+  answer: Muestro el texto de origen. Para corregirlo, modifica la fuente de origen y vuelve a cargarla e indexarla.
 - topic: Alcance
   question: ¿Qué hago si una fuente parece equivocada?
   answer: Revisa su contexto y versión; reformula la consulta o verifica el documento original antes de usarla.
@@ -143,15 +143,18 @@ questions:
   answer: El flujo predeterminado presenta pasajes literales; no redacta un resumen nuevo a partir de ellos.
 - topic: Alcance
   question: ¿Traduces el texto de las fuentes?
-  answer: El texto documental se conserva en su idioma original; la traducción de la interfaz no traduce las fuentes.
+  answer: El contenido de las fuentes se conserva en su idioma original; la traducción de la interfaz no traduce las fuentes.
 - topic: Alcance
-  question: ¿Puedes hacer cálculos con mis documentos?
-  answer: Recupero datos documentales; los cálculos nuevos requieren otra herramienta y revisar los valores de origen.
+  question: ¿Puedes hacer cálculos con estas fuentes?
+  answer: Recupero los datos tal como están en las fuentes; los cálculos nuevos requieren otra herramienta y revisar los valores de origen.
+- topic: Alcance
+  question: ¿Consultas bases de datos en vivo?
+  answer: No. Trabajo con las fuentes cargadas e indexadas en el proyecto; si los datos cambian, hay que volver a cargarlos e indexarlos.
 - topic: Alcance
   question: ¿Consultas noticias o información de internet?
   answer: La búsqueda del asistente consulta este proyecto; no busca noticias en internet para completar las fuentes.
 - topic: Alcance
-  question: ¿Puedes modificar mis documentos desde el chat?
+  question: ¿Puedes modificar las fuentes desde el chat?
   answer: La conversación consulta información; la carga y los cambios se gestionan con la CLI o el panel autorizado.
 - topic: Privacidad y acceso
   question: ¿Dónde se ejecuta ipsis?
@@ -306,7 +309,7 @@ questions:
   answer: Light prioriza la recuperación híbrida; medium añade un reranker semántico para ordenar candidatos.
 - topic: Calidad y mantenimiento
   question: ¿Cambiar el tema del widget requiere reindexar?
-  answer: No. Los colores, fuentes y textos de presentación se pueden cambiar sin reconstruir el índice documental.
+  answer: No. Los colores, fuentes y textos de presentación se pueden cambiar sin reconstruir el índice.
 - topic: Calidad y mantenimiento
   question: ¿Cómo actualizo ipsis?
   answer: Si lo instalaste como herramienta uv, usa uv tool upgrade ipsis y reinicia el servicio; conserva la carpeta

@@ -337,7 +337,7 @@ def test_busqueda_tiene_barra_abajo_extractos_visibles_y_teclado(navegador, serv
     page.route("**/ask", lambda r: r.fulfill(json=publico))
     page.goto(servidor_widget)
     page.get_by_role("button", name="Open search of Library").click()
-    entrada = page.get_by_label("Search your documents")
+    entrada = page.get_by_label("Type your search")
     expect(page.get_by_text("Enter a question or keywords to find information.")).to_be_visible()
     assert page.evaluate("Array.from(document.querySelector('ipsis-chat').shadowRoot.querySelectorAll('.rw-form,.rw-mensajes')).map(e => e.className)") == ["rw-mensajes", "rw-form"]
     entrada.fill("practica stock")
@@ -382,7 +382,7 @@ def test_respuesta_y_cita_se_renderizan(navegador, servidor_widget):
     page.get_by_role("button", name="Send question").click()
 
     expect(page.get_by_text("La respuesta está respaldada por el manual.")).to_be_visible()
-    expect(page.get_by_text("1 source from the document")).to_be_visible()
+    expect(page.get_by_text("1 source consulted")).to_be_visible()
     expect(page.get_by_text("Manual › Inicio")).to_be_visible()
     page.close()
 
@@ -624,7 +624,7 @@ def test_busqueda_muestra_esqueleto_y_los_resultados_entran_en_secuencia(navegad
     expect(esqueleto).to_be_visible()
     expect(esqueleto).to_have_attribute("aria-hidden", "true")
     expect(esqueleto.locator(".rw-esq-tarjeta")).to_have_count(3)
-    expect(esqueleto.locator(".rw-esqueleto-estado span")).to_have_text("Reading the documents…")
+    expect(esqueleto.locator(".rw-esqueleto-estado span")).to_have_text("Reviewing the information…")
     expect(page.locator(".rw-busqueda-vacia")).to_be_hidden()
     pendientes[0].fulfill(json=_pagina_fuentes(continuar=False))
     expect(page.locator(".rw-resultado")).to_have_count(3)

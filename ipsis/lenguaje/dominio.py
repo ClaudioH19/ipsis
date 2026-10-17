@@ -100,7 +100,7 @@ def _extraer_organismos(texto: str, organismos: list[str]) -> list[tuple[str, st
 class PerfilDominio:
     nombre: str
     nombre_asistente: str = "el asistente"
-    descripcion_dominio: str = "los documentos cargados"
+    descripcion_dominio: str = "la información disponible"
     idioma: str = "es"
     organismos: list[str] = field(default_factory=list)
     reglas: list[ReglaEntidad] = field(default_factory=list)

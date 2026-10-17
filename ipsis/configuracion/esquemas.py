@@ -39,7 +39,7 @@ class PosturaConfig(ConfiguracionEstricta):
 class AsistenteConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
-    descripcion_dominio: str = Field(default="los documentos cargados", min_length=1)
+    descripcion_dominio: str = Field(default="la información disponible", min_length=1)
     idioma: str = Field(default="es", min_length=2)
     # «bm25» es de diagnóstico (ipsis benchmark): ipsis init no lo ofrece.
     perfil: Literal["light", "medium", "bm25"] = "light"

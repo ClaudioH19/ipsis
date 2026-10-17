@@ -8,7 +8,7 @@ from ipsis.servicio.api import crear_app
 def test_demo_habilitada_no_habilita_admin_y_renderiza_idioma():
     cliente = TestClient(crear_app(modo=ModoServicio(demo=True)))
     html = cliente.get("/widget/demo.html").text
-    assert "Explora tus documentos" in html
+    assert "Encuentra lo que necesitas" in html
     assert '<ipsis-chat mode="embedded"' in html and 'href="/styles.css"' in html
     assert "{{" not in html and "[[" not in html
     assert '/admin/panel' not in html

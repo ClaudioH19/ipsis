@@ -24,8 +24,8 @@ prepare:
   project_done: 'Experimental project: {path}'
 init:
   help: Create the configuration for a new project.
-  opt_name: 'Visible name of the assistant (default: ''Document assistant'', or its translation).'
-  opt_description: 'Short description of the domain, e.g. ''my team''s handbook'' (default: ''the loaded documents'').'
+  opt_name: 'Visible name of the assistant (default: ''Assistant'', or its translation).'
+  opt_description: 'Short description of the domain, e.g. ''my team''s handbook'' (default: ''the available information'').'
   opt_language: 'Language code of the documents (default: en, or es with IPSIS_LANG=es). es, en and pt have their own pack; any other code uses the universal rules, no stemming and English texts.'
   opt_profile: 'Installation profile: light (no extra models) or medium (default: medium).'
   opt_force: Reset config/assistant.yaml if it already exists.
@@ -131,7 +131,7 @@ index:
   media_none: 'Media: no usable card found, so nothing was indexed for the media lane.'
 demo:
   lang: en
-  title: Explore your documents
+  title: Find what you need
   intro: Search for information and review sources ranked by relevance. Open each result to read its context and keep searching if you need more options.
   navigation: Navigation
   admin: Manage project
@@ -139,7 +139,7 @@ demo:
   key_title: Widget access key
   key_label: If your project requires a key, enter it here.
   key_apply: Apply key
-  footer: Search the documents loaded in this project. Sources let you check the information.
+  footer: Search the available information. Sources let you check where each piece of information comes from.
 serve:
   examples: |
     Examples (from the project folder):
@@ -996,7 +996,7 @@ presets:
   editorial: Warm palette and serif typography for long documentation.
   contrast: High contrast, marked controls and animations off.
 runtime:
-  preview_search_heading: Search your documents
+  preview_search_heading: Search for information
   preview_show_results: View sample results
   preview_search_button: Search
   preview_search_source: manual.txt
@@ -1028,7 +1028,7 @@ runtime:
   log_query_log: 'could not write the query log: {error}'
   preview_lang: en
   preview_title: Widget preview — {preset}
-  preview_header: Document assistant · preset {preset}
+  preview_header: Assistant · preset {preset}
   preview_question: What are the requirements to start the procedure?
   preview_heading: Preview
   preview_preset: 'Active preset:'

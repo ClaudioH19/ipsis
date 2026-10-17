@@ -187,7 +187,7 @@ def completar_proyecto_existente() -> None:
         coleccion_base=slug_coleccion(dominio.get("nombre_asistente", "Asistente documental"))
     )
     inicializar_dominio_si_falta(
-        descripcion_dominio=dominio.get("descripcion_dominio", "los documentos cargados")
+        descripcion_dominio=dominio.get("descripcion_dominio", "la información disponible")
     )
     inicializar_estilos_si_falta()
     inicializar_personalidad_si_falta()

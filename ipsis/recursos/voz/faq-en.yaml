@@ -2,13 +2,13 @@
 questions:
 - topic: About the assistant
   question: What is ipsis?
-  answer: Ipsis is a self-hosted assistant that searches and ranks sources from your documents.
+  answer: Ipsis is a self-hosted multipurpose assistant that retrieves information from indexed sources, such as documents and tables.
 - topic: About the assistant
   question: Who are you?
-  answer: I am an assistant for exploring documents and helping you review their sources.
+  answer: I am an assistant for finding information in the sources available here and helping you review where it comes from.
 - topic: About the assistant
   question: Are you a person?
-  answer: I am software; help messages are fixed responses and sources come from documents.
+  answer: I am software; help messages are fixed responses and results come from indexed sources.
 - topic: About the assistant
   question: What does the name ipsis mean?
   answer: The name refers to ipsissima verba, the very words of the document.
@@ -20,10 +20,10 @@ questions:
   answer: Ipsis runs its models on CPU; the default flow does not require a GPU.
 - topic: About the assistant
   question: Do you need internet for every query?
-  answer: After downloading the models, a local deployment can search its documents without internet.
+  answer: After downloading the models, a local deployment can search its sources without internet.
 - topic: About the assistant
   question: Where does your information come from?
-  answer: Sources come from this project's indexed documents; help comes from a fixed catalog.
+  answer: Information comes from the sources indexed here; help comes from a fixed catalog.
 - topic: About the assistant
   question: Which languages does ipsis support?
   answer: Spanish, English and Portuguese have dedicated messages and rules; other languages use universal rules
@@ -33,7 +33,7 @@ questions:
   answer: The router offers different sources so you can compare their content and check which one is useful.
 - topic: Searching
   question: How do I start using the search?
-  answer: Enter a question about your documents, submit it and open the context of the results.
+  answer: Enter a query about the information you need, submit it and open the context of the results.
 - topic: Searching
   question: Can I search with keywords?
   answer: Yes. You can use keywords, names or identifiers instead of a complete question.
@@ -42,7 +42,7 @@ questions:
   answer: Add the exact topic, product, process or code and search for one thing at a time.
 - topic: Searching
   question: How do I search for a product code?
-  answer: Enter the code as it appears in the inventory and add the field you need, such as stock or price.
+  answer: Enter the code as it appears in the source and add the field name you need, such as stock or price.
 - topic: Searching
   question: Can I ask several questions together?
   answer: You can enter them, but separate questions make it easier to compare sources for each topic.
@@ -54,13 +54,13 @@ questions:
   answer: It adds other sources from the retrieved set for the same query while keeping the ones already displayed.
 - topic: Searching
   question: What happens when I submit another query?
-  answer: A new document query replaces the previous search's result list.
+  answer: A new query replaces the previous search's result list.
 - topic: Searching
   question: Do you remember the topic of my previous question?
   answer: The router searches using the current query; include the name or topic in each new question.
 - topic: Searching
   question: What should I do if my question is too broad?
-  answer: Specify the document, product or activity you need and the information you want to find.
+  answer: Specify the topic, product or activity you need and the information you want to find.
 - topic: Reading sources
   question: How does ipsis rank sources?
   answer: Search retrieves candidates and, depending on the profile, a reranker helps order their relevance.
@@ -122,14 +122,14 @@ questions:
   question: Can you reconstruct missing PDF columns?
   answer: The view does not invent columns; lost structure requires improving document extraction.
 - topic: Scope
-  question: Can you invent a value missing from the documents?
-  answer: No. Document sources must preserve text that exists in the indexed documents.
+  question: Can you invent a value missing from the sources?
+  answer: No. Results must preserve content that exists in the indexed sources.
 - topic: Scope
   question: Does an empty search prove the information is absent?
-  answer: No. The query or index may be responsible; try other wording and check which documents are loaded.
+  answer: No. The query or index may be responsible; try other wording and check which content is loaded.
 - topic: Scope
-  question: Can you correct an incorrect document value?
-  answer: I show the original text. To correct it, edit the document, load it again and reindex.
+  question: Can you correct an incorrect value in a source?
+  answer: I show the original text. To correct it, edit the original source, load it again and reindex.
 - topic: Scope
   question: What should I do if a source seems wrong?
   answer: Review its context and version; rephrase the query or check the original document before using it.
@@ -141,15 +141,18 @@ questions:
   answer: The default flow presents literal passages; it does not write a new summary from them.
 - topic: Scope
   question: Do you translate source text?
-  answer: Document text stays in its original language; translating the interface does not translate sources.
+  answer: Source content stays in its original language; translating the interface does not translate sources.
 - topic: Scope
-  question: Can you perform calculations with my documents?
-  answer: I retrieve document data; new calculations require another tool and checking the original values.
+  question: Can you perform calculations with these sources?
+  answer: I retrieve data as it appears in the sources; new calculations require another tool and checking the original values.
+- topic: Scope
+  question: Do you query live databases?
+  answer: No. I work with the sources loaded and indexed in the project; if the data changes, load and index it again.
 - topic: Scope
   question: Do you look up news or information on the internet?
   answer: The assistant searches this project; it does not search internet news to fill in source content.
 - topic: Scope
-  question: Can you modify my documents from chat?
+  question: Can you modify the sources from chat?
   answer: The conversation searches information; uploads and changes are managed with the CLI or authorized panel.
 - topic: Privacy and access
   question: Where does ipsis run?
@@ -300,7 +303,7 @@ questions:
   answer: Light prioritizes hybrid retrieval; medium adds a semantic reranker to order candidates.
 - topic: Quality and maintenance
   question: Does changing the widget theme require reindexing?
-  answer: No. Colors, fonts and presentation text can change without rebuilding the document index.
+  answer: No. Colors, fonts and presentation text can change without rebuilding the index.
 - topic: Quality and maintenance
   question: How do I update ipsis?
   answer: If installed as a uv tool, use uv tool upgrade ipsis and restart the service; keep the project directory.

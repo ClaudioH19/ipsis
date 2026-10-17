@@ -29,6 +29,22 @@ The presentation by result shape and the audio and video lane are on by default 
 
 ### Changed
 
+- The fixed help (voice packs and FAQ in Spanish, English and Portuguese) presents ipsis as a multipurpose assistant over
+  the project's indexed sources, such as documents and tables, instead of only documents. Welcome, capability, tips,
+  "about" and "limits" messages and the FAQ answers say "sources" or "information" where they said "documents"; texts that
+  refer to a concrete document (title, version, `{n_docs}`) are unchanged. The help now states that ipsis works with what
+  was loaded and indexed, not with live data, and adds a FAQ entry on live databases. The wording addresses the person
+  using the widget (a customer of whoever deploys it), not the owner of the content: no "your documents" or "your
+  project".
+- The widget interface follows the same tone. The Spanish, English and Portuguese packs (`idiomas/`) and the English
+  fallbacks in `widget.js` no longer say "Search your documents" or "source from the document": the search label is
+  "Type your search", the start text "Search for information", the loading stage "Reviewing the information…" and the
+  source counts "1 source consulted". The demo page title is "Find what you need". New projects default to the
+  assistant name "Assistant" and the domain description "the available information" (they were "Document assistant" and
+  "the loaded documents"); existing projects keep the values in their `config/assistant.yaml`. Text only: retrieval and
+  the placeholders of the messages are unchanged.
+- Added a [review and proposed contract for database snapshots and deterministic record
+  lookup](docs/plan/fuentes-tabulares.md). Database synchronization and access policies described there are future work.
 - **Structural preparation is the default** (`retrieval.preparation.mode: structural_v1`; see
   [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). It indexes small children with title
   and section and expands to the whole unit for ranking, which raised top-1 accuracy in the passage bank and on

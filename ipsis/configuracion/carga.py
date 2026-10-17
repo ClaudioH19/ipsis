@@ -26,7 +26,7 @@ RUTA_DOMINIO = rutas.ASISTENTE
 _DOMINIO_POR_DEFECTO = {
     "config_version": CONFIG_VERSION,
     "nombre_asistente": "Asistente documental",
-    "descripcion_dominio": "los documentos cargados",
+    "descripcion_dominio": "la información disponible",
     "idioma": "es",
     "perfil": "light",
     "cors_origenes": [],

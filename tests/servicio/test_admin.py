@@ -122,7 +122,7 @@ def test_put_valido_cambia_el_tono_de_la_siguiente_consulta_y_audita(proyecto):
     respuesta = c.post("/ask", json={"question": "hola", "session_id": "s"}).json()["answer"]
     from ipsis.lenguaje.tonos import cargar_tono
 
-    assert respuesta in [v.format(assistant_name="Asistente documental", domain_description="los documentos cargados")
+    assert respuesta in [v.format(assistant_name="Asistente", domain_description="la información disponible")
                          for v in cargar_tono("es", "direct").variantes("greeting")]
     auditoria = Path(".ipsis/logs/admin.jsonl").read_text(encoding="utf-8")
     entrada = json.loads(auditoria.splitlines()[-1])

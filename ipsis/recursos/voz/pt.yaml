@@ -16,29 +16,29 @@ interface:
   voice_show_all: Mostrar mensagem completa
   voice_results: Abra uma fonte para conferir seu contexto.
   voice_continuation: Confira as fontes adicionadas recentemente.
-  voice_no_results: Tente outras palavras-chave ou confira os documentos carregados.
+  voice_no_results: Tente outras palavras-chave ou confira as informações carregadas.
 messages:
   welcome:
     - Olá. Escreva uma pergunta e confira as fontes ordenadas por relevância.
     - Bem-vindo. Você pode pesquisar por pergunta, nome, código ou palavras-chave.
-    - De qual informação você precisa? Comece com uma pergunta sobre seus documentos.
-    - Explore seus documentos. Abra os resultados para ler o contexto.
+    - De qual informação você precisa? Comece com uma pergunta.
+    - Busque o que precisa. Abra os resultados para ler o contexto.
     - Olá. Ajudo a encontrar trechos para que você possa verificar as informações.
     - Comece com o que procura. Reformule a consulta se precisar de outras opções.
     - Bem-vindo. Aqui você encontra fontes com referências e contexto para conferir.
     - Procura um valor ou uma explicação? Escreva o tema e o que precisa saber.
     - Olá. Tente uma pergunta específica ou o identificador de um produto.
-    - Seus documentos são o ponto de partida. Escreva uma consulta para explorá-los.
+    - Aqui você encontra informações para consultar. Escreva o que procura e confira as fontes.
   greeting:
     - Olá, como posso ajudar hoje?
     - Bom dia. Você pode começar com uma pergunta ou palavras-chave.
     - Oi. Conte o que precisa e podemos começar.
     - Bem-vindo. Qual informação gostaria de conferir?
-    - Olá. Estou pronto para pesquisar as fontes do seu projeto.
+    - Olá. Estou pronto para encontrar a informação de que você precisa.
     - Oi. Você pode consultar um nome, código ou tema.
     - Olá. Se precisar de orientação, selecione Como pesquisar.
     - Prazer em conhecer você. Qual informação precisa encontrar?
-    - Oi. Abra um resultado para ver o contexto do documento.
+    - Oi. Abra um resultado para ver de onde ele vem e o contexto.
     - Bem-vindo de volta. Escreva sua próxima consulta quando quiser.
   thanks:
     - De nada, foi um prazer ajudar.
@@ -50,32 +50,32 @@ messages:
     - Obrigado. Você pode voltar às fontes mostradas quando quiser.
     - De nada. Tente outras palavras-chave se ainda tiver dúvidas.
     - Foi um prazer. Você pode pesquisar outro tema nesta página.
-    - Obrigado. Continue explorando seus documentos por aqui.
+    - Obrigado. Continue sua consulta por aqui.
   farewell:
     - Até logo. Tenha um bom dia.
-    - Tchau. Os documentos estarão aqui para sua próxima consulta.
+    - Tchau. As informações estarão aqui para sua próxima consulta.
     - Até mais. Confira as fontes que pretende utilizar.
     - Até breve. Você pode retomar a pesquisa nesta página.
-    - Tenha um bom dia. Volte quando precisar consultar um documento.
+    - Tenha um bom dia. Volte quando precisar consultar uma informação.
     - Tchau por enquanto. Obrigado por conferir as fontes do projeto.
     - Até logo. Você pode deixar os resultados abertos para ler depois.
     - Até breve. Escreva outra consulta se decidir continuar.
-    - Tchau. Espero que a revisão dos documentos seja útil para você.
+    - Tchau. Espero que a revisão das fontes seja útil para você.
     - Até a próxima. Esta página continua disponível para pesquisa.
   capability:
-    - Pesquiso nos documentos carregados e mostro fontes ordenadas para você conferir.
+    - Pesquiso nas fontes carregadas, como documentos e tabelas, e mostro resultados ordenados para você conferir.
     - Você pode consultar temas, nomes ou códigos e abrir o contexto de cada resultado.
     - Ajudo a localizar informações. Você pode verificar qual fonte responde à pergunta.
     - Mostro trechos do projeto com referências; você pode pedir mais resultados quando disponíveis.
-    - Você pode pesquisar valores de inventário, instruções ou textos dos documentos carregados.
-    - Recupero texto documental. Não calculo estoque nem altero valores de inventário.
+    - Você pode pesquisar valores de tabelas e inventário, instruções ou textos das fontes carregadas.
+    - Recupero a informação como aparece na fonte, seja texto ou linhas de uma tabela. Não calculo estoque nem altero valores.
     - Confira as primeiras opções, abra os trechos ou reformule a pesquisa com outro termo.
     - Ajudo a encontrar fontes sem escrever uma resposta nova a partir delas.
     - Pesquise com linguagem natural ou palavras-chave. Cada resultado permite conferir sua origem.
-    - A pesquisa abrange este projeto. O painel de administração permite gerenciar seus documentos.
+    - A pesquisa abrange as informações disponíveis aqui; cada resultado mostra de onde vem.
   tips:
     - Inclua o tema e o valor que procura, como estoque do produto junto ao código.
-    - Se souber um nome ou identificador, escreva como aparece no documento.
+    - Se souber um nome ou identificador, escreva como aparece na fonte.
     - Pesquise uma coisa por vez para facilitar a comparação das fontes.
     - Se faltarem opções, tente um termo mais geral e leia o contexto.
     - Abra cada resultado para ler o trecho completo e conferir sua relação com a pergunta.
@@ -85,7 +85,7 @@ messages:
     - Acrescente o nome do manual, produto ou tema se a consulta for muito ampla.
     - Confira a referência e a versão do documento antes de usar um dado.
   searching:
-    - Pesquisando fontes nos seus documentos…
+    - Buscando a informação de que você precisa…
     - Conferindo opções para esta consulta…
     - Recuperando trechos relacionados…
     - Consultando o índice do projeto…
@@ -93,7 +93,7 @@ messages:
     - Pesquisando o tema que você indicou…
     - Preparando as fontes para consulta…
     - Localizando possíveis correspondências…
-    - Pesquisando nos documentos carregados…
+    - Pesquisando nas fontes carregadas…
     - Recuperando opções com seu contexto…
   results:
     - "{count} para conferir. Abra cada fonte para verificar se responde à pergunta."
@@ -103,7 +103,7 @@ messages:
     - Compare as opções antes de escolher qual informação utilizar.
     - Estas são possíveis fontes. Reformule a consulta para procurar outras opções.
     - Se o dado estiver em uma tabela, confira também os cabeçalhos das colunas.
-    - Os resultados preservam o texto do documento. Leia o contexto da correspondência.
+    - Os resultados preservam o texto da fonte. Leia o contexto da correspondência.
     - Continue lendo as fontes ou escreva uma consulta mais específica.
     - Confira o documento e sua versão ao verificar a informação encontrada.
   results_variants:
@@ -148,28 +148,28 @@ messages:
   no_results:
     - Não há fontes para mostrar nesta pesquisa. Tente outras palavras-chave.
     - Nenhuma opção foi recuperada. Confira o nome ou código que escreveu.
-    - Tente uma consulta mais geral ou acrescente o nome do documento.
+    - Tente uma consulta mais geral ou acrescente o nome do documento ou da tabela.
     - Esta pesquisa não retornou fontes. Você pode reformular a pergunta.
-    - Confira se o documento necessário está carregado no projeto.
+    - Confira se a informação necessária está carregada no projeto.
     - Não há opções para conferir aqui. Tente pesquisar o tema separadamente.
-    - Use um sinônimo ou uma palavra que lembra do documento.
+    - Use um sinônimo ou uma palavra que lembra da fonte.
     - Tente o identificador completo se procura um produto ou registro.
     - Nenhuma fonte foi mostrada. Divida a consulta em perguntas mais curtas.
-    - Tente outra pesquisa e confira os documentos disponíveis no painel.
+    - Tente outra pesquisa e confira o conteúdo disponível no painel.
   about:
-  - Sou o ipsis, seu assistente para consultar os documentos deste projeto.
-  - Trabalho com os textos carregados aqui. Cada resultado mostra de onde vem.
-  - Apresento trechos dos documentos junto com o contexto para facilitar a leitura.
-  - As mensagens de boas-vindas e ajuda são textos da interface, separados do conteúdo documental.
+  - Sou o ipsis, seu assistente para encontrar informações em documentos, tabelas e outras fontes.
+  - Trabalho com as fontes carregadas aqui, como documentos e tabelas. Cada resultado mostra de onde vem.
+  - Apresento trechos das fontes junto com o contexto para facilitar a leitura.
+  - As mensagens de boas-vindas e ajuda são textos da interface, separados do conteúdo das fontes.
   - Selecione o título para abrir o contexto. O caminho das seções mostra onde o trecho aparece.
   - Você pode cumprimentar, agradecer ou se despedir; também posso ajudar a começar.
   limits:
-  - Minhas informações vêm dos documentos carregados neste projeto.
+  - Minhas informações vêm das fontes carregadas aqui.
   - Um resultado relacionado pode oferecer contexto sem responder exatamente à sua pergunta.
-  - Se um dado não aparece nos documentos, não posso completá-lo com informações inventadas.
+  - Se um dado não aparece nas fontes, não posso completá-lo com informações inventadas.
   - Os valores de uma tabela pertencem ao documento e à versão indicados na fonte.
-  - Localizo textos; cálculos e decisões exigem conferir os dados de origem.
-  - As perguntas de exemplo são pontos de partida; adapte-as aos seus documentos.
+  - Trabalho com o que foi carregado e indexado, não com dados em tempo real; cálculos e decisões exigem conferir os dados de origem.
+  - As perguntas de exemplo são pontos de partida; adapte-as ao que você precisa.
   examples:
   - Para encontrar um procedimento, pergunte “Quais passos devo seguir?” e acrescente o nome do processo.
   - Para conferir condições, pergunte “Quais são os requisitos?” junto com o procedimento ou produto.

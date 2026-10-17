@@ -2,13 +2,13 @@
 questions:
 - topic: Sobre o assistente
   question: O que é o ipsis?
-  answer: O ipsis é um assistente auto-hospedado que busca e ordena fontes dos seus documentos.
+  answer: O ipsis é um assistente multipropósito auto-hospedado que recupera informações das fontes indexadas, como documentos e tabelas.
 - topic: Sobre o assistente
   question: Quem é você?
-  answer: Sou um assistente para consultar documentos e ajudar a conferir suas fontes.
+  answer: Sou um assistente para localizar informações nas fontes disponíveis aqui e ajudar a conferir de onde vêm.
 - topic: Sobre o assistente
   question: Você é uma pessoa?
-  answer: Sou um software; as mensagens de ajuda são respostas fixas e as fontes vêm dos documentos.
+  answer: Sou um software; as mensagens de ajuda são respostas fixas e os resultados vêm das fontes indexadas.
 - topic: Sobre o assistente
   question: O que significa o nome ipsis?
   answer: O nome se refere a ipsissima verba, as próprias palavras do documento.
@@ -20,10 +20,10 @@ questions:
   answer: O ipsis executa seus modelos na CPU; o fluxo padrão não exige uma GPU.
 - topic: Sobre o assistente
   question: Você precisa de internet para cada consulta?
-  answer: Depois de baixar os modelos, uma instalação local pode consultar seus documentos sem internet.
+  answer: Depois de baixar os modelos, uma instalação local pode consultar suas fontes sem internet.
 - topic: Sobre o assistente
   question: De onde vêm suas informações?
-  answer: As fontes vêm dos documentos indexados neste projeto; a ajuda vem de um catálogo fixo.
+  answer: As informações vêm das fontes indexadas aqui; a ajuda vem de um catálogo fixo.
 - topic: Sobre o assistente
   question: Quais idiomas o ipsis suporta?
   answer: Espanhol, inglês e português têm mensagens e regras próprias; outros idiomas usam regras universais e
@@ -33,7 +33,7 @@ questions:
   answer: O roteador oferece fontes diferentes para comparar o conteúdo e conferir qual é útil.
 - topic: Buscar informações
   question: Como começo a usar a busca?
-  answer: Escreva uma pergunta sobre seus documentos, envie e abra o contexto dos resultados.
+  answer: Escreva uma consulta sobre a informação de que precisa, envie e abra o contexto dos resultados.
 - topic: Buscar informações
   question: Posso buscar com palavras-chave?
   answer: Sim. Você pode usar palavras-chave, nomes ou identificadores em vez de uma pergunta completa.
@@ -42,7 +42,7 @@ questions:
   answer: Acrescente o tema, produto, processo ou código específico e consulte uma coisa por vez.
 - topic: Buscar informações
   question: Como busco um código de produto?
-  answer: Digite o código como aparece no inventário e acrescente o campo necessário, como estoque ou preço.
+  answer: Digite o código como aparece na fonte e acrescente o nome do campo necessário, como estoque ou preço.
 - topic: Buscar informações
   question: Posso fazer várias perguntas juntas?
   answer: Pode escrevê-las, mas separar as perguntas facilita comparar as fontes de cada tema.
@@ -54,13 +54,13 @@ questions:
   answer: Acrescenta outras fontes do conjunto recuperado para a mesma consulta, mantendo as que já aparecem.
 - topic: Buscar informações
   question: O que acontece quando envio outra consulta?
-  answer: Uma nova consulta documental substitui a lista de resultados da busca anterior.
+  answer: Uma nova consulta substitui a lista de resultados da busca anterior.
 - topic: Buscar informações
   question: Você lembra o tema da minha pergunta anterior?
   answer: O roteador busca usando a consulta atual; inclua o nome ou tema em cada nova pergunta.
 - topic: Buscar informações
   question: O que faço se minha pergunta for ampla demais?
-  answer: Informe o documento, produto ou atividade de interesse e o dado que deseja localizar.
+  answer: Informe o tema, produto ou atividade de interesse e o dado que deseja localizar.
 - topic: Ler fontes
   question: Como o ipsis ordena as fontes?
   answer: A busca recupera candidatos e, conforme o perfil, um reranker ajuda a ordenar sua relevância.
@@ -122,14 +122,14 @@ questions:
   question: Você pode reconstruir colunas perdidas de um PDF?
   answer: A visualização não inventa colunas; se a estrutura foi perdida, é preciso melhorar a extração do documento.
 - topic: Alcance
-  question: Você pode inventar um dado ausente dos documentos?
-  answer: Não. As fontes documentais devem preservar texto que exista nos documentos indexados.
+  question: Você pode inventar um dado ausente das fontes?
+  answer: Não. Os resultados devem preservar conteúdo que exista nas fontes indexadas.
 - topic: Alcance
   question: Uma busca vazia prova que o dado não existe?
-  answer: Não. A consulta ou o índice pode ser responsável; tente outras palavras e confira os documentos carregados.
+  answer: Não. A consulta ou o índice pode ser responsável; tente outras palavras e confira o conteúdo carregado.
 - topic: Alcance
-  question: Você pode corrigir um dado incorreto do documento?
-  answer: Mostro o texto de origem. Para corrigir, edite o documento, carregue novamente e reindexe.
+  question: Você pode corrigir um dado incorreto de uma fonte?
+  answer: Mostro o texto de origem. Para corrigir, edite a fonte de origem, carregue novamente e reindexe.
 - topic: Alcance
   question: O que faço se uma fonte parecer errada?
   answer: Confira o contexto e a versão; reformule a consulta ou verifique o documento original antes de usar.
@@ -141,15 +141,18 @@ questions:
   answer: O fluxo padrão apresenta trechos literais; não escreve um resumo novo a partir deles.
 - topic: Alcance
   question: Você traduz o texto das fontes?
-  answer: O texto documental permanece no idioma original; traduzir a interface não traduz as fontes.
+  answer: O conteúdo das fontes permanece no idioma original; traduzir a interface não traduz as fontes.
 - topic: Alcance
-  question: Você pode fazer cálculos com meus documentos?
-  answer: Recupero dados documentais; novos cálculos exigem outra ferramenta e conferir os valores de origem.
+  question: Você pode fazer cálculos com estas fontes?
+  answer: Recupero os dados como aparecem nas fontes; novos cálculos exigem outra ferramenta e conferir os valores de origem.
+- topic: Alcance
+  question: Você consulta bancos de dados em tempo real?
+  answer: Não. Trabalho com as fontes carregadas e indexadas no projeto; se os dados mudarem, carregue e indexe novamente.
 - topic: Alcance
   question: Você consulta notícias ou informações da internet?
   answer: A busca do assistente consulta este projeto; não busca notícias na internet para completar as fontes.
 - topic: Alcance
-  question: Você pode modificar meus documentos pelo chat?
+  question: Você pode modificar as fontes pelo chat?
   answer: A conversa consulta informações; os arquivos e as alterações são gerenciados pela CLI ou pelo painel autorizado.
 - topic: Privacidade e acesso
   question: Onde o ipsis é executado?
@@ -301,7 +304,7 @@ questions:
   answer: Light prioriza a recuperação híbrida; medium acrescenta um reranker semântico para ordenar candidatos.
 - topic: Qualidade e manutenção
   question: Mudar o tema do widget exige reindexação?
-  answer: Não. As cores, fontes e textos de apresentação podem mudar sem reconstruir o índice documental.
+  answer: Não. As cores, fontes e textos de apresentação podem mudar sem reconstruir o índice.
 - topic: Qualidade e manutenção
   question: Como atualizo o ipsis?
   answer: Se instalou como ferramenta uv, use uv tool upgrade ipsis e reinicie o serviço; mantenha a pasta do projeto.

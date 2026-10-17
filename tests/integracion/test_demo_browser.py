@@ -58,10 +58,10 @@ def test_demo_embedded_tema_y_consulta(navegador, demo, ancho, tema):
     page.on("pageerror", lambda e: errores.append(str(e)))
     page.goto(url)
     if ancho > 480:
-        expect(page.get_by_role("heading", name="Explora tus documentos")).to_be_visible()
+        expect(page.get_by_role("heading", name="Encuentra lo que necesitas")).to_be_visible()
         expect(page.get_by_role("link", name="Administrar proyecto")).to_be_visible()
     else:  # en teléfonos la página de prueba no tiene encabezado y el asistente ocupa toda la pantalla
-        expect(page.get_by_role("heading", name="Explora tus documentos")).to_be_hidden()
+        expect(page.get_by_role("heading", name="Encuentra lo que necesitas")).to_be_hidden()
         expect(page.get_by_role("link", name="Administrar proyecto")).to_be_hidden()
     expect(page.locator("#rw-input")).to_be_visible()
     assert page.evaluate("window.Ipsis.state().position") == "embedded"

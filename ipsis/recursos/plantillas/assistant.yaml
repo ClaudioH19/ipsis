@@ -1,8 +1,8 @@
 # Assistant identity. Created by `ipsis init`; edit it here or with
 # `ipsis configure key=value`.
 config_version: 8
-assistant_name: "Document assistant"
-domain_description: "the loaded documents"
+assistant_name: "Assistant"
+domain_description: "the available information"
 language: en
 profile: medium
 cors_origins: []

@@ -24,8 +24,8 @@ prepare:
   project_done: 'Proyecto experimental: {path}'
 init:
   help: Crea la configuración de un dominio nuevo.
-  opt_name: 'Nombre visible del asistente (por defecto: ''Asistente documental'', o su traducción).'
-  opt_description: 'Descripción corta del dominio, p.ej. ''el manual de mi equipo'' (por defecto: ''los documentos cargados'').'
+  opt_name: 'Nombre visible del asistente (por defecto: ''Asistente'', o su traducción).'
+  opt_description: 'Descripción corta del dominio, p.ej. ''el manual de mi equipo'' (por defecto: ''la información disponible'').'
   opt_language: 'Código del idioma de los documentos (por defecto: en, o es con IPSIS_LANG=es). es, en y pt tienen paquete propio; otro código usa las reglas universales, sin stem, y los textos en inglés.'
   opt_profile: 'Perfil de instalación: light (sin modelos extra) o medium (por defecto: medium).'
   opt_force: Reinicia config/assistant.yaml si ya existe.
@@ -131,7 +131,7 @@ index:
   media_none: 'Multimedia: no hay ninguna ficha utilizable, así que no se indexó nada del carril multimedia.'
 demo:
   lang: es
-  title: Explora tus documentos
+  title: Encuentra lo que necesitas
   intro: Busca información y revisa las fuentes ordenadas por relevancia. Abre cada resultado para leer su contexto y sigue buscando si necesitas más opciones.
   navigation: Navegación
   admin: Administrar proyecto
@@ -139,7 +139,7 @@ demo:
   key_title: Clave de acceso al widget
   key_label: Si tu proyecto exige una clave, introdúcela aquí.
   key_apply: Aplicar clave
-  footer: Consulta los documentos cargados en este proyecto. Las fuentes te permiten comprobar la información.
+  footer: Consulta la información disponible. Las fuentes te permiten comprobar de dónde viene cada dato.
 serve:
   examples: |
     Ejemplos (desde la carpeta del proyecto):
@@ -996,7 +996,7 @@ presets:
   editorial: Paleta cálida y tipografía serif para documentación extensa.
   contrast: Contraste alto, controles marcados y animaciones desactivadas.
 runtime:
-  preview_search_heading: Busca en tus documentos
+  preview_search_heading: Busca información
   preview_show_results: Ver resultados de ejemplo
   preview_search_button: Buscar
   preview_search_source: manual.txt
@@ -1028,7 +1028,7 @@ runtime:
   log_query_log: 'no se pudo escribir el registro de consultas: {error}'
   preview_lang: es
   preview_title: Vista previa del widget — {preset}
-  preview_header: Asistente documental · preset {preset}
+  preview_header: Asistente · preset {preset}
   preview_question: ¿Qué requisitos se necesitan para iniciar el trámite?
   preview_heading: Vista previa
   preview_preset: 'Preset activo:'

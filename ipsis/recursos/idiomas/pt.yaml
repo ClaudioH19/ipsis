@@ -613,7 +613,7 @@ interfaz:
   search_send: 'Buscar'
   search_open: 'Abrir buscador de {title}'
   search_close: 'Fechar buscador'
-  search_question_label: 'Buscar nos seus documentos'
+  search_question_label: 'Escreva sua consulta'
   search_results_label: 'Resultados da busca'
   search_results_count: '{n} resultados para «{query}»'
   search_read_document: 'Ler contexto completo'
@@ -621,7 +621,7 @@ interfaz:
   result_distinguished: 'Distingue-se por'
   voice_count_phrase: '{n} resultados'
   voice_count_phrase_one: '1 resultado'
-  search_stage_read: 'Lendo os documentos…'
+  search_stage_read: 'Revisando as informações…'
   search_stage_compare: 'Comparando fontes…'
   search_stage_rank: 'Ordenando por relevância…'
   clear_input: 'Limpar busca'
@@ -645,7 +645,7 @@ interfaz:
   media_chapter_at: 'A partir de {time}'
   media_duration: 'Duração {time}'
   search_added: 'Foram adicionados {n} resultados.'
-  search_start: 'Busque nos seus documentos'
+  search_start: 'Busque informações'
   search_instruction: 'Digite uma pergunta ou palavras-chave para encontrar informação.'
   keep_searching: 'Continuar buscando'
   rephrase_search: 'Você também pode escrever uma pergunta mais específica.'
@@ -659,13 +659,13 @@ interfaz:
   ranked_hint: 'Fontes ordenadas por relevância'
   read_context: 'Ler a fonte e o contexto completo'
   context_truncated: 'O contexto apresentado está recortado.'
-  default_assistant_name: Assistente documental
-  default_domain_description: os documentos carregados
-  sources_one: 1 fonte do documento
-  sources_many: '{n} fontes do documento'
+  default_assistant_name: Assistente
+  default_domain_description: as informações disponíveis
+  sources_one: 1 fonte consultada
+  sources_many: '{n} fontes consultadas'
   citation_position: 'caracteres {start}–{end}'
   title: Assistente
-  subtitle: Responde citando o documento
+  subtitle: Responde citando a fonte
   open: Abrir chat de {title}
   close: Fechar chat
   question_label: Escreva sua pergunta

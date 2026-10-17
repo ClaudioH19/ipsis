@@ -240,7 +240,7 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert cfg["microcopy"]["waiting"][0] == "Buscando"  # tono serio
     assert all(len(v) == CUOTAS_PAQUETE[s] for s, v in cfg["microcopy"].items())
     assert "{" not in " ".join(sum(cfg["microcopy"].values(), []))  # variables reemplazadas
-    assert cfg["interface"]["sources_many"] == "{n} fuentes del documento"  # plantilla del widget
+    assert cfg["interface"]["sources_many"] == "{n} fuentes consultadas"  # plantilla del widget
 
 
 # --- ipsis widget style: cada valor, por consola ----------------------------------------------
