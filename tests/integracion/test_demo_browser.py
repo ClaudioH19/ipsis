@@ -13,6 +13,12 @@ from tests.consulta.test_motor_v2 import motor
 from tests.integracion.test_widget_browser import navegador
 
 
+def _pedir_ayuda(page, nombre):
+    """El menú de ayuda es un icono «?» en el encabezado del asistente: se abre y se elige la opción (se cierra solo)."""
+    page.locator(".rw-cabecera .rw-voz-menu summary").click()
+    page.get_by_role("button", name=nombre, exact=True).click()
+
+
 @pytest.fixture
 def demo(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
@@ -51,8 +57,12 @@ def test_demo_embedded_tema_y_consulta(navegador, demo, ancho, tema):
     errores = []
     page.on("pageerror", lambda e: errores.append(str(e)))
     page.goto(url)
-    expect(page.get_by_role("heading", name="Explora tus documentos")).to_be_visible()
-    expect(page.get_by_role("link", name="Administrar proyecto")).to_be_visible()
+    if ancho > 480:
+        expect(page.get_by_role("heading", name="Explora tus documentos")).to_be_visible()
+        expect(page.get_by_role("link", name="Administrar proyecto")).to_be_visible()
+    else:  # en teléfonos la página de prueba no tiene encabezado y el asistente ocupa toda la pantalla
+        expect(page.get_by_role("heading", name="Explora tus documentos")).to_be_hidden()
+        expect(page.get_by_role("link", name="Administrar proyecto")).to_be_hidden()
     expect(page.locator("#rw-input")).to_be_visible()
     assert page.evaluate("window.Ipsis.state().position") == "embedded"
     assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--rw-fondo') === "
@@ -107,14 +117,15 @@ def test_voz_separada_escribe_sin_retrasar_fuentes_y_conserva_resultados(navegad
     page.route("**/ask", responder)
     page.goto(url.replace("/widget/demo.html", "/"))
     expect(page.locator(".rw-voz")).to_be_visible()
-    page.get_by_role("button", name="Cómo buscar", exact=True).click()
+    _pedir_ayuda(page, "Cómo buscar")
     expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "true")
     parcial = page.locator(".rw-voz-texto").inner_text()
     completo = page.locator(".rw-voz .rw-sr-solo").inner_text()
     assert len(parcial) < len(completo)
     page.get_by_role("button", name="Mostrar completo").click()
     expect(page.locator(".rw-voz-texto")).to_have_text(completo)
-    expect(page.locator("#rw-input")).to_be_focused()
+    # el botón pasa a «Mostrar menos» y conserva el foco: quien lo activó con el teclado puede volver a contraer
+    expect(page.locator(".rw-voz-mas")).to_be_focused()
     page.locator("#rw-input").fill("stock")
     page.locator(".rw-enviar").click()
     expect(page.locator(".rw-resultado")).to_have_count(3)
@@ -158,7 +169,7 @@ def test_voz_sin_movimiento_y_error_no_reemplaza_fuentes(navegador, demo, reduci
     expect(page.locator(".rw-voz-texto")).not_to_be_empty()
     expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "false")
     expect(page.get_by_role("button", name="Mostrar completo")).to_be_hidden()
-    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    _pedir_ayuda(page, "Qué puedo hacer")
     expect(page.locator(".rw-voz")).to_have_attribute("data-category", "capability")
     assert page.locator(".rw-voz-texto").inner_text() == page.locator(".rw-voz .rw-sr-solo").inner_text()
     page.locator("#rw-input").fill("stock")
@@ -183,15 +194,15 @@ def test_nuevo_mensaje_cancela_escritura_y_cambio_de_movimiento_la_completa(nave
     page.on("pageerror", lambda e: errores.append(str(e)))
     page.goto(url)
     expect(page.locator(".rw-voz")).to_be_visible()
-    page.get_by_role("button", name="Cómo buscar", exact=True).click()
+    _pedir_ayuda(page, "Cómo buscar")
     anterior = page.locator(".rw-voz .rw-sr-solo").inner_text()
-    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    _pedir_ayuda(page, "Qué puedo hacer")
     siguiente = page.locator(".rw-voz .rw-sr-solo").inner_text()
     assert siguiente != anterior
     page.emulate_media(reduced_motion="reduce")
     expect(page.locator(".rw-voz")).to_have_attribute("data-typing", "false")
     expect(page.locator(".rw-voz-texto")).to_have_text(siguiente)
-    page.get_by_role("button", name="Qué puedo hacer", exact=True).click()
+    _pedir_ayuda(page, "Qué puedo hacer")
     assert page.locator(".rw-voz-texto").inner_text() != siguiente
     assert not errores
     page.close()
