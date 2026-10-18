@@ -259,7 +259,9 @@ Plantilla:
 ### Congelamiento de la prueba sintética (2026-10-18)
 - `sintetico_prueba.yaml`: 4 documentos (transporte, evaluación de asignaturas, salud estudiantil, ayudantías), 26
   objetivos y 52 preguntas. Lo escribió Claude después del banco de entrenamiento, con dominios distintos.
-- SHA-256: `49e6237f67c1efe6c74443edc0007e2d8a82f599ce4611c6b3697ded44aee9b5`.
+- SHA-256 con finales LF: `49e6237f67c1efe6c74443edc0007e2d8a82f599ce4611c6b3697ded44aee9b5`. Huella canónica,
+  que no depende de CRLF/LF al clonar en Windows: blob de git `569b71843933d7a16521feb32929baef7fd70502`
+  (comprobar con `git hash-object laboratorio_reranker/sintetico_prueba.yaml`).
 - **No se ha medido.** Se mide una sola vez en la etapa 4, con el modelo base y con la copia afinada. Si el hash
   cambia, la prueba deja de valer.
 - Límite conocido: con 52 preguntas y un bge que acierta casi todo en lo sintético, esta prueba difícilmente reúne
