@@ -225,6 +225,9 @@ def real(documentos: Path, fuente: Path, destino: Path) -> Path:
 # Etapa 3: conjunto de afinado (grupos de 1 positivo y N negativos, formato FlagEmbedding)
 # ---------------------------------------------------------------------------
 PUBLICOS = SALIDA / "datos-publicos"
+# Grupos del banco sintético de entrenamiento ya armados desde el volcado del motor (texto propio, sin licencias de
+# terceros ni datos del cliente): permiten regenerar el conjunto en otra máquina sin ipsis ni modelos ONNX.
+GRUPOS_SINTETICOS = Path(__file__).with_name("grupos_sinteticos.jsonl")
 SQAC_REV = "f9928e8819596a601b8887cc5f8598b15d589a82"
 MIRACL_ST_REV = "07e2b629250bf4185f4c87f640fac15949b8aa73"
 _TILDES = str.maketrans("áéíóúÁÉÍÓÚüÜ", "aeiouAEIOUuU")
@@ -377,7 +380,11 @@ def entrenamiento(args) -> Path:
     desarrollo = grupos_sqac("dev", args.sqac_dev, args.negativos, args.semilla)
     if args.volcado and args.banco:
         sinteticos = grupos_volcado(Path(args.volcado), Path(args.banco), args.negativos)
-        entrenar += [g for g in sinteticos for _ in range(args.repetir_sintetico)]  # sobre-muestreo del dominio
+        GRUPOS_SINTETICOS.write_text("".join(json.dumps(g, ensure_ascii=False) + "\n" for g in sinteticos),
+                                     encoding="utf-8")  # versionado: así otra máquina no necesita el motor
+    else:
+        sinteticos = [json.loads(l) for l in Path(args.sinteticos).read_text(encoding="utf-8").splitlines() if l]
+    entrenar += [g for g in sinteticos for _ in range(args.repetir_sintetico)]  # sobre-muestreo del dominio
     # Registro informal: una fracción de las preguntas formales se reescribe por reglas (no las sintéticas, que ya
     # traen su par informal escrito a mano).
     for g in entrenar + desarrollo:
@@ -387,14 +394,16 @@ def entrenamiento(args) -> Path:
         elif g["origen"] == "sintetico":
             g["registro"] = "informal" if g["id"].endswith("i") else "formal"
     azar.shuffle(entrenar)
-    destino = SALIDA / "afinado"
+    destino = Path(args.destino)
     destino.mkdir(parents=True, exist_ok=True)
     for nombre, grupos in (("entrenamiento", entrenar), ("desarrollo", desarrollo)):
         (destino / f"grupos-{nombre}.jsonl").write_text(
             "".join(json.dumps(g, ensure_ascii=False) + "\n" for g in grupos), encoding="utf-8")
     from collections import Counter
 
-    resumen = {"entrenamiento": dict(Counter(g["origen"] for g in entrenar)),
+    sha = {n: hashlib.sha256((destino / f"grupos-{n}.jsonl").read_bytes()).hexdigest()
+           for n in ("entrenamiento", "desarrollo")}
+    resumen = {"sha256": sha, "entrenamiento": dict(Counter(g["origen"] for g in entrenar)),
                "desarrollo": dict(Counter(g["origen"] for g in desarrollo)),
                "registro": dict(Counter(g["registro"] for g in entrenar)), "negativos": args.negativos,
                "excluidas_por_nomiracl": len(excluir), "semilla": args.semilla}
@@ -415,9 +424,12 @@ def main() -> None:
     p = sub.add_parser("entrenamiento", help="etapa 3: grupos de afinado")
     p.add_argument("--sqac", type=int, default=1200)
     p.add_argument("--sqac-dev", type=int, default=200)
-    p.add_argument("--miracl", type=int, default=800)
-    p.add_argument("--volcado", help="volcado del motor sobre el banco sintético de entrenamiento")
+    p.add_argument("--miracl", type=int, default=400, help="400: se bajó de 800 por ruido (bitácora, OBS-0012)")
+    p.add_argument("--volcado", help="volcado del motor sobre el banco sintético de entrenamiento (rearma "
+                                     "grupos_sinteticos.jsonl); sin él se usan los grupos versionados")
     p.add_argument("--banco", help="banco.jsonl de ese banco (evidencias y partición)")
+    p.add_argument("--sinteticos", default=str(GRUPOS_SINTETICOS))
+    p.add_argument("--destino", default=str(SALIDA / "afinado"))
     p.add_argument("--repetir-sintetico", type=int, default=2)
     p.add_argument("--negativos", type=int, default=7)
     p.add_argument("--informal", type=float, default=0.3, help="fracción de preguntas públicas informalizadas")

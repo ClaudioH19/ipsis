@@ -92,27 +92,36 @@ uv pip install --python .cache/laboratorio-reranker/venv/Scripts/python.exe -e .
 El entrenamiento (`afinar.py entrenar`) solo necesita torch, transformers y los grupos de la etapa 3; no necesita
 ipsis, ni los modelos ONNX, ni el banco real. **Los grupos no contienen nada del cliente**, así que se pueden copiar.
 
-1. En la máquina con GPU: el repo con la carpeta `laboratorio_reranker/` y, aparte, los tres archivos de
-   `.cache/laboratorio-reranker/afinado/` (`grupos-entrenamiento.jsonl`, `grupos-desarrollo.jsonl`, `resumen.json`)
-   en la misma ruta relativa. Esos archivos no viajan por git: SQAC y MIRACL tienen licencias propias y `.cache/`
-   está ignorada.
-2. Entorno (Windows o Linux, con el driver de NVIDIA y `nvidia-smi` funcionando):
+1. Clonar el repo y pasar a la rama `laboratorio-reranker`.
+2. Entorno (Windows o Linux, con el driver de NVIDIA y `nvidia-smi` funcionando). No hace falta instalar ipsis:
 
    ```bash
    uv venv .cache/laboratorio-reranker/venv --python 3.12
    uv pip install --python <venv>/python torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
-   uv pip install --python <venv>/python transformers==4.57.6 huggingface_hub
+   uv pip install --python <venv>/python transformers==4.57.6 huggingface_hub scikit-learn==1.9.1 pyarrow
    ```
 
-3. Medir antes de entrenar. Se detiene a los 20 pasos e informa los s/grupo y la memoria pico de la GPU:
+   (En Windows, `<venv>/python` es `.cache/laboratorio-reranker/venv/Scripts/python.exe`.)
+3. Regenerar el conjunto de afinado: descarga SQAC, MIRACL y la lista de exclusión de NoMIRACL con revisiones
+   fijadas, y toma los grupos sintéticos versionados (`grupos_sinteticos.jsonl`). Es determinista:
+
+   ```bash
+   python laboratorio_reranker/datos.py entrenamiento
+   ```
+
+   Debe imprimir `sha256.entrenamiento = 94aaf75221e886b7…` y `sha256.desarrollo = dc9be08b6931a184…`, los mismos
+   del portátil (se verificó regenerando desde cero). Si no coinciden, revisar la versión de scikit-learn antes de
+   entrenar. Los datos de SQAC y MIRACL no se versionan porque tienen licencias propias.
+
+4. Medir antes de entrenar. Se detiene a los 20 pasos e informa los s/grupo y la memoria pico de la GPU:
 
    ```bash
    python laboratorio_reranker/afinar.py entrenar --pasos-prueba 20
    ```
 
-4. Entrenar con `python laboratorio_reranker/afinar.py entrenar`. La copia queda en
+5. Entrenar con `python laboratorio_reranker/afinar.py entrenar`. La copia queda en
    `.cache/laboratorio-reranker/<run_id>/copia/`; `run.json` registra el desarrollo y `original_intacto: true`.
-5. Exportar (en cualquiera de las dos máquinas; necesita `onnx` y `onnxruntime`) con
+6. Exportar (en cualquiera de las dos máquinas; necesita `onnx` y `onnxruntime`) con
    `afinar.py exportar <run_id>`. Para medir en el portátil basta traer `onnx/` (int8, ~570 MB, más el tokenizador
    y la config).
 
