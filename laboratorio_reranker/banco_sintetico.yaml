@@ -1,0 +1,356 @@
+# Banco sintético del laboratorio (README § 5.2). Lo escribe Claude; origen: claude-opus-5.5, 2026-10-17.
+#
+# Reproduce los fallos de orden observados en documentos reales:
+#   hermana       la respuesta está en una unidad que solo se distingue de sus hermanas por un actor, un período o
+#                 una columna (filas de tabla que no dicen a qué unidad pertenecen, como P1/P2);
+#   otro_aspecto  otros pasajes del mismo tema responden otro aspecto (piden un plazo, el vecino da un monto);
+#   brecha_lexica la pregunta usa palabras que el pasaje no tiene.
+# Cada objetivo tiene una pregunta formal (id …f) y otra informal (id …i). `respuesta` es un literal que se busca
+# dentro de `seccion` (el encabezado más cercano), no en todo el documento: las tablas hermanas repiten cifras.
+#
+# Particiones por documento: `dev` (descubrimiento y piloto) o `test` (congelada; nadie la mira antes de la etapa 4).
+# El piloto es `dev` entero. `datos.py sintetico` lo materializa en .cache/ con el formato de banco_pasajes.
+
+documentos:
+- archivo: reglamento_practicas_enfermeria.md
+  dominio: salud-universidad
+  particion: dev
+  texto: |
+    # Reglamento de Prácticas Clínicas de la Carrera de Enfermería
+
+    ## Título I. Disposiciones generales
+
+    Artículo 1. El presente reglamento regula las prácticas clínicas de la carrera de Enfermería, que se realizan en
+    hospitales, centros de salud familiar y servicios de atención primaria con los que la universidad mantiene
+    convenios docente-asistenciales vigentes.
+
+    Artículo 2. Las prácticas clínicas son asignaturas obligatorias del plan de estudios. Cada una tiene prerrequisitos
+    propios, que se indican en el plan de estudios, y no pueden cursarse en paralelo con otra práctica clínica.
+
+    Artículo 3. Antes de iniciar cualquier práctica clínica, los estudiantes deben acreditar el esquema completo de
+    vacunación contra hepatitis B y contra influenza de la temporada, además de haber aprobado el curso de
+    precauciones estándar y manejo de residuos.
+
+    Artículo 4. Durante la práctica se exige uniforme clínico institucional completo y credencial visible. No se
+    permiten joyas, piercings visibles ni uñas largas o pintadas, y el cabello largo debe llevarse tomado.
+
+    ## Título II. Práctica Clínica I
+
+    La Práctica Clínica I se cursa en el quinto semestre y comprende 144 horas en servicios de atención primaria.
+    Su propósito es que el estudiante valore a usuarios y familias, registre la atención y participe en actividades
+    de promoción de la salud bajo supervisión directa.
+
+    La práctica se organiza en jornadas de mañana, de lunes a jueves. Los viernes se destinan a talleres de
+    reflexión en la universidad, a cargo de la docente de la asignatura.
+
+    | Instrumento | Semana de entrega | Ponderación | Evalúa |
+    |---|---|---|---|
+    | Bitácora reflexiva | Semana 5 | 20 % | Docente de la asignatura |
+    | Informe de caso familiar | Semana 9 | 30 % | Docente de la asignatura |
+    | Pauta de desempeño clínico | Semana 12 | 50 % | Enfermera supervisora del centro |
+
+    ## Título III. Práctica Clínica II
+
+    La Práctica Clínica II se cursa en el séptimo semestre y comprende 216 horas en servicios de medicina y cirugía
+    de adultos. El estudiante planifica y ejecuta cuidados de enfermería a usuarios hospitalizados, administra
+    medicamentos con supervisión y participa en la entrega de turno.
+
+    Las jornadas son de mañana o de tarde según el servicio asignado, de lunes a viernes. La asignación de servicio
+    se publica la semana anterior al inicio de la práctica.
+
+    | Instrumento | Semana de entrega | Ponderación | Evalúa |
+    |---|---|---|---|
+    | Bitácora reflexiva | Semana 7 | 15 % | Enfermera supervisora del servicio |
+    | Proceso de atención de enfermería | Semana 10 | 35 % | Docente de la asignatura |
+    | Pauta de desempeño clínico | Semana 14 | 50 % | Enfermera supervisora del servicio |
+
+    ## Título IV. Práctica Clínica III
+
+    La Práctica Clínica III se cursa en el noveno semestre y comprende 288 horas en unidades de paciente crítico,
+    urgencia y pediatría. El estudiante asume progresivamente la gestión del cuidado de un grupo de usuarios, con
+    supervisión indirecta en las últimas semanas.
+
+    Las jornadas pueden incluir turnos de noche, que se informan con dos semanas de anticipación.
+
+    | Instrumento | Semana de entrega | Ponderación | Evalúa |
+    |---|---|---|---|
+    | Bitácora reflexiva | Semana 6 | 10 % | Docente de la asignatura |
+    | Examen clínico objetivo estructurado | Semana 11 | 40 % | Comisión de tres docentes |
+    | Pauta de desempeño clínico | Semana 15 | 50 % | Enfermera supervisora de la unidad |
+
+    ## Título V. Asistencia, inasistencias y recuperación
+
+    Artículo 10. La asistencia a las prácticas clínicas es obligatoria en un 100 %. Se admite un máximo de tres
+    inasistencias justificadas por práctica; una cuarta inasistencia, aunque esté justificada, obliga a repetir la
+    práctica completa.
+
+    Artículo 11. Toda inasistencia debe justificarse ante la coordinación de prácticas dentro de las 48 horas
+    siguientes, con certificado médico o documento que acredite la causa. Una inasistencia no justificada en ese
+    plazo se califica con la nota mínima en la pauta de desempeño de esa semana.
+
+    Artículo 12. Las horas no realizadas por inasistencias justificadas se recuperan en el período de recuperación
+    de enero, en el mismo servicio o en uno equivalente que asigne la coordinación.
+
+    Artículo 13. Ante un accidente cortopunzante o una exposición a fluidos corporales, el estudiante debe informar
+    de inmediato a su supervisor y acudir al servicio de urgencia dentro de las 2 horas siguientes para iniciar el
+    protocolo de exposición. El seguro escolar cubre la atención.
+
+    ## Título VI. Calificación y reprobación
+
+    Artículo 14. La nota final de cada práctica es el promedio ponderado de sus instrumentos. La práctica se aprueba
+    con nota final igual o superior a 4,0 y con nota igual o superior a 4,0 en la pauta de desempeño clínico.
+
+    Artículo 15. La reprobación de una misma práctica clínica por segunda vez causa la eliminación de la carrera.
+    El estudiante puede apelar ante el consejo de escuela dentro de los cinco días hábiles siguientes a la
+    publicación de la nota.
+
+- archivo: ordenanza_estacionamiento.md
+  dominio: municipal
+  particion: dev
+  texto: |
+    # Ordenanza Municipal de Estacionamiento en la Vía Pública
+
+    ## Título I. Objeto y ámbito
+
+    Artículo 1. Esta ordenanza regula el estacionamiento de vehículos en la vía pública de la comuna, las tarifas,
+    los permisos especiales y las sanciones por su incumplimiento. Se aplica a automóviles, camionetas,
+    motocicletas y vehículos de carga de hasta 3.500 kilos.
+
+    Artículo 2. La comuna se divide en tres zonas de estacionamiento regulado: Zona Centro, Zona Mixta y Zona
+    Residencial. Sus límites se indican en el plano anexo, que se mantiene publicado en el sitio web municipal.
+
+    Artículo 3. El pago se realiza en los parquímetros o mediante la aplicación municipal. No se cobra tarifa los
+    domingos ni los días festivos. Las motocicletas pagan el 50 % de la tarifa de la zona.
+
+    ## Título II. Zona Centro
+
+    La Zona Centro comprende el casco histórico y las calles comerciales que lo rodean. Es la zona de mayor
+    rotación y concentra la mayor parte de los parquímetros de la comuna.
+
+    | Concepto | Valor |
+    |---|---|
+    | Horario de cobro | lunes a sábado de 8:00 a 20:00 |
+    | Tarifa por minuto | $35 |
+    | Tiempo máximo continuo | 2 horas |
+
+    ## Título III. Zona Mixta
+
+    La Zona Mixta comprende los barrios de uso comercial y residencial que rodean la Zona Centro, incluidos los
+    alrededores del hospital y de la terminal de buses.
+
+    | Concepto | Valor |
+    |---|---|
+    | Horario de cobro | lunes a viernes de 8:00 a 19:00 |
+    | Tarifa por minuto | $28 |
+    | Tiempo máximo continuo | 4 horas |
+
+    ## Título IV. Zona Residencial
+
+    La Zona Residencial comprende los barrios de uso preferentemente habitacional donde el estacionamiento se regula
+    para proteger a los residentes de la ocupación prolongada por vehículos de otros sectores.
+
+    | Concepto | Valor |
+    |---|---|
+    | Horario de cobro | lunes a viernes de 9:00 a 14:00 |
+    | Tarifa por minuto | $20 |
+    | Tiempo máximo continuo | sin límite |
+
+    ## Título V. Permiso de residente
+
+    Artículo 10. Las personas que viven en la Zona Mixta o en la Zona Residencial pueden solicitar un permiso de
+    residente, que las exime del pago de la tarifa en la cuadra de su domicilio y en las cuadras contiguas.
+
+    Artículo 11. Para obtener el permiso se debe presentar un certificado de residencia y el padrón del vehículo a
+    nombre del solicitante o de un integrante de su grupo familiar.
+
+    Artículo 12. El permiso de residente tiene un costo anual de 0,5 UTM y debe renovarse cada año antes del 31 de
+    marzo. Se otorga un máximo de dos permisos por domicilio.
+
+    ## Título VI. Carga y descarga
+
+    Artículo 15. En la Zona Centro, las operaciones de carga y descarga solo se permiten entre las 7:00 y las 10:00
+    horas, en los espacios señalizados para ese fin, y por un máximo de 30 minutos por vehículo.
+
+    ## Título VII. Infracciones y sanciones
+
+    Artículo 20. Estacionar sin pagar la tarifa se sanciona con multa de 1 UTM.
+
+    Artículo 21. Exceder el tiempo máximo continuo de la zona se sanciona con multa de 0,5 UTM.
+
+    Artículo 22. Estacionar en un espacio reservado para personas con discapacidad sin la credencial
+    correspondiente se sanciona con multa de 3 UTM.
+
+    Artículo 23. El vehículo que obstruya un acceso, un paradero o un espacio de carga podrá ser retirado por grúa
+    y trasladado al corral municipal. Su retiro tiene un costo de 2 UTM más 0,1 UTM por cada día de permanencia.
+
+casos:
+# --- reglamento_practicas_enfermeria.md ---
+- objetivo: sint-001
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título III. Práctica Clínica II
+  dificultad: hermana
+  respuesta: Bitácora reflexiva | Semana 7 | 15 %
+  formal: ¿Cuál es la ponderación de la bitácora reflexiva en la Práctica Clínica II?
+  informal: cuanto vale la bitacora en la practica 2
+- objetivo: sint-002
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título II. Práctica Clínica I
+  dificultad: hermana
+  respuesta: Informe de caso familiar | Semana 9
+  formal: ¿En qué semana se entrega el informe de caso familiar de la Práctica Clínica I?
+  informal: pa q semana es el informe de caso en la practica 1
+- objetivo: sint-003
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título IV. Práctica Clínica III
+  dificultad: hermana
+  respuesta: Examen clínico objetivo estructurado | Semana 11 | 40 % | Comisión de tres docentes
+  formal: ¿Quién evalúa el examen clínico objetivo estructurado de la Práctica Clínica III?
+  informal: quien me toma el osce en la practica 3
+- objetivo: sint-004
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título III. Práctica Clínica II
+  dificultad: hermana
+  respuesta: comprende 216 horas en servicios de medicina y cirugía
+  formal: ¿Cuántas horas comprende la Práctica Clínica II?
+  informal: cuantas horas son en la practica 2
+- objetivo: sint-005
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título V. Asistencia, inasistencias y recuperación
+  dificultad: otro_aspecto
+  respuesta: Toda inasistencia debe justificarse ante la coordinación de prácticas dentro de las 48 horas
+  formal: ¿Cuál es el plazo para justificar una inasistencia a la práctica?
+  informal: hasta cuando tengo pa justificar si falte a la practica
+- objetivo: sint-006
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título V. Asistencia, inasistencias y recuperación
+  dificultad: otro_aspecto
+  respuesta: Se admite un máximo de tres inasistencias justificadas por práctica
+  formal: ¿Cuántas inasistencias justificadas se permiten en una práctica clínica?
+  informal: cuantas veces puedo faltar a la practica con licencia
+- objetivo: sint-007
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título VI. Calificación y reprobación
+  dificultad: otro_aspecto
+  respuesta: La práctica se aprueba con nota final igual o superior a 4,0 y con nota igual o superior a 4,0 en la pauta de desempeño clínico
+  formal: ¿Con qué nota se aprueba una práctica clínica?
+  informal: con que nota paso la practica
+- objetivo: sint-008
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título I. Disposiciones generales
+  dificultad: brecha_lexica
+  respuesta: No se permiten joyas, piercings visibles ni uñas largas o pintadas
+  formal: ¿Qué restricciones de presentación personal rigen durante la práctica?
+  informal: puedo ir con aros a la practica
+- objetivo: sint-009
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título I. Disposiciones generales
+  dificultad: brecha_lexica
+  respuesta: los estudiantes deben acreditar el esquema completo de vacunación contra hepatitis B
+  formal: ¿Qué vacunas se exigen antes de iniciar una práctica clínica?
+  informal: tengo q estar vacunado pa entrar al hospital
+- objetivo: sint-010
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título VI. Calificación y reprobación
+  dificultad: brecha_lexica
+  respuesta: La reprobación de una misma práctica clínica por segunda vez causa la eliminación de la carrera
+  formal: ¿Qué consecuencia tiene reprobar la misma práctica clínica por segunda vez?
+  informal: si me echo la practica dos veces me sacan de la carrera
+- objetivo: sint-011
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título V. Asistencia, inasistencias y recuperación
+  dificultad: brecha_lexica
+  respuesta: el estudiante debe informar de inmediato a su supervisor y acudir al servicio de urgencia dentro de las 2 horas siguientes
+  formal: ¿Qué debe hacer el estudiante ante un accidente cortopunzante?
+  informal: que hago si me pincho con una aguja en el turno
+- objetivo: sint-012
+  documento: reglamento_practicas_enfermeria.md
+  seccion: Título V. Asistencia, inasistencias y recuperación
+  dificultad: otro_aspecto
+  respuesta: Las horas no realizadas por inasistencias justificadas se recuperan en el período de recuperación de enero
+  formal: ¿Cuándo se recuperan las horas no realizadas por inasistencias justificadas?
+  informal: las horas q no hice cuando las recupero
+# --- ordenanza_estacionamiento.md ---
+- objetivo: sint-013
+  documento: ordenanza_estacionamiento.md
+  seccion: Título III. Zona Mixta
+  dificultad: hermana
+  respuesta: Tarifa por minuto | $28
+  formal: ¿Cuál es la tarifa por minuto en la Zona Mixta?
+  informal: cuanto cobran el minuto en la zona mixta
+- objetivo: sint-014
+  documento: ordenanza_estacionamiento.md
+  seccion: Título II. Zona Centro
+  dificultad: hermana
+  respuesta: Tiempo máximo continuo | 2 horas
+  formal: ¿Cuál es el tiempo máximo continuo de estacionamiento en la Zona Centro?
+  informal: cuanto rato puedo dejar el auto en el centro
+- objetivo: sint-015
+  documento: ordenanza_estacionamiento.md
+  seccion: Título IV. Zona Residencial
+  dificultad: hermana
+  respuesta: Horario de cobro | lunes a viernes de 9:00 a 14:00
+  formal: ¿Cuál es el horario de cobro en la Zona Residencial?
+  informal: a q hora dejan de cobrar en la zona residencial
+- objetivo: sint-016
+  documento: ordenanza_estacionamiento.md
+  seccion: Título VII. Infracciones y sanciones
+  dificultad: otro_aspecto
+  respuesta: Estacionar sin pagar la tarifa se sanciona con multa de 1 UTM
+  formal: ¿Cuál es la multa por estacionar sin pagar la tarifa?
+  informal: si no pago el parquimetro de cuanto es el parte
+- objetivo: sint-017
+  documento: ordenanza_estacionamiento.md
+  seccion: Título VII. Infracciones y sanciones
+  dificultad: otro_aspecto
+  respuesta: sin la credencial correspondiente se sanciona con multa de 3 UTM
+  formal: ¿Cuál es la multa por estacionar en un espacio para personas con discapacidad sin credencial?
+  informal: cuanto es la multa por estacionarse en el lugar de discapacitados
+- objetivo: sint-018
+  documento: ordenanza_estacionamiento.md
+  seccion: Título V. Permiso de residente
+  dificultad: otro_aspecto
+  respuesta: debe renovarse cada año antes del 31 de marzo
+  formal: ¿Hasta qué fecha debe renovarse el permiso de residente?
+  informal: hasta cuando tengo pa renovar el permiso de vecino
+- objetivo: sint-019
+  documento: ordenanza_estacionamiento.md
+  seccion: Título V. Permiso de residente
+  dificultad: otro_aspecto
+  respuesta: El permiso de residente tiene un costo anual de 0,5 UTM
+  formal: ¿Cuánto cuesta el permiso de residente?
+  informal: cuanto sale el permiso pa los vecinos
+- objetivo: sint-020
+  documento: ordenanza_estacionamiento.md
+  seccion: Título V. Permiso de residente
+  dificultad: otro_aspecto
+  respuesta: Para obtener el permiso se debe presentar un certificado de residencia y el padrón del vehículo
+  formal: ¿Qué documentos se requieren para obtener el permiso de residente?
+  informal: q papeles piden pa el permiso de residente
+- objetivo: sint-021
+  documento: ordenanza_estacionamiento.md
+  seccion: Título VI. Carga y descarga
+  dificultad: brecha_lexica
+  respuesta: las operaciones de carga y descarga solo se permiten entre las 7:00 y las 10:00
+  formal: ¿En qué horario se permiten las operaciones de carga y descarga en la Zona Centro?
+  informal: a q hora pueden descargar los camiones en el centro
+- objetivo: sint-022
+  documento: ordenanza_estacionamiento.md
+  seccion: Título I. Objeto y ámbito
+  dificultad: brecha_lexica
+  respuesta: No se cobra tarifa los domingos ni los días festivos
+  formal: ¿Se cobra tarifa de estacionamiento los días festivos?
+  informal: el domingo hay q pagar estacionamiento
+- objetivo: sint-023
+  documento: ordenanza_estacionamiento.md
+  seccion: Título VII. Infracciones y sanciones
+  dificultad: brecha_lexica
+  respuesta: Su retiro tiene un costo de 2 UTM más 0,1 UTM por cada día de permanencia
+  formal: ¿Cuánto cuesta retirar un vehículo del corral municipal?
+  informal: si se me llevan el auto con la grua cuanto me sale sacarlo
+- objetivo: sint-024
+  documento: ordenanza_estacionamiento.md
+  seccion: Título I. Objeto y ámbito
+  dificultad: brecha_lexica
+  respuesta: Las motocicletas pagan el 50 % de la tarifa de la zona
+  formal: ¿Cuánto pagan las motocicletas por estacionar?
+  informal: las motos pagan lo mismo q los autos
