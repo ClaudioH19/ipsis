@@ -1,7 +1,7 @@
 # Banco multimedia (español, sintético)
 
 Mide cuándo el carril multimedia debe mostrar una ficha de audio o video y cuándo no
-([plan multimedia](../../../../docs/plan/multimedia.md), M0.2 y M2.2). **Es sintético**: las fichas y las
+([ADR 0011](../../../../docs/decisions/0011-media-records-in-a-separate-lane.md)). **Es sintético**: las fichas y las
 preguntas las escribió el mismo asistente que construye el carril, sobre los documentos de
 `../../banco_terminos/validacion/es/corpus/`, así que sus cifras son optimistas. No sustituye a fichas y preguntas
 reales; si se aportan, se miden aparte y quedan fuera del repositorio.

@@ -18,7 +18,7 @@ Los modelos de embeddings, reranking y lectura extractiva siguen siendo candidat
 
 Este documento conserva el diseño y el mapa del checkout inspeccionado el
 2026-10-11, incluidos cambios locales anteriores a este mapa. La implementación
-experimental posterior se documenta en el [avance](../plan/motor-v2-avance.md).
+experimental posterior se documenta en [fuentes ordenadas](fuentes-v2.md), el [diagnóstico](motor-v2-diagnostico.md) y las [mejoras de lectura](motor-v2-mejoras-lectura.md).
 El orden real lo establece el perfil efectivo, no la lista de clases del registro.
 La referencia principal es `medium`; `light` omite reranker y lector.
 
@@ -206,7 +206,7 @@ reranker mide pertinencia; un lector extractivo puede elegir una cifra de
 otra relación. Las tablas y listas necesitan contexto aunque el lector no
 extraiga sus múltiples elementos. La CPU disponible limita cuántas ventanas
 podemos procesar. Las primeras comparaciones reales están en el
-[avance](../plan/motor-v2-avance.md); no acreditan una mejora general de v2.
+[diagnóstico](motor-v2-diagnostico.md); no acreditan una mejora general de v2.
 
 ## 13. Referencias al código inspeccionado
 
@@ -232,5 +232,5 @@ efectivo, sus versiones y soporte. Los criterios
 de aceptación de respuestas están pendientes de validación; no se declara
 una garantía de precisión ni una calibración universal.
 
-El [plan de implementación y reemplazo](../plan/motor-v2.md) define entregas,
-criterios de promoción y retiro del motor anterior.
+Lo que falta para promoverlo y retirar el motor anterior está en los
+[planes de trabajo](../plan/README.md#motor-v2-lo-que-falta).

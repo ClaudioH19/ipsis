@@ -55,7 +55,7 @@ Plantilla:
   `sint-003i` y `sint-006i` quedan en el rango 3 dentro del motor, pero en el 1 fuera de él. Su reranking duró
   ~1,1 s (los demás, 1,5–2,2 s) y la correcta era la tercera de la cola: el motor puntuó un solo lote de 2 y se
   detuvo. Fuera del motor, en esta máquina, el int8 cuesta ~480 ms por par; la referencia de
-  `precision-ingesta-avance.md` es 85 ms por par con 4 CPU.
+  `docs/methodology/precision-ingesta.md` es 85 ms por par con 4 CPU.
 - ¿Esperable?: no.
 - Explicaciones posibles: (1) `puntuar_progresivo` no inicia un lote que no cabe en `presupuesto_consulta_ms`
   (2 500 ms menos 150); con la CPU cargada o lenta quedan candidatos sin puntuar, y la correcta sin puntuar se

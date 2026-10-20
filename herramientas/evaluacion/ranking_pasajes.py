@@ -1,4 +1,4 @@
-"""Rango de la fuente correcta por etapa (F0.2 de docs/plan/precision-ingesta-tareas.md).
+"""Rango de la fuente correcta por etapa (F0.2 de docs/methodology/precision-ingesta.md).
 
 Dice si el error de «la fuente correcta no sale primera» es de recuperación o de
 orden. Por cada pregunta respondible de un banco con evidencias (por ejemplo

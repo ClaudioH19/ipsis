@@ -6,7 +6,7 @@ Status: accepted (2026-10-16).
 
 Some questions are best answered by an audio or a video the institution already has. ipsis is non-generative
 (ADR 0001) and self-hosted: it must not transcribe, summarise or invent text about a media file, and the documents and
-questions never leave the server. The plan is in `docs/plan/multimedia*.md`.
+questions never leave the server.
 
 ## Decision
 

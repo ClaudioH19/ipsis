@@ -132,7 +132,7 @@ class RedaccionConfig(ConfiguracionEstricta):
 
 
 class PresentacionConfig(ConfiguracionEstricta):
-    """Presentación según la forma de los resultados (``docs/plan/presentacion.md``, ADR 0010): encendida por defecto.
+    """Presentación según la forma de los resultados (ADR 0010): encendida por defecto.
 
     ``margen_claro`` es la separación mínima entre la primera y la segunda fuente para llamar «clara» a una página; ``None``
     la desactiva (solo quedan ``variantes``, ``documentos`` y ``neutral``). Se mide por perfil, porque la escala del
@@ -180,7 +180,7 @@ class PipelineV2Config(ConfiguracionEstricta):
 
 
 class MediaConfig(ConfiguracionEstricta):
-    """Carril multimedia (``docs/plan/multimedia.md``, ADR 0011): encendido por defecto, con el umbral medido en M2.2.
+    """Carril multimedia (ADR 0011): encendido por defecto, con el umbral medido en M2.2.
 
     ``puntaje_minimo`` es un coseno denso (absoluto); ``None`` significa «no se muestra nada»: la búsqueda corre y queda
     en el diagnóstico, pero ninguna ficha se publica. Sin carpeta ``media/`` indexada no hace nada.

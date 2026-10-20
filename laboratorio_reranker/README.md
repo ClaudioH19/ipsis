@@ -20,7 +20,7 @@ primer puesto:
 | 33 formales | 33 | 0,849 | 1,000 | ≈ 5 |
 | Banco de pasajes sintético, `test` | 44 | 1,000 | 1,000 | 0 (saturado) |
 
-Fuente: `docs/plan/precision-ingesta-avance.md`. Lo que ya se probó y **no** movió hit@1:
+Fuente: `docs/methodology/precision-ingesta.md`. Lo que ya se probó y **no** movió hit@1:
 
 - otro modelo denso;
 - la ventana de 256 → 512 tokens;

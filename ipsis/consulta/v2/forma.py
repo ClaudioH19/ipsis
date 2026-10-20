@@ -3,7 +3,7 @@
 Describe cómo se parecen entre sí las primeras fuentes publicadas, para que el widget elija el mensaje y la disposición
 («Esto dice…», «Depende de tu caso», «Lo encontré en dos documentos»). **No cambia qué se publica ni su orden**: es una
 función pura sobre lo ya publicado, y una descripción de la página, no una afirmación de que la primera fuente responda
-(ADR 0001, ``docs/plan/presentacion.md``).
+(ADR 0001, ADR 0010).
 
 Cada fuente es un ``dict`` con ``score``, ``tipo_puntaje``, ``doc_id``, ``seccion_path`` (lista) y ``alcance``.
 

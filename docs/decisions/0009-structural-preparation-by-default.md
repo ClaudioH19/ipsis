@@ -5,12 +5,12 @@ Status: accepted (2026-10-15).
 ## Context
 
 The top-1 source was often not first even when the right one was among the first
-five. The plan in `docs/plan/precision-ingesta*.md` measured why. With the fixed-size
+five. The plan in `docs/methodology/precision-ingesta.md` measured why. With the fixed-size
 chunker `CH-F256` (256 words or more, crossing sections, no header) the hybrid order
 already had the right source in the first five in 100 % of the synthetic passage
 bank, but the cross-encoder, which reads only the first ~256 tokens of
 question plus passage, pushed it down in `medium` (hit@1 0.736 against 0.792 in the
-hybrid order). Details and tables: `docs/plan/precision-ingesta-avance.md`.
+hybrid order). Details and tables: `docs/methodology/precision-ingesta.md`.
 
 ## Decision
 

@@ -2,7 +2,7 @@
 
 Las guías de uso (inglés y español) documentan todos los comandos de la CLI, los enlaces relativos existen y los
 datos que se copian a mano (modelos de cada perfil, ``config_version``, formatos, secciones de cada guía en inglés
-y en español, versión publicada) coinciden con su fuente de verdad en el código. Plan: ``docs/plan/coherencia.md``.
+y en español, versión publicada) coinciden con su fuente de verdad en el código.
 """
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ def test_los_enlaces_relativos_de_la_documentacion_existen():
 
 
 # ---------------------------------------------------------------------------
-# Coherencia entre el código y la documentación (docs/plan/coherencia-tareas.md, C1).
+# Coherencia entre el código y la documentación (plan de coherencia, C1).
 #
 # Cada prueba que hoy falla lleva ``xfail(strict=True)`` con la tarea del plan que la arregla: esa tarea quita
 # la marca, y si alguien arregla la documentación antes, ``strict`` avisa para que la quite.

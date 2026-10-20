@@ -3,7 +3,7 @@
 Cada ficha activa aporta una unidad (título, descripción y palabras clave) y cada capítulo otra (título de la ficha más
 título y descripción del capítulo). Se indexan en una colección de Qdrant **separada** de la de documentos
 (``…_v{n}__media``), con el mismo modelo denso y estadísticas léxicas propias, y con su propio manifiesto: el índice
-de documentos, su manifiesto y su ``hash_corpus`` no cambian (``docs/plan/multimedia-tareas.md``, reglas 3 y 4).
+de documentos, su manifiesto y su ``hash_corpus`` no cambian (ADR 0011).
 
 Lo indexado y lo que se muestra es el texto que escribió una persona: nada se transcribe ni se analiza (ADR 0001).
 """
