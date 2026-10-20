@@ -1,3 +1,0 @@
-es 0.85 0.0 {'dev': {'sin_patron': 18, 'aceptadas': 3, 'correctas': 3, 'errores': []}, 'test': {'sin_patron': 15, 'aceptadas': 1, 'correctas': 1, 'errores': []}}
-en 0.87 0.0 {'dev': {'sin_patron': 17, 'aceptadas': 2, 'correctas': 2, 'errores': []}, 'test': {'sin_patron': 15, 'aceptadas': 0, 'correctas': 0, 'errores': []}}
-pt 0.895 0.0 {'dev': {'sin_patron': 17, 'aceptadas': 1, 'correctas': 1, 'errores': []}, 'test': {'sin_patron': 15, 'aceptadas': 1, 'correctas': 1, 'errores': []}}
