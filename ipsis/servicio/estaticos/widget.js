@@ -285,6 +285,58 @@
   // los que se usan si el servicio no responde: `config/styles.yaml`
   // las redefine y el servicio las sirve en /styles.css, que se enlaza
   // DESPUES de este bloque (ver mas abajo) y por tanto gana.
+  // Estructura por preset que las variables no alcanzan: @E editorial, @F forest, @I institucional, @A todas.
+  var FAMILIAS = [
+    "@E .rw-cabecera{border-bottom:3px double var(--rw-borde);}",
+    "@E .rw-busqueda .rw-resultado{background:transparent;border:0;border-top:1px solid var(--rw-borde-resultado);",
+    "  border-radius:0;box-shadow:none;padding:18px 2px 20px;margin:0;}",
+    "@E .rw-busqueda .rw-resultado:first-child{border-top:2px solid var(--rw-texto);}",
+    "@E .rw-busqueda .rw-resultado-numero{min-width:0;height:auto;padding:0;background:none;color:var(--rw-acento);",
+    "  font:italic 400 24px/1 var(--rw-fuente-titulo);}",
+    "@E .rw-resultado-alcance{padding:0 0 0 9px;border:0;border-left:1px solid var(--rw-borde-resultado);border-radius:0;",
+    "  background:transparent;color:var(--rw-texto-suave);font-weight:500;}",
+    "@E .rw-busqueda .rw-resultado-titulo{line-height:1.22;}",
+    "@E .rw-resultado-vista,@E .rw-documento{font-family:var(--rw-fuente-titulo);}",
+    "@E .rw-busqueda details > summary{min-height:0;padding:0 0 2px;border:0;border-bottom:1px solid currentColor;",
+    "  border-radius:0;background:transparent;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;}",
+    "@E .rw-seguir{border:1px solid var(--rw-texto);background:transparent;color:var(--rw-texto);",
+    "  text-transform:uppercase;letter-spacing:.1em;}",
+    "@E .rw-voz-burbuja{padding:2px 0 2px 14px;background:transparent;border:0 solid var(--rw-acento);border-left-width:2px;font:italic 1em var(--rw-fuente-titulo);}",
+    "@F .rw-busqueda .rw-resultado,@F .rw-busqueda .rw-resultado:first-child{background:var(--rw-superficie);",
+    "  border:1px solid var(--rw-borde-resultado);border-inline-start:4px solid var(--rw-acento);",
+    "  border-radius:0 var(--rw-radio-control) var(--rw-radio-control) 0;padding:14px 16px 16px;margin:0 0 14px;}",
+    "@I[data-preset=ocean]{--rw-cab-fondo:var(--rw-acento);--rw-cab-texto:var(--rw-acento-texto);--rw-cab-linea:transparent;}",
+    "@I[data-preset=midnight]{--rw-cab-fondo:var(--rw-superficie);--rw-cab-texto:var(--rw-texto);--rw-cab-linea:var(--rw-acento);}",
+    "@media (prefers-color-scheme:dark){@I[data-preset=ocean]{--rw-cab-fondo:var(--rw-superficie);",
+    "  --rw-cab-texto:var(--rw-texto);--rw-cab-linea:var(--rw-acento);}}",
+    "@I .rw-cabecera{background:var(--rw-cab-fondo);color:var(--rw-cab-texto);border-bottom:2px solid var(--rw-cab-linea);}",
+    "@I .rw-cabecera h2{color:var(--rw-cab-texto);}",
+    "@I .rw-subtitulo,@I .rw-cabecera summary,@I .rw-cerrar{color:color-mix(in srgb,var(--rw-cab-texto) 80%,transparent);}",
+    "@I .rw-cabecera summary:hover,@I .rw-cerrar:hover,@I .rw-cerrar:focus-visible{color:var(--rw-cab-texto);",
+    "  background:color-mix(in srgb,var(--rw-cab-texto) 14%,transparent);}",
+    "@I .rw-busqueda .rw-resultado{border-top:3px solid var(--rw-acento);box-shadow:none;}",
+    "@I .rw-busqueda .rw-resultado:hover{border-color:var(--rw-borde-resultado);border-top-color:var(--rw-acento);}",
+    "@I .rw-busqueda .rw-resultado-numero{min-width:24px;height:24px;border-radius:2px;font-size:12px;}",
+    "@I .rw-resultado-alcance{border-radius:2px;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}",
+    "@I .rw-busqueda details > summary{border-radius:2px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;",
+    "  background:transparent;border-color:var(--rw-acento);}",
+    "@I .rw-busqueda details > summary:hover{background:var(--rw-acento);color:var(--rw-acento-texto);}",
+    "@I .rw-seguir{background:var(--rw-acento);color:var(--rw-acento-texto);border-color:var(--rw-acento);",
+    "  text-transform:uppercase;letter-spacing:.09em;}",
+    "@I .rw-voz-burbuja{border-left:3px solid var(--rw-acento);}",
+    "@A .rw-subtitulo{text-transform:uppercase;letter-spacing:.09em;font-size:10px;}",
+    "@A .rw-resultado-doc{text-transform:uppercase;letter-spacing:.08em;}",
+    "@E .rw-resultado-doc{color:var(--rw-acento);}@I .rw-resultado-doc{color:var(--rw-seccion);}",
+    "@A .rw-voz-burbuja{border-radius:var(--rw-radio-control);box-shadow:none;}",
+    "@A .rw-voz[data-avatar='si'] .rw-voz-burbuja::after{display:none;}",
+    "@A .rw-seguir,@A .rw-sugerencias button{border-radius:var(--rw-radio-control);box-shadow:none;}",
+    "@A[data-modo='busqueda'] .rw-form input,@A[data-modo='busqueda'] .rw-form .rw-enviar{border-radius:var(--rw-radio-control);}",
+    "@A[data-modo='busqueda'] .rw-form .rw-enviar{box-shadow:none;}",
+  ].join("\n")
+    .replace(/@E/g, ".rw-panel:is([data-preset=editorial],[data-preset=forest])").replace(/@F/g, ".rw-panel[data-preset=forest]")
+    .replace(/@I/g, ".rw-panel:is([data-preset=ocean],[data-preset=midnight])")
+    .replace(/@A/g, ".rw-panel:is([data-preset=editorial],[data-preset=forest],[data-preset=ocean],[data-preset=midnight])");
+
   estilos.textContent = [
     ".rw-raiz{",
     "  --rw-acento:" + COLOR_ACENTO + ";",
@@ -826,6 +878,8 @@
     ".rw-panel[data-animaciones='false'] .rw-esq-tarjeta,.rw-panel[data-animaciones='false'] .rw-esqueleto-estado i{animation:none;}",
     "@media(prefers-reduced-motion:reduce){.rw-esq-tarjeta,.rw-esqueleto-estado i,.rw-busqueda .rw-resultado,",
     "  .rw-sugerencias button{animation:none;transition:none;}}",
+
+    FAMILIAS,
 
     // Teléfono (o apaisado bajo): hoja a pantalla completa. La altura sigue al
     // viewport visible, así el teclado virtual no tapa el campo de texto.

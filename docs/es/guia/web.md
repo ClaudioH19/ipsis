@@ -269,7 +269,13 @@ comprobarla:
 Los resultados se distinguen con tarjetas (`cards`), separadores (`lines`) o
 un margen editorial (`editorial`). Los presets `classic`, `minimal`,
 `editorial`, `contrast`, `search`, `search_compact`, `ocean`, `forest` y
-`midnight` combinan estos diseños con sus colores y tipografías.
+`midnight` combinan estos diseños con sus colores y tipografías. Dos de ellos van más
+allá del color y tienen estructura propia: **editorial** (`editorial`, `forest`: titulares
+serif, filetes de periódico, rótulos en versalitas y enlaces subrayados en lugar de botones
+píldora; `forest` compone los resultados como notas de papel con barra lateral) e
+**institucional** (`ocean`, `midnight`: cabecera sólida, esquinas rectas, rótulos en
+mayúsculas y un filete sobre cada resultado). Las fuentes son pilas del sistema: no se
+descarga nada de terceros.
 
 Los títulos tienen color, fuente, tamaño y peso propios. Puedes ajustar las
 secciones, los bordes y el fondo de los resultados sin cambiar el color de los

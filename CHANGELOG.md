@@ -6,6 +6,13 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+- **Redesigned themes.** `editorial` and `forest` now compose results like a newspaper (serif headlines, rules,
+  small-caps labels, underlined links; `forest` uses paper notes with a side bar) and `ocean` and `midnight` are
+  institutional (solid header, square corners, uppercase labels, a rule above each result), instead of recolors of the
+  classic layout. Palettes have light and dark variants and use system font stacks. The preset names are unchanged.
+  The structure is scoped by `data-preset`, so `classic`, `minimal`, `contrast`, `search` and `search_compact` look the same.
+  README and guide screenshots were regenerated.
+
 ## [1.1.0] - 2026-10-17
 
 **Upgrading from 1.0.0:** the first `ipsis` command migrates a v2 project to `config_version` 8 and, if it had not chosen

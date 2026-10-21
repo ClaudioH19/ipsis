@@ -29,6 +29,10 @@ def contenido_publico(tema: dict) -> dict:
     return a_externo({"contenido": tema.get("contenido") or {}}, "estilos")["content"]
 
 
+# Pilas del sistema: sin descargar tipografías (el widget no pide recursos a terceros).
+_SANS_INSTITUCIONAL = "'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif"
+_SERIF_EDITORIAL = "'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif"
+
 PRESETS: dict[str, dict[str, Any]] = {
     "clasico": {
         "tema": {},
@@ -45,15 +49,19 @@ PRESETS: dict[str, dict[str, Any]] = {
     "editorial": {
         "tema": {
             "colores": {
-                "acento": "#8b2f3c", "acento_texto": "#fffaf3", "superficie": "#fffdf8",
-                "fondo": "#f5efe5", "texto": "#29231f", "texto_suave": "#70655c",
-                "borde": "#ded2c4", "aviso": "#8a5a18", "aviso_borde": "#b9812d",
+                "acento": "#8f1d2c", "acento_texto": "#fff8f0", "superficie": "#fffefb", "fondo": "#f4efe6",
+                "texto": "#1c1917", "texto_suave": "#6a6259", "borde": "#d8cfc2", "aviso": "#8a5a18", "aviso_borde": "#b9812d",
+                "borde_resultado": "#cfc4b5",
             },
-            "colores_oscuro": {"acento": "#f2a6af", "acento_texto": "#29231f", "superficie": "#24201e",
-                                "fondo": "#191614", "texto": "#f5efe5", "texto_suave": "#c0b4a8", "borde": "#4c4037"},
-            "tipografia": {"familia": "Georgia, 'Times New Roman', serif", "interlineado": "1.65", "tamano_titulo": "20px"},
-            "forma": {"radio_panel": "8px", "radio_burbuja": "6px", "radio_control": "4px"},
-            "presentacion": {"densidad": "comoda", "citas": "lista", "diseno_resultados": "editorial"},
+            "colores_oscuro": {"acento": "#e8a0a9", "acento_texto": "#2a0c10", "superficie": "#201c19", "fondo": "#171412",
+                                "texto": "#f1ebe2", "texto_suave": "#b5aa9d", "borde": "#3c342d", "borde_resultado": "#4a4037"},
+            "tipografia": {"familia": _SANS_INSTITUCIONAL, "familia_titulo": _SERIF_EDITORIAL, "interlineado": "1.6",
+                           "tamano_titulo": "21px", "peso_titulo": "600", "tamano_cita": "12px"},
+            "forma": {"radio_panel": "4px", "radio_burbuja": "2px", "radio_control": "2px", "radio_resultado": "0px",
+                      "relleno_resultado": "4px", "separacion_resultado": "0px"},
+            "sombras": {"panel": "0 1px 2px rgba(28,25,23,.06), 0 14px 36px -14px rgba(28,25,23,.26)",
+                        "boton": "0 6px 18px rgba(28,25,23,.26)"},
+            "presentacion": {"densidad": "comoda", "citas": "lista", "alineacion": "inicio", "diseno_resultados": "editorial"},
         },
     },
     "contraste": {
@@ -97,34 +105,57 @@ PRESETS: dict[str, dict[str, Any]] = {
     },
     "oceano": {
         "tema": {
-            "colores": {"acento": "#0e7490", "fondo": "#ecfeff", "superficie": "#ffffff",
-                        "titulo": "#155e75", "seccion": "#0e7490", "borde": "#a5d5de", "borde_resultado": "#a5d5de"},
-            "colores_oscuro": {"acento": "#67e8f9", "acento_texto": "#082f49", "fondo": "#08202b",
-                               "superficie": "#0c2e3b", "titulo": "#a5f3fc", "seccion": "#67e8f9", "borde": "#286070",
-                               "borde_resultado": "#286070"},
-            "forma": {"radio_resultado": "18px", "radio_panel": "22px"},
+            "colores": {
+                "acento": "#12355b", "acento_texto": "#ffffff", "superficie": "#ffffff", "fondo": "#f2f5f9",
+                "texto": "#14202e", "texto_suave": "#566579", "borde": "#d3dbe6", "borde_resultado": "#d3dbe6",
+                "titulo": "#12355b", "seccion": "#35516f",
+            },
+            "colores_oscuro": {"acento": "#8fb4e3", "acento_texto": "#0b1a2c", "superficie": "#131c28", "fondo": "#0d141d",
+                               "texto": "#e6ecf4", "texto_suave": "#9fb0c4", "borde": "#2a3646", "borde_resultado": "#2a3646",
+                               "titulo": "#c5d9f2", "seccion": "#8fb4e3"},
+            "tipografia": {"familia": _SANS_INSTITUCIONAL, "familia_titulo": _SANS_INSTITUCIONAL, "interlineado": "1.55",
+                           "tamano_titulo": "16px", "peso_titulo": "650"},
+            "forma": {"radio_panel": "4px", "radio_burbuja": "2px", "radio_control": "2px", "radio_resultado": "2px",
+                      "separacion_resultado": "12px", "relleno_resultado": "14px"},
+            "sombras": {"panel": "0 1px 2px rgba(10,25,47,.08), 0 16px 40px -16px rgba(10,25,47,.32)",
+                        "boton": "0 6px 18px rgba(10,25,47,.3)"},
+            "presentacion": {"densidad": "comoda", "citas": "acordeon", "diseno_resultados": "tarjetas"},
         },
     },
     "bosque": {
         "tema": {
-            "colores": {"acento": "#166534", "fondo": "#f0f7ee", "superficie": "#fffef8",
-                        "titulo": "#14532d", "seccion": "#3f6544", "borde": "#c4d8bd", "borde_resultado": "#c4d8bd"},
-            "colores_oscuro": {"acento": "#86efac", "acento_texto": "#102518", "fondo": "#101e16",
-                               "superficie": "#1b2c20", "titulo": "#bbf7d0", "seccion": "#a4ccab", "borde": "#395c40",
-                               "borde_resultado": "#395c40"},
-            "tipografia": {"familia_titulo": "Georgia, 'Times New Roman', serif", "tamano_titulo": "19px"},
-            "presentacion": {"diseno_resultados": "editorial"},
+            "colores": {
+                "acento": "#1f5a3b", "acento_texto": "#f6fbf7", "superficie": "#fcfdfb", "fondo": "#eff3ee",
+                "texto": "#161d18", "texto_suave": "#5c685f", "borde": "#d0dbd0", "borde_resultado": "#c3d1c4",
+            },
+            "colores_oscuro": {"acento": "#8fd0a6", "acento_texto": "#0c2216", "superficie": "#17211b", "fondo": "#0f1612",
+                               "texto": "#e8efe9", "texto_suave": "#a5b3a8", "borde": "#2f3f34", "borde_resultado": "#3a4d3f"},
+            "tipografia": {"familia": _SANS_INSTITUCIONAL, "familia_titulo": _SERIF_EDITORIAL, "interlineado": "1.6",
+                           "tamano_titulo": "21px", "peso_titulo": "600", "tamano_cita": "12px"},
+            "forma": {"radio_panel": "4px", "radio_burbuja": "2px", "radio_control": "2px", "radio_resultado": "0px",
+                      "relleno_resultado": "4px", "separacion_resultado": "0px"},
+            "sombras": {"panel": "0 1px 2px rgba(22,29,24,.06), 0 14px 36px -14px rgba(22,29,24,.26)",
+                        "boton": "0 6px 18px rgba(22,29,24,.26)"},
+            "presentacion": {"densidad": "comoda", "citas": "lista", "alineacion": "inicio", "diseno_resultados": "editorial"},
         },
     },
     "medianoche": {
         "tema": {
-            "colores": {"acento": "#c4b5fd", "acento_texto": "#1e1b4b", "superficie": "#222039",
-                        "fondo": "#151325", "texto": "#f5f3ff", "texto_suave": "#c1bdd6", "borde": "#4c4669",
-                        "titulo": "#ddd6fe", "seccion": "#c4b5fd"},
-            "colores_oscuro": {"acento": "#c4b5fd", "acento_texto": "#1e1b4b", "superficie": "#222039",
-                               "fondo": "#151325", "texto": "#f5f3ff", "texto_suave": "#c1bdd6", "borde": "#4c4669",
-                               "titulo": "#ddd6fe", "seccion": "#c4b5fd"},
-            "tipografia": {"familia": "'Segoe UI', Helvetica, Arial, sans-serif", "peso_titulo": "700"},
+            "colores": {"acento": "#d9b86c", "acento_texto": "#1a1406", "superficie": "#161d27", "fondo": "#0e131a",
+                        "texto": "#e6ebf2", "texto_suave": "#98a5b6", "borde": "#273140", "borde_resultado": "#2d3949",
+                        "titulo": "#f2f5f9", "seccion": "#d9b86c"},
+            "colores_oscuro": {"acento": "#d9b86c", "acento_texto": "#1a1406", "superficie": "#161d27", "fondo": "#0e131a",
+                               "texto": "#e6ebf2", "texto_suave": "#98a5b6", "borde": "#273140", "borde_resultado": "#2d3949",
+                               "titulo": "#f2f5f9", "seccion": "#d9b86c"},
+            "tipografia": {"familia": _SANS_INSTITUCIONAL, "familia_titulo": _SANS_INSTITUCIONAL, "interlineado": "1.55",
+                           "tamano_titulo": "16px", "peso_titulo": "650"},
+            "forma": {"radio_panel": "4px", "radio_burbuja": "2px", "radio_control": "2px", "radio_resultado": "2px",
+                      "separacion_resultado": "12px", "relleno_resultado": "14px"},
+            "sombras": {"panel": "0 1px 2px rgba(0,0,0,.4), 0 18px 44px -14px rgba(0,0,0,.65)",
+                        "boton": "0 6px 18px rgba(0,0,0,.5)",
+                        "panel_oscuro": "0 1px 2px rgba(0,0,0,.4), 0 18px 44px -14px rgba(0,0,0,.65)",
+                        "boton_oscuro": "0 6px 18px rgba(0,0,0,.5)"},
+            "presentacion": {"densidad": "comoda", "citas": "acordeon", "diseno_resultados": "tarjetas"},
         },
     },
 }

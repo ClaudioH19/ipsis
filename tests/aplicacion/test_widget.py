@@ -41,7 +41,7 @@ def test_aplicar_preset_preserva_css_extra_y_escribe_yaml_valido(tmp_path):
 
     assert tema == persistido
     assert persistido["preset"] == "editorial"
-    assert persistido["colores"]["acento"] == "#8b2f3c"
+    assert persistido["colores"]["acento"] == "#8f1d2c"
     assert persistido["css_extra"] == ".marca{display:block}"
 
 

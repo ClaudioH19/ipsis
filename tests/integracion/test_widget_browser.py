@@ -453,8 +453,8 @@ def test_temas_reales_demarcadores_y_titulos_personalizables(navegador, servidor
     expect(page.locator(".rw-resultado")).to_have_count(3)
     expect(page.locator(".rw-resultado-numero")).to_have_text(["1", "2", "3"])
     tarjeta = page.locator(".rw-resultado").first
-    assert tarjeta.evaluate("e => parseFloat(getComputedStyle(e).borderBottomWidth)") > 0 or tarjeta.evaluate(
-        "e => parseFloat(getComputedStyle(e).borderInlineStartWidth)") > 0
+    assert any(tarjeta.evaluate(f"e => parseFloat(getComputedStyle(e).{lado})") > 0
+               for lado in ("borderBottomWidth", "borderTopWidth", "borderInlineStartWidth"))
     titulo = tarjeta.locator(".rw-resultado-titulo")
     assert titulo.evaluate("e => getComputedStyle(e).color") == titulo.evaluate(
         "e => { var x=document.createElement('span');x.style.color='var(--rw-titulo)';e.append(x);"

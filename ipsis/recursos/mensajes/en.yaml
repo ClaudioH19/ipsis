@@ -986,14 +986,14 @@ panel:
   source_project: "project (engine.yaml)"
   source_profile: "profile"
 presets:
-  ocean: Teal palette, rounded cards and ocean tones for headings.
-  forest: Green palette, serif headings and editorial section borders.
-  midnight: Dark violet theme with cards and contrasting headings.
+  ocean: Institutional navy, solid header, square corners and uppercase labels.
+  forest: Editorial green, serif headlines and paper notes with a side bar.
+  midnight: Dark institutional, graphite with a brass accent and a ruled header.
   search: Wide search layout with visible excerpts and source links.
   search_compact: Compact search layout for panels and result lists.
   classic: Neutral blue, comfortable, the same as the factory design.
   minimal: Compact interface, subtle radii and soft shadows.
-  editorial: Warm palette and serif typography for long documentation.
+  editorial: Newspaper editorial with warm paper, serif headlines, rules and small-caps links.
   contrast: High contrast, marked controls and animations off.
 runtime:
   preview_search_heading: Search for information

@@ -986,14 +986,14 @@ panel:
   source_project: "proyecto (engine.yaml)"
   source_profile: "perfil"
 presets:
-  ocean: Paleta turquesa, tarjetas redondeadas y títulos en tonos oceánicos.
-  forest: Paleta verde, títulos serif y secciones con margen editorial.
-  midnight: Tema oscuro violeta con tarjetas y títulos de alto contraste.
+  ocean: Institucional azul marino, cabecera sólida, esquinas rectas y rótulos en mayúsculas.
+  forest: Editorial verde, titulares serif y notas de papel con barra lateral.
+  midnight: Institucional oscuro, grafito con acento latón y cabecera con filete.
   search: Buscador amplio, extractos visibles y enlaces a las fuentes.
   search_compact: Buscador compacto para paneles y listas de resultados.
   classic: Azul neutro, cómodo y equivalente al diseño de fábrica.
   minimal: Interfaz compacta, radios discretos y sombras suaves.
-  editorial: Paleta cálida y tipografía serif para documentación extensa.
+  editorial: Editorial de periódico, con papel cálido, titulares serif, filetes y enlaces en versalitas.
   contrast: Contraste alto, controles marcados y animaciones desactivadas.
 runtime:
   preview_search_heading: Busca información

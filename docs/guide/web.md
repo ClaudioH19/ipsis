@@ -255,7 +255,12 @@ they show:
 Results use cards (`cards`), dividers (`lines`) or an editorial margin
 (`editorial`). The `classic`, `minimal`, `editorial`, `contrast`, `search`,
 `search_compact`, `ocean`, `forest` and `midnight` presets combine these layouts
-with distinct palettes and typography.
+with distinct palettes and typography. Two of them go further than colors and have
+their own structure: **editorial** (`editorial`, `forest`: serif headlines, newspaper
+rules, small-caps labels and underlined links instead of pill buttons; `forest` composes
+the results as paper notes with a side bar) and **institutional** (`ocean`, `midnight`:
+solid header, square corners, uppercase labels and a rule above each result). Their
+fonts are system stacks: nothing is downloaded from third parties.
 
 Headings have their own color, font, size and weight. Section colors, result
 backgrounds and dividers can be adjusted independently of button colors:
