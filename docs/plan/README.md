@@ -13,6 +13,7 @@ estado de todos, y el detalle de lo que sigue abierto. Estado al 2026-10-20.
 | Multimedia | cerrado; no se hace M4 (servir archivos) ni M4.2 (panel, no pedido) | [ADR 0011](../decisions/0011-media-records-in-a-separate-lane.md) |
 | Precisión desde la ingesta | casi cerrado; quedan F3.3 (condicional) y F4.3 (espera al usuario) | [precision-ingesta.md](../methodology/precision-ingesta.md), [ADR 0009](../decisions/0009-structural-preparation-by-default.md) |
 | Plan V4 (bancos, memoria, sinónimos, intención) | cerrado el 2026-10-16 | [v4-results.md](../methodology/v4-results.md), [ADR 0007](../decisions/0007-versioned-lexical-sources.md) |
+| Expansión de pasajes (doc2query) | descartado el 2026-10-20: el generador local empeora `medium` | [doc2query.md](../methodology/doc2query.md) |
 | **Motor v2** | v2 es el predeterminado desde el 2026-10-12; faltan evaluación general y retiro de v1 | abajo |
 | **Conversación en v2** | abierto el 2026-10-19, sin iniciar | abajo |
 | **Fuentes tabulares** | propuesta sin implementar | abajo |
