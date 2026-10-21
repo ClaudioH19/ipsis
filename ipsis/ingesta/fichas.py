@@ -2,7 +2,7 @@
 
 Una ficha es metadata escrita por una persona: título, descripción, palabras clave y capítulos. ipsis no abre ni
 analiza el archivo de audio o video: lo que se busca y se muestra es ese texto, literal
-(ADR 0001, ``docs/plan/multimedia.md``). Esta capa solo lee y valida; no indexa ni sirve archivos.
+(ADR 0001, ADR 0011). Esta capa solo lee y valida; no indexa ni sirve archivos.
 
 El ``id`` de una ficha es el nombre de su archivo sin ``.yaml`` (``induccion-matricula.yaml``). Un archivo inválido no
 impide leer los demás: sus errores quedan en ``LecturaFichas.errores`` bajo su ``id``.

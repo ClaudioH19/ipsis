@@ -39,7 +39,7 @@ lexical:
   b: 0.75
   max_focus_terms: 2
 # A project in one of these languages uses that reranker with that many candidates (v2): a larger
-# cross-encoder that separates passages of the same topic better (docs/plan/precision-ingesta-avance.md).
+# cross-encoder that separates passages of the same topic better (docs/methodology/precision-ingesta.md).
 # Other languages keep `models.reranker`. A project that sets `profile_overrides.models.reranker` keeps its own.
 language_rerankers:
   es: onnx-community/bge-reranker-v2-m3-ONNX

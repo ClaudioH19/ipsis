@@ -28,3 +28,6 @@ Thumbs.db
 
 # Grafo de conocimiento local (graphify)
 graphify-out/
+
+# Descargas completas de Wiktionary/Kaikki (785 MB): se recuperan del historial, ver herramientas/sinonimos/README.md
+herramientas/sinonimos/datos/diccionarios/

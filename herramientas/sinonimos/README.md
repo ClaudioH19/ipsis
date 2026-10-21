@@ -131,6 +131,13 @@ La caché temporal ya no es necesaria para reconstruir la misma versión.
 
 ## Diccionarios extensos: español, inglés y portugués
 
+> **Las descargas completas (`datos/diccionarios/`, 785 MB) ya no están en el
+> árbol de trabajo**; siguen en el historial de git y están en `.gitignore`.
+> Solo hacen falta para reconstruir estas tablas con `construir.py` (el
+> producto usa las tablas ya construidas en `ipsis/recursos/sinonimos/`).
+> Para recuperarlas: `git checkout c8084e6 -- herramientas/sinonimos/datos/diccionarios`
+> y luego `git restore --staged herramientas/sinonimos/datos/diccionarios`.
+
 El conversor v4 incorpora también las instantáneas de Wiktionary publicadas
 por [Kaikki](https://kaikki.org/dictionary/), extraídas el 2026-10-03 del dump
 enwiktionary 2026-09-02. La edición inglesa incluye datos léxicos de los tres

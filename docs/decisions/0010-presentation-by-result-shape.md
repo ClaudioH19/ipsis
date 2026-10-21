@@ -7,7 +7,7 @@ Status: accepted (2026-10-16).
 The right source is often among the three shown but not the first one. Showing it as a second card
 reads like an assistant mistake. Making the engine answer "this one" would need a confidence that the
 retrieval scores do not provide (ADR 0001: nothing shown is generated, and nothing claims to be the
-answer). The plan is in `docs/plan/presentacion*.md`.
+answer).
 
 ## Decision
 
@@ -31,8 +31,7 @@ answer). The plan is in `docs/plan/presentacion*.md`.
 
 ## Evidence
 
-Measured on three real institutional documents (56 questions, `docs/plan/presentacion-avance.md`,
-"P0.2"). The margin between the first two scores separates correct first sources only in `medium`
+Measured on three real institutional documents (56 questions). The margin between the first two scores separates correct first sources only in `medium`
 (reranker logit): a margin of about 3.6 gave 21 of 21 correct on the first source, but the Wilson 95 %
 lower bound does not reach 0.98 with so few cases, and the questions were written by the same assistant
 that builds the system. In `light` (retrieval score, relative to the query) no margin reached 0.98.

@@ -44,7 +44,7 @@ The presentation by result shape and the audio and video lane are on by default 
   "the loaded documents"); existing projects keep the values in their `config/assistant.yaml`. Text only: retrieval and
   the placeholders of the messages are unchanged.
 - Added a [review and proposed contract for database snapshots and deterministic record
-  lookup](docs/plan/fuentes-tabulares.md). Database synchronization and access policies described there are future work.
+  lookup](docs/plan/README.md#fuentes-tabulares). Database synchronization and access policies described there are future work.
 - **Structural preparation is the default** (`retrieval.preparation.mode: structural_v1`; see
   [ADR 0009](docs/decisions/0009-structural-preparation-by-default.md)). It indexes small children with title
   and section and expands to the whole unit for ranking, which raised top-1 accuracy in the passage bank and on

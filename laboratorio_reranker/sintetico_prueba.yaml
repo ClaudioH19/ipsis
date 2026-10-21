@@ -1,0 +1,418 @@
+# Banco sintético de PRUEBA, congelado (README § 5.2). Lo escribe Claude; origen: claude-opus-5.5, 2026-10-18.
+#
+# Se escribió DESPUÉS del de entrenamiento y con dominios distintos (transporte, evaluación de asignaturas, salud
+# estudiantil, ayudantías). Nadie lo mira ni lo mide antes de la etapa 4: se congela con el hash de este archivo
+# (registrado en la bitácora) y se mide una sola vez, con el modelo base y con la copia afinada.
+# Mismos tipos de dificultad que el entrenamiento: hermana, otro_aspecto, brecha_lexica; cada objetivo con su par
+# formal (…f) e informal (…i).
+
+documentos:
+- archivo: reglamento_transporte_institucional.md
+  dominio: transporte
+  particion: test
+  texto: |
+    # Reglamento del Servicio de Transporte Institucional
+
+    ## Artículo 1. Objeto
+
+    La universidad ofrece buses de acercamiento gratuitos entre la ciudad y el campus para estudiantes y
+    funcionarios con credencial vigente. El servicio funciona solo en días hábiles del calendario académico.
+
+    ## Artículo 2. Coordinación de Transporte
+
+    La Coordinación de Transporte define los recorridos, publica los horarios al inicio de cada semestre, administra
+    las reservas y recibe los reclamos sobre el servicio. Puede modificar un recorrido por obras o emergencias,
+    informándolo con un día de anticipación.
+
+    ## Artículo 3. Ruta 1
+
+    La Ruta 1 une el terminal de buses con el campus por la avenida principal.
+
+    | Dato | Detalle |
+    |---|---|
+    | Primera salida | 6:45 desde el terminal de buses |
+    | Frecuencia | cada 20 minutos en hora punta |
+    | Capacidad | 45 pasajeros sentados |
+
+    ## Artículo 4. Ruta 2
+
+    La Ruta 2 recorre los barrios del sector norte antes de llegar al campus.
+
+    | Dato | Detalle |
+    |---|---|
+    | Primera salida | 7:10 desde la plaza norte |
+    | Frecuencia | cada 40 minutos durante todo el día |
+    | Capacidad | 30 pasajeros sentados |
+
+    ## Artículo 5. Ruta 3
+
+    La Ruta 3 es un servicio vespertino que conecta el campus con la estación de tren.
+
+    | Dato | Detalle |
+    |---|---|
+    | Primera salida | 17:30 desde el campus |
+    | Frecuencia | cada 30 minutos hasta las 22:00 |
+    | Capacidad | 45 pasajeros sentados |
+
+    ## Artículo 6. Reservas
+
+    Los asientos de la Ruta 2 se reservan en la aplicación hasta las 20:00 del día anterior. Las Rutas 1 y 3 no
+    requieren reserva y se ocupan por orden de llegada.
+
+    ## Artículo 7. Normas y sanciones
+
+    Está prohibido comer dentro de los buses y viajar de pie en la carretera. Quien reserve un asiento y no lo use
+    tres veces en un mes queda sin derecho a reservar durante el mes siguiente. Los objetos olvidados se guardan en
+    la Coordinación de Transporte durante 30 días.
+
+- archivo: reglamento_evaluacion_asignaturas.md
+  dominio: docencia
+  particion: test
+  texto: |
+    # Reglamento de Evaluación de Asignaturas de Pregrado
+
+    ## Título I. Normas comunes
+
+    Artículo 1. Toda asignatura informa en su programa los instrumentos de evaluación, sus fechas y sus
+    ponderaciones durante la primera semana de clases. El programa no puede modificarse después de la cuarta
+    semana sin acuerdo escrito del curso.
+
+    Artículo 2. El profesor responsable publica las notas en el sistema académico. Los estudiantes pueden revisar
+    sus evaluaciones corregidas dentro de los cinco días hábiles siguientes a la publicación de cada nota.
+
+    ## Título II. Asignaturas teóricas
+
+    Las asignaturas teóricas se evalúan con pruebas escritas y un examen final.
+
+    | Instrumento | Ponderación |
+    |---|---|
+    | Pruebas parciales | 60 % |
+    | Controles de lectura | 10 % |
+    | Examen final | 30 % |
+
+    ## Título III. Asignaturas prácticas
+
+    Las asignaturas prácticas se evalúan principalmente con informes y trabajo de laboratorio.
+
+    | Instrumento | Ponderación |
+    |---|---|
+    | Informes de laboratorio | 50 % |
+    | Prueba práctica | 30 % |
+    | Examen final | 20 % |
+
+    ## Título IV. Talleres de proyecto
+
+    Los talleres de proyecto no tienen examen final; se evalúan por entregas del proyecto.
+
+    | Instrumento | Ponderación |
+    |---|---|
+    | Entregas parciales | 40 % |
+    | Presentación final | 35 % |
+    | Coevaluación del equipo | 25 % |
+
+    ## Título V. Examen final y aprobación
+
+    Artículo 10. Para rendir el examen final se requiere una asistencia mínima del 75 % a las clases.
+
+    Artículo 11. Se exime del examen final el estudiante que tenga un promedio de presentación igual o superior a
+    5,5, sin notas bajo 4,0.
+
+    Artículo 12. La asignatura se aprueba con nota final igual o superior a 4,0. El estudiante reprobado con nota
+    entre 3,5 y 3,9 tiene derecho a un examen de repetición.
+
+    ## Título VI. Inasistencia a evaluaciones
+
+    Artículo 15. La inasistencia a una evaluación debe justificarse en la secretaría de la escuela dentro de las
+    72 horas siguientes. Con justificación aceptada, la evaluación se recupera en la semana de recuperaciones; sin
+    ella, se califica con nota 1,0.
+
+- archivo: programa_salud_estudiantil.md
+  dominio: salud-estudiantil
+  particion: test
+  texto: |
+    # Programa de Salud Estudiantil
+
+    ## Sección 1. Beneficiarios
+
+    El programa atiende a los estudiantes de pregrado y postgrado con matrícula vigente. La atención se solicita en
+    la aplicación del servicio de salud o en el mesón del centro de salud del campus.
+
+    ## Sección 2. Equipo del centro de salud
+
+    El centro de salud cuenta con médicos generales, odontólogos, psicólogos y una enfermera coordinadora. La
+    enfermera coordinadora organiza las agendas, deriva los casos urgentes y gestiona las licencias médicas
+    emitidas en el centro.
+
+    ## Sección 3. Atención médica
+
+    | Condición | Detalle |
+    |---|---|
+    | Copago | sin costo |
+    | Horario | lunes a viernes de 8:30 a 17:30 |
+    | Atenciones al año | sin límite |
+
+    ## Sección 4. Atención dental
+
+    | Condición | Detalle |
+    |---|---|
+    | Copago | $3.000 por sesión |
+    | Horario | lunes a jueves de 9:00 a 16:00 |
+    | Atenciones al año | hasta seis sesiones |
+
+    ## Sección 5. Atención psicológica
+
+    | Condición | Detalle |
+    |---|---|
+    | Copago | sin costo |
+    | Horario | lunes a viernes de 9:00 a 19:00 |
+    | Atenciones al año | hasta ocho sesiones, ampliables por indicación profesional |
+
+    ## Sección 6. Inasistencias y cancelaciones
+
+    Las horas se cancelan en la aplicación con al menos 12 horas de anticipación. Dos inasistencias sin cancelar en
+    un semestre suspenden la posibilidad de reservar horas durante 30 días, salvo en atención psicológica de
+    urgencia.
+
+    ## Sección 7. Urgencias
+
+    El centro de salud no atiende urgencias graves. Ante una urgencia, el estudiante debe acudir al servicio de
+    urgencia más cercano; el seguro escolar cubre la atención si el accidente ocurrió en actividades académicas.
+
+- archivo: reglamento_ayudantias.md
+  dominio: docencia-apoyo
+  particion: test
+  texto: |
+    # Reglamento de Ayudantías
+
+    ## Artículo 1. Definición
+
+    La ayudantía es una actividad remunerada en la que un estudiante apoya la docencia o la investigación bajo la
+    supervisión de un académico. Existen tres tipos de ayudantía, con requisitos, horas y pagos distintos.
+
+    ## Artículo 2. Académico supervisor
+
+    El académico supervisor define las tareas del ayudante, firma el registro mensual de horas y evalúa su
+    desempeño al término del semestre. Un académico puede supervisar a un máximo de cuatro ayudantes por semestre.
+
+    ## Artículo 3. Ayudantía de cátedra
+
+    | Elemento | Condición |
+    |---|---|
+    | Requisito | haber aprobado la asignatura con nota 5,5 o superior |
+    | Dedicación | 6 horas semanales |
+    | Pago | $90.000 mensuales |
+
+    ## Artículo 4. Ayudantía de laboratorio
+
+    | Elemento | Condición |
+    |---|---|
+    | Requisito | haber aprobado la asignatura y el curso de seguridad de laboratorios |
+    | Dedicación | 8 horas semanales |
+    | Pago | $120.000 mensuales |
+
+    ## Artículo 5. Ayudantía de investigación
+
+    | Elemento | Condición |
+    |---|---|
+    | Requisito | tener aprobado el 70 % de los créditos de la carrera |
+    | Dedicación | 10 horas semanales |
+    | Pago | $150.000 mensuales |
+
+    ## Artículo 6. Incompatibilidades
+
+    Un estudiante puede tener como máximo dos ayudantías en el mismo semestre, siempre que no superen 16 horas
+    semanales en total. No puede ser ayudante de una asignatura que esté cursando.
+
+    ## Artículo 7. Pago y término
+
+    El pago se realiza el día 10 del mes siguiente, una vez recibido el registro de horas firmado. La ayudantía
+    termina anticipadamente si el ayudante deja de ser alumno regular o si el académico informa un incumplimiento
+    reiterado de las tareas.
+
+casos:
+# --- reglamento_transporte_institucional.md ---
+- objetivo: test-001
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 4. Ruta 2
+  dificultad: hermana
+  respuesta: Primera salida | 7:10 desde la plaza norte
+  formal: ¿A qué hora sale el primer bus de la Ruta 2?
+  informal: a q hora pasa la primera micro de la ruta 2
+- objetivo: test-002
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 5. Ruta 3
+  dificultad: hermana
+  respuesta: Frecuencia | cada 30 minutos hasta las 22:00
+  formal: ¿Con qué frecuencia pasa el bus de la Ruta 3?
+  informal: cada cuanto pasa el bus de la ruta 3
+- objetivo: test-003
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 3. Ruta 1
+  dificultad: hermana
+  respuesta: Capacidad | 45 pasajeros sentados
+  formal: ¿Cuál es la capacidad del bus de la Ruta 1?
+  informal: cuantos caben en el bus de la ruta 1
+- objetivo: test-004
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 6. Reservas
+  dificultad: otro_aspecto
+  respuesta: Los asientos de la Ruta 2 se reservan en la aplicación hasta las 20:00 del día anterior
+  formal: ¿Hasta qué hora se puede reservar un asiento en la Ruta 2?
+  informal: hasta q hora alcanzo a reservar pa la ruta 2
+- objetivo: test-005
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 7. Normas y sanciones
+  dificultad: otro_aspecto
+  respuesta: Quien reserve un asiento y no lo use tres veces en un mes queda sin derecho a reservar durante el mes siguiente
+  formal: ¿Qué sanción tiene no usar un asiento reservado?
+  informal: q pasa si reservo y no me subo
+- objetivo: test-006
+  documento: reglamento_transporte_institucional.md
+  seccion: Artículo 7. Normas y sanciones
+  dificultad: brecha_lexica
+  respuesta: Los objetos olvidados se guardan en la Coordinación de Transporte durante 30 días
+  formal: ¿Dónde se guardan los objetos olvidados en los buses?
+  informal: se me quedo la mochila en la micro donde la busco
+# --- reglamento_evaluacion_asignaturas.md ---
+- objetivo: test-007
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título III. Asignaturas prácticas
+  dificultad: hermana
+  respuesta: Examen final | 20 %
+  formal: ¿Qué ponderación tiene el examen final en las asignaturas prácticas?
+  informal: cuanto vale el examen en los ramos practicos
+- objetivo: test-008
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título II. Asignaturas teóricas
+  dificultad: hermana
+  respuesta: Pruebas parciales | 60 %
+  formal: ¿Cuánto ponderan las pruebas parciales en una asignatura teórica?
+  informal: cuanto pesan las pruebas en un ramo teorico
+- objetivo: test-009
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título IV. Talleres de proyecto
+  dificultad: hermana
+  respuesta: Coevaluación del equipo | 25 %
+  formal: ¿Qué peso tiene la coevaluación en los talleres de proyecto?
+  informal: cuanto vale la nota q nos ponemos entre nosotros en el taller
+- objetivo: test-010
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título V. Examen final y aprobación
+  dificultad: otro_aspecto
+  respuesta: Se exime del examen final el estudiante que tenga un promedio de presentación igual o superior a 5,5
+  formal: ¿Con qué promedio se exime un estudiante del examen final?
+  informal: con q nota me eximo
+- objetivo: test-011
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título V. Examen final y aprobación
+  dificultad: otro_aspecto
+  respuesta: Para rendir el examen final se requiere una asistencia mínima del 75 %
+  formal: ¿Qué asistencia se exige para rendir el examen final?
+  informal: cuanto tengo q ir a clases pa poder dar el examen
+- objetivo: test-012
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título VI. Inasistencia a evaluaciones
+  dificultad: brecha_lexica
+  respuesta: La inasistencia a una evaluación debe justificarse en la secretaría de la escuela dentro de las 72 horas siguientes
+  formal: ¿Cuál es el plazo para justificar la inasistencia a una evaluación?
+  informal: falte a la prueba hasta cuando presento el certificado
+- objetivo: test-013
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título V. Examen final y aprobación
+  dificultad: brecha_lexica
+  respuesta: El estudiante reprobado con nota entre 3,5 y 3,9 tiene derecho a un examen de repetición
+  formal: ¿Quién tiene derecho a un examen de repetición?
+  informal: me saque un 3,7 tengo otra oportunidad?
+- objetivo: test-014
+  documento: reglamento_evaluacion_asignaturas.md
+  seccion: Título I. Normas comunes
+  dificultad: otro_aspecto
+  respuesta: Los estudiantes pueden revisar sus evaluaciones corregidas dentro de los cinco días hábiles siguientes a la publicación de cada nota
+  formal: ¿En qué plazo se pueden revisar las evaluaciones corregidas?
+  informal: hasta cuando puedo ir a ver la prueba corregida
+# --- programa_salud_estudiantil.md ---
+- objetivo: test-015
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 4. Atención dental
+  dificultad: hermana
+  respuesta: Copago | $3.000 por sesión
+  formal: ¿Cuál es el copago de la atención dental?
+  informal: cuanto se paga por ir al dentista de la u
+- objetivo: test-016
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 5. Atención psicológica
+  dificultad: hermana
+  respuesta: Atenciones al año | hasta ocho sesiones, ampliables por indicación profesional
+  formal: ¿Cuántas sesiones de atención psicológica se pueden tener al año?
+  informal: cuantas veces puedo ir al psicologo
+- objetivo: test-017
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 3. Atención médica
+  dificultad: hermana
+  respuesta: Horario | lunes a viernes de 8:30 a 17:30
+  formal: ¿En qué horario funciona la atención médica?
+  informal: a q hora atiende el medico en el campus
+- objetivo: test-018
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 6. Inasistencias y cancelaciones
+  dificultad: otro_aspecto
+  respuesta: Dos inasistencias sin cancelar en un semestre suspenden la posibilidad de reservar horas durante 30 días
+  formal: ¿Qué ocurre si un estudiante falta dos veces a una hora sin cancelarla?
+  informal: si no voy a la hora y no aviso me castigan?
+- objetivo: test-019
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 6. Inasistencias y cancelaciones
+  dificultad: otro_aspecto
+  respuesta: Las horas se cancelan en la aplicación con al menos 12 horas de anticipación
+  formal: ¿Con cuánta anticipación se debe cancelar una hora?
+  informal: con cuanto tiempo antes tengo q anular la hora
+- objetivo: test-020
+  documento: programa_salud_estudiantil.md
+  seccion: Sección 7. Urgencias
+  dificultad: brecha_lexica
+  respuesta: Ante una urgencia, el estudiante debe acudir al servicio de urgencia más cercano
+  formal: ¿Qué debe hacer un estudiante ante una urgencia grave?
+  informal: me corte feo la mano voy al centro de salud de la u?
+# --- reglamento_ayudantias.md ---
+- objetivo: test-021
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 4. Ayudantía de laboratorio
+  dificultad: hermana
+  respuesta: Pago | $120.000 mensuales
+  formal: ¿Cuánto se paga por una ayudantía de laboratorio?
+  informal: cuanto pagan por ser ayudante de lab
+- objetivo: test-022
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 5. Ayudantía de investigación
+  dificultad: hermana
+  respuesta: Dedicación | 10 horas semanales
+  formal: ¿Cuántas horas semanales exige la ayudantía de investigación?
+  informal: cuantas horas a la semana son de ayudante de investigacion
+- objetivo: test-023
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 3. Ayudantía de cátedra
+  dificultad: hermana
+  respuesta: Requisito | haber aprobado la asignatura con nota 5,5 o superior
+  formal: ¿Qué requisito se exige para ser ayudante de cátedra?
+  informal: q nota necesito pa ser ayudante de un ramo
+- objetivo: test-024
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 6. Incompatibilidades
+  dificultad: otro_aspecto
+  respuesta: Un estudiante puede tener como máximo dos ayudantías en el mismo semestre
+  formal: ¿Cuántas ayudantías puede tener un estudiante en un semestre?
+  informal: puedo ser ayudante de tres ramos a la vez
+- objetivo: test-025
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 7. Pago y término
+  dificultad: brecha_lexica
+  respuesta: El pago se realiza el día 10 del mes siguiente, una vez recibido el registro de horas firmado
+  formal: ¿Cuándo se paga la ayudantía?
+  informal: q dia me cae la plata de la ayudantia
+- objetivo: test-026
+  documento: reglamento_ayudantias.md
+  seccion: Artículo 6. Incompatibilidades
+  dificultad: brecha_lexica
+  respuesta: No puede ser ayudante de una asignatura que esté cursando
+  formal: ¿Puede un estudiante ser ayudante de una asignatura que está cursando?
+  informal: puedo ser ayudante del ramo q estoy tomando

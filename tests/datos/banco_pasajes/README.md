@@ -1,6 +1,6 @@
 # Banco de pasajes
 
-Banco sintético en español, inglés y portugués (F0.1 de [precision-ingesta-tareas.md](../../../docs/plan/precision-ingesta-tareas.md))
+Banco sintético en español, inglés y portugués (ver [precision-ingesta.md](../../../docs/methodology/precision-ingesta.md))
 para medir el **orden de los pasajes**, no solo el de los documentos. A
 diferencia de los demás bancos, aquí cada documento tiene muchos fragmentos
 (más de 6 con `CH-F256`) y la respuesta compite con pasajes muy parecidos.

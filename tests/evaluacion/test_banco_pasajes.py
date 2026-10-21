@@ -1,7 +1,7 @@
 """Banco de pasajes: pruebas estructurales (sin modelos ni red).
 
 Mide el orden de pasajes dentro de documentos largos; ver
-tests/datos/banco_pasajes/README.md y docs/plan/precision-ingesta-tareas.md (F0.1).
+tests/datos/banco_pasajes/README.md y docs/methodology/precision-ingesta.md.
 """
 from __future__ import annotations
 

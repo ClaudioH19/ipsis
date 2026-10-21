@@ -1,0 +1,12 @@
+# Entorno aparte del laboratorio (ver README § 3). torch se instala antes, desde el índice de PyTorch:
+#   CPU:  uv pip install --python <venv> torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+#   CUDA: uv pip install --python <venv> torch==2.14.1 --index-url https://download.pytorch.org/whl/cu126
+# ipsis (onnxruntime, tokenizers, huggingface-hub) llega con `-e .`; para solo entrenar en otra máquina basta
+# transformers + huggingface_hub. Versiones con que se midió:
+transformers==4.57.6
+numpy==2.5.4
+onnxruntime==1.31.0
+tokenizers==0.22.2
+scikit-learn==1.9.1   # sondas por capa (interior.py) y TF-IDF de SQAC (datos.py)
+pyarrow==26.0.0       # MIRACL en parquet (datos.py)
+onnx==1.23.2          # exportación (afinar.py exportar)

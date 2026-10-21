@@ -193,6 +193,8 @@ def test_manifiesto_real_tiene_fuentes_y_hashes_por_idioma():
 
 @pytest.mark.slow
 def test_reproducibilidad_de_fuentes_reales_solo_si_estan_en_cache(tmp_path):
+    if not (construir.RAIZ / "herramientas/sinonimos/datos/diccionarios").is_dir():
+        pytest.skip("Faltan las descargas completas; ver herramientas/sinonimos/README.md")
     cfg = construir.cargar_fuentes()
     cache = construir.ORIGINALES
     construir.ejecutar(["es", "en", "pt"], cfg, cache, tmp_path, offline=True)

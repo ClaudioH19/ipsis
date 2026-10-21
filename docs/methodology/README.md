@@ -40,6 +40,9 @@ Values not yet checked against a golden set are marked as
 7. [Multilingual](multilingual.md): language packs and tones.
 8. [Evaluation bank](evaluation.md): format, categories and splits.
 
+[Passage expansion with doc2query](doc2query.md) was measured and discarded: with a real local
+generator it lowers hit@1 in `medium`.
+
 [V4 evaluation results](v4-results.md) compare memory, local synonyms and
 intent fallback against F1 with the corrected selected-span metric, including
 raw evidence and observed limitations.

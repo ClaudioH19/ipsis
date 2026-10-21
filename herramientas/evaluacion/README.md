@@ -1,7 +1,7 @@
 # Regresión documental general
 
-Para comparar el motor experimental v2 con v1 sobre un proyecto real, consultar
-el [avance y los comandos](../../docs/plan/motor-v2-avance.md). El comparador
+Para comparar el motor experimental v2 con v1 sobre un proyecto real, usar
+`comparar_motores.py` (abajo). El comparador
 offline trabaja sobre copias y conserva respuestas completas y trazas; la
 selección por defecto del servicio es v2, que entrega fuentes rankeadas para revisar.
 
@@ -138,7 +138,7 @@ de ingesta por corrida (`--con-cabecera`, `--estrategia`, `--preparacion`,
 `--reranker-max-tokens`, `--modelo-denso`) y comparar con `--comparar`. Requiere
 modelos en caché. Desde que `ipsis init` escribe la preparación estructural, la corrida sin flags mide
 *esa* configuración: para medir el fragmentado de tamaño fijo hay que pasar `--preparacion legacy`
-(`--estrategia` y `--con-cabecera` no tienen efecto en modo estructural). Detalle: [plan de precisión desde la ingesta](../../docs/plan/precision-ingesta-tareas.md).
+(`--estrategia` y `--con-cabecera` no tienen efecto en modo estructural). Detalle: [precisión desde la ingesta](../../docs/methodology/precision-ingesta.md).
 
 ```bash
 python herramientas/evaluacion/ranking_pasajes.py tests/datos/banco_pasajes/es/manifiesto.json \
@@ -156,3 +156,25 @@ el pasaje del reranker es la unidad padre con su sección.
 python herramientas/evaluacion/tokens_fragmentos.py --perfil medium --idioma es --salida tokens_es
 python herramientas/evaluacion/tokens_fragmentos.py --banco ruta/al/manifiesto.json --estrategias CH-F256S estructural_v1
 ```
+
+## Comparar v1 y v2 sobre un proyecto real (`comparar_motores.py`)
+
+Preparar un JSON privado con preguntas independientes o casos con expectativas literales (ayudan a revisar, no
+sustituyen una evaluación semántica):
+
+```json
+[{"id": "ponderaciones", "question": "¿Cuáles son las ponderaciones?", "required": ["20%", "40%"]}]
+```
+
+```powershell
+.venv/Scripts/python.exe herramientas/evaluacion/comparar_motores.py `
+  --project C:/ruta/proyecto --questions C:/ruta/preguntas.json `
+  --output .cache/motor-v2/comparaciones --rounds 2
+```
+
+`--conversation` conserva una sesión por ronda y `--frozen-source` ejecuta v1 desde una copia anterior del código. Cada
+motor corre en un proceso separado y secuencial, con dos hilos ONNX y sin descargas; se requiere la caché de modelos y un
+índice local dentro de `.ipsis/index` (un servidor o una ruta externa se rechazan). El comparador trabaja sobre un snapshot
+compartido, réplicas de SQLite y una copia del código actual; no consulta el índice servido. Los reportes contienen
+respuestas, evidencias, trazas, errores, hashes, configuración efectiva y latencias (la memoria es RSS muestreada, no un pico
+garantizado), son privados y no se versionan. Marcan los casos como pendientes de revisión semántica y no eligen ganador.

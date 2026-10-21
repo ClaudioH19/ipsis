@@ -11,7 +11,7 @@ Portuguese**, uses `onnx-community/bge-reranker-v2-m3-ONNX` scoring 10 candidate
 `language_rerank_candidates` in `ipsis/recursos/perfiles/medium.yaml`). Measurements (real institutional
 documents, 89 questions, formal and informal): hit@1 0.73 -> 0.80 offline and 0.79 -> 0.86 in the engine, informal
 questions 0.46 -> 0.68; ~85 ms per passage and ~560 MB against ~21 ms and ~130 MB; p95 of a full query 1.7 s in
-the 2.5 s v2 budget (4 CPUs). Details: `docs/plan/precision-ingesta-avance.md`. The synthetic passage bank no longer
+the 2.5 s v2 budget (4 CPUs). Details: `docs/methodology/precision-ingesta.md`. The synthetic passage bank no longer
 discriminates between rerankers once the structural preparation is on (all reach 0.98 to 1.00). English keeps
 mMiniLM until real English documents can be measured. v1 is unchanged.
 

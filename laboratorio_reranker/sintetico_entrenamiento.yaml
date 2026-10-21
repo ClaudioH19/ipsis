@@ -1,0 +1,592 @@
+# Banco sintético de ENTRENAMIENTO (README § 4, etapa 3). Lo escribe Claude; origen: claude-opus-5.5, 2026-10-18.
+#
+# Dominios distintos de los de prueba (banco_sintetico.yaml), de banco_pasajes y de los documentos reales.
+# Cada documento reproduce lo que mostró la oclusión (OBS-0010):
+#   - unidades hermanas con tablas cuyas filas no nombran su unidad (la unidad está solo en el encabezado);
+#   - artículos del mismo tema que describen el instrumento SIN el dato pedido (competidores de «otro aspecto»);
+#   - anclas de entidad (comisión, beca, plan, línea) repartidas en los competidores.
+# Sin anexos que repitan cifras: un negativo que contenga la respuesta con otro formato sería un falso negativo.
+# Todas las preguntas tienen par formal (…f) e informal (…i, con brecha léxica, sin tildes, abreviaturas).
+
+documentos:
+- archivo: reglamento_becas_estudiantiles.md
+  dominio: universidad-beneficios
+  particion: entrenamiento
+  texto: |
+    # Reglamento de Becas y Beneficios Estudiantiles
+
+    ## Título I. Disposiciones generales
+
+    Artículo 1. Este reglamento regula las becas internas de la universidad: la Beca de Excelencia Académica, la
+    Beca de Alimentación y la Beca de Movilidad. Cada beca tiene requisitos, montos y obligaciones propias.
+
+    Artículo 2. La Comisión de Becas, integrada por la Dirección de Asuntos Estudiantiles, un representante de la
+    Vicerrectoría Académica y un representante estudiantil, revisa las postulaciones, resuelve las apelaciones y
+    puede solicitar antecedentes adicionales cuando lo estime necesario.
+
+    Artículo 3. Las postulaciones se presentan a través del portal estudiantil. No se reciben postulaciones en papel
+    ni por correo electrónico.
+
+    ## Título II. Beca de Excelencia Académica
+
+    La Beca de Excelencia Académica premia el rendimiento sostenido y se renueva cada año mientras el estudiante
+    mantenga las condiciones de asignación.
+
+    | Concepto | Valor |
+    |---|---|
+    | Requisito de promedio | 6,0 o superior en el año anterior |
+    | Beneficio | rebaja del 50 % del arancel anual |
+    | Plazo de postulación | hasta el 15 de marzo |
+
+    ## Título III. Beca de Alimentación
+
+    La Beca de Alimentación entrega un aporte mensual para almuerzos en los casinos de la universidad durante los
+    meses lectivos.
+
+    | Concepto | Valor |
+    |---|---|
+    | Requisito socioeconómico | pertenecer al 60 % de menores ingresos |
+    | Beneficio | $45.000 mensuales cargados en la tarjeta universitaria |
+    | Plazo de postulación | hasta el 30 de abril |
+
+    ## Título IV. Beca de Movilidad
+
+    La Beca de Movilidad financia parte de los gastos de un semestre de intercambio en una universidad con convenio.
+
+    | Concepto | Valor |
+    |---|---|
+    | Requisito académico | haber aprobado el 60 % de los créditos de la carrera |
+    | Beneficio | aporte único de $1.200.000 para pasajes y alojamiento |
+    | Plazo de postulación | hasta el 31 de agosto del año anterior al intercambio |
+
+    ## Título V. Obligaciones y pérdida del beneficio
+
+    Artículo 10. El estudiante becado debe informar a la Dirección de Asuntos Estudiantiles cualquier cambio en su
+    situación socioeconómica dentro de los 30 días siguientes.
+
+    Artículo 11. La beca se pierde por reprobar más del 40 % de los créditos inscritos en un semestre, por
+    suspensión de estudios no autorizada o por entregar información falsa en la postulación.
+
+    Artículo 12. El estudiante que pierda una beca podrá apelar ante la Comisión de Becas dentro de los diez días
+    hábiles siguientes a la notificación.
+
+- archivo: politica_teletrabajo.md
+  dominio: rrhh
+  particion: entrenamiento
+  texto: |
+    # Política de Teletrabajo y Jornada Flexible
+
+    ## Capítulo 1. Alcance
+
+    Esta política se aplica a los funcionarios de planta y contrata cuyas funciones puedan realizarse a distancia.
+    La jefatura directa evalúa la compatibilidad de las funciones y la Unidad de Personas registra la modalidad
+    acordada en el anexo de contrato.
+
+    ## Capítulo 2. Modalidad presencial
+
+    La modalidad presencial es la regla general para funciones de atención de público, laboratorio y mantención.
+
+    | Aspecto | Condición |
+    |---|---|
+    | Días en la oficina | cinco días a la semana |
+    | Horario | entrada flexible entre las 7:30 y las 9:30 |
+    | Equipamiento | puesto de trabajo institucional |
+
+    ## Capítulo 3. Modalidad híbrida
+
+    La modalidad híbrida combina días en la oficina con días de trabajo a distancia, según un calendario fijo
+    acordado con la jefatura.
+
+    | Aspecto | Condición |
+    |---|---|
+    | Días en la oficina | tres días a la semana como mínimo |
+    | Horario | bloque de conexión obligatorio de 10:00 a 13:00 |
+    | Equipamiento | notebook institucional y aporte de $20.000 mensuales para internet |
+
+    ## Capítulo 4. Modalidad remota
+
+    La modalidad remota se autoriza de forma excepcional, por un máximo de seis meses renovables, cuando existan
+    razones de salud, cuidado o distancia debidamente acreditadas.
+
+    | Aspecto | Condición |
+    |---|---|
+    | Días en la oficina | un día al mes para reuniones de equipo |
+    | Horario | bloque de conexión obligatorio de 9:00 a 14:00 |
+    | Equipamiento | notebook, silla ergonómica y aporte de $30.000 mensuales para internet |
+
+    ## Capítulo 5. Derecho a desconexión y seguridad
+
+    Artículo 15. Los funcionarios en modalidad híbrida o remota tienen derecho a no responder comunicaciones fuera
+    de su jornada, durante un período mínimo de 12 horas continuas en cada día.
+
+    Artículo 16. Los accidentes ocurridos durante el trabajo a distancia se informan a la Unidad de Personas dentro
+    de las 24 horas siguientes, para su denuncia al organismo administrador del seguro.
+
+    Artículo 17. La jefatura puede revocar la modalidad híbrida o remota con un aviso previo de 30 días si las metas
+    del funcionario no se cumplen durante dos evaluaciones consecutivas.
+
+- archivo: bases_fondo_innovacion.md
+  dominio: fondos-publicos
+  particion: entrenamiento
+  texto: |
+    # Bases del Fondo Regional de Innovación
+
+    ## 1. Objetivo del fondo
+
+    El Fondo Regional de Innovación financia proyectos que desarrollen productos, servicios o procesos nuevos en
+    la región. Tiene tres líneas de financiamiento, cada una con montos, plazos y exigencias distintas.
+
+    ## 2. Comité evaluador
+
+    El comité evaluador está compuesto por cinco expertos externos designados por el Consejo Regional. Revisa la
+    admisibilidad, asigna los puntajes según la pauta de evaluación y propone la lista de proyectos seleccionados.
+    Sus integrantes no pueden tener vínculos con las organizaciones postulantes.
+
+    ## 3. Línea Emprende
+
+    La Línea Emprende está dirigida a emprendimientos con menos de tres años de iniciación de actividades.
+
+    | Ítem | Condición |
+    |---|---|
+    | Monto máximo | $15.000.000 |
+    | Duración del proyecto | hasta 12 meses |
+    | Cofinanciamiento exigido | 10 % del costo total, en dinero o en especies |
+
+    ## 4. Línea Escala
+
+    La Línea Escala está dirigida a pequeñas y medianas empresas que busquen llevar una innovación al mercado.
+
+    | Ítem | Condición |
+    |---|---|
+    | Monto máximo | $40.000.000 |
+    | Duración del proyecto | hasta 18 meses |
+    | Cofinanciamiento exigido | 30 % del costo total, al menos la mitad en dinero |
+
+    ## 5. Línea Colabora
+
+    La Línea Colabora financia proyectos asociativos entre al menos dos empresas y una universidad o centro de
+    investigación.
+
+    | Ítem | Condición |
+    |---|---|
+    | Monto máximo | $80.000.000 |
+    | Duración del proyecto | hasta 24 meses |
+    | Cofinanciamiento exigido | 20 % del costo total, aportado por las empresas participantes |
+
+    ## 6. Pauta de evaluación
+
+    Cada proyecto admisible se evalúa con los criterios siguientes:
+
+    | Criterio | Ponderación |
+    |---|---|
+    | Grado de novedad | 35 % |
+    | Impacto económico regional | 30 % |
+    | Capacidad del equipo | 20 % |
+    | Coherencia del presupuesto | 15 % |
+
+    El puntaje mínimo para ser seleccionado es de 70 puntos sobre 100.
+
+    ## 7. Rendición de cuentas
+
+    Los proyectos seleccionados rinden sus gastos cada tres meses en la plataforma del fondo. Un gasto no rendido
+    dentro de los 30 días siguientes al cierre del trimestre debe reintegrarse.
+
+- archivo: reglamento_centro_deportivo.md
+  dominio: servicios-deportes
+  particion: entrenamiento
+  texto: |
+    # Reglamento del Centro Deportivo Universitario
+
+    ## Artículo 1. Usuarios
+
+    Pueden usar el centro deportivo los estudiantes, los funcionarios y los usuarios externos que contraten un plan.
+    El acceso se registra con la credencial universitaria o con la tarjeta de usuario externo.
+
+    ## Artículo 2. Coordinación del centro
+
+    La coordinación del centro deportivo programa los talleres, administra las reservas y aplica las sanciones de
+    este reglamento. Atiende consultas en la recepción del gimnasio y en el correo institucional del centro.
+
+    ## Artículo 3. Plan Estudiante
+
+    | Característica | Detalle |
+    |---|---|
+    | Valor | gratuito con matrícula vigente |
+    | Horario de uso | lunes a viernes de 7:00 a 22:00 |
+    | Reservas de cancha | hasta dos horas por semana |
+
+    ## Artículo 4. Plan Funcionario
+
+    | Característica | Detalle |
+    |---|---|
+    | Valor | $8.000 mensuales descontados por planilla |
+    | Horario de uso | lunes a sábado de 7:00 a 22:00 |
+    | Reservas de cancha | hasta cuatro horas por semana |
+
+    ## Artículo 5. Plan Externo
+
+    | Característica | Detalle |
+    |---|---|
+    | Valor | $25.000 mensuales pagados por adelantado |
+    | Horario de uso | lunes a viernes de 18:00 a 22:00 y sábados de 9:00 a 14:00 |
+    | Reservas de cancha | no incluye reservas |
+
+    ## Artículo 6. Normas de uso
+
+    Es obligatorio usar toalla en las máquinas y limpiarlas después de cada uso. No se permite ingresar con
+    alimentos a la sala de musculación. Los menores de 16 años solo pueden entrenar acompañados por un adulto
+    inscrito.
+
+    ## Artículo 7. Sanciones
+
+    La inasistencia a una reserva de cancha sin cancelarla con al menos tres horas de anticipación se sanciona con
+    la suspensión de las reservas durante dos semanas. El daño intencional a las instalaciones se sanciona con la
+    suspensión del acceso por seis meses, sin perjuicio de la reposición del daño.
+
+- archivo: protocolo_reclamos.md
+  dominio: atencion-usuarios
+  particion: entrenamiento
+  texto: |
+    # Protocolo de Atención de Reclamos y Sugerencias
+
+    ## Sección A. Canales de ingreso
+
+    Los reclamos y sugerencias se ingresan por el formulario web, en la oficina de partes o por teléfono. Todo
+    ingreso recibe un número de seguimiento que se informa al usuario en el mismo momento.
+
+    ## Sección B. Unidad de Gestión de Reclamos
+
+    La Unidad de Gestión de Reclamos clasifica cada ingreso, lo deriva al área responsable y vigila que la
+    respuesta se entregue a tiempo. También elabora un informe semestral con los reclamos más frecuentes.
+
+    ## Sección C. Reclamos de primer nivel
+
+    Son reclamos de primer nivel los que se refieren a demoras, errores de información o trato en la atención.
+
+    | Etapa | Plazo |
+    |---|---|
+    | Acuse de recibo | 24 horas |
+    | Respuesta de fondo | 5 días hábiles |
+    | Responsable de responder | jefatura del área involucrada |
+
+    ## Sección D. Reclamos de segundo nivel
+
+    Son reclamos de segundo nivel los que involucran cobros indebidos, daños materiales o incumplimientos de
+    contrato.
+
+    | Etapa | Plazo |
+    |---|---|
+    | Acuse de recibo | 24 horas |
+    | Respuesta de fondo | 15 días hábiles |
+    | Responsable de responder | Dirección de Administración y Finanzas |
+
+    ## Sección E. Apelación
+
+    Si el usuario no está conforme con la respuesta, puede apelar dentro de los diez días hábiles siguientes. La
+    apelación la resuelve un comité distinto del área que respondió, en un plazo de 20 días hábiles.
+
+    ## Sección F. Sugerencias
+
+    Las sugerencias no tienen plazo de respuesta obligatorio. La Unidad de Gestión de Reclamos las revisa una vez
+    al mes y publica en el sitio web las que se implementan.
+
+- archivo: contrato_residencia_estudiantil.md
+  dominio: vivienda
+  particion: entrenamiento
+  texto: |
+    # Condiciones de Arriendo de la Residencia Estudiantil
+
+    ## Cláusula 1. Objeto
+
+    La universidad arrienda habitaciones amobladas en su residencia estudiantil a estudiantes regulares. El
+    contrato dura un año académico, de marzo a diciembre.
+
+    ## Cláusula 2. Administración de la residencia
+
+    La administración de la residencia asigna las habitaciones, recibe los pagos, autoriza las visitas y realiza
+    una inspección de las habitaciones al inicio y al término del contrato. Su oficina funciona en el primer piso.
+
+    ## Cláusula 3. Habitación individual
+
+    | Condición | Valor |
+    |---|---|
+    | Arriendo mensual | $210.000 |
+    | Garantía | un mes de arriendo |
+    | Baño | privado |
+
+    ## Cláusula 4. Habitación doble
+
+    | Condición | Valor |
+    |---|---|
+    | Arriendo mensual | $150.000 por persona |
+    | Garantía | medio mes de arriendo |
+    | Baño | compartido entre dos personas |
+
+    ## Cláusula 5. Habitación compartida de cuatro camas
+
+    | Condición | Valor |
+    |---|---|
+    | Arriendo mensual | $95.000 por persona |
+    | Garantía | $50.000 |
+    | Baño | común del piso |
+
+    ## Cláusula 6. Pago y atrasos
+
+    El arriendo se paga dentro de los cinco primeros días de cada mes. Cada día de atraso genera un recargo de
+    $2.000. Dos meses impagos son causal de término del contrato.
+
+    ## Cláusula 7. Convivencia
+
+    Las visitas pueden permanecer hasta las 23:00 y deben registrarse en la portería. Se prohíbe fumar en las
+    habitaciones y tener mascotas. El silencio es obligatorio entre las 23:00 y las 7:00.
+
+    ## Cláusula 8. Devolución de la garantía
+
+    La garantía se devuelve dentro de los 30 días siguientes al término del contrato, descontados los daños
+    registrados en la inspección final.
+
+casos:
+# --- reglamento_becas_estudiantiles.md ---
+- objetivo: ent-001
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título III. Beca de Alimentación
+  dificultad: hermana
+  respuesta: Beneficio | $45.000 mensuales cargados en la tarjeta universitaria
+  formal: ¿Cuál es el monto de la Beca de Alimentación?
+  informal: cuanta plata da la beca de alimentacion
+- objetivo: ent-002
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título II. Beca de Excelencia Académica
+  dificultad: hermana
+  respuesta: Requisito de promedio | 6,0 o superior en el año anterior
+  formal: ¿Qué promedio se exige para la Beca de Excelencia Académica?
+  informal: con q promedio me dan la beca de excelencia
+- objetivo: ent-003
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título IV. Beca de Movilidad
+  dificultad: hermana
+  respuesta: Plazo de postulación | hasta el 31 de agosto del año anterior al intercambio
+  formal: ¿Hasta cuándo se puede postular a la Beca de Movilidad?
+  informal: hasta cuando postulo a la beca pa irme de intercambio
+- objetivo: ent-004
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título IV. Beca de Movilidad
+  dificultad: hermana
+  respuesta: Beneficio | aporte único de $1.200.000 para pasajes y alojamiento
+  formal: ¿Qué beneficio entrega la Beca de Movilidad?
+  informal: cuanto me pasan pal intercambio
+- objetivo: ent-005
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título V. Obligaciones y pérdida del beneficio
+  dificultad: otro_aspecto
+  respuesta: La beca se pierde por reprobar más del 40 % de los créditos inscritos en un semestre
+  formal: ¿Por qué causas se pierde una beca?
+  informal: si repruebo ramos pierdo la beca?
+- objetivo: ent-006
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título V. Obligaciones y pérdida del beneficio
+  dificultad: otro_aspecto
+  respuesta: podrá apelar ante la Comisión de Becas dentro de los diez días hábiles siguientes a la notificación
+  formal: ¿Cuál es el plazo para apelar la pérdida de una beca?
+  informal: me quitaron la beca hasta cuando puedo reclamar
+- objetivo: ent-007
+  documento: reglamento_becas_estudiantiles.md
+  seccion: Título V. Obligaciones y pérdida del beneficio
+  dificultad: brecha_lexica
+  respuesta: debe informar a la Dirección de Asuntos Estudiantiles cualquier cambio en su situación socioeconómica dentro de los 30 días siguientes
+  formal: ¿Qué debe hacer el becado si cambia su situación socioeconómica?
+  informal: si a mis papas les empieza a ir mejor tengo q avisar algo
+# --- politica_teletrabajo.md ---
+- objetivo: ent-008
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 3. Modalidad híbrida
+  dificultad: hermana
+  respuesta: Días en la oficina | tres días a la semana como mínimo
+  formal: ¿Cuántos días a la semana se debe asistir a la oficina en la modalidad híbrida?
+  informal: en el hibrido cuantos dias tengo q ir
+- objetivo: ent-009
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 4. Modalidad remota
+  dificultad: hermana
+  respuesta: Equipamiento | notebook, silla ergonómica y aporte de $30.000 mensuales para internet
+  formal: ¿Qué equipamiento recibe el funcionario en modalidad remota?
+  informal: q me pasan si trabajo 100% desde la casa
+- objetivo: ent-010
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 3. Modalidad híbrida
+  dificultad: hermana
+  respuesta: Horario | bloque de conexión obligatorio de 10:00 a 13:00
+  formal: ¿Cuál es el bloque de conexión obligatorio en la modalidad híbrida?
+  informal: a q hora tengo q estar conectado si estoy en hibrido
+- objetivo: ent-011
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 4. Modalidad remota
+  dificultad: otro_aspecto
+  respuesta: por un máximo de seis meses renovables
+  formal: ¿Por cuánto tiempo se autoriza la modalidad remota?
+  informal: cuanto tiempo me dejan trabajar remoto
+- objetivo: ent-012
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 5. Derecho a desconexión y seguridad
+  dificultad: brecha_lexica
+  respuesta: durante un período mínimo de 12 horas continuas en cada día
+  formal: ¿Cuánto dura el derecho a desconexión?
+  informal: me pueden escribir el jefe en la noche?
+- objetivo: ent-013
+  documento: politica_teletrabajo.md
+  seccion: Capítulo 5. Derecho a desconexión y seguridad
+  dificultad: otro_aspecto
+  respuesta: La jefatura puede revocar la modalidad híbrida o remota con un aviso previo de 30 días
+  formal: ¿Con cuánta anticipación puede revocarse la modalidad híbrida o remota?
+  informal: me pueden sacar del teletrabajo de un dia pa otro
+# --- bases_fondo_innovacion.md ---
+- objetivo: ent-014
+  documento: bases_fondo_innovacion.md
+  seccion: 4. Línea Escala
+  dificultad: hermana
+  respuesta: Monto máximo | $40.000.000
+  formal: ¿Cuál es el monto máximo de financiamiento de la Línea Escala?
+  informal: cuanto es lo maximo q te dan en escala
+- objetivo: ent-015
+  documento: bases_fondo_innovacion.md
+  seccion: 5. Línea Colabora
+  dificultad: hermana
+  respuesta: Cofinanciamiento exigido | 20 % del costo total, aportado por las empresas participantes
+  formal: ¿Qué cofinanciamiento exige la Línea Colabora?
+  informal: cuanto tenemos q poner nosotros en colabora
+- objetivo: ent-016
+  documento: bases_fondo_innovacion.md
+  seccion: 3. Línea Emprende
+  dificultad: hermana
+  respuesta: Duración del proyecto | hasta 12 meses
+  formal: ¿Cuánto puede durar un proyecto de la Línea Emprende?
+  informal: cuantos meses dura el proyecto en emprende
+- objetivo: ent-017
+  documento: bases_fondo_innovacion.md
+  seccion: 6. Pauta de evaluación
+  dificultad: otro_aspecto
+  respuesta: Grado de novedad | 35 %
+  formal: ¿Qué ponderación tiene el grado de novedad en la evaluación?
+  informal: cuanto pesa q la idea sea nueva
+- objetivo: ent-018
+  documento: bases_fondo_innovacion.md
+  seccion: 6. Pauta de evaluación
+  dificultad: otro_aspecto
+  respuesta: El puntaje mínimo para ser seleccionado es de 70 puntos sobre 100
+  formal: ¿Cuál es el puntaje mínimo para que un proyecto sea seleccionado?
+  informal: con cuantos puntos quedo seleccionado
+- objetivo: ent-019
+  documento: bases_fondo_innovacion.md
+  seccion: 7. Rendición de cuentas
+  dificultad: brecha_lexica
+  respuesta: Un gasto no rendido dentro de los 30 días siguientes al cierre del trimestre debe reintegrarse
+  formal: ¿Qué ocurre con un gasto que no se rinde a tiempo?
+  informal: si no subo una boleta a tiempo q pasa con esa plata
+# --- reglamento_centro_deportivo.md ---
+- objetivo: ent-020
+  documento: reglamento_centro_deportivo.md
+  seccion: Artículo 4. Plan Funcionario
+  dificultad: hermana
+  respuesta: Valor | $8.000 mensuales descontados por planilla
+  formal: ¿Cuánto cuesta el Plan Funcionario del centro deportivo?
+  informal: cuanto me descuentan por usar el gimnasio siendo funcionario
+- objetivo: ent-021
+  documento: reglamento_centro_deportivo.md
+  seccion: Artículo 5. Plan Externo
+  dificultad: hermana
+  respuesta: Horario de uso | lunes a viernes de 18:00 a 22:00 y sábados de 9:00 a 14:00
+  formal: ¿En qué horario pueden usar el centro deportivo los usuarios externos?
+  informal: a q hora puede ir alguien q no es de la u
+- objetivo: ent-022
+  documento: reglamento_centro_deportivo.md
+  seccion: Artículo 3. Plan Estudiante
+  dificultad: hermana
+  respuesta: Reservas de cancha | hasta dos horas por semana
+  formal: ¿Cuántas horas de cancha puede reservar un estudiante por semana?
+  informal: cuanto rato puedo pedir la cancha a la semana
+- objetivo: ent-023
+  documento: reglamento_centro_deportivo.md
+  seccion: Artículo 7. Sanciones
+  dificultad: otro_aspecto
+  respuesta: se sanciona con la suspensión de las reservas durante dos semanas
+  formal: ¿Qué sanción tiene no asistir a una reserva de cancha sin cancelarla?
+  informal: q pasa si pido la cancha y no voy
+- objetivo: ent-024
+  documento: reglamento_centro_deportivo.md
+  seccion: Artículo 6. Normas de uso
+  dificultad: brecha_lexica
+  respuesta: Los menores de 16 años solo pueden entrenar acompañados por un adulto inscrito
+  formal: ¿Pueden entrenar los menores de 16 años en el centro deportivo?
+  informal: puedo llevar a mi hermano chico al gym
+# --- protocolo_reclamos.md ---
+- objetivo: ent-025
+  documento: protocolo_reclamos.md
+  seccion: Sección D. Reclamos de segundo nivel
+  dificultad: hermana
+  respuesta: Respuesta de fondo | 15 días hábiles
+  formal: ¿En qué plazo se responde un reclamo de segundo nivel?
+  informal: si me cobraron de mas en cuanto me responden
+- objetivo: ent-026
+  documento: protocolo_reclamos.md
+  seccion: Sección C. Reclamos de primer nivel
+  dificultad: hermana
+  respuesta: Responsable de responder | jefatura del área involucrada
+  formal: ¿Quién responde un reclamo de primer nivel?
+  informal: quien me contesta si reclamo por mala atencion
+- objetivo: ent-027
+  documento: protocolo_reclamos.md
+  seccion: Sección E. Apelación
+  dificultad: otro_aspecto
+  respuesta: puede apelar dentro de los diez días hábiles siguientes
+  formal: ¿Cuál es el plazo para apelar la respuesta a un reclamo?
+  informal: no me gusto la respuesta del reclamo hasta cuando alego
+- objetivo: ent-028
+  documento: protocolo_reclamos.md
+  seccion: Sección F. Sugerencias
+  dificultad: brecha_lexica
+  respuesta: Las sugerencias no tienen plazo de respuesta obligatorio
+  formal: ¿Existe un plazo de respuesta para las sugerencias?
+  informal: si mando una idea me tienen q responder?
+# --- contrato_residencia_estudiantil.md ---
+- objetivo: ent-029
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 4. Habitación doble
+  dificultad: hermana
+  respuesta: Arriendo mensual | $150.000 por persona
+  formal: ¿Cuál es el arriendo mensual de una habitación doble?
+  informal: cuanto sale la pieza doble al mes
+- objetivo: ent-030
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 5. Habitación compartida de cuatro camas
+  dificultad: hermana
+  respuesta: Garantía | $50.000
+  formal: ¿Cuál es la garantía de la habitación compartida de cuatro camas?
+  informal: cuanto hay q dejar de garantia en la pieza de 4
+- objetivo: ent-031
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 6. Pago y atrasos
+  dificultad: otro_aspecto
+  respuesta: Cada día de atraso genera un recargo de $2.000
+  formal: ¿Qué recargo se aplica por pagar el arriendo con atraso?
+  informal: si pago tarde el arriendo me cobran mas?
+- objetivo: ent-032
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 7. Convivencia
+  dificultad: brecha_lexica
+  respuesta: Las visitas pueden permanecer hasta las 23:00 y deben registrarse en la portería
+  formal: ¿Hasta qué hora pueden permanecer las visitas en la residencia?
+  informal: hasta q hora se puede quedar mi polola
+- objetivo: ent-033
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 8. Devolución de la garantía
+  dificultad: otro_aspecto
+  respuesta: La garantía se devuelve dentro de los 30 días siguientes al término del contrato
+  formal: ¿Cuándo se devuelve la garantía?
+  informal: cuando me devuelven la plata q deje al entrar
+- objetivo: ent-034
+  documento: contrato_residencia_estudiantil.md
+  seccion: Cláusula 7. Convivencia
+  dificultad: brecha_lexica
+  respuesta: Se prohíbe fumar en las habitaciones y tener mascotas
+  formal: ¿Se permiten mascotas en la residencia?
+  informal: puedo tener un gato en la pieza
