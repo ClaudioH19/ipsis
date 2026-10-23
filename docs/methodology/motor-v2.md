@@ -212,12 +212,12 @@ podemos procesar. Las primeras comparaciones reales están en el
 
 - [Perfil medium](../../ipsis/recursos/perfiles/medium.yaml): orden y presupuestos.
 - [Construcción](../../ipsis/aplicacion/consulta.py): componentes, modelos y perfil efectivo.
-- [Orquestador](../../ipsis/consulta/motor.py): admisión, saltos y salidas tempranas.
+- Orquestador (`ipsis/consulta/motor.py`, retirado): admisión, saltos y salidas tempranas.
 - [Adaptadores](../../ipsis/aplicacion/registro_base.py): clasificador, extractor y verificador literal.
-- [Análisis](../../ipsis/consulta/etapas/analisis.py), [ortografía](../../ipsis/lenguaje/ortografia.py) y [seguimiento](../../ipsis/consulta/seguimiento.py).
-- [Confianza y recuperación](../../ipsis/consulta/etapas/recuperacion.py), [filtros](../../ipsis/consulta/etapas/filtros.py) y [reranking](../../ipsis/consulta/etapas/reranking.py).
-- [Selección y evidencia](../../ipsis/consulta/etapas/seleccion.py), [lectura](../../ipsis/consulta/etapas/lectura.py) y [lector ONNX](../../ipsis/modelos/lector.py).
-- [Política](../../ipsis/consulta/etapas/politica.py), [redacción](../../ipsis/consulta/etapas/redaccion.py) y [verificación](../../ipsis/consulta/etapas/verificacion.py).
+- Análisis (`ipsis/consulta/etapas/analisis.py`, retirado), [ortografía](../../ipsis/lenguaje/ortografia.py) y [seguimiento](../../ipsis/consulta/seguimiento.py).
+- Confianza y recuperación (`ipsis/consulta/etapas/recuperacion.py`, retirado), filtros (`ipsis/consulta/etapas/filtros.py`, retirado) y reranking (`ipsis/consulta/etapas/reranking.py`, retirado).
+- Selección y evidencia (`ipsis/consulta/etapas/seleccion.py`, retirado), lectura (`ipsis/consulta/etapas/lectura.py`, retirado) y [lector ONNX](../../ipsis/modelos/lector.py).
+- Política (`ipsis/consulta/etapas/politica.py`, retirado), redacción (`ipsis/consulta/etapas/redaccion.py`, retirado) y verificación (`ipsis/consulta/etapas/verificacion.py`, retirado).
 - [API](../../ipsis/servicio/api.py), [widget](../../ipsis/servicio/estaticos/widget.js) y [traza](../../ipsis/nucleo/traza.py).
 - [Parser](../../ipsis/ingesta/parsear.py), [chunking](../../ipsis/ingesta/chunking.py) e [ingesta](../../ipsis/ingesta/ingesta.py).
 

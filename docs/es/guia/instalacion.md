@@ -18,9 +18,9 @@ crear el primer proyecto. El uso diario y la referencia de comandos están en
 
   `bm25` es solo de diagnóstico para `ipsis benchmark`: no se instala.
   Los tamaños son los de los archivos ONNX en disco (medidos el 2026-10-16 tras `ipsis models download`: e5-small
-  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). El lector QA extractivo (mDeBERTa) pertenece al motor
-  opcional `pipeline: v1`: el motor predeterminado (v2) no lo carga ni lo descarga, y `ipsis models list`
-  muestra lo que usa el motor activo.
+  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). El lector QA extractivo (mDeBERTa) solo se carga si se activa
+  el opcional `v2.qa_highlights`; si no, ni el motor ni `ipsis models download` lo traen, y `ipsis models list`
+  muestra lo que usa la configuración activa.
   Latencia medida de una consulta completa de `medium` (v2; banco sintético de pasajes, 116 preguntas, 4 CPU de un
   Intel Xeon a 2,1 GHz, 2026-10-16): español con bge-reranker-v2-m3, p50 604 ms y p95 749 ms; inglés con mMiniLM,
   p50 349 ms y p95 620 ms. Ese banco tiene pasajes cortos: con documentos reales en español el p95 fue de 1,7 s

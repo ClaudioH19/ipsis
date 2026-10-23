@@ -21,7 +21,7 @@ Opcional, para medir y ajustar:
 
 ```text
 ipsis golden template → (una persona completa golden.csv) → ipsis golden import
-  → ipsis evaluate → ipsis calibrate --apply
+  → ipsis evaluate
 ```
 
 ## Qué responde el asistente
@@ -51,16 +51,10 @@ Cada respuesta tiene un estado, que el widget pinta distinto:
 
 | Estado | Qué significa |
 |---|---|
-| `ok` | Encontró el texto que responde; lo muestra literal, con la cita |
-| `related` | No hay respuesta directa; muestra lo más cercano y lo dice |
+| `ok` | Una respuesta directa. v2 no la produce (era del motor v1 retirado); la API aún la declara para clientes antiguos |
+| `related` | Las fuentes ordenadas que encontró para revisar: v2 las muestra con su cita y no afirma que alguna sea la respuesta |
 | `no_answer` | No está en los documentos. Con `plan: clarification`, la pregunta no dice de qué se trata («¿Quién lo aprueba?» sin conversación previa) y el asistente pide el tema |
 | `conversational` | Saludo, agradecimiento, despedida o «qué puedes hacer» |
-
-Cada respuesta trae además un nivel de confianza (`confidence_level`): `high`
-para una respuesta directa leída por el lector QA (medium), `medium` para una
-respuesta directa sin lector (light; el widget muestra «Revisa la cita») y
-`low` para un pasaje relacionado. Los niveles salen de precisiones medidas, no
-de un umbral nuevo; ver [paráfrasis informales](../../methodology/informal-paraphrases.md) (en inglés).
 
 El asistente nunca redacta contenido: el texto viene literal de tus
 documentos, y las citas, con documento, sección y offsets, van debajo para
@@ -69,7 +63,7 @@ comprobarlo.
 ## La terminal: menú y modo interactivo
 
 `ipsis help` imprime todos los comandos agrupados por tarea
-(Empezar, Documentos, Preguntar, Personalizar, Medir y calibrar, Desplegar y
+(Empezar, Documentos, Preguntar, Personalizar, Medir, Desplegar y
 operar) con ejemplos; `ipsis` sin argumentos hace lo mismo si su salida no es
 una terminal. `ipsis help <comando>` imprime las opciones de un
 comando, igual que `ipsis <comando> --help`.
@@ -85,9 +79,9 @@ empieza con `/` es un comando:
 |---|---|
 | cualquier texto | Pregunta al motor del proyecto de esta carpeta; las preguntas de seguimiento conservan el tema |
 | `/help` | Lista los comandos del modo interactivo |
-| `/diagnostics on\|off` | Muestra, en cada respuesta, las etapas, las señales, la regla que decidió y el tramo exacto (lo que imprime `ipsis ask --diagnostics`) |
+| `/diagnostics on\|off` | Muestra, en cada respuesta, las etapas, la regla, los candidatos y las evidencias (lo que imprime `ipsis ask --diagnostics`) |
 | `/reload` | Recarga el motor tras cambiar configuración o documentos |
-| `/<comando> …` | Cualquier comando de ipsis: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/calibrate --help` |
+| `/<comando> …` | Cualquier comando de ipsis: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/evaluate --help` |
 | `/exit`, `/quit`, Ctrl+D | Sale |
 
 Los modelos se cargan una vez, con la primera pregunta. Antes de correr un
@@ -130,8 +124,8 @@ usando el mismo índice local, deténlo antes.
 |---|---|
 | `ipsis init [--profile light\|medium] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Crea `config/` y `documents/`. El idioma por defecto es `en` (o `es` con `IPSIS_LANG=es`). Sin `--force` no pisa un proyecto existente |
 | `ipsis configure clave=valor …` | Edita `assistant.yaml`: `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys` (listas separadas por coma) y `query_log.enabled` (true o false) |
-| `ipsis profile show` | Perfil activo, modelos, presupuesto p95 y si el índice y la calibración le sirven |
-| `ipsis profile set <perfil>` | Cambia el perfil. Avisa si hay que reindexar; la calibración anterior deja de aplicarse |
+| `ipsis profile show` | Perfil activo, modelos, presupuesto p95 y si el índice le sirve |
+| `ipsis profile set <perfil>` | Cambia el perfil. Avisa si hay que reindexar |
 | `ipsis snapshot-config [--output RUTA]` | Escribe la configuración efectiva, con los valores por defecto resueltos |
 
 ### Modelos
@@ -183,13 +177,13 @@ cargado y no migra la configuración del proyecto.
 
 | Comando | Qué hace |
 |---|---|
-| `ipsis doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, calibración, golden, CORS, personalidad y modo. Cada error trae su acción. Sale con 0 si no hay errores |
+| `ipsis doctor` | Diagnóstico de solo lectura: configuración, perfil, idioma, stemmer, modelos, índice, golden, CORS, personalidad y modo. Cada error trae su acción. Sale con 0 si no hay errores |
 | `ipsis audit [--from FECHA] [--to FECHA]` / `ipsis audit --trace ID` | Revisa el registro de consultas: estados, reglas, tonos y si cada evidencia sigue siendo literal del corpus. Con `--from`/`--to` (`AAAA-MM-DD` o ISO 8601, UTC por defecto, inclusivas) solo cuenta ese rango. `--trace` muestra una consulta original y sus pasos por `consulta_id`, sin ejecutarla ni consultar el corpus. El registro se activa con `ipsis configure query_log.enabled=true` |
 
 ### Personalidad
 
 Detalle en [personalidad.md](personalidad.md). Solo presentación: no pide
-reindexar ni recalibrar.
+reindexar.
 
 | Comando | Qué hace |
 |---|---|
@@ -220,9 +214,8 @@ Detalle en [golden.md](golden.md).
 | `ipsis golden validate` | Comprueba el banco contra el corpus actual |
 | `ipsis golden export --format squad2\|csv [--output RUTA]` | Exporta el banco |
 | `ipsis evaluate [--bank MANIFIESTO] [--output RUTA]` | Métricas del perfil activo, con la cota de falsos `ok` |
-| `ipsis calibrate [--alpha 0.05] [--apply]` | Elige umbrales con control de riesgo usando solo dev. No entrena nada |
 | `ipsis compare <a.json> <b.json> [--output RUTA]` | Compara dos reportes de `ipsis evaluate` |
-| `ipsis benchmark --bank M [--bank M2…] [--profiles …] [--experiments] [--latency-only] [--repetitions N] [--output DIR]` | Compara perfiles: seguridad, cobertura, latencia y costo |
+| `ipsis benchmark --bank M [--bank M2…] [--profiles …] [--latency-only] [--repetitions N] [--output DIR]` | Compara perfiles: seguridad, cobertura, latencia y costo |
 
 ### Widget
 
@@ -246,10 +239,9 @@ Detalle en [web.md](web.md).
 
 ## Variables de entorno
 
-V2 es el motor predeterminado de proyectos nuevos y configuraciones sin
-selector. Enruta consultas a fuentes ordenadas para revisar. Una selección
-explícita `pipeline: v1` en `config/engine.yaml` conserva el motor anterior;
-cámbiala a `pipeline: v2` y reinicia el servicio para activar v2. Publica hasta
+V2 es el único motor: enruta consultas a fuentes ordenadas para revisar. (El
+motor v1 se retiró; `pipeline: v1` en `config/engine.yaml` se carga como v2.)
+Publica hasta
 tres desplegables por página con contexto literal cercano, botón para seguir
 buscando y QA apagado por defecto. El reranking es progresivo, con presupuesto
 de trabajo de 2500 ms; los candidatos pendientes se conservan para continuar.

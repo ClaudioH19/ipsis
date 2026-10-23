@@ -228,26 +228,15 @@ production mode and its access controls.
 
 ## 📏 Checking quality
 
-**V2 needs no golden dataset or direct-answer calibration to run.**
+**ipsis needs no golden dataset to run.**
 Test representative queries against your documents: check the right source,
 its ranking position, context and provenance. Corpus updates require
 reindexing. `ipsis audit` verifies literal text and references; it does not
 prove relevance or document truthfulness.
 
-Test banks remain useful for catching retrieval regressions. Historical
-direct-answer figures and calibration commands belong to the optional
-`pipeline: v1` engine; they do not certify v2.
-
-<details>
-<summary>Compatibility: v1 engine and golden datasets</summary>
-
-An explicit `pipeline: v1` selection in `config/engine.yaml` keeps the previous
-engine. Its `golden`, `evaluate` and `calibrate` tools remain available for
-evaluating and calibrating direct answers. V1 calibration does not control
-router ranking. See [golden](docs/guide/golden.md) and the
-[v1 methodology](docs/methodology/calibration.md).
-
-</details>
+Test banks remain useful for catching retrieval regressions: see the
+[golden set](docs/guide/golden.md). The v1 engine and its calibration were
+retired; a project that still says `pipeline: v1` loads as v2.
 
 ## 📚 Documentation
 
@@ -263,7 +252,7 @@ router ranking. See [golden](docs/guide/golden.md) and the
 | [Audio and video](docs/guide/media.md) | Records, threshold and widget card |
 | [Personality](docs/guide/personality.md) | Tones, Folio and panel |
 | [Deployment](docs/guide/deployment.md) | Docker, HTTPS and operations |
-| [Optional v1 golden set](docs/guide/golden.md) | Previous engine evaluation and calibration |
+| [Golden set](docs/guide/golden.md) | Question banks to evaluate retrieval |
 
 ## 🛠️ Development
 

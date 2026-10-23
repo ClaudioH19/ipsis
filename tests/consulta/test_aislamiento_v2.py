@@ -81,3 +81,11 @@ assert resultado.contrato_http['fragmentos'], resultado.contrato_http
     proceso = subprocess.run([sys.executable, "-I", "-c", codigo, str(TESTS)], cwd=os.getcwd(),
                              capture_output=True, text=True, timeout=120, env={**os.environ, "IPSIS_LANG": "es"})
     assert proceso.returncode == 0, proceso.stdout + proceso.stderr
+
+
+def test_los_modulos_del_motor_v1_ya_no_existen():
+    """El motor v1 se retiró (ADR 0012): ninguno de sus módulos debe volver a aparecer."""
+    import importlib.util
+
+    for modulo in MODULOS_V1:
+        assert importlib.util.find_spec(modulo) is None, f"{modulo} volvió a existir"

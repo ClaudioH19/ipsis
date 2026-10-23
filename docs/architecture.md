@@ -31,7 +31,7 @@ flowchart LR
     end
     subgraph Server["Your server"]
         C["Caddy<br/>HTTPS"] --> API["FastAPI service<br/>ipsis serve"]
-        API --> M["Engine<br/>cascade of stages"]
+        API --> M["Engine v2<br/>ranked literal sources"]
         M --> Q[("Qdrant<br/>.ipsis/index")]
         M --> O["ONNX models<br/>global cache"]
         API --> P["/admin panel"]
@@ -84,7 +84,7 @@ Rules, checked by `tests/test_arquitectura.py`:
 
 | Module | What it does |
 |---|---|
-| `contratos.py` | Protocols of the swappable components: parser, chunker, dense and sparse encoders, retriever, fusion, reranker, abstention policy, verifier, renderer and `Etapa` (stage) |
+| `contratos.py` | Protocols of the swappable components: parser, chunker, dense and sparse encoders, retriever, fusion, reranker, verifier and the query engine |
 | `esquemas.py` | Strict Pydantic schemas crossing boundaries: `ChunkRecord`, `RetrievalCandidate`, `LecturaQA`, `EvidenceSpan`, `AssistantResult`, diagnostics |
 | `registro.py` | Registry of factories by type and name |
 
@@ -92,13 +92,12 @@ Rules, checked by `tests/test_arquitectura.py`:
 
 | Module | What it does |
 |---|---|
-| `esquemas.py` | Schemas of `assistant.yaml` and `engine.yaml`, with `config_version` migrations up to 5 |
+| `esquemas.py` | Schemas of `assistant.yaml` and `engine.yaml`, with `config_version` migrations up to 8 |
 | `glosario.py` | English names on disk ↔ internal names, for every project file |
 | `archivos.py` | Reads and writes project YAML through the glossary (atomic writes) |
 | `carga.py` | Loads and validates the configuration; copies the templates on `ipsis init` |
 | `migraciones.py` | Migrates older projects (folders, files and Spanish keys) |
-| `perfiles.py` | Profiles `light`, `medium` and `bm25`; merge profile ← `engine.yaml` ← calibration |
-| `calibracion.py` | `calibration.yaml` and when it applies (provenance) |
+| `perfiles.py` | Profiles `light`, `medium` and `bm25` (models, budget, retrieval mode, per-language rerankers); merge profile ← `engine.yaml` |
 | `personalidad.py` | `personality.yaml`: tone, avatar and the event catalog |
 | `rutas.py` | Relative paths of a project |
 
@@ -151,22 +150,22 @@ Rules, checked by `tests/test_arquitectura.py`:
 
 | Module | What it does |
 |---|---|
-| `motor.py` | Runs the profile's stages, times each one and builds the result |
-| `contexto.py` | `ContextoConsulta`: what each stage reads and fills in |
-| `seguimiento.py` | Conversation memory: topics per session, follow-ups, expiry ([ADR 0006](decisions/0006-conversation-memory.md)) |
-| `alternativas.py` | Proactive posture: similar literal paragraphs after a `no_answer`, chosen by the family of a missing declared entity ("TP-400" for "TP-500") or by nearly all the question words ([ADR 0008](decisions/0008-proactive-posture-and-metadata-similarity.md)) |
+| `v2/` | The engine: `motor.py` runs the stages and times them; `forma.py`, `resultados.py`, `paginacion.py` and `reranking.py` shape, publish and page the ranked sources |
+| `recuperador.py` | The Qdrant retriever (dense + BM25 with RRF) |
+| `plantillas.py` | Loads the fixed texts: tone, connectors and conversational answers |
+| `salida.py` | Builds the result and the HTTP contract of an answer |
+| `media.py` | The media lane (video and audio records) |
+| `seguimiento.py` | Conversation memory: topics per session, follow-ups, expiry ([ADR 0006](decisions/0006-conversation-memory.md)). Not wired to v2 yet: base of the conversation plan |
 | `admision.py` | Limit of concurrent queries (503 when saturated) |
 | `variantes.py` | Picks the tone variant by session and turn |
-| `etapas/` | One file per stage (see §4) |
 
-### `evaluacion/` — measuring and calibrating (pure functions)
+### `evaluacion/` — measuring (pure functions)
 
 | Module | What it does |
 |---|---|
 | `banco.py` | The versioned bank format |
 | `golden.py` | CSV, JSONL and SQuAD 2.0 ↔ bank; question template |
 | `metricas.py` | Coverage, false `ok`, Clopper-Pearson risk, latencies |
-| `calibracion.py` | Chooses thresholds on `dev` with risk ≤ α |
 | `benchmark.py`, `comparacion.py` | Per-profile reports and comparison |
 
 ### `aplicacion/` — use cases
@@ -185,7 +184,7 @@ production), `despliegue` and `publico` (public ↔ internal names).
 | `cli/base.py`, `cli/comandos/*` | One command per class (Command pattern), grouped as in `ipsis --help`; texts from the message catalog |
 | `cli/menu.py`, `cli/comandos/chat.py` | `ipsis` alone (or `ipsis help`): the commands grouped by task with examples; `ipsis chat`: the interactive mode, questions to one engine loaded once and `/commands` dispatched to the same CLI |
 | `servicio/api.py` | FastAPI: `/ask`, `/config`, `/ready`, static files, CORS, cache and errors; translates the engine contract to the public one |
-| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel`: personality and styles, and also status, thresholds, document upload and reindexing (`aplicacion/panel.py`); a reload replaces the engine in the background (`servicio/api.py::recargar_motor`) |
+| `servicio/admin.py` | `/admin` (API with a token) and `/admin/panel`: personality and styles, and also status, document upload and reindexing (`aplicacion/panel.py`); a reload replaces the engine in the background (`servicio/api.py::recargar_motor`) |
 | `servicio/seguridad.py` | Rate limit and widget keys |
 | `servicio/estaticos/` | `widget.js`, `avatar.js` (the bundled avatar engine) and the panel |
 
@@ -199,109 +198,55 @@ and `despliegue/` (templates of `ipsis deploy prepare`).
 
 ```mermaid
 flowchart TD
-    P([Question]) --> C{conversational}
-    C -- "hello, thanks…" --> RF([Fixed answer from the tone])
-    C -- no --> A["analysis<br/>follow-up? → inherit the topic<br/>intention and relation words<br/>synonyms of missing words"]
-    MEM[("conversation memory<br/>current and earlier topics")] -.->|"“and with 90?”"| A
-    WN[("filtered local WordNet<br/>source + sense + POS")] -.->|"OOV, one sense only"| A
-    A --> CF[confidence<br/>dense cosine → s_ret]
-    CF --> IF["unknown intention + corpus topic?<br/>reuse vector → example similarity"]
-    IF --> F["filters<br/>focus terms (not relation<br/>nor generic words), s_oov"]
-    F --> R[retrieval<br/>original e5 vector + expanded BM25<br/>RRF + entity-directed]
-    R --> T{any candidate<br/>with a focus term?}
-    T -- no --> E
-    T -- yes --> RR[reranking<br/>cross-encoder → s_rr]
-    RR --> L["reading<br/>QA reader → span, s_qa<br/>+ the candidate with a cue"]
-    L --> E["evidence<br/>anchor sentence, cue bonus<br/>→ s_foco, s_cov"]
-    E --> PO{policy<br/>cascade_v1}
-    PO -- ok --> RD[rendering<br/>tone + citation]
-    PO -- related --> RD
-    PO -- no_answer --> ALT["alternatives (proactive posture)<br/>premise or no answer only<br/>declared-entity family or<br/>nearly all question words<br/>→ literal paragraphs, verified"]
-    ALT --> RD
-    RD --> V[verification<br/>text == corpus start:end]
-    V -.->|"first cited source passage<br/>same topic and turn only"| MEM
-    V --> S([Answer + citations + diagnostics])
+    P([Question]) --> C{courtesy}
+    C -- "hello, thanks, help…" --> RF([Fixed answer])
+    C -- no --> PR["preparation<br/>typo correction against<br/>the corpus vocabulary"]
+    WN[("filtered local WordNet<br/>source + sense + POS")] -.->|"query word absent from the corpus, one sense only"| R
+    PR --> R["retrieval<br/>original e5 vector + expanded BM25<br/>RRF fusion, spelling variants interleaved"]
+    R --> CT["context<br/>neighboring literal passages<br/>(read from the document, not re-indexed)"]
+    CT --> RR["reranking<br/>cross-encoder, progressive,<br/>inside the query budget"]
+    RR --> L["reading<br/>top passages; optional QA<br/>highlights (qa_highlights)"]
+    L --> E["evidence<br/>text == corpus start:end"]
+    E --> RD["rendering<br/>ranked sources by result shape,<br/>citations, continuation"]
+    RD --> S([Ranked literal sources + diagnostics])
 ```
 
 | Stage | light | medium |
 |---|:-:|:-:|
-| conversational, analysis (typo correction), confidence, filters, retrieval | ✓ | ✓ |
-| clarification (inside retrieval: no topic → `necesita_aclaracion`) | ✓ | ✓ |
-| reranking | — | ✓ (mmarco, k=4) |
-| reading | — | ✓ (semantic reading: top 3 sentences by RRF of cross-encoder, e5, lexical) |
-| evidence, policy, rendering, verification | ✓ | ✓ |
-| historical p95 (universal bank) | 85 ms | 815 ms |
+| courtesy, preparation (typo correction), retrieval, context | ✓ | ✓ |
+| reranking | — | ✓ (cross-encoder; the language's own reranker for `es`/`pt`) |
+| reading | ✓ (publishes passages) | ✓ (publishes passages; QA highlights if enabled) |
+| evidence, rendering | ✓ | ✓ |
 
-The former `heavy` profile was removed on 2026-10-08 (ADR 0003). See
+v2 does not decide whether a question "has an answer": it publishes the
+ranked literal sources for a person to review, with their citations, and says
+`no_answer` only when nothing is recovered. It keeps no state between
+questions apart from the continuation cursors of "keep searching". The
+conversation memory (follow-ups such as "and abroad?") is not part of v2
+yet: the code that implemented it (`consulta/seguimiento.py`) is kept as the
+base of the plan in [docs/plan](plan/README.md). The stages in detail:
+[engine map](methodology/motor-v2.md) and
+[ranked sources](methodology/fuentes-v2.md).
+
+The former `heavy` profile was removed on 2026-10-08 (ADR 0003), and the v1
+engine (answer cascade, calibration and abstention alternatives) in October 2026. See
 [general regression](../herramientas/evaluacion/README.md) for reproducible
 measurements and alternative-model comparisons.
 
-Each stage receives the `ContextoConsulta`, fills it in and may close the
-query. A `no_answer` from a false premise or without an answer may carry
-alternatives: similar paragraphs that are in the documents, never an answer
-and never part of the conversation memory
-([configuration](guide/configuration.md#when-the-answer-is-not-there-posture)). If no candidate contains a focus term, the reranker and the reader
-are skipped (early exit). The rules in detail: [policy](methodology/policy.md).
-
 ### Understanding the question
 
-The analysis stage reads the question with the language pack's rules
-(`ipsis/recursos/idiomas/<language>.yaml`), without any model: patterns,
-word lists and the corpus statistics. Nothing is generated and the question
-the user wrote is the one that is answered. Three things come out of it:
-
-After dense confidence, an unrecognized intention can use example similarity
-with a cached query vector. Examples are encoded at startup. In a follow-up,
-both pattern recognition and similarity use the current user's question;
-inherited words supply retrieval context, not a different relation. This
-fallback needs a corpus topic, measured model/language settings, minimum
-cosine, a margin against the second intention and language-declared compatible
-question forms. The extra check rejects amount/actor questions that resemble
-deadline/procedure examples. It supplies answer cues;
-it removes no query terms and changes no acceptance thresholds. BM25 skips it.
-Shipped E5-small settings enable only categories with correct dev fallback
-cases: end/procedure in Spanish, end in English and procedure in Portuguese.
-
-The QA reader receives the current follow-up when it expresses a recognized
-relation or multiple content terms. A bare qualifier ("and in summer?")
-retains the interpreted question so the topic and preceding relation remain
-available. Intent recognition still uses the current turn. For actor
-questions, it reads the sentence selected for that action, excluding other
-roles elsewhere in the passage. Selected quantity spans can include their
-adjacent unit, limit and reference point; selected actor spans can include
-the matching action clause. This completion is literal, retains exact
-offsets and records the raw model span in diagnostics. It does not replace
-the selected actor or number with another one, and answer thresholds remain
-unchanged.
+Two small, model-free pieces prepare the question, with the language pack's
+rules (`ipsis/recursos/idiomas/<language>.yaml`) and the corpus statistics.
+Nothing is generated and the question the user wrote is the one that is
+searched:
 
 | | What it looks for | Example | What changes afterwards |
 |---|---|---|---|
-| **Follow-up** | Whether the question follows the conversation's current topic, returns to an earlier one or opens a new one, by its topic terms and a follow-up marker ("and", "y", "e") | "¿y con 90?" after "¿Qué pasa si el proveedor rechaza la orden?" | Retrieval uses "¿y con 90? proveedor rechaza orden"; the selection weighs the user's own words fully and the inherited ones half |
-| **Intention** | Which relation is asked for: start, end, threshold, consequence, person in charge, requirement, procedure | "cuando empieza la compra?" → start; relation words "cuando", "empieza" | Relation words are not topic (not focus, not scored in the selection); a sentence with one of the intention's cues ("Una vez…", "después de…") weighs ×2, and the reader also reads the candidate with the best cued sentence |
-| **Synonyms** | A question word missing from the corpus whose synonym is in it | "necesita" → "requieren" | The synonym is searched and measured instead of the missing word |
+| **Typos** | A word that is not in the corpus vocabulary and is one edit away from one that is | "pasword" → "password" | The corrected question is searched as another variant; the original is kept |
+| **Synonyms** | A question word missing from the corpus whose synonym is in it | "necesita" → "requieren" | The synonym is added to the BM25 query; the dense vector is the original's |
 
-The conversation memory keeps, per `session_id`, the current topic (its
-core terms, the last follow-up and the vocabulary of the passages that
-answered it) and up to four earlier ones, so a question can return to them.
-An out-of-domain question in the middle does not change the topic; a
-deliberate change of topic never inherits, even if it starts with "and". A
-conversation is forgotten after `conversation.expiry_minutes` without
-questions (30 by default, in `engine.yaml`), and the widget starts a new one
-on every page load. The rationale and the measurements are in
-[ADR 0005](decisions/0005-deterministic-query-understanding.md) and
-[ADR 0006](decisions/0006-conversation-memory.md); the signals in
-[lexical](methodology/lexical.md).
-
-Vocabulary enters memory only after final verification, from the source
-passage containing the first displayed citation. That context lets the next
-question refer to a neighboring step; other candidates are excluded. An
-out-of-domain turn cannot replace the vocabulary. Turn tokens reject stale
-concurrent replies, and compaction also removes obsolete surface forms.
-
-`genericas_memoria` is separate from the answer's generic-word list:
-`tiempo/tempo` do not open or contaminate a topic, but keep their original
-weight in focus and answer selection. Topic compaction must not change
-how an independent question is answered.
+The rationale is in [ADR 0005](decisions/0005-deterministic-query-understanding.md);
+the lexical resources in [lexical](methodology/lexical.md).
 
 ## 5. Ingestion
 
@@ -339,8 +284,8 @@ sequenceDiagram
     S->>S: CORS, widget key, rate limit, admission
     S->>M: consultar()
     M-->>S: AssistantResult (status, text, citations with offsets)
-    S-->>W: answer + exact_answer (only when ok)
-    W->>U: literal text + citations with the span marked
+    S-->>W: ranked sources + citations + has_more / continuation
+    W->>U: literal sources with their citations
     W->>W: avatar by status (happy · unsure · sorry)
 ```
 
@@ -350,7 +295,7 @@ sequenceDiagram
 | `GET /config` | What the widget needs: language texts, tone microcopy, styles, placement and avatar |
 | `GET /widget.js`, `/avatar.js`, `/styles.css`, `/avatars/*.avatar.json` | Static files (long cache in production) |
 | `GET /health` · `GET /ready` | Alive · ready, with the project diagnosis (503 when something blocks) |
-| `/admin/*`, `/admin/panel` | Personality, styles, status, thresholds, documents and reindexing over HTTP, with a token and HTTPS |
+| `/admin/*`, `/admin/panel` | Personality, styles, status, documents and reindexing over HTTP, with a token and HTTPS |
 | `GET /source` | Source code (AGPL §13) |
 
 ## 7. Deployment
@@ -358,7 +303,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph Team["Your team"]
-        R1["ipsis load · index · calibrate"] --> R2["ipsis deploy prepare"]
+        R1["ipsis load · index · evaluate"] --> R2["ipsis deploy prepare"]
     end
     R2 -- "dist/" --> VPS
     subgraph VPS["Server (docker compose)"]
@@ -376,8 +321,7 @@ Step by step in the [deployment guide](guide/deployment.md).
 |---|---|
 | What was the index built with? | `.ipsis/index/*.manifest.json`: model, stemmer, corpus hash, payload version |
 | Why does this term weigh so much? | `.ipsis/index/*.stats.json`: df, N, mean length |
-| Where do the thresholds come from? | `config/calibration.yaml`: bank, hashes, α and the `test` result |
-| Why was this question `related`? | `ipsis ask --diagnostics` or the query log: stages, signals and rule |
+| Why did this question show these sources? | `ipsis ask --diagnostics` or the query log: stages, candidates and rule |
 | Is the answer literal? | `ipsis audit`: checks every logged piece of evidence against the corpus |
 | Who changed the personality? | `.ipsis/logs/admin.jsonl`: date, IP, action and keys (never the token) |
 
@@ -387,11 +331,11 @@ Step by step in the [deployment guide](guide/deployment.md).
 |---|---|---|
 | Strategy + Protocol | `nucleo/contratos.py` | Swappable components |
 | Registry / Factory | `nucleo/registro.py`, `aplicacion/registro_base.py` | Build components by name; heavy imports live inside the factory |
-| Pipeline | `consulta/motor.py` + `etapas/` | The profile lists the stages; the engine runs and times them |
+| Pipeline | `consulta/v2/motor.py` | The engine runs the stages in order and times each one |
 | Template Method | `modelos/onnx.py` | What the three ONNX models share |
 | Adapter | `indice/qdrant.py`, `modelos/*` | Isolate Qdrant and onnxruntime |
 | Command | `cli/comandos/*` | One command, one class |
 | Facade (use cases) | `aplicacion/*` | CLI and API share the logic |
-| Layered configuration | `configuracion/perfiles.py` | profile ← `engine.yaml` ← calibration |
+| Layered configuration | `configuracion/perfiles.py` | profile ← `engine.yaml` |
 | Value objects | `nucleo/esquemas.py` | Every piece of data crossing a boundary is strict Pydantic |
 | Glossary at the edges | `configuracion/glosario.py`, `recursos/mensajes/` | English for users, internal names for the code |

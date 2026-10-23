@@ -1,7 +1,7 @@
 # Regresión documental general
 
-Para comparar el motor experimental v2 con v1 sobre un proyecto real, usar
-`comparar_motores.py` (abajo). El comparador
+Para comparar v2 con el motor v1 retirado sobre un proyecto real, usar
+`comparar_motores.py` (abajo; v1 solo existe en una copia anterior del código). El comparador
 offline trabaja sobre copias y conserva respuestas completas y trazas; la
 selección por defecto del servicio es v2, que entrega fuentes rankeadas para revisar.
 
@@ -73,8 +73,7 @@ Variantes: `granite`, `granite97`, `harrier`, `gemma2`, `horizon-base`,
 `horizon-small`, `granite-horizon`; se reportan como `medium+<variante>`.
 Proceden del antiguo perfil heavy, retirado porque ninguna superó a medium
 (ADR 0003). Cambian un componente, conservando el
-lector, los umbrales y la cascada de medium (20/4/2, 600 caracteres, sin
-concordancia) para atribuir la diferencia al modelo. La combinada cambia
+lector de medium para atribuir la diferencia al modelo. La combinada cambia
 recuperador y reranker. Las variantes son configuraciones experimentales;
 `--no-baseline` mide y reporta errores, pero solo falla por problemas de
 ejecución, salvo que se añada `--strict`.
@@ -172,7 +171,7 @@ sustituyen una evaluación semántica):
   --output .cache/motor-v2/comparaciones --rounds 2
 ```
 
-`--conversation` conserva una sesión por ronda y `--frozen-source` ejecuta v1 desde una copia anterior del código. Cada
+`--conversation` conserva una sesión por ronda y `--frozen-source` (necesaria para v1, que ya no está en el código actual) ejecuta v1 desde una copia anterior del código. Cada
 motor corre en un proceso separado y secuencial, con dos hilos ONNX y sin descargas; se requiere la caché de modelos y un
 índice local dentro de `.ipsis/index` (un servidor o una ruta externa se rechazan). El comparador trabaja sobre un snapshot
 compartido, réplicas de SQLite y una copia del código actual; no consulta el índice servido. Los reportes contienen

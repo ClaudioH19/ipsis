@@ -2,7 +2,7 @@
 
 Generado por `ipsis deploy prepare` (perfil `{{perfil}}`). Esta carpeta
 trae todo lo que el servicio necesita: configuración, documentos, índice,
-calibración y avatares. Cópiala completa al servidor (VPS).
+y avatares. Cópiala completa al servidor (VPS).
 
 ## 1. En el servidor
 
@@ -52,31 +52,22 @@ Desde la carpeta del proyecto en tu equipo, antes de preparar el despliegue:
 
 ```bash
 ipsis configure cors_origins=https://www.tu-sitio.cl query_log.enabled=true
-ipsis configure posture.mode=strict
 ipsis profile set medium
 ipsis models download
 ipsis profile show
 ipsis snapshot-config --output reports/config-review.yaml
 ```
 
-`configure` edita `config/assistant.yaml`. La lectura y los umbrales se ajustan
+`configure` edita `config/assistant.yaml`. Los modelos y los presupuestos de v2 se ajustan
 en `config/engine.yaml`, combinando este bloque con el que ya exista:
 
 ```yaml
 profile_overrides:
-  cascade:
-    read_m: 2
-    max_reading_chars: 600
-  default_thresholds:
-    ok: 0.80
-    focus: 1.0
+  models:
+    reranker: Horizon-Labs/multilingual-reranker-small
 ```
 
-Son valores de `medium`, no una garantía de precisión. La precedencia es
-perfil, ajustes y calibración vigente. Para medir cambios de lectura o umbrales,
-renombra `config/calibration.yaml` y conserva el archivo anterior; esos cambios
-no invalidan automáticamente todas las calibraciones. La versión 1 se ignora
-bajo el criterio de evaluación nuevo: vuelve a calibrar.
+La precedencia es perfil y luego `profile_overrides`. Estos ajustes no son una garantía de precisión.
 
 Evalúa en el proyecto original, que contiene el golden (no se copia a esta carpeta):
 
@@ -84,13 +75,12 @@ Evalúa en el proyecto original, que contiene el golden (no se copia a esta carp
 ipsis golden validate
 ipsis evaluate --output reports/evaluation.json
 ipsis benchmark --bank golden/bank/manifest.json --profiles light,medium --output reports/profiles
-ipsis calibrate                    # revisar dev y test antes de usar --apply
 ipsis doctor
 ```
 
 La respuesta completa se mide igual para todos los perfiles; QA tiene su propia
 métrica y no aplica sin lector. `evaluate` falla ante directas sin el dato esperado
-o falsos `ok`. Una comprobación `test` fallida no bloquea automáticamente `--apply`.
+o falsos `ok`.
 `doctor` y `/ready` validan funcionamiento, no exactitud de respuestas.
 
 Después de desplegar, puedes editar `config/assistant.yaml` o `config/engine.yaml`
@@ -99,18 +89,17 @@ del contenedor, detén primero el servicio si Qdrant es local:
 
 ```bash
 docker compose stop asistente
-docker compose run --rm --no-deps asistente ipsis configure posture.mode=strict
-docker compose run --rm --no-deps asistente ipsis doctor
+docker compose run --rm --no-deps asistente docker compose run --rm --no-deps asistente ipsis doctor
 docker compose --profile https up -d
 ```
 
 Cambios de corpus, fragmentación o modelo denso requieren `ipsis index`, validar
-el golden y recalibrar. Tono y avatar usan `ipsis personality` o `config/personality.yaml`;
+el golden. Tono y avatar usan `ipsis personality` o `config/personality.yaml`;
 los estilos usan `ipsis widget style` o `config/styles.yaml`.
 
 ## Actualizar
 
-Medium usa e5-small + mMiniLM + mDeBERTa y cascada 20/4/2. Otros modelos
+Medium usa e5-small + mMiniLM + mDeBERTa. Otros modelos
 se eligen en `config/engine.yaml::profile_overrides.models` (claves `dense`,
 `reranker`, `reader`); conserva `retrieval.model: null` para usar ese denso.
 La imagen lee estos ajustes al descargar. Si cambian, reindexa y reconstruye

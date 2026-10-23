@@ -8,11 +8,11 @@ de arquitectura (ADR) y la arquitectura están en inglés, en
 |---|---|
 | [Instalación](guia/instalacion.md) | Requisitos, perfiles, modelos, caché y Qdrant |
 | [Uso](guia/uso.md) | Ciclo de trabajo, menú de la terminal, modo interactivo (`ipsis chat`) y todos los comandos |
-| [Configuración](guia/configuracion.md) | Cada archivo del proyecto, umbrales y precedencia |
-| [Golden set](guia/golden.md) | Preguntas de prueba, evaluación y calibración |
+| [Configuración](guia/configuracion.md) | Cada archivo del proyecto y su precedencia |
+| [Golden set](guia/golden.md) | Preguntas de prueba y evaluación |
 | [Web](guia/web.md) | Widget, ubicación, API JavaScript, CSP y avatar |
 | [Integraciones](guia/integraciones.md) | Ejemplos HTML, Astro, Svelte, React, Angular y Python; CORS, rutas y SSR |
-| [Personalidad](guia/personalidad.md) | Tonos, Folio y panel `/admin` (también estado, umbrales y documentos) |
+| [Personalidad](guia/personalidad.md) | Tonos, Folio y panel `/admin` (también estado y documentos) |
 | [Despliegue](guia/despliegue.md) | Servidor con HTTPS, Docker, modos y lista antes de lanzar |
 
 Los comandos, archivos, claves y la API están en inglés en todos los

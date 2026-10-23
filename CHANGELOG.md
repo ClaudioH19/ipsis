@@ -6,6 +6,32 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Removed
+
+- **The v1 engine is retired** ([ADR 0012](docs/decisions/0012-retire-the-v1-engine.md)). v2 is the only engine. Gone with
+  v1: the answer cascade and its stages, the proactive alternatives (`posture.*` and `profile_overrides.alternatives`),
+  `ipsis calibrate`, `config/calibration.yaml` and the calibration check of `ipsis doctor` and `ipsis profile`, the
+  thresholds editor of the `/admin` panel (`PUT /admin/thresholds`) and the `--experiments` option of
+  `ipsis benchmark`. The installation profiles keep the models, the latency budget, the retrieval mode and the
+  per-language rerankers.
+- `ipsis ask --diagnostics` (and `/diagnostics` in `ipsis chat`) prints only what v2 produces: stages, rule, typo
+  corrections, evidence and the candidates with their place in each ranking. The benchmark report records the retrieval
+  mode instead of the cascade (`schema_version` 3).
+
+### Changed
+
+- **Upgrading needs no action.** A project that still says `pipeline: v1` loads as v2 and prints a notice once; the index
+  is not rebuilt. The v1 components, the `rendering`, `abstention` and `acceptance_criteria` sections, the v1
+  `profile_overrides`, `posture` in `assistant.yaml` and an old `config/calibration.yaml` are ignored; delete them when
+  you can. `config_version` stays 8.
+- Tests: `tests/consulta/test_caracterizacion_v2.py` freezes the public answers of v2 over an in-memory index (no
+  models), and `tests/test_arquitectura.py` plus `tests/consulta/test_aislamiento_v2.py` fail if anything outside the
+  retired modules imports them or if serving v2 loads v1 code. Tests that only covered v1 were removed.
+- `RetrieverQdrant` moved to `ipsis/consulta/recuperador.py` and `cargar_plantillas` to `ipsis/consulta/plantillas.py`.
+  `ipsis/consulta/seguimiento.py` (conversation memory) is kept, not wired to v2, as the base of the conversation plan.
+- The slow tests that need downloaded models were not run with this change; run `pytest -m slow` once with the models.
+  The `tests/datos/banco_general/linea_base.json` reference was measured with v1 and must be recorded again for v2.
+
 - **Redesigned themes.** `editorial` and `forest` now compose results like a newspaper (serif headlines, rules,
   small-caps labels, underlined links; `forest` uses paper notes with a side bar) and `ocean` and `midnight` are
   institutional (solid header, square corners, uppercase labels, a rule above each result), instead of recolors of the

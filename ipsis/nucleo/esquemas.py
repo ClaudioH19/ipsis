@@ -1,7 +1,6 @@
 """Esquemas versionados que cruzan las fronteras entre etapas, servicio y evaluación."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Literal
 
@@ -115,20 +114,6 @@ class FiltroEntidad(EsquemaEstricto):
     valor_norm: str = Field(min_length=1)
 
 
-class SenalesRecuperacion(EsquemaEstricto):
-    """Qué tan bien cubre el índice una pregunta, antes de recuperar.
-
-    Cada retriever define cómo calcula ``confianza_top1`` (en Qdrant, el coseno
-    denso del mejor chunk). No son comparables entre retrievers: los umbrales
-    de abstención se configuran por retriever."""
-    confianza_top1: float
-    margen_top1_top2: float
-    metodo_confianza: str | None = None
-    estado_calibracion: Literal["sin_calibrar", "calibrado"] | None = None
-    terminos_encontrados: list[str] = Field(default_factory=list)
-    terminos_ausentes: list[str] = Field(default_factory=list)
-
-
 class LecturaQA(EsquemaEstricto):
     """Resultado del lector QA sobre un pasaje (estilo SQuAD 2.0)."""
 
@@ -143,17 +128,6 @@ class LecturaQA(EsquemaEstricto):
     def s_qa(self) -> float:
         """Señal de la política: probabilidad del tramo menos la de «sin respuesta», en [0, 1]."""
         return max(0.0, self.prob_respuesta - self.prob_sin_respuesta)
-
-
-class SenalesLexicas(EsquemaEstricto):
-    """Señales léxicas de una consulta, todas en [0, 1] (ver ``ipsis.lenguaje.lexico``)."""
-
-    terminos_foco: list[str] = Field(default_factory=list)  # forma de superficie
-    s_oov: float = Field(default=0.0, ge=0.0, le=1.0)
-    s_cov: float | None = Field(default=None, ge=0.0, le=1.0)
-    s_foco: float | None = Field(default=None, ge=0.0, le=1.0)
-    s_lex: float | None = Field(default=None, ge=0.0, le=1.0)
-    acuerdo: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class EvidenceSpan(EsquemaEstricto):
@@ -202,7 +176,7 @@ class QueryDiagnostic(EsquemaEstricto):
 
     schema_version: Literal[2] = 2
     backend: str = Field(min_length=1)
-    pipeline: Literal["v1", "v2"] = "v1"
+    pipeline: Literal["v2"] = "v2"
     duplicados: dict[str, list[str]] = Field(default_factory=dict)
     expansiones: list[dict[str, Any]] = Field(default_factory=list)
     presupuestos: dict[str, Any] = Field(default_factory=dict)
@@ -264,22 +238,5 @@ __all__ = [
     "SCHEMA_VERSION", "AssistantResult", "AssistantState", "ChunkRecord",
     "DiagnosticCandidate", "DocumentRecord", "ElementRecord", "EvidenceSpan",
     "FiltroEntidad", "QueryAnalysis", "QueryDiagnostic", "RetrievalCandidate",
-    "RetrievalSignals", "SenalesRecuperacion",
+    "RetrievalSignals",
 ]
-
-
-Resultado = Literal["responde", "relacionado", "abstiene"]
-
-
-@dataclass(frozen=True)
-class DecisionAbstencion:
-    resultado: Resultado
-    motivo: str
-    entidad_texto: str | None = None
-    capa_decisora: str = ""
-    confianza_utilizada: float | None = None
-    candidato_id: str | None = None
-
-    @property
-    def abstiene(self) -> bool:
-        return self.resultado == "abstiene"

@@ -120,7 +120,7 @@ ipsis deploy prepare --domain asistente.tu-dominio.cl
 ```
 
 `dist/` incluye:
-- la configuración (con `personality.yaml`, `styles.yaml`, la calibración
+- la configuración (con `personality.yaml`, `styles.yaml`
   y los avatares importados), los documentos y el índice;
 - `Dockerfile`, `docker-compose.yml` (con un Caddy opcional, perfil `https`,
   ya declarado como proxy confiable), `Caddyfile` y `.env.example`;
@@ -174,7 +174,7 @@ Variables del modo y del panel `/admin`:
 | `IPSIS_LANG` | `es` para servir el `/admin/panel` en español |
 
 Tras 5 tokens incorrectos, la IP queda bloqueada 15 minutos. Cada cambio
-queda en `.ipsis/logs/admin.jsonl` (el panel también cambia umbrales, sube documentos de hasta 20 MiB
+queda en `.ipsis/logs/admin.jsonl` (el panel también sube documentos de hasta 20 MiB
 y reindexa: trata el token como una credencial de despliegue; mientras se recarga el motor `/ask`
 responde 503, así que reindexa fuera de horas de uso): fecha, IP, acción y claves, nunca el
 token. `ipsis doctor` revisa el modo: avisa en desarrollo y da error con un
@@ -192,7 +192,7 @@ Para rotar el token, cámbialo y reinicia el servicio.
 
 ## Antes de lanzar con un cliente
 
-Para cambios posteriores de perfil, lectura, umbrales, CORS o personalidad,
+Para cambios posteriores de perfil, lectura, CORS o personalidad,
 consulta [configuración para despliegue](configuracion.md#cambiar-configuración-antes-o-después-de-desplegar).
 El `DEPLOY.md` generado incluye comandos de administración del contenedor,
 ejemplos de `profile_overrides` y el flujo de evaluación antes de aplicar cambios.
@@ -203,12 +203,8 @@ publica; ningún comando la marca solo.
 - [ ] **Golden real:** escrito y revisado por una persona, con al menos un
   30% de preguntas sin respuesta o con premisa falsa, y pares «mismo tema,
   dato ausente» (ver [golden.md](golden.md)).
-- [ ] **Calibración:** revisar por separado `dev` y `test`: `CALIBRADO` describe
-  la selección en `dev` y no basta si `test` falla. En `test`, la cota superior
-  al 95% del riesgo de respuestas directas incorrectas debe ser ≤ 5%; con 0 errores exige al
-  menos 59 respuestas aceptadas en `test`). Si da `MUESTRA_INSUFICIENTE`, se
-  puede lanzar con los umbrales del perfil, sin afirmar el 5%. Las calibraciones
-  v1 deben regenerarse: v2 mide respuesta completa y separa el tramo QA.
+- [ ] **Evaluación:** correr `ipsis evaluate` sobre el golden y revisar por
+  separado las métricas de respuesta completa y la calidad del tramo QA.
 - [ ] **Latencia:** `ipsis benchmark` cumple el presupuesto del perfil en la
   máquina de producción (light ≤ 150 ms y medium ≤ 1 s de p95).
 - [ ] **Pruebas en verde** sobre la versión que se despliega

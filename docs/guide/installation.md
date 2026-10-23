@@ -19,9 +19,9 @@ your first project. Everyday use and the command reference are in
   `bm25` is a diagnostic profile for `ipsis benchmark` only: it cannot be
   installed.
   Sizes are the ONNX files on disk (measured on 2026-10-16 after `ipsis models download`: e5-small
-  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). The extractive QA reader (mDeBERTa) belongs to
-  the optional `pipeline: v1` engine: the default engine (v2) neither loads nor downloads it, and
-  `ipsis models list` shows what the active engine uses.
+  470 MB, bge-reranker-v2-m3 int8 571 MB, mMiniLM 119 MB). The extractive QA reader (mDeBERTa) is loaded only when the
+  optional `v2.qa_highlights` is on; otherwise neither the engine nor `ipsis models download` fetches it, and
+  `ipsis models list` shows what the active configuration uses.
   Measured latency of a whole `medium` query (v2; synthetic passage bank, 116 questions, 4 CPUs of an Intel Xeon
   2.1 GHz, 2026-10-16): Spanish with bge-reranker-v2-m3, p50 604 ms and p95 749 ms; English with mMiniLM,
   p50 349 ms and p95 620 ms. That bank has short passages: with real Spanish documents the p95 was 1.7 s (see

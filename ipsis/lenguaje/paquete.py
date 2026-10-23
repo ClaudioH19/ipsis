@@ -147,13 +147,13 @@ class PaqueteIdioma(_Estricto):
     genericas_memoria: list[str] = Field(default_factory=list)
     # Pronombres que remiten a algo ya nombrado («¿Quién lo aprueba?»): sin conversación
     # previa y sin otro tema que verbos, la pregunta necesita aclaración
-    # (ipsis.lenguaje.aclaracion). Sin los que también son artículos («la», «o»).
+    # Sin uso desde que se retiró el motor v1 (lo leía ipsis.lenguaje.aclaracion).
     pronombres_anaforicos: list[str] = Field(default_factory=list)
     # Abreviaturas de quien escribe apurado («q», «pa», «pra», «u»): marcan la pregunta como
-    # coloquial (ipsis.lenguaje.estilo). Siguen siendo stopwords.
+    # coloquial (sin uso desde que se retiró el motor v1). Siguen siendo stopwords.
     abreviaturas_informales: list[str] = Field(default_factory=list)
     # Enlaces de un modificador con su núcleo («gastos de electricidad») y si el modificador
-    # va antes del núcleo («electricity costs»): ipsis.consulta.etapas.seleccion.modificador_distinto.
+    # va antes del núcleo («electricity costs»). Sin uso desde que se retiró el motor v1.
     preposiciones_modificador: list[str] = Field(default_factory=list)
     modificador_antepuesto: bool = False
     # Sufijos de sustantivos derivados que el stemmer deja («signatur», «assinatur»;

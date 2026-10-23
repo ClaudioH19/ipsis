@@ -1,7 +1,7 @@
 """``ipsis deploy prepare``: una carpeta lista para copiar a un VPS.
 
 Reúne lo que el servicio necesita en ejecución (configuración con
-personalidad, estilos, calibración y avatares importados; documentos; índice)
+personalidad, estilos y avatares importados; documentos; índice)
 y genera desde ``ipsis/recursos/despliegue/preparar/`` el ``Dockerfile``, el
 ``docker-compose.yml`` con un Caddy opcional (perfil ``https``), el
 ``Caddyfile``, un ``.env.example`` y ``DEPLOY.md`` en el idioma del

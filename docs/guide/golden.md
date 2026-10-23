@@ -1,21 +1,20 @@
 # Your golden set
 
-> This guide covers evaluation and calibration for the optional `pipeline: v1`
-> engine. The default v2 router needs no golden dataset to run and does not use
-> these thresholds to rank sources. Query banks remain useful for checking
-> retrieval, relevance and context; direct-answer metrics do not certify ranking.
+> The v2 router needs no golden dataset to run. Query banks remain useful for
+> checking retrieval, relevance and context; direct-answer metrics do not
+> certify ranking. (The `ipsis calibrate` command, which chose answer
+> thresholds for the retired v1 engine, no longer exists.)
 
-The golden set is the bank of real questions you use to measure and
-calibrate the assistant. It lives in the `golden/` folder of each project and
+The golden set is the bank of real questions you use to measure the
+assistant. It lives in the `golden/` folder of each project and
 is never mixed with the synthetic bank of the tests (`tests/datos/banco/`).
 
 The versioned bank lives in `golden/bank/` (`manifest.json` plus the cases in
 JSONL). It is built from a simple CSV that a person fills in. With 30 to 60
 questions reviewed by someone who knows the documents, it is good for tuning
-and comparing profiles (certifying a risk takes more: see "Calibrate"). It
-should cover the six internal categories (exact, paraphrase, no answer,
-false premise, ambiguous, conversational) and split `dev` and `test` cases
-before calibrating.
+and comparing profiles. It should cover the six internal categories (exact,
+paraphrase, no answer, false premise, ambiguous, conversational) and split
+`dev` and `test` cases.
 
 ## Step by step
 
@@ -25,7 +24,6 @@ ipsis golden template                # golden/golden.csv with questions suggeste
 ipsis golden import golden/golden.csv
 ipsis golden validate                # does it still match the corpus?
 ipsis evaluate                       # coverage, false "ok" answers and latency of the profile
-ipsis calibrate                      # see "Calibrate"
 ```
 
 1. **Template.** `ipsis golden template [--n N]` picks diverse sections of
@@ -59,7 +57,7 @@ ipsis calibrate                      # see "Calibrate"
 
 ## Curation rules
 
-- `dev` can be used to tune thresholds; `test` stays closed until the final
+- `dev` can be used to tune settings; `test` stays closed until the final
   comparison.
 - The dev/test split happens on import. It is 50/50 within each stratum:
   - the internal category (exact, paraphrase, no answer…);
@@ -107,43 +105,3 @@ not validate all semantics: review actions, conditions and added passages.
 New reports use schema 2 and declare the criterion. Old reports remain readable,
 but `compare` rejects mixed criteria: re-evaluate both configurations. Historical
 measurements are retained, not silently reinterpreted.
-
-## Calibrate
-
-```text
-ipsis calibrate [--alpha 0.05] [--apply]
-```
-
-It needs the index (`ipsis index`) and the imported golden set
-(`ipsis golden import`). It runs the profile over the golden set and
-**chooses scalar thresholds** (`ok`, `oov_ok`, `focus`) using `dev` only. It
-looks for the combination that answers directly most often while the upper
-bound of its risk (Clopper-Pearson at 95%) is ≤ `--alpha`; `test` only
-verifies. It never trains or modifies models. Among combinations with the
-same coverage it prefers:
-
-1. the one with fewer errors;
-2. the one closest to the profile thresholds;
-3. only then, the strictest.
-
-If `dev` cannot tell two values of a threshold apart, that threshold does
-not move.
-
-| Result | Meaning | Exit |
-|---|---|---|
-| `CALIBRATED` | There is enough sample and a combination meets α | 0 |
-| `INSUFFICIENT_SAMPLE` | α cannot be certified yet: there are not enough direct answers without errors in `dev` (with 0 errors, 59 for α = 0.05). It does **not** mean the profile is unsafe | 0 |
-| `NO_SAFE_THRESHOLD` | There is enough sample, but no combination meets α | 1 |
-
-- Without `--apply` it only reports and writes nothing.
-- Calibration version 2 measures full-answer risk with expected-source evidence;
-  QA span quality is separate. Version 1 is retained but ignored; recalibrate.
-- With `--apply` it writes `config/calibration.yaml` in any state, for
-  auditing. The engine uses its thresholds **only** when the status is
-  `calibrated` and its provenance matches the project: profile, models and
-  the index's `corpus_hash`. If the corpus or the profile changes, the
-  calibration is ignored and the profile thresholds return.
-- If the corpus changed since the golden set was imported, run
-  `ipsis golden validate` first and, if needed, import again.
-- The universal bank of the tests (`tests/datos/banco_universal/`) is a
-  regression bank and cannot be used to calibrate.

@@ -1,5 +1,7 @@
 # ADR 0006: conversation memory (topics, expiry and per-page sessions)
 
+> **Not active in v2 ([ADR 0012](0012-retire-the-v1-engine.md)).** The memory (`consulta/seguimiento.py`) was wired only into the v1 engine. The module and its tests are kept as the base of the "Conversation in v2" plan in [docs/plan](../plan/README.md); the measurements below are v1's.
+
 ## Context
 
 [ADR 0005](0005-deterministic-query-understanding.md) added follow-up

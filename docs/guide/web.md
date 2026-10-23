@@ -60,7 +60,7 @@ Search errors appear in guidance and leave existing results available.
 
 `GET /config` adds `assistant_messages` (category → list of fixed strings),
 `suggested_questions`, `animations_enabled`, and localized guidance labels in
-`interface`. Engine v1 retains its existing chat flow.
+`interface`.
 
 ## Add it
 
@@ -239,7 +239,7 @@ they show:
 ## Texts
 
 - **From the active tone** (see [personality.md](personality.md)): the
-  v1 welcome, "searching…", the invitation to the citations and the error
+  welcome, "searching…", the invitation to the citations and the error
   messages come from `/config` in 7 variants, and the widget rotates them.
 - **v2 guidance:** its separate fixed catalog has 142 messages per supported
   language, with examples and information about the assistant and its scope.

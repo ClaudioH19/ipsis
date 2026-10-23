@@ -3,8 +3,7 @@
 The **tone** decides how the assistant sounds around the text of your
 documents. It never decides what it answers. The document text goes
 literally and the citations go underneath, to check it. Changing the tone
-does not change the status of any answer, and needs no reindexing or
-recalibrating.
+does not change the status of any answer, and needs no reindexing.
 
 ## Configuration: `config/personality.yaml`
 
@@ -255,7 +254,7 @@ in the widget ones and 8 in the rest. That is 162 per tone and language,
 | `no_answer` | it is not in the documents | — |
 | `premise_not_found` | the question asked about something that does not exist | `{entity}` (required) |
 | `needs_clarification` | the question does not say what it is about ("¿Cuánto es?", "Who approves it?" with no conversation) | — |
-| `alternatives_intro` | after `no_answer` or `premise_not_found`, before the similar passages of the proactive posture ([configuration](configuration.md#when-the-answer-is-not-there-posture)) | — |
+| `alternatives_intro` | not used since the v1 engine was retired (it introduced the similar passages of the removed proactive posture); the tone files still define it | — |
 | `welcome`, `waiting`, `citations_hint`, `network_error`, `rate_limit_error`, `service_error` | widget texts | `welcome`: `{assistant_name}` |
 
 ## Variety and traceability
@@ -321,8 +320,7 @@ files.
 | `GET /admin/styles` · `PUT /admin/styles` | Widget theme and placement (`styles.yaml`), with the same validation as the terminal |
 | `GET /admin/styles/flat` · `POST /admin/styles/set` | Every `section.key` value, or `{"assignments": ["colors.accent=#0ea5e9"]}` |
 | `GET /admin/styles/presets` · `POST /admin/styles/preset` | Lists the visual presets, or applies one: `{"name": "editorial"}` (`classic`, `minimal`, `editorial`, `contrast`) |
-| `GET /admin/status` | Profile, index, calibration, the thresholds in force with their source (`profile`, `project` or `calibration`), the documents and the `ipsis doctor` checks |
-| `PUT /admin/thresholds` | `{"thresholds": {"ok": 0.85, "related": null}}`: writes `config/engine.yaml::profile_overrides.default_thresholds` (`null` goes back to the profile value) and reloads the engine. Names and the [0, 1] range are validated |
+| `GET /admin/status` | Profile, index, the documents and the `ipsis doctor` checks |
 | `GET /admin/documents` · `POST /admin/documents?name=FILE` | Lists the catalog, or uploads one document as the raw body (PDF, DOCX, MD or TXT, up to 20 MiB; only the base name is kept). Like `ipsis load`: it does not reindex |
 | `POST /admin/reindex` · `GET /admin/task` | Reindexes in the background (409 if a reload is already running); `task` reports `running`, `done` or `error`. Meanwhile `/ask` answers 503 |
 
@@ -346,12 +344,11 @@ service.
 | **Tone** | Chooses the tone and the variety. Per situation, it shows the variants with the project variables and lets you write your own texts. If a text fails the linter, it shows the errors and saves nothing |
 | **Avatar** | Imports an `.avatar.json` (validated before saving), chooses the avatar, its colors, placement and size, and assigns each event to an animation. The ▶ button triggers the event in the preview |
 | **Widget** | Applies a preset and changes the accent color, position, size, launcher and how citations show. "Full style" edits every value of `styles.yaml`: light and dark colors, typography, shapes, shadows and animations |
-| **Status** | Profile, index, calibration and readiness; the thresholds in force with their profile and project values and their source, editable (empty = the profile's); and the `ipsis doctor` checks. Saving reloads the engine for a few seconds |
+| **Status** | Profile, index and readiness; and the `ipsis doctor` checks |
 | **Documents** | The catalog; uploads PDF, DOCX, Markdown or TXT files (up to 20 MiB each) and reindexes in the background, showing the progress |
 
 Tone, avatar and widget change only the presentation. **Status** and
-**Documents** change what the assistant answers: a threshold changes when it
-answers directly, and new documents become answerable after reindexing.
+**Documents** change what the assistant answers: new documents become answerable after reindexing.
 
 - **Preview:** the real widget, served by your service. It reloads by
   itself after each saved change.
@@ -396,8 +393,7 @@ checks:
 1. **Recognizable tone:** the 162 variants sound like the same character.
 2. **Honesty:** `related_intro` and `missing_focus` say it is not a direct
    answer; `no_answer` and `premise_not_found` never suggest the
-   information exists elsewhere; `alternatives_intro` says the passages that
-   follow are similar, not what was asked, and promises nothing about them.
+   information exists elsewhere.
 3. **No content:** no template reads as something the document says.
 4. **The connector fits:** `opening`, `addition`, `condition` and
    `exception` read well followed by a citation that starts with a capital

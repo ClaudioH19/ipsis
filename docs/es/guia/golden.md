@@ -1,21 +1,20 @@
 # Tu golden set
 
-> Esta guía describe la evaluación y calibración del motor opcional
-> `pipeline: v1`. El enrutador v2 predeterminado no necesita un golden dataset
-> para funcionar y no usa estos umbrales para ordenar fuentes. Los bancos
-> de consultas siguen siendo útiles para evaluar recuperación, relevancia y
-> contexto; las métricas de respuestas directas no certifican su ranking.
+> El enrutador v2 no necesita un golden dataset para funcionar. Los bancos de
+> consultas siguen siendo útiles para evaluar recuperación, relevancia y
+> contexto; las métricas de respuestas directas no certifican su ranking. (El
+> comando `ipsis calibrate`, que elegía umbrales de respuesta para el motor v1
+> retirado, ya no existe.)
 
 El golden set es el banco de preguntas reales del cliente con el que se mide
-y calibra el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
+el asistente. Vive en la carpeta `golden/` de cada proyecto y nunca
 se mezcla con el banco sintético de las pruebas (`tests/datos/banco/`).
 
 El banco versionado queda en `golden/bank/` (`manifest.json` más los casos
 en JSONL). Se arma a partir de un CSV simple que completa una persona. Con 30 a 60 preguntas revisadas
 por una persona conocedora del corpus sirve para ajustar y comparar perfiles
-(para certificar un riesgo hace falta más: ver «Calibrar»). Debe cubrir las seis
-categorías internas (exacta, paráfrasis, sin respuesta, premisa falsa,
-ambigua, conversacional) y separar casos `dev` y `test` antes de calibrar.
+Debe cubrir las seis categorías internas (exacta, paráfrasis, sin respuesta,
+premisa falsa, ambigua, conversacional) y separar casos `dev` y `test`.
 
 ## Paso a paso
 
@@ -25,7 +24,6 @@ ipsis golden template            # golden/golden.csv con preguntas sugeridas des
 ipsis golden import golden/golden.csv
 ipsis golden validate              # ¿sigue coincidiendo con el corpus?
 ipsis evaluate                     # cobertura, falsos «ok» y latencia del perfil
-ipsis calibrate                    # ver «Calibrar»
 ```
 
 1. **Plantilla.** `ipsis golden template [--n N]` elige secciones diversas de
@@ -58,7 +56,7 @@ ipsis calibrate                    # ver «Calibrar»
 
 ## Reglas de curación
 
-- `dev` puede usarse para ajustar umbrales; `test` permanece cerrado hasta la
+- `dev` puede usarse para ajustar la configuración; `test` permanece cerrado hasta la
   comparación final.
 - La separación dev/test se hace al importar. Es 50/50 dentro de cada estrato:
   - categoría interna (exacta, paráfrasis, sin respuesta…);
@@ -105,42 +103,3 @@ no verifica toda su semántica: revisa acciones, condiciones y pasajes añadidos
 Los nuevos reportes llevan versión 2 y declaran el criterio. Los anteriores
 se pueden leer, pero `compare` rechaza mezclar criterios: vuelve a evaluar
 ambas configuraciones. No se modifican los reportes históricos.
-
-## Calibrar
-
-```text
-ipsis calibrate [--alpha 0.05] [--apply]
-```
-
-Requiere el índice (`ipsis index`) y el golden importado
-(`ipsis golden import`). Corre el perfil sobre el golden y **elige umbrales
-escalares** (`ok`, `oov_ok`, `focus`) usando solo `dev`. Busca la combinación
-que más responde directo cuya cota superior de riesgo (Clopper-Pearson al 95%)
-es ≤ `--alpha`; `test` solo verifica. No entrena ni modifica modelos.
-Entre combinaciones con la misma cobertura, prefiere:
-
-1. la de menos errores;
-2. la más cercana a los umbrales del perfil;
-3. recién después, la más estricta.
-
-Si `dev` no distingue dos valores de un umbral, ese umbral no se mueve.
-
-| Resultado | Qué significa | Salida |
-|---|---|---|
-| `CALIBRADO` | Hay muestra y una combinación cumple α | 0 |
-| `MUESTRA_INSUFICIENTE` | Todavía no se puede certificar α: no hay suficientes respuestas directas sin error en `dev` (con 0 errores, 59 para α = 0,05). **No** significa que el perfil sea inseguro | 0 |
-| `SIN_UMBRAL_SEGURO` | Hay muestra, pero ninguna combinación cumple α | 1 |
-
-- Sin `--apply`, solo informa y no escribe nada.
-- La calibración versión 2 calcula riesgo sobre respuestas completas con
-  respaldo en la evidencia esperada; el tramo QA se mide aparte. La versión 1
-  queda conservada pero no se aplica: vuelve a calibrar.
-- Con `--apply`, escribe `config/calibration.yaml` en cualquier
-  estado, para auditoría. El motor **solo** usa sus umbrales si el estado es
-  `calibrated` y su procedencia coincide con el proyecto: perfil, modelos y
-  `corpus_hash` del índice. Si cambia el corpus o el perfil, la calibración se
-  ignora y vuelven los umbrales del perfil.
-- Si el corpus cambió desde que se importó el golden, primero
-  `ipsis golden validate` y, si corresponde, vuelve a importar.
-- El banco universal de las pruebas (`tests/datos/banco_universal/`) es de
-  regresión y no se puede usar para calibrar.

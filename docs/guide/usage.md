@@ -21,7 +21,7 @@ Optional, to measure and tune:
 
 ```text
 ipsis golden template → (a person fills in golden.csv) → ipsis golden import
-  → ipsis evaluate → ipsis calibrate --apply
+  → ipsis evaluate
 ```
 
 ## What the assistant answers
@@ -48,16 +48,10 @@ Every answer has a status, and the widget renders each one differently:
 
 | Status | Meaning |
 |---|---|
-| `ok` | It found the text that answers; it shows it literally, with the citation |
-| `related` | There is no direct answer; it shows the closest passage and says so |
+| `ok` | A direct answer. v2 does not produce it (it belonged to the retired v1 engine); the API still declares it for older clients |
+| `related` | The ranked sources found for review: v2 shows them with their citation and does not claim any is the answer |
 | `no_answer` | It is not in the documents. With `plan: clarification`, the question does not say what it is about ("Who approves it?" with no previous conversation) and the assistant asks for the topic |
 | `conversational` | A greeting, thanks, goodbye or "what can you do?" |
-
-Each answer also carries a confidence level (`confidence_level`): `high` for a
-direct answer read by the QA reader (medium), `medium` for a direct answer
-without a reader (light; the widget shows "Check the citation"), `low` for a
-related passage. The levels come from measured precision, not from a new
-threshold; see [informal paraphrases](../methodology/informal-paraphrases.md).
 
 The assistant never writes content: the text comes literally from your
 documents, and the citations (document, section and offsets) go underneath
@@ -66,7 +60,7 @@ so anyone can check it.
 ## The terminal: menu and interactive mode
 
 `ipsis help` prints every command grouped by task (Start, Documents, Ask,
-Customize, Measure and calibrate, Deploy and operate) with examples;
+Customize, Measure, Deploy and operate) with examples;
 `ipsis` with no arguments does the same when its output is not a terminal. `ipsis help <command>` prints the options of one command, the same
 as `ipsis <command> --help`.
 
@@ -81,9 +75,9 @@ starts with `/` is a command:
 |---|---|
 | any text | Asks the engine of the project in this folder; follow-up questions keep the topic |
 | `/help` | Lists the commands of the interactive mode |
-| `/diagnostics on\|off` | Shows, for every answer, the stages, signals, the deciding rule and the exact span (what `ipsis ask --diagnostics` prints) |
+| `/diagnostics on\|off` | Shows, for every answer, the stages, the rule, the candidates and the evidence (what `ipsis ask --diagnostics` prints) |
 | `/reload` | Reloads the engine after changing configuration or documents |
-| `/<command> …` | Any ipsis command: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/calibrate --help` |
+| `/<command> …` | Any ipsis command: `/doctor`, `/load ./docs`, `/index`, `/profile show`, `/evaluate --help` |
 | `/exit`, `/quit`, Ctrl+D | Leaves |
 
 The models load once, with the first question. Before running a command the
@@ -146,8 +140,8 @@ local index, stop it first.
 |---|---|
 | `ipsis init [--profile light\|medium] [--language en] [--assistant-name N] [--domain-description D] [--force]` | Creates `config/` and `documents/`. The language defaults to `en` (or `es` with `IPSIS_LANG=es`). Without `--force` it never overwrites an existing project |
 | `ipsis configure key=value …` | Edits `assistant.yaml`: `assistant_name`, `domain_description`, `language`, `profile`, `cors_origins`, `widget_keys` (lists separated by commas) and `query_log.enabled` (true or false) |
-| `ipsis profile show` | Active profile, models, p95 budget and whether the index and the calibration fit it |
-| `ipsis profile set <profile>` | Changes the profile. It tells you when to reindex; the previous calibration stops applying |
+| `ipsis profile show` | Active profile, models, p95 budget and whether the index fits it |
+| `ipsis profile set <profile>` | Changes the profile. It tells you when to reindex |
 | `ipsis snapshot-config [--output PATH]` | Writes the effective configuration with every default resolved |
 
 ### Models
@@ -180,13 +174,13 @@ local index, stop it first.
 
 | Command | What it does |
 |---|---|
-| `ipsis doctor` | Read-only diagnosis: configuration, profile, language, stemmer, models, index, calibration, golden set, CORS, personality and mode. Every error comes with its action. Exits with 0 when there are no errors |
+| `ipsis doctor` | Read-only diagnosis: configuration, profile, language, stemmer, models, index, golden set, CORS, personality and mode. Every error comes with its action. Exits with 0 when there are no errors |
 | `ipsis audit [--from DATE] [--to DATE]` / `ipsis audit --trace ID` | Reviews the query log: statuses, rules, tones and whether every piece of evidence is still literal in the corpus. With `--from`/`--to` (`YYYY-MM-DD` or ISO 8601, UTC by default, inclusive) it only counts that range. `--trace` shows an original query and its steps by `consulta_id`, without running it or accessing the corpus. Turn the log on with `ipsis configure query_log.enabled=true` |
 
 ### Personality
 
 Details in [personality.md](personality.md). Presentation only: it never
-requires reindexing or recalibrating.
+requires reindexing.
 
 | Command | What it does |
 |---|---|
@@ -217,9 +211,8 @@ Details in [golden.md](golden.md).
 | `ipsis golden validate` | Checks the bank against the current corpus |
 | `ipsis golden export --format squad2\|csv [--output PATH]` | Exports the bank |
 | `ipsis evaluate [--bank MANIFEST] [--output PATH]` | Metrics of the active profile, with the bound on false `ok` answers |
-| `ipsis calibrate [--alpha 0.05] [--apply]` | Chooses thresholds under risk control using dev only. It trains nothing |
 | `ipsis compare <a.json> <b.json> [--output PATH]` | Compares two reports from `ipsis evaluate` |
-| `ipsis benchmark --bank M [--bank M2…] [--profiles …] [--experiments] [--latency-only] [--repetitions N] [--output DIR]` | Compares profiles: safety, coverage, latency and cost |
+| `ipsis benchmark --bank M [--bank M2…] [--profiles …] [--latency-only] [--repetitions N] [--output DIR]` | Compares profiles: safety, coverage, latency and cost |
 
 ### Widget
 
@@ -243,10 +236,8 @@ Details in [web.md](web.md).
 
 ## Environment variables
 
-V2 is the default engine for new projects and configurations without a pipeline
-selector. It routes queries to ranked sources for review. An explicit
-`pipeline: v1` in `config/engine.yaml` keeps the legacy engine; change it to
-`pipeline: v2` and restart the service to switch an existing project.
+V2 is the only engine: it routes queries to ranked sources for review. (The
+v1 engine was retired; `pipeline: v1` in `config/engine.yaml` loads as v2.)
 It publishes up to three source dropdowns per page with literal neighboring
 context and a button to continue searching, and
 keeps QA disabled by default. Reranking is progressive, with a 2500 ms work

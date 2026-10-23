@@ -279,11 +279,7 @@ questions:
   answer: Recarregue a página e confira a cache; se usa um widget exportado, substitua também a cópia de widget.js.
 - topic: Qualidade e manutenção
   question: Preciso de um golden dataset para usar o roteador?
-  answer: Não. O roteador pode buscar fontes sem um golden dataset nem calibração de respostas diretas.
-- topic: Qualidade e manutenção
-  question: Para que serve a calibração do motor v1?
-  answer: Ajusta os limiares do motor opcional de respostas diretas com um banco revisado; não controla o ranking
-    v2.
+  answer: Não. O roteador pode buscar fontes sem um golden dataset.
 - topic: Qualidade e manutenção
   question: Como avalio a qualidade das fontes?
   answer: Use consultas representativas e confira se recuperam o documento correto, sua posição e o contexto necessário.

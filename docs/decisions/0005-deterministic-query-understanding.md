@@ -1,5 +1,7 @@
 # ADR 0005: deterministic query understanding (intentions and cues)
 
+> **Partly retired by [ADR 0012](0012-retire-the-v1-engine.md).** Typo correction and synonym expansion are still used by v2. Intention recognition, the focus rules and follow-up inheritance belonged to the v1 engine and are no longer executed.
+
 ## Context
 
 "when does the purchase start?" ("cuando empieza la compra?") failed on an

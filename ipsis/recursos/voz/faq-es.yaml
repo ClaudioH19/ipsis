@@ -283,11 +283,7 @@ questions:
   answer: Recarga la página y comprueba la caché; si usas un widget exportado, reemplaza también su copia de widget.js.
 - topic: Calidad y mantenimiento
   question: ¿Necesito un golden dataset para usar el enrutador?
-  answer: No. El enrutador puede buscar fuentes sin un golden dataset ni calibración de respuestas directas.
-- topic: Calidad y mantenimiento
-  question: ¿Para qué sirve la calibración del motor v1?
-  answer: Ajusta umbrales del motor opcional de respuestas directas con un banco revisado; no controla el ranking
-    v2.
+  answer: No. El enrutador puede buscar fuentes sin un golden dataset.
 - topic: Calidad y mantenimiento
   question: ¿Cómo evalúo la calidad de las fuentes?
   answer: Usa consultas representativas y revisa si recuperan el documento correcto, su posición y el contexto necesario.

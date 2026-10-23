@@ -1,5 +1,7 @@
 # ADR 0004: cascade with lexical signals and removal of the regex guards
 
+> **Superseded by [ADR 0012](0012-retire-the-v1-engine.md).** The cascade this record describes lived in the v1 engine, retired in October 2026. The record stays as history.
+
 ## Context
 
 The previous policy (`layered_v1`) decided in layers with a similarity

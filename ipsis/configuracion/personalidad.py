@@ -1,6 +1,6 @@
 """``config/personality.yaml``: tono de las respuestas y avatar del widget.
 
-Es solo presentación: no cambia estados, umbrales, índice ni calibración. Si
+Es solo presentación: no cambia estados, índice ni lo que responde el motor. Si
 el archivo falta rigen los valores por defecto. El catálogo de eventos del
 avatar (con su clave sugerida y su respaldo) vive aquí para que la CLI, el
 diagnóstico y el servicio usen el mismo.
