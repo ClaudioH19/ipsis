@@ -46,12 +46,10 @@ Ejemplo de par mínimo:
 |---|---|---|
 | `<idioma>/corpus/*.md`, `<idioma>/casos.yaml` | a mano | Fuentes |
 | `<idioma>/banco.jsonl`, `<idioma>/manifiesto.json` | `python tests/datos/banco_universal/construir.py` | Banco en el formato interno; una prueba verifica que coincide con las fuentes |
-| `linea_base.json` | `python tests/datos/banco_universal/linea_base.py light,medium` | Resultado de referencia por perfil e idioma |
+| `linea_base.py` | a mano | Evalúa el banco con un perfil e idioma (lo usa la prueba lenta) |
 
 La prueba lenta (`tests/evaluacion/test_banco_universal.py`, marcas `slow` y
-`modelos`) falla si aparece un falso `ok` o un tramo equivocado que no estaba
-en la línea base. La corrección de la métrica en 2026-10-06 registra también
-`directas_sin_literal`: se mide el tramo seleccionado por el lector, no un
-dato correcto en otra parte de una cita amplia. Los errores previos se
-conservan por ID para detectar regresiones; no se declaran seguros. Si una
-mejora elimina errores, vuelve a registrar la línea base.
+`modelos`) comprueba que v2 no marque ningún caso como `ok` (publica fuentes y no
+decide, ADR 0012) y que cada caso deja su decisión auditable. La línea base de
+falsos `ok` de la cascada v1 se retiró con ese motor; la calidad de la
+recuperación se vigila con `tests/datos/banco_general`.
