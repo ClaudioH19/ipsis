@@ -73,8 +73,6 @@ cannot change them unnoticed.
   `abreviaturas_informales`, `bordes_respuesta`, `respaldo_intencion`, the
   modifier lists) are still loaded and unused. Removing them is a separate
   change of the packs.
-- The slow tests that need downloaded models could not run when the engine
-  was removed; run `pytest -m slow` once on a machine with the models.
-- `tests/datos/banco_general/linea_base.json` was measured with v1 and can no
-  longer be reproduced; `herramientas/evaluacion/general.py --record-baseline`
-  records a v2 reference.
+- The slow tests that needed v1 were converted to v2 and run with the real
+  models. The false-`ok` baseline of the universal bank was retired: v2 never
+  answers `ok`, so retrieval quality is watched through `tests/datos/banco_general`.

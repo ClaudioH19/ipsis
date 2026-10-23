@@ -19,11 +19,8 @@ estado de todos, y el detalle de lo que sigue abierto. Estado al 2026-10-23.
 | **Conversación en v2** | abierto el 2026-10-19, sin iniciar | abajo |
 | **Fuentes tabulares** | propuesta sin implementar | abajo |
 
-Al retirar el motor v1 se borraron o adaptaron sus pruebas. Quedan sin poder correr en una máquina sin modelos
-las lentas que dependen de ellos (`test_caracterizacion`, `test_banco_universal`, `test_general_regresion`,
-`test_tono_no_cambia_estados`, `test_portabilidad_*`): hay que correr `pytest -m slow` una vez con los modelos
-descargados, y regenerar con `herramientas/evaluacion/general.py --record-baseline` la línea base de
-`tests/datos/banco_general`, que se midió con v1. Pendiente aparte: los campos del paquete de idioma que solo leían
+Al retirar el motor v1 se borraron o adaptaron sus pruebas; las lentas se convirtieron a v2 y se corrieron con los
+modelos reales (suite completa verde). Pendiente aparte: los campos del paquete de idioma que solo leían
 los módulos de v1 (ADR 0012).
 
 ## Motor v2: lo que falta

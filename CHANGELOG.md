@@ -29,8 +29,10 @@ a minor change may break compatibility and is marked as such.
   retired modules imports them or if serving v2 loads v1 code. Tests that only covered v1 were removed.
 - `RetrieverQdrant` moved to `ipsis/consulta/recuperador.py` and `cargar_plantillas` to `ipsis/consulta/plantillas.py`.
   `ipsis/consulta/seguimiento.py` (conversation memory) is kept, not wired to v2, as the base of the conversation plan.
-- The slow tests that need downloaded models were not run with this change; run `pytest -m slow` once with the models.
-  The `tests/datos/banco_general/linea_base.json` reference was measured with v1 and must be recorded again for v2.
+- The slow tests that needed v1 were converted to v2 and run with the real models (full suite: 1790 passed, 3 skipped):
+  `test_caracterizacion` is regenerated for v2 (its `light.json`/`medium.json` are v2 output), `test_tono_no_cambia_estados`
+  applies the tone to courtesy answers only, and the v1 false-`ok` baseline of `test_banco_universal` was retired
+  (v2 never answers `ok`; the test now checks that).
 
 - **Redesigned themes.** `editorial` and `forest` now compose results like a newspaper (serif headlines, rules,
   small-caps labels, underlined links; `forest` uses paper notes with a side bar) and `ocean` and `midnight` are
