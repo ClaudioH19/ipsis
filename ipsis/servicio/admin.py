@@ -79,7 +79,7 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
                        recargar: Callable[[bool], bool] | None = None) -> APIRouter:
     """Router de ``/admin``. ``al_cambiar`` se llama tras cada escritura (recarga en caliente).
     Con ``servicio`` (el estado de la aplicación) y ``recargar`` (recarga del motor en segundo
-    plano, ``True`` si arrancó) existen también estado, umbrales, documentos y reindexado."""
+    plano, ``True`` si arrancó) existen también estado, documentos y reindexado."""
     from ipsis.aplicacion.avatar import AvatarInvalido
     from ipsis.aplicacion.personalidad import (
         PersonalidadInvalida,
@@ -251,29 +251,12 @@ def crear_router_admin(modo: ModoServicio, limitador, al_cambiar: Callable[[], N
 
 
 def _rutas_de_operacion(router: APIRouter, servicio, recargar, cambio, invalido) -> None:
-    """Estado, umbrales, documentos y reindexado (pestañas Estado y Documentos del panel)."""
+    """Estado, documentos y reindexado (pestañas Estado y Documentos del panel)."""
     from ipsis.aplicacion import panel
-
-    def efectivos() -> dict | None:
-        politica = getattr(servicio.motor, "politica_abstencion", None)
-        return dict(getattr(politica, "umbrales", None) or {}) or None
 
     @router.get("/status")
     def estado_proyecto():
-        return {**panel.estado(efectivos()), "ready": servicio.listo, "task": servicio.tarea}
-
-    @router.put("/thresholds")
-    def cambiar_umbrales(request: Request, cuerpo: dict = Body(...)):
-        cambios = cuerpo.get("thresholds")
-        if not isinstance(cambios, dict) or not cambios:
-            raise HTTPException(status_code=422, detail={"errors": ["expected {thresholds: {key: value|null}}"]})
-        try:
-            filas = panel.cambiar_umbrales(cambios)
-        except ValueError as e:
-            raise invalido(e) from e
-        cambio(request, "thresholds", list(cambios))
-        recargar(False)  # la política se arma al construir el motor
-        return {"thresholds": filas, "task": servicio.tarea}
+        return {**panel.estado(), "ready": servicio.listo, "task": servicio.tarea}
 
     @router.get("/documents")
     def listar_documentos():

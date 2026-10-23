@@ -54,18 +54,6 @@ def actualizar_dominio(pares: dict[str, str], ruta: str = RUTA_DOMINIO) -> dict:
     for clave, valor in pares.items():
         if clave == "registro.activo":
             nuevo["registro"] = {**(nuevo.get("registro") or {}), "activo": _booleano(clave, valor)}
-        elif clave == "postura.modo":
-            from ipsis.configuracion.glosario import POSTURAS
-
-            interno = {externo: interno for interno, externo in POSTURAS.items()}
-            modo = valor.strip().lower()
-            if modo not in interno and modo not in POSTURAS:
-                raise ValueError(t("app.unknown_posture", value=valor, available=sorted(interno)))
-            nuevo["postura"] = {**(nuevo.get("postura") or {}), "modo": interno.get(modo, modo)}
-        elif clave == "postura.max_alternativas":
-            if not valor.strip().isdigit() or not 1 <= int(valor) <= 5:
-                raise ValueError(t("app.posture_alternatives_range", value=valor))
-            nuevo["postura"] = {**(nuevo.get("postura") or {}), "max_alternativas": int(valor)}
         elif clave in _CLAVES_LISTA_SEPARADA_POR_COMA:
             nuevo[clave] = [v.strip() for v in valor.split(",") if v.strip()]
         else:
@@ -288,22 +276,12 @@ class EstadoIndice:
 
 
 @dataclass(frozen=True)
-class EstadoCalibracionPerfil:
-    """``sin_calibracion``, ``vigente``, ``obsoleta`` (procedencia distinta) o
-    ``no_habilitada`` (guardada solo para auditoría). Usa la misma regla que el motor."""
-
-    estado: str
-    motivo: str | None = None
-
-
-@dataclass(frozen=True)
 class ResumenPerfil:
     perfil: str
     descripcion: str
     presupuesto_p95_ms: int
     modelos: dict
     indice: EstadoIndice
-    calibracion: EstadoCalibracionPerfil
 
 
 @dataclass(frozen=True)
@@ -312,7 +290,6 @@ class CambioPerfil:
     nuevo: str
     cambio_real: bool
     indice: EstadoIndice
-    calibracion: EstadoCalibracionPerfil
 
 
 def idioma_con_respaldo(codigo: str) -> bool:
@@ -374,70 +351,41 @@ def estado_indice(perfil: str, stemmer: str | None = None) -> EstadoIndice:
                         ultimo.stemmer, ultimo.n_chunks)
 
 
-def estado_calibracion(perfil_instalacion, indice: EstadoIndice) -> EstadoCalibracionPerfil:
-    """Vigencia de ``config/calibration.yaml`` con la regla del motor
-    (``motivo_no_aplicable``): perfil, modelos y corpus del índice compatible."""
-    from ipsis.configuracion import rutas
-    from ipsis.configuracion.calibracion import EstadoCalibracion, leer_calibracion, motivo_no_aplicable
-
-    archivo = leer_calibracion(rutas.CALIBRACION)
-    if archivo is None:
-        return EstadoCalibracionPerfil("sin_calibracion")
-    hash_corpus = indice.hash_corpus if indice.estado == "compatible" else None
-    from ipsis.lenguaje.paquete import cargar_paquete
-    from ipsis.lenguaje.sinonimos import huella_lexica
-    from ipsis.configuracion.carga import cargar_dominio
-
-    hash_lexico = huella_lexica(cargar_paquete(cargar_dominio().get("idioma", "es"), proyecto=Path.cwd()))
-    motivo = motivo_no_aplicable(archivo, perfil=perfil_instalacion.perfil,
-                                 modelos=perfil_instalacion.modelos.model_dump(), hash_corpus=hash_corpus,
-                                 hash_lexico=hash_lexico)
-    if motivo is None:
-        return EstadoCalibracionPerfil("vigente")
-    if archivo.estado != EstadoCalibracion.CALIBRADO:
-        return EstadoCalibracionPerfil("no_habilitada", motivo)
-    return EstadoCalibracionPerfil("obsoleta", motivo)
-
-
 def perfil_de_instalacion(nombre: str):
-    """Perfil ``nombre`` con los ``ajustes_perfil`` del proyecto (si hay uno), sin
-    calibración: lo que importa para modelos, índice y presupuesto. Valida los
-    ajustes (``ValueError`` si no sirven para ese perfil)."""
+    """Perfil ``nombre`` con los ``ajustes_perfil`` del proyecto (si hay uno): lo que importa para
+    modelos, índice y presupuesto. Valida los ajustes (``ValueError`` si no sirven para ese perfil)."""
     from ipsis.configuracion import rutas
     from ipsis.configuracion.carga import cargar_dominio, cargar_proyecto
     from ipsis.configuracion.perfiles import ajustes_de_idioma, perfil_efectivo
 
     motor = cargar_proyecto() if Path(rutas.MOTOR).is_file() else {}
     ajustes = motor.get("ajustes_perfil")
-    if motor.get("pipeline", "v2") == "v2":  # el reranker propio del idioma es de v2
-        ajustes, _ = ajustes_de_idioma(nombre, ajustes, cargar_dominio().get("idioma"))
-    return perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
+    ajustes, _ = ajustes_de_idioma(nombre, ajustes, cargar_dominio().get("idioma"))
+    return perfil_efectivo(nombre, ajustes)
 
 
 def resumen_perfil() -> ResumenPerfil:
-    """Perfil activo, sus modelos y presupuesto, y si el índice y la calibración le sirven."""
+    """Perfil activo, sus modelos y presupuesto, y si el índice le sirve."""
     nombre = cargar_dominio().get("perfil", "light")
     instalacion = perfil_de_instalacion(nombre)
     indice = estado_indice(nombre)
     return ResumenPerfil(
         perfil=nombre, descripcion=instalacion.descripcion, presupuesto_p95_ms=instalacion.presupuesto_p95_ms,
         modelos=instalacion.modelos.model_dump(), indice=indice,
-        calibracion=estado_calibracion(instalacion, indice),
     )
 
 
 def cambiar_perfil(destino: str) -> CambioPerfil:
     """Cambia ``assistant.yaml::perfil`` y dice qué consecuencias tiene.
 
-    No descarga modelos, no reindexa, no calibra ni borra nada: el índice y
-    ``calibration.yaml`` quedan como estaban (el motor ignora una calibración
-    de otra procedencia). Los ``ajustes_perfil`` del proyecto se conservan y se
-    validan contra el perfil destino antes de escribir.
+    No descarga modelos, no reindexa ni borra nada: el índice queda como estaba.
+    Los ``ajustes_perfil`` del proyecto se conservan y se validan contra el perfil
+    destino antes de escribir.
     """
     destino = validar_perfil_instalable(destino)
     anterior = cargar_dominio().get("perfil", "light")
-    instalacion = perfil_de_instalacion(destino)  # valida los ajustes del proyecto antes de escribir
+    perfil_de_instalacion(destino)  # valida los ajustes del proyecto antes de escribir
     if anterior != destino:
         actualizar_dominio({"perfil": destino})
     indice = estado_indice(destino)
-    return CambioPerfil(anterior, destino, anterior != destino, indice, estado_calibracion(instalacion, indice))
+    return CambioPerfil(anterior, destino, anterior != destino, indice)

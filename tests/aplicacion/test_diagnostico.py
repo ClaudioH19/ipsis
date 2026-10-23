@@ -103,21 +103,6 @@ def indexar(modelo: str = E5_SMALL, stemmer: str | None = "spanish", hash_corpus
     return huella
 
 
-def calibracion(perfil: str, hash_corpus: str, estado: str = "calibrado") -> None:
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
-    from ipsis.lenguaje.paquete import cargar_paquete
-    from ipsis.lenguaje.sinonimos import huella_lexica
-
-    Path("config/calibration.yaml").write_text(yaml.safe_dump({
-        "version": 2,
-        "estado": estado, "alfa": 0.05, "confianza": 0.95,
-        "procedencia": {"perfil": perfil, "modelos": cargar_perfil_instalacion(perfil).modelos.model_dump(),
-                        "hash_corpus": hash_corpus, "banco": "golden@1.0.0", "hash_banco": "x",
-                        "hash_lexico": huella_lexica(cargar_paquete("es", proyecto=Path.cwd()))},
-        "umbrales": {"ok": 0.9} if estado == "calibrado" else {},
-    }), encoding="utf-8")
-
-
 def importar_golden() -> None:
     Path("golden").mkdir(exist_ok=True)
     Path("golden/golden.csv").write_text(GOLDEN, encoding="utf-8")
@@ -150,7 +135,7 @@ def sano(perfil: str = "light") -> str:
 
 
 # --- sano ---------------------------------------------------------------------------------
-def test_proyecto_sano_sin_golden_ni_calibracion_esta_listo(proyecto):
+def test_proyecto_sano_sin_golden_esta_listo(proyecto):
     from ipsis.aplicacion.diagnostico import ORDEN
 
     proyecto("medium")
@@ -158,22 +143,21 @@ def test_proyecto_sano_sin_golden_ni_calibracion_esta_listo(proyecto):
     r = reporte()
     assert [c.clave for c in r.chequeos] == list(ORDEN)
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "ok",
-                          "indice": "ok", "calibracion": "aviso", "golden": "aviso", "cors": "ok",
+                          "indice": "ok", "golden": "aviso", "cors": "ok",
                           "personalidad": "ok", "modo": "ok"}  # Folio incluido
     assert r.listo and r.errores == [] and r.perfil == "medium"
     assert r.chequeo("modelos").datos["faltantes"] == []
-    assert r.chequeo("calibracion").acciones == () and r.chequeo("golden").acciones == ()
+    assert r.chequeo("golden").acciones == ()
 
 
-def test_proyecto_sano_con_calibracion_y_golden_vigentes_queda_todo_ok(proyecto):
+def test_proyecto_sano_con_golden_vigente_queda_todo_ok(proyecto):
     proyecto("light")
-    huella = sano("light")
+    sano("light")
     importar_golden()
-    calibracion("light", huella)
     editar("config/personality.yaml", avatar={"activo": False})  # sin avatar: el ícono, sin aviso
     r = reporte()
     assert set(estados(r).values()) == {"ok"}, estados(r)
-    assert "vigente" in r.chequeo("calibracion").mensaje and "vigente" in r.chequeo("golden").mensaje
+    assert "vigente" in r.chequeo("golden").mensaje
 
 
 # --- todos los fallos a la vez ------------------------------------------------------------------
@@ -183,17 +167,15 @@ def test_acumula_todos_los_fallos_y_cada_error_trae_una_accion(proyecto):
     cargar_manual()
     importar_golden()
     indexar(E5_BASE)  # índice de otro modelo denso
-    calibracion("light", "sha256:viejo")
     modificar_documento()  # el corpus cambió después del golden y del índice
     editar("config/assistant.yaml", claves_widget=["clave-sitio"])
     r = reporte()
     assert estados(r) == {"configuracion": "ok", "perfil": "ok", "idioma": "ok", "stemmer": "ok", "modelos": "error",
-                          "indice": "error", "calibracion": "aviso", "golden": "aviso", "cors": "error",
+                          "indice": "error", "golden": "aviso", "cors": "error",
                           "personalidad": "ok", "modo": "ok"}
     assert r.chequeo("modelos").datos["faltantes"] == [RERANKER_ES]
     assert r.chequeo("modelos").acciones == ("ipsis models download",)
     assert "e5-base" in r.chequeo("indice").mensaje and r.chequeo("indice").acciones == ("ipsis index",)
-    assert "obsoleta" in r.chequeo("calibracion").mensaje
     assert r.chequeo("golden").acciones == ("ipsis golden validate", "ipsis golden import <archivo>")
     assert all(c.acciones for c in r.errores)
     assert not r.listo
@@ -220,15 +202,8 @@ def test_configuracion_invalida_nombra_el_archivo_y_no_evalua_lo_que_depende_de_
     configuracion = r.chequeo("configuracion")
     assert configuracion.estado.value == "error" and "config/assistant.yaml" in configuracion.mensaje
     assert "profile" in configuracion.mensaje and configuracion.acciones
-    for clave in ("perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "cors"):
+    for clave in ("perfil", "idioma", "stemmer", "modelos", "indice", "cors"):
         assert r.chequeo(clave).estado.value == "no_evaluado", clave
-
-
-def test_politica_de_abstencion_desconocida(proyecto):
-    proyecto("light")
-    editar("config/engine.yaml", componentes={**leer_proyecto(Path("config/engine.yaml"))["componentes"], "abstention_policy": "nada"})
-    c = reporte().chequeo("configuracion")
-    assert c.estado.value == "error" and "política de abstención 'nada'" in c.mensaje and c.acciones
 
 
 # --- perfil ---------------------------------------------------------------------------------
@@ -244,9 +219,9 @@ def test_perfil_bm25_editado_a_mano_es_error(proyecto):
 
 def test_ajustes_perfil_invalidos_son_error(proyecto):
     proyecto("light")
-    editar("config/engine.yaml", ajustes_perfil={"cascada": {"rerank_k": -3}})
+    editar("config/engine.yaml", ajustes_perfil={"recuperacion_modo": "turbo"})
     perfil = reporte().chequeo("perfil")
-    assert perfil.estado.value == "error" and "profile_overrides" in perfil.mensaje and "cascade.rerank_k" in perfil.mensaje
+    assert perfil.estado.value == "error" and "profile_overrides" in perfil.mensaje and "retrieval_mode" in perfil.mensaje
     assert "profile_overrides" in perfil.acciones[0]
 
 
@@ -306,16 +281,14 @@ def test_light_solo_requiere_el_denso(proyecto):
     assert modelos.estado.value == "ok" and len(modelos.detalles) == 1
 
 
-def test_default_v2_medium_no_exige_qa_pero_v1_explicito_si(proyecto):
+def test_medium_no_exige_qa_salvo_con_destacados(proyecto):
     proyecto("medium")
     instalar(E5_SMALL, RERANKER_ES)
     assert leer_proyecto(Path("config/engine.yaml"))["pipeline"] == "v2"
     modelos = reporte().chequeo("modelos")
     assert modelos.estado.value == "ok" and len(modelos.detalles) == 2
-    editar("config/engine.yaml", pipeline="v1")
-    # v1 no usa el reranker propio del idioma: pide el del perfil, además del lector QA.
-    assert reporte().chequeo("modelos").datos["faltantes"] == [
-        "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", LECTOR]
+    editar("config/engine.yaml", pipeline="v1")  # el motor v1 se retiró: se carga como v2
+    assert reporte().chequeo("modelos").estado.value == "ok"
     editar("config/engine.yaml", pipeline="v2", v2={"destacar_fragmentos": True})
     assert reporte().chequeo("modelos").datos["faltantes"] == [LECTOR]
 
@@ -372,29 +345,6 @@ def test_manifiesto_sin_coleccion_qdrant_es_error(proyecto):
     assert indice.estado.value == "error" and "no existe" in indice.mensaje and indice.acciones == ("ipsis index",)
 
 
-# --- calibración ------------------------------------------------------------------------------
-def test_calibracion_no_habilitada_y_obsoleta_son_avisos(proyecto):
-    proyecto("light")
-    huella = sano("light")
-    calibracion("light", huella, estado="muestra_insuficiente")
-    c = reporte().chequeo("calibracion")
-    assert c.estado.value == "aviso" and "auditoría" in c.mensaje and "obsoleta" not in c.mensaje
-
-    calibracion("medium", huella)
-    c = reporte().chequeo("calibracion")
-    assert c.estado.value == "aviso" and "obsoleta" in c.mensaje
-    assert c.acciones == ("ipsis golden import <archivo>", "ipsis calibrate --apply")  # no hay golden
-    importar_golden()
-    assert reporte().chequeo("calibracion").acciones == ("ipsis calibrate --apply",)
-    assert Path("config/calibration.yaml").is_file()  # doctor no la toca
-
-
-def test_calibracion_ilegible_es_error(proyecto):
-    proyecto("light")
-    sano("light")
-    Path("config/calibration.yaml").write_text("estado: inventado\n", encoding="utf-8")
-    c = reporte().chequeo("calibracion")
-    assert c.estado.value == "error" and c.acciones
 
 
 # --- golden -----------------------------------------------------------------------------------
@@ -406,11 +356,11 @@ def test_banco_de_regresion_es_ok_e_ilegible_es_aviso(proyecto):
     datos = json.loads(manifiesto.read_text(encoding="utf-8"))
     manifiesto.write_text(json.dumps({**datos, "uso": "regresion"}), encoding="utf-8")
     golden = reporte().chequeo("golden")
-    assert golden.estado.value == "ok" and "no para calibrar" in golden.mensaje
+    assert golden.estado.value == "ok" and "regresión" in golden.mensaje
 
     manifiesto.write_text("{roto", encoding="utf-8")
     golden = reporte().chequeo("golden")
-    assert golden.estado.value == "aviso" and "bloqueados" in golden.mensaje and golden.acciones
+    assert golden.estado.value == "aviso" and "bloqueado" in golden.mensaje and golden.acciones
 
 
 # --- CORS -------------------------------------------------------------------------------------
@@ -430,7 +380,7 @@ def test_cli_resume_y_no_repite_acciones(proyecto, capsys):
     assert main(["doctor"]) == 1
     salida = capsys.readouterr().out
     assert "[ERROR]   Modelos" in salida and "[ERROR]   Índice" in salida and "[AVISO]   Golden" in salida
-    assert "3 errores, 2 avisos. El proyecto no está listo." in salida
+    assert "3 errores, 1 aviso. El proyecto no está listo." in salida
     resumen = salida.split("Acciones:\n")[1].splitlines()
     assert resumen[:3] == ["  ipsis models download", "  ipsis index", "  ipsis configure cors_origins=https://tu-sitio.cl"]
     assert resumen[3:] == []  # con Folio incluido, el avatar no pide acción
@@ -441,7 +391,7 @@ def test_cli_sano_sale_con_cero(proyecto, capsys):
     sano("light")
     capsys.readouterr()
     assert main(["doctor"]) == 0
-    assert "0 errores, 2 avisos. El proyecto puede funcionar." in capsys.readouterr().out
+    assert "0 errores, 1 aviso. El proyecto puede funcionar." in capsys.readouterr().out
 
 
 def test_doctor_no_usa_red_ni_onnx_ni_escribe(proyecto, monkeypatch):
@@ -463,7 +413,6 @@ def test_doctor_no_usa_red_ni_onnx_ni_escribe(proyecto, monkeypatch):
 class _MotorListo:
     """Motor que arranca sin modelos: lo que importa aquí es el diagnóstico del proyecto."""
 
-    politica_abstencion = None
     backend = "memoria"
     retriever = None
     control_admision = None
@@ -492,13 +441,13 @@ def _ready():
 
 def test_ready_proyecto_sano(proyecto):
     proyecto("light")
-    calibracion("light", sano("light"))
+    sano("light")
     r = _ready()
     assert r.status_code == 200, r.json()
     cuerpo = r.json()
     assert cuerpo["ready"] and cuerpo["project"]["ready"] and cuerpo["project"]["profile"] == "light"
     assert cuerpo["project"]["blocking"] == []
-    assert cuerpo["project"]["checks"]["index"] == "ok" and cuerpo["project"]["checks"]["calibration"] == "ok"
+    assert cuerpo["project"]["checks"]["index"] == "ok" and "calibration" not in cuerpo["project"]["checks"]
 
 
 def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
@@ -514,15 +463,6 @@ def test_ready_indice_incompatible_no_esta_listo_y_dice_que_hacer(proyecto):
     assert bloqueo["key"] == "index" and "incompatible" in bloqueo["message"]
     assert bloqueo["actions"] == ["ipsis index"]
     assert "index: incompatible" in cuerpo["detail"]
-
-
-def test_ready_sin_calibracion_esta_listo_con_aviso(proyecto):
-    proyecto("light")
-    sano("light")
-    r = _ready()
-    assert r.status_code == 200
-    avisos = {a["key"]: a for a in r.json()["project"]["warnings"]}
-    assert "opcional" in avisos["calibration"]["message"]
 
 
 def test_ready_no_repite_el_diagnostico_en_cada_llamada(proyecto, monkeypatch):
@@ -550,7 +490,7 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     from ipsis.aplicacion.personalidad import importar_avatar_desde
 
     proyecto("light")
-    calibracion("light", sano("light"))
+    sano("light")
     importar_avatar_desde(_json.dumps(definicion_avatar()).encode(), "propio")
     Path(".ipsis/logs").mkdir(parents=True, exist_ok=True)
     Path(".ipsis/logs/queries.jsonl").write_text("{}\n", encoding="utf-8")
@@ -563,7 +503,7 @@ def test_desplegar_preparar_genera_todo(proyecto, capsys):
     assert "Despliegue preparado" in salida and "perfil light" in salida
     dist = Path("dist")
     for archivo in ("config/assistant.yaml", "config/personality.yaml", "config/styles.yaml",
-                    "config/calibration.yaml", "config/avatars/propio.avatar.json",
+                    "config/avatars/propio.avatar.json",
                     "documents/catalog.yaml", "Dockerfile", "docker-compose.yml", "Caddyfile", ".env.example",
                     "DEPLOY.md", "paquete/ipsis-0-py3-none-any.whl"):
         assert (dist / archivo).is_file(), archivo

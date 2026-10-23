@@ -1,7 +1,7 @@
 """Terminal interactiva de ``ipsis``: Folio, autocompletado y menú de opciones.
 
 Con ``prompt_toolkit`` (dependencia del paquete), al escribir ``/`` se despliega
-un menú con los comandos y su descripción; tras ``/calibrate `` aparecen sus
+un menú con los comandos y su descripción; tras ``/evaluate `` aparecen sus
 opciones con su ayuda, y tras ``/load `` las rutas. Todo sale del parser de la
 CLI: un comando nuevo aparece solo. Sin terminal real (o sin la librería) se usa
 ``input()``, igual que antes.

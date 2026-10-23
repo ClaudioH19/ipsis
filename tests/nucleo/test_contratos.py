@@ -169,22 +169,19 @@ def test_el_nucleo_no_importa_dependencias_pesadas():
     assert salida.stdout.strip() == ""
 
 
-def test_configuracion_v3_pasa_a_cascada_y_poda_la_abstencion_por_capas():
+def test_configuracion_v3_con_politica_por_capas_migra_y_descarta_lo_del_motor_v1():
     datos = {
         "config_version": 3,
         "componentes": {"abstention_policy": "politica_v3"},
         "recuperacion": {"modelo": "m", "estrategia_chunking": "c", "coleccion_base": "demo"},
         "abstencion": {
             "capa_a_fuera_dominio": {"umbral": 0.8},
-            "confianza_alta": {"umbral": 0.85},
             "capa_b_premisa": {"max_fragmentos_adicionales": 3},
-            "zona_gris": {"modo": "relacionado"},
         },
     }
 
     migrado = validar_motor(datos)
 
     assert migrado["config_version"] == 8
-    assert migrado["componentes"]["abstention_policy"] == "cascada_v1"
-    assert migrado["abstencion"] == {"max_fragmentos_adicionales": 3}
+    assert "abstention_policy" not in migrado["componentes"] and "abstencion" not in migrado
     assert validar_motor(migrado) == migrado

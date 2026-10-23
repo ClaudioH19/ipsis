@@ -97,21 +97,16 @@ def test_tono_invalido_no_escribe_nada(proyecto, capsys, argumentos):
     assert "Error" in capsys.readouterr().out and PERSONALIDAD.read_bytes() == antes
 
 
-def test_el_motor_usa_el_tono_activo_y_la_variedad_fija(proyecto):
-    from ipsis.aplicacion.consulta import construir_motor  # noqa: F401 -- la ruta real del motor
-    from ipsis.consulta.etapas.redaccion import cargar_plantillas
-    from ipsis.consulta.motor import Motor
+def test_las_plantillas_usan_el_tono_activo_y_la_variedad_fija(proyecto):
+    from ipsis.consulta.plantillas import cargar_plantillas
     from ipsis.lenguaje.paquete import cargar_paquete
 
     datos = leer_proyecto(PERSONALIDAD)
     datos["tono"].update(activo="direct", variedad="fija")
     escribir_proyecto(PERSONALIDAD, datos)
     plantillas = cargar_plantillas(cargar_paquete("es"), {"nombre_asistente": "A", "descripcion_dominio": "B"})
-    assert plantillas["tono"] == "direct" and plantillas["abstencion"]["generico"][0].startswith("No está")
-    motor = Motor(plantillas=plantillas)
-    assert motor.selector_variantes.fija and motor.selector_variantes.tono == "direct"
-    textos = {motor.consultar("hola", "s").mensaje_usuario for _ in range(3)}
-    assert len(textos) == 1  # fija: siempre la primera variante
+    assert plantillas["tono"] == "direct" and plantillas["variedad"] == "fija"
+    assert plantillas["abstencion"]["generico"][0].startswith("No está")
 
 
 def test_plantilla_propia_invalida_es_error_en_validar_y_doctor(proyecto, capsys):

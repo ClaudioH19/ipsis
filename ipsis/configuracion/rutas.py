@@ -11,7 +11,7 @@ MOTOR = "config/engine.yaml"
 ESTILOS = "config/styles.yaml"
 DOMINIO = "config/domain.yaml"
 IDIOMA = "config/language.yaml"
-CALIBRACION = "config/calibration.yaml"
+CALIBRACION = "config/calibration.yaml"  # heredado: ya nada lo lee; solo la migración de proyectos antiguos lo reubica
 PERSONALIDAD = "config/personality.yaml"
 AVATARES = "config/avatars"
 

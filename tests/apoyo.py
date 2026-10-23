@@ -127,13 +127,16 @@ def definicion_avatar(**cambios) -> dict:
 
 
 def motor_minimo():
-    """Motor sin índice con las plantillas del proyecto actual (para probar la API)."""
+    """Motor v2 listo, con un índice en memoria y las plantillas del proyecto actual (para probar la API)."""
+    from apoyo_v2 import RecuperadorMemoria
+    from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier
     from ipsis.configuracion.carga import cargar_dominio
-    from ipsis.consulta.etapas.redaccion import cargar_plantillas
-    from ipsis.consulta.motor import Motor
+    from ipsis.consulta.plantillas import cargar_plantillas
+    from ipsis.consulta.v2 import MotorV2
     from ipsis.lenguaje.paquete import cargar_paquete
 
-    motor = Motor(plantillas=cargar_plantillas(cargar_paquete("es"), cargar_dominio()), idioma=cargar_paquete("es"))
+    motor = MotorV2(retriever=RecuperadorMemoria(), verificador=LiteralOffsetsVerifier(),
+                    plantillas=cargar_plantillas(cargar_paquete("es"), cargar_dominio()), idioma=cargar_paquete("es"))
     from ipsis.aplicacion.consulta import recargar_presentacion
 
     recargar_presentacion(motor)  # fija la marca inicial, como construir_motor
@@ -141,8 +144,7 @@ def motor_minimo():
 
 
 _TIPOS_PROYECTO = {"assistant.yaml": "asistente", "engine.yaml": "motor", "styles.yaml": "estilos",
-                   "personality.yaml": "personalidad", "domain.yaml": "dominio",
-                   "calibration.yaml": "calibracion", "catalog.yaml": "catalogo"}
+                   "personality.yaml": "personalidad", "domain.yaml": "dominio", "catalog.yaml": "catalogo"}
 
 
 def leer_proyecto(ruta) -> dict:

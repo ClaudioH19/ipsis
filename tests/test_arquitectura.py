@@ -123,3 +123,33 @@ def test_la_regla_de_frontera_detecta_un_import_prohibido():
     assert [m for _, m in violaciones_de_frontera("servicio", codigo)] == [
         "ipsis.cli.base", "ipsis.evaluacion.golden", "ipsis.configuracion.carga"]
     assert violaciones_de_frontera("aplicacion", codigo) == []  # la regla es solo para la presentación
+
+
+# --- El motor v1 no se filtra al resto del código --------------------------------------------
+# Nada fuera de los módulos v1 puede importarlos (tampoco con un import diferido dentro de una
+# función): así v2, el servicio y la CLI no cargan la cascada ni dependen de ella.
+# La ejecución real se comprueba en tests/consulta/test_aislamiento_v2.py.
+def _destinos(nodo: ast.AST):
+    """Módulos que importa un nodo, incluidos ``from paquete import submódulo``."""
+    if isinstance(nodo, ast.ImportFrom) and nodo.module and nodo.level == 0:
+        yield nodo.module
+        for alias in nodo.names:
+            yield f"{nodo.module}.{alias.name}"
+    elif isinstance(nodo, ast.Import):
+        for alias in nodo.names:
+            yield alias.name
+
+
+def test_ningun_modulo_fuera_de_v1_importa_el_motor_v1():
+    from apoyo_v2 import es_modulo_v1
+
+    violaciones = []
+    for archivo in sorted(RAIZ.rglob("*.py")):
+        modulo = ".".join(["ipsis", *archivo.relative_to(RAIZ).with_suffix("").parts]).removesuffix(".__init__")
+        if es_modulo_v1(modulo):
+            continue
+        for nodo in ast.walk(ast.parse(archivo.read_text(encoding="utf-8"))):
+            v1 = next((d for d in _destinos(nodo) if es_modulo_v1(d)), None)  # el más corto: el módulo mismo
+            if v1:
+                violaciones.append(f"{archivo.relative_to(RAIZ.parent).as_posix()}:{nodo.lineno} -> {v1}")
+    assert not violaciones, "código fuera de v1 que importa el motor v1:\n" + "\n".join(sorted(set(violaciones)))

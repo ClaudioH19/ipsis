@@ -1,6 +1,6 @@
 """Transporte HTTP del asistente documental.
 
-La aplicación adapta ``Motor.consultar()`` al contrato HTTP. El contrato
+La aplicación adapta ``consultar()`` del motor al contrato HTTP. El contrato
 público usa nombres en inglés (``POST /ask`` con ``question`` y
 ``session_id``; respuesta con ``status``, ``answer``, ``fragments``…); el
 motor conserva su contrato interno y aquí se traduce. El pipeline, sus
@@ -25,11 +25,11 @@ from pydantic import BaseModel, Field
 from ipsis import __version__
 from ipsis.recursos.mensajes import t
 from ipsis.aplicacion.consulta import (
-    Motor,
     MotorNoListo,
     MotorSaturado,
     ContinuacionInvalida,
     construir_motor_del_proyecto,
+    motor_vacio,
     recargar_presentacion,
 )
 from ipsis.nucleo.contratos import QueryEngine
@@ -356,7 +356,7 @@ def recargar_motor(servicio: EstadoAplicacion, *, reindexar: bool = False) -> No
     with servicio.candado_recarga:
         servicio.tarea = {"state": "running", "reindex": reindexar}
         servicio.listo = False
-        anterior, servicio.motor = servicio.motor, Motor()
+        anterior, servicio.motor = servicio.motor, motor_vacio()
         try:
             anterior.cerrar()
             if reindexar:
@@ -366,8 +366,7 @@ def recargar_motor(servicio: EstadoAplicacion, *, reindexar: bool = False) -> No
             motor = (servicio.constructor_motor or _construir_motor_produccion)()
             motor.calentar()
             servicio.motor = motor
-            servicio.abstencion_calibrada = getattr(motor, "abstencion_calibrada",
-                                                    bool(getattr(motor, "politica_abstencion", None)))
+            servicio.abstencion_calibrada = getattr(motor, "abstencion_calibrada", False)
             servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
             servicio.listo, servicio.error_arranque = True, None
             servicio.tarea = {"state": "done", "reindex": reindexar}
@@ -464,7 +463,7 @@ def crear_app(
     cfg_dominio = configuracion_asistente()
     cfg_limite = limite_de_peticiones()
     estado = EstadoAplicacion(
-        motor=motor or Motor(),
+        motor=motor or motor_vacio(),
         constructor_motor=(constructor_motor or _construir_motor_produccion) if motor is None else None,
         claves_widget=list(cfg_dominio.get("claves_widget", [])),
         limitador=LimitadorPeticiones(
@@ -481,11 +480,7 @@ def crear_app(
             if servicio.constructor_motor is not None:
                 servicio.motor = servicio.constructor_motor()
             servicio.motor.calentar()
-            servicio.abstencion_calibrada = getattr(
-                servicio.motor,
-                "abstencion_calibrada",
-                bool(getattr(servicio.motor, "politica_abstencion", None)),
-            )
+            servicio.abstencion_calibrada = getattr(servicio.motor, "abstencion_calibrada", False)
             # El diagnóstico se calcula aquí, antes de declararse listo: /ready nunca lo espera.
             servicio.diagnostico = (time.monotonic(), _calcular_diagnostico())
             servicio.listo = True
@@ -594,7 +589,7 @@ def crear_app(
             "ready": True,
             "mode": modo.publico,
             "backend": motor_activo.backend,
-            "pipeline": getattr(motor_activo, "pipeline", "v1"),
+            "pipeline": getattr(motor_activo, "pipeline", "v2"),
             "collection": getattr(coleccion, "nombre", motor_activo.backend),
             "n_chunks": motor_activo.n_chunks(),
             "n_inventory_entities": len(motor_activo.inventario_entidades()),
@@ -616,7 +611,7 @@ def crear_app(
         dominio = configuracion_asistente()
         idioma = dominio.get("idioma", "es")
         interfaz = interfaz_del_idioma(idioma)
-        es_enrutador = getattr(_estado(request).motor, "pipeline", "v1") == "v2"
+        es_enrutador = getattr(_estado(request).motor, "pipeline", "v2") == "v2"
         microcopy = microcopia_del_widget(idioma, dominio.get("nombre_asistente") or
                                          interfaz.get("default_assistant_name", ""))
         if es_enrutador:

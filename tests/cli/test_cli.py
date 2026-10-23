@@ -226,16 +226,16 @@ def test_configurar_claves_widget_como_lista(proyecto_temporal: Path):
     assert dominio["claves_widget"] == ["clave-sitio-a", "clave-sitio-b"]
 
 
-def test_la_postura_es_proactiva_por_defecto_y_se_configura(proyecto_temporal: Path):
-    """ADR 0008: ``posture`` en assistant.yaml, en inglés en el disco."""
+def test_la_postura_retirada_no_se_configura_pero_un_proyecto_viejo_la_ignora(proyecto_temporal: Path):
+    """Las alternativas de abstención eran del motor v1: ``posture.*`` ya no es una clave válida."""
     main(["init"])
     ruta = proyecto_temporal / "config" / "assistant.yaml"
-    assert leer_proyecto(ruta)["postura"] == {"modo": "proactiva", "max_alternativas": 3}
-    assert main(["configure", "posture.mode=strict", "posture.max_alternatives=2"]) == 0
-    assert leer_proyecto(ruta)["postura"] == {"modo": "estricta", "max_alternativas": 2}
-    assert "mode: strict" in ruta.read_text(encoding="utf-8")
-    assert main(["configure", "posture.mode=agresiva"]) == 1
-    assert main(["configure", "posture.max_alternatives=9"]) == 1
+    assert "postura" not in leer_proyecto(ruta) and "posture" not in ruta.read_text(encoding="utf-8")
+    assert main(["configure", "posture.mode=strict"]) == 1
+    ruta.write_text(ruta.read_text(encoding="utf-8") + "posture:\n  mode: strict\n  max_alternatives: 2\n", encoding="utf-8")
+    from ipsis.configuracion.carga import cargar_dominio
+
+    assert "postura" not in cargar_dominio()
 
 
 def test_doctor_sin_indice_reporta_falla_accionable(proyecto_temporal: Path, capsys):
@@ -270,25 +270,6 @@ def test_doctor_reporta_textos_de_idioma_invalidos(proyecto_temporal: Path, caps
     salida = capsys.readouterr().out
     assert codigo == 1
     assert "[ERROR]   Idioma" in salida
-
-
-def test_doctor_reporta_politica_abstencion_desconocida(proyecto_temporal: Path, capsys):
-    main(["init"])
-    ruta_motor = proyecto_temporal / "config" / "engine.yaml"
-    motor = leer_proyecto(ruta_motor)
-    motor["componentes"]["abstention_policy"] = "inexistente"
-    ruta_motor.write_text(
-        yaml.safe_dump(motor, allow_unicode=True, sort_keys=False),
-        encoding="utf-8",
-    )
-    capsys.readouterr()
-
-    codigo = main(["doctor"])
-    salida = capsys.readouterr().out
-
-    assert codigo == 1
-    assert "política de abstención" in salida
-    assert "inexistente" in salida
 
 
 def test_evaluar_sin_golden_set_no_falla(proyecto_temporal: Path):

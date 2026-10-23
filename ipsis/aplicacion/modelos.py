@@ -97,7 +97,7 @@ def _modelos(instalacion, *, usar_pipeline=False):
         from ipsis.configuracion.carga import cargar_proyecto
 
         cfg = cargar_proyecto()
-        sin_lector = cfg.get("pipeline") == "v2" and not (cfg.get("v2") or {}).get("destacar_fragmentos", False)
+        sin_lector = not (cfg.get("v2") or {}).get("destacar_fragmentos", False)  # el lector solo marca destacados
     vistos: dict[str, tuple[str, object]] = {}
     for rol, id_hf in instalacion.modelos.model_dump().items():
         if rol == "lector" and sin_lector:

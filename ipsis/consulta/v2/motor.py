@@ -49,7 +49,7 @@ class MotorV2:
     etapas_efectivas = ("cortesia", "preparacion", "recuperacion", "contexto", "reranking", "lectura", "evidencia", "redaccion")
     abstencion_calibrada = False
 
-    def __init__(self, *, retriever, verificador, idioma=None, perfil=None, plantillas=None,
+    def __init__(self, *, retriever=None, verificador=None, idioma=None, perfil=None, plantillas=None,
                  control_admision=None, top_k=None, opciones=None, reranker=None, lector=None,
                  buscador_media=None, opciones_media=None):
         if top_k is not None and top_k < 1:
@@ -88,9 +88,11 @@ class MotorV2:
             cerrar()
 
     def n_chunks(self):
+        self._validar_listo()
         return self.retriever.n_chunks()
 
     def inventario_entidades(self):
+        self._validar_listo()
         return self.retriever.inventario_entidades()
 
     def respuesta_conversacional(self, categoria, pregunta=""):

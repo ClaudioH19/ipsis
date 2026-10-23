@@ -24,12 +24,12 @@ def test_cada_comando_registrado_esta_en_un_grupo_del_menu():
 def test_ipsis_sin_argumentos_muestra_el_menu(capsys):
     assert main([]) == 0
     salida = capsys.readouterr().out
-    assert "Measure and calibrate" in salida and "calibrate" in salida and "ipsis chat" in salida
+    assert "Measure" in salida and "evaluate" in salida and "ipsis chat" in salida
 
 
 def test_help_de_un_comando_muestra_sus_opciones(capsys):
-    assert main(["help", "calibrate"]) == 0
-    assert "--alpha" in capsys.readouterr().out
+    assert main(["help", "evaluate"]) == 0
+    assert "--bank" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("ruta,opciones", [
@@ -114,10 +114,10 @@ def test_chat_pregunta_con_un_motor_cargado_una_vez_y_corre_sus_comandos(monkeyp
 
 def test_chat_despacha_un_comando_de_la_cli_y_sigue(monkeypatch, tmp_path, capsys):
     monkeypatch.chdir(tmp_path)
-    chat = ComandoChat(entrada=_entrada(["/doctor", "/calibrate --help", "/chat"]))
+    chat = ComandoChat(entrada=_entrada(["/doctor", "/evaluate --help", "/chat"]))
     assert chat.ejecutar(argparse.Namespace(diagnostico=False)) == 0  # termina con EOF
     salida = capsys.readouterr().out
-    assert "No ipsis project found in this folder." in salida and "--alpha" in salida
+    assert "No ipsis project found in this folder." in salida and "--bank" in salida
     assert "Unknown command: /chat" in salida
 
 
@@ -135,14 +135,14 @@ def test_la_barra_despliega_los_comandos_con_su_descripcion():
 
     todos = candidatos("/", construir_parser())
     nombres = {c for c, _, _ in todos}
-    assert {"/doctor", "/index", "/calibrate", "/help", "/diagnostics", "/exit"} <= nombres
+    assert {"/doctor", "/index", "/evaluate", "/help", "/diagnostics", "/exit"} <= nombres
     assert "/chat" not in nombres and all(d for c, d, _ in todos if c != "/quit")
-    assert _nombres("/cal") == ["/calibrate"]
+    assert _nombres("/eva") == ["/evaluate"]
 
 
 def test_tras_el_comando_aparecen_sus_opciones_y_subcomandos():
-    assert set(_nombres("/calibrate --")) == {"--alpha", "--apply"}
-    assert set(_nombres("/calibrate ")) == {"--alpha", "--apply"}
+    assert set(_nombres("/evaluate --")) == {"--bank", "--output"}
+    assert set(_nombres("/evaluate ")) == {"--bank", "--output"}
     assert {"show", "set"} == set(_nombres("/profile "))
     assert _nombres("/widget theme ap") == ["apply"]
     assert _nombres("hola") == []  # una pregunta no se autocompleta
@@ -160,4 +160,4 @@ def test_el_banner_muestra_a_folio_y_el_proyecto(tmp_path, monkeypatch):
 
 def test_ipsis_solo_fuera_de_una_terminal_imprime_el_menu(capsys):
     assert main([]) == 0  # en pytest la salida no es una terminal
-    assert "Measure and calibrate" in capsys.readouterr().out
+    assert "Measure" in capsys.readouterr().out

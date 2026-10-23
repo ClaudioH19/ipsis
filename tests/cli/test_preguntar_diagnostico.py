@@ -7,21 +7,21 @@ from ipsis.cli import main
 from ipsis.nucleo.esquemas import AssistantResult, AssistantState
 
 DIAGNOSTICO = {
-    "perfil": "medium",
-    "regla": "ok_lector",
-    "etapas": {"filtros_ms": 3, "recuperacion_ms": 12, "lectura_ms": 40, "politica_ms": 0},
-    "senales_politica": {"s_ret": 0.81, "s_oov": 0.0, "s_foco": 0.5, "s_cov": 0.75, "s_rr": 2.3, "s_qa": 0.93},
-    "senales_lexicas": {"terminos_foco": ["filtro", "sedimentos"], "foco_encontrados": ["filtro"],
-                        "foco_ausentes": ["sedimentos"], "ausentes_del_corpus": ["xilofon"]},
-    "oracion_foco": "El filtro se cambia cada 6 meses.",
+    "regla": "recuperado",
+    "etapas": {"preparacion_ms": 1, "recuperacion_ms": 12, "reranking_ms": 40, "lectura_ms": 2},
+    "ortografia": {"sedimentso": "sedimentos"},
+    "candidatos": [
+        {"chunk_id": "manual__c0000", "inicio": "El filtro se cambia cada 6 meses.",
+         "signals": {"dense_rank": 2, "sparse_rank": 1, "fusion_rank": 1}},
+        {"chunk_id": "manual__c0001", "inicio": "La garantía dura dos años.",
+         "signals": {"fusion_rank": 2}},
+    ],
+    "rerank": [{"chunk_id": "manual__c0001", "score": 1.5}, {"chunk_id": "manual__c0000", "score": 3.25}],
+    "lecturas": [{"chunk_id": "manual__c0000", "prob_respuesta": 0.93, "texto": "6 meses"}],
     "evidencias": [{"doc_id": "manual", "chunk_id": "manual__c0000", "texto": "El filtro se cambia cada 6 meses.",
                     "offset_inicio": 14, "offset_fin": 47}],
-    "advertencias": [],
-    "tono": "cordial",
-    "plantillas": ["cordial.opening.2"],
-    "contrato_http": {"estado": "ok", "respuesta": "El filtro se cambia cada 6 meses.",
-                      "respuesta_exacta": {"chunk_id": "manual__c0000", "texto": "6 meses",
-                                           "offset_inicio": 39, "offset_fin": 46}},
+    "advertencias": ["contexto truncado"],
+    "contrato_http": {"estado": "related", "respuesta": "2 resultados relacionados para revisar."},
 }
 
 
@@ -34,7 +34,7 @@ class MotorFalso:
 
     def consultar(self, pregunta, id_sesion):
         self.llamadas.append(("consultar", pregunta))
-        return AssistantResult(estado=AssistantState.RESPUESTA_DIRECTA, motivo="lector",
+        return AssistantResult(estado=AssistantState.RELACIONADO, motivo="recuperado",
                                mensaje_usuario=self.diagnostico["contrato_http"]["respuesta"],
                                diagnostico=self.diagnostico)
 
@@ -47,61 +47,46 @@ def test_el_caso_de_uso_lee_el_diagnostico_del_motor():
 
     motor = MotorFalso()
     d = diagnosticar_pregunta("¿Cada cuánto se cambia el filtro?", motor=motor)
-    assert (d.estado, d.regla, d.motivo, d.perfil) == ("ok", "ok_lector", "lector", "medium")
-    assert d.etapas == [("filters", 3), ("retrieval", 12), ("reading", 40), ("policy", 0)]
+    assert (d.estado, d.regla, d.motivo) == ("related", "recuperado", "recuperado")
+    assert d.etapas == [("preparation", 1), ("retrieval", 12), ("reranking", 40), ("reading", 2)]
     assert d.total_ms == 55
-    assert d.senales["s_qa"] == 0.93
-    assert (d.foco_encontrados, d.foco_ausentes) == (["filtro"], ["sedimentos"])
-    assert d.tramo["texto"] == "6 meses" and d.tramo["offset_inicio"] == 39
+    assert d.ortografia == {"sedimentso": "sedimentos"} and d.advertencias == ["contexto truncado"]
+    assert [e["chunk_id"] for e in d.evidencias] == ["manual__c0000"]
     assert motor.llamadas == [("consultar", "¿Cada cuánto se cambia el filtro?")]  # un motor ajeno no se cierra
 
 
-def test_cli_muestra_etapas_senales_foco_regla_y_tramo(monkeypatch, capsys):
+def test_los_candidatos_traen_su_lugar_en_cada_ranking():
+    from ipsis.aplicacion.consulta import diagnosticar_pregunta
+
+    d = diagnosticar_pregunta("x", motor=MotorFalso())
+    primero, segundo = d.candidatos
+    assert (primero["denso"], primero["bm25"], primero["fusion"]) == (2, 1, 1)
+    assert (primero["rerank"], primero["rerank_score"], primero["qa"]) == (2, 3.25, 0.93)
+    assert (segundo["rerank"], segundo["rerank_score"], segundo["qa"]) == (1, 1.5, None)
+
+
+def test_cli_muestra_etapas_regla_candidatos_y_evidencia(monkeypatch, capsys):
     motor = MotorFalso()
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: motor)
     monkeypatch.setattr("httpx.post", lambda *a, **k: pytest.fail("--diagnostics no usa el servicio"))
     assert main(["ask", "--diagnostics", "¿Cada cuánto se cambia el filtro?"]) == 0
     salida = capsys.readouterr().out
-    assert "[OK]" in salida and "Regla: ok_lector (motivo: lector; perfil: medium)" in salida
-    for linea in ("  filters               3", "  reading              40", "  total                55"):
+    assert "[RELACIONADO" in salida and "Regla: recuperado (motivo: recuperado)" in salida
+    for linea in ("  retrieval            12", "  reranking            40", "  total                55"):
         assert linea in salida
-    assert "s_qa=0.930" in salida and "s_foco=0.500" in salida
-    assert "Términos foco: encontrados: filtro; ausentes: sedimentos" in salida
-    assert "Términos que no están en el corpus: xilofon" in salida
-    assert "Tramo exacto: «6 meses» (manual__c0000, offsets 39-46)" in salida
+    assert "Erratas corregidas con el corpus: sedimentso → sedimentos" in salida
     assert "Evidencia: manual offsets 14-47" in salida
-    assert "Tono: cordial; plantillas: cordial.opening.2" in salida
+    assert "manual__c0000: denso 2, bm25 1, fusión 1, reranker 2 (+3.25), QA 0.93" in salida
+    assert "Advertencia: contexto truncado" in salida
     assert motor.llamadas[0] == "calentar" and motor.llamadas[-1] == "cerrar"  # latencias sin carga de modelos
 
 
-def test_cli_sin_tramo_ni_foco_muestra_guiones(monkeypatch, capsys):
-    diagnostico = {**DIAGNOSTICO, "senales_lexicas": None,
-                   "contrato_http": {"estado": "relacionado", "respuesta": "No encontré…"}}
+def test_cli_sin_candidatos_ni_evidencia_no_imprime_esas_secciones(monkeypatch, capsys):
+    diagnostico = {"etapas": {"recuperacion_ms": 1}, "contrato_http": {"estado": "no_answer", "respuesta": "No hay."}}
     monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
     assert main(["ask", "--diagnostics", "x"]) == 0
     salida = capsys.readouterr().out
-    assert "Tramo exacto: -" in salida and "encontrados: -; ausentes: -" in salida
-
-
-def test_cli_expansion_automatica_muestra_procedencia(monkeypatch, capsys):
-    diagnostico = {**DIAGNOSTICO, "recursos_lexicos": [{"palabra": "vehiculo", "formas": ["automóvil"],
-                   "fuente": "mcr-omw-es", "sentido": "uno-n", "pos": "n"}]}
-    monkeypatch.setattr("ipsis.aplicacion.consulta.construir_motor_del_proyecto", lambda: MotorFalso(diagnostico))
-    assert main(["ask", "--diagnostics", "vehículo"]) == 0
-    assert "vehiculo → automóvil (mcr-omw-es, sentido uno-n, POS n)" in capsys.readouterr().out
-
-
-def test_ranking_diagnostico_distingue_consulta_densa_y_bm25():
-    from types import SimpleNamespace
-    from ipsis.aplicacion.consulta import _ranking_diagnostico
-
-    llamadas = []
-    def rankings(pregunta, *, pregunta_bm25):
-        llamadas.append((pregunta, pregunta_bm25))
-        return {}
-    motor = SimpleNamespace(retriever=SimpleNamespace(rankings_diagnostico=rankings))
-    _ranking_diagnostico(motor, "vehículo", {"pregunta_recuperacion": "vehículo automóvil"})
-    assert llamadas == [("vehículo", "vehículo automóvil")]
+    assert "Candidatos" not in salida and "Evidencia:" not in salida and "Regla: - " in salida
 
 
 def test_cli_motor_que_no_se_puede_construir_pide_rag_doctor(monkeypatch, capsys):

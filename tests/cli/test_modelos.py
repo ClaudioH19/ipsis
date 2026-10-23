@@ -123,16 +123,16 @@ def test_descargar_usa_el_perfil_activo_y_la_frontera_de_cache(hub, capsys, tmp_
     assert _descargas(hub) == [] and capsys.readouterr().out.count("ya disponible") == 2
 
 
-def test_v1_explicito_conserva_la_descarga_del_lector(hub):
+def test_pipeline_v1_heredado_se_trata_como_v2_y_no_descarga_el_lector(hub):
     from apoyo import escribir_proyecto
 
     _proyecto("medium")
     archivo = Path("config/engine.yaml")
     cfg = leer_proyecto(archivo)
-    cfg["pipeline"] = "v1"
+    cfg["pipeline"] = "v1"  # el motor v1 se retiró: el proyecto arranca con v2
     escribir_proyecto(archivo, cfg)
     assert main(["models", "download"]) == 0
-    assert _descargas(hub) == MEDIUM
+    assert _descargas(hub) == MEDIUM[:-1] and LECTOR not in _descargas(hub)
 
 
 def test_descargar_otro_perfil_no_cambia_el_activo_y_reutiliza_lo_compartido(hub, capsys):

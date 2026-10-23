@@ -139,8 +139,9 @@ def test_migra_un_proyecto_v4_a_nombres_en_ingles(tmp_path: Path):
     motor = crudo("config/engine.yaml")
     assert motor["retrieval"] == {"model": "m", "mode": "hybrid", "collection_base": "demo",
                                   "qdrant_path": ".ipsis/index/qdrant"}
-    assert motor["components"] == {"abstention_policy": "cascade_v1"}
-    assert motor["rendering"] == {"inline_citation": "short"}
+    # Claves y valores del motor v1 (retirado): se reubican sin traducir y se ignoran al cargar.
+    assert motor["components"] == {"abstention_policy": "cascada_v1"}
+    assert motor["redaccion"] == {"cita_en_texto": "breve"}
     assert crudo("config/styles.yaml") == {"preset": "contrast", "presentation": {"density": "compact"},
                                           "placement": {"position": "embedded"}, "colors": {"accent": "#ff0000"},
                                           "custom_css": ""}
@@ -148,8 +149,8 @@ def test_migra_un_proyecto_v4_a_nombres_en_ingles(tmp_path: Path):
     assert personalidad["tone"] == {"active": "serious", "variety": "fixed",
                                     "templates": {"no_answer": ["No está en {domain_description}."]}}
     assert personalidad["avatar"] == {"enabled": True, "placement": "header", "events": {"answer_ok": "happy"}}
-    assert crudo("config/calibration.yaml") == {"version": 1, "status": "calibrated", "alpha": 0.05,
-                                               "thresholds": {"domain": 0.5}}
+    # La calibración era del motor v1: el archivo se reubica con el resto, pero nada lo lee ni lo traduce.
+    assert crudo("config/calibration.yaml")["estado"] == "calibrado"
     catalogo = crudo("documents/catalog.yaml")
     assert catalogo == {"documents": [{"file": "a.md", "doc_id": "a", "doc_title": "A", "version": "1",
                                        "active": True, "content_hash": "abc"}]}

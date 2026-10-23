@@ -34,10 +34,10 @@ def test_plantillas_ida_y_vuelta(nombre):
 
 def test_traduce_claves_anidadas_listas_y_valores():
     interno = {"recuperacion": {"modo": "hibrida", "top_k": 5},
-               "redaccion": {"cita_en_texto": "breve"}, "clave_propia": {"modo": "x"}}
+               "conversacion": {"vencimiento_minutos": 30}, "clave_propia": {"modo": "x"}}
     externo = a_externo(interno, "motor")
     assert externo == {"retrieval": {"mode": "hybrid", "top_k": 5},
-                       "rendering": {"inline_citation": "short"}, "clave_propia": {"modo": "x"}}
+                       "conversation": {"expiry_minutes": 30}, "clave_propia": {"modo": "x"}}
     assert a_interno(externo, "motor") == interno
 
     catalogo = {"documentos": [{"archivo": "a.md", "vigente": False}]}

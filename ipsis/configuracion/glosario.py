@@ -30,37 +30,18 @@ def _c(externa: str, hijos: dict | None = None, **kw) -> Clave:
 
 
 # --- vocabulario compartido ----------------------------------------------------------------------
-UMBRALES = {"oov_dominio": _c("oov_domain"), "oov_ok": _c("oov_ok"), "dominio": _c("domain"),
-            "relacionado": _c("related"), "foco": _c("focus"), "ok": _c("ok"), "cov": _c("cov"),
-            "ok_fuerte": _c("ok_strong"), "oov_ok_fuerte": _c("oov_ok_strong"),
-            "foco_coloquial": _c("focus_informal")}
 MODELOS = {"denso": _c("dense"), "reranker": _c("reranker"), "lector": _c("reader")}
 MODOS_RECUPERACION = {"vectorial": "dense", "hibrida": "hybrid", "dispersa": "sparse"}
-ETAPAS = {"conversacional": "conversational", "analisis": "analysis", "confianza": "confidence",
-          "filtros": "filters", "recuperacion": "retrieval", "reranking": "reranking", "lectura": "reading",
-          "evidencia": "evidence", "politica": "policy", "redaccion": "rendering", "verificacion": "verification"}
-
-POSTURAS = {"proactiva": "proactive", "estricta": "strict"}
-SENALES_ALTERNATIVA = {"familia": _c("family"), "medida": _c("measure"), "terminos": _c("terms"), "seccion": _c("section"),
-                       "keywords": _c("keywords"), "categoria": _c("category"), "similitud": _c("similarity")}
+# Etapas de v2, con el nombre que ve quien lee un diagnóstico.
+ETAPAS = {"cortesia": "courtesy", "preparacion": "preparation", "recuperacion": "retrieval", "contexto": "context",
+          "reranking": "reranking", "lectura": "reading", "evidencia": "evidence", "redaccion": "rendering"}
 
 PERFIL = {
     "perfil": _c("profile"), "descripcion": _c("description"), "presupuesto_p95_ms": _c("p95_budget_ms"),
     "modelos": _c("models", MODELOS),
-    "cascada": _c("cascade", {
-        "recuperar_n": _c("retrieve_n"), "rerank_k": _c("rerank_k"),
-        "rerank_candidatos": _c("rerank_candidates"), "leer_m": _c("read_m"),
-        "max_tokens_pasaje": _c("max_passage_tokens"), "stride": _c("stride"),
-        "salida_temprana_sin_foco": _c("early_exit_without_focus"), "concordancia": _c("agreement_check"),
-        "max_caracteres_lectura": _c("max_reading_chars"), "lectura_semantica": _c("semantic_reading"),
-    }),
-    "etapas": _c("stages", valores=ETAPAS),
-    "lexico": _c("lexical", {"k1": _c("k1"), "b": _c("b"), "max_terminos_foco": _c("max_focus_terms")}),
-    "umbrales_por_defecto": _c("default_thresholds", UMBRALES),
     "recuperacion_modo": _c("retrieval_mode", valores=MODOS_RECUPERACION),
     "reranker_por_idioma": _c("language_rerankers"),
     "rerank_candidatos_por_idioma": _c("language_rerank_candidates"),
-    "alternativas": _c("alternatives", {"umbral": _c("threshold"), "pesos": _c("weights", SENALES_ALTERNATIVA)}),
 }
 
 # --- archivos ------------------------------------------------------------------------------------
@@ -69,7 +50,6 @@ ASISTENTE = {
     "descripcion_dominio": _c("domain_description"), "idioma": _c("language"), "perfil": _c("profile"),
     "cors_origenes": _c("cors_origins"), "claves_widget": _c("widget_keys"),
     "registro": _c("query_log", {"activo": _c("enabled")}),
-    "postura": _c("posture", {"modo": _c("mode", valores=POSTURAS), "max_alternativas": _c("max_alternatives")}),
 }
 
 MOTOR = {
@@ -107,23 +87,14 @@ MOTOR = {
     }),
     "componentes": _c("components", {
         nombre: _c(nombre) for nombre in ("parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
-                                          "fusion", "reranker", "intent_classifier", "answer_extractor",
-                                          "evidence_verifier", "response_renderer")
-    } | {"abstention_policy": _c("abstention_policy", valores={"cascada_v1": "cascade_v1"})}),
+                                          "fusion", "reranker", "evidence_verifier")
+    }),
     "qdrant": _c("qdrant", {"modo": _c("mode", valores={"servidor": "server"}), "url_servidor": _c("server_url")}),
     "servicio": _c("service", {"concurrencia_maxima": _c("max_concurrency")}),
     "conversacion": _c("conversation", {"vencimiento_minutos": _c("expiry_minutes"),
                                         "max_sesiones": _c("max_sessions")}),
     "seguridad": _c("security", {"limite_peticiones": _c("rate_limit", {
         "capacidad": _c("capacity"), "tasa_por_segundo": _c("rate_per_second")})}),
-    "redaccion": _c("rendering", {
-        "longitud_maxima_fragmento_chars": _c("max_fragment_chars"),
-        "max_fragmentos_en_respuesta": _c("max_fragments"), "score_relativo_minimo": _c("min_relative_score"),
-        "cita_en_texto": _c("inline_citation", valores={"completa": "full", "breve": "short", "ninguna": "none"}),
-        "incluir_apertura": _c("include_opening"),
-    }),
-    "abstencion": _c("abstention", {"max_fragmentos_adicionales": _c("max_extra_fragments")}),
-    "criterios_aceptacion": _c("acceptance_criteria"),
     "pipeline_version": _c("pipeline_version"),
     "ajustes_perfil": _c("profile_overrides", PERFIL),
 }
@@ -220,18 +191,6 @@ DOMINIO = {
     }),
 }
 
-CALIBRACION = {
-    "version": _c("version"),
-    "estado": _c("status", valores={"calibrado": "calibrated", "muestra_insuficiente": "insufficient_sample",
-                                    "sin_umbral_seguro": "no_safe_threshold"}),
-    "alfa": _c("alpha"), "confianza": _c("confidence"),
-    "procedencia": _c("provenance", {"perfil": _c("profile"), "modelos": _c("models", MODELOS),
-                                     "hash_corpus": _c("corpus_hash"), "banco": _c("bank"),
-                                     "hash_banco": _c("bank_hash"), "hash_lexico": _c("lexical_hash")}),
-    "umbrales": _c("thresholds", UMBRALES),
-    "resultado": _c("result"),
-}
-
 CATALOGO = {
     "documentos": _c("documents", {
         "archivo": _c("file"), "doc_id": _c("doc_id"), "doc_titulo": _c("doc_title"), "version": _c("version"),
@@ -240,7 +199,7 @@ CATALOGO = {
 }
 
 ARCHIVOS = {"asistente": ASISTENTE, "motor": MOTOR, "estilos": ESTILOS, "personalidad": PERSONALIDAD,
-            "dominio": DOMINIO, "calibracion": CALIBRACION, "catalogo": CATALOGO, "perfil": PERFIL}
+            "dominio": DOMINIO, "catalogo": CATALOGO, "perfil": PERFIL}
 
 
 # --- traducción ----------------------------------------------------------------------------------

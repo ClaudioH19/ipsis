@@ -100,19 +100,6 @@ def _mostrar_indice(indice, perfil: str) -> None:
         print(t("cli.action", action="ipsis index"))
 
 
-def _mostrar_calibracion(calibracion, cambio: bool = False) -> None:
-    if calibracion.estado == "sin_calibracion":
-        print(t("profile.calibration_none"))
-    elif calibracion.estado == "vigente":
-        print(t("profile.calibration_current"))
-    elif calibracion.estado == "no_habilitada":
-        print(t("profile.calibration_disabled", reason=calibracion.motivo))
-    else:
-        prefijo = t("profile.calibration_changed" if cambio else "profile.calibration_stale")
-        print(t("profile.calibration_kept", prefix=prefijo, reason=calibracion.motivo))
-        print(t("cli.action", action=t("profile.calibration_action")))
-
-
 class ComandoPerfilMostrar(Comando):
     nombre = "show"
     ayuda = "profile.show_help"
@@ -126,7 +113,6 @@ class ComandoPerfilMostrar(Comando):
         for rol, clave in (("denso", "role_dense"), ("reranker", "role_reranker"), ("lector", "role_reader")):
             print(f"  {t('profile.' + clave):9} {r.modelos.get(rol) or t('cli.none')}")
         _mostrar_indice(r.indice, r.perfil)
-        _mostrar_calibracion(r.calibracion)
         return 0
 
 
@@ -158,8 +144,6 @@ class ComandoPerfilCambiar(Comando):
         else:
             print(t("profile.dense_changed", old=indice.modelo_indice, new=indice.modelo_requerido))
             print(t("cli.action", action="ipsis index"))
-        if cambio.calibracion.estado in ("obsoleta", "no_habilitada"):
-            _mostrar_calibracion(cambio.calibracion, cambio=True)
         return 0
 
 

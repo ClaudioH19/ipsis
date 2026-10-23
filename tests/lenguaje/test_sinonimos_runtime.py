@@ -63,27 +63,8 @@ def test_relacion_y_manuales_tienen_prioridad(monkeypatch):
     assert recursos.expansion_automatica("necesita", p, est) == ({}, [])
 
 
-def test_analisis_preserva_pregunta_y_guarda_expansion_aparte(monkeypatch):
-    from ipsis.consulta.contexto import ContextoConsulta
-    from ipsis.consulta.etapas.analisis import EtapaAnalisis
-    from ipsis.nucleo.esquemas import QueryAnalysis
-
-    p = cargar_paquete("es")
-    g = _grupo(p)
-    monkeypatch.setattr(recursos, "indice_automatico", lambda *_: {r: (g,) for r in g.raices})
-    est = SimpleNamespace(df={g.raices[1]: 1})
-    motor = SimpleNamespace(idioma=p, retriever=SimpleNamespace(estadisticas_lexico=lambda: est),
-                            _analizar=lambda pregunta, sesion: QueryAnalysis(pregunta_original=pregunta,
-                                                                          pregunta_normalizada=pregunta))
-    ctx = ContextoConsulta(pregunta="¿Qué edificio?", id_sesion="uno")
-    EtapaAnalisis(motor).ejecutar(ctx)
-    assert ctx.consulta.pregunta_original == ctx.pregunta == "¿Qué edificio?"
-    assert ctx.consulta.contexto["pregunta_recuperacion"] == "¿Qué edificio? inmueble"
-    assert ctx.diagnostico["recursos_lexicos"][0]["sentido"] == "uno"
-
-
 def test_recuperacion_bm25_expandida_reutiliza_vector_original(monkeypatch):
-    from ipsis.consulta.etapas import recuperacion
+    from ipsis.consulta import recuperador as recuperacion
     from ipsis.nucleo.esquemas import QueryAnalysis
 
     consultas, busquedas = [], []

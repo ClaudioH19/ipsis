@@ -249,14 +249,13 @@ def test_error_de_consulta_se_registra_sin_mensaje_interno(tipo):
 
 
 def test_servicio_con_motor_real_registra_ruta_conversacional():
-    from ipsis.aplicacion.consulta import Motor
+    from apoyo import motor_minimo
     from ipsis.servicio.api import crear_app
 
     assert main(["configure", "query_log.enabled=true"]) == 0
-    cliente = TestClient(crear_app(Motor()))
+    cliente = TestClient(crear_app(motor_minimo()))
     assert cliente.post("/ask", json={"question": "hola", "session_id": "secreta"}).status_code == 200
     entrada = json.loads(REGISTRO.read_text(encoding="utf-8"))
     etapas = [e for e in entrada["traza"] if e["tipo"] == "etapa"]
-    assert etapas[0]["nombre"] == "conversacional" and etapas[0]["estado"] == "completada"
-    assert all(e["estado"] == "omitida" for e in etapas[1:])
+    assert [e["nombre"] for e in etapas] == ["cortesia"] and etapas[0]["estado"] == "completada"
     assert not any(e["tipo"] == "recuperacion" for e in entrada["traza"])

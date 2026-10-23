@@ -1,4 +1,4 @@
-"""``/admin``: estado, umbrales, documentos y reindexado (pestañas Estado y Documentos)."""
+"""``/admin``: estado, documentos y reindexado (pestañas Estado y Documentos)."""
 from __future__ import annotations
 
 import time
@@ -54,35 +54,19 @@ def _esperar_tarea(cliente: TestClient) -> dict:
 
 
 def test_las_rutas_nuevas_exigen_el_token_y_bloquean_tras_cinco_fallos(cliente):
-    for metodo, ruta in (("get", "/admin/status"), ("put", "/admin/thresholds"), ("get", "/admin/documents"),
-                         ("post", "/admin/documents?name=a.md"), ("post", "/admin/reindex")):
+    for metodo, ruta in (("get", "/admin/status"), ("get", "/admin/documents"),
+                         ("post", "/admin/documents?name=a.md"), ("post", "/admin/reindex"), ("get", "/admin/task")):
         assert getattr(cliente, metodo)(ruta).status_code == 401, ruta
-    assert cliente.get("/admin/task").status_code == 429  # la IP queda bloqueada 15 minutos
+    assert cliente.get("/admin/status").status_code == 429  # la IP queda bloqueada 15 minutos
 
 
-def test_estado_muestra_perfil_umbrales_documentos_y_diagnostico(cliente):
+def test_estado_muestra_perfil_documentos_y_diagnostico(cliente):
     datos = cliente.get("/admin/status", headers=AUTH).json()
     assert datos["profile"] == "medium" and datos["documents"] == []
-    umbrales = {u["key"]: u for u in datos["thresholds"]}
-    assert {"ok", "focus", "oov_ok", "ok_strong"} <= set(umbrales)
-    assert umbrales["ok"]["profile"] == 0.8 and umbrales["ok"]["source"] == "profile"
     assert datos["doctor"] and {"key", "level", "message"} <= set(datos["doctor"][0])
-
-
-def test_umbrales_se_guardan_en_engine_yaml_validan_y_recargan_el_motor(cliente):
-    r = cliente.put("/admin/thresholds", headers=AUTH, json={"thresholds": {"ok": 0.85}})
-    assert r.status_code == 200
-    assert _esperar_tarea(cliente)["state"] == "done"
-    motor = yaml.safe_load(Path("config/engine.yaml").read_text(encoding="utf-8"))
-    assert motor["profile_overrides"]["default_thresholds"]["ok"] == 0.85
-    fila = next(u for u in cliente.get("/admin/status", headers=AUTH).json()["thresholds"] if u["key"] == "ok")
-    assert fila["project"] == 0.85 and fila["source"] == "project"
-    assert cliente.put("/admin/thresholds", headers=AUTH, json={"thresholds": {"nada": 0.5}}).status_code == 422
-    assert cliente.put("/admin/thresholds", headers=AUTH, json={"thresholds": {"ok": 1.5}}).status_code == 422
-    assert cliente.put("/admin/thresholds", headers=AUTH, json={"thresholds": {"ok": None}}).status_code == 200
-    _esperar_tarea(cliente)
-    motor = yaml.safe_load(Path("config/engine.yaml").read_text(encoding="utf-8"))
-    assert "ok" not in ((motor.get("profile_overrides") or {}).get("default_thresholds") or {})
+    # Los umbrales y la calibración eran de la cascada v1: ya no se publican ni se editan.
+    assert "thresholds" not in datos and "calibration" not in datos
+    assert cliente.put("/admin/thresholds", headers=AUTH, json={"thresholds": {"ok": 0.85}}).status_code in (404, 405)
 
 
 def test_subir_un_documento_lo_cataloga_y_rechaza_lo_que_no_sirve(cliente, monkeypatch):

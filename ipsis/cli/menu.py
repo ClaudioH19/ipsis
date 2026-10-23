@@ -18,7 +18,7 @@ GRUPOS: list[tuple[str, list[str]]] = [
     ("menu.group_documents", ["load", "sync", "prepare", "index"]),
     ("menu.group_ask", ["chat", "ask", "serve"]),
     ("menu.group_customize", ["configure", "personality", "widget"]),
-    ("menu.group_quality", ["golden", "evaluate", "calibrate", "compare", "benchmark", "audit"]),
+    ("menu.group_quality", ["golden", "evaluate", "compare", "benchmark", "audit"]),
     ("menu.group_operate", ["deploy", "snapshot-config"]),
 ]
 
@@ -31,7 +31,6 @@ EJEMPLOS: list[tuple[str, str]] = [
     ("menu.example_chat", "ipsis chat"),
     ("menu.example_demo", "ipsis serve --demo --open"),
     ("menu.example_serve", "ipsis serve --mode development --open"),
-    ("menu.example_threshold", "ipsis calibrate --alpha 0.05 --apply"),
 ]
 
 

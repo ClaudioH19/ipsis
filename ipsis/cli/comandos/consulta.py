@@ -229,44 +229,13 @@ def imprimir_diagnostico(d) -> None:
     nada = t("cli.none")
     print(etiqueta_estado(d.estado))
     print(d.respuesta)
-    print(t("ask.rule", rule=d.regla or nada, reason=d.motivo, profile=d.perfil or nada))
-    if d.nivel_confianza:
-        print(t("ask.confidence_level", level=t(f"ask.confidence_{d.nivel_confianza}")))
+    print(t("ask.rule", rule=d.regla or nada, reason=d.motivo))
     print(t("ask.stages"))
     for nombre, ms in d.etapas:
         print(f"  {nombre:16} {ms:>6}")
-    print(f"  {'total':16} {d.total_ms:>6}" + (t("ask.early_exit") if d.salto_modelos else ""))
-    if d.senales:
-        print(t("ask.signals"))
-        print("  " + "  ".join(f"{k}={_valor(v)}" for k, v in d.senales.items()))
-    if d.intencion:
-        if d.intencion.get("origen") == "similitud":
-            print(t("ask.intention_similarity", name=d.intencion["nombre"],
-                    score=_valor(d.intencion["similitud"]), margin=_valor(d.intencion["margen"])))
-        else:
-            print(t("ask.intention", name=d.intencion["nombre"], relation=d.intencion.get("relacion") or nada))
+    print(f"  {'total':16} {d.total_ms:>6}")
     if d.ortografia:
         print(t("ask.spelling", values="; ".join(f"{p} → {f}" for p, f in d.ortografia.items())))
-    if d.sinonimos:
-        print(t("ask.synonyms", values="; ".join(f"{p} → {', '.join(f)}" for p, f in d.sinonimos.items())))
-    for recurso in d.recursos_lexicos:
-        print(t("ask.lexical_source", word=recurso["palabra"], forms=", ".join(recurso["formas"]),
-                source=recurso["fuente"], sense=recurso["sentido"], pos=recurso["pos"]))
-    if d.conversacion:
-        print(t("ask.conversation", action=t(f"ask.conversation_{d.conversacion['accion']}"),
-                topic=d.conversacion.get("tema") or nada))
-    if d.pregunta_interpretada:
-        print(t("ask.interpreted", question=d.pregunta_interpretada))
-    print(t("ask.focus", found=", ".join(d.foco_encontrados) or nada, missing=", ".join(d.foco_ausentes) or nada))
-    if d.ausentes_del_corpus:
-        print(t("ask.absent", terms=", ".join(d.ausentes_del_corpus)))
-    if d.oracion_foco:
-        print(t("ask.sentence", sentence=d.oracion_foco))
-    if d.tramo:
-        print(t("ask.span", text=d.tramo["texto"], chunk_id=d.tramo["chunk_id"], start=d.tramo["offset_inicio"],
-                end=d.tramo["offset_fin"]))
-    else:
-        print(t("ask.no_span"))
     for e in d.evidencias:
         print(t("ask.evidence", doc_id=e["doc_id"], start=e["offset_inicio"], end=e["offset_fin"]))
     if d.candidatos:
@@ -276,26 +245,8 @@ def imprimir_diagnostico(d) -> None:
             rr = f"{c['rerank']} ({c['rerank_score']:+.2f})" if c["rerank"] is not None else "-"
             print(t("ask.candidate", chunk_id=c["chunk_id"], dense=c["denso"] or "-", bm25=c["bm25"] or "-",
                     fusion=c["fusion"] or "-", rerank=rr, qa=qa, start=c["inicio"][:70]))
-    if d.oraciones:
-        print(t("ask.sentences"))
-        for o in d.oraciones:
-            print(t("ask.scored_sentence", score=o["score"], text=o["texto"][:110]))
-    if d.alternativas is not None:
-        print(t("ask.alternatives", offered=len(d.alternativas["ofrecidas"]),
-                discarded=len(d.alternativas["descartadas"])))
-        for clave, lista in (("ask.alternative_offered", d.alternativas["ofrecidas"]),
-                             ("ask.alternative_discarded", d.alternativas["descartadas"][:5])):
-            for a in lista:
-                senales = " ".join(f"{k}={v:.2f}" for k, v in a["senales"].items() if v)
-                print(t(clave, affinity=a["afinidad"], signals=senales, text=a["texto"][:90]))
-    if d.tono:
-        print(t("ask.tone", tone=d.tono, templates=", ".join(d.plantillas) or nada))
     for a in d.advertencias:
         print(t("ask.warning", warning=a))
-
-
-def _valor(v) -> str:
-    return f"{v:.3f}" if isinstance(v, float) else str(v)
 
 
 __all__ = ["ComandoPreguntar", "ComandoServir", "ETIQUETA_ESTADO", "etiqueta_estado", "imprimir_diagnostico"]

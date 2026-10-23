@@ -4,8 +4,7 @@ from threading import Barrier
 
 import pytest
 
-from ipsis.consulta.motor import Motor
-from ipsis.nucleo.esquemas import AssistantResult, AssistantState, ChunkRecord, QueryAnalysis, RetrievalCandidate
+from ipsis.nucleo.esquemas import ChunkRecord, QueryAnalysis, RetrievalCandidate
 from ipsis.nucleo.traza import capturar_traza, recuperar_con_traza, traza_actual
 
 
@@ -37,61 +36,40 @@ def test_recuperacion_guarda_texto_filtro_y_copia_del_ranking_original():
     assert "secreto" not in str(traza.eventos)
 
 
-def test_traza_registra_saltos_estado_y_decision_sin_mutacion_retroactiva():
-    class Inicial:
-        nombre = "inicial"
-        requiere_admision = False
+def test_v2_traza_cada_etapa_y_la_salida_no_cambia_despues():
+    from apoyo_v2 import RecuperadorMemoria
+    from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier
+    from ipsis.consulta.v2 import MotorV2
 
-        def ejecutar(self, ctx):
-            ctx.diagnostico["pasos"] = ["original"]
-            ctx.saltar_modelos = True
-
-    class Modelo:
-        nombre = "lectura"
-        requiere_admision = True
-        usa_modelos = True
-
-        def ejecutar(self, ctx):
-            raise AssertionError("no debe ejecutarse")
-
-    class Final:
-        nombre = "politica"
-        requiere_admision = True
-
-        def ejecutar(self, ctx):
-            ctx.diagnostico["regla"] = "sin_foco"
-            ctx.resultado = AssistantResult(estado=AssistantState.SIN_RESPUESTA, motivo="sin_foco",
-                                            mensaje_usuario="No hay respuesta", diagnostico=ctx.diagnostico)
-
-    motor = Motor(etapas=[Inicial(), Modelo(), Final(), Modelo()])
-    motor.retriever = motor.analizador = motor.extractor = motor.verificador = object()
+    motor = MotorV2(retriever=RecuperadorMemoria(), verificador=LiteralOffsetsVerifier())
     with capturar_traza() as traza:
-        resultado = motor.consultar("pregunta", "sesion-secreta")
+        resultado = motor.consultar("filtro del purificador", "sesion-secreta")
     etapas = [e for e in traza.eventos if e["tipo"] == "etapa"]
-    assert [e["estado"] for e in etapas] == ["completada", "omitida", "completada", "omitida"]
-    assert etapas[1]["motivo"] == "sin_foco_en_candidatos"
-    assert etapas[3]["motivo"] == "resultado_temprano"
-    assert etapas[0]["salida"]["salto_modelos"] is True
+    assert [e["nombre"] for e in etapas][:4] == ["cortesia", "preparacion", "recuperacion", "contexto"]
+    assert {e["estado"] for e in etapas} == {"completada"}
+    assert any(e["tipo"] == "recuperacion" and e["origen"] == "principal" for e in traza.eventos)
     resultado.diagnostico["regla"] = "modificada"
-    assert etapas[2]["salida"]["diagnostico"]["regla"] == "sin_foco"
+    assert etapas[-1]["salida"]["diagnostico"].get("regla") != "modificada"
     assert "sesion-secreta" not in str(traza.eventos)
     assert traza_actual() is None
 
 
-def test_etapa_fallida_conserva_traza_y_propaga_error():
-    class Falla:
-        nombre = "lectura"
+def test_v2_una_etapa_fallida_conserva_la_traza_y_propaga_el_error():
+    from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier
+    from ipsis.consulta.v2 import MotorV2
 
-        def ejecutar(self, ctx):
+    class Roto:
+        def recuperar(self, consulta, limite, filtro=None):
             raise RuntimeError("error interno")
 
-    from ipsis.consulta.contexto import ContextoConsulta
+        def estadisticas_lexico(self):
+            return None
 
+    motor = MotorV2(retriever=Roto(), verificador=LiteralOffsetsVerifier())
     with capturar_traza() as traza, pytest.raises(RuntimeError):
-        Motor()._ejecutar_etapa(Falla(), ContextoConsulta(pregunta="dato", id_sesion="secreto"))
-    assert traza.eventos[0]["estado"] == "error"
-    assert traza.eventos[0]["error"] == "RuntimeError"
-    assert "salida" in traza.eventos[0]
+        motor.consultar("dato", "secreto")
+    fallida = [e for e in traza.eventos if e["tipo"] == "etapa" and e["estado"] == "error"]
+    assert fallida and fallida[0]["error"] == "RuntimeError" and "salida" in fallida[0]
     assert traza_actual() is None
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from ipsis.evaluacion.banco import cargar_banco, exigir_calibrable, validar_evidencias_contra_corpus
+from ipsis.evaluacion.banco import cargar_banco, validar_evidencias_contra_corpus
 from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -33,8 +33,6 @@ def test_cada_calidad_tiene_mismos_hechos_preguntas_y_offsets_congelados(calidad
     textos = {a.doc_id: parsear_documento(str(ruta / "corpus" / a.ruta), doc_id=a.doc_id, doc_titulo=a.doc_id,
                                          version="1").texto_completo for a in banco.manifiesto.corpus.archivos}
     validar_evidencias_contra_corpus(banco, textos)
-    with pytest.raises(ValueError):
-        exigir_calibrable(banco)
 
 
 def fila(id_, correcta=True, error=False):

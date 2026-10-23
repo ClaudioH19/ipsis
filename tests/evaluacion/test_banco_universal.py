@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from ipsis.evaluacion.banco import cargar_banco, exigir_calibrable, validar_evidencias_contra_corpus
+from ipsis.evaluacion.banco import cargar_banco, validar_evidencias_contra_corpus
 from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parents[1] / "datos" / "banco_universal"
@@ -100,13 +100,11 @@ def test_cubre_las_capacidades_en_cada_idioma(bancos):
         assert capacidades == CAPACIDADES, idioma
 
 
-def test_el_banco_universal_no_calibra(bancos):
+def test_el_banco_universal_es_de_regresion(bancos):
     for banco in bancos.values():
         assert banco.manifiesto.uso == "regresion"
-        with pytest.raises(ValueError, match="no para calibrar"):
-            exigir_calibrable(banco)
     golden = cargar_banco(Path(__file__).resolve().parents[1] / "datos" / "banco" / "manifiesto.json")
-    exigir_calibrable(golden)  # un banco de evaluación sí
+    assert golden.manifiesto.uso == "evaluacion"
     # Ningún código del producto apunta al banco universal: no se usa por defecto.
     raiz_rag = Path(__file__).resolve().parents[2] / "ipsis"
     assert not [p for p in raiz_rag.rglob("*.py") if re.search(r"banco_universal", p.read_text(encoding="utf-8"))]
@@ -146,14 +144,4 @@ def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
                 continue
             assert fila.senales is not None, fila.caso_id
             assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
-    # La calibración re-decide con la misma regla que producción: con los
-    # umbrales del perfil reproduce exactamente cada estado observado.
-    from ipsis.configuracion.perfiles import perfil_efectivo
-    from ipsis.evaluacion.calibracion import redecidir
-
-    umbrales = perfil_efectivo(perfil).umbrales_por_defecto
-    for obs in artefacto.observaciones:
-        assert redecidir(obs, umbrales).estado == obs.estado, (obs.caso_id, obs.regla)
-    # …y medir el banco universal no lo vuelve calibrable.
-    with pytest.raises(ValueError, match="no para calibrar"):
-        exigir_calibrable(cargar_banco(RAIZ / idioma / "manifiesto.json"))
+    assert cargar_banco(RAIZ / idioma / "manifiesto.json").manifiesto.uso == "regresion"  # medirlo no lo vuelve evaluación

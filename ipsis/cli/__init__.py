@@ -14,7 +14,7 @@ from ipsis.cli.base import Comando, Grupo, registrar
 from ipsis.cli.comandos.chat import ComandoAyuda, ComandoChat
 from ipsis.cli.comandos.consulta import ComandoPreguntar, ComandoServir
 from ipsis.cli.comandos.corpus import ComandoCargar, ComandoIndexar, ComandoPreparar, ComandoSincronizar
-from ipsis.cli.comandos.evaluacion import ComandoBenchmark, ComandoCalibrar, ComandoComparar, ComandoEvaluar
+from ipsis.cli.comandos.evaluacion import ComandoBenchmark, ComandoComparar, ComandoEvaluar
 from ipsis.cli.comandos.golden import grupo_golden
 from ipsis.cli.comandos.modelos import grupo_modelos
 from ipsis.cli.comandos.operacion import ComandoAuditar, ComandoDoctor, ComandoSnapshotConfig
@@ -31,7 +31,7 @@ def registro_de_comandos() -> list[Comando | Grupo]:
         ComandoPreparar(),
         ComandoServir(init, cargar, indexar), ComandoChat(), ComandoPreguntar(),
         ComandoDoctor(), ComandoAuditar(), ComandoSnapshotConfig(),
-        ComandoEvaluar(), ComandoCalibrar(), ComandoComparar(), ComandoBenchmark(main),
+        ComandoEvaluar(), ComandoComparar(), ComandoBenchmark(main),
         grupo_golden(), grupo_widget(), grupo_desplegar(), ComandoAyuda(),
     ]
 

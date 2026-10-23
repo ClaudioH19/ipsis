@@ -175,8 +175,7 @@ _ARCHIVOS_V5 = (
 )
 # Archivo del proyecto → su entrada en el glosario.
 _GLOSARIO_V5 = ((rutas.ASISTENTE, "asistente"), (rutas.MOTOR, "motor"), (rutas.ESTILOS, "estilos"),
-                (rutas.PERSONALIDAD, "personalidad"), (rutas.DOMINIO, "dominio"), (rutas.CALIBRACION, "calibracion"),
-                (rutas.CATALOGO, "catalogo"))
+                (rutas.PERSONALIDAD, "personalidad"), (rutas.DOMINIO, "dominio"), (rutas.CATALOGO, "catalogo"))
 _QDRANT_ANTERIORES = (".cache/qdrant_local", ".rag/indice/qdrant", ".ipsis/indice/qdrant")
 
 
