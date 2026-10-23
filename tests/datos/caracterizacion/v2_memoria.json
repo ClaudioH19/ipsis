@@ -1,0 +1,589 @@
+{
+  "equipo": {
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo funciona solo con agua fría. Manual del purificador.\n\n2. El equipo debe instalarse lejos de fuentes de calor. Manual del purificador.\n\n3. El equipo admite una presión máxima de 4,0 bar. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "3 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "equipo-1",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El equipo funciona solo con agua fría.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "equipo-2",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El equipo debe instalarse lejos de fuentes de calor.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "equipo-3",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El equipo admite una presión máxima de 4,0 bar.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": "<cursor>",
+    "fragments": [
+      {
+        "chunk_id": "equipo-1",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 1038,
+        "match_start": 1000,
+        "offset_end": 1038,
+        "offset_start": 1000,
+        "page": null,
+        "rank": 1,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Equipo > Uso",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El equipo funciona solo con agua fría.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "equipo-2",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 1252,
+        "match_start": 1200,
+        "offset_end": 1252,
+        "offset_start": 1200,
+        "page": null,
+        "rank": 2,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Equipo > Seguridad",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El equipo debe instalarse lejos de fuentes de calor.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "equipo-3",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 1447,
+        "match_start": 1400,
+        "offset_end": 1447,
+        "offset_start": 1400,
+        "page": null,
+        "rank": 3,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Equipo > Presión",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El equipo admite una presión máxima de 4,0 bar.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": true,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "result_shape": "variants",
+    "service_level": "normal",
+    "status": "related"
+  },
+  "equipo (página 2)": {
+    "answer": "2 resultados relacionados para revisar.\n\n1. El equipo emite menos de 40 dB durante el uso. Manual del purificador.\n\n2. El equipo se limpia por fuera con un paño húmedo. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "2 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "equipo-4",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El equipo emite menos de 40 dB durante el uso.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "equipo-5",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El equipo se limpia por fuera con un paño húmedo.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": null,
+    "fragments": [
+      {
+        "chunk_id": "equipo-4",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 1646,
+        "match_start": 1600,
+        "offset_end": 1646,
+        "offset_start": 1600,
+        "page": null,
+        "rank": 4,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Equipo > Ruido",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El equipo emite menos de 40 dB durante el uso.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "equipo-5",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 1849,
+        "match_start": 1800,
+        "offset_end": 1849,
+        "offset_start": 1800,
+        "page": null,
+        "rank": 5,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Equipo > Limpieza",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El equipo se limpia por fuera con un paño húmedo.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": false,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "service_level": "normal",
+    "status": "related"
+  },
+  "gracias": {
+    "answer": "Gracias. Puedes volver a las fuentes mostradas cuando quieras.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "Gracias. Puedes volver a las fuentes mostradas cuando quieras.",
+        "type": "message"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "conversational_category": "thanks",
+    "fragments": [],
+    "plan": "conversational",
+    "service_level": "normal",
+    "status": "conversational"
+  },
+  "hola": {
+    "answer": "Hola. Si necesitas orientación, pulsa «Cómo buscar».",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "Hola. Si necesitas orientación, pulsa «Cómo buscar».",
+        "type": "message"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "conversational_category": "greeting",
+    "fragments": [],
+    "plan": "conversational",
+    "service_level": "normal",
+    "status": "conversational"
+  },
+  "¿Cada cuánto se cambia el filtro del purificador?": {
+    "answer": "3 resultados relacionados para revisar.\n\n1. El filtro de sedimentos del purificador se cambia cada 6 meses. Manual del purificador.\n\n2. El reembolso del purificador se paga en 10 días hábiles desde la devolución. Manual del purificador.\n\n3. La garantía cubre 12 meses desde la compra del purificador. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "3 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "filtro",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El filtro de sedimentos del purificador se cambia cada 6 meses.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "reembolso",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "garantia",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "La garantía cubre 12 meses desde la compra del purificador.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": "<cursor>",
+    "fragments": [
+      {
+        "chunk_id": "filtro",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 63,
+        "match_start": 0,
+        "offset_end": 63,
+        "offset_start": 0,
+        "page": null,
+        "rank": 1,
+        "scope": null,
+        "score": 0.4,
+        "score_kind": "retrieval_score",
+        "section": "Mantenimiento",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El filtro de sedimentos del purificador se cambia cada 6 meses.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "reembolso",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 276,
+        "match_start": 200,
+        "offset_end": 276,
+        "offset_start": 200,
+        "page": null,
+        "rank": 2,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Postventa > Reembolsos",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "garantia",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 459,
+        "match_start": 400,
+        "offset_end": 459,
+        "offset_start": 400,
+        "page": null,
+        "rank": 3,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Postventa > Garantía",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "La garantía cubre 12 meses desde la compra del purificador.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": true,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "result_shape": "neutral",
+    "service_level": "normal",
+    "status": "related"
+  },
+  "¿Cuál es la capital de Mongolia?": {
+    "answer": "No se encontraron fuentes para revisar. Prueba reformulando la pregunta.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "No se encontraron fuentes para revisar. Prueba reformulando la pregunta.",
+        "type": "message"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": null,
+    "fragments": [],
+    "has_more": false,
+    "plan": "no_answer",
+    "response_mode": "ranked_sources",
+    "service_level": "normal",
+    "status": "no_answer"
+  },
+  "¿Cuánto cuesta el purificador P2?": {
+    "answer": "3 resultados relacionados para revisar.\n\n1. Modelo | Precio\nPurificador P1 | $120.000\nPurificador P2 | $180.000 Manual del purificador.\n\n2. El filtro de sedimentos del purificador se cambia cada 6 meses. Manual del purificador.\n\n3. El reembolso del purificador se paga en 10 días hábiles desde la devolución. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "3 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "precios",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "Modelo | Precio\nPurificador P1 | $120.000\nPurificador P2 | $180.000",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "filtro",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El filtro de sedimentos del purificador se cambia cada 6 meses.",
+        "type": "passage"
+      },
+      {
+        "chunk_id": "reembolso",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": "<cursor>",
+    "fragments": [
+      {
+        "chunk_id": "precios",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 867,
+        "match_start": 800,
+        "offset_end": 867,
+        "offset_start": 800,
+        "page": null,
+        "rank": 1,
+        "scope": null,
+        "score": 0.2,
+        "score_kind": "retrieval_score",
+        "section": "Precios",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "Modelo | Precio\nPurificador P1 | $120.000\nPurificador P2 | $180.000",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "filtro",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 63,
+        "match_start": 0,
+        "offset_end": 63,
+        "offset_start": 0,
+        "page": null,
+        "rank": 2,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Mantenimiento",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El filtro de sedimentos del purificador se cambia cada 6 meses.",
+        "truncated": false,
+        "version": "1"
+      },
+      {
+        "chunk_id": "reembolso",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 276,
+        "match_start": 200,
+        "offset_end": 276,
+        "offset_start": 200,
+        "page": null,
+        "rank": 3,
+        "scope": null,
+        "score": 0.1,
+        "score_kind": "retrieval_score",
+        "section": "Postventa > Reembolsos",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": true,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "result_shape": "neutral",
+    "service_level": "normal",
+    "status": "related"
+  },
+  "¿En cuántos días se paga el reembolso?": {
+    "answer": "1 resultados relacionados para revisar.\n\n1. El reembolso del purificador se paga en 10 días hábiles desde la devolución. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "1 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "reembolso",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": null,
+    "fragments": [
+      {
+        "chunk_id": "reembolso",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 276,
+        "match_start": 200,
+        "offset_end": 276,
+        "offset_start": 200,
+        "page": null,
+        "rank": 1,
+        "scope": null,
+        "score": 0.3,
+        "score_kind": "retrieval_score",
+        "section": "Postventa > Reembolsos",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "El reembolso del purificador se paga en 10 días hábiles desde la devolución.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": false,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "result_shape": "neutral",
+    "service_level": "normal",
+    "status": "related"
+  },
+  "¿Qué pasa si no estoy en la visita?": {
+    "answer": "1 resultados relacionados para revisar.\n\n1. Si no estás en la visita de instalación, se reagenda sin costo. Manual del purificador.",
+    "answer_blocks": [
+      {
+        "chunk_id": null,
+        "citation": null,
+        "connector": null,
+        "text": "1 resultados relacionados para revisar.",
+        "type": "message"
+      },
+      {
+        "chunk_id": "visita",
+        "citation": "Manual del purificador",
+        "connector": null,
+        "text": "Si no estás en la visita de instalación, se reagenda sin costo.",
+        "type": "passage"
+      }
+    ],
+    "confidence": {
+      "bm25_agreement": null,
+      "margin": 0.0,
+      "top1": 0.0
+    },
+    "continuation": null,
+    "fragments": [
+      {
+        "chunk_id": "visita",
+        "distinctive_terms": null,
+        "doc_id": "manual",
+        "doc_title": "Manual del purificador",
+        "match_end": 663,
+        "match_start": 600,
+        "offset_end": 663,
+        "offset_start": 600,
+        "page": null,
+        "rank": 1,
+        "scope": null,
+        "score": 0.3,
+        "score_kind": "retrieval_score",
+        "section": "Instalación",
+        "source_blocks": [],
+        "source_name": null,
+        "text": "Si no estás en la visita de instalación, se reagenda sin costo.",
+        "truncated": false,
+        "version": "1"
+      }
+    ],
+    "has_more": false,
+    "plan": "gray_zone",
+    "response_mode": "ranked_sources",
+    "result_shape": "neutral",
+    "service_level": "normal",
+    "status": "related"
+  }
+}
