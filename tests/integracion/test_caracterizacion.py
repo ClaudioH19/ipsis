@@ -1,4 +1,4 @@
-"""Caracterización de ``POST /ask``: congela el comportamiento actual.
+"""Caracterización de ``POST /ask``: congela lo que publica el motor v2.
 
 Sirve de red de seguridad para las refactorizaciones: mover código no debe
 cambiar ninguna respuesta. Congela también respuestas malas conocidas; cuando
@@ -33,7 +33,7 @@ from apoyo import CARACTERIZACION, CORPUS
 pytestmark = pytest.mark.slow
 
 MEDIUM = pytest.param("medium", marks=pytest.mark.modelos(
-    "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx"))
+    "onnx-community/bge-reranker-v2-m3-ONNX"))
 ACTUALIZAR = os.environ.get("IPSIS_UPDATE_CHARACTERIZATION") == "1"
 
 # Tolerancia para los puntajes: absorbe diferencias numéricas entre CPUs y
@@ -87,12 +87,12 @@ def url_servicio(perfil):
     try:
         _rag(["init", "--assistant-name", "Asistente Aqualis",
               "--domain-description", "los manuales del purificador Aqualis", "--profile", perfil], proyecto)
-        # El archivo esperado congela la cascada de v1 con fragmentos de tamaño fijo, como se capturó el 2026-10-10: hoy el
-        # motor por defecto es v2 (publica fuentes) y la preparación por defecto es la estructural (ADR 0009). Se fijan
-        # las condiciones originales para que siga protegiendo ese camino.
+        # El archivo esperado congela lo que publica v2 con la preparación estructural. El presupuesto de consulta
+        # se amplía para que el reordenamiento progresivo termine siempre: con el de producción (2500 ms) el
+        # resultado dependería de la velocidad de la CPU en que corre la prueba.
         motor = proyecto / "config" / "engine.yaml"
-        motor.write_text(motor.read_text(encoding="utf-8").replace("\npipeline: v2", "\npipeline: v1", 1)
-                         .replace("mode: structural_v1", "mode: legacy", 1), encoding="utf-8")
+        motor.write_text(motor.read_text(encoding="utf-8").replace("query_budget_ms: 2500", "query_budget_ms: 30000", 1),
+                         encoding="utf-8")
         _rag(["load", str(CORPUS)], proyecto)
         _rag(["index"], proyecto)
 
@@ -188,7 +188,10 @@ def test_consultar_no_cambia(observado, perfil, pregunta):
 def test_caracterizacion_cubre_todos_los_estados(observado):
     """Si una pregunta cambia de estado al regenerar, la cobertura no debe perderse."""
     estados = {r["status"] for r in observado.values()}
-    assert {"ok", "related", "no_answer", "conversational"} <= estados
+    # v2 publica siempre las mejores fuentes: las preguntas fuera del corpus también salen «related»
+    # (ver ADR 0012); «no_answer» solo aparece sin ninguna fuente recuperable.
+    assert {"related", "conversational"} <= estados
+    assert "ok" not in estados, "v2 publica fuentes; nunca responde «ok»"
 
 
 def test_respuestas_son_texto_literal_del_corpus(observado):

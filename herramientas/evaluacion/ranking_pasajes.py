@@ -16,7 +16,7 @@ recuperado, no los del texto publicado.
 
 Cada ejecución copia el corpus a un proyecto temporal, indexa con la
 configuración pedida y lo descarta: nunca toca ``.ipsis/`` del proyecto actual.
-Sin calibración (``ruta_calibracion=None`` en v2). Requiere los modelos en caché
+Requiere los modelos en caché
 (``IPSIS_MODELS_DIR``) o red hacia huggingface.co.
 
     python herramientas/evaluacion/ranking_pasajes.py \\

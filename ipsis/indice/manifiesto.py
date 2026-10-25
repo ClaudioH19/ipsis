@@ -50,14 +50,14 @@ def _huella_embebido(payload: dict) -> str:
 
 def hash_corpus(payloads: list[dict]) -> str:
     """Huella del contenido indexado: hash de los hashes de cada fragmento (y, si hay cabecera,
-    del texto embebido: cambiar lo que se vectoriza invalida una calibración hecha antes)."""
+    del texto embebido: cambiar lo que se vectoriza cambia la huella)."""
     if any(p.get("preparacion") for p in payloads):
         huellas = sorted(json.dumps({k: p.get(k) for k in ("chunk_id", "hash_texto", "texto_embebido",
             "parent_id", "offset_inicio", "offset_fin", "structure_hash", "preparacion")},
             sort_keys=True, ensure_ascii=False) for p in payloads)
     else:
         # El texto que se vectoriza también cuenta, pero solo cuando difiere del citado (cabecera
-        # activa): sin cabecera la huella es la de siempre y las calibraciones existentes siguen valiendo.
+        # activa): sin cabecera la huella es la de siempre y los índices existentes siguen valiendo.
         huellas = sorted(p["hash_texto"] + _huella_embebido(p) for p in payloads)
     return "sha256:" + hashlib.sha256("\n".join(huellas).encode("utf-8")).hexdigest()
 

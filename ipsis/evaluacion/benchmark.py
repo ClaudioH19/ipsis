@@ -34,12 +34,9 @@ class Latencia(BaseModel):
     etapas: dict[str, dict[str, float]] = Field(default_factory=dict)
 
 
-def latencia_de(observaciones: list[ObservacionEvaluacion], extra_ms: dict[str, float] | None = None) -> Latencia:
-    """p50/p95 por consulta (motor ya calentado) y por etapa, desde las
-    mediciones del propio motor. ``extra_ms`` suma un costo por caso (para
-    estimar una variante con trabajo adicional)."""
-    extra_ms = extra_ms or {}
-    totales = [o.latencia_ms + extra_ms.get(o.caso_id, 0.0) for o in observaciones]
+def latencia_de(observaciones: list[ObservacionEvaluacion]) -> Latencia:
+    """p50/p95 por consulta (motor ya calentado) y por etapa, desde las mediciones del propio motor."""
+    totales = [o.latencia_ms for o in observaciones]
     por_etapa: dict[str, list[float]] = {}
     for o in observaciones:
         for etapa, ms in o.etapas_ms.items():
@@ -59,18 +56,16 @@ class ModeloCargado(BaseModel):
 
 
 class ResultadoPerfil(BaseModel):
-    nombre: str  # «medium» o una variante: «medium+ok0.85»
+    nombre: str
     perfil: str
-    variante: str | None = None  # qué cambia y cómo se midió (experimental, nunca default)
     presupuesto_p95_ms: int
     latencia: Latencia
     cumple_presupuesto: bool
     cobertura: ReporteCobertura
     modelos: list[ModeloCargado] = Field(default_factory=list)
-    cascada: dict = Field(default_factory=dict)
+    recuperacion: str = "hibrida"  # vectorial, hibrida o dispersa
     tiempo_indexado_s: float | None = None  # costo único, fuera de la latencia por consulta
     tono: str | None = None
-    costo_extra: dict | None = None  # p. ej. búsquedas adicionales de una variante
 
 
 class BancoUsado(BaseModel):
@@ -82,7 +77,7 @@ class BancoUsado(BaseModel):
 
 
 class ReporteBenchmark(BaseModel):
-    schema_version: int = 1
+    schema_version: int = 3
     criterio_respuesta: str = CRITERIO_LEGADO
     bancos: list[BancoUsado]
     nota: str
@@ -96,11 +91,10 @@ def nota_de(bancos: list[BancoUsado]) -> str:
 
 
 def codigo_salida(reporte: ReporteBenchmark) -> int:
-    """≠ 0 si un perfil (no las variantes experimentales) excede su presupuesto
-    p95 o, con un banco de evaluación del cliente, da una directa errónea (la misma
+    """≠ 0 si un perfil excede su presupuesto p95 o, con un banco de evaluación del cliente, da una directa errónea (la misma
     guardia de ``ipsis evaluate``). Un banco de regresión no tiene límite de falsos
     ok propio: los compara la línea base de las pruebas."""
-    perfiles = [p for p in reporte.perfiles if p.variante is None]
+    perfiles = reporte.perfiles
     if any(not p.cumple_presupuesto for p in perfiles):
         return 1
     if all(b.uso == "evaluacion" for b in reporte.bancos) and any(p.cobertura.riesgo_aceptadas.x for p in perfiles):
@@ -177,28 +171,20 @@ def markdown(reporte: ReporteBenchmark) -> str:
         lineas.append(f"- **{p.nombre}**: " + (t("evaluation.report_none") if not falsos else
                       "; ".join(f"`{f.caso_id}` «{f.pregunta}»" for f in falsos)))
     lineas += ["", t("evaluation.report_cost"), "",
-               t("evaluation.report_cost_header"), "|---|---|---|---|---|"]
+               t("evaluation.report_cost_header"), "|---|---|---|---|"]
     for p in reporte.perfiles:
         modelos = "<br>".join(
             f"{m.rol}: {m.id_hf.split('/')[-1]} ({m.parametros / 1e6:.0f} M · "
             f"{'—' if m.onnx_mb is None else f'{m.onnx_mb:.0f} MB'})" for m in p.modelos) or "—"
-        k = p.cascada
-        extra = "—" if not p.costo_extra else ", ".join(f"{a}: {b}" for a, b in p.costo_extra.items())
-        lineas.append(f"| {p.nombre} | {modelos} | {k.get('recuperar_n')} / {k.get('rerank_k')} / "
-                      f"{k.get('leer_m')} | {p.tiempo_indexado_s if p.tiempo_indexado_s is not None else '—'} | "
-                      f"{extra} |")
+        lineas.append(f"| {p.nombre} | {modelos} | {p.recuperacion} | "
+                      f"{p.tiempo_indexado_s if p.tiempo_indexado_s is not None else '—'} |")
     lineas += ["", t("evaluation.report_onnx_note"), "",
                t("evaluation.report_stage_latency"), ""]
-    etapas = list(dict.fromkeys(e for p in reporte.perfiles if p.variante is None for e in p.latencia.etapas))
+    etapas = list(dict.fromkeys(e for p in reporte.perfiles for e in p.latencia.etapas))
     lineas += [f"| {perfil} | " + " | ".join(etapas) + " |", "|---|" + "---|" * len(etapas)]
     for p in reporte.perfiles:
-        if p.variante is None:
-            lineas.append(f"| {p.nombre} | " + " | ".join(
-                str(p.latencia.etapas.get(e, {}).get("p95", "—")) for e in etapas) + " |")
-    variantes = [p for p in reporte.perfiles if p.variante]
-    if variantes:
-        lineas += ["", t("evaluation.report_variants"), ""]
-        lineas += [f"- **{p.nombre}**: {p.variante}" for p in variantes]
+        lineas.append(f"| {p.nombre} | " + " | ".join(
+            str(p.latencia.etapas.get(e, {}).get("p95", "—")) for e in etapas) + " |")
     return "\n".join(lineas) + "\n"
 
 

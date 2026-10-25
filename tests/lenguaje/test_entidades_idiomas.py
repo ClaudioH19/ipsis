@@ -6,10 +6,10 @@ from __future__ import annotations
 
 import pytest
 
-from ipsis.consulta.etapas.conversacional import detectar_conversacional
-from ipsis.consulta.etapas.redaccion import cargar_plantillas
+from ipsis.consulta.plantillas import cargar_plantillas
 from ipsis.lenguaje.entidades import extraer_articulos, extraer_fechas, extraer_plazos
 from ipsis.lenguaje.paquete import cargar_paquete
+from ipsis.lenguaje.voz import categoria_cortesia
 
 PLAZOS = {
     "es": [("dentro de cinco días hábiles", "5_dia_habiles"), ("dura 4 semanas", "4_semana"),
@@ -35,13 +35,17 @@ REFERENCIAS = {
     "pt": [("conforme o artigo 8", "articulo_8"), ("os artigos 13 e 14", "articulo_13_y_14"),
            ("o anexo 2", "anexo_2"), ("os artigos 20 a 23", "articulo_20_a_23")],
 }
+# Cortesías completas (v2 solo responde a la expresión entera; «hola, ¿cuánto dura…?» sigue buscando).
 CONVERSACION = {
-    "es": [("hola", "greeting"), ("muchas gracias", "thanks"), ("chao", "farewell"),
-           ("¿qué puedes hacer?", "capability"), ("¿cuánto dura la garantía?", None)],
-    "en": [("hello there", "greeting"), ("thanks a lot", "thanks"), ("bye", "farewell"),
-           ("what can you do?", "capability"), ("how long is the warranty?", None)],
-    "pt": [("olá", "greeting"), ("muito obrigado", "thanks"), ("tchau", "farewell"),
-           ("o que você pode fazer?", "capability"), ("quanto dura a garantia?", None)],
+    "es": [("hola", "greeting"), ("gracias", "thanks"), ("chao", "farewell"),
+           ("¿qué puedes hacer?", "capability"), ("¿cuánto dura la garantía?", None),
+           ("hola, ¿cuánto dura la garantía?", None)],
+    "en": [("hello", "greeting"), ("thank you", "thanks"), ("bye", "farewell"),
+           ("what can you do?", "capability"), ("how long is the warranty?", None),
+           ("hello, how long is the warranty?", None)],
+    "pt": [("olá", "greeting"), ("obrigado", "thanks"), ("tchau", "farewell"),
+           ("o que você pode fazer?", "capability"), ("quanto dura a garantia?", None),
+           ("olá, quanto dura a garantia?", None)],
 }
 
 
@@ -73,7 +77,7 @@ def test_referencias(idioma, texto, esperado):
 @pytest.mark.parametrize(("idioma", "texto", "esperado"), _casos(CONVERSACION))
 def test_conversacion(idioma, texto, esperado):
     plantillas = cargar_plantillas(cargar_paquete(idioma))
-    assert detectar_conversacional(texto, plantillas) == esperado
+    assert categoria_cortesia(texto, plantillas) == esperado
 
 
 @pytest.mark.parametrize("idioma", ["es", "en", "pt"])

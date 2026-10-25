@@ -276,11 +276,7 @@ questions:
   answer: Reload the page and check the cache; if you use an exported widget, replace its widget.js copy too.
 - topic: Quality and maintenance
   question: Do I need a golden dataset to use the router?
-  answer: No. The router can search sources without a golden dataset or direct-answer calibration.
-- topic: Quality and maintenance
-  question: What is v1 engine calibration for?
-  answer: It tunes the optional direct-answer engine's thresholds using a reviewed bank; it does not control v2
-    ranking.
+  answer: No. The router can search sources without a golden dataset.
 - topic: Quality and maintenance
   question: How do I evaluate source quality?
   answer: Use representative queries and check whether they retrieve the right document, its position and the needed

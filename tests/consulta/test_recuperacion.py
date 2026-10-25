@@ -73,7 +73,7 @@ def retriever(payloads):
 
     from ipsis.indice.qdrant import indexar_qdrant
     from ipsis.indice.qdrant import ColeccionQdrant
-    from ipsis.consulta.etapas.recuperacion import RetrieverQdrant
+    from ipsis.consulta.recuperador import RetrieverQdrant
 
     codificador = CodificadorFalso()
     client, modelo, estadisticas, nombre = indexar_qdrant(
@@ -136,38 +136,10 @@ def test_filtro_por_entidad_restringe_los_candidatos(retriever, payloads):
     assert candidatos and {c.chunk.chunk_id for c in candidatos} <= con_articulo_4
 
 
-def test_senales_usan_el_coseno_denso(retriever):
-    senales = retriever.estimar_confianza(_consulta("garantía del equipo"), limite=2)
-    assert 0.0 < senales.confianza_top1 <= 1.0 + 1e-6
-    assert senales.margen_top1_top2 >= 0.0
-
-
-def test_traza_confianza_guarda_los_candidatos_originales_sin_busquedas_extra(retriever, monkeypatch):
-    from ipsis.consulta.etapas import recuperacion
-    from ipsis.nucleo.traza import capturar_traza
-
-    buscar_original = recuperacion.buscar
-    llamadas = []
-
-    def buscar(*args, **kwargs):
-        llamadas.append(kwargs)
-        return buscar_original(*args, **kwargs)
-
-    monkeypatch.setattr(recuperacion, "buscar", buscar)
-    with capturar_traza() as traza:
-        senales = retriever.estimar_confianza(_consulta("garantía del equipo"), limite=2)
-    assert len(llamadas) == 1
-    evento = traza.eventos[0]
-    assert evento["origen"] == "confianza" and evento["modo"] == "vectorial"
-    assert evento["candidatos"][0]["score"] == senales.confianza_top1
-    assert evento["candidatos"][0]["chunk"]["texto_fuente"]
-
-
 def test_la_pregunta_se_codifica_una_sola_vez_por_texto(retriever):
     codificador = retriever.coleccion.codificador
     antes = codificador.llamadas
     consulta = _consulta("¿cuánto dura la membrana?")
-    retriever.estimar_confianza(consulta, limite=2)
     retriever.recuperar(consulta, limite=3)
     retriever.recuperar(consulta, limite=1, filtro=FiltroEntidad(valor_norm="articulo_4"))
     assert codificador.llamadas == antes + 1
@@ -180,7 +152,7 @@ def test_expone_inventarios_y_tamano(retriever, payloads):
 
 
 def test_modo_invalido_falla_al_construir(retriever):
-    from ipsis.consulta.etapas.recuperacion import RetrieverQdrant
+    from ipsis.consulta.recuperador import RetrieverQdrant
 
     with pytest.raises(ValueError, match="modo desconocido"):
         RetrieverQdrant(retriever.coleccion, modo="magico")

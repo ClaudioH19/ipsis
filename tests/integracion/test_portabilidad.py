@@ -148,23 +148,17 @@ def test_portabilidad_init_cargar_indexar_subprocesos(proyecto_externo: Path):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("pipeline", ["v1", "v2"])
-def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path, pipeline):
+def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path):
     """Criterio de cierre 1 (completo): init -> cargar -> indexar -> servir
     -> preguntar, con el servicio real levantado en un puerto libre y
-    cerrado al final. V1 devuelve 'ok'; el default v2 publica fuentes 'related'.
-    Ambos conservan citas literales y una pregunta ajena NO da 'ok'."""
+    cerrado al final. v2 publica fuentes 'related' con citas literales y una
+    pregunta ajena NO da 'ok'."""
     docs = _construir_documentos(proyecto_externo)
     _init_cargar_indexar(proyecto_externo, docs)
 
-    from apoyo import escribir_proyecto, leer_proyecto
+    from apoyo import leer_proyecto
 
-    archivo_motor = proyecto_externo / "config/engine.yaml"
-    cfg = leer_proyecto(archivo_motor)
-    assert cfg["pipeline"] == "v2"  # init activa v2 sin configuración adicional
-    if pipeline == "v1":
-        cfg["pipeline"] = "v1"
-        escribir_proyecto(archivo_motor, cfg)
+    assert leer_proyecto(proyecto_externo / "config/engine.yaml")["pipeline"] == "v2"  # init activa v2
 
     puerto = _puerto_libre()
     proceso = subprocess.Popen(
@@ -184,11 +178,11 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path, pipelin
                 pass
             time.sleep(1)
         assert listo, "el servicio no quedó listo en 90s"
-        assert resp.json()["pipeline"] == pipeline
+        assert resp.json()["pipeline"] == "v2"
         modo = httpx.get(f"http://127.0.0.1:{puerto}/config", timeout=10).json()["response_mode"]
-        assert modo == ("ranked_sources" if pipeline == "v2" else None)
+        assert modo == "ranked_sources"
 
-        # Caso literal: cita del manual, directa en v1 y fuente ordenada en v2.
+        # Caso literal: cita del manual como fuente ordenada.
         resp = httpx.post(
             f"http://127.0.0.1:{puerto}/ask",
             json={"question": "¿Cuántos meses cubre la garantía del equipo X100?", "session_id": "portabilidad"},
@@ -196,8 +190,8 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path, pipelin
         )
         assert resp.status_code == 200
         datos = resp.json()
-        assert datos["status"] == ("related" if pipeline == "v2" else "ok"), datos
-        assert datos.get("response_mode") == ("ranked_sources" if pipeline == "v2" else None)
+        assert datos["status"] == "related", datos
+        assert datos.get("response_mode") == "ranked_sources"
         assert "18 meses" in datos["answer"]
         assert len(datos["fragments"]) >= 1
         # "Literal" significa substring exacto de lo que el parser extrajo
@@ -211,10 +205,8 @@ def test_portabilidad_preguntar_de_punta_a_punta(proyecto_externo: Path, pipelin
         assert frag_manual is not None, datos["fragments"]
         assert frag_manual["text"] in doc_manual.texto_completo  # cita LITERAL, substring exacto de la fuente
 
-        # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Con tres chunks
-        # su s_oov es 0,74 y cascada_v1 hoy la deja en relacionado (docs/methodology/lexical.md: sinónimos).
-        # Se conserva para que una regresión sea visible: puede mejorar a 'ok', pero
-        # nunca perder el pasaje con «18 meses».
+        # Caso paráfrasis: «dura» no está en el corpus (dice «cubre»). Se conserva para que una
+        # regresión sea visible: nunca debe perder el pasaje con «18 meses».
         resp = httpx.post(
             f"http://127.0.0.1:{puerto}/ask",
             json={"question": "¿Cuánto dura la garantía del equipo X100?", "session_id": "portabilidad"},

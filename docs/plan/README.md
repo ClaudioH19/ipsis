@@ -2,7 +2,7 @@
 
 Un plan se borra al cerrarse: lo que vale queda en `CHANGELOG.md`, los
 [ADR](../decisions/) y [docs/methodology/](../methodology/). Este documento reúne el
-estado de todos, y el detalle de lo que sigue abierto. Estado al 2026-10-20.
+estado de todos, y el detalle de lo que sigue abierto. Estado al 2026-10-23.
 
 ## Estado
 
@@ -14,14 +14,14 @@ estado de todos, y el detalle de lo que sigue abierto. Estado al 2026-10-20.
 | Precisión desde la ingesta | casi cerrado; quedan F3.3 (condicional) y F4.3 (espera al usuario) | [precision-ingesta.md](../methodology/precision-ingesta.md), [ADR 0009](../decisions/0009-structural-preparation-by-default.md) |
 | Plan V4 (bancos, memoria, sinónimos, intención) | cerrado el 2026-10-16 | [v4-results.md](../methodology/v4-results.md), [ADR 0007](../decisions/0007-versioned-lexical-sources.md) |
 | Expansión de pasajes (doc2query) | descartado el 2026-10-20: el generador local empeora `medium` | [doc2query.md](../methodology/doc2query.md) |
-| **Motor v2** | v2 es el predeterminado desde el 2026-10-12; faltan evaluación general y retiro de v1 | abajo |
+| Retiro del motor v1 | cerrado el 2026-10-23 | [ADR 0012](../decisions/0012-retire-the-v1-engine.md) |
+| **Motor v2** | v2 es el único motor; falta la evaluación reservada con modelos y la presentación completa | abajo |
 | **Conversación en v2** | abierto el 2026-10-19, sin iniciar | abajo |
 | **Fuentes tabulares** | propuesta sin implementar | abajo |
 
-Las pruebas que hoy fallan en el motor v1 por snapshots anteriores a v2 (`test_caracterizacion`,
-`test_banco_universal::test_falsos_ok_no_superan_la_linea_base`, `test_general_regresion`,
-`test_tono_no_cambia_estados`, `test_portabilidad_pythonioencoding_cp1252_no_falla`) fallan también
-sin cambios y conviene corregirlas aparte.
+Al retirar el motor v1 se borraron o adaptaron sus pruebas; las lentas se convirtieron a v2 y se corrieron con los
+modelos reales (suite completa verde). Pendiente aparte: los campos del paquete de idioma que solo leían
+los módulos de v1 (ADR 0012).
 
 ## Motor v2: lo que falta
 
@@ -40,16 +40,16 @@ Pendiente, y todavía sin criterios cumplidos:
    migración, reindexación y rollback probados en una copia de proyecto.
 3. **Presentación completa.** Bloques de párrafos, listas y tablas con referencia por celda en API y widget;
    conversación e idiomas anunciados acreditados.
-4. **Retiro de v1** solo con evidencia: selector, paquete v1, cascada y reglas antiguas fuera; migrador de
-   configuración histórica en la frontera; ADR de comprensión, cascada y memoria actualizados.
+4. ~~**Retiro de v1**~~ hecho el 2026-10-23 (ADR 0012): selector, cascada y reglas antiguas fuera; una configuración
+   con `pipeline: v1` se carga como v2.
 5. **Preparación documental:** comparar el parser propio con Docling por fidelidad y costo en CPU.
 
 ## Conversación en v2
 
 **Problema.** Con v2 como predeterminado tres cosas no funcionan:
 
-1. **No hay memoria de conversación.** `MemoriaConversacion` solo se crea en la rama v1 de
-   `construir_motor_del_proyecto` (`ipsis/aplicacion/consulta.py`). «¿Y para extranjeros?» se busca sola. Las
+1. **No hay memoria de conversación.** `MemoriaConversacion` (`ipsis/consulta/seguimiento.py`) se conserva, pero
+   ya no la crea `construir_motor` (solo la creaba la rama v1, retirada). «¿Y para extranjeros?» se busca sola. Las
    cifras del [ADR 0006](../decisions/0006-conversation-memory.md) (36/38 seguimientos en español) son de v1.
 2. **Ambigüedad sin umbral.** La forma `variants` dice «Depende de tu caso» aunque la pregunta ya nombre el caso
    («¿cuántas horas tiene la Práctica II?»).
@@ -72,14 +72,14 @@ Pendiente, y todavía sin criterios cumplidos:
 
 **Reglas fijas:** sin generación (ADR 0001; texto nuevo solo en `recursos/voz` o `recursos/idiomas`, en los tres idiomas);
 apagado hasta M3 (`conversation.enabled_v2: false` deja v2 exactamente como hoy); `herencia_indebida` = 0 en los tres
-idiomas es condición de cualquier cambio; v1 no cambia; medir en `dev`, informar en `test`; documentos reales fuera del repo;
+idiomas es condición de cualquier cambio; medir en `dev`, informar en `test`; documentos reales fuera del repo;
 nunca inventar cifras.
 
 **Fases** (una tarea por sesión; las marcadas con ⚠ cambian la conducta por defecto y piden aprobación):
 
 | Fase | Contenido | Pendiente de decidir |
 |---|---|---|
-| M0.1 | `tests/datos/banco_conversaciones/medir.py` con `--pipeline v1\|v2`: herencia correcta, indebida y perdida, hit@1/@3 | |
+| M0.1 | `tests/datos/banco_conversaciones/medir.py` sobre v2 (las cifras de v1 solo se pueden reproducir con una copia anterior del código): herencia correcta, indebida y perdida, hit@1/@3 | |
 | M0.2 | Banco encadenado (`encadenado.py`): las preguntas independientes de `banco_consultas` y `banco_informal`, aisladas frente a seguidas en una conversación | |
 | M0.3 | Seguimientos informales por idioma, con métrica aparte | ⚠ quién los escribe (recomendado: el agente propone 10 por idioma y la persona corrige) |
 | M1.1 | Conversación emitida por el servidor (`MemoriaConversacion.emitir`, campo `conversation`) | ⚠ si `conversation` aparece con la opción apagada (recomendado: no) |

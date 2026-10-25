@@ -1,6 +1,6 @@
 # Assistant personality: tone of the answers and widget avatar.
 # Presentation only: it never changes what the assistant answers, and it needs
-# no reindexing or recalibration. Edit it here, with `ipsis personality …` or
+# no reindexing. Edit it here, with `ipsis personality …` or
 # in the /admin/panel.
 #
 # tone.active: cordial | formal | serious | upbeat | friendly | empathetic | direct

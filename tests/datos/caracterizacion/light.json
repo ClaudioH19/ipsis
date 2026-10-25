@@ -3,7 +3,7 @@
     "status": "conversational",
     "service_level": "normal",
     "plan": "conversational",
-    "answer": "¡Hola! Soy Asistente Aqualis. Respondo preguntas sobre los manuales del purificador Aqualis citando el texto exacto del documento. ¿Qué necesitas saber?",
+    "answer": "Hola. Si necesitas orientación, pulsa «Cómo buscar».",
     "confidence": {
       "top1": 0.0,
       "margin": 0.0
@@ -14,7 +14,7 @@
     "status": "conversational",
     "service_level": "normal",
     "plan": "conversational",
-    "answer": "Gracias a ti. Si necesitas algo más de los manuales del purificador Aqualis, pregunta cuando quieras.",
+    "answer": "Gracias. Puedes volver a las fuentes mostradas cuando quieras.",
     "confidence": {
       "top1": 0.0,
       "margin": 0.0
@@ -22,32 +22,41 @@
     "fragments": []
   },
   "¿Cada cuánto se cambia el filtro de sedimentos?": {
-    "status": "ok",
+    "status": "related",
     "service_level": "normal",
-    "plan": "extractive",
-    "answer": "Según el texto cargado:\n\nEl filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. (Fuente: Manual del purificador de agua Aqualis P3).\n\nEl documento también señala: Reglamento ficticio creado para las pruebas de caracterización. (Fuente: Reglamento del servicio técnico Aqualis).",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.\n\n2. El servicio técnico atiende de lunes a viernes, entre las 9 y las 18 horas. Los sábados solo se atienden emergencias por filtraciones. Reglamento del servicio técnico Aqualis.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.85422,
-      "margin": 0.02035
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0002",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3 > Filtros",
-        "offset_start": 463,
+        "offset_start": 376,
         "offset_end": 665,
-        "text": "El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
         "score": 1.0
       },
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0003",
         "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 40,
-        "offset_end": 103,
-        "text": "Reglamento ficticio creado para las pruebas de caracterización.",
-        "score": 0.66667
+        "section": "Reglamento del servicio técnico Aqualis > Horario de atención",
+        "offset_start": 683,
+        "offset_end": 817,
+        "text": "El servicio técnico atiende de lunes a viernes, entre las 9 y las 18 horas. Los sábados solo se atienden emergencias por filtraciones.",
+        "score": 0.47619
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.44444
       }
     ]
   },
@@ -55,14 +64,14 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No encontré justo eso, pero los documentos tratan el tema así:\n\nArtículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEl documento agrega, en otra sección: Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).\n\nPuede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n2. La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie. Manual del purificador de agua Aqualis P3.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.8699,
-      "margin": 0.08424
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0002",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
         "offset_start": 395,
@@ -71,43 +80,61 @@
         "score": 1.0
       },
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0003",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Garantía",
+        "offset_start": 675,
+        "offset_end": 893,
+        "text": "La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie.",
+        "score": 0.4
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3 > Instalación",
-        "offset_start": 290,
+        "offset_start": 154,
         "offset_end": 367,
-        "text": "Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
-        "score": 0.66667
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.36111
       }
     ]
   },
   "¿En cuántos días hábiles se paga el reembolso?": {
-    "status": "ok",
+    "status": "related",
     "service_level": "normal",
-    "plan": "extractive",
-    "answer": "El documento lo plantea así:\n\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nA esto se suma lo siguiente: Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n2. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.\n\n3. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.87552,
-      "margin": 0.09017
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0002",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
-        "offset_start": 537,
+        "offset_start": 395,
         "offset_end": 662,
-        "text": "Artículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
         "score": 1.0
       },
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "reglamento-servicio__u0001",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
+        "offset_start": 116,
+        "offset_end": 383,
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.53333
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 42,
-        "offset_end": 141,
-        "text": "Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe.",
-        "score": 0.66667
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.30952
       }
     ]
   },
@@ -115,29 +142,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Lo que preguntas no aparece de forma directa. Esto es lo relacionado que encontré:\n\nEl purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nTe sumo también esto: Reglamento ficticio creado para las pruebas de caracterización. (Fuente: Reglamento del servicio técnico Aqualis).\n\n¿Coincide con lo que necesitabas? Con otro detalle puedo afinar la búsqueda.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. Manual del purificador de agua Aqualis P3.\n\n2. Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe. Manual del purificador de agua Aqualis P3.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.88395,
-      "margin": 0.04861
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0004",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 105,
-        "offset_end": 141,
-        "text": "El purificador Aqualis P3 no existe.",
-        "score": 1.0
+        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
+        "offset_start": 902,
+        "offset_end": 1041,
+        "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día.",
+        "score": 0.75
       },
       {
-        "chunk_id": "reglamento-servicio__c0000",
-        "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis",
-        "offset_start": 40,
-        "offset_end": 103,
-        "text": "Reglamento ficticio creado para las pruebas de caracterización.",
+        "chunk_id": "manual-purificador__u0000",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3",
+        "offset_start": 42,
+        "offset_end": 141,
+        "text": "Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe.",
         "score": 0.66667
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.53333
       }
     ]
   },
@@ -145,29 +181,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "La respuesta directa no aparece. Te comparto lo que más se relaciona:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEn relación con lo anterior, dice: Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\n¿Responde esto a lo que preguntaste? Si no, indícame qué parte te falta.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.\n\n2. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n3. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.86534,
-      "margin": 0.08885
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0001",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
-        "offset_start": 260,
+        "offset_start": 116,
         "offset_end": 383,
-        "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
         "score": 1.0
       },
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "reglamento-servicio__u0002",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
+        "offset_start": 395,
+        "offset_end": 662,
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "score": 0.5
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 42,
-        "offset_end": 141,
-        "text": "Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe.",
-        "score": 0.66667
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.325
       }
     ]
   },
@@ -175,29 +220,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Sobre «equipo» no hay una respuesta directa. Esto es lo relacionado:\n\nEl filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. (Fuente: Manual del purificador de agua Aqualis P3).\n\nA esto se suma lo siguiente: Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. (Fuente: Reglamento del servicio técnico Aqualis).\n\nPuede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.\n\n2. El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. Manual del purificador de agua Aqualis P3.\n\n3. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.88733,
-      "margin": 0.05573
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0001",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
-        "offset_start": 511,
-        "offset_end": 665,
-        "text": "El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
-        "score": 1.0
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.83333
       },
       {
-        "chunk_id": "reglamento-servicio__c0000",
-        "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
-        "offset_start": 395,
-        "offset_end": 662,
-        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
-        "score": 0.66667
+        "chunk_id": "manual-purificador__u0004",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
+        "offset_start": 902,
+        "offset_end": 1041,
+        "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día.",
+        "score": 0.7
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.58333
       }
     ]
   },
@@ -205,29 +259,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No hay una respuesta exacta, aunque los documentos dicen esto sobre el tema:\n\nLos sábados solo se atienden emergencias por filtraciones. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEl documento también señala: Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe. (Fuente: Manual del purificador de agua Aqualis P3).\n\nRevisa si este texto responde tu duda; si no, reformula la pregunta y lo intento de nuevo.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El servicio técnico atiende de lunes a viernes, entre las 9 y las 18 horas. Los sábados solo se atienden emergencias por filtraciones. Reglamento del servicio técnico Aqualis.\n\n2. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.\n\n3. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.85329,
-      "margin": 0.08236
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0003",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Horario de atención",
-        "offset_start": 759,
+        "offset_start": 683,
         "offset_end": 817,
-        "text": "Los sábados solo se atienden emergencias por filtraciones.",
+        "text": "El servicio técnico atiende de lunes a viernes, entre las 9 y las 18 horas. Los sábados solo se atienden emergencias por filtraciones.",
         "score": 1.0
       },
       {
-        "chunk_id": "manual-purificador__c0000",
-        "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3",
-        "offset_start": 42,
-        "offset_end": 141,
-        "text": "Documento ficticio creado para las pruebas de caracterización. El purificador Aqualis P3 no existe.",
+        "chunk_id": "reglamento-servicio__u0001",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
+        "offset_start": 116,
+        "offset_end": 383,
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
         "score": 0.33333
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.25
       }
     ]
   },
@@ -235,29 +298,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "Sin una respuesta directa a mano, esto es lo más pertinente:\n\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).\n\nEn relación con lo anterior, dice: La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).\n\n¿Era esto lo que querías saber? Puedo buscar otra vez si me das más detalles.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.\n\n2. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n3. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.82972,
-      "margin": 0.07259
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "reglamento-servicio__u0001",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
-        "offset_start": 260,
+        "offset_start": 116,
         "offset_end": 383,
-        "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
         "score": 1.0
       },
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "reglamento-servicio__u0002",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
+        "offset_start": 395,
+        "offset_end": 662,
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "score": 0.58333
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
         "doc_title": "Manual del purificador de agua Aqualis P3",
-        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
-        "offset_start": 236,
-        "offset_end": 367,
-        "text": "La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
-        "score": 0.66667
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.34286
       }
     ]
   },
@@ -265,29 +337,38 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No veo una respuesta directa; te muestro lo que dicen los documentos sobre el tema:\n\nSi la presión supera 4,0 bar, instala una válvula reductora antes del equipo. (Fuente: Manual del purificador de agua Aqualis P3).\n\nTambién dice esto: Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).\n\nRevisa si este texto responde tu duda; si no, reformula la pregunta y lo intento de nuevo.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.\n\n2. La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie. Manual del purificador de agua Aqualis P3.\n\n3. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.",
     "confidence": {
-      "top1": 0.82911,
-      "margin": 0.03318
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0001",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3 > Instalación",
-        "offset_start": 290,
+        "offset_start": 154,
         "offset_end": 367,
-        "text": "Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
         "score": 1.0
       },
       {
-        "chunk_id": "reglamento-servicio__c0000",
+        "chunk_id": "manual-purificador__u0003",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Garantía",
+        "offset_start": 675,
+        "offset_end": 893,
+        "text": "La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie.",
+        "score": 0.58333
+      },
+      {
+        "chunk_id": "reglamento-servicio__u0001",
         "doc_title": "Reglamento del servicio técnico Aqualis",
         "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
-        "offset_start": 260,
+        "offset_start": 116,
         "offset_end": 383,
-        "text": "Artículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
-        "score": 0.66667
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.5
       }
     ]
   },
@@ -295,14 +376,14 @@
     "status": "related",
     "service_level": "normal",
     "plan": "gray_zone",
-    "answer": "No hay una respuesta directa en los documentos, pero esto es lo más relacionado:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).\n\nPara completar, el texto indica: La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. (Fuente: Reglamento del servicio técnico Aqualis).\n\nPuede que este pasaje sea lo que buscas. Si no lo es, pregúntame con otras palabras.",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. Manual del purificador de agua Aqualis P3.\n\n2. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.82504,
-      "margin": 0.03083
+      "top1": 0.0,
+      "margin": 0.0
     },
     "fragments": [
       {
-        "chunk_id": "manual-purificador__c0000",
+        "chunk_id": "manual-purificador__u0004",
         "doc_title": "Manual del purificador de agua Aqualis P3",
         "section": "Manual del purificador de agua Aqualis P3 > Consumo",
         "offset_start": 902,
@@ -311,58 +392,179 @@
         "score": 1.0
       },
       {
-        "chunk_id": "reglamento-servicio__c0000",
-        "doc_title": "Reglamento del servicio técnico Aqualis",
-        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
-        "offset_start": 214,
-        "offset_end": 383,
-        "text": "La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "chunk_id": "manual-purificador__u0002",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
         "score": 0.66667
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.41667
       }
     ]
   },
   "¿Qué dice el artículo 99?": {
-    "status": "no_answer",
+    "status": "related",
     "service_level": "normal",
-    "plan": "no_answer",
-    "answer": "No hay rastro de \"artículo 99\" en los documentos disponibles.",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n2. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.\n\n3. Reglamento ficticio creado para las pruebas de caracterización. Reglamento del servicio técnico Aqualis.",
     "confidence": {
-      "top1": 0.82813,
-      "margin": 0.0552
+      "top1": 0.0,
+      "margin": 0.0
     },
-    "fragments": []
+    "fragments": [
+      {
+        "chunk_id": "reglamento-servicio__u0002",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
+        "offset_start": 395,
+        "offset_end": 662,
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "score": 0.625
+      },
+      {
+        "chunk_id": "reglamento-servicio__u0001",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
+        "offset_start": 116,
+        "offset_end": 383,
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.53333
+      },
+      {
+        "chunk_id": "reglamento-servicio__u0000",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis",
+        "offset_start": 40,
+        "offset_end": 103,
+        "text": "Reglamento ficticio creado para las pruebas de caracterización.",
+        "score": 0.5
+      }
+    ]
   },
   "¿Rechaza el 5% del agua?": {
-    "status": "no_answer",
+    "status": "related",
     "service_level": "normal",
-    "plan": "no_answer",
-    "answer": "No hay información sobre \"5%\" en tus documentos; puede que no forme parte de ellos.\n\nLo más parecido que tengo es esto:\n\nEl equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. (Fuente: Manual del purificador de agua Aqualis P3).",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día. Manual del purificador de agua Aqualis P3.\n\n2. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.\n\n3. Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita. Reglamento del servicio técnico Aqualis.",
     "confidence": {
-      "top1": 0.84075,
-      "margin": 0.01515
+      "top1": 0.0,
+      "margin": 0.0
     },
-    "fragments": []
+    "fragments": [
+      {
+        "chunk_id": "manual-purificador__u0004",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Consumo",
+        "offset_start": 902,
+        "offset_end": 1041,
+        "text": "El equipo rechaza el 12,5% del agua de entrada en modo ahorro y el 30% en modo normal. Produce hasta 190 litros de agua purificada por día.",
+        "score": 1.0
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.5
+      },
+      {
+        "chunk_id": "reglamento-servicio__u0001",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Solicitudes",
+        "offset_start": 116,
+        "offset_end": 383,
+        "text": "Artículo 3. Toda solicitud de visita técnica se registra en el portal de clientes o por teléfono. La empresa responde dentro de 5 días hábiles.\nArtículo 4. Si el cliente no está en el domicilio durante la visita, se cobra un recargo del 15% sobre la tarifa de visita.",
+        "score": 0.44444
+      }
+    ]
   },
   "¿Cómo se prepara un asado?": {
-    "status": "no_answer",
+    "status": "related",
     "service_level": "normal",
-    "plan": "no_answer",
-    "answer": "Lo siento, eso no figura en los documentos disponibles.",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.\n\n2. Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente. Reglamento del servicio técnico Aqualis.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.78761,
-      "margin": 0.00044
+      "top1": 0.0,
+      "margin": 0.0
     },
-    "fragments": []
+    "fragments": [
+      {
+        "chunk_id": "manual-purificador__u0002",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.75
+      },
+      {
+        "chunk_id": "reglamento-servicio__u0002",
+        "doc_title": "Reglamento del servicio técnico Aqualis",
+        "section": "Reglamento del servicio técnico Aqualis > Reembolsos",
+        "offset_start": 395,
+        "offset_end": 662,
+        "text": "Artículo 7. El cliente puede solicitar el reembolso dentro de 30 días corridos desde la compra, siempre que el equipo no haya sido instalado.\nArtículo 8. El reembolso se paga en un plazo de 10 días hábiles mediante transferencia a la cuenta registrada por el cliente.",
+        "score": 0.58333
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.53333
+      }
+    ]
   },
   "¿Cuál es la capital de Mongolia?": {
-    "status": "no_answer",
+    "status": "related",
     "service_level": "normal",
-    "plan": "no_answer",
-    "answer": "No tengo esa información: no está en los documentos cargados.",
+    "plan": "gray_zone",
+    "answer": "3 resultados relacionados para revisar.\n\n1. La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie. Manual del purificador de agua Aqualis P3.\n\n2. El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses. Manual del purificador de agua Aqualis P3.\n\n3. El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo. Manual del purificador de agua Aqualis P3.",
     "confidence": {
-      "top1": 0.71938,
-      "margin": 0.00979
+      "top1": 0.0,
+      "margin": 0.0
     },
-    "fragments": []
+    "fragments": [
+      {
+        "chunk_id": "manual-purificador__u0003",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Garantía",
+        "offset_start": 675,
+        "offset_end": 893,
+        "text": "La garantía cubre 24 meses desde la fecha de compra. No cubre daños por congelamiento ni por instalación sin válvula reductora cuando la presión la exige. Para hacerla efectiva, conserva la boleta y el número de serie.",
+        "score": 0.66667
+      },
+      {
+        "chunk_id": "manual-purificador__u0002",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Filtros",
+        "offset_start": 376,
+        "offset_end": 665,
+        "text": "El equipo usa tres filtros: sedimentos, carbón activado y membrana de ósmosis inversa. El filtro de sedimentos se cambia cada 6 meses. El filtro de carbón activado se cambia cada 12 meses, salvo que el agua tenga mucho cloro, en cuyo caso se cambia cada 6 meses. La membrana dura 24 meses.",
+        "score": 0.625
+      },
+      {
+        "chunk_id": "manual-purificador__u0001",
+        "doc_title": "Manual del purificador de agua Aqualis P3",
+        "section": "Manual del purificador de agua Aqualis P3 > Instalación",
+        "offset_start": 154,
+        "offset_end": 367,
+        "text": "El purificador se instala bajo el lavaplatos y se conecta a la toma de agua fría. La presión de entrada debe estar entre 1,5 y 4,0 bar. Si la presión supera 4,0 bar, instala una válvula reductora antes del equipo.",
+        "score": 0.44444
+      }
+    ]
   }
 }

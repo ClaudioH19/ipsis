@@ -17,7 +17,7 @@ from ipsis.recursos.mensajes import catalogo, t
 _activa: ContextVar[Actividad | None] = ContextVar("ipsis_actividad", default=None)
 COMANDOS = {
     "load": "load", "index": "index", "doctor": "doctor", "audit": "audit",
-    "evaluate": "evaluate", "calibrate": "calibrate", "benchmark": "benchmark",
+    "evaluate": "evaluate", "benchmark": "benchmark",
     "ask": "query", "models": "models", "deploy": "deploy",
 }
 

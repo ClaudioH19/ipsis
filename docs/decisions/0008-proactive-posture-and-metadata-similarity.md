@@ -1,5 +1,7 @@
 # ADR 0008: proactive posture and similarity from metadata
 
+> **Retired by [ADR 0012](0012-retire-the-v1-engine.md).** The proactive posture, `posture.*` and `profile_overrides.alternatives` were part of the v1 engine and were removed with it. The record stays as history.
+
 - Status: accepted and implemented.
 - Date: 2026-10-08.
 

@@ -4,6 +4,14 @@ Every technique of the library is documented in a note before it is
 considered stable. The note goes with the code and is updated whenever its
 algorithm changes.
 
+> **History.** The v1 engine (answer cascade, calibration, abstention
+> alternatives) was retired in October 2026. Notes, measurements and scripts
+> that describe it (`calibration`, `policy`, `lexical`, `informal-paraphrases`,
+> `auditoria-2026-10-08/`, `mediciones/`) are kept as evidence of what was
+> measured: the modules they cite as `retirado` no longer exist and can be read
+> in the repository history up to commit `57c7690`. The live engine is
+> described in [motor-v2](motor-v2.md) and [fuentes-v2](fuentes-v2.md).
+
 ## Required template
 
 1. Purpose.

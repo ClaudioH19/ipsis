@@ -86,7 +86,7 @@ class ProyectoNoEncontrado(RuntimeError):
     """No hay ``config/assistant.yaml`` ni ``config/engine.yaml``."""
 
 
-ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "calibracion", "golden", "cors",
+ORDEN = ("configuracion", "perfil", "idioma", "stemmer", "modelos", "indice", "golden", "cors",
          "personalidad", "modo")
 _PERFIL_CAMBIAR = "ipsis profile set light|medium"
 
@@ -185,11 +185,6 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
     except Exception as e:  # noqa: BLE001
         problemas.append(f"{rutas.DOMINIO}: {_breve(e, 'dominio')}")
         acciones.append(t("check.fix_domain", path=rutas.DOMINIO))
-    if ctx.motor is not None:
-        problema = _politica_abstencion(ctx.motor)
-        if problema:
-            problemas.append(problema)
-            acciones.append(t("check.fix_policy", path=rutas.MOTOR))
     if Path(rutas.ESTILOS).is_file():
         try:
             from ipsis.aplicacion.estilos import cargar_estilos, render_css
@@ -206,21 +201,6 @@ def _configuracion(ctx: _Contexto) -> ChequeoDoctor:
     return _chequeo("configuracion", Estado.OK, t("check.config_ok"))
 
 
-def _politica_abstencion(motor: dict) -> str | None:
-    """Mismo chequeo que hacía doctor: la política existe y acepta los umbrales."""
-    from ipsis.aplicacion.registro_base import registrar_componentes_base
-    from ipsis.configuracion.perfiles import cargar_perfil_instalacion
-    from ipsis.nucleo.registro import RegistroComponentes
-
-    nombre = motor["componentes"]["abstention_policy"]
-    try:
-        fabrica = registrar_componentes_base(RegistroComponentes()).obtener("abstention_policy", nombre)
-        fabrica(umbrales=cargar_perfil_instalacion("light").umbrales_por_defecto)
-    except Exception as e:  # noqa: BLE001
-        return t("check.policy_unavailable", path=rutas.MOTOR, name=nombre, error=_breve(e))
-    return None
-
-
 def _perfil(ctx: _Contexto) -> ChequeoDoctor:
     from ipsis.aplicacion.proyecto import PerfilInvalido, validar_perfil_instalable
     from ipsis.configuracion.perfiles import perfil_efectivo
@@ -234,11 +214,10 @@ def _perfil(ctx: _Contexto) -> ChequeoDoctor:
         return _chequeo("perfil", Estado.ERROR, f"{nombre}: {e}", [_PERFIL_CAMBIAR], perfil=nombre)
     ajustes = (ctx.motor or {}).get("ajustes_perfil")
     try:
-        if (ctx.motor or {}).get("pipeline", "v2") == "v2":
-            from ipsis.configuracion.perfiles import ajustes_de_idioma
+        from ipsis.configuracion.perfiles import ajustes_de_idioma
 
-            ajustes, _ = ajustes_de_idioma(nombre, ajustes, ctx.dominio.get("idioma"))
-        ctx.instalacion = perfil_efectivo(nombre, ajustes, ruta_calibracion=None)
+        ajustes, _ = ajustes_de_idioma(nombre, ajustes, ctx.dominio.get("idioma"))
+        ctx.instalacion = perfil_efectivo(nombre, ajustes)
     except Exception as e:  # noqa: BLE001
         return _chequeo("perfil", Estado.ERROR,
                         t("check.invalid_overrides", profile=nombre, path=rutas.MOTOR, error=_breve(e, "perfil")),
@@ -369,34 +348,6 @@ def _corpus_cambio(indice, cfg_rec: dict) -> bool:
     return huella_corpus(rutas.DOCUMENTOS, cfg_rec) != indice.hash_corpus
 
 
-def _calibracion(ctx: _Contexto) -> ChequeoDoctor:
-    from ipsis.aplicacion.proyecto import estado_calibracion
-    from ipsis.configuracion.calibracion import leer_calibracion
-
-    if ctx.instalacion is None or ctx.indice is None:
-        return _no_evaluado("calibracion", t("check.dep_profile_index"))
-    try:
-        leer_calibracion(rutas.CALIBRACION)
-        estado = estado_calibracion(ctx.instalacion, ctx.indice)
-    except Exception as e:  # noqa: BLE001 -- el motor tampoco podría leerla
-        return _chequeo("calibracion", Estado.ERROR,
-                        t("check.calibration_invalid", path=rutas.CALIBRACION, error=_breve(e, "calibracion")),
-                        [t("check.calibration_rewrite"), t("check.calibration_delete", path=rutas.CALIBRACION)],
-                        estado="ilegible")
-    if estado.estado == "sin_calibracion":
-        return _chequeo("calibracion", Estado.AVISO, t("check.calibration_none"), estado="sin_calibracion")
-    if estado.estado == "vigente":
-        return _chequeo("calibracion", Estado.OK, t("check.calibration_current"), estado="vigente")
-    if estado.estado == "no_habilitada":
-        return _chequeo("calibracion", Estado.AVISO, t("check.calibration_audit", reason=estado.motivo),
-                        estado="no_habilitada")
-    golden, banco, _ = ctx.golden()
-    calibrable = golden == "vigente" and banco.manifiesto.uso != "regresion"
-    acciones = ["ipsis calibrate --apply"] if calibrable else [t("check.golden_import"), "ipsis calibrate --apply"]
-    return _chequeo("calibracion", Estado.AVISO, t("check.calibration_stale", reason=estado.motivo),
-                    acciones, estado="obsoleta")
-
-
 def _golden(ctx: _Contexto) -> ChequeoDoctor:
     estado, banco, motivo = ctx.golden()
     if estado == "sin_golden":
@@ -480,7 +431,7 @@ def _modo(ctx: _Contexto) -> ChequeoDoctor:
 
 CHEQUEOS: tuple[tuple[str, Callable[[_Contexto], ChequeoDoctor]], ...] = (
     ("configuracion", _configuracion), ("perfil", _perfil), ("idioma", _idioma), ("stemmer", _stemmer),
-    ("modelos", _modelos), ("indice", _indice), ("calibracion", _calibracion), ("golden", _golden), ("cors", _cors),
+    ("modelos", _modelos), ("indice", _indice), ("golden", _golden), ("cors", _cors),
     ("personalidad", _personalidad), ("modo", _modo),
 )
 
@@ -507,7 +458,7 @@ def diagnosticar(*, abrir_indice: bool = True) -> ReporteDoctor:
 
 # Chequeo y estado como los publica /ready.
 CLAVE_PUBLICA = {"configuracion": "configuration", "perfil": "profile", "idioma": "language", "stemmer": "stemmer",
-                 "modelos": "models", "indice": "index", "calibracion": "calibration", "golden": "golden",
+                 "modelos": "models", "indice": "index", "golden": "golden",
                  "cors": "cors", "personalidad": "personality", "modo": "mode"}
 ESTADO_PUBLICO = {Estado.OK: "ok", Estado.AVISO: "warning", Estado.ERROR: "error", Estado.NO_EVALUADO: "not_evaluated"}
 

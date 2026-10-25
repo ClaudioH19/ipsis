@@ -1,6 +1,7 @@
 """Validación versionada de los archivos principales de configuración."""
 from __future__ import annotations
 
+import logging
 from copy import deepcopy
 from typing import Any, Literal
 
@@ -11,9 +12,15 @@ from ipsis.recursos.mensajes import t
 CONFIG_VERSION = 8
 COMPONENTE_CONFIG_KEYS = (
     "parser", "chunker", "dense_encoder", "sparse_encoder", "retriever",
-    "fusion", "reranker", "intent_classifier", "answer_extractor",
-    "evidence_verifier", "response_renderer", "abstention_policy",
+    "fusion", "reranker", "evidence_verifier",
 )
+# Componentes del motor v1 (retirado): un engine.yaml anterior todavía los trae y se ignoran al cargar.
+COMPONENTES_RETIRADOS = ("intent_classifier", "answer_extractor", "response_renderer", "abstention_policy")
+# Secciones de engine.yaml y ajustes de perfil que solo usaba v1 (cascada, umbrales, redacción por plantilla).
+# Se listan los nombres internos y los del archivo: estas claves ya no están en el glosario que los traduce.
+SECCIONES_RETIRADAS = ("redaccion", "rendering", "abstencion", "abstention", "criterios_aceptacion", "acceptance_criteria")
+AJUSTES_RETIRADOS = ("cascada", "cascade", "etapas", "stages", "lexico", "lexical", "umbrales_por_defecto",
+                     "default_thresholds", "alternativas", "alternatives")
 
 
 class ConfiguracionEstricta(BaseModel):
@@ -26,16 +33,6 @@ class RegistroConfig(ConfiguracionEstricta):
     activo: bool = False
 
 
-class PosturaConfig(ConfiguracionEstricta):
-    """Qué hace el asistente cuando no encuentra lo pedido (ADR 0008).
-
-    ``proactiva``: ofrece hasta ``max_alternativas`` párrafos parecidos que sí
-    están en el corpus; ``estricta``: solo dice que no está."""
-
-    modo: Literal["proactiva", "estricta"] = "proactiva"
-    max_alternativas: int = Field(default=3, ge=1, le=5)
-
-
 class AsistenteConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
     nombre_asistente: str = Field(default="Asistente documental", min_length=1)
@@ -46,7 +43,6 @@ class AsistenteConfig(ConfiguracionEstricta):
     cors_origenes: list[str] = Field(default_factory=list)
     claves_widget: list[str] = Field(default_factory=list)
     registro: RegistroConfig = Field(default_factory=RegistroConfig)
-    postura: PosturaConfig = Field(default_factory=PosturaConfig)
 
 
 class PreparacionConfig(ConfiguracionEstricta):
@@ -92,11 +88,7 @@ class ComponentesConfig(ConfiguracionEstricta):
     retriever: str = Field(default="qdrant", min_length=1)
     fusion: str = Field(default="rrf", min_length=1)
     reranker: str | None = Field(default=None, min_length=1)
-    intent_classifier: str = Field(default="rules", min_length=1)
-    answer_extractor: str = Field(default="sentence_selector", min_length=1)
     evidence_verifier: str = Field(default="literal_offsets", min_length=1)
-    response_renderer: str = Field(default="templates", min_length=1)
-    abstention_policy: str = Field(default="cascada_v1", min_length=1)
 
 
 class QdrantConfig(ConfiguracionEstricta):
@@ -121,14 +113,6 @@ class LimitePeticionesConfig(ConfiguracionEstricta):
 
 class SeguridadConfig(ConfiguracionEstricta):
     limite_peticiones: LimitePeticionesConfig = Field(default_factory=LimitePeticionesConfig)
-
-
-class RedaccionConfig(ConfiguracionEstricta):
-    longitud_maxima_fragmento_chars: int = Field(default=500, ge=1)
-    max_fragmentos_en_respuesta: int = Field(default=2, ge=1)
-    score_relativo_minimo: float = Field(default=0.6, ge=0)
-    cita_en_texto: Literal["completa", "breve", "ninguna"] = "breve"
-    incluir_apertura: bool = True
 
 
 class PresentacionConfig(ConfiguracionEstricta):
@@ -194,7 +178,7 @@ class MediaConfig(ConfiguracionEstricta):
 
 class MotorConfig(ConfiguracionEstricta):
     config_version: int = Field(default=CONFIG_VERSION, ge=1)
-    pipeline: Literal["v1", "v2"] = "v2"
+    pipeline: Literal["v2"] = "v2"
     v2: PipelineV2Config = Field(default_factory=PipelineV2Config)
     media: MediaConfig = Field(default_factory=MediaConfig)
     recuperacion: RecuperacionConfig
@@ -203,9 +187,6 @@ class MotorConfig(ConfiguracionEstricta):
     servicio: ServicioConfig = Field(default_factory=ServicioConfig)
     conversacion: ConversacionConfig = Field(default_factory=ConversacionConfig)
     seguridad: SeguridadConfig = Field(default_factory=SeguridadConfig)
-    redaccion: RedaccionConfig = Field(default_factory=RedaccionConfig)
-    abstencion: dict[str, Any] | None = None
-    criterios_aceptacion: dict[str, Any] = Field(default_factory=dict)
     pipeline_version: str = "ingesta-0.1.0"
     # Sobrescrituras del perfil de instalación (ver ipsis/configuracion/perfiles.py).
     ajustes_perfil: dict[str, Any] = Field(default_factory=dict)
@@ -217,7 +198,8 @@ PREPARACION_ESTRUCTURAL = {"modo": "estructural_v1", "max_palabras_unidad": 400,
 
 def activar_preparacion_estructural(motor: dict[str, Any]) -> bool:
     """Activa la preparación estructural en un ``engine.yaml`` (claves internas) que usa v2 y no eligió
-    preparación. Una elección explícita, incluida ``legacy``, o el motor v1 se respetan. Devuelve si cambió."""
+    preparación. Una elección explícita, incluida ``legacy``, se respeta; un ``pipeline: v1`` heredado también
+    (conserva su índice actual hasta que se reindexe). Devuelve si cambió."""
     if motor.get("pipeline", "v2") != "v2":
         return False
     recuperacion = motor.setdefault("recuperacion", {})
@@ -334,7 +316,36 @@ def _migrar(datos: dict[str, Any], nombre: str) -> dict[str, Any]:
         # Un proyecto que lo tenía se carga como medium; si su índice era de otro
         # modelo denso, ``ipsis profile show`` pide reindexar.
         salida["perfil"] = "medium"
+    if nombre == "motor":
+        _retirar_motor_v1(salida)
+    elif nombre == "asistente":
+        salida.pop("postura", None)  # las alternativas de abstención eran de v1
+        salida.pop("posture", None)
     return salida
+
+
+_AVISADO_V1 = False
+
+
+def _retirar_motor_v1(motor: dict[str, Any]) -> None:
+    """El motor v1 se retiró (ADR 0012): un proyecto que lo elegía pasa a v2, con un aviso por proceso, y
+    pierden efecto los componentes que solo él usaba. La preparación del índice no cambia: no hace falta reindexar."""
+    global _AVISADO_V1
+    if motor.get("pipeline") == "v1":
+        motor["pipeline"] = "v2"
+        if not _AVISADO_V1:
+            _AVISADO_V1 = True
+            logging.getLogger(__name__).warning(t("core.pipeline_v1_retired"))
+    componentes = motor.get("componentes")
+    if isinstance(componentes, dict):
+        for clave in COMPONENTES_RETIRADOS:
+            componentes.pop(clave, None)
+    for clave in SECCIONES_RETIRADAS:
+        motor.pop(clave, None)
+    ajustes = motor.get("ajustes_perfil")
+    if isinstance(ajustes, dict):
+        for clave in AJUSTES_RETIRADOS:
+            ajustes.pop(clave, None)
 
 
 def migrar_asistente(datos: dict[str, Any]) -> dict[str, Any]:

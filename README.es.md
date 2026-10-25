@@ -229,26 +229,16 @@ relajan el modo de producción ni sus controles de acceso.
 
 ## 📏 Verificar la calidad
 
-**No necesitas un golden dataset ni calibrar respuestas directas para usar v2.**
+**No necesitas un golden dataset para usar ipsis.**
 Prueba consultas representativas sobre tus documentos: comprueba que recuperen
 la fuente correcta, su orden, el contexto y la procedencia. Una actualización
 del corpus requiere volver a indexarlo. `ipsis audit` verifica literalidad y
 referencias; no prueba relevancia ni que el documento sea verdadero.
 
 Los bancos de prueba siguen siendo útiles para detectar regresiones de
-recuperación. Las cifras históricas de respuestas directas y los comandos de
-calibración pertenecen al motor opcional `pipeline: v1`; no certifican v2.
-
-<details>
-<summary>Compatibilidad: motor v1 y golden datasets</summary>
-
-Una selección explícita `pipeline: v1` en `config/engine.yaml` mantiene el
-motor anterior. Sus herramientas `golden`, `evaluate` y `calibrate` se conservan
-para evaluar y calibrar respuestas directas. La calibración de v1 no controla
-el ranking del enrutador. Consulta [golden](docs/es/guia/golden.md) y la
-[metodología de v1](docs/methodology/calibration.md).
-
-</details>
+recuperación: ver el [golden set](docs/es/guia/golden.md). El motor v1 y su
+calibración se retiraron; un proyecto que todavía dice `pipeline: v1` se carga
+como v2.
 
 ## 📚 Documentación
 
@@ -264,7 +254,7 @@ el ranking del enrutador. Consulta [golden](docs/es/guia/golden.md) y la
 | [Audio y video](docs/es/guia/multimedia.md) | Fichas, umbral y tarjeta del widget |
 | [Personalidad](docs/es/guia/personalidad.md) | Tonos, Folio y panel |
 | [Despliegue](docs/es/guia/despliegue.md) | Docker, HTTPS y operación |
-| [Golden v1, opcional](docs/es/guia/golden.md) | Evaluación y calibración del motor anterior |
+| [Golden set](docs/es/guia/golden.md) | Bancos de preguntas para evaluar la recuperación |
 
 ## 🛠️ Desarrollo
 

@@ -36,8 +36,12 @@ def _aislar_seguridad(monkeypatch: pytest.MonkeyPatch):
     claves) y un limitador propio con capacidad amplia -- los tests que
     quieren probar lo contrario lo configuran ellos mismos con
     ``monkeypatch``, que restaura el valor original al terminar."""
+    from apoyo import motor_minimo
+
     monkeypatch.setattr(estado, "claves_widget", [])
     monkeypatch.setattr(estado, "limitador", LimitadorPeticiones(capacidad=1000, tasa_por_segundo=1000.0))
+    monkeypatch.setattr(estado, "motor", motor_minimo())  # la app global arranca con un motor vacío («no listo»)
+    monkeypatch.setattr(estado, "listo", True)
     yield
 
 

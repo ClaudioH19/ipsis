@@ -4,7 +4,7 @@ El cliente escribe preguntas y copia la respuesta tal cual del documento; aquí
 se ubica ese texto en el corpus, se calculan los offsets y se arma el banco
 versionado (``ipsis.evaluacion.banco``). Ver docs/guide/golden.md.
 
-Nada de esto entrena: el golden solo mide y, en ``ipsis calibrate``, elige umbrales.
+Nada de esto entrena: el golden solo mide.
 """
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ SUBTIPO_PUBLICO = {"trampa_mismo_tema": "same_topic_trap"}
 MINIMO_FILAS = 30
 PROPORCION_MINIMA_SIN_RESPUESTA = 0.30
 # Con 0 errores, la cota de Clopper-Pearson al 95% baja de 5% recién con 59
-# respuestas aceptadas (docs/methodology/calibration.md).
+# respuestas aceptadas (docs/methodology/calibration.md, histórico del motor v1).
 ACEPTADAS_PARA_CERTIFICAR = 59
 UMBRAL_EXACTA = 0.6  # s_cov(pregunta, evidencia) ≥ 0,6 → exacta; si no, parafrasis
 

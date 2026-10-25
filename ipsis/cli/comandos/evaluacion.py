@@ -1,4 +1,4 @@
-"""Grupo evaluación: evaluar, calibrar, comparar y benchmark."""
+"""Grupo evaluación: evaluar, comparar y benchmark."""
 from __future__ import annotations
 
 import argparse
@@ -8,8 +8,6 @@ from pathlib import Path
 
 from ipsis.aplicacion.benchmark import benchmark_perfiles
 from ipsis.aplicacion.evaluacion import (
-    ErrorCalibracion,
-    calibrar_proyecto,
     comparar_reportes,
     ejecutar_benchmark,
     evaluar_backend_activo,
@@ -69,64 +67,6 @@ class ComandoEvaluar(Comando):
         return 0 if r.guardia_respuestas else 1
 
 
-# Estado de la calibración → clave de su nombre en el catálogo.
-_ESTADO_CALIBRACION = {"calibrado": "calibrate.status_calibrated",
-                       "muestra_insuficiente": "calibrate.status_insufficient_sample",
-                       "sin_umbral_seguro": "calibrate.status_no_safe_threshold"}
-
-
-class ComandoCalibrar(Comando):
-    nombre = "calibrate"
-    ayuda = "calibrate.help"
-
-    def registrar(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument("--alpha", dest="alfa", type=float, default=0.05, help=t("calibrate.opt_alpha"))
-        parser.add_argument("--apply", dest="aplicar", action="store_true", help=t("calibrate.opt_apply"))
-
-    def ejecutar(self, args: argparse.Namespace) -> int:
-        try:
-            calibracion = calibrar_proyecto(alfa=args.alfa, aplicar=args.aplicar)
-        except ErrorCalibracion as e:
-            print(t("calibrate.failed"))
-            for error in e.errores:
-                print(t("cli.item", item=error))
-            return 1
-        r, procedencia = calibracion.resultado, calibracion.procedencia
-        estado = r.estado.value
-        print(t("calibrate.header", status=t(_ESTADO_CALIBRACION[estado]), alpha=r.alfa, confidence=r.confianza))
-        print(t("calibrate.provenance", profile=procedencia.perfil, bank=procedencia.banco,
-                corpus=procedencia.hash_corpus[:19]))
-        dev = r.dev
-        print(t("calibrate.dev", n=dev.riesgo.n, x=dev.riesgo.x, bound=_porcentaje(dev.riesgo.cota_superior)))
-        print(t("calibrate.coverage", direct=_porcentaje(dev.cobertura_directa), exact=_porcentaje(dev.cobertura_exacta),
-                paraphrase=_porcentaje(dev.cobertura_parafrasis), false_ok=dev.falsos_ok,
-                traps=dev.falsos_ok_trampas))
-        if estado == "calibrado":
-            print(t("calibrate.thresholds"))
-            for nombre in r.calibrables:
-                antes, despues = r.umbrales_perfil[nombre], r.umbrales[nombre]
-                print(t("calibrate.threshold", name=nombre, before=antes, after=despues,
-                        mark="" if antes == despues else t("calibrate.changes")))
-        elif estado == "muestra_insuficiente":
-            print(t("calibrate.insufficient"))
-            print(t("calibrate.accepted", n=r.aceptadas_sin_error_max_dev))
-            print(t("calibrate.needed", alpha=r.alfa, confidence=r.confianza, n=r.n_minimo_sin_errores))
-            print(t("calibrate.missing", n=r.faltan_aceptadas))
-            print(t("calibrate.profile_thresholds"))
-        else:
-            print(t("calibrate.no_safe", n=r.aceptadas_max_dev, alpha=r.alfa))
-            print(t("calibrate.profile_thresholds"))
-        if r.test is not None:
-            prueba = r.test
-            print(t("calibrate.test", verdict=r.verificacion_test, n=prueba.riesgo.n, x=prueba.riesgo.x,
-                    bound=_porcentaje(prueba.riesgo.cota_superior), coverage=_porcentaje(prueba.cobertura_directa)))
-        if calibracion.ruta is not None:
-            print(t("calibrate.saved" if estado == "calibrado" else "calibrate.saved_audit", path=calibracion.ruta))
-        elif estado == "calibrado":
-            print(t("calibrate.not_saved"))
-        return 1 if estado == "sin_umbral_seguro" else 0
-
-
 class ComandoComparar(Comando):
     nombre = "compare"
     ayuda = "compare.help"
@@ -167,8 +107,6 @@ class ComandoBenchmark(Comando):
         parser.add_argument("--latency-only", dest="solo_latencia", action="store_true",
                             help=t("benchmark.opt_latency_only"))
         parser.add_argument("--profiles", dest="perfiles", default=None, help=t("benchmark.opt_profiles"))
-        parser.add_argument("--experiments", dest="experimentos", action="store_true",
-                            help=t("benchmark.opt_experiments"))
         parser.add_argument("--repetitions", dest="repeticiones", type=int, default=20,
                             help=t("benchmark.opt_repetitions"))
         parser.add_argument("--output", dest="salida", default=None, help=t("benchmark.opt_output"))
@@ -191,14 +129,14 @@ class ComandoBenchmark(Comando):
         perfiles = [p.strip() for p in args.perfiles.split(",") if p.strip()]
         try:
             reporte, ruta_json, ruta_md, salida, codigo = benchmark_perfiles(
-                args.banco, perfiles, self.ejecutar_cli, args.salida, experimentos=args.experimentos)
+                args.banco, perfiles, self.ejecutar_cli, args.salida)
         except (ValueError, RuntimeError) as e:
             print(t("benchmark.failed", error=e))
             return 1
         print(reporte.nota)
         for p in reporte.perfiles:
             c = p.cobertura.total
-            marca = "" if p.variante else t("benchmark.within" if p.cumple_presupuesto else "benchmark.over")
+            marca = t("benchmark.within" if p.cumple_presupuesto else "benchmark.over")
             print(t("benchmark.profile_row", name=p.nombre, coverage=c.cobertura_directa or 0, false_ok=c.falsos_ok,
                     unanswerable=c.no_respondibles, p50=p.latencia.p50, p95=p.latencia.p95,
                     budget=p.presupuesto_p95_ms, mark=marca))

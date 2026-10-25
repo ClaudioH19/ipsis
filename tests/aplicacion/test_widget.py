@@ -238,7 +238,9 @@ def test_config_trae_microcopia_del_tono_y_ubicacion(tmp_path, monkeypatch):
     assert set(cfg["microcopy"]) == {"welcome", "waiting", "citations_hint", "network_error", "rate_limit_error",
                                       "service_error"}
     assert cfg["microcopy"]["waiting"][0] == "Buscando"  # tono serio
-    assert all(len(v) == CUOTAS_PAQUETE[s] for s, v in cfg["microcopy"].items())
+    # v2 es un buscador de fuentes: el saludo de bienvenida es el de la interfaz de búsqueda, uno solo.
+    assert cfg["microcopy"]["welcome"] == [cfg["interface"]["search_greeting"]]
+    assert all(len(v) == CUOTAS_PAQUETE[s] for s, v in cfg["microcopy"].items() if s != "welcome")
     assert "{" not in " ".join(sum(cfg["microcopy"].values(), []))  # variables reemplazadas
     assert cfg["interface"]["sources_many"] == "{n} fuentes consultadas"  # plantilla del widget
 

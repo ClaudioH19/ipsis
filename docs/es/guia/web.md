@@ -70,7 +70,7 @@ existentes.
 
 `GET /config` agrega `assistant_messages` (categoría → lista de textos fijos),
 `suggested_questions`, `animations_enabled` y las etiquetas de orientación
-localizadas en `interface`. El motor v1 conserva su flujo de chat actual.
+localizadas en `interface`.
 
 ## Insertarlo
 

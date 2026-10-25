@@ -1,5 +1,5 @@
 """``ipsis benchmark --profiles`` con perfiles falsos: mismo banco, latencia,
-presupuesto, reportes, experimentos y código de salida. Sin modelos."""
+presupuesto, reportes y código de salida. Sin modelos."""
 from __future__ import annotations
 
 import json
@@ -49,20 +49,15 @@ def _artefacto(banco, perfil: str, *, trampa_qa: float = 0.82) -> ArtefactoEvalu
                                observaciones=observaciones)
 
 
-def _evaluar_falso(perfil, manifiesto, banco, experimentos):
-    acuerdo = None
-    if experimentos and perfil == "light":
-        # acuerdo 0 en la trampa que da ok (las búsquedas no coinciden), 1 en el resto
-        trampa = next(c.id for c in banco.casos if c.subtipo == "trampa_mismo_tema")
-        acuerdo = ({c.id: 0.0 if c.id == trampa else 1.0 for c in banco.casos}, {c.id: 3.0 for c in banco.casos})
-    return _artefacto(banco, perfil), 1.5, acuerdo
+def _evaluar_falso(perfil, manifiesto, banco):
+    return _artefacto(banco, perfil), 1.5
 
 
-def _benchmark(tmp_path, perfiles, experimentos=False, bancos=(UNIVERSAL_ES,)):
+def _benchmark(tmp_path, perfiles, bancos=(UNIVERSAL_ES,)):
     from ipsis.aplicacion.benchmark import ejecutar_benchmark_perfiles
 
     return ejecutar_benchmark_perfiles([str(b) for b in bancos], perfiles, main, tmp_path,
-                                       experimentos=experimentos, evaluar_perfil=_evaluar_falso)
+                                       evaluar_perfil=_evaluar_falso)
 
 
 # --- funciones puras -----------------------------------------------------------------
@@ -72,8 +67,6 @@ def test_latencia_p50_p95_y_por_etapa():
     latencia = latencia_de(observaciones)
     assert (latencia.p50, latencia.p95) == (pytest.approx(50.5), pytest.approx(95.05, abs=0.1))
     assert latencia.etapas["lectura"]["p95"] == pytest.approx(190.1, abs=0.1)
-    con_extra = latencia_de(observaciones, extra_ms={str(i): 10 for i in range(1, 101)})
-    assert con_extra.p95 == pytest.approx(105.05, abs=0.1)
     assert percentil([], 0.95) == 0.0
 
 
@@ -92,9 +85,9 @@ def test_mismos_casos_orden_estable_y_presupuesto(tmp_path, monkeypatch):
 def test_un_perfil_que_omite_casos_falla(tmp_path):
     from ipsis.aplicacion.benchmark import ejecutar_benchmark_perfiles
 
-    def incompleto(perfil, manifiesto, banco, experimentos):
+    def incompleto(perfil, manifiesto, banco):
         artefacto = _artefacto(banco, perfil)
-        return artefacto.model_copy(update={"observaciones": artefacto.observaciones[:-1]}), 0.0, None
+        return artefacto.model_copy(update={"observaciones": artefacto.observaciones[:-1]}), 0.0
 
     with pytest.raises(RuntimeError, match="exactamente los casos"):
         ejecutar_benchmark_perfiles([str(UNIVERSAL_ES)], ["light"], main, tmp_path, evaluar_perfil=incompleto)
@@ -129,18 +122,10 @@ def test_falsos_ok_solo_cortan_con_un_banco_de_evaluacion(tmp_path):
     assert codigo_salida(evaluacion) == 1  # misma guardia que ipsis evaluate: 0 falsos ok
 
 
-def test_experimentos_son_variantes_y_no_cortan(tmp_path):
-    reporte = _benchmark(tmp_path, ["light", "medium"], experimentos=True)
-    por_nombre = {p.nombre: p for p in reporte.perfiles}
-    variante = por_nombre["medium+ok0.85"]
-    assert variante.variante and variante.latencia == por_nombre["medium"].latencia
-    assert por_nombre["medium"].cobertura.total.falsos_ok == 1
-    assert variante.cobertura.total.falsos_ok == 0  # s_qa 0,82 < 0,85
-    acuerdo = por_nombre["light+acuerdo"]
-    assert acuerdo.cobertura.total.falsos_ok == 1  # la trampa usa el lector (ok_lector): acuerdo no aplica
-    assert acuerdo.costo_extra["búsquedas extra p95 ms"] == 3.0
-    assert acuerdo.latencia.p95 == pytest.approx(por_nombre["light"].latencia.p95 + 3.0)
-    assert "Variantes experimentales" in markdown(reporte)
+def test_el_reporte_dice_como_recupera_cada_perfil(tmp_path):
+    reporte = _benchmark(tmp_path, ["bm25", "light"])
+    assert [p.recuperacion for p in reporte.perfiles] == ["dispersa", "hibrida"]
+    assert "| bm25 |" in markdown(reporte) and "Variantes experimentales" not in markdown(reporte)
 
 
 # --- bm25 de diagnóstico ---------------------------------------------------------------
@@ -160,7 +145,7 @@ def test_bm25_recupera_solo_con_bm25_y_no_se_instala(tmp_path, monkeypatch):
 # --- CLI -------------------------------------------------------------------------------
 def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("ipsis.aplicacion.benchmark._evaluar_en_proyecto",
-                        lambda p, m, b, main, e: _evaluar_falso(p, m, b, e))
+                        lambda p, m, b, main: _evaluar_falso(p, m, b))
     salida = tmp_path / "reportes"
     assert main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
                  "--output", str(salida)]) == 0
@@ -179,34 +164,14 @@ def test_cli_escribe_reportes_y_sale_segun_presupuesto(tmp_path, monkeypatch, ca
 @pytest.mark.modelos("intfloat/multilingual-e5-small", "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
                      "dewdev/mdeberta-v3-base-squad2-onnx")
 def test_benchmark_real_light_y_medium_sobre_el_mismo_banco(tmp_path, capsys, monkeypatch):
-    # Este banco compara la cascada y lectura de v1; el default del producto es v2.
-    from apoyo import escribir_proyecto, leer_proyecto
-    from ipsis.aplicacion import benchmark
-
-    evaluar = benchmark._evaluar_en_proyecto
-
-    def evaluar_v1(perfil, manifiesto, banco, main, experimentos, ajustes=None):
-        def main_v1(argumentos):
-            codigo = main(argumentos)
-            if argumentos[0] == "init" and codigo == 0:
-                archivo = Path("config/engine.yaml")
-                cfg = leer_proyecto(archivo)
-                cfg["pipeline"] = "v1"
-                escribir_proyecto(archivo, cfg)
-            return codigo
-
-        return evaluar(perfil, manifiesto, banco, main_v1, experimentos, ajustes)
-
-    monkeypatch.setattr(benchmark, "_evaluar_en_proyecto", evaluar_v1)
     salida = tmp_path / "reportes"
     codigo = main(["benchmark", "--bank", str(UNIVERSAL_ES), "--profiles", "bm25,light,medium",
                    "--output", str(salida)])
     reporte = ReporteBenchmark.model_validate_json((salida / "benchmark-profiles.json").read_text(encoding="utf-8"))
     bm25, light, medium = reporte.perfiles
-    assert bm25.cascada["recuperacion"] == "dispersa" and light.cascada["recuperacion"] == "hibrida"
+    assert bm25.recuperacion == "dispersa" and light.recuperacion == "hibrida"
     assert codigo == codigo_salida(reporte)
     assert {f.caso_id for f in light.cobertura.casos} == {f.caso_id for f in medium.cobertura.casos}
     assert light.latencia.n == medium.latencia.n == 30
-    assert "lectura" in medium.latencia.etapas and "lectura" not in light.latencia.etapas
     assert [m.rol for m in medium.modelos] == ["denso", "reranker", "lector"]
     assert medium.cobertura.por_grupo["exacta"].cobertura_directa >= light.cobertura.por_grupo["exacta"].cobertura_directa

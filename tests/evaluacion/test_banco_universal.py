@@ -1,8 +1,7 @@
 """Banco universal (tests/datos/banco_universal): regresión del software en es, en y pt.
 
-Las pruebas estructurales no usan modelos ni red. La prueba lenta mide cada
-perfil y falla si los falsos ok superan la línea base registrada: detecta
-regresiones sin exigir hoy un resultado que corresponde a P10.
+Las pruebas estructurales no usan modelos ni red. La prueba lenta evalúa cada
+perfil con v2 y comprueba que ningún caso salga «ok» (v2 publica fuentes).
 """
 from __future__ import annotations
 
@@ -15,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from ipsis.evaluacion.banco import cargar_banco, exigir_calibrable, validar_evidencias_contra_corpus
+from ipsis.evaluacion.banco import cargar_banco, validar_evidencias_contra_corpus
 from ipsis.ingesta.parsear import parsear_documento
 
 RAIZ = Path(__file__).resolve().parents[1] / "datos" / "banco_universal"
@@ -100,21 +99,19 @@ def test_cubre_las_capacidades_en_cada_idioma(bancos):
         assert capacidades == CAPACIDADES, idioma
 
 
-def test_el_banco_universal_no_calibra(bancos):
+def test_el_banco_universal_es_de_regresion(bancos):
     for banco in bancos.values():
         assert banco.manifiesto.uso == "regresion"
-        with pytest.raises(ValueError, match="no para calibrar"):
-            exigir_calibrable(banco)
     golden = cargar_banco(Path(__file__).resolve().parents[1] / "datos" / "banco" / "manifiesto.json")
-    exigir_calibrable(golden)  # un banco de evaluación sí
+    assert golden.manifiesto.uso == "evaluacion"
     # Ningún código del producto apunta al banco universal: no se usa por defecto.
     raiz_rag = Path(__file__).resolve().parents[2] / "ipsis"
     assert not [p for p in raiz_rag.rglob("*.py") if re.search(r"banco_universal", p.read_text(encoding="utf-8"))]
 
 
-# --- línea base por perfil (lenta, requiere modelos) ---------------------------------
+# --- invariante de v2 por perfil (lenta, requiere modelos) ---------------------------------
 E5 = "intfloat/multilingual-e5-small"
-MEDIUM = ("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base-squad2-onnx")
+MEDIUM = ("onnx-community/bge-reranker-v2-m3-ONNX", "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1")
 
 
 @pytest.mark.slow
@@ -123,37 +120,18 @@ MEDIUM = ("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "dewdev/mdeberta-v3-base
     pytest.param("medium", marks=pytest.mark.modelos(E5, *MEDIUM)),
 ])
 @pytest.mark.parametrize("idioma", IDIOMAS)
-def test_falsos_ok_no_superan_la_linea_base(perfil, idioma):
-    """Regresión, no objetivo de seguridad: la línea base registra los falsos ok
-    de hoy para detectar uno nuevo; no los declara aceptables."""
+def test_v2_nunca_responde_ok_y_cada_caso_deja_su_decision(perfil, idioma):
+    """v2 publica fuentes y no decide «ok» (ADR 0012): ningún caso del banco puede salir «ok»,
+    así que tampoco hay falsos ok. La calidad de la recuperación se vigila con ``tests/datos/banco_general``."""
     linea_base = _modulo("linea_base")
-    referencia = json.loads((RAIZ / "linea_base.json").read_text(encoding="utf-8"))[perfil][idioma]
     artefacto = linea_base.evaluar_artefacto(idioma, perfil)
     actual = linea_base.resumir(artefacto)
-    nuevos = sorted(set(actual["falsos_ok"]) - set(referencia["falsos_ok"]))
-    assert not nuevos, f"falsos ok nuevos respecto de la línea base: {nuevos}"
-    # Un literal en la cita amplia no vuelve correcto al tramo equivocado del
-    # lector. La referencia corregida registra esos errores previos por ID.
-    nuevas_sin_literal = sorted(set(actual["directas_sin_literal"]) - set(referencia["directas_sin_literal"]))
-    assert not nuevas_sin_literal, f"tramos equivocados nuevos respecto de la línea base: {nuevas_sin_literal}"
-    # Las observaciones guardan la decisión auditable de cada caso…
+    assert actual["falsos_ok"] == [] and actual["directas_sin_literal"] == []
+    assert all(g["ok"] == 0 for g in actual["grupos"].values()), actual["grupos"]
+    # Las observaciones guardan la decisión auditable de cada caso.
     cobertura = artefacto.reporte.cobertura
     assert set(cobertura.por_idioma) == {idioma}
     for fila in cobertura.casos:
         if fila.grupo != "conversacional":
             assert fila.regla, fila.caso_id
-            if fila.regla == "aclaracion":  # se decide antes de la política, sin sus señales
-                continue
-            assert fila.senales is not None, fila.caso_id
-            assert (fila.senales.s_qa is None) == (perfil == "light")  # sin lector no hay s_qa
-    # La calibración re-decide con la misma regla que producción: con los
-    # umbrales del perfil reproduce exactamente cada estado observado.
-    from ipsis.configuracion.perfiles import perfil_efectivo
-    from ipsis.evaluacion.calibracion import redecidir
-
-    umbrales = perfil_efectivo(perfil).umbrales_por_defecto
-    for obs in artefacto.observaciones:
-        assert redecidir(obs, umbrales).estado == obs.estado, (obs.caso_id, obs.regla)
-    # …y medir el banco universal no lo vuelve calibrable.
-    with pytest.raises(ValueError, match="no para calibrar"):
-        exigir_calibrable(cargar_banco(RAIZ / idioma / "manifiesto.json"))
+    assert cargar_banco(RAIZ / idioma / "manifiesto.json").manifiesto.uso == "regresion"  # medirlo no lo vuelve evaluación

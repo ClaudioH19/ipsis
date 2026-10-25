@@ -3,7 +3,7 @@
 El **tono** decide cómo suena el asistente alrededor del texto de tus
 documentos. No decide qué responde. El texto del documento va literal y las
 citas van debajo, para comprobarlo. Cambiar de tono no cambia el estado de
-ninguna respuesta, ni pide reindexar ni recalibrar.
+ninguna respuesta ni pide reindexar.
 
 ## Configuración: `config/personality.yaml`
 
@@ -258,7 +258,7 @@ total, y todos los idiomas tienen la misma cantidad por situación.
 | `no_answer` | no está en los documentos | — |
 | `premise_not_found` | se preguntó por algo que no existe | `{entity}` (obligatoria) |
 | `needs_clarification` | la pregunta no dice de qué se trata («¿Cuánto es?», «¿Quién lo aprueba?» sin conversación) | — |
-| `alternatives_intro` | tras `no_answer` o `premise_not_found`, antes de los pasajes parecidos de la postura proactiva ([configuración](configuracion.md#cuando-la-respuesta-no-está-postura)) | — |
+| `alternatives_intro` | sin uso desde que se retiró el motor v1 (presentaba los pasajes parecidos de la postura proactiva eliminada); los archivos de tono aún la definen | — |
 | `welcome`, `waiting`, `citations_hint`, `network_error`, `rate_limit_error`, `service_error` | textos del widget | `welcome`: `{assistant_name}` |
 
 ## Variedad y trazabilidad
@@ -324,8 +324,7 @@ archivos YAML.
 | `GET /admin/styles` · `PUT /admin/styles` | Tema y ubicación del widget (`styles.yaml`), con la misma validación que la terminal |
 | `GET /admin/styles/flat` · `POST /admin/styles/set` | Cada valor `seccion.clave`, o `{"assignments": ["colors.accent=#0ea5e9"]}` |
 | `GET /admin/styles/presets` · `POST /admin/styles/preset` | Lista los presets visuales, o aplica uno: `{"name": "editorial"}` (`classic`, `minimal`, `editorial`, `contrast`) |
-| `GET /admin/status` | Perfil, índice, calibración, los umbrales vigentes con su origen (`profile`, `project` o `calibration`), los documentos y los chequeos de `ipsis doctor` |
-| `PUT /admin/thresholds` | `{"thresholds": {"ok": 0.85, "related": null}}`: escribe `config/engine.yaml::profile_overrides.default_thresholds` (`null` vuelve al valor del perfil) y recarga el motor. Valida nombres y el rango [0, 1] |
+| `GET /admin/status` | Perfil, índice, los documentos y los chequeos de `ipsis doctor` |
 | `GET /admin/documents` · `POST /admin/documents?name=ARCHIVO` | Lista el catálogo, o sube un documento como cuerpo crudo (PDF, DOCX, MD o TXT, hasta 20 MiB; se conserva solo el nombre base). Como `ipsis load`: no reindexa |
 | `POST /admin/reindex` · `GET /admin/task` | Reindexa en segundo plano (409 si ya hay una recarga en curso); `task` informa `running`, `done` o `error`. Mientras tanto `/ask` responde 503 |
 
@@ -348,12 +347,11 @@ panel habla inglés por defecto y español con `IPSIS_LANG=es` en el servicio.
 | **Tono** | Elige el tono y la variedad. Por situación, muestra las variantes con las variables del proyecto y deja escribir textos propios. Si un texto no pasa el linter, muestra los errores y no guarda nada |
 | **Avatar** | Importa un `.avatar.json` (se valida antes de guardar), elige el avatar, sus colores, ubicación y tamaño, y asigna cada evento a una animación. El botón ▶ dispara el evento en la vista previa |
 | **Widget** | Aplica un preset y cambia el color de acento, la posición, el tamaño, el lanzador y cómo se muestran las citas. «Estilo completo» edita cada valor de `styles.yaml`: colores claros y oscuros, tipografía, formas, sombras y animaciones |
-| **Estado** | Perfil, índice, calibración y disponibilidad; los umbrales vigentes con su valor de perfil y de proyecto y su origen, editables (vacío = el del perfil); y los chequeos de `ipsis doctor`. Guardar recarga el motor durante unos segundos |
+| **Estado** | Perfil, índice y disponibilidad; y los chequeos de `ipsis doctor` |
 | **Documentos** | El catálogo; sube archivos PDF, DOCX, Markdown o TXT (hasta 20 MiB cada uno) y reindexa en segundo plano, mostrando el avance |
 
 Tono, avatar y widget cambian solo la presentación. **Estado** y
-**Documentos** cambian qué responde el asistente: un umbral cambia cuándo
-responde directo, y los documentos nuevos se pueden responder tras reindexar.
+**Documentos** cambian qué responde el asistente: los documentos nuevos se pueden responder tras reindexar.
 
 - **Vista previa:** el widget real, servido por tu servicio. Se recarga sola
   tras cada cambio guardado.
@@ -397,8 +395,7 @@ revisa:
 1. **Tono reconocible:** las 162 variantes suenan al mismo carácter.
 2. **Honestidad:** `related_intro` y `missing_focus` dicen que no es una
    respuesta directa; `no_answer` y `premise_not_found` no sugieren que la
-   información exista en otra parte; `alternatives_intro` dice que lo que
-   sigue es parecido, no lo pedido, y no promete nada sobre ello.
+   información exista en otra parte.
 3. **Sin contenido:** ninguna plantilla se lee como algo que dice el
    documento.
 4. **El conector encaja:** `opening`, `addition`, `condition` y `exception`

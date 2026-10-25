@@ -114,16 +114,9 @@ def test_diagnostico_v2_no_reinterpreta_ni_repite_busquedas():
     from ipsis.aplicacion.consulta import diagnosticar_pregunta
 
     m = motor()
-
-    def prohibido(*_):
-        raise AssertionError("el diagnóstico v2 debe usar la consulta observada")
-
-    m.retriever.rankings_diagnostico = prohibido
-    m.retriever.textos_diagnostico = prohibido
     resultado = diagnosticar_pregunta("ponderaciones", m)
-    assert resultado.oraciones == []
-    assert len(m.retriever.consultas) == 1
-    assert resultado.tramo is None
+    assert len(m.retriever.consultas) == 1  # el diagnóstico lee lo observado, no repite la búsqueda
+    assert [c["chunk_id"] for c in resultado.candidatos] == ["table"]
     assert resultado.regla == "recuperado"
 
 
@@ -220,12 +213,34 @@ def test_migracion_sin_selector_elige_v2_y_es_idempotente(version):
 
 
 @pytest.mark.parametrize("version", [0, 5, 6, 7])
-@pytest.mark.parametrize("pipeline", ["v1", "v2"])
-def test_migracion_conserva_motor_elegido_explicitamente(version, pipeline):
-    original = {"config_version": version, "pipeline": pipeline,
+def test_migracion_conserva_v2_elegido_explicitamente(version):
+    original = {"config_version": version, "pipeline": "v2",
                 "recuperacion": {"estrategia_chunking": "CH-F256", "coleccion_base": "x"}}
-    assert validar_motor(original)["pipeline"] == pipeline
-    assert migrar_motor(original)["pipeline"] == pipeline
+    assert validar_motor(original)["pipeline"] == "v2"
+    assert migrar_motor(original)["pipeline"] == "v2"
+
+
+@pytest.mark.parametrize("version", [0, 5, 6, 7, 8])
+def test_pipeline_v1_se_carga_como_v2_sin_forzar_reindexar(version, caplog):
+    """El motor v1 se retiró: la configuración que lo elegía sigue arrancando, con v2 y un aviso."""
+    import logging
+
+    import ipsis.configuracion.esquemas as esquemas
+
+    esquemas._AVISADO_V1 = False
+    original = {"config_version": version, "pipeline": "v1",
+                "recuperacion": {"estrategia_chunking": "CH-F256", "coleccion_base": "x"}}
+    with caplog.at_level(logging.WARNING, logger="ipsis.configuracion.esquemas"):
+        cargada = validar_motor(original)
+    assert cargada["pipeline"] == "v2"
+    assert original["pipeline"] == "v1"  # no modifica el archivo de entrada
+    assert "pipeline: v1" in caplog.text
+    if version < 8:
+        # Una elección anterior no cambia el índice: sin preparación elegida se conserva la de siempre.
+        assert cargada["recuperacion"]["preparacion"]["modo"] == "legacy"
+    caplog.clear()
+    validar_motor(original)
+    assert "pipeline: v1" not in caplog.text  # el aviso sale una vez por proceso
 
 
 def test_paquete_v2_no_importa_heuristicas_de_v1():
@@ -348,12 +363,6 @@ def test_fabrica_default_v2_no_construye_cascada_y_se_puede_servir(monkeypatch, 
     from ipsis.configuracion.carga import cargar_proyecto, cargar_dominio
     from ipsis.nucleo.registro import RegistroComponentes
     from ipsis.servicio.api import crear_app
-    from ipsis.lenguaje import intenciones
-
-    def prohibido(*_):
-        raise AssertionError("v2 no debe construir respaldo de intención")
-
-    monkeypatch.setattr(intenciones, "construir_respaldo", prohibido)
     # Este motor usa un índice en memoria y no necesita modelos descargados.
     # La disponibilidad del proyecto de disco se verifica en el smoke real,
     # no contra la caché global de quien ejecuta esta prueba de la fábrica.
@@ -373,7 +382,7 @@ def test_fabrica_default_v2_no_construye_cascada_y_se_puede_servir(monkeypatch, 
     assert m.abstencion_calibrada is False
     assert "intent_classifier" not in m.metadatos_auditoria["componentes"]
     assert m.metadatos_auditoria["componentes"]["answer_reader"] is None
-    assert m.metadatos_auditoria["componentes_configurados"]["intent_classifier"] == "rules"
+    assert "componentes_configurados" not in m.metadatos_auditoria
     with TestClient(crear_app(m)) as cliente:
         ready = cliente.get("/ready")
         assert ready.status_code == 200

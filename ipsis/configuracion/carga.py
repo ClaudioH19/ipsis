@@ -116,7 +116,7 @@ def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perf
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     recuperacion = dict(cfg["recuperacion"])
     instalacion = perfil_efectivo(perfil or cargar_dominio().get("perfil", "light"),
-                                cfg.get("ajustes_perfil"), ruta_calibracion=None)
+                                cfg.get("ajustes_perfil"))
     if not recuperacion.get("modelo"):
         recuperacion["modelo"] = instalacion.modelos.denso
     if instalacion.recuperacion_modo:
@@ -133,17 +133,6 @@ def config_recuperacion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO, perf
 def config_servicio(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
     cfg = cfg if cfg is not None else cargar_proyecto(ruta)
     return cfg.get("servicio", {"concurrencia_maxima": 4})
-
-
-def config_redaccion(cfg: dict | None = None, ruta: str = RUTA_PROYECTO) -> dict:
-    cfg = cfg if cfg is not None else cargar_proyecto(ruta)
-    return cfg.get("redaccion", {
-        "longitud_maxima_fragmento_chars": 10**9,
-        "max_fragmentos_en_respuesta": 2,
-        "score_relativo_minimo": 0.6,
-        "cita_en_texto": "breve",
-        "incluir_apertura": True,
-    })
 
 
 _LIMITE_PETICIONES_POR_DEFECTO = {"capacidad": 100, "tasa_por_segundo": 1.0}
@@ -165,7 +154,6 @@ CLAVES_DOMINIO = {
     "assistant_name": "nombre_asistente", "domain_description": "descripcion_dominio", "language": "idioma",
     "profile": "perfil", "cors_origins": "cors_origenes", "widget_keys": "claves_widget",
     "query_log.enabled": "registro.activo",
-    "posture.mode": "postura.modo", "posture.max_alternatives": "postura.max_alternativas",
 }
 CLAVES_DOMINIO_VALIDAS = set(CLAVES_DOMINIO)
 _CLAVES_LISTA_SEPARADA_POR_COMA = {"cors_origenes", "claves_widget"}

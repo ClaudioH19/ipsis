@@ -154,7 +154,7 @@ def test_personalidad_yaml_sobrescribe_y_se_valida(tmp_path: Path):
 
 
 def test_el_motor_usa_el_tono_y_la_sobrescritura_del_proyecto(tmp_path: Path, monkeypatch):
-    from ipsis.consulta.etapas.redaccion import cargar_plantillas
+    from ipsis.consulta.plantillas import cargar_plantillas
     from ipsis.lenguaje.paquete import cargar_paquete
 
     (tmp_path / "config").mkdir()

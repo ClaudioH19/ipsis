@@ -92,7 +92,7 @@ def markdown(reporte):
     return "\n".join(lineas) + "\n"
 
 
-def ejecutar(perfiles, variantes, manifiestos, salida, descargar=False, condiciones=None):
+def ejecutar(perfiles, variantes, manifiestos, salida, descargar=False):
     from ipsis.aplicacion.benchmark import _evaluar_en_proyecto
     from ipsis.cli import main
     from ipsis.configuracion.perfiles import perfil_efectivo
@@ -124,7 +124,7 @@ def ejecutar(perfiles, variantes, manifiestos, salida, descargar=False, condicio
         "resultados": [], "fallos": []}
     salida.mkdir(parents=True, exist_ok=True)
     for nombre, perfil, ajustes in trabajos:
-        efectivo = perfil_efectivo(perfil, ajustes, ruta_calibracion=None)
+        efectivo = perfil_efectivo(perfil, ajustes)
         try:
             for id_hf in efectivo.modelos.model_dump().values():
                 if id_hf:
@@ -137,7 +137,7 @@ def ejecutar(perfiles, variantes, manifiestos, salida, descargar=False, condicio
             print(f"Midiendo {nombre} / {banco.manifiesto.dataset_id} ({len(banco.casos)} casos)...", flush=True)
             inicio = time.perf_counter()
             try:
-                artefacto, indexado, _ = _evaluar_en_proyecto(perfil, manifiesto, banco, main, False, ajustes, condiciones)
+                artefacto, indexado = _evaluar_en_proyecto(perfil, manifiesto, banco, main, ajustes)
                 artefacto = artefacto.model_copy(update={"backend": nombre})
                 ruta = salida / f"{nombre.replace('+', '-')}-{banco.manifiesto.dataset_id}.json"
                 ruta.write_text(artefacto.model_dump_json(indent=2)+"\n", encoding="utf-8")

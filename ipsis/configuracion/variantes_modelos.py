@@ -1,8 +1,4 @@
 """Variantes de medium que cambian un modelo, para evaluar candidatos por componente."""
-from copy import deepcopy
-
-CASCADE = {"recuperar_n": 20, "rerank_k": 4, "leer_m": 2,
-           "max_caracteres_lectura": 600, "concordancia": False}
 BASE = {"denso": "intfloat/multilingual-e5-small",
         "reranker": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
         "lector": "dewdev/mdeberta-v3-base-squad2-onnx"}
@@ -19,9 +15,9 @@ VARIANTES_MODELOS = {
 
 
 def ajustes_variante(nombre: str) -> dict:
-    """Ajustes del motor; mismo lector/cascada para atribuir las diferencias."""
+    """Ajustes del perfil; el mismo lector en todas las variantes, para atribuir las diferencias."""
     cambios = VARIANTES_MODELOS[nombre]
-    return {"modelos": {**BASE, **cambios}, "cascada": deepcopy(CASCADE)}
+    return {"modelos": {**BASE, **cambios}}
 
 
 __all__ = ["VARIANTES_MODELOS", "ajustes_variante"]

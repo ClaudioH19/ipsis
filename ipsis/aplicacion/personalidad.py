@@ -2,7 +2,7 @@
 
 Todo cambio se valida completo (esquema, linter de plantillas y avatar) antes
 de escribir ``config/personality.yaml``; si no pasa, no se escribe
-nada. Es presentación: no toca índice, calibración ni umbrales.
+nada. Es presentación: no toca el índice ni lo que responde el motor.
 """
 from __future__ import annotations
 

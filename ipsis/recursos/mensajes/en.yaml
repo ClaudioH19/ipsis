@@ -37,7 +37,7 @@ init:
   language_profile: '  language = {language!r}, profile = {profile!r}'
   fallback_note: '  Note: there is no pack for {language!r}: the universal rules, unstemmed terms and the English texts are used (translate them in config/language.yaml).'
   corpus_ready: Empty corpus ready in documents/ (catalog in {path}).
-  engine_created: config/engine.yaml created with generic starting thresholds. Calibration comes last, once the setup is stable.
+  engine_created: 'config/engine.yaml created with the starting values.'
   engine_kept: config/engine.yaml already existed -- left untouched.
   domain_created: 'config/domain.yaml created: your own domain rules and categories (optional).'
   domain_kept: config/domain.yaml already existed -- left untouched.
@@ -50,19 +50,12 @@ configure:
   value: '  {key} = {value!r}'
 profile:
   help: Show or change the installation profile (light or medium).
-  show_help: Show the active profile, its models and budget, and whether the index and calibration fit it.
-  set_help: Change the active profile and tell whether to reindex or recalibrate (runs nothing expensive).
+  show_help: 'Show the active profile, its models and budget, and whether the index fits it.'
+  set_help: 'Change the active profile and tell whether to reindex (runs nothing expensive).'
   arg_profile: 'Target installation profile: light or medium.'
   index_compatible: 'Index: compatible (built with {model}).'
   index_missing: 'Index: does not exist yet; the next ''ipsis index'' will build it for {profile} ({model}).'
   index_incompatible: 'Index: incompatible: it was built with {built} and the {profile} profile needs {needed}.'
-  calibration_none: 'Calibration: none (the profile thresholds apply).'
-  calibration_current: 'Calibration: current (its thresholds are active).'
-  calibration_disabled: 'Calibration: saved for auditing only, not applied ({reason}).'
-  calibration_changed: The previous calibration no longer matches the active profile
-  calibration_stale: 'Calibration: stale'
-  calibration_kept: '{prefix} ({reason}). The profile thresholds apply; the file is kept.'
-  calibration_action: ipsis calibrate --apply (if you have an imported golden set)
   active: 'Active profile: {profile}'
   active_described: 'Active profile: {profile} ({description})'
   budget: 'p95 budget: {ms} ms'
@@ -179,7 +172,7 @@ ask:
   arg_question: The question to send (quoted if it has spaces).
   opt_url: 'Base URL of the service (default: ''http://127.0.0.1:8000'').'
   opt_timeout: 'Seconds to wait for an answer before failing (default: 30).'
-  opt_diagnostics: Run the question with the project engine in this process (without the service) and show the stages with their latency, signals, focus terms, the deciding rule and the exact span. With local Qdrant, stop 'ipsis serve' first.
+  opt_diagnostics: Run the question with the project engine in this process (without the service) and show the stages with their latency, the candidates with their place in each ranking and the evidence. With local Qdrant, stop 'ipsis serve' first.
   status_ok: '[OK]'
   status_related: '[RELATED -- not a direct answer]'
   status_no_answer: '[NO ANSWER]'
@@ -197,42 +190,15 @@ ask:
   engine_failed: 'The project engine could not run: {error}'
   rule: '
 
-    Rule: {rule} (reason: {reason}; profile: {profile})'
+    Rule: {rule} (reason: {reason})'
   stages: 'Stages (ms):'
-  early_exit: '   (early exit: no models)'
-  signals: 'Signals:'
-  intention: 'Intention: {name} (recognized in “{relation}”)'
-  intention_similarity: 'Intention: {name} (similarity: {score}, margin: {margin})'
   spelling: 'Typos corrected against the corpus: {values}'
-  confidence_level: 'Confidence: {level}'
-  confidence_alta: high (direct answer read by the QA reader)
-  confidence_media: medium (direct answer without a reader; check the citation)
-  confidence_baja: low (closest passage, not a direct answer)
-  synonyms: 'Synonyms used: {values}'
-  lexical_source: 'BM25 expansion: {word} → {forms} ({source}, sense {sense}, POS {pos})'
-  conversation: 'Conversation: {action}; topic: {topic}'
-  conversation_hereda: follows the topic
-  conversation_retoma: returns to an earlier topic
-  conversation_tema_nuevo: new topic
-  conversation_sin_cambio: no topic change
-  interpreted: 'Interpreted question: "{question}"'
-  focus: 'Focus terms: found: {found}; missing: {missing}'
-  absent: 'Terms not in the corpus: {terms}'
-  sentence: 'Evaluated sentence: «{sentence}»'
-  span: 'Exact span: «{text}» ({chunk_id}, offsets {start}-{end})'
-  no_span: 'Exact span: -'
   evidence: 'Evidence: {doc_id} offsets {start}-{end}'
   candidates: 'Candidates (place in dense / BM25 / fusion / reranker; QA reader probability):'
   candidate: '  {chunk_id}: dense {dense}, bm25 {bm25}, fusion {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
-  sentences: 'Best scored sentences (s_lex, what the selection uses):'
-  scored_sentence: '  {score:.3f} «{text}»'
-  alternatives: 'Alternatives (posture): {offered} offered, {discarded} discarded'
-  alternative_offered: '  offered    {affinity:.2f}  {signals}  {text}'
-  alternative_discarded: '  discarded  {affinity:.2f}  {signals}  {text}'
-  tone: 'Tone: {tone}; templates: {templates}'
   warning: 'Warning: {warning}'
 doctor:
-  help: 'Read-only diagnosis: configuration, profile, language, models, index, calibration, golden and CORS.'
+  help: 'Read-only diagnosis: configuration, profile, language, models, index, golden and CORS.'
   no_project: No ipsis project found in this folder.
   title: 'Project diagnosis
 
@@ -349,7 +315,7 @@ tone:
   list_help: Tones available for the project language, with an example of each.
   row: '{mark} {tone:9} {description}'
   example: '            «{example}»'
-  apply_help: Activate a tone. Needs no reindexing or recalibration.
+  apply_help: 'Activate a tone. Needs no reindexing.'
   arg_tone: cordial, formal, serious, upbeat, friendly, empathetic or direct.
   applied: 'Active tone: {tone}. Restart ''ipsis serve'' (or wait for the hot reload) to see it.'
   try_help: Print the variants of a tone, with the project variables.
@@ -401,31 +367,6 @@ evaluate:
   guard: 'Wrong direct answers in this bank (must be 0): {verdict}'
   pass: PASS
   blocked: BLOCKED
-calibrate:
-  help: Choose thresholds with the imported golden set, under risk control.
-  opt_alpha: 'Maximum risk of wrong direct answers, between 0 and 1 (default: 0.05).'
-  opt_apply: Save the result to config/calibration.yaml (only used if it ends up calibrated).
-  failed: 'Could not calibrate:'
-  status_calibrated: CALIBRATED
-  status_insufficient_sample: INSUFFICIENT_SAMPLE
-  status_no_safe_threshold: NO_SAFE_THRESHOLD
-  header: 'Calibration: {status}  (target risk ≤ {alpha:.1%}, confidence {confidence:.0%})'
-  provenance: Profile {profile}, bank {bank}, corpus {corpus}…
-  dev: 'Dev (chooses the thresholds): {n} direct answers, {x} wrong, upper bound {bound}'
-  coverage: '  direct coverage {direct} (exact {exact}, paraphrase {paraphrase}); false ok {false_ok} (traps {traps})'
-  thresholds: 'Thresholds (profile → calibrated):'
-  threshold: '  {name:8} {before:.4f} → {after:.4f}{mark}'
-  changes: '   (changes)'
-  insufficient: 'The risk cannot be certified yet (it does not mean the profile is unsafe):'
-  accepted: '  answers accepted without error: {n}'
-  needed: '  needed for α={alpha} at {confidence:.0%}: {n}'
-  missing: '  at least {n} more'
-  profile_thresholds: The profile thresholds still apply.
-  no_safe: The sample is large enough (up to {n} direct answers in dev), but no threshold combination keeps the bound ≤ {alpha:.1%}.
-  test: 'Test (verification only): {verdict}; {n} direct answers, {x} wrong, bound {bound}; direct coverage {coverage}'
-  saved: Calibration saved and enabled in {path}.
-  saved_audit: Result saved for auditing in {path}. The profile thresholds remain active.
-  not_saved: 'Nothing was saved: use ''ipsis calibrate --apply'' to enable these thresholds.'
 compare:
   help: Compare reports produced by 'ipsis evaluate'.
   arg_reports: Two or more comparable JSON reports.
@@ -440,12 +381,11 @@ benchmark:
   opt_bank: Versioned manifest to evaluate; repeatable (e.g. one bank per language).
   opt_latency_only: Measure p50/p95 per stage of each profile against its budget.
   opt_profiles: Profiles to compare (bm25,light,medium). With --latency-only, default light,medium.
-  opt_experiments: Add experimental variants (medium with τ_ok 0.85; light with agreement).
   opt_repetitions: 'Times each question is repeated with --latency-only (default: 20).'
   opt_output: 'Output folder (default: golden/reports with --profiles, otherwise reports/benchmark).'
   failed: 'Could not run the benchmark: {error}'
   written: Reproducible benchmark written to {path}
-  no_decisions: The report makes no decisions; review it before changing defaults or thresholds.
+  no_decisions: 'The report makes no decisions; review it before changing defaults.'
   within: ' [within budget]'
   over: ' [OVER budget]'
   profile_row: '{name:16} direct coverage {coverage:.1%}  false ok {false_ok}/{unanswerable}  p50 {p50} ms  p95 {p95} ms (budget {budget}){mark}'
@@ -558,11 +498,7 @@ app:
   avatar_missing: 'there is no avatar {name!r}; available: {available}'
   avatar_name_rules: 'invalid name {name!r}: use lowercase letters, digits and hyphens (e.g. «my-avatar»)'
   expects_boolean: '{key} expects true or false, not {value!r}'
-  posture_alternatives_range: 'posture.max_alternatives expects a whole number from 1 to 5, not {value!r}'
-  unknown_posture: 'unknown posture {value!r}: use one of {available}'
   unknown_configure_keys: 'unknown key(s) for ''ipsis configure'': {keys}. Valid: {valid}'
-  unknown_threshold: 'unknown threshold {key!r}. Valid: {valid}'
-  threshold_range: 'threshold {key!r} must be a number between 0 and 1 (got {value!r})'
   upload_type: '{name!r} is not a supported document. Valid extensions: {valid}'
   upload_empty: '{name!r} is empty'
   upload_size: '{name!r} is larger than {mb} MiB'
@@ -574,9 +510,6 @@ app:
   index_failed: indexing {what} failed
   report_missing: the report {name} was not produced
   init_failed_profile: ipsis init --profile {profile} failed
-  no_index_calibrate: there is no valid index for the project ({name}). Run 'ipsis index' before calibrating
-  alpha_range: --alpha must be between 0 and 1, exclusive (got {alpha})
-  golden_revalidate: Run 'ipsis golden validate' and import the golden set again if needed
   init_failed_for: ipsis init failed for {profile}
   unknown_profiles: unknown profiles {profiles}; use {valid}
   cases_mismatch: '{profile} did not evaluate exactly the cases of {bank}'
@@ -607,7 +540,6 @@ app:
   from_after_to: --from is later than --to
   path_missing: '{path} does not exist'
   no_components: the configuration defines no components
-  unknown_stage: the profile {profile!r} declares the unknown stage {stage!r}. Review profile_overrides.stages in config/engine.yaml. {error}
   audit_missing_document: the document is no longer in the current corpus
   audit_out_of_range: offsets outside the document (length {length})
   audit_altered: logged «{logged}», in the corpus «{current}»
@@ -620,7 +552,7 @@ bankfile:
   answer_repeated: the answer appears {n} times ({documents}); the first one is used. Fill in the 'document' column to choose
   invalid_id: '{origin}: invalid id {id!r} (lowercase letters, digits, ''_'' or ''-'')'
   repeated_id: '{origin}: id {id!r} repeated (also in {other})'
-  small: 'the golden set has {n} rows: good as a quick check; to tune thresholds and compare profiles you want at least {minimum}'
+  small: 'the golden set has {n} rows: good as a quick check; to compare profiles you want at least {minimum}'
   few_unanswerable: 'only {n} of {total} rows are no_answer or false_premise (less than {minimum:.0%}): the risk of false ok answers cannot be measured well'
   no_traps: 'there are no ''same_topic_trap'' rows: add unanswerable questions about the same topics as the answerable ones (e.g. «What does the warranty cover?» next to «When does it expire?»)'
   not_certifiable: 'good for practical tuning, not for certifying: with 0 errors you need at least {needed} accepted answers in test to claim α=0.05 at 95% (there are ~{n} answerable rows in test)'
@@ -645,7 +577,6 @@ check:
   name_stemmer: Stemmer
   name_modelos: Models
   name_indice: Index
-  name_calibracion: Calibration
   name_golden: Golden
   name_cors: CORS
   name_personalidad: Personality
@@ -654,7 +585,6 @@ check:
   dep_language_pack: the language pack
   dep_profile: the profile
   dep_config_profile: the configuration and the profile
-  dep_profile_index: the profile and the index
   root: (root)
   golden_missing_document: a document of the bank is missing from the corpus ({file})
   golden_corpus_changed: the corpus changed since it was imported
@@ -663,10 +593,8 @@ check:
   no_file: '{path} does not exist'
   init_force: ipsis init --force (creates engine.yaml; resets assistant.yaml to the defaults)
   fix_domain: 'fix {path} (it is optional: you can also delete it)'
-  fix_policy: fix components.abstention_policy in {path}
   fix_styles: fix {path} (meanwhile the widget uses the factory design)
   config_ok: assistant.yaml and engine.yaml valid
-  policy_unavailable: '{path}: abstention policy {name!r} not available: {error}'
   invalid_overrides: '{profile}: the profile_overrides of {path} are not valid: {error}'
   fix_overrides: fix profile_overrides in {path}
   language_invalid: '{code}: the pack with the overrides of {path} is not valid: {error}'
@@ -691,18 +619,11 @@ check:
   index_incompatible: 'incompatible: {reason}'
   index_corpus_changed: the documents changed since the last indexing
   index_ok: compatible ({model}, {n} chunks, corpus unchanged)
-  calibration_invalid: '{path} is not valid ({error}); the engine cannot start'
-  calibration_rewrite: ipsis calibrate --apply (rewrites it)
-  calibration_delete: or delete {path}
-  calibration_none: none (optional); the profile thresholds are used
-  calibration_current: 'current: its thresholds are active'
-  calibration_audit: saved for auditing only ({reason})
-  calibration_stale: stale ({reason}); the profile thresholds apply and the file is kept
   golden_import: ipsis golden import <file>
   golden_none: none (optional)
-  golden_stale: '{reason}: do not use it to evaluate or calibrate until you update it'
-  golden_unreadable: the imported bank cannot be read ({reason}); evaluating and calibrating are blocked
-  golden_regression: 'regression bank {id} ({n} cases): good for evaluating, not for calibrating'
+  golden_stale: '{reason}: do not use it to evaluate until you update it'
+  golden_unreadable: 'the imported bank cannot be read ({reason}); evaluating is blocked'
+  golden_regression: 'regression bank {id} ({n} cases): good for evaluating'
   golden_ok: '{id} ({n} cases), current with the corpus'
   cors_missing: 'cors_origins is empty but there are widget_keys configured: the browser will block the widget requests from your site'
   cors_action: ipsis configure cors_origins=https://your-site.com
@@ -740,6 +661,7 @@ core:
   not_yaml_object: '{name} must be a YAML object'
   config_version_type: '{name}.config_version must be a non-negative integer'
   config_version_newer: '{name} uses config_version={version}, but this installation only supports up to {supported}'
+  pipeline_v1_retired: '`pipeline: v1` no longer exists: the v1 engine was retired and this project loads with v2. Remove that line from config/engine.yaml to silence this notice.'
   reranker_options: retrieval.reranker with options cannot be migrated automatically; select components.reranker by name
   reranker_conflict: retrieval.reranker and components.reranker contradict each other
   no_migration: there is no migration for {name} version {version}
@@ -797,15 +719,6 @@ core:
   index_no_stats: the lexical statistics of the index do not exist at {path!r}. Run 'ipsis index' to rebuild the index.
   collection_missing: the Qdrant collection {name!r} does not exist yet. Run 'ipsis index' first (it reads the same config/engine.yaml::retrieval as this service).
 evaluation:
-  calibrated: 'Calibrated on dev: {n} direct answers, {x} wrong, bound {bound} ≤ α={alpha}; direct coverage {coverage}.'
-  insufficient_sample: 'Insufficient sample: up to {without_errors} direct answers without errors in dev. Certifying α={alpha} with {confidence} confidence needs at least {needed} if they stay error-free ({missing} missing). It is not evidence of being unsafe: the profile thresholds are kept.'
-  no_safe_threshold: 'No safe threshold: there are up to {accepted} direct answers in dev, but no combination keeps the bound ≤ α={alpha}. The profile thresholds are kept.'
-  calibration_status: 'the calibration ended with status {status}: the profile thresholds are used'
-  calibration_profile: it was calibrated with the profile {calibrated!r} and the project uses {profile!r}
-  calibration_models: it was calibrated with other models
-  calibration_corpus: the indexed corpus changed since the calibration (or there is no index)
-  calibration_lexical: the lexical rules or sources changed since calibration (or its lexical hash is missing)
-  calibration_criterion: the answer evaluation criterion changed; run 'ipsis calibrate' again before applying thresholds
   offsets_mismatch: the evidence offsets do not match the literal text
   answerable_needs_evidence: an answerable question needs a literal answer and evidence
   literal_in_evidence: the literal answer must be contained in a piece of evidence
@@ -817,19 +730,14 @@ evaluation:
   missing_categories: 'required categories are missing: {categories}'
   stable_split: a stable bank must split dev and test
   corpus_hash: the corpus hash does not match the manifest
-  regression_bank: 'the bank {bank!r} is a software regression bank: it is for measuring and comparing, not for calibrating thresholds. Calibrate with your golden set'
   unknown_document: '{case}: unknown document {document!r}'
   not_literal: '{case}: evidence not literal or invalid offsets'
   compare_two: at least two runs are needed to compare
   compare_labels: each run needs a different backend label
   compare_identity: the runs do not use the same dataset, corpus and k
   compare_criterion: the reports use different answer evaluation criteria; re-evaluate both runs
-  note_regression: 'Regression bank: it compares profiles on the same cases. Its risk bounds certify no client; ''ipsis calibrate'' does that with the client''s golden set.'
-  note_evaluation: 'Client evaluation bank: incorrect direct answers (as in ''ipsis evaluate'') must be 0; QA span quality is separate and risk bounds require reviewing calibration.'
-  variant_medium_ok: 'medium with τ_ok = {value} (profile: {profile_value}). It re-decides the medium observations with the production rule; a threshold does not change the cost, so the latency is medium''s.'
-  variant_light_agreement: light requiring agreement ≥ 0.5 (dense top-1 in the BM25 top-3 and vice versa) for a lexical ok. It adds two searches per question; the latency adds their measured cost to each light query.
-  extra_p50: extra searches p50 ms
-  extra_p95: extra searches p95 ms
+  note_regression: 'Regression bank: it compares profiles on the same cases. Its risk bounds certify no client.'
+  note_evaluation: 'Client evaluation bank: incorrect direct answers (as in ''ipsis evaluate'') must be 0; QA span quality is separate.'
   report_title: '# Benchmark by profile'
   report_bank: '- Bank `{bank}` ({language}, use {use}, {cases} cases)'
   report_project_language: project language
@@ -846,10 +754,9 @@ evaluation:
   report_false_ok: '## False ok per profile (hard negatives)'
   report_none: none
   report_cost: '## Cost'
-  report_cost_header: '| Profile | Models (parameters · ONNX on disk) | retrieve_n / rerank_k / read_m | Indexing (s) | Extra |'
+  report_cost_header: '| Profile | Models (parameters · ONNX on disk) | Retrieval | Indexing (s) |'
   report_onnx_note: The ONNX size is that of the file on disk, not the memory used (RSS is not measured).
   report_stage_latency: '## Latency per stage (p95 ms)'
-  report_variants: '## Experimental variants (not defaults)'
 lint:
   unknown_situation: unknown situation {situation!r}
   empty: empty
@@ -945,18 +852,10 @@ panel:
   session_ended: The session ended or the token changed. Sign in again.
   network_error: Could not connect to the service.
   no_changes: There are no style changes to save.
-  note: "Tone, avatar and widget change only the presentation. Thresholds and documents (Status and Documents tabs) change what the assistant answers."
+  note: 'Tone, avatar and widget change only the presentation. Documents (Documents tab) change which sources the assistant finds.'
   tab_status: "Status"
   tab_documents: "Documents"
   status_title: "Project status"
-  thresholds_title: "Thresholds"
-  thresholds_note: "Leave a value empty to use the profile's. A calibration in force (config/calibration.yaml) takes precedence over ok, oov_ok and focus. Saving reloads the engine for a few seconds."
-  threshold: "Threshold"
-  effective: "In force"
-  profile_value: "Profile"
-  project_value: "Project"
-  source: "Source"
-  save_thresholds: "Save thresholds"
   doctor_title: "Diagnosis (ipsis doctor)"
   refresh: "Refresh"
   documents_title: "Documents"
@@ -971,7 +870,6 @@ panel:
   not_ready: "Not ready"
   profile_label: "Profile"
   index_label: "Index"
-  calibration_label: "Calibration"
   chunks: "chunks"
   task_running: "Reloading the engine..."
   task_done: "Engine reloaded."
@@ -982,9 +880,6 @@ panel:
   reindex_hint: "Uploaded. Press Reindex to make the new documents answerable."
   'yes': "yes"
   'no': "no"
-  source_calibration: "calibration"
-  source_project: "project (engine.yaml)"
-  source_profile: "profile"
 presets:
   ocean: Institutional navy, solid header, square corners and uppercase labels.
   forest: Editorial green, serif headlines and paper notes with a side bar.
@@ -1011,9 +906,6 @@ runtime:
   short_token: 'IPSIS_ADMIN_TOKEN has {length} characters; {minimum} or more are needed: /admin stays off'
   bad_source_url: 'IPSIS_SOURCE_URL={url!r} is not an http(s) URL: /source uses {default}'
   positive: '{name} must be greater than zero'
-  not_negative: '{name} cannot be negative'
-  reader_disagreement: the two best spans give different values of the same type
-  unsupported_entity: 'entity in the answer without literal support in the fragments: {entities}'
   already_loaded: (already in the catalog, same content)
   plain_text_sections: 'the plain text declares no section structure: the whole document has no seccion_path, which weakens the deterministic filters.'
   assistant_header: '# Assistant identity. Edit it with `ipsis configure key=value`.
@@ -1067,7 +959,7 @@ menu:
   group_documents: Documents
   group_ask: Ask
   group_customize: Customize
-  group_quality: Measure and calibrate
+  group_quality: 'Measure'
   group_operate: Deploy and operate
   group_other: Other
   examples: Examples
@@ -1075,14 +967,13 @@ menu:
   example_load: Add a folder of documents to the catalog
   example_chat: Ask and run commands interactively (/help inside)
   example_serve: Open the test page and enable the panel; prints a temporary token if none is configured
-  example_threshold: Choose thresholds with your golden set at 5 % risk
   footer: "Options: ipsis help serve · ipsis help widget theme apply · <command> --help · interactive mode: ipsis chat"
 help:
   help: Show the commands grouped by task, or the help of one command.
   arg_command: Command path to explain (e.g. serve or widget theme apply).
 chat:
   help: 'Interactive mode: type questions, and /commands (/help, /doctor, /index...).'
-  opt_diagnostics: Start with diagnostics on (stages, signals, rule and span of each answer).
+  opt_diagnostics: Run the question with the project engine in this process (without the service) and show the stages with their latency, the candidates with their place in each ranking and the evidence. With local Qdrant, stop 'ipsis serve' first.
   welcome: "ipsis chat -- type a question, or /help for commands. /exit to leave."
   commands: 'Commands:'
   cmd_help: 'Show this list or the options of one command: /help serve, /help widget theme apply.'
@@ -1125,7 +1016,6 @@ progress:
   doctor: Checking the project and what it needs
   audit: Checking project integrity
   evaluate: Evaluating answers with your question bank
-  calibrate: Finding safe thresholds with your question bank
   benchmark: Measuring quality and response times
   query: Looking for an answer in your documents
   engine: Preparing the engine for the conversation

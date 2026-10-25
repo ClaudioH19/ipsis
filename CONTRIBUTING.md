@@ -9,8 +9,7 @@ Issues and pull requests are welcome in English or Spanish.
 - **Nothing generative.** Every statement is a literal span of the
   document; the only additions are fixed, reviewed templates
   ([ADR 0001](docs/decisions/0001-non-generative-answers.md)).
-- **No training.** No fine-tuning and no learned weights: calibration only
-  chooses thresholds among observed values.
+- **No training.** No fine-tuning and no learned weights.
 - **Abstaining beats being wrong.** A change that raises coverage at the
   cost of false `ok` answers is not accepted.
 - **No language text in Python.** Words, patterns and messages go in the

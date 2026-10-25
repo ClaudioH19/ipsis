@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from ipsis.nucleo.contratos import AnswerExtractor, EvidenceVerifier
+from ipsis.nucleo.contratos import EvidenceVerifier
 from ipsis.nucleo.esquemas import (
     ChunkRecord,
     EvidenceSpan,
-    QueryAnalysis,
     RetrievalCandidate,
     RetrievalSignals,
 )
 from ipsis.indice.payload import payload_desde_evidencia
-from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier, SentenceSelectorExtractor
+from ipsis.aplicacion.registro_base import LiteralOffsetsVerifier
 
 
 def _candidato(
@@ -36,39 +35,17 @@ def _candidato(
     )
 
 
-def test_selector_y_verificador_cumplen_protocolos_tipados():
-    assert isinstance(SentenceSelectorExtractor(), AnswerExtractor)
+def test_el_verificador_cumple_el_protocolo_tipado():
     assert isinstance(LiteralOffsetsVerifier(), EvidenceVerifier)
 
 
-def test_selector_devuelve_evidencia_literal_y_prioriza_entidad():
-    consulta = QueryAnalysis(
-        pregunta_original="¿Qué dice el artículo 9?",
-        pregunta_normalizada="¿Qué dice el artículo 9?",
-    )
-    sin_entidad = _candidato(
-        "c-alto",
-        "Este fragmento tiene similitud general, pero no contiene la referencia.",
-        offset=0,
-        score=0.95,
-    )
-    con_entidad = _candidato(
-        "c-entidad",
-        "Introducción. El artículo 9 fija un plazo de 10 días. Cierre.",
-        offset=100,
-        score=0.70,
-    )
-    candidatos = [sin_entidad, con_entidad]
-
-    evidencias = SentenceSelectorExtractor(limite_caracteres=45).extraer(
-        consulta,
-        candidatos,
-    )
-
-    assert evidencias[0].chunk_id == "c-entidad"
-    assert "artículo 9" in evidencias[0].texto
-    assert evidencias[0].score == 0.70
-    assert LiteralOffsetsVerifier().verificar(evidencias, candidatos) == (True, [])
+def test_el_verificador_acepta_una_evidencia_literal():
+    candidato = _candidato("c1", "Introducción. El artículo 9 fija un plazo de 10 días.", offset=100, score=0.7)
+    texto = "El artículo 9 fija un plazo de 10 días."
+    inicio = 100 + candidato.chunk.texto_fuente.index(texto)
+    evidencia = EvidenceSpan(doc_id="manual", chunk_id="c1", texto=texto, offset_inicio=inicio,
+                             offset_fin=inicio + len(texto))
+    assert LiteralOffsetsVerifier().verificar([evidencia], [candidato]) == (True, [])
 
 
 def test_verificador_rechaza_texto_no_literal_aunque_el_largo_coincida():

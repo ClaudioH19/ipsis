@@ -128,7 +128,7 @@
     });
   });
 
-  // --- estado del proyecto y umbrales ----------------------------------
+  // --- estado del proyecto ----------------------------------------------
   function fila(dl, termino, valor) {
     dl.appendChild(elemento("dt", termino));
     dl.appendChild(elemento("dd", valor == null ? "-" : String(valor)));
@@ -144,25 +144,7 @@
     vaciar(dl);
     fila(dl, textos.perfil, d.profile + " -- " + d.description);
     fila(dl, textos.indice, d.index.state + (d.index.chunks != null ? " (" + d.index.chunks + " " + textos.fragmentos + ")" : ""));
-    fila(dl, textos.calibracion, d.calibration.state + (d.calibration.reason ? " -- " + d.calibration.reason : ""));
     fila(dl, d.ready ? textos.listo : textos.noListo, textoTarea(d.task));
-    var cuerpo = $("tabla-umbrales");
-    vaciar(cuerpo);
-    d.thresholds.forEach(function (u) {
-      var tr = elemento("tr");
-      tr.appendChild(elemento("td", u.key));
-      tr.appendChild(elemento("td", u.value == null ? "-" : String(u.value)));
-      tr.appendChild(elemento("td", u.profile == null ? "-" : String(u.profile)));
-      var td = elemento("td");
-      var entrada = elemento("input", null, { type: "number", min: "0", max: "1", step: "0.01",
-                                             "data-umbral": u.key, "aria-label": u.key });
-      if (u.source !== "profile" && u.project != null) entrada.value = String(u.project);
-      entrada.dataset.inicial = entrada.value;
-      td.appendChild(entrada);
-      tr.appendChild(td);
-      tr.appendChild(elemento("td", textos["origen" + u.source.charAt(0).toUpperCase() + u.source.slice(1)] || u.source));
-      cuerpo.appendChild(tr);
-    });
     var lista = $("lista-doctor");
     vaciar(lista);
     d.doctor.forEach(function (c) {
@@ -173,7 +155,7 @@
   function cargarProyecto() {
     return api("GET", "/status").then(pintarProyecto, fallo);
   }
-  // Mientras el motor se recarga (umbrales o reindexado), se consulta /task cada 2 s.
+  // Mientras el motor se recarga (reindexado), se consulta /task cada 2 s.
   function seguirTarea(alTerminar) {
     api("GET", "/task").then(function (r) {
       $("doc-tarea").textContent = textoTarea(r.task);
@@ -183,20 +165,6 @@
   }
   $("actualizar-proyecto").addEventListener("click", cargarProyecto);
   $("pestana-proyecto").addEventListener("click", cargarProyecto);
-  $("guardar-umbrales").addEventListener("click", function () {
-    var cambios = {};
-    Array.prototype.forEach.call(document.querySelectorAll("[data-umbral]"), function (e) {
-      if (e.value === e.dataset.inicial) return;
-      cambios[e.dataset.umbral] = e.value === "" ? null : Number(e.value);
-    });
-    if (!Object.keys(cambios).length) { avisar(textos.sinCambios); return; }
-    mostrarErrores([]);
-    api("PUT", "/thresholds", { thresholds: cambios }).then(function () {
-      avisar(textos.guardado);
-      seguirTarea(cargarProyecto);
-    }, fallo);
-  });
-
   // --- documentos -------------------------------------------------------
   function pintarDocumentos(lista) {
     var cuerpo = $("tabla-documentos");

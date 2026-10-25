@@ -37,7 +37,7 @@ init:
   language_profile: '  language = {language!r}, profile = {profile!r}'
   fallback_note: '  Nota: no hay un paquete para {language!r}: se usan las reglas universales, términos sin stem y los textos en inglés (tradúcelos en config/language.yaml).'
   corpus_ready: Corpus vacío listo en documents/ (catálogo en {path}).
-  engine_created: config/engine.yaml creado con umbrales genéricos de partida. La calibración se realiza al final, después de estabilizar la infraestructura.
+  engine_created: 'config/engine.yaml creado con los valores de partida.'
   engine_kept: config/engine.yaml ya existía -- no se tocó.
   domain_created: 'config/domain.yaml creado: reglas y categorías propias de tu dominio (opcional).'
   domain_kept: config/domain.yaml ya existía -- no se tocó.
@@ -50,19 +50,12 @@ configure:
   value: '  {key} = {value!r}'
 profile:
   help: Muestra o cambia el perfil de instalación (light o medium).
-  show_help: Muestra el perfil activo, sus modelos, su presupuesto y si el índice y la calibración le sirven.
-  set_help: Cambia el perfil activo e indica si hay que reindexar o recalibrar (no ejecuta nada costoso).
+  show_help: 'Muestra el perfil activo, sus modelos, su presupuesto y si el índice le sirve.'
+  set_help: 'Cambia el perfil activo e indica si hay que reindexar (no ejecuta nada costoso).'
   arg_profile: 'Perfil de instalación destino: light o medium.'
   index_compatible: 'Índice: compatible (construido con {model}).'
   index_missing: 'Índice: todavía no existe; el próximo ''ipsis index'' lo construirá para {profile} ({model}).'
   index_incompatible: 'Índice: incompatible: se construyó con {built} y el perfil {profile} necesita {needed}.'
-  calibration_none: 'Calibración: no hay (rigen los umbrales del perfil).'
-  calibration_current: 'Calibración: vigente (sus umbrales están activos).'
-  calibration_disabled: 'Calibración: guardada solo para auditoría, no se aplica ({reason}).'
-  calibration_changed: La calibración anterior ya no corresponde al perfil activo
-  calibration_stale: 'Calibración: obsoleta'
-  calibration_kept: '{prefix} ({reason}). Rigen los umbrales del perfil; el archivo se conserva.'
-  calibration_action: ipsis calibrate --apply (si tienes un golden set importado)
   active: 'Perfil activo: {profile}'
   active_described: 'Perfil activo: {profile} ({description})'
   budget: 'Presupuesto p95: {ms} ms'
@@ -179,7 +172,7 @@ ask:
   arg_question: La pregunta a enviar (entre comillas si tiene espacios).
   opt_url: 'Base del servicio a consultar (por defecto: ''http://127.0.0.1:8000'').'
   opt_timeout: 'Segundos de espera máxima por una respuesta antes de fallar (por defecto: 30).'
-  opt_diagnostics: Ejecuta la pregunta con el motor del proyecto en este proceso (sin el servicio) y muestra etapas con su latencia, señales, términos foco, la regla que decidió y el tramo exacto. En modo Qdrant local, detén 'ipsis serve' antes.
+  opt_diagnostics: Ejecuta la pregunta con el motor del proyecto en este proceso (sin el servicio) y muestra las etapas con su latencia, los candidatos con su lugar en cada ranking y la evidencia. Con Qdrant local, detén antes 'ipsis serve'.
   status_ok: '[OK]'
   status_related: '[RELACIONADO -- no es una respuesta directa]'
   status_no_answer: '[SIN RESPUESTA]'
@@ -197,42 +190,15 @@ ask:
   engine_failed: 'No se pudo ejecutar el motor del proyecto: {error}'
   rule: '
 
-    Regla: {rule} (motivo: {reason}; perfil: {profile})'
+    Regla: {rule} (motivo: {reason})'
   stages: 'Etapas (ms):'
-  early_exit: '   (salida temprana: sin modelos)'
-  signals: 'Señales:'
-  intention: 'Intención: {name} (reconocida en «{relation}»)'
-  intention_similarity: 'Intención: {name} (similitud: {score}, margen: {margin})'
   spelling: 'Erratas corregidas con el corpus: {values}'
-  confidence_level: 'Confianza: {level}'
-  confidence_alta: alta (respuesta directa leída por el lector QA)
-  confidence_media: media (respuesta directa sin lector; revisa la cita)
-  confidence_baja: baja (pasaje más cercano, no una respuesta directa)
-  synonyms: 'Sinónimos usados: {values}'
-  lexical_source: 'Expansión BM25: {word} → {forms} ({source}, sentido {sense}, POS {pos})'
-  conversation: 'Conversación: {action}; tema: {topic}'
-  conversation_hereda: sigue el tema
-  conversation_retoma: retoma un tema anterior
-  conversation_tema_nuevo: tema nuevo
-  conversation_sin_cambio: sin cambio de tema
-  interpreted: 'Pregunta interpretada: «{question}»'
-  focus: 'Términos foco: encontrados: {found}; ausentes: {missing}'
-  absent: 'Términos que no están en el corpus: {terms}'
-  sentence: 'Oración evaluada: «{sentence}»'
-  span: 'Tramo exacto: «{text}» ({chunk_id}, offsets {start}-{end})'
-  no_span: 'Tramo exacto: -'
   evidence: 'Evidencia: {doc_id} offsets {start}-{end}'
   candidates: 'Candidatos (lugar en denso / BM25 / fusión / reranker; probabilidad del lector QA):'
   candidate: '  {chunk_id}: denso {dense}, bm25 {bm25}, fusión {fusion}, reranker {rerank}, QA {qa} · «{start}…»'
-  sentences: 'Oraciones mejor puntuadas (s_lex, lo que usa la selección):'
-  scored_sentence: '  {score:.3f} «{text}»'
-  alternatives: 'Alternativas (postura): {offered} ofrecidas, {discarded} descartadas'
-  alternative_offered: '  ofrecida   {affinity:.2f}  {signals}  {text}'
-  alternative_discarded: '  descartada {affinity:.2f}  {signals}  {text}'
-  tone: 'Tono: {tone}; plantillas: {templates}'
   warning: 'Advertencia: {warning}'
 doctor:
-  help: 'Diagnóstico de solo lectura: configuración, perfil, idioma, modelos, índice, calibración, golden y CORS.'
+  help: 'Diagnóstico de solo lectura: configuración, perfil, idioma, modelos, índice, golden y CORS.'
   no_project: No se encontró un proyecto ipsis en esta carpeta.
   title: 'Diagnóstico del proyecto
 
@@ -349,7 +315,7 @@ tone:
   list_help: Tonos disponibles para el idioma del proyecto, con un ejemplo de cada uno.
   row: '{mark} {tone:9} {description}'
   example: '            «{example}»'
-  apply_help: Activa un tono. No pide reindexar ni recalibrar.
+  apply_help: 'Activa un tono. No pide reindexar.'
   arg_tone: cordial, formal, serious, upbeat, friendly, empathetic o direct.
   applied: 'Tono activo: {tone}. Reinicia ''ipsis serve'' (o espera la recarga en caliente) para verlo.'
   try_help: Imprime las variantes de un tono, con las variables del proyecto.
@@ -401,31 +367,6 @@ evaluate:
   guard: 'Respuestas directas incorrectas en este banco (debe ser 0): {verdict}'
   pass: CUMPLE
   blocked: BLOQUEADO
-calibrate:
-  help: Elige umbrales con el golden importado, con control de riesgo.
-  opt_alpha: 'Riesgo máximo de respuestas directas incorrectas, entre 0 y 1 (por defecto: 0.05).'
-  opt_apply: Guarda el resultado en config/calibration.yaml (solo se usa si queda calibrado).
-  failed: 'No se pudo calibrar:'
-  status_calibrated: CALIBRADO
-  status_insufficient_sample: MUESTRA_INSUFICIENTE
-  status_no_safe_threshold: SIN_UMBRAL_SEGURO
-  header: 'Calibración: {status}  (riesgo objetivo ≤ {alpha:.1%}, confianza {confidence:.0%})'
-  provenance: Perfil {profile}, banco {bank}, corpus {corpus}…
-  dev: 'Dev (elige los umbrales): {n} respuestas directas, {x} incorrectas, cota superior {bound}'
-  coverage: '  cobertura directa {direct} (exactas {exact}, paráfrasis {paraphrase}); falsos ok {false_ok} (trampas {traps})'
-  thresholds: 'Umbrales (perfil → calibrado):'
-  threshold: '  {name:8} {before:.4f} → {after:.4f}{mark}'
-  changes: '   (cambia)'
-  insufficient: 'Todavía no se puede certificar el riesgo (no significa que el perfil sea inseguro):'
-  accepted: '  respuestas aceptadas sin error: {n}'
-  needed: '  necesarias para α={alpha} al {confidence:.0%}: {n}'
-  missing: '  faltan al menos: {n}'
-  profile_thresholds: Siguen vigentes los umbrales del perfil.
-  no_safe: Hay muestra suficiente (hasta {n} respuestas directas en dev), pero ninguna combinación de umbrales deja la cota ≤ {alpha:.1%}.
-  test: 'Test (solo verifica): {verdict}; {n} respuestas directas, {x} incorrectas, cota {bound}; cobertura directa {coverage}'
-  saved: Calibración guardada y habilitada en {path}.
-  saved_audit: Resultado guardado para auditoría en {path}. Los umbrales del perfil siguen activos.
-  not_saved: 'No se guardó nada: usa ''ipsis calibrate --apply'' para habilitar estos umbrales.'
 compare:
   help: Compara artefactos producidos por 'ipsis evaluate'.
   arg_reports: Dos o más reportes JSON comparables.
@@ -440,12 +381,11 @@ benchmark:
   opt_bank: Manifiesto versionado a evaluar; repetible (p. ej. un banco por idioma).
   opt_latency_only: Mide p50/p95 por etapa de cada perfil frente a su presupuesto.
   opt_profiles: Perfiles a comparar (bm25,light,medium). Con --latency-only, por defecto light,medium.
-  opt_experiments: Agrega variantes experimentales (medium con τ_ok 0,85; light con acuerdo).
   opt_repetitions: 'Veces que se repite cada pregunta con --latency-only (por defecto: 20).'
   opt_output: 'Directorio de salida (por defecto: golden/reports con --profiles, si no reports/benchmark).'
   failed: 'No se pudo ejecutar el benchmark: {error}'
   written: Benchmark reproducible escrito en {path}
-  no_decisions: El informe no toma decisiones; revísalo antes de cambiar defaults o umbrales.
+  no_decisions: 'El informe no toma decisiones; revísalo antes de cambiar defaults.'
   within: ' [cumple]'
   over: ' [EXCEDE el presupuesto]'
   profile_row: '{name:16} cobertura directa {coverage:.1%}  falsos ok {false_ok}/{unanswerable}  p50 {p50} ms  p95 {p95} ms (presupuesto {budget}){mark}'
@@ -558,11 +498,7 @@ app:
   avatar_missing: 'no hay un avatar {name!r}; disponibles: {available}'
   avatar_name_rules: 'nombre inválido {name!r}: usa minúsculas, números y guiones (p. ej. «mi-avatar»)'
   expects_boolean: '{key} espera true o false, no {value!r}'
-  posture_alternatives_range: 'posture.max_alternatives espera un número entero de 1 a 5, no {value!r}'
-  unknown_posture: 'postura desconocida {value!r}: usa una de {available}'
   unknown_configure_keys: 'clave(s) desconocida(s) para ''ipsis configure'': {keys}. Válidas: {valid}'
-  unknown_threshold: 'umbral desconocido {key!r}. Válidos: {valid}'
-  threshold_range: 'el umbral {key!r} debe ser un número entre 0 y 1 (llegó {value!r})'
   upload_type: '{name!r} no es un documento soportado. Extensiones válidas: {valid}'
   upload_empty: '{name!r} está vacío'
   upload_size: '{name!r} supera {mb} MiB'
@@ -574,9 +510,6 @@ app:
   index_failed: falló la indexación de {what}
   report_missing: no se produjo el artefacto {name}
   init_failed_profile: falló ipsis init --profile {profile}
-  no_index_calibrate: no hay un índice válido para el proyecto ({name}). Ejecuta 'ipsis index' antes de calibrar
-  alpha_range: --alpha debe estar entre 0 y 1, sin incluirlos (se recibió {alpha})
-  golden_revalidate: Ejecuta 'ipsis golden validate' y vuelve a importar el golden si corresponde
   init_failed_for: falló ipsis init para {profile}
   unknown_profiles: perfiles desconocidos {profiles}; usa {valid}
   cases_mismatch: '{profile} no evaluó exactamente los casos de {bank}'
@@ -607,7 +540,6 @@ app:
   from_after_to: --from es posterior a --to
   path_missing: no existe {path}
   no_components: la configuración no define componentes
-  unknown_stage: el perfil {profile!r} declara la etapa desconocida {stage!r}. Revisa profile_overrides.stages en config/engine.yaml. {error}
   audit_missing_document: el documento ya no está en el corpus vigente
   audit_out_of_range: offsets fuera del documento (largo {length})
   audit_altered: registrado «{logged}», en el corpus «{current}»
@@ -620,7 +552,7 @@ bankfile:
   answer_repeated: la respuesta aparece {n} veces ({documents}); se usa la primera. Indica la columna 'document' para elegir
   invalid_id: '{origin}: id {id!r} inválido (minúsculas, dígitos, ''_'' o ''-'')'
   repeated_id: '{origin}: id {id!r} repetido (también en {other})'
-  small: 'el golden tiene {n} filas: sirve como prueba rápida; para ajustar umbrales y comparar perfiles conviene tener al menos {minimum}'
+  small: 'el golden tiene {n} filas: sirve como prueba rápida; para comparar perfiles conviene tener al menos {minimum}'
   few_unanswerable: 'solo {n} de {total} filas son no_answer o false_premise (menos de {minimum:.0%}): no se puede medir bien el riesgo de falsos ok'
   no_traps: 'no hay filas ''same_topic_trap'': agrega preguntas sin respuesta sobre los mismos temas que las respondibles (p. ej. «¿Qué incluye la garantía?» junto a «¿Cuándo vence?»)'
   not_certifiable: 'sirve para ajuste práctico, no para certificar: con 0 errores hacen falta al menos {needed} respuestas aceptadas en test para afirmar α=0,05 al 95% (hay ~{n} respondibles en test)'
@@ -645,7 +577,6 @@ check:
   name_stemmer: Stemmer
   name_modelos: Modelos
   name_indice: Índice
-  name_calibracion: Calibración
   name_golden: Golden
   name_cors: CORS
   name_personalidad: Personalidad
@@ -654,7 +585,6 @@ check:
   dep_language_pack: el paquete de idioma
   dep_profile: el perfil
   dep_config_profile: la configuración y el perfil
-  dep_profile_index: el perfil y el índice
   root: (raíz)
   golden_missing_document: falta un documento del banco en el corpus ({file})
   golden_corpus_changed: el corpus cambió desde que se importó
@@ -663,10 +593,8 @@ check:
   no_file: no existe {path}
   init_force: ipsis init --force (crea engine.yaml; reinicia assistant.yaml con valores por defecto)
   fix_domain: 'corrige {path} (es opcional: también puedes borrarlo)'
-  fix_policy: corrige components.abstention_policy en {path}
   fix_styles: corrige {path} (mientras tanto el widget usa el diseño de fábrica)
   config_ok: assistant.yaml y engine.yaml válidos
-  policy_unavailable: '{path}: política de abstención {name!r} no disponible: {error}'
   invalid_overrides: '{profile}: los profile_overrides de {path} no son válidos: {error}'
   fix_overrides: corrige profile_overrides en {path}
   language_invalid: '{code}: el paquete con las sobrescrituras de {path} no es válido: {error}'
@@ -691,18 +619,11 @@ check:
   index_incompatible: 'incompatible: {reason}'
   index_corpus_changed: los documentos cambiaron desde la última indexación
   index_ok: compatible ({model}, {n} fragmentos, corpus sin cambios)
-  calibration_invalid: '{path} no es válido ({error}); el motor no puede arrancar'
-  calibration_rewrite: ipsis calibrate --apply (la reescribe)
-  calibration_delete: o borra {path}
-  calibration_none: no hay (opcional); se usan los umbrales del perfil
-  calibration_current: 'vigente: sus umbrales están activos'
-  calibration_audit: guardada solo para auditoría ({reason})
-  calibration_stale: obsoleta ({reason}); rigen los umbrales del perfil y el archivo se conserva
   golden_import: ipsis golden import <archivo>
   golden_none: no hay (opcional)
-  golden_stale: '{reason}: no lo uses para evaluar ni calibrar hasta actualizarlo'
-  golden_unreadable: el banco importado no se puede leer ({reason}); evaluar y calibrar quedan bloqueados
-  golden_regression: 'banco de regresión {id} ({n} casos): sirve para evaluar, no para calibrar'
+  golden_stale: '{reason}: no lo uses para evaluar hasta actualizarlo'
+  golden_unreadable: 'el banco importado no se puede leer ({reason}); evaluar queda bloqueado'
+  golden_regression: 'banco de regresión {id} ({n} casos): sirve para evaluar'
   golden_ok: '{id} ({n} casos), vigente con el corpus actual'
   cors_missing: 'cors_origins está vacío pero hay widget_keys configuradas: el navegador bloqueará las peticiones del widget desde tu sitio'
   cors_action: ipsis configure cors_origins=https://tu-sitio.cl
@@ -740,6 +661,7 @@ core:
   not_yaml_object: '{name} debe ser un objeto YAML'
   config_version_type: '{name}.config_version debe ser un entero no negativo'
   config_version_newer: '{name} usa config_version={version}, pero esta instalación solo soporta hasta {supported}'
+  pipeline_v1_retired: '«pipeline: v1» ya no existe: el motor v1 se retiró y este proyecto se carga con v2. Quita esa línea de config/engine.yaml para silenciar este aviso.'
   reranker_options: retrieval.reranker con opciones no puede migrarse automáticamente; selecciona components.reranker por nombre
   reranker_conflict: retrieval.reranker y components.reranker se contradicen
   no_migration: no existe migración de {name} versión {version}
@@ -797,15 +719,6 @@ core:
   index_no_stats: no existen las estadísticas léxicas del índice en {path!r}. Ejecuta 'ipsis index' para reconstruir el índice.
   collection_missing: la colección Qdrant {name!r} no existe todavía. Ejecuta 'ipsis index' primero (lee la misma config/engine.yaml::retrieval que este servicio).
 evaluation:
-  calibrated: 'Calibrado en dev: {n} respuestas directas, {x} erróneas, cota {bound} ≤ α={alpha}; cobertura directa {coverage}.'
-  insufficient_sample: 'Muestra insuficiente: hasta {without_errors} respuestas directas sin error en dev. Para certificar α={alpha} con {confidence} de confianza hacen falta al menos {needed} si siguen sin errores (faltan {missing}). No es evidencia de inseguridad: se mantienen los umbrales del perfil.'
-  no_safe_threshold: 'Sin umbral seguro: hay hasta {accepted} respuestas directas en dev, pero ninguna combinación deja la cota ≤ α={alpha}. Se mantienen los umbrales del perfil.'
-  calibration_status: 'la calibración quedó en estado {status}: se usan los umbrales del perfil'
-  calibration_profile: se calibró con el perfil {calibrated!r} y el proyecto usa {profile!r}
-  calibration_models: se calibró con otros modelos
-  calibration_corpus: el corpus indexado cambió desde la calibración (o no hay índice)
-  calibration_lexical: las reglas o fuentes léxicas cambiaron desde la calibración (o falta su huella léxica)
-  calibration_criterion: cambió el criterio de evaluación de respuestas; vuelve a ejecutar 'ipsis calibrate' antes de aplicar umbrales
   offsets_mismatch: los offsets de evidencia no coinciden con el texto literal
   answerable_needs_evidence: una pregunta respondible exige respuesta literal y evidencia
   literal_in_evidence: la respuesta literal debe estar contenida en una evidencia
@@ -817,19 +730,14 @@ evaluation:
   missing_categories: 'faltan categorías requeridas: {categories}'
   stable_split: un banco estable debe separar dev y test
   corpus_hash: el hash del corpus no coincide con el manifiesto
-  regression_bank: 'el banco {bank!r} es de regresión del software: sirve para medir y comparar, no para calibrar umbrales. Calibra con el golden del cliente'
   unknown_document: '{case}: documento desconocido {document!r}'
   not_literal: '{case}: evidencia no literal o offsets inválidos'
   compare_two: se requieren al menos dos ejecuciones para comparar
   compare_labels: cada ejecución debe tener una etiqueta de backend distinta
   compare_identity: las ejecuciones no usan el mismo dataset, corpus y k
   compare_criterion: los reportes usan distintos criterios de evaluación de respuestas; vuelve a evaluar ambas ejecuciones
-  note_regression: 'Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no certifican a ningún cliente; eso lo hace «ipsis calibrate» con el golden del cliente.'
-  note_evaluation: 'Banco de evaluación del cliente: las respuestas directas incorrectas (como en «ipsis evaluate») deben ser 0; la calidad QA se mide aparte y las cotas requieren revisar la calibración.'
-  variant_medium_ok: 'medium con τ_ok = {value} (perfil: {profile_value}). Re-decide las observaciones de medium con la regla de producción; un umbral no cambia el costo, así que la latencia es la de medium.'
-  variant_light_agreement: light exigiendo acuerdo ≥ 0,5 (top-1 denso en el top-3 BM25 y viceversa) para un ok léxico. Agrega dos búsquedas por pregunta; la latencia suma su costo medido a cada consulta de light.
-  extra_p50: búsquedas extra p50 ms
-  extra_p95: búsquedas extra p95 ms
+  note_regression: 'Banco de regresión: compara perfiles sobre los mismos casos. Sus cotas de riesgo no certifican a ningún cliente.'
+  note_evaluation: 'Banco de evaluación del cliente: las respuestas directas incorrectas (como en «ipsis evaluate») deben ser 0; la calidad QA se mide aparte.'
   report_title: '# Benchmark por perfiles'
   report_bank: '- Banco `{bank}` ({language}, uso {use}, {cases} casos)'
   report_project_language: idioma del proyecto
@@ -846,10 +754,9 @@ evaluation:
   report_false_ok: '## Falsos ok por perfil (hard negatives)'
   report_none: ninguno
   report_cost: '## Costo'
-  report_cost_header: '| Perfil | Modelos (parámetros · ONNX en disco) | recuperar_n / rerank_k / leer_m | Indexado (s) | Extra |'
+  report_cost_header: '| Perfil | Modelos (parámetros · ONNX en disco) | Recuperación | Indexado (s) |'
   report_onnx_note: El tamaño ONNX es el del archivo en disco, no la memoria usada (no se mide RSS).
   report_stage_latency: '## Latencia por etapa (p95 ms)'
-  report_variants: '## Variantes experimentales (no son defaults)'
 lint:
   unknown_situation: situación desconocida {situation!r}
   empty: vacía
@@ -945,18 +852,10 @@ panel:
   session_ended: La sesión terminó o el token cambió. Vuelve a entrar.
   network_error: No se pudo conectar con el servicio.
   no_changes: No hay cambios de estilo para guardar.
-  note: "Tono, avatar y widget cambian solo la presentación. Los umbrales y los documentos (pestañas Estado y Documentos) cambian qué responde el asistente."
+  note: 'Tono, avatar y widget cambian solo la presentación. Los documentos (pestaña Documentos) cambian qué fuentes encuentra el asistente.'
   tab_status: "Estado"
   tab_documents: "Documentos"
   status_title: "Estado del proyecto"
-  thresholds_title: "Umbrales"
-  thresholds_note: "Deja un valor vacío para usar el del perfil. Una calibración vigente (config/calibration.yaml) tiene precedencia sobre ok, oov_ok y focus. Guardar recarga el motor durante unos segundos."
-  threshold: "Umbral"
-  effective: "Vigente"
-  profile_value: "Perfil"
-  project_value: "Proyecto"
-  source: "Origen"
-  save_thresholds: "Guardar umbrales"
   doctor_title: "Diagnóstico (ipsis doctor)"
   refresh: "Actualizar"
   documents_title: "Documentos"
@@ -971,7 +870,6 @@ panel:
   not_ready: "No listo"
   profile_label: "Perfil"
   index_label: "Índice"
-  calibration_label: "Calibración"
   chunks: "fragmentos"
   task_running: "Recargando el motor..."
   task_done: "Motor recargado."
@@ -982,9 +880,6 @@ panel:
   reindex_hint: "Subido. Presiona Reindexar para que los documentos nuevos se puedan responder."
   'yes': "sí"
   'no': "no"
-  source_calibration: "calibración"
-  source_project: "proyecto (engine.yaml)"
-  source_profile: "perfil"
 presets:
   ocean: Institucional azul marino, cabecera sólida, esquinas rectas y rótulos en mayúsculas.
   forest: Editorial verde, titulares serif y notas de papel con barra lateral.
@@ -1011,9 +906,6 @@ runtime:
   short_token: 'IPSIS_ADMIN_TOKEN tiene {length} caracteres; se necesitan {minimum} o más: /admin queda apagado'
   bad_source_url: 'IPSIS_SOURCE_URL={url!r} no es una URL http(s): /source usa {default}'
   positive: '{name} debe ser mayor que cero'
-  not_negative: '{name} no puede ser negativo'
-  reader_disagreement: los dos mejores tramos dan valores distintos del mismo tipo
-  unsupported_entity: 'entidad en la respuesta sin respaldo literal en los fragmentos: {entities}'
   already_loaded: (ya estaba en el catálogo, mismo contenido)
   plain_text_sections: 'el texto plano no declara estructura de secciones: todo el documento queda sin seccion_path, lo que degrada los filtros deterministas.'
   assistant_header: '# Identidad del asistente. Editable con `ipsis configure clave=valor`.
@@ -1064,7 +956,7 @@ menu:
   group_documents: Documentos
   group_ask: Preguntar
   group_customize: Personalizar
-  group_quality: Medir y calibrar
+  group_quality: 'Medir'
   group_operate: Desplegar y operar
   group_other: Otros
   examples: Ejemplos
@@ -1075,14 +967,13 @@ menu:
   example_demo: Servir y abrir la página de prueba con el widget y el tema del proyecto
   example_chat: Preguntar y correr comandos en modo interactivo (/help adentro)
   example_serve: Abrir la prueba y habilitar el panel; se imprime un token temporal si falta uno
-  example_threshold: Elegir umbrales con tu golden set al 5 % de riesgo
   footer: "Opciones: ipsis help serve · ipsis help widget theme apply · <comando> --help · modo interactivo: ipsis chat"
 help:
   help: Muestra los comandos agrupados por tarea, o la ayuda de un comando.
   arg_command: Ruta del comando a explicar (p. ej. serve o widget theme apply).
 chat:
   help: 'Modo interactivo: escribe preguntas y /comandos (/help, /doctor, /index...).'
-  opt_diagnostics: Empezar con el diagnóstico activo (etapas, señales, regla y tramo de cada respuesta).
+  opt_diagnostics: Ejecuta la pregunta con el motor del proyecto en este proceso (sin el servicio) y muestra las etapas con su latencia, los candidatos con su lugar en cada ranking y la evidencia. Con Qdrant local, detén antes 'ipsis serve'.
   welcome: "ipsis chat -- escribe una pregunta, o /help para ver los comandos. /exit para salir."
   commands: 'Comandos:'
   cmd_help: 'Muestra esta lista o las opciones de un comando: /help serve, /help widget theme apply.'
@@ -1125,7 +1016,6 @@ progress:
   doctor: Revisando el proyecto y lo que necesita
   audit: Comprobando la integridad del proyecto
   evaluate: Evaluando las respuestas con tu banco de preguntas
-  calibrate: Buscando umbrales seguros con tu banco de preguntas
   benchmark: Midiendo calidad y tiempos de respuesta
   query: Buscando una respuesta en tus documentos
   engine: Preparando el motor para la conversación
