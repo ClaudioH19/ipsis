@@ -46,8 +46,9 @@ into confidence percentages.
 - **Spanish, English and Portuguese help:** at least 100 recognized questions
   per language across ten topics, alongside 142 interface message variants.
   Mixed document queries still go through search.
-- **Nine visual themes:** classic, minimal, editorial, contrast, search,
-  search_compact, ocean, forest and midnight. Editable colors, fonts, headings and sections.
+- **Ten visual themes:** classic, minimal, editorial, contrast, search,
+  search_compact, ocean, forest, midnight and glass (frosted glass in the iOS and macOS style).
+  Editable colors, fonts, headings and sections.
 - **Web integration:** a single `widget.js`, Shadow DOM, keyboard access,
   mobile layout, dark mode, visible loading, transitions and the optional Folio avatar.
   Help uses a compact menu and scrollbars adapt to the theme.

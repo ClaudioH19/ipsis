@@ -15,7 +15,7 @@ from ipsis.aplicacion.widget import (
 
 def test_catalogo_de_presets_es_estable():
     assert list(listar_presets()) == ["classic", "minimal", "editorial", "contrast", "search", "search_compact",
-                                    "ocean", "forest", "midnight"]
+                                    "ocean", "forest", "midnight", "glass"]
 
 
 @pytest.mark.parametrize("preset", list(listar_presets()))
@@ -312,3 +312,25 @@ def test_el_widget_muestra_las_alternativas_de_una_respuesta_sin_respuesta():
     assert "alternativas: (r.alternatives || []).map(fragmentoInterno)" in js
     assert ".rw-msg-alternativas{" in js
     assert 'estadoResp === "sin_respuesta" ? (respuesta.alternativas || [])' in js
+
+
+def test_el_preset_glass_lleva_su_estructura_solo_en_su_hoja(tmp_path):
+    from ipsis.aplicacion.estilos import render_css
+
+    glass = aplicar_preset("glass", str(tmp_path / "glass.yaml"))
+    css = render_css(glass, str(tmp_path / "glass.yaml"))
+    assert "[data-preset=glass]" in css and "backdrop-filter" in css and "prefers-reduced-motion" in css
+    # Los demás presets no descargan nada de eso.
+    for otro in ("classic", "editorial", "midnight"):
+        tema = aplicar_preset(otro, str(tmp_path / f"{otro}.yaml"))
+        assert "data-preset=glass" not in render_css(tema, str(tmp_path / f"{otro}.yaml"))
+
+
+def test_la_hoja_del_preset_glass_viaja_en_el_paquete():
+    from importlib.resources import files
+    from pathlib import Path
+
+    hoja = files("ipsis.recursos").joinpath("estilos", "cristal.css")
+    assert hoja.is_file() and "[data-preset=glass]" in hoja.read_text(encoding="utf-8")
+    assert '"estilos/*.css"' in (Path(__file__).resolve().parents[2] / "pyproject.toml").read_text(encoding="utf-8")
+

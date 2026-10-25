@@ -8,6 +8,11 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **`glass` preset: an iOS and macOS look.** Frosted-glass panel, hairline borders, large corners, rounded chat bubbles,
+  a pill-shaped field and suggestions, a round send button, system blue and springy entrances and presses, in light and
+  dark mode. Apply it with `ipsis widget theme apply glass`. Its structure is a stylesheet
+  (`ipsis/recursos/estilos/cristal.css`) that `/styles.css` adds only for this preset; the widget's own size budget
+  moved from 40 to 41 KB gzip and is now measured with LF endings.
 - **Key line in ranked sources, experimental and off by default** ([ADR 0013](docs/decisions/0013-key-line-in-ranked-sources.md)).
   `v2.presentation.key_line: true` makes the API add `key_line` (a literal span of the source) to each of the first three
   sources, and the widget shows it in a "Closest to your question" callout and marks its table row. It never changes the

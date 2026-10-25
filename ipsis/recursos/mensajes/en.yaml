@@ -884,6 +884,7 @@ presets:
   ocean: Institutional navy, solid header, square corners and uppercase labels.
   forest: Editorial green, serif headlines and paper notes with a side bar.
   midnight: Dark institutional, graphite with a brass accent and a ruled header.
+  glass: Frosted glass in the iOS and macOS style, rounded bubbles, hairlines and springy animations.
   search: Wide search layout with visible excerpts and source links.
   search_compact: Compact search layout for panels and result lists.
   classic: Neutral blue, comfortable, the same as the factory design.

@@ -884,6 +884,7 @@ presets:
   ocean: Institucional azul marino, cabecera sólida, esquinas rectas y rótulos en mayúsculas.
   forest: Editorial verde, titulares serif y notas de papel con barra lateral.
   midnight: Institucional oscuro, grafito con acento latón y cabecera con filete.
+  glass: Vidrio esmerilado al estilo iOS y macOS, burbujas redondeadas, líneas finas y animaciones elásticas.
   search: Buscador amplio, extractos visibles y enlaces a las fuentes.
   search_compact: Buscador compacto para paneles y listas de resultados.
   classic: Azul neutro, cómodo y equivalente al diseño de fábrica.

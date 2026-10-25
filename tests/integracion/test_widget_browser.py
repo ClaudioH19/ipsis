@@ -434,7 +434,7 @@ def test_cerrar_anima_la_salida_y_luego_oculta(navegador, servidor_widget, movim
 
 @pytest.mark.browser
 @pytest.mark.parametrize("preset", ["classic", "minimal", "editorial", "contrast", "search", "search_compact",
-                                    "ocean", "forest", "midnight"])
+                                    "ocean", "forest", "midnight", "glass"])
 @pytest.mark.parametrize("modo", ["light", "dark"])
 def test_temas_reales_demarcadores_y_titulos_personalizables(navegador, servidor_widget, tmp_path, preset, modo):
     from ipsis.aplicacion.estilos import render_css
@@ -460,7 +460,7 @@ def test_temas_reales_demarcadores_y_titulos_personalizables(navegador, servidor
         "e => { var x=document.createElement('span');x.style.color='var(--rw-titulo)';e.append(x);"
         "var c=getComputedStyle(x).color;x.remove();return c; }")
     assert tarjeta.evaluate("e => e.getBoundingClientRect().right") <= 375
-    if preset in {"ocean", "forest", "midnight"}:
+    if preset in {"ocean", "forest", "midnight", "glass"}:
         page.screenshot(path=str(tmp_path / f"{preset}-{modo}.png"), full_page=True)
     # Una asignación personalizada gana incluso en search/search_compact/contrast.
     page.evaluate("document.querySelector('ipsis-chat').shadowRoot.querySelector('.rw-raiz').style.setProperty('--rw-tamano-titulo','23px')")

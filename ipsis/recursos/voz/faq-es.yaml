@@ -190,7 +190,7 @@ questions:
   answer: No guarda la conversación en localStorage; crea una sesión nueva al cargar la página.
 - topic: Apariencia del widget
   question: ¿Qué temas tiene el widget de ipsis?
-  answer: Incluye classic, minimal, editorial, contrast, search, search_compact, ocean, forest y midnight.
+  answer: Incluye classic, minimal, editorial, contrast, search, search_compact, ocean, forest, midnight y glass.
 - topic: Apariencia del widget
   question: ¿Puedo cambiar el color de los títulos?
   answer: Sí. El panel y styles.yaml permiten ajustar colors.heading y colors.section por separado.

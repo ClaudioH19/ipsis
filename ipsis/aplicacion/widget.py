@@ -160,6 +160,36 @@ PRESETS: dict[str, dict[str, Any]] = {
     },
 }
 
+_SF = "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI Variable Text', system-ui, 'Helvetica Neue', Arial, sans-serif"
+PRESETS["cristal"] = {
+    # Estilo iOS/macOS: vidrio esmerilado, líneas de medio píxel, esquinas amplias y resortes. El vidrio, las burbujas y los
+    # resortes están en recursos/estilos/cristal.css, que /styles.css añade solo con este preset; aquí van los tokens.
+    "tema": {
+        "colores": {
+            "acento": "#007aff", "acento_texto": "#ffffff", "superficie": "#ffffff", "fondo": "#f2f2f7",
+            "texto": "#1d1d1f", "texto_suave": "#6e6e73", "borde": "#d1d1d6", "borde_resultado": "#d1d1d6",
+            "aviso": "#8a5a00", "aviso_borde": "#ff9f0a", "vivo": "#34c759",
+        },
+        "colores_oscuro": {
+            "acento": "#0a84ff", "acento_texto": "#ffffff", "superficie": "#1c1c1e", "fondo": "#000000",
+            "texto": "#f5f5f7", "texto_suave": "#a1a1a6", "borde": "#38383a", "borde_resultado": "#38383a",
+            "aviso": "#ffd60a", "aviso_borde": "#ff9f0a", "vivo": "#30d158",
+        },
+        "tipografia": {"familia": _SF, "familia_titulo": _SF, "tamano_base": "15px", "tamano_mensaje": "15px",
+                       "tamano_cita": "12.5px", "interlineado": "1.47", "tamano_titulo": "17px", "peso_titulo": "600"},
+        "forma": {"radio_panel": "28px", "radio_burbuja": "20px", "radio_control": "14px", "radio_resultado": "18px",
+                  "separacion_resultado": "10px", "relleno_resultado": "16px", "tamano_boton": "60px"},
+        "sombras": {"panel": "0 0 0 .5px rgba(0,0,0,.06), 0 30px 70px -18px rgba(0,0,0,.34), 0 10px 26px -10px rgba(0,0,0,.18)",
+                    "boton": "0 12px 28px -8px rgba(0,122,255,.55)",
+                    "panel_oscuro": "0 0 0 .5px rgba(255,255,255,.1), 0 30px 70px -18px rgba(0,0,0,.7), 0 10px 26px -10px rgba(0,0,0,.5)",
+                    "boton_oscuro": "0 12px 28px -8px rgba(10,132,255,.5)"},
+        "animaciones": {"duracion_panel": "520ms", "duracion_burbuja": "480ms", "duracion_control": "280ms",
+                        "curva": "cubic-bezier(.22,1.15,.36,1)", "desplazamiento_entrada": "14px",
+                        "escala_entrada": ".94", "escala_hover": "1.06"},
+        "presentacion": {"densidad": "comoda", "citas": "acordeon", "alineacion": "inicio", "diseno_resultados": "tarjetas"},
+    },
+}
+
 _SECCIONES = {"colores", "colores_oscuro", "tipografia", "forma", "sombras", "animaciones"}
 
 

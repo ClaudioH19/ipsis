@@ -46,8 +46,9 @@ de certeza a partir del ranking.
 - **Ayuda en español, inglés y portugués:** al menos 100 preguntas reconocidas
   por idioma en diez temas, además de 142 variantes de mensajes de interfaz.
   Una pregunta mixta sobre documentos sigue usando la búsqueda.
-- **Nueve temas visuales:** classic, minimal, editorial, contrast, search,
-  search_compact, ocean, forest y midnight. Colores, fuentes, títulos y secciones editables.
+- **Diez temas visuales:** classic, minimal, editorial, contrast, search,
+  search_compact, ocean, forest, midnight y glass (vidrio esmerilado al estilo iOS y macOS).
+  Colores, fuentes, títulos y secciones editables.
 - **Integración web:** un archivo `widget.js`, Shadow DOM, teclado, móvil,
   modo oscuro, carga visible, transiciones y el avatar opcional Folio.
   La ayuda usa un menú compacto y los scrollbars se adaptan al tema.

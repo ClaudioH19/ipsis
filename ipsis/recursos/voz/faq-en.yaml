@@ -186,7 +186,7 @@ questions:
   answer: It does not store conversation in localStorage; it creates a new session when the page loads.
 - topic: Widget appearance
   question: Which themes does the ipsis widget have?
-  answer: It includes classic, minimal, editorial, contrast, search, search_compact, ocean, forest and midnight.
+  answer: It includes classic, minimal, editorial, contrast, search, search_compact, ocean, forest, midnight and glass.
 - topic: Widget appearance
   question: Can I change heading colors?
   answer: Yes. The panel and styles.yaml let you adjust colors.heading and colors.section separately.

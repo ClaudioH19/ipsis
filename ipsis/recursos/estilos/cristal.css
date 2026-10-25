@@ -1,0 +1,114 @@
+/* Preset «glass» (estilo iOS/macOS): vidrio esmerilado, líneas de medio píxel, esquinas amplias y resortes suaves.
+   Solo usa las variables del tema, así que sigue el modo claro y oscuro y se puede reteñir con styles.yaml.
+   Sin backdrop-filter el panel queda opaco; con prefers-reduced-motion o animaciones apagadas no hay movimiento. */
+.rw-panel[data-preset=glass]{
+  --rw-linea:color-mix(in srgb,var(--rw-texto) 14%,transparent);
+  --rw-relleno-suave:color-mix(in srgb,var(--rw-texto) 7%,transparent);
+  --rw-resorte:cubic-bezier(.22,1.15,.36,1);
+  background:color-mix(in srgb,var(--rw-superficie) 74%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(32px);backdrop-filter:saturate(180%) blur(32px);
+  border:.5px solid var(--rw-linea);
+  letter-spacing:-.011em;font-feature-settings:"kern","liga","calt";
+  animation:rw-vidrio-entrar .52s var(--rw-resorte) both;
+}
+@media (prefers-color-scheme:dark){.rw-panel[data-preset=glass]{background:color-mix(in srgb,var(--rw-superficie) 88%,transparent);}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .rw-panel[data-preset=glass]{background:var(--rw-superficie);}
+}
+.rw-panel[data-preset=glass].rw-saliendo{animation:rw-salir var(--rw-dur-salida) cubic-bezier(.4,0,1,1) forwards;}
+@keyframes rw-vidrio-entrar{
+  from{opacity:0;transform:translateY(14px) scale(.94);}
+  55%{opacity:1;transform:translateY(-2px) scale(1.012);}
+  to{opacity:1;transform:none;}}
+@keyframes rw-vidrio-burbuja{
+  from{opacity:0;transform:translateY(12px) scale(.9);}
+  60%{opacity:1;transform:translateY(-1px) scale(1.012);}
+  to{opacity:1;transform:none;}}
+
+/* Cabecera: barra translúcida con filete fino. */
+.rw-panel[data-preset=glass] .rw-cabecera{background:transparent;border-bottom:.5px solid var(--rw-linea);padding:12px 14px;}
+.rw-panel[data-preset=glass] .rw-cabecera h2{font-size:15px;font-weight:600;letter-spacing:-.02em;}
+.rw-panel[data-preset=glass] .rw-subtitulo{font-size:11.5px;}
+.rw-panel[data-preset=glass] .rw-cerrar{width:28px;height:28px;padding:6px;border-radius:50%;
+  background:var(--rw-relleno-suave);transition:background .2s ease,transform .3s var(--rw-resorte);}
+.rw-panel[data-preset=glass] .rw-cerrar:hover{background:var(--rw-linea);}
+.rw-panel[data-preset=glass] .rw-cerrar:active{transform:scale(.88);}
+
+/* Conversación: burbujas tipo iMessage sobre el vidrio. */
+.rw-panel[data-preset=glass] .rw-mensajes{background:transparent;gap:6px;padding:14px 14px 10px;}
+.rw-panel[data-preset=glass] .rw-msg{padding:9px 14px;border:0;border-radius:20px;box-shadow:none;
+  animation:rw-vidrio-burbuja .48s var(--rw-resorte) both;}
+.rw-panel[data-preset=glass] .rw-msg-usuario{background:var(--rw-acento);color:var(--rw-acento-texto);border-bottom-right-radius:6px;}
+.rw-panel[data-preset=glass] :is(.rw-msg-ok,.rw-msg-relacionado,.rw-msg-alternativas,.rw-msg-conversacional){
+  background:var(--rw-relleno-suave);color:var(--rw-texto);border:0;border-bottom-left-radius:6px;}
+.rw-panel[data-preset=glass] .rw-escribiendo{background:var(--rw-relleno-suave);border:0;border-radius:20px;border-bottom-left-radius:6px;}
+.rw-panel[data-preset=glass] .rw-citas{border-top:.5px solid var(--rw-linea);}
+.rw-panel[data-preset=glass] :is(.rw-citas details,.rw-cita){border:.5px solid var(--rw-linea);border-radius:12px;background:transparent;}
+
+/* Escribir: campo en píldora (16 px: iOS no hace zoom al enfocar) y botón redondo. */
+.rw-panel[data-preset=glass] .rw-form{background:transparent;border-top:.5px solid var(--rw-linea);padding:10px 12px 12px;}
+.rw-panel[data-preset=glass] .rw-form input{padding:10px 16px;font-size:16px;border:.5px solid var(--rw-linea);
+  border-radius:99px;background:var(--rw-relleno-suave);}
+.rw-panel[data-preset=glass] .rw-form input:focus{border-color:var(--rw-acento);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--rw-acento) 22%,transparent);}
+.rw-panel[data-preset=glass] .rw-form .rw-enviar{width:36px;height:36px;border-radius:50%;box-shadow:none;
+  transition:transform .35s var(--rw-resorte),opacity .2s ease;}
+.rw-panel[data-preset=glass] .rw-form .rw-enviar:hover:not(:disabled){transform:scale(1.08);box-shadow:none;}
+.rw-panel[data-preset=glass] .rw-form .rw-enviar:active:not(:disabled){transform:scale(.88);}
+.rw-panel[data-preset=glass] .rw-limpiar{inset-inline-end:6px;width:24px;height:24px;border-radius:50%;
+  background:color-mix(in srgb,var(--rw-texto) 22%,transparent);color:var(--rw-superficie);}
+.rw-panel[data-preset=glass] .rw-limpiar svg{width:11px;height:11px;}
+.rw-panel[data-preset=glass] :is(.rw-voz,.rw-fuente){background:transparent;}
+.rw-panel[data-preset=glass] .rw-voz{border-top:.5px solid var(--rw-linea);}
+.rw-panel[data-preset=glass] .rw-voz-burbuja{border:0;border-radius:20px;background:var(--rw-relleno-suave);box-shadow:none;}
+.rw-panel[data-preset=glass] .rw-voz[data-avatar=si] .rw-voz-burbuja::after{display:none;}
+
+/* Sugerencias y acciones: píldoras tonales con rebote al pulsar. */
+.rw-panel[data-preset=glass] .rw-sugerencias button{border:0;border-radius:99px;background:var(--rw-relleno-suave);
+  box-shadow:none;font-size:13px;transition:background .2s ease,transform .35s var(--rw-resorte);}
+.rw-panel[data-preset=glass] .rw-sugerencias button:hover{background:color-mix(in srgb,var(--rw-acento) 14%,transparent);transform:none;box-shadow:none;}
+.rw-panel[data-preset=glass] .rw-sugerencias button:active{transform:scale(.95);}
+.rw-panel[data-preset=glass] .rw-seguir{border:0;border-radius:14px;color:var(--rw-acento);font-weight:600;
+  background:color-mix(in srgb,var(--rw-acento) 12%,transparent);}
+.rw-panel[data-preset=glass] .rw-seguir:hover:not(:disabled){background:color-mix(in srgb,var(--rw-acento) 20%,transparent);}
+.rw-panel[data-preset=glass] .rw-seguir:active:not(:disabled){transform:scale(.97);}
+.rw-panel[data-preset=glass] .rw-faq{border:.5px solid var(--rw-linea);border-radius:16px;background:transparent;}
+
+/* Resultados: tarjetas de vidrio con sombra suave que se elevan al pasar el puntero. */
+.rw-panel[data-preset=glass] .rw-busqueda .rw-resultado{background:color-mix(in srgb,var(--rw-superficie) 82%,transparent);
+  border:.5px solid var(--rw-linea);border-radius:18px;padding:16px;
+  box-shadow:0 1px 1px rgba(0,0,0,.04),0 10px 26px -14px rgba(0,0,0,.28);
+  animation:rw-vidrio-burbuja .5s var(--rw-resorte) both;
+  transition:transform .35s var(--rw-resorte),box-shadow .35s ease,border-color .2s ease;}
+.rw-panel[data-preset=glass] .rw-busqueda .rw-resultado:hover{transform:translateY(-2px);
+  border-color:var(--rw-linea);box-shadow:0 1px 1px rgba(0,0,0,.05),0 16px 34px -14px rgba(0,0,0,.34);}
+.rw-panel[data-preset=glass] .rw-busqueda .rw-resultado-titulo{font-weight:600;letter-spacing:-.02em;}
+.rw-panel[data-preset=glass] .rw-busqueda .rw-resultado-numero{background:var(--rw-relleno-suave);color:var(--rw-texto-suave);}
+.rw-panel[data-preset=glass] .rw-resultado-alcance{border:0;background:color-mix(in srgb,var(--rw-acento) 12%,transparent);}
+.rw-panel[data-preset=glass] .rw-busqueda details > summary{color:var(--rw-acento);font-weight:600;}
+.rw-panel[data-preset=glass] .rw-busqueda details[open]{border-left:0;padding-left:0;}
+.rw-panel[data-preset=glass] .rw-tabla-scroll{border:.5px solid var(--rw-linea);border-radius:14px;}
+.rw-panel[data-preset=glass] .rw-tabla :is(td,th){border-color:var(--rw-linea);border-width:0 .5px .5px 0;}
+.rw-panel[data-preset=glass] .rw-tabla th{background:var(--rw-relleno-suave);}
+.rw-panel[data-preset=glass] .rw-tabla tbody tr:nth-child(even){background:transparent;}
+.rw-panel[data-preset=glass] .rw-linea-clave{border-left:0;border-radius:12px;padding:.6em .85em;
+  background:color-mix(in srgb,var(--rw-acento) 11%,transparent);}
+.rw-panel[data-preset=glass] .rw-linea-clave::before{color:var(--rw-acento);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.rw-panel[data-preset=glass] .rw-carga{background:transparent;}
+.rw-panel[data-preset=glass] .rw-carga::after{background:linear-gradient(90deg,transparent,var(--rw-acento),transparent);}
+
+/* Lanzador de vidrio teñido (el panel hermano lleva data-preset; :has no existe en navegadores muy viejos: sin él queda el lanzador normal). */
+.rw-raiz:has(.rw-panel[data-preset=glass]) .rw-boton{
+  background:color-mix(in srgb,var(--rw-acento) 90%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 28px -8px color-mix(in srgb,var(--rw-acento) 60%,transparent);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease;}
+.rw-raiz:has(.rw-panel[data-preset=glass]) .rw-boton:hover{transform:translateY(-2px) scale(1.06);}
+.rw-raiz:has(.rw-panel[data-preset=glass]) .rw-boton:active{transform:scale(.92);}
+
+@media (prefers-reduced-motion:reduce){
+  .rw-panel[data-preset=glass],.rw-panel[data-preset=glass] .rw-msg,.rw-panel[data-preset=glass] .rw-busqueda .rw-resultado{animation:none;}
+  .rw-panel[data-preset=glass] *{transition-duration:.01ms !important;}
+  .rw-panel[data-preset=glass] .rw-busqueda .rw-resultado:hover{transform:none;}}
+.rw-panel[data-preset=glass][data-animaciones=false],
+.rw-panel[data-preset=glass][data-animaciones=false] :is(.rw-msg,.rw-busqueda .rw-resultado){animation:none;}

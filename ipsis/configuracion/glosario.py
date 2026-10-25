@@ -111,7 +111,7 @@ TAMANOS = {"compacto": "compact", "normal": "normal", "amplio": "wide"}
 LANZADORES = {"burbuja": "bubble", "pestana": "tab", "oculto": "hidden"}
 PRESETS = {"clasico": "classic", "contraste": "contrast", "minimal": "minimal", "editorial": "editorial",
            "buscador": "search", "buscador_compacto": "search_compact",
-           "oceano": "ocean", "bosque": "forest", "medianoche": "midnight"}
+           "oceano": "ocean", "bosque": "forest", "medianoche": "midnight", "cristal": "glass"}
 
 ESTILOS = {
     "preset": _c("preset", valores=PRESETS),

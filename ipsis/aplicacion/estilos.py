@@ -82,6 +82,19 @@ _SOMBRAS_CLARO = {"panel": "--rw-sombra-panel", "boton": "--rw-sombra-boton"}
 _SOMBRAS_OSCURO = {"panel_oscuro": "--rw-sombra-panel", "boton_oscuro": "--rw-sombra-boton"}
 
 
+# Preset → hoja con su estructura propia (recursos/estilos/<archivo>.css).
+_CSS_PRESET = {"cristal": "cristal.css", "glass": "cristal.css"}
+
+
+def _css_del_preset(preset: str | None) -> str:
+    archivo = _CSS_PRESET.get(str(preset or ""))
+    if archivo is None:
+        return ""
+    from importlib.resources import files
+
+    return files("ipsis.recursos").joinpath("estilos", archivo).read_text(encoding="utf-8").strip()
+
+
 def cargar_estilos(ruta: str = RUTA_ESTILOS) -> dict:
     """Lee el YAML de estilos. Si no existe, devuelve un tema vacío: el
     widget se ve entonces con sus valores de repuesto, que es exactamente
@@ -144,6 +157,11 @@ def render_css(tema: dict | None = None, ruta: str = RUTA_ESTILOS) -> str:
             ".rw-boton,.rw-boton > svg,.rw-enviar,.rw-cerrar,.rw-form input,.rw-busqueda{transition:none !important;}\n"
             ".rw-boton:hover,.rw-enviar:hover:not(:disabled){transform:none !important;}"
         )
+
+    # Estructura que las variables no alcanzan (vidrio, burbujas, resortes): solo la lleva quien usa ese preset.
+    estructura = _css_del_preset(tema.get("preset"))
+    if estructura:
+        partes.append(estructura)
 
     extra = str(tema.get("css_extra") or "").strip()
     if extra:
