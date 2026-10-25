@@ -130,6 +130,14 @@ visualizador o el widget para probar los cambios.
   y una curva; las ráfagas de la estela se desplazan y desvanecen. La pausa
   conserva el recorrido y la estela. Folio lo usa al enviar (`sent`) y encontrar una cita
   (`answer_ok`); las asignaciones personalizadas tienen prioridad.
+- `vida-folio.js`: cuerpo vivo. Un resorte amortiguado por canal (x, y, giro, escala) mueve el lienzo con las
+  propiedades CSS `translate`, `rotate` y `scale` (no toca el `transform` de Folio). `apuntar(x, y)` inclina el
+  cuerpo hacia el puntero y lo agranda al acercarse; `escribir(inputType, valor)` da un cabeceo por tecla, mantiene la
+  inclinación hacia el campo, sacude la cabeza al borrar, sobresalta (`surprised`) al borrar cinco veces en 0,9 s y
+  guiña (`wink`) al vaciar un campo de al menos cuatro caracteres. El widget lo crea con `crearVida(lienzo,
+  {puede, reaccionar})`; `puede` lo limita a reposo, atento o escribiendo, y no hace nada con movimiento reducido.
+  El bucle de animación duerme en reposo. `node --test herramientas/avatar/vida-folio.test.mjs` lo comprueba con un
+  reloj falso.
 - `autonomia-folio.js`: reacciones espontáneas superpuestas al reposo. El
   widget las activa en `idle` y `attentive`, y las interrumpe al teclear,
   buscar, responder o seguir el puntero. No cambia el evento del chat ni

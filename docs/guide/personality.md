@@ -220,6 +220,13 @@ change the chat state or generate messages.
   “no estoy triste”. Searches, responses and errors take
   priority. The visualizer includes a text field for trying this without
   sending queries; reduced motion omits these gestures.
+- **Body, typing and deleting (Folio):** besides the eyes, the whole body follows the pointer: it leans and tilts a few
+  pixels toward it and grows slightly when it comes close, then settles after 1.5 s of stillness. Each letter you type is
+  a short nod, and while you write it leans toward the field. Deleting shakes its head; deleting five or more
+  characters in a hurry startles it (`surprised`), and emptying a field that held at least four characters makes it
+  wink and bounce, like "forget it". Motion comes from damped springs (`herramientas/avatar/vida-folio.js`) applied
+  with the CSS `translate`, `rotate` and `scale` properties, so it composes with the internal float and flights. It
+  only acts at rest, attentive or typing, and never with reduced motion.
 - On a phone the avatar is 40 px and hides while the keyboard is open.
 
 ## Included tones

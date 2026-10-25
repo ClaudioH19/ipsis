@@ -13,6 +13,11 @@ a minor change may break compatibility and is marked as such.
   dark mode. Apply it with `ipsis widget theme apply glass`. Its structure is a stylesheet
   (`ipsis/recursos/estilos/cristal.css`) that `/styles.css` adds only for this preset; the widget's own size budget
   moved from 40 to 41 KB gzip and is now measured with LF endings.
+- **A livelier Folio.** The whole body follows the pointer (it leans and tilts, and grows a little when close), nods on
+  every key, shakes its head when you delete, is startled when you delete five or more characters at once and winks
+  and bounces when you empty the field. Motion comes from damped springs
+  (`herramientas/avatar/vida-folio.js`, in the avatar bundle, so the widget gains about 170 bytes) and never runs with
+  reduced motion.
 - **Key line in ranked sources, experimental and off by default** ([ADR 0013](docs/decisions/0013-key-line-in-ranked-sources.md)).
   `v2.presentation.key_line: true` makes the API add `key_line` (a literal span of the source) to each of the first three
   sources, and the widget shows it in a "Closest to your question" callout and marks its table row. It never changes the

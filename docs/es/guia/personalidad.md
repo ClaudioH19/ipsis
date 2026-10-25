@@ -213,6 +213,13 @@ reducido; no alteran el estado del chat ni producen mensajes.
   (`dead_zone`, en px) y vuelve al centro tras 1,5 s quieto. Con «reducir
   movimiento» del sistema no sigue el puntero.
 - La pestaña oculta pausa la animación.
+- **Cuerpo, escritura y borrado (Folio):** además de los ojos, todo el cuerpo sigue al puntero: se inclina unos píxeles
+  hacia él y crece un poco al acercarse, y se asienta tras 1,5 s quieto. Cada letra que tecleas es un cabeceo breve, y
+  mientras escribes se inclina hacia el campo. Al borrar niega con la cabeza; borrar cinco o más caracteres de golpe lo
+  sobresalta (`surprised`), y vaciar un campo que tenía al menos cuatro caracteres lo hace guiñar y rebotar, como un
+  «olvídalo». El movimiento sale de resortes amortiguados (`herramientas/avatar/vida-folio.js`) aplicados con las
+  propiedades CSS `translate`, `rotate` y `scale`, así que se compone con la flotación y los vuelos internos. Solo
+  actúa en reposo, atento o escribiendo, y nunca con movimiento reducido.
 - **Contacto y escritura (Folio):** al pasar el mouse sobre él hace un gesto
   amable. Mientras tecleas escucha; tras 1,2 segundos de pausa vuelve a mirar
   el borrador. Reconoce localmente signos de pregunta y exclamación, saludos,

@@ -1103,10 +1103,15 @@
   function actualizarLimpiar() { botonLimpiar.hidden = !input.value || input.disabled; }
   botonLimpiar.addEventListener("click", function () {
     input.value = "";
+    if (AVATAR.vida) AVATAR.vida.escribir("deleteContent", "");
     actualizarLimpiar();
     input.focus();
   });
-  input.addEventListener("input", function () { avatarAlTeclear(); actualizarLimpiar(); });
+  input.addEventListener("input", function (ev) {
+    avatarAlTeclear();
+    if (AVATAR.vida) AVATAR.vida.escribir(ev.inputType || "", input.value);
+    actualizarLimpiar();
+  });
   campo.appendChild(input);
   campo.appendChild(botonLimpiar);
   form.appendChild(etiquetaInput);
@@ -2596,6 +2601,11 @@
     AVATAR.analizarTexto = typeof motor.reactionForText === "function" ? motor.reactionForText : null;
     autonomiaAvatar(true);
     AVATAR.lienzo = lienzo;
+    // Cuerpo vivo: sigue al puntero y reacciona al teclear y al borrar, solo en reposo, atento o escribiendo.
+    AVATAR.vida = typeof motor.crearVida === "function" ? motor.crearVida(lienzo, {
+      reaccionar: reaccionAvatar,
+      puede: function () { return !maquina.transitorio && /^(idle|attentive|typing)$/.test(maquina.persistente); }
+    }) : null;
     maquina.ultimoPersistente = inicial;
     ubicarAvatar();
     emitir("ipsis:avatar", { state: "ready", name: AVATAR.config.nombre });
@@ -2930,6 +2940,7 @@
     mirada.pendiente = window.requestAnimationFrame(function () {
       mirada.pendiente = null;
       mirarHacia(x, y);
+      if (AVATAR.vida) AVATAR.vida.apuntar(x, y);
       // El lienzo es decorativo (pointer-events:none): se detecta el contacto
       // por su caja, sin interceptar los clics del lanzador o del chat.
       if (!AVATAR.lienzo) return;
@@ -2943,7 +2954,11 @@
       AVATAR.sobre = dentro;
     });
   }, { passive: true });
-  document.addEventListener("pointerleave", function () { AVATAR.sobre = false; volverAlCentro(); });
+  document.addEventListener("pointerleave", function () {
+    AVATAR.sobre = false;
+    volverAlCentro();
+    if (AVATAR.vida) AVATAR.vida.soltar();
+  });
 
   cargarConfigServidor();
 
