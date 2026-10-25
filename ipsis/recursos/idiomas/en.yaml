@@ -628,6 +628,7 @@ interfaz:
   source_original: 'View original text'
   source_table: 'Source table'
   source_table_hint: 'Open full context to read the table with its columns.'
+  key_line_label: 'Closest to your question'
   search_results_count_one: '1 result for “{query}”'
   search_more: 'Show more results'
   search_variants_label: 'Choose your case'

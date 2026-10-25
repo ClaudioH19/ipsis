@@ -18,6 +18,7 @@ v2:
   # On by default (these lines only make it visible); false turns it off. `clear_margin` (a "clear answer" page) stays off: it is not proven; see ADR 0010.
   presentation:
     enabled: true
+    # key_line: false   # experimental (ADR 0013): marks the line closest to the question; 70 % precise when measured
 # Audio and video records (media/*.yaml; docs/guide/media.md, ADR 0011), on by default: a separate card after the sources, shown only
 # when its dense cosine reaches min_score. With no media/ folder this does nothing. null min_score shows nothing at all.
 media:

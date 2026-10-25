@@ -17,6 +17,9 @@ from ipsis.consulta.v2.resultados import preparar_resultados
 from ipsis.consulta.v2.reranking import preparar_vistas, puntuar_progresivo
 from ipsis.consulta.v2.paginacion import RankingsTemporales
 
+LINEA_CLAVE_FUENTES = 3  # cuántas fuentes publicadas reciben línea clave
+LINEA_CLAVE_MS_POR_LINEA = 25  # costo medido de codificar una línea (multilingual-e5-small, 6 núcleos)
+
 
 @dataclass
 class _Consulta:
@@ -68,6 +71,7 @@ class MotorV2:
         self.opciones_media = {"presupuesto_ms": 150, **(opciones_media or {})}
         self.backend = type(retriever).__name__
         self.metadatos_auditoria = {}
+        self._selector_linea = None  # ADR 0013: se crea al primer uso, con el codificador del recuperador
         self._rankings = RankingsTemporales()
 
     def _validar_listo(self):
@@ -179,6 +183,7 @@ class MotorV2:
                 "pagina_reutilizada": reutilizada, "modo": "progresivo"}
             ctx.diagnostico["presupuestos"]["presupuesto_aplicado_ms"] = self._presupuesto(deadline_ms)
             resultado = self._publicar(ctx, elegidos, eventos)
+            self._anadir_linea_clave(resultado, pregunta, limite)
             return self._con_cursor(resultado, siguiente if resultado.evidencias else None)
         return self._admitir(publicar)
 
@@ -336,6 +341,7 @@ class MotorV2:
         resultado = self._publicar(ctx, todos[:self.top_k], eventos)
         self._anadir_multimedia(resultado, ctx, limite)
         self._anadir_forma(resultado)
+        self._anadir_linea_clave(resultado, pregunta, limite)
         return self._con_cursor(resultado, cursor if resultado.evidencias else None)
 
     def _anadir_forma(self, resultado):
@@ -357,6 +363,47 @@ class MotorV2:
         resultado.contrato_http["forma_resultados"] = forma
         resultado.diagnostico["forma_resultados"] = {"forma": forma, "margen": margen(fuentes),
                                                       "relacion": relacion(fuentes)}
+
+    def _anadir_linea_clave(self, resultado, pregunta, limite):
+        """Marca en las primeras fuentes la línea más cercana a la pregunta (``linea_clave``, ADR 0013).
+
+        Solo con ``v2.presentation.key_line``. Corre después de publicar y sin cambiar qué se publica ni su orden: cada
+        fuente gana un campo opcional con offsets del documento. Si no queda presupuesto, las fuentes restantes se
+        quedan sin línea y se avisa; una falla del codificador nunca tumba la consulta."""
+        presentacion = self.opciones["presentacion"]
+        if not presentacion["linea_clave"] or not resultado.evidencias:
+            return
+        codificador = getattr(self.retriever, "codificador", None)
+        vector_consulta = getattr(self.retriever, "vector_consulta", None)
+        if codificador is None or vector_consulta is None:
+            return
+        from ipsis.consulta.v2.linea_clave import SelectorLineaClave, tramos_de_linea
+
+        if self._selector_linea is None or self._selector_linea.codificador is not codificador:
+            self._selector_linea = SelectorLineaClave(codificador)
+        inicio = time.perf_counter()
+        fragmentos = resultado.contrato_http["fragmentos"]
+        marcadas = omitidas = 0
+        try:
+            vector = vector_consulta(" ".join(pregunta.split()))
+            for evidencia, fragmento in list(zip(resultado.evidencias, fragmentos, strict=True))[:LINEA_CLAVE_FUENTES]:
+                nuevas = self._selector_linea.lineas_nuevas(evidencia.texto)
+                # Con todas las líneas en caché el costo es de milisegundos y no compite con el reranker por el tiempo.
+                if nuevas and time.perf_counter() + nuevas * LINEA_CLAVE_MS_POR_LINEA / 1000 > limite:
+                    omitidas += 1
+                    continue
+                seleccion = self._selector_linea.seleccionar(
+                    vector, evidencia.texto, base=evidencia.offset_inicio, margen=presentacion["margen_linea_clave"])
+                if seleccion is not None:
+                    fragmento["linea_clave"] = seleccion
+                    marcadas += 1
+        except Exception as error:  # noqa: BLE001 -- la línea clave es opcional
+            resultado.diagnostico.setdefault("advertencias", []).append(f"línea clave falló: {type(error).__name__}")
+            return
+        if omitidas:
+            resultado.diagnostico.setdefault("advertencias", []).append("línea clave omitida por presupuesto")
+        resultado.diagnostico["linea_clave"] = {"marcadas": marcadas, "omitidas_por_presupuesto": omitidas,
+                                                "ms": round((time.perf_counter() - inicio) * 1000, 1)}
 
     def _anadir_multimedia(self, resultado, ctx, limite):
         """Busca fichas multimedia para la pregunta y las deja en el contrato interno (``multimedia``).

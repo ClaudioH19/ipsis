@@ -91,6 +91,15 @@ class BloqueFuente(BaseModel):
     rows: list[FilaVisual] = Field(default_factory=list)
 
 
+class LineaClave(BaseModel):
+    """La línea de la fuente más cercana a la pregunta (ADR 0013): un tramo literal, no una respuesta."""
+
+    offset_start: int = Field(ge=0)
+    offset_end: int = Field(ge=0)
+    margin: float = Field(ge=0)
+    method: Literal["dense"]
+
+
 class Fragmento(BaseModel):
     chunk_id: str
     doc_title: str
@@ -111,6 +120,7 @@ class Fragmento(BaseModel):
     match_end: Optional[int] = None
     truncated: Optional[bool] = None
     source_blocks: list[BloqueFuente] = Field(default_factory=list)
+    key_line: Optional[LineaClave] = None
 
 
 class Confianza(BaseModel):
@@ -239,6 +249,10 @@ def respuesta_publica(contrato: dict) -> dict:
                 ("truncado", "truncated"), ("bloques_fuente", "source_blocks")):
             if interno in f:
                 salida[externo] = f[interno]
+        if f.get("linea_clave"):
+            linea = f["linea_clave"]
+            salida["key_line"] = {"offset_start": linea["offset_inicio"], "offset_end": linea["offset_fin"],
+                                  "margin": linea["margen"], "method": "dense"}
         if "tipo_puntaje" in f:
             salida["score_kind"] = {"logit_reranker": "reranker_logit",
                                     "recuperacion": "retrieval_score"}[f["tipo_puntaje"]]

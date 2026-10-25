@@ -69,7 +69,8 @@ MOTOR = {
                      "destacar_fragmentos": _c("qa_highlights"),
                      "presentacion": _c("presentation", {
                          "activo": _c("enabled"), "margen_claro": _c("clear_margin"),
-                         "margen_claro_por_perfil": _c("clear_margin_by_profile")})}),
+                         "margen_claro_por_perfil": _c("clear_margin_by_profile"),
+                         "linea_clave": _c("key_line"), "margen_linea_clave": _c("key_line_margin")})}),
     "media": _c("media", {"activo": _c("enabled"), "max_resultados": _c("max_results"),
                            "puntaje_minimo": _c("min_score"), "presupuesto_ms": _c("budget_ms")}),
     "recuperacion": _c("retrieval", {

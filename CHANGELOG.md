@@ -6,6 +6,13 @@ a minor change may break compatibility and is marked as such.
 
 ## [Unreleased]
 
+### Added
+
+- **Key line in ranked sources, experimental and off by default** ([ADR 0013](docs/decisions/0013-key-line-in-ranked-sources.md)).
+  `v2.presentation.key_line: true` makes the API add `key_line` (a literal span of the source) to each of the first three
+  sources, and the widget shows it in a "Closest to your question" callout and marks its table row. It never changes the
+  sources, their order or their text. Measured on the real-document bank it is right 70 % of the time, so it stays off.
+
 ### Removed
 
 - **The v1 engine is retired** ([ADR 0012](docs/decisions/0012-retire-the-v1-engine.md)). v2 is the only engine. Gone with

@@ -126,6 +126,9 @@ class PresentacionConfig(ConfiguracionEstricta):
     activo: bool = True
     margen_claro: float | None = Field(default=None, ge=0)
     margen_claro_por_perfil: dict[str, float] = Field(default_factory=dict)
+    # ADR 0013: marca en cada una de las 3 primeras fuentes la línea más cercana a la pregunta. Apagada por defecto.
+    linea_clave: bool = False
+    margen_linea_clave: float = Field(default=0.01, ge=0)
 
     @model_validator(mode="after")
     def margenes_no_negativos(self):

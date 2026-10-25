@@ -181,6 +181,7 @@
     source_original: "View original text",
     source_table: "Source table",
     source_table_hint: "Open full context to read the table with its columns.",
+    key_line_label: "Closest to your question",
     search_more: "Show more results",
     search_variants_label: "Choose your case",
     search_not_this: "This isn't it",
@@ -602,6 +603,11 @@
     ".rw-tabla tr:last-child>*{border-bottom:0;}.rw-tabla tr>*:last-child{border-right:0;}",
     ".rw-tabla th{font-weight:650;background:var(--rw-fondo);overflow-wrap:normal;hyphens:none;}",
     ".rw-tabla tbody tr:nth-child(even){background:color-mix(in srgb,var(--rw-fondo) 60%,transparent);}",
+    ".rw-fila-clave>*{background:color-mix(in srgb,var(--rw-acento) 14%,transparent);font-weight:600;}",
+    ".rw-fila-clave>*:first-child{box-shadow:inset 3px 0 0 var(--rw-acento);}",
+    ".rw-linea-clave{margin:.6em 0 .2em;padding:.5em .75em;border-left:3px solid var(--rw-acento);",
+    "background:color-mix(in srgb,var(--rw-acento) 8%,transparent);overflow-wrap:anywhere;}",
+    ".rw-linea-clave::before{content:attr(data-e);display:block;font-size:.75em;color:var(--rw-texto-suave);}",
     ".rw-fuente-literal pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;}",
     ".rw-parrafo-frase .rw-documento{color:var(--rw-texto-suave);}",
     ".rw-busqueda details{margin:8px 0 0;padding:0;font-size:var(--rw-tamano-cita);}",
@@ -1230,7 +1236,8 @@
     return { chunk_id: f.chunk_id, doc_id: f.doc_id, doc_titulo: f.doc_title, seccion: f.section, texto: f.text,
              offset_inicio: f.offset_start, offset_fin: f.offset_end, version: f.version,
              rango: f.rank, coincidencia_inicio: f.match_start, coincidencia_fin: f.match_end,
-             truncado: f.truncated, archivo: f.source_name, alcance: f.scope, rasgos: f.distinctive_terms, bloques_fuente: f.source_blocks };
+             truncado: f.truncated, archivo: f.source_name, alcance: f.scope, rasgos: f.distinctive_terms, bloques_fuente: f.source_blocks,
+             linea_clave: f.key_line ? [f.key_line.offset_start, f.key_line.offset_end] : null };
   }
   function respuestaInterna(r) {
     r = r || {};
@@ -1607,7 +1614,7 @@
     return bloques;
   }
 
-  function documentoVisual(contenedor, fuente, bloques, base, rango, pregunta) {
+  function documentoVisual(contenedor, fuente, bloques, base, rango, pregunta, linea) {
     contenedor.classList.add("rw-documento");
     var caracteres = Array.from(fuente);
     function indice(offset) { return caracteres.slice(0, offset - base).join("").length; }
@@ -1646,6 +1653,9 @@
         b.rows.forEach(function (fila, y) {
           var tr = document.createElement("tr"), porColumna = {};
           fila.cells.forEach(function (c) { porColumna[c.column] = c; });
+          if (linea && fila.cells.some(function (c) { return c.offset_start < linea[1] && c.offset_end > linea[0]; })) {
+            tr.className = "rw-fila-clave";
+          }
           for (var x = 0; x < b.columns; x++) {
             if (ocupadas[y] && ocupadas[y][x]) continue;
             var c = porColumna[x], td = document.createElement(fila.header ? "th" : "td");
@@ -1683,6 +1693,12 @@
     item.dataset.anunciada = "si";
     hablar(voz("opened_source").replace(/\{doc\}/g, doc).replace(/\{scope_suffix\}/g, contexto ? ", " + contexto : ""),
            "opened_source");
+  }
+
+  // Línea clave (ADR 0013): tramo literal de la fuente; "" si los offsets no calzan.
+  function textoLineaClave(frag, l) {
+    var c = Array.from(frag.texto || ""), b = frag.offset_inicio;
+    return l && l[0] >= b && l[1] > l[0] && l[1] - b <= c.length ? c.slice(l[0] - b, l[1] - b).join("").trim() : "";
   }
 
   function agregarResultados(lista, fragmentos, pregunta) {
@@ -1770,6 +1786,14 @@
       var inicio = caracteres.slice(0, inicioFuente).join("").length;
       var fin = caracteres.slice(0, finFuente).join("").length;
       var coincidencia = completo.slice(inicio, fin) || completo;
+      var textoClave = textoLineaClave(frag, frag.linea_clave), lineaClave = textoClave ? frag.linea_clave : null;
+      if (textoClave) {
+        var clave = document.createElement("p");
+        clave.className = "rw-linea-clave";
+        clave.dataset.e = texto("key_line_label");
+        clave.textContent = textoClave;
+        item.appendChild(clave);
+      }
       var vista = document.createElement("div");
       vista.className = "rw-resultado-vista";
       var caracteresVista = Array.from(coincidencia);
@@ -1779,7 +1803,7 @@
       });
       // Una tabla corta se muestra con sus columnas; el contexto completo conserva las grandes.
       if (tablaCoincidente && Array.from(tablaCoincidente.text).length <= 1600) {
-        documentoVisual(vista, tablaCoincidente.text, [tablaCoincidente], tablaCoincidente.offset_start, null, pregunta);
+        documentoVisual(vista, tablaCoincidente.text, [tablaCoincidente], tablaCoincidente.offset_start, null, pregunta, lineaClave);
       } else if (tablaCoincidente) vista.textContent = texto("source_table_hint");
       else documentoVisual(vista, caracteresVista.length > 400 ? caracteresVista.slice(0, 400).join("") + "\u2026"
         : coincidencia, [], frag.offset_inicio + inicioFuente, null, pregunta);
@@ -1811,7 +1835,7 @@
       var contexto = document.createElement("div");
       contexto.className = "rw-resultado-contexto";
       var conTabla = documentoVisual(contexto, completo, frag.bloques_fuente, frag.offset_inicio,
-        fin > inicio && fin - inicio < completo.length ? [inicio, fin] : null);
+        fin > inicio && fin - inicio < completo.length ? [inicio, fin] : null, undefined, lineaClave);
       detalles.appendChild(contexto);
       if (conTabla) {
         var original = document.createElement("details"), etiquetaOriginal = document.createElement("summary");

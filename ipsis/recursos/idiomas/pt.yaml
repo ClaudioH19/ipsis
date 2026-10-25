@@ -628,6 +628,7 @@ interfaz:
   source_original: 'Ver texto original'
   source_table: 'Tabela do documento'
   source_table_hint: 'Abra o contexto completo para ler a tabela com suas colunas.'
+  key_line_label: 'O mais próximo da sua pergunta'
   search_results_count_one: '1 resultado para «{query}»'
   search_more: 'Mostrar mais resultados'
   search_variants_label: 'Escolha o seu caso'

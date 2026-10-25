@@ -102,7 +102,8 @@ def test_no_modifica_las_fuentes():
 # --- configuración -----------------------------------------------------------
 
 def test_la_presentacion_esta_encendida_por_defecto_y_sin_margen_claro():
-    assert PresentacionConfig().model_dump() == {"activo": True, "margen_claro": None, "margen_claro_por_perfil": {}}
+    assert PresentacionConfig().model_dump() == {"activo": True, "margen_claro": None, "margen_claro_por_perfil": {},
+                                                 "linea_clave": False, "margen_linea_clave": 0.01}
     assert PipelineV2Config().model_dump()["presentacion"]["activo"] is True
     assert PipelineV2Config.model_validate({"presentacion": {"activo": False}}).presentacion.activo is False
 
@@ -111,7 +112,8 @@ def test_se_lee_con_los_nombres_en_ingles_del_archivo():
     datos = interpretar("v2:\n  presentation:\n    enabled: true\n    clear_margin: 2.5\n"
                         "    clear_margin_by_profile:\n      medium: 4.0\n      light: 0.3\n", "motor")
     assert PipelineV2Config.model_validate(datos["v2"]).presentacion.model_dump() == {
-        "activo": True, "margen_claro": 2.5, "margen_claro_por_perfil": {"medium": 4.0, "light": 0.3}}
+        "activo": True, "margen_claro": 2.5, "margen_claro_por_perfil": {"medium": 4.0, "light": 0.3},
+        "linea_clave": False, "margen_linea_clave": 0.01}
 
 
 @pytest.mark.parametrize("datos", [{"margen_claro": -1}, {"margen_claro_por_perfil": {"medium": -0.1}}, {"rareza": 1}])

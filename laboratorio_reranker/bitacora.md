@@ -311,3 +311,51 @@ Plantilla:
     diferencia solo puede venir del entrenamiento.
 - Se necesitó liberar el modelo de PyTorch antes de cuantizar: la matriz de embeddings exige ~1 GB contiguo y el
   portátil tenía 5,6 GB libres.
+
+### OBS-0014: dar tiempo ilimitado al reranker no sube el primer puesto
+- Etapa / control: 0 / C0 (presupuesto)
+- Casos y run_id: banco real, 64 preguntas (`todas`), motor v2 `medium` tras retirar v1, CPU libre (Ryzen 5 7530U);
+  tres corridas, una por condición. Salidas fuera del repo (carpeta temporal de la sesión, 2026-10-25).
+- Cambio realizado: `presupuesto_consulta_ms` y `rerank_candidatos` por condición. A: 2 500 ms, 60 candidatos (el
+  valor actual). B: 30 000 ms, 10 candidatos. C: 30 000 ms, 20 candidatos. «Responde de verdad»: el texto publicado en
+  el puesto 1 contiene la respuesta literal o alguna evidencia anotada (normalizado, sin tildes ni mayúsculas).
+- Resultado observable:
+
+  | Condición | Puntuados (mediana) | hit@1 | hit@3 | hit@5 | Sin aparecer | Latencia p50 / p95 |
+  |---|---|---|---|---|---|---|
+  | A | 4 (mín. 2, máx. 10) | 53/64 (0,828) | 58 | 60 | 4 | 2,0 / 2,8 s |
+  | B | 10 | 53/64 (0,828) | 59 | 62 | 2 | 5,3 / 7,1 s |
+  | C | 20 | 53/64 (0,828) | 60 | 63 | 1 | 11,0 / 17,8 s |
+
+  - presupuesto agotado en 63 de 64 preguntas en A y en 0 en B y C;
+  - etiqueta de offsets y criterio de texto coinciden en las 64: los 53 hit@1 contienen la respuesta;
+  - con tiempo suben a hit@1 `010i` (5 → 1) y, en C, `022i` (fuera → 1); mejoran a los puestos 2–5 `002i`, `003i`,
+    `004i`, `030f` y `030i`;
+  - con tiempo bajan `012i` (1 → 3), `011i` (1 → 2 solo en C), `031f` (2 → 3), `032f` (2 → 5) y `018i` (2 → 5);
+  - `031i` no aparece en ninguna condición (híbrido 41).
+- ¿Esperable?: en parte; OBS-0008 anticipaba que el presupuesto movía casos, no que el neto fuera cero.
+- Explicaciones posibles: (1) puntuar más candidatos rescata correctas escondidas, pero también deja al reranker
+  preferir el pasaje del mismo tema sin el dato (OBS-0010) donde el orden híbrido ya acertaba; (2) la ganancia en
+  hit@3 y hit@5 (1–2 casos) no compensa el costo: 2,6 a 5,5 veces la latencia, fuera del tope de 3 s.
+- Siguiente control: repetir A para medir la variación entre corridas; no subir el presupuesto.
+- Estado: aislada (una corrida por condición, n = 64, preguntas escritas por Claude). **El tiempo explica la correcta
+  que nunca se evalúa, pero no el techo de hit@1; ese viene del orden del reranker.**
+
+### OBS-0015: la línea clave densa acierta 70 % de lo que marca; se deja apagada
+- Etapa / control: presentación (ADR 0013), no es un control del modelo
+- Casos y run_id: banco real, 64 preguntas; 83 de las 192 fuentes del top-3 contienen la respuesta en alguna línea.
+  Selectores fuera del motor y motor completo con la línea clave encendida (presupuesto 2 500 ms, caché caliente).
+- Cambio realizado: `v2.presentation.key_line` marca en cada fuente publicada la línea más cercana a la pregunta.
+- Resultado observable:
+  - línea correcta fuera del motor (79 fuentes): azar 0,29; primera línea 0,24; léxico IDF 0,58; denso e5-small 0,71
+    (0,8 s por consulta en frío); lector QA 0,85 (5,7 s por consulta);
+  - motor completo: latencia p50 / p95 1,97 / 2,35 s (sin línea clave: 1,99 / 2,47 s); marca 37 de 83 fuentes con la
+    respuesta (45 %) y acierta 26 (70 %); marca también 42 de 109 fuentes sin la respuesta (39 %);
+  - margen mínimo 0,03: 19 % de cobertura con 81 % de precisión; 0,05: 7 % con 100 %;
+  - con la caché fría, el reranker agota el presupuesto y la línea se omite en 14 de 64 consultas.
+- ¿Esperable?: en parte; fuera del motor el denso con margen 0,01 daba 66 % de cobertura al 81 %, y dentro del motor
+  baja a 45 % al 70 %.
+- Explicaciones posibles: (1) los márgenes de coseno dentro del motor son menores que los medidos fuera (la causa no se
+  investigó); (2) las líneas de encabezado y las filas vecinas de una tabla compiten con la fila que responde.
+- Siguiente control: vectores de línea calculados al indexar; acuerdo entre denso y lector sobre la línea de mayor margen.
+- Estado: aislada (una corrida, n = 64, preguntas escritas por Claude). **Queda apagada por defecto.**
