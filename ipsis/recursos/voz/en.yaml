@@ -120,6 +120,13 @@ messages:
     - "{count}. This topic appears in {n_docs} documents; check which one you use."
     - I found it in more than one document. Compare their titles and versions to see which applies.
     - "{count}. The first sources come from {n_docs} different documents; open the one that helps."
+  results_multi:
+    - "{questions}, {count}. Each has its own section; open the sources you need."
+    - "I searched {questions} separately: {count} in total. Review the sources for each one."
+    - "{count}, split across {questions}. Use the index above to move from one to another."
+    - "I split your message into {questions}. Each group shows its own sources to review."
+    - "{questions} and {count} in total. Compare the context of each source before deciding."
+    - "Each question has its own sources. {count} in total; the index takes you to each one."
   continuation:
     - "{count} in the list now. Compare the new options with the earlier ones."
     - "The search continues: {count} so far. Open the new options to read their context."

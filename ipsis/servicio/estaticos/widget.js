@@ -183,6 +183,18 @@
     source_table_hint: "Open full context to read the table with its columns.",
     key_line_label: "Closest to your question",
     search_more: "Show more results",
+    multi_heading: "{n} questions in your message",
+    multi_jump_label: "Your questions",
+    multi_question_n: "Question {n} of {total}",
+    multi_group_count: "{n} results",
+    multi_group_count_one: "1 result",
+    multi_group_empty: "I found no sources for this question. Try rephrasing it.",
+    multi_group_exhausted: "No more results for this question.",
+    multi_more_for: "Show more results for question {n}",
+    multi_no_results_chip: "no results",
+    multi_unsearched: "I only searched the first {n} questions. Send the rest separately:",
+    multi_added: "Added {n} results to question {question}.",
+    voice_count_questions: "{n} questions",
     search_variants_label: "Choose your case",
     search_not_this: "This isn't it",
     media_also_video: "There is also a video about this",
@@ -842,6 +854,28 @@
     ".rw-resultado-padre{color:var(--rw-seccion);background:var(--rw-fondo);border-color:var(--rw-borde-resultado);font-weight:600;}",
     ".rw-resultado-rasgos{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);overflow-wrap:anywhere;}",
     ".rw-resultado-archivo{flex-basis:100%;min-width:0;font-size:calc(var(--rw-tamano-cita) - 1px);color:var(--rw-texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;}",
+    ".rw-indice{position:sticky;top:calc(var(--rw-relleno) * -1);z-index:3;flex-wrap:nowrap;overflow-x:auto;gap:8px;margin:0 calc(var(--rw-relleno) * -1) 16px;",
+    "  padding:9px var(--rw-relleno);background:var(--rw-fondo);border-bottom:1px solid var(--rw-borde-resultado);scrollbar-width:thin;}",
+    ".rw-panel[data-densidad='compacta'] .rw-indice{top:-10px;margin-inline:-10px;padding-inline:10px;}",
+    ".rw-indice .rw-atajo{display:inline-flex;align-items:center;gap:7px;flex:none;max-width:min(11em,64%);min-height:32px;}",
+    ".rw-atajo-n,.rw-grupo-n{display:inline-grid;place-items:center;flex:none;min-width:1.6em;height:1.6em;border-radius:99px;padding:0 .35em;",
+    "  background:var(--rw-acento);color:var(--rw-acento-texto);font-size:.85em;font-weight:700;line-height:1;}",
+    ".rw-atajo-texto{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}",
+    ".rw-indice .rw-atajo[aria-current='true']{background:color-mix(in srgb,var(--rw-acento) 24%,var(--rw-superficie));border-color:var(--rw-acento);}",
+    ".rw-indice .rw-atajo[data-vacio]{opacity:.65;}",
+    ".rw-indice .rw-atajo[data-vacio] .rw-atajo-n{background:var(--rw-texto-suave);}",
+    ".rw-grupo{scroll-margin-top:60px;margin:0 0 30px;min-width:0;}",
+    ".rw-grupo + .rw-grupo{padding-top:22px;border-top:1px solid var(--rw-borde-resultado);}",
+    ".rw-grupo-cabecera{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:start;margin:0 0 14px;}",
+    ".rw-grupo-n{min-width:1.9em;height:1.9em;font-size:var(--rw-tamano-cita);}",
+    ".rw-grupo-pregunta{margin:0;font-family:var(--rw-fuente-titulo);font-size:var(--rw-tamano-titulo);font-weight:var(--rw-peso-titulo);",
+    "  color:var(--rw-titulo);line-height:1.35;overflow-wrap:anywhere;}",
+    ".rw-grupo-pregunta:focus-visible{outline:2px solid var(--rw-acento);outline-offset:3px;border-radius:4px;}",
+    ".rw-grupo-cuenta{grid-column:2;margin:3px 0 0;font-size:var(--rw-tamano-cita);color:var(--rw-texto-suave);}",
+    ".rw-grupo-cuenta:empty,.rw-grupo .rw-busqueda-acciones:empty{display:none;}",
+    ".rw-sin-buscar{margin:6px 0 0;padding:12px;border:1px dashed var(--rw-borde-resultado);border-radius:var(--rw-radio-resultado);}",
+    ".rw-sin-buscar ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px;}",
+    ".rw-sin-buscar .rw-atajo{display:block;max-width:100%;text-align:start;white-space:normal;}",
     ".rw-busqueda .rw-resultado-vista{margin:8px 0 4px;}",
     ".rw-busqueda details{margin-top:10px;}",
     ".rw-busqueda details > summary{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:6px 14px;list-style:none;cursor:pointer;",
@@ -1255,6 +1289,13 @@
       has_more: r.has_more,
       forma: r.result_shape,
       media: r.media || [],
+      // Varias preguntas en un mensaje: un grupo por pregunta, cada uno con su propia continuación.
+      grupos: (r.question_groups || []).map(function (g) {
+        return { indice: g.index, pregunta: g.question, estado: ESTADOS_INTERNOS[g.status] || "sin_respuesta",
+                 fragmentos: (g.fragments || []).map(fragmentoInterno), has_more: g.has_more,
+                 continuation: g.continuation, forma: g.result_shape, media: g.media || [] };
+      }),
+      sin_buscar: r.unsearched_questions || [],
       respuesta: r.answer,
       bloques: (r.answer_blocks || []).map(function (b) {
         return { tipo: b.type, texto: b.text, conector: b.connector, cita: b.citation };
@@ -1706,12 +1747,16 @@
     return l && l[0] >= b && l[1] > l[0] && l[1] - b <= c.length ? c.slice(l[0] - b, l[1] - b).join("").trim() : "";
   }
 
-  function agregarResultados(lista, fragmentos, pregunta) {
+  // ``vistos``: las fuentes ya publicadas en esta lista. Cada pregunta de un mensaje con varias tiene la suya: una misma
+  // fuente puede ser la mejor para dos preguntas y debe verse en las dos.
+  var contadorDocumentos = 0;
+  function agregarResultados(lista, fragmentos, pregunta, vistos) {
     var primero = null, nuevos = 0;
+    vistos = vistos || (paginaBusqueda && paginaBusqueda.vistos) || null;
     fragmentos.forEach(function (frag, indice) {
       var clave = JSON.stringify([frag.doc_id, frag.chunk_id, frag.version, frag.offset_inicio, frag.offset_fin]);
-      if (paginaBusqueda && paginaBusqueda.vistos.has(clave)) return;
-      if (paginaBusqueda) paginaBusqueda.vistos.add(clave);
+      if (vistos && vistos.has(clave)) return;
+      if (vistos) vistos.add(clave);
       var item = document.createElement("li");
       item.className = "rw-resultado";
       item.style.setProperty("--rw-i", String(Math.min(nuevos++, 6)));
@@ -1814,7 +1859,7 @@
         : coincidencia, [], frag.offset_inicio + inicioFuente, null, pregunta);
       item.appendChild(vista);
       var detalles = document.createElement("details");
-      detalles.id = "rw-documento-" + (lista.children.length + 1);
+      detalles.id = "rw-documento-" + (++contadorDocumentos);
       var resumen = document.createElement("summary");
       resumen.textContent = texto("search_read_document");
       detalles.appendChild(resumen);
@@ -1997,7 +2042,11 @@
 
   function renderizarBusqueda(respuesta) {
     activarBusqueda();
+    if (respuesta.grupos && respuesta.grupos.length) { renderizarBusquedaMultiple(respuesta); return; }
+    if (respuesta.grupo && paginaBusqueda && paginaBusqueda.grupos) { continuarGrupo(respuesta); return; }
     if (!respuesta.continuando || !paginaBusqueda) {
+      contadorDocumentos = 0;
+      if (paginaBusqueda && paginaBusqueda.observador) paginaBusqueda.observador.disconnect();
       var seccion = document.createElement("section");
       seccion.className = "rw-busqueda";
       var contador = document.createElement("h3");
@@ -2087,6 +2136,185 @@
     hablar(mensajeVoz, categoriaVoz);
   }
 
+  // Varias preguntas en un mensaje (ADR 0014): una sección por pregunta (título, cuenta, lista numerada desde 1, su propio
+  // «Mostrar más») bajo un índice fijo. Agrupar cambia dónde se ve una fuente, nunca cuál ni en qué orden.
+  function pintarAccionesDeGrupo(vista, datos) {
+    var n = vista.lista.children.length;
+    vista.cuenta.textContent = n ? texto(n === 1 ? "multi_group_count_one" : "multi_group_count", { n: n }) : "";
+    vista.acciones.replaceChildren();
+    var nota = function (clave) {
+      var p = document.createElement("p");
+      p.className = "rw-busqueda-ayuda";
+      p.textContent = texto(clave);
+      vista.acciones.appendChild(p);
+    };
+    if (!n) return nota("multi_group_empty");
+    if (datos.has_more && datos.continuation) {
+      var mas = document.createElement("button");
+      mas.type = "button";
+      mas.className = "rw-seguir";
+      mas.dataset.activo = "si";
+      mas.textContent = texto("search_more");
+      mas.setAttribute("aria-label", texto("multi_more_for", { n: vista.indice }) + ": " + vista.pregunta);
+      mas.addEventListener("click", function () { enviarPregunta(vista.pregunta, datos.continuation, mas, false, vista.indice); });
+      vista.acciones.appendChild(mas);
+    } else if (datos.continuando) nota("multi_group_exhausted");
+  }
+
+  function crearGrupo(datos, total) {
+    var id = "rw-grupo-" + datos.indice;
+    var seccion = document.createElement("section");
+    seccion.className = "rw-grupo";
+    seccion.id = id;
+    seccion.setAttribute("aria-labelledby", id + "-t");
+    var cabecera = document.createElement("header");
+    cabecera.className = "rw-grupo-cabecera";
+    var numero = document.createElement("span");
+    numero.className = "rw-grupo-n";
+    numero.setAttribute("aria-hidden", "true");
+    numero.textContent = String(datos.indice);
+    var titulo = document.createElement("h4");
+    titulo.className = "rw-grupo-pregunta";
+    titulo.id = id + "-t";
+    titulo.tabIndex = -1;
+    var lector = document.createElement("span");
+    lector.className = "rw-sr-solo";
+    lector.textContent = texto("multi_question_n", { n: datos.indice, total: total }) + ": ";
+    titulo.append(lector, document.createTextNode(datos.pregunta));  // texto del usuario: nunca como HTML
+    var cuenta = document.createElement("p");
+    cuenta.className = "rw-grupo-cuenta";
+    cabecera.append(numero, titulo, cuenta);
+    var lista = document.createElement("ol");
+    lista.className = "rw-resultados";
+    lista.dataset.forma = datos.forma || "neutral";
+    var acciones = document.createElement("div");
+    acciones.className = "rw-busqueda-acciones";
+    seccion.append(cabecera, lista, acciones);
+    var vista = { seccion: seccion, lista: lista, acciones: acciones, cuenta: cuenta, cabecera: titulo,
+                  vistos: new Set(), pregunta: datos.pregunta, indice: datos.indice };
+    agregarResultados(lista, datos.fragmentos, datos.pregunta, vista.vistos);
+    if (lista.dataset.forma === "variants") atajosDeVariantes(vista);
+    if (lista.dataset.forma === "documents") marcarGruposDeDocumento(lista);
+    pintarAccionesDeGrupo(vista, datos);
+    agregarMedia(seccion, datos.media);
+    return vista;
+  }
+
+  // Índice fijo: un botón por pregunta, con aria-current en la que se lee; sin fuentes se ve apagado.
+  function crearIndiceDePreguntas(grupos, vistas) {
+    var nav = document.createElement("nav");
+    nav.className = "rw-atajos rw-indice";
+    nav.setAttribute("aria-label", texto("multi_jump_label"));
+    var botones = grupos.map(function (datos, i) {
+      var boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = "rw-atajo";
+      var n = document.createElement("span");
+      n.className = "rw-atajo-n";
+      n.setAttribute("aria-hidden", "true");
+      n.textContent = String(datos.indice);
+      var etiqueta = document.createElement("span");
+      etiqueta.className = "rw-atajo-texto";
+      etiqueta.textContent = datos.pregunta;
+      boton.append(n, etiqueta);
+      if (!datos.fragmentos.length) {
+        boton.dataset.vacio = "si";
+        boton.title = datos.pregunta + " — " + texto("multi_no_results_chip");
+        boton.setAttribute("aria-label", datos.pregunta + " (" + texto("multi_no_results_chip") + ")");
+      }
+      boton.addEventListener("click", function () {
+        vistas[i].seccion.scrollIntoView({ block: "start", behavior: sinMovimiento() ? "auto" : "smooth" });
+        vistas[i].cabecera.focus({ preventScroll: true });
+      });
+      nav.appendChild(boton);
+      return boton;
+    });
+    botones[0].setAttribute("aria-current", "true");
+    return { nav: nav, botones: botones };
+  }
+
+  function renderizarBusquedaMultiple(respuesta) {
+    contadorDocumentos = 0;
+    if (paginaBusqueda && paginaBusqueda.observador) paginaBusqueda.observador.disconnect();
+    var grupos = respuesta.grupos;
+    var seccion = document.createElement("section");
+    seccion.className = "rw-busqueda rw-multiple";
+    var contador = document.createElement("h3");
+    contador.className = "rw-busqueda-contador";
+    contador.textContent = texto("multi_heading", { n: grupos.length });
+    var vistas = grupos.map(function (datos) { return crearGrupo(datos, grupos.length); });
+    var indice = crearIndiceDePreguntas(grupos, vistas);
+    seccion.append(contador, indice.nav);
+    vistas.forEach(function (vista) { seccion.appendChild(vista.seccion); });
+    var pie = document.createElement("div");
+    pie.className = "rw-busqueda-acciones";
+    if (respuesta.sin_buscar && respuesta.sin_buscar.length) {  // pasaron del tope: un botón cada una, que la busca sola
+      var aviso = document.createElement("section");
+      aviso.className = "rw-sin-buscar";
+      var nota = document.createElement("p");
+      nota.className = "rw-busqueda-ayuda";
+      nota.textContent = texto("multi_unsearched", { n: grupos.length });
+      var lista = document.createElement("ul");
+      respuesta.sin_buscar.forEach(function (pregunta) {
+        var item = document.createElement("li"), buscar = document.createElement("button");
+        buscar.type = "button";
+        buscar.className = "rw-atajo";
+        buscar.textContent = pregunta;
+        buscar.addEventListener("click", function () { enviarPregunta(pregunta); });
+        item.appendChild(buscar);
+        lista.appendChild(item);
+      });
+      aviso.append(nota, lista);
+      pie.appendChild(aviso);
+    }
+    seccion.appendChild(pie);
+    paginaBusqueda = { seccion: seccion, contador: contador, lista: null, acciones: pie, vistos: new Set(),
+                       grupos: vistas, observador: null };
+    mensajes.replaceChildren(seccion);
+    mensajes.scrollTop = 0;
+    if (window.IntersectionObserver) {  // la activa es la que cruza la franja alta, bajo el índice
+      paginaBusqueda.observador = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (entrada) {
+          if (!entrada.isIntersecting) return;
+          indice.botones.forEach(function (boton, i) {
+            if (vistas[i].seccion !== entrada.target) return boton.removeAttribute("aria-current");
+            boton.setAttribute("aria-current", "true");
+            boton.scrollIntoView({ block: "nearest", inline: "nearest" });
+          });
+        });
+      }, { root: mensajes, rootMargin: "-64px 0px -60% 0px" });
+      vistas.forEach(function (vista) { paginaBusqueda.observador.observe(vista.seccion); });
+    }
+    var total = vistas.reduce(function (suma, vista) { return suma + vista.lista.children.length; }, 0);
+    anunciador.textContent = contador.textContent + ". " + texto(total === 1 ? "voice_count_phrase_one" : "voice_count_phrase", { n: total });
+    var categoria = total ? "results" : "no_results";
+    var banco = total && BANCO_VOZ.results_multi && BANCO_VOZ.results_multi.length ? "results_multi" : categoria;
+    hablar(rellenarVoz(voz(banco, texto("voice_" + categoria)), total, grupos.length), categoria);
+  }
+
+  // {count} («5 resultados»), {questions} («3 preguntas») y {n}; sin ninguno, el conteo va delante.
+  function rellenarVoz(mensaje, total, preguntas) {
+    if (!total) return mensaje;
+    var frase = texto(total === 1 ? "voice_count_phrase_one" : "voice_count_phrase", { n: total });
+    if (!/\{(count|questions|n)\}/.test(mensaje)) return frase + ". " + mensaje;
+    return mensaje.replace(/\{count\}/g, frase).replace(/\{questions\}/g, texto("voice_count_questions", { n: preguntas }))
+      .replace(/\{n\}/g, String(total));
+  }
+
+  // «Mostrar más» de una pregunta: es una página ordinaria de esa pregunta y se suma a su lista.
+  function continuarGrupo(respuesta) {
+    var vista = paginaBusqueda.grupos[respuesta.grupo - 1];
+    if (!vista) return;
+    var antes = vista.lista.children.length;
+    var primero = agregarResultados(vista.lista, respuesta.fragmentos, vista.pregunta, vista.vistos);
+    if (vista.lista.dataset.forma === "documents") marcarGruposDeDocumento(vista.lista);
+    pintarAccionesDeGrupo(vista, { has_more: respuesta.has_more, continuation: respuesta.continuation, continuando: true });
+    anunciador.textContent = texto("multi_added", { n: vista.lista.children.length - antes, question: vista.indice });
+    if (primero) primero.focus({ preventScroll: true });
+    var total = paginaBusqueda.grupos.reduce(function (suma, v) { return suma + v.lista.children.length; }, 0);
+    hablar(rellenarVoz(voz("continuation", texto("voice_continuation")), total, paginaBusqueda.grupos.length), "continuation");
+  }
+
   // Indicador de "escribiendo": sin el, el widget se queda mudo entre que
   // se envia la pregunta y llega la respuesta. Son tres puntos animados,
   // no un mensaje -- no se agrega nada al historial.
@@ -2127,11 +2355,14 @@
     return e;
   }
 
-  function mostrarEsqueleto(continuando) {
+  function mostrarEsqueleto(continuando, grupo) {
     quitarEsqueleto();
     if (continuando && paginaBusqueda) {
       esqueleto = crearEsqueleto(1);
-      paginaBusqueda.seccion.insertBefore(esqueleto, paginaBusqueda.acciones);
+      // Con varias preguntas, la tarjeta de espera va al final del grupo que se está ampliando.
+      var vista = grupo && paginaBusqueda.grupos && paginaBusqueda.grupos[grupo - 1];
+      if (vista) vista.seccion.insertBefore(esqueleto, vista.acciones);
+      else paginaBusqueda.seccion.insertBefore(esqueleto, paginaBusqueda.acciones);
       return;
     }
     esqueleto = crearEsqueleto(3);
@@ -2149,12 +2380,12 @@
     ocultosPorEsqueleto = [];
   }
 
-  function mostrarEscribiendo(continuando) {
+  function mostrarEscribiendo(continuando, grupo) {
     if (modoBusqueda) {
       mensajes.setAttribute("aria-busy", "true");
       mensajes.classList.add("rw-buscando");
       indicadorBusqueda.hidden = false;
-      mostrarEsqueleto(continuando);
+      mostrarEsqueleto(continuando, grupo);
       hablar(voz("searching", micro("waiting")), "searching");
       return;
     }
@@ -2304,7 +2535,9 @@
   }
 
   var peticionPendiente = false;
-  function enviarPregunta(pregunta, cursor, botonMas, reintento) {
+  // ``grupo``: con varias preguntas en un mensaje, el número de la que se amplía (``cursor`` es el de ese grupo y
+  // ``pregunta`` su texto: para el servicio es una continuación ordinaria de una sola pregunta).
+  function enviarPregunta(pregunta, cursor, botonMas, reintento, grupo) {
     if (peticionPendiente) return;
     peticionPendiente = true;
     var exito = false;
@@ -2318,7 +2551,7 @@
     input.disabled = true;
     actualizarLimpiar();
     botonEnviar.disabled = true;
-    mostrarEscribiendo(!!cursor);
+    mostrarEscribiendo(!!cursor, grupo);
 
     fetch(API_BASE + "/ask", {
       method: "POST",
@@ -2349,6 +2582,7 @@
         respuesta.pregunta = pregunta;
         respuesta.continuando = !!cursor;
         respuesta.reintento = !!reintento;
+        respuesta.grupo = grupo || null;
         if (botonMas) botonMas.dataset.activo = "no";
         agregarMensajeAsistente(respuesta);
         exito = true;

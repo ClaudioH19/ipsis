@@ -567,6 +567,11 @@ modificador_antepuesto: true
 genericas: [often, much, many, long, far, do, does, did, done, make, makes, made, have, has, had, get, gets, got, can, could, must, should, be, is, are, was, were, go, goes, happen, happens, take, takes, took, taking, time, times, day, days, week, weeks, month, months, year, years, hour, hours, minute, minutes, someone, somebody, anyone, anybody, everyone, everybody, something, anything, meet, meets, fulfil, fulfill, fulfils, fulfills, like, know, want, wants]
 # Derived-noun suffixes the stemmer keeps: «signature» counts as «sign» for the focus terms.
 sufijos_derivados: [atur, ment]
+# Several questions in one message (ipsis.lenguaje.subpreguntas). Lowercase, no accents. Only a question that
+# starts inside another is cut: link or comma + interrogative. Question marks need no words.
+varias_preguntas:
+  interrogativos: [what, which, who, whom, whose, when, where, why, how]
+  enlaces: [and, also, and also, plus, and then, and finally, as well as]
 conversacional:
   categorias:
   - greeting
@@ -658,6 +663,19 @@ interfaz:
   search_empty: 'No sources found to review. Try rephrasing your question.'
   ranked_sources: '{n} related results to review.'
   ranked_hint: 'Sources ranked by relevance'
+  multi_sources: 'I found {n} questions in your message and searched each one separately.'
+  multi_heading: '{n} questions in your message'
+  multi_jump_label: 'Your questions'
+  multi_question_n: 'Question {n} of {total}'
+  multi_group_count: '{n} results'
+  multi_group_count_one: '1 result'
+  multi_group_empty: 'I found no sources for this question. Try rephrasing it.'
+  multi_group_exhausted: 'No more results for this question.'
+  multi_more_for: 'Show more results for question {n}'
+  multi_no_results_chip: 'no results'
+  multi_unsearched: 'I only searched the first {n} questions. Send the rest separately:'
+  multi_added: 'Added {n} results to question {question}.'
+  voice_count_questions: '{n} questions'
   read_context: 'Read the source and full context'
   context_truncated: 'The displayed context is truncated.'
   default_assistant_name: Assistant

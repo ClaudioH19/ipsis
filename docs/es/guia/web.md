@@ -58,6 +58,13 @@ Solo las expresiones de cortesía completas evitan la recuperación documental;
 una consulta mixta como «hola, ¿cuál es el stock del producto A?» sigue
 consultando el corpus.
 
+**Varias preguntas en un mensaje.** Si el mensaje trae más de una pregunta, el widget muestra una sección por pregunta,
+bajo un índice fijo: cada sección tiene la pregunta como título, su cantidad de resultados, sus propias fuentes (numeradas
+desde 1 en el ranking de esa pregunta), su propio **Mostrar más resultados** y, si no encontró nada, su propio aviso. Una
+fuente que es la mejor para dos preguntas aparece en las dos. Las preguntas que pasan del tope
+(`v2.multi_question.max_questions`) se listan como botones que buscan cada una por separado. Un mensaje con una sola
+pregunta se ve igual que antes.
+
 La orientación se revela carácter por carácter, sin retrasar las peticiones de
 red ni mostrar las fuentes carácter por carácter. **Mostrar completo** termina
 la animación de inmediato. Un mensaje nuevo cancela la animación anterior. Las

@@ -608,6 +608,11 @@ genericas: [tiempo, hacer, hace, hacen, hecho, realizar, realiza, realizan, tene
 # Sufijos de sustantivos derivados que el stemmer deja (ipsis.lenguaje.consultas.equivalentes).
 # El de español ya lleva «aprobación» y «firma» a la raíz del verbo.
 sufijos_derivados: []
+# Varias preguntas en un mensaje (ipsis.lenguaje.subpreguntas). En minúsculas y sin tildes. Solo se corta una
+# pregunta que arranca dentro de otra: enlace o coma + interrogativa. Los signos de interrogación no necesitan palabras.
+varias_preguntas:
+  interrogativos: [que, cual, cuales, quien, quienes, cuanto, cuanta, cuantos, cuantas, cuando, donde, como, por que, para que]
+  enlaces: [y, e, ademas, tambien, y ademas, y tambien, ademas de eso, y por ultimo, y finalmente]
 conversacional:
   categorias:
   - greeting
@@ -704,6 +709,19 @@ interfaz:
   search_empty: 'No se encontraron fuentes para revisar. Prueba reformulando la pregunta.'
   ranked_sources: '{n} resultados relacionados para revisar.'
   ranked_hint: 'Fuentes ordenadas por pertinencia'
+  multi_sources: 'Entendí {n} preguntas en tu mensaje y busqué cada una por separado.'
+  multi_heading: '{n} preguntas en tu mensaje'
+  multi_jump_label: 'Tus preguntas'
+  multi_question_n: 'Pregunta {n} de {total}'
+  multi_group_count: '{n} resultados'
+  multi_group_count_one: '1 resultado'
+  multi_group_empty: 'No encontré fuentes para esta pregunta. Prueba reformulándola.'
+  multi_group_exhausted: 'No hay más resultados para esta pregunta.'
+  multi_more_for: 'Mostrar más resultados de la pregunta {n}'
+  multi_no_results_chip: 'sin resultados'
+  multi_unsearched: 'Solo busqué las primeras {n} preguntas. Envía las demás por separado:'
+  multi_added: 'Se añadieron {n} resultados a la pregunta {question}.'
+  voice_count_questions: '{n} preguntas'
   read_context: 'Leer la fuente y el contexto completo'
   context_truncated: 'El contexto mostrado está recortado.'
   default_assistant_name: Asistente

@@ -50,6 +50,12 @@ this section too, preserving expanded sources and the continuation button.
 Only complete courtesy expressions bypass document retrieval; a mixed query
 such as “hello, what is the stock of product A?” still searches the corpus.
 
+**Several questions in one message.** When the message holds more than one question, the widget shows one section per
+question under a fixed index: each section has the question as its title, its result count, its own sources (numbered from
+1 in that question's ranking), its own **Show more results** and, if nothing was found, its own notice. A source that is
+the best for two questions appears under both. Questions beyond the limit (`v2.multi_question.max_questions`) are listed as
+buttons that search each one alone. A message with one question looks exactly as before.
+
 Guidance is revealed character by character, without delaying network requests
 or displaying sources character by character. **Show full message** finishes
 the animation immediately. A newer message cancels the previous animation.

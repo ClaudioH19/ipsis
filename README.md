@@ -39,6 +39,8 @@ into confidence percentages.
 
 - **Document search:** hybrid retrieval, lexical variants and ranking;
   `medium` adds a semantic reranker. Scores are not probabilities.
+- **Several questions in one message:** each question is searched on its own and shown
+  in its own section, with its sources and its own "Show more results".
 - **Verifiable reading:** literal text and offsets, expandable context,
   document paragraphs and headings, tables with columns and horizontal scrolling.
 - **Documents and inventories:** text PDFs, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,

@@ -137,6 +137,21 @@ class PresentacionConfig(ConfiguracionEstricta):
         return self
 
 
+class VariasPreguntasConfig(ConfiguracionEstricta):
+    """Varias preguntas en un mensaje (ADR 0014): encendido por defecto; un mensaje con una sola pregunta no cambia.
+
+    Cada pregunta se busca por separado y se publica en su propio grupo, con ``resultados_por_pregunta`` fuentes en la
+    primera página (el resto, con «Mostrar más» de ese grupo). ``max_preguntas`` limita cuántas se buscan: las demás se
+    devuelven en ``unsearched_questions`` para que la interfaz las muestre. ``cortar_por_interrogativas`` apaga el corte
+    de una pregunta que arranca dentro de otra («… y cuánto cuesta…») y deja solo los signos de interrogación.
+    """
+
+    activo: bool = True
+    max_preguntas: int = Field(default=3, ge=2, le=6)
+    resultados_por_pregunta: int = Field(default=2, ge=1, le=10)
+    cortar_por_interrogativas: bool = True
+
+
 class PipelineV2Config(ConfiguracionEstricta):
     """Fuentes ordenadas, contexto de lectura y destacado QA optativo."""
 
@@ -156,6 +171,7 @@ class PipelineV2Config(ConfiguracionEstricta):
     max_tokens_pasaje: int = Field(default=384, ge=64, le=512)
     stride: int = Field(default=128, ge=0, le=256)
     presentacion: PresentacionConfig = Field(default_factory=PresentacionConfig)
+    varias_preguntas: VariasPreguntasConfig = Field(default_factory=VariasPreguntasConfig)
 
     @model_validator(mode="after")
     def presupuestos(self):

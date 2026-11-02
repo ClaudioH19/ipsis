@@ -232,8 +232,29 @@ class MotorV2:
                 plan="conversacional", diagnostico=ctx.diagnostico,
             )
         limite = self._limite(inicio, deadline_ms)
+        division = self._dividir(pregunta)
+        if division is not None and division.multiple:
+            return self._consultar_multiple(pregunta, id_sesion, inicio, limite, deadline_ms, division)
+        self._presupuestar(ctx, deadline_ms)
+        todos, eventos = self._recuperar_parte(pregunta, ctx, limite)
+        # Las ventanas se fijan una vez. Solo el orden aún no publicado puede cambiar.
+        cursor = self._rankings.guardar(pregunta, id_sesion, ctx, todos, eventos, self.top_k)
+        ctx.diagnostico["paginacion"] = {"offset": 0, "ranking_reutilizado": False, "modo": "progresivo"}
+        resultado = self._publicar(ctx, todos[:self.top_k], eventos)
+        self._anadir_multimedia(resultado, ctx, limite)
+        self._anadir_forma(resultado)
+        self._anadir_linea_clave(resultado, pregunta, limite)
+        return self._con_cursor(resultado, cursor if resultado.evidencias else None)
+
+    def _presupuestar(self, ctx, deadline_ms):
         ctx.diagnostico["presupuestos"] = dict(self.opciones)
         ctx.diagnostico["presupuestos"]["presupuesto_aplicado_ms"] = self._presupuesto(deadline_ms)
+
+    def _recuperar_parte(self, pregunta, ctx, limite):
+        """Preparación, recuperación, contexto, reranking y lectura de **una** pregunta.
+
+        Devuelve ``(todos, eventos)``: el ranking completo con sus ventanas de resultado. Lo comparten la consulta de una
+        sola pregunta y cada pregunta de un mensaje con varias (``_consultar_multiple``)."""
         with self._etapa("preparacion", ctx):
             ctx.variantes = [" ".join(pregunta.split())]
             if self.idioma is not None and self.opciones.get("corregir_erratas", True):
@@ -332,17 +353,115 @@ class MotorV2:
                     "uso": "destacado_no_confianza_de_respuesta"} for l in ctx.lecturas]
             elif self.lector is not None and ctx.pasajes:
                 ctx.diagnostico["advertencias"].append("lector optativo omitido por presupuesto")
-        todos, eventos = preparar_resultados(
+        return preparar_resultados(
             ctx.candidatos, self.retriever, limite=self.opciones["max_caracteres_resultado"],
             vecinos=self.opciones["vecinos_contexto"], cantidad=len(ctx.candidatos))
-        # Las ventanas se fijan una vez. Solo el orden aún no publicado puede cambiar.
-        cursor = self._rankings.guardar(pregunta, id_sesion, ctx, todos, eventos, self.top_k)
-        ctx.diagnostico["paginacion"] = {"offset": 0, "ranking_reutilizado": False, "modo": "progresivo"}
-        resultado = self._publicar(ctx, todos[:self.top_k], eventos)
-        self._anadir_multimedia(resultado, ctx, limite)
-        self._anadir_forma(resultado)
-        self._anadir_linea_clave(resultado, pregunta, limite)
-        return self._con_cursor(resultado, cursor if resultado.evidencias else None)
+
+    def _dividir(self, pregunta):
+        """Las preguntas del mensaje (``Division``), o ``None`` si ``v2.multi_question`` está apagado (ADR 0014)."""
+        cfg = self.opciones["varias_preguntas"]
+        if not cfg["activo"]:
+            return None
+        from ipsis.lenguaje.subpreguntas import dividir
+
+        return dividir(pregunta, self.idioma, maximo=cfg["max_preguntas"], unir=cfg["cortar_por_interrogativas"])
+
+    def _consultar_multiple(self, pregunta, id_sesion, inicio, limite, deadline_ms, division):
+        """Un mensaje con varias preguntas: cada una se busca por separado y se publica en su propio grupo.
+
+        Cada pregunta recorre el mismo camino que una consulta sola (``_recuperar_parte``) y guarda su ranking en
+        ``RankingsTemporales`` **bajo su propio texto**: el cursor de un grupo sigue una pregunta ordinaria, así que
+        ``continuar`` funciona sin saber nada de grupos. El tiempo se reparte en partes iguales; lo que una pregunta no
+        gasta lo aprovechan las siguientes (los plazos son absolutos).
+        """
+        por_pregunta = self.opciones["varias_preguntas"]["resultados_por_pregunta"]
+        total = len(division.partes)
+        resultados = []
+        for i, parte in enumerate(division.partes):
+            ctx = _Consulta(pregunta=parte, inicio=inicio)
+            self._presupuestar(ctx, deadline_ms)
+            todos, eventos = self._recuperar_parte(parte, ctx, inicio + (limite - inicio) * (i + 1) / total)
+            cursor = self._rankings.guardar(parte, id_sesion, ctx, todos, eventos, por_pregunta)
+            ctx.diagnostico["paginacion"] = {"offset": 0, "ranking_reutilizado": False, "modo": "progresivo",
+                                             "pregunta": i + 1}
+            resultado = self._publicar(ctx, todos[:por_pregunta], eventos)
+            self._anadir_multimedia(resultado, ctx, limite)
+            self._anadir_forma(resultado)
+            self._anadir_linea_clave(resultado, parte, limite)
+            resultados.append(self._con_cursor(resultado, cursor if resultado.evidencias else None))
+        return self._unir_resultados(inicio, division, resultados)
+
+    def _unir_resultados(self, inicio, division, resultados):
+        """Un solo resultado para el mensaje: los grupos en ``grupos_preguntas`` y, para quien no los entienda,
+        las fuentes en orden de grupo en ``fragmentos`` (cada una con su ``indice_pregunta``)."""
+        from ipsis.recursos.mensajes import t
+
+        perfil = self.perfil_instalacion
+        interfaz = getattr(self.idioma, "interfaz", None) or {}
+        total = len(resultados)
+        grupos, fragmentos, evidencias, advertencias, etapas, preguntas = [], [], [], [], {}, []
+        bloques = []
+        for i, (parte, resultado) in enumerate(zip(division.partes, resultados), start=1):
+            contrato = resultado.contrato_http
+            for fragmento in contrato["fragmentos"]:
+                fragmento["indice_pregunta"] = i
+            grupo = {"indice": i, "pregunta": parte, "estado": contrato["estado"],
+                     "fragmentos": contrato["fragmentos"], "continuation": contrato.get("continuation"),
+                     "has_more": bool(contrato.get("has_more"))}
+            for clave in ("forma_resultados", "multimedia"):
+                if contrato.get(clave):
+                    grupo[clave] = contrato[clave]
+            grupos.append(grupo)
+            fragmentos.extend(contrato["fragmentos"])
+            evidencias.extend(resultado.evidencias)
+            bloques.append({"tipo": "mensaje", "texto": f"{i}. {parte}"})
+            if resultado.evidencias:
+                bloques.extend(b for b in contrato["bloques"] if b["tipo"] == "pasaje")
+            else:
+                bloques.append({"tipo": "mensaje", "texto": interfaz.get("multi_group_empty") or t("app.search_empty")})
+            diagnostico = resultado.diagnostico
+            advertencias.extend(a for a in diagnostico.get("advertencias", []) if a not in advertencias)
+            for etapa, ms in diagnostico.get("etapas", {}).items():
+                etapas[etapa] = etapas.get(etapa, 0) + ms
+            preguntas.append({"indice": i, "pregunta": parte, "regla": diagnostico.get("regla"),
+                              "etapas": diagnostico.get("etapas", {}), "candidatos": len(diagnostico.get("candidatos", [])),
+                              "paginacion": diagnostico.get("paginacion"),
+                              "reranking_progresivo": diagnostico.get("reranking_progresivo"),
+                              "forma_resultados": diagnostico.get("forma_resultados"),
+                              "ortografia": diagnostico.get("ortografia"), "advertencias": diagnostico.get("advertencias", [])})
+        if division.omitidas:
+            aviso = interfaz.get("multi_unsearched")
+            advertencias.append(f"{len(division.omitidas)} preguntas sin buscar (tope de {total})")
+            bloques.append({"tipo": "mensaje", "texto": ((aviso.format(n=total) + " ") if aviso else "") +
+                            " ".join(division.omitidas)})
+        if evidencias:
+            estado, regla = AssistantState.RELACIONADO, "recuperado"
+            intro = interfaz.get("multi_sources")
+            bloques.insert(0, {"tipo": "mensaje", "texto": intro.format(n=total) if intro
+                               else t("app.ranked_sources", n=len(evidencias))})
+        else:
+            estado, regla = AssistantState.SIN_RESPUESTA, "sin_evidencia"
+            bloques = [{"tipo": "mensaje", "texto": interfaz.get("search_empty") or t("app.search_empty")}]
+        mensaje = "\n\n".join(b["texto"] + (f" {b['cita']}." if b.get("cita") else "") for b in bloques)
+        detalle = QueryDiagnostic(
+            backend=self.backend, pipeline=self.pipeline, perfil=perfil.perfil if perfil else None,
+            etapas=etapas, advertencias=advertencias, regla=regla, evidencias=evidencias, preguntas=preguntas,
+            presupuestos=resultados[0].diagnostico.get("presupuestos", {}),
+            paginacion={"modo": "por_pregunta", "preguntas": total,
+                        "resultados_por_pregunta": self.opciones["varias_preguntas"]["resultados_por_pregunta"]},
+            decision={"seleccion_pasajes": "ranking_por_pregunta", "qa_desplaza_pasajes": False,
+                      "confianza_respuesta_calculada": False, "modo": "fuentes_ordenadas"},
+        ).model_dump(mode="python")
+        final = construir_resultado(
+            estado=estado, motivo=regla, mensaje=mensaje,
+            confianza={"top1": 0.0, "margen": 0.0, "acuerdo_bm25": None},
+            latencia_ms=int((time.perf_counter() - inicio) * 1000),
+            plan="zona_gris" if evidencias else "sin_respuesta", diagnostico=detalle, evidencias=evidencias,
+            fragmentos_http=fragmentos, bloques=bloques, modo_respuesta="fuentes_ordenadas")
+        final.contrato_http["grupos_preguntas"] = grupos
+        if division.omitidas:
+            final.contrato_http["preguntas_sin_buscar"] = list(division.omitidas)
+        return self._con_cursor(final, None)  # la continuación es de cada grupo, no del mensaje
 
     def _anadir_forma(self, resultado):
         """Describe la forma de la primera página (``forma_resultados``) para que el widget elija mensaje y disposición.

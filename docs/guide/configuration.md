@@ -97,6 +97,22 @@ V2 publishes ranked literal sources with continuation. See
 (answer cascade, calibration and abstention alternatives) was retired; a
 configuration that still says `pipeline: v1` loads as v2 and prints a notice.
 
+A message with several questions ("how much is the P1? and how long is the warranty?") is split, searched question by
+question and answered in one group per question ([ADR 0014](../decisions/0014-several-questions-in-one-message.md)). It is
+on by default and a single question is unaffected:
+
+```yaml
+v2:
+  multi_question:
+    enabled: true             # false: search the whole message at once
+    max_questions: 3          # 2 to 6; the rest is returned as `unsearched_questions`
+    results_per_question: 2   # sources per question on the first page
+    split_on_interrogatives: true  # false: split on question marks only
+```
+
+What counts as an interrogative word or a link word comes from the language pack (`varias_preguntas`), not from the code;
+to add a language, add those two lists to its pack.
+
 The `components` section selects implementations by name:
 
 ```yaml

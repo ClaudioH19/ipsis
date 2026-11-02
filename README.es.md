@@ -39,6 +39,8 @@ de certeza a partir del ranking.
 
 - **Búsqueda documental:** recuperación híbrida, variantes léxicas y ranking;
   `medium` añade un reranker semántico. Los scores no son probabilidades.
+- **Varias preguntas en un mensaje:** cada pregunta se busca por separado y se muestra
+  en su propia sección, con sus fuentes y su propio «Mostrar más resultados».
 - **Lectura verificable:** texto y posiciones literales, contexto desplegable,
   párrafos y encabezados del documento, tablas con columnas y desplazamiento horizontal.
 - **Documentos e inventarios:** PDF con texto, DOCX, Markdown, LaTeX, TXT, XLSX, XLS,

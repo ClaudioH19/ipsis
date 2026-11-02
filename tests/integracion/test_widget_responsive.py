@@ -31,10 +31,11 @@ def test_widget_no_inserta_html_crudo():
         assert not re.search(uso, codigo), uso
 
 
-def test_widget_sin_avatar_pesa_menos_de_41_kb_gzip():
+def test_widget_sin_avatar_pesa_menos_de_44_kb_gzip():
     # Se mide con finales LF, como en el repositorio: un checkout con CRLF (Windows) no debe cambiar el resultado.
-    # El tope pasó de 40 a 41 KB con la línea clave (ADR 0013); el widget tenía 50 B de holgura.
-    assert len(gzip.compress(WIDGET.read_bytes().replace(b"\r\n", b"\n"), 9)) <= 41 * 1024
+    # El tope pasó de 40 a 41 KB con la línea clave (ADR 0013) y de 41 a 44 KB con las varias preguntas por mensaje
+    # (ADR 0014: secciones por pregunta, índice, «Mostrar más» por grupo); el widget tiene unos 450 B de holgura.
+    assert len(gzip.compress(WIDGET.read_bytes().replace(b"\r\n", b"\n"), 9)) <= 44 * 1024
 
 
 def test_no_hay_opcion_para_ocultar_las_citas():

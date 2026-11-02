@@ -8,6 +8,15 @@ a minor change may break compatibility and is marked as such.
 
 ### Added
 
+- **Several questions in one message, searched separately and shown by question** ([ADR 0014](docs/decisions/0014-several-questions-in-one-message.md)).
+  "How much is the P1? And how long is the warranty?" is split (on question marks, and inside a question only before an
+  interrogative word that follows "and" or a comma), each question gets its own retrieval, reranking and continuation,
+  and the widget shows one section per question: a numbered title, its count, its sources numbered from 1, its own
+  "Show more results" and its own empty state, under a fixed index that jumps to each question. `/ask` adds
+  `question_groups`, `question_index` on each fragment and `unsearched_questions` (questions beyond
+  `v2.multi_question.max_questions`, which the widget offers as one-click searches). The interrogative and link words are
+  in each language pack (`varias_preguntas`, with es, en and pt), never in the code. A single question is untouched.
+  `v2.multi_question.enabled: false` restores the old behavior. The widget's own size budget moved from 41 to 44 KB gzip.
 - **`glass` preset: an iOS and macOS look.** Frosted-glass panel, hairline borders, large corners, rounded chat bubbles,
   a pill-shaped field and suggestions, a round send button, system blue and springy entrances and presses, in light and
   dark mode. Apply it with `ipsis widget theme apply glass`. Its structure is a stylesheet

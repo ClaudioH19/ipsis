@@ -1080,3 +1080,130 @@ def test_el_mensaje_del_asistente_va_abajo_junto_al_campo_con_lugar_para_el_avat
     assert page.locator(".rw-voz-avatar").count() == 1                    # sin avatar activo está vacío y oculto
     expect(page.locator(".rw-voz-avatar")).to_be_hidden()
     page.close()
+
+
+# --- varias preguntas en un mensaje (ADR 0014) ---------------------------------------------------------------------
+def _fuente_grupo(cid, rango, texto, documento="Manual del purificador", seccion="Postventa > Garantía"):
+    return {"chunk_id": cid, "doc_id": "manual", "doc_title": documento, "section": seccion, "version": "1",
+            "rank": rango, "offset_start": 0, "offset_end": len(texto), "text": texto, "score": 1.0,
+            "match_start": 0, "match_end": len(texto), "truncated": False}
+
+
+def _publico_varias(con_sin_buscar=True):
+    compartida = _fuente_grupo("garantia", 1, "La garantía cubre 12 meses desde la compra del purificador.")
+    g1 = [compartida, _fuente_grupo("garantia-2", 2, "La garantía no cubre el desgaste normal del filtro.")]
+    g2 = [_fuente_grupo("precios", 1, "Purificador P1: $120.000. Purificador P2: $180.000.", seccion="Precios"),
+          dict(compartida, rank=2, question_index=2)]
+    for f in g1:
+        f["question_index"] = 1
+    for f in g2[:1]:
+        f["question_index"] = 2
+    grupos = [
+        {"index": 1, "question": "¿Cuánto dura la garantía?", "status": "related", "fragments": g1,
+         "has_more": True, "continuation": "cursor-1"},
+        {"index": 2, "question": "¿Cuánto cuesta el purificador P1?", "status": "related", "fragments": g2,
+         "has_more": False},
+        {"index": 3, "question": "¿Quién fabrica el repuesto de la bomba de agua?", "status": "no_answer",
+         "fragments": [], "has_more": False},
+    ]
+    publico = {"status": "related", "response_mode": "ranked_sources", "answer": "Entendí 3 preguntas.",
+               "answer_blocks": [{"type": "message", "text": "Entendí 3 preguntas."}],
+               "fragments": g1 + g2, "has_more": False, "question_groups": grupos}
+    if con_sin_buscar:
+        publico["unsearched_questions"] = ["¿Dónde queda la sucursal?"]
+    return publico
+
+
+def _abrir_busqueda_varias(page, base, pregunta="¿Cuánto dura la garantía? ¿Cuánto cuesta el P1? ¿Quién fabrica la bomba?"):
+    page.route("**/config", lambda r: r.fulfill(json={"assistant_name": "Manual", "response_mode": "ranked_sources",
+               "preset": "search", "text_align": "start"}))
+    page.goto(base)
+    page.get_by_role("button", name="Open search of Manual").click()
+    page.locator("#rw-input").fill(pregunta)
+    page.get_by_role("button", name="Search", exact=True).click()
+
+
+@pytest.mark.browser
+@pytest.mark.parametrize("ancho", [375, 900])
+def test_varias_preguntas_se_muestran_en_grupos_con_indice_y_sin_desborde(navegador, servidor_widget, tmp_path, ancho):
+    page = navegador.new_page(viewport={"width": ancho, "height": 1500 if ancho == 375 else 800})
+    page.route("**/ask", lambda r: r.fulfill(json=_publico_varias()))
+    _abrir_busqueda_varias(page, servidor_widget)
+    grupos = page.locator(".rw-grupo")
+    expect(grupos).to_have_count(3)
+    # Cada pregunta es un título de nivel 4 con su número, y su lista numera desde 1.
+    expect(page.get_by_role("heading", name=re.compile("¿Cuánto dura la garantía"), level=4)).to_be_visible()
+    expect(grupos.nth(0).locator(".rw-resultado")).to_have_count(2)
+    expect(grupos.nth(1).locator(".rw-resultado")).to_have_count(2)
+    expect(grupos.nth(2).locator(".rw-resultado")).to_have_count(0)
+    expect(grupos.nth(0).locator(".rw-grupo-cuenta")).to_have_text("2 results")
+    expect(grupos.nth(2).locator(".rw-busqueda-ayuda")).to_contain_text("no sources for this question")
+    # Una misma fuente es la mejor de dos preguntas: aparece en las dos.
+    assert page.locator(".rw-resultado-vista", has_text="La garantía cubre 12 meses").count() == 2
+    # Índice: un botón por pregunta; la sin fuentes se ve apagada y lo dice a los lectores de pantalla.
+    indice = page.get_by_role("navigation", name="Your questions")
+    expect(indice.get_by_role("button")).to_have_count(3)
+    expect(indice.locator("button").nth(2)).to_have_attribute("data-vacio", "si")
+    expect(indice.locator("button").nth(0)).to_have_attribute("aria-current", "true")
+    # «Mostrar más» solo en el grupo que tiene más.
+    expect(page.get_by_role("button", name=re.compile("Show more results for question 1"))).to_have_count(1)
+    expect(page.get_by_role("button", name=re.compile("Show more results for question 2"))).to_have_count(0)
+    # Los ids de los contextos no se repiten entre grupos.
+    ids = page.locator(".rw-resultado details").evaluate_all("els => els.map(e => e.id)")
+    assert len(ids) == len(set(ids)) == 4
+    # Las no buscadas se ofrecen como botón.
+    expect(page.locator(".rw-sin-buscar")).to_contain_text("I only searched the first 3 questions")
+    expect(page.locator(".rw-sin-buscar button")).to_have_text("¿Dónde queda la sucursal?")
+    assert page.evaluate("""() => { const r = document.querySelector('ipsis-chat').shadowRoot.querySelector('.rw-mensajes');
+        return r.scrollWidth <= r.clientWidth + 1; }""")
+    expect(grupos.nth(0).locator(".rw-resultado").nth(1)).to_be_visible()
+    page.wait_for_timeout(1200)  # las tarjetas entran con una animación escalonada
+    page.screenshot(path=str(tmp_path / f"varias-{ancho}.png"))
+    # El índice lleva a la pregunta y deja el foco en su título.
+    indice.locator("button").nth(1).click()
+    expect(page.locator(".rw-grupo-pregunta").nth(1)).to_be_focused()
+    page.close()
+
+
+@pytest.mark.browser
+def test_varias_preguntas_mostrar_mas_amplia_solo_su_grupo_y_las_no_buscadas_se_buscan_solas(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 420, "height": 800})
+    peticiones = []
+
+    def responder(ruta):
+        cuerpo = ruta.request.post_data_json
+        peticiones.append(cuerpo)
+        if cuerpo.get("continuation") == "cursor-1":
+            extra = _fuente_grupo("garantia-3", 3, "La garantía se anula si se abre el equipo.")
+            ruta.fulfill(json={"status": "related", "response_mode": "ranked_sources", "fragments": [extra],
+                               "has_more": False})
+        elif cuerpo["question"] == "¿Dónde queda la sucursal?":
+            ruta.fulfill(json={"status": "no_answer", "response_mode": "ranked_sources", "fragments": [],
+                               "has_more": False})
+        else:
+            ruta.fulfill(json=_publico_varias())
+
+    page.route("**/ask", responder)
+    _abrir_busqueda_varias(page, servidor_widget)
+    grupos = page.locator(".rw-grupo")
+    page.get_by_role("button", name=re.compile("Show more results for question 1")).click()
+    expect(grupos.nth(0).locator(".rw-resultado")).to_have_count(3)
+    expect(grupos.nth(1).locator(".rw-resultado")).to_have_count(2)
+    # Para el servicio es una continuación ordinaria: el texto del grupo y el cursor del grupo.
+    assert peticiones[-1]["question"] == "¿Cuánto dura la garantía?" and peticiones[-1]["continuation"] == "cursor-1"
+    expect(grupos.nth(0).locator(".rw-busqueda-ayuda")).to_have_text("No more results for this question.")
+    expect(grupos.nth(0).get_by_role("button", name=re.compile("Show more"))).to_have_count(0)
+    page.locator(".rw-sin-buscar button").click()
+    expect(page.locator("#rw-input")).to_have_value("¿Dónde queda la sucursal?")
+    assert peticiones[-1]["question"] == "¿Dónde queda la sucursal?" and not peticiones[-1].get("continuation")
+    page.close()
+
+
+@pytest.mark.browser
+def test_una_sola_pregunta_no_cambia_su_presentacion(navegador, servidor_widget):
+    page = navegador.new_page(viewport={"width": 420, "height": 800})
+    page.route("**/ask", lambda r: r.fulfill(json=_pagina_fuentes(0, True)))
+    _abrir_busqueda_varias(page, servidor_widget, "stock")
+    expect(page.locator(".rw-resultado")).to_have_count(3)
+    assert page.locator(".rw-grupo").count() == 0 and page.locator(".rw-indice").count() == 0
+    page.close()

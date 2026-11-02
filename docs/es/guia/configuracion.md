@@ -101,6 +101,22 @@ respuesta, calibración y alternativas en abstenciones) se retiró: una
 configuración que todavía dice `pipeline: v1` se carga como v2 y muestra un
 aviso.
 
+Un mensaje con varias preguntas («¿cuánto cuesta el P1? ¿y cuánto dura la garantía?») se divide, se busca pregunta por
+pregunta y se responde en un grupo por pregunta ([ADR 0014](../../decisions/0014-several-questions-in-one-message.md)).
+Está activo por defecto y una sola pregunta no cambia:
+
+```yaml
+v2:
+  multi_question:
+    enabled: true             # false: el mensaje se busca entero
+    max_questions: 3          # 2 a 6; las demás se devuelven en `unsearched_questions`
+    results_per_question: 2   # fuentes por pregunta en la primera página
+    split_on_interrogatives: true  # false: solo los signos de interrogación
+```
+
+Qué es una palabra interrogativa o un enlace sale del paquete de idioma (`varias_preguntas`), no del código; para agregar
+un idioma, agrega esas dos listas a su paquete.
+
 La sección `components` selecciona implementaciones por nombre:
 
 ```yaml

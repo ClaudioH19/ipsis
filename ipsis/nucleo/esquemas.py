@@ -220,6 +220,7 @@ class QueryDiagnostic(EsquemaEstricto):
     tono: str | None = None
     plantillas: list[str] = Field(default_factory=list)  # <tono>.<situación>.<n> usadas en la respuesta
     alternativas: dict[str, Any] | None = None  # ofrecidas y descartadas, con sus señales (ADR 0008)
+    preguntas: list[dict[str, Any]] | None = None  # varias preguntas en un mensaje: una entrada por pregunta (ADR 0014)
 
 
 class AssistantResult(EsquemaEstricto):

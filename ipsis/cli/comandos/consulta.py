@@ -198,6 +198,16 @@ class ComandoPreguntar(Comando):
         datos = resp.json()
         print(etiqueta_estado(datos.get("status", "?")))
         print(datos.get("answer") or "")
+        grupos = datos.get("question_groups") or []
+        if grupos:  # varias preguntas en el mensaje: las citas de cada una, por separado
+            for grupo in grupos:
+                print(t("ask.group", n=grupo["index"], question=grupo["question"]))
+                for f in grupo["fragments"]:
+                    print(t("ask.citation", title=f["doc_title"], section=f["section"], start=f["offset_start"],
+                            end=f["offset_end"], score=f["score"]))
+            if datos.get("unsearched_questions"):
+                print(t("ask.unsearched", questions=" | ".join(datos["unsearched_questions"])))
+            return 0
         fragmentos = datos.get("fragments") or []
         if fragmentos:
             print(t("ask.citations"))

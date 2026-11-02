@@ -568,6 +568,11 @@ genericas_memoria: [tempo]
 genericas: [quanto, quanta, quantos, quantas, tempo, fazer, faz, fazem, feito, realizar, realiza, realizam, ter, tem, têm, tenho, poder, pode, podem, posso, dever, deve, devem, devo, haver, há, ser, estar, dar, da, dão, ir, acontecer, acontece, vez, vezes, dia, dias, semana, semanas, mes, meses, ano, anos, hora, horas, minuto, minutos, alguém, algo, qualquer, vou, vai, vão, vamos, vem, vêm, venho, tiver, tiverem, tenha, der, derem, estou, está, estão, cumprir, cumpro, cumpre, cumprem, quero, queria, querer, gostaria, saber]
 # Sufixos de substantivos derivados que o stemmer mantém: «assinatura» conta como «assina».
 sufijos_derivados: [atur, ament, ment, aca, ica]
+# Várias perguntas numa mensagem (ipsis.lenguaje.subpreguntas). Em minúsculas e sem acentos. Só se corta uma
+# pergunta que começa dentro de outra: ligação ou vírgula + interrogativa. Os pontos de interrogação não precisam de palavras.
+varias_preguntas:
+  interrogativos: [o que, qual, quais, quem, quanto, quanta, quantos, quantas, quando, onde, como, por que, para que]
+  enlaces: [e, alem disso, tambem, e tambem, e alem disso, e por fim, e finalmente]
 conversacional:
   categorias:
   - greeting
@@ -658,6 +663,19 @@ interfaz:
   search_empty: 'Nenhuma fonte encontrada para conferir. Tente reformular a pergunta.'
   ranked_sources: '{n} resultados relacionados para revisar.'
   ranked_hint: 'Fontes ordenadas por relevância'
+  multi_sources: 'Entendi {n} perguntas na sua mensagem e busquei cada uma separadamente.'
+  multi_heading: '{n} perguntas na sua mensagem'
+  multi_jump_label: 'Suas perguntas'
+  multi_question_n: 'Pergunta {n} de {total}'
+  multi_group_count: '{n} resultados'
+  multi_group_count_one: '1 resultado'
+  multi_group_empty: 'Não encontrei fontes para esta pergunta. Tente reformulá-la.'
+  multi_group_exhausted: 'Não há mais resultados para esta pergunta.'
+  multi_more_for: 'Mostrar mais resultados da pergunta {n}'
+  multi_no_results_chip: 'sem resultados'
+  multi_unsearched: 'Busquei apenas as primeiras {n} perguntas. Envie as demais separadamente:'
+  multi_added: 'Foram adicionados {n} resultados à pergunta {question}.'
+  voice_count_questions: '{n} perguntas'
   read_context: 'Ler a fonte e o contexto completo'
   context_truncated: 'O contexto apresentado está recortado.'
   default_assistant_name: Assistente

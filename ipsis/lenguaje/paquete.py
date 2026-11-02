@@ -61,6 +61,16 @@ class Mensajes(_Estricto):
     conectores: dict[str, list[str]] = Field(default_factory=dict)  # secuencia, contraste_version
 
 
+class VariasPreguntas(_Estricto):
+    """Palabras con las que se reconoce una pregunta que arranca dentro de otra (``ipsis.lenguaje.subpreguntas``).
+
+    En minúsculas y sin tildes. ``interrogativos`` y ``enlaces`` admiten expresiones de varias palabras
+    («por que», «y además»). Los signos de interrogación no necesitan nada de esto."""
+
+    interrogativos: list[str] = Field(default_factory=list)
+    enlaces: list[str] = Field(default_factory=list)
+
+
 class GoldenInstrucciones(_Estricto):
     """Textos de ``ipsis golden template`` (ver docs/guide/golden.md).
 
@@ -136,6 +146,8 @@ class PaqueteIdioma(_Estricto):
     bordes_respuesta: BordesRespuesta = Field(default_factory=BordesRespuesta)
     # Cómo empieza una pregunta de seguimiento («y», «entonces»; ipsis.consulta.seguimiento).
     seguimiento: list[str] = Field(default_factory=list)
+    # Varias preguntas en un mensaje: interrogativas y enlaces del idioma (ipsis.lenguaje.subpreguntas).
+    varias_preguntas: VariasPreguntas = Field(default_factory=VariasPreguntas)
     # Grupos de sinónimos con sus formas comunes (ipsis.lenguaje.consultas.sinonimos_presentes):
     # solo reemplazan una palabra de la pregunta que no está en el corpus.
     sinonimos: list[list[str]] = Field(default_factory=list)

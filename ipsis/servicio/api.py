@@ -121,6 +121,8 @@ class Fragmento(BaseModel):
     truncated: Optional[bool] = None
     source_blocks: list[BloqueFuente] = Field(default_factory=list)
     key_line: Optional[LineaClave] = None
+    # Solo con varias preguntas en un mensaje: a cuál de ellas (``question_groups[].index``) pertenece esta fuente.
+    question_index: Optional[int] = None
 
 
 class Confianza(BaseModel):
@@ -184,6 +186,22 @@ class FichaMedia(BaseModel):
     version: Optional[str] = None
 
 
+class GrupoPreguntas(BaseModel):
+    """Las fuentes de **una** de las preguntas de un mensaje (``v2.multi_question``, ADR 0014).
+
+    ``continuation`` sigue **esta** pregunta: se envía a ``/ask`` junto con ``question`` (el texto de este grupo) y
+    devuelve una respuesta ordinaria de una sola pregunta con las fuentes siguientes."""
+
+    index: int
+    question: str
+    status: Literal["related", "no_answer"]
+    fragments: list[Fragmento]
+    has_more: bool = False
+    continuation: Optional[str] = None
+    result_shape: Optional[Literal["clear", "variants", "documents", "neutral"]] = None
+    media: Optional[list[FichaMedia]] = None
+
+
 class RespuestaConsulta(BaseModel):
     status: Literal["ok", "related", "conversational", "no_answer", "degraded", "saturated"]
     service_level: Literal["normal", "medium", "high"]
@@ -197,6 +215,12 @@ class RespuestaConsulta(BaseModel):
     # Solo en la primera página y con ``media.enabled`` y ``min_score``: fichas multimedia que corresponden a la pregunta.
     # No cambia ``fragments``. Ausente si no hay ninguna publicable.
     media: Optional[list[FichaMedia]] = None
+    # Solo si el mensaje traía varias preguntas: las fuentes de cada una, por separado. ``fragments`` sigue listando todas
+    # (en orden de grupo, con ``question_index``) para quien no entienda los grupos; ``has_more`` y ``continuation``
+    # del mensaje no se usan: cada grupo tiene los suyos.
+    question_groups: Optional[list[GrupoPreguntas]] = None
+    # Preguntas que no se buscaron por pasar del tope (``v2.multi_question.max_questions``), tal como se escribieron.
+    unsearched_questions: Optional[list[str]] = None
     # ``answer`` por párrafos, para pintarlo con estructura: unirlos con una
     # línea en blanco (conector + texto + cita) reproduce ``answer``.
     answer_blocks: list[BloqueRespuesta] = Field(default_factory=list)
@@ -246,7 +270,8 @@ def respuesta_publica(contrato: dict) -> dict:
                 ("alcance", "scope"),
                 ("rasgos", "distinctive_terms"),
                 ("offset_coincidencia_inicio", "match_start"), ("offset_coincidencia_fin", "match_end"),
-                ("truncado", "truncated"), ("bloques_fuente", "source_blocks")):
+                ("truncado", "truncated"), ("bloques_fuente", "source_blocks"),
+                ("indice_pregunta", "question_index")):
             if interno in f:
                 salida[externo] = f[interno]
         if f.get("linea_clave"):
@@ -305,7 +330,25 @@ def respuesta_publica(contrato: dict) -> dict:
         fichas = [f for f in contrato.get("multimedia") or [] if f.get("url")]
         if fichas:
             publica["media"] = [{k: f.get(k) for k in _CAMPOS_MEDIA} for f in fichas]
+        if contrato.get("grupos_preguntas"):
+            publica["question_groups"] = [_grupo_publico(g, fragmento) for g in contrato["grupos_preguntas"]]
+            if contrato.get("preguntas_sin_buscar"):
+                publica["unsearched_questions"] = list(contrato["preguntas_sin_buscar"])
     return publica
+
+
+def _grupo_publico(grupo: dict, fragmento) -> dict:
+    """Un grupo de ``grupos_preguntas`` (contrato interno) con los nombres públicos."""
+    salida = {"index": grupo["indice"], "question": grupo["pregunta"], "status": _ESTADOS[grupo["estado"]],
+              "fragments": [fragmento(f) for f in grupo["fragmentos"]], "has_more": bool(grupo.get("has_more"))}
+    if grupo.get("continuation"):
+        salida["continuation"] = grupo["continuation"]
+    if grupo.get("forma_resultados"):
+        salida["result_shape"] = _FORMAS[grupo["forma_resultados"]]
+    fichas = [f for f in grupo.get("multimedia") or [] if f.get("url")]
+    if fichas:
+        salida["media"] = [{k: f.get(k) for k in _CAMPOS_MEDIA} for f in fichas]
+    return salida
 
 
 class ConfigWidget(BaseModel):

@@ -120,6 +120,13 @@ messages:
     - "{count}. Este tema aparece en {n_docs} documentos; comprueba cuál es el que usas."
     - Lo encontré en más de un documento. Compara su título y versión para saber cuál aplica.
     - "{count}. Las primeras fuentes vienen de {n_docs} documentos diferentes; abre la que te sirva."
+  results_multi:
+    - "{questions}, {count}. Cada una tiene su sección; abre las fuentes que necesites."
+    - "Busqué {questions} por separado: {count} en total. Revisa las fuentes de cada una."
+    - "{count}, repartidos entre {questions}. Usa el índice de arriba para ir de una a otra."
+    - "Separé tu mensaje en {questions}. Cada grupo muestra sus propias fuentes para revisar."
+    - "{questions} y {count} en total. Compara el contexto de cada fuente antes de decidir."
+    - "Cada pregunta tiene sus fuentes. {count} en total; el índice te lleva a cada una."
   continuation:
     - "Ahora hay {count} en la lista. Compara las nuevas opciones con las anteriores."
     - "La búsqueda continúa: {count} hasta ahora. Abre las opciones nuevas para leer su contexto."

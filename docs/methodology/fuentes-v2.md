@@ -25,6 +25,21 @@ Con `v2.presentation.enabled` la primera página trae `result_shape` (`variants`
 parecen las dos primeras fuentes y deja que el widget elija mensaje y disposición. No cambia qué se publica ni su orden
 ([ADR 0010](../decisions/0010-presentation-by-result-shape.md)).
 
+## Varias preguntas en un mensaje
+
+Un mensaje como «¿cuánto cuesta el P1? ¿y cuánto dura la garantía?» se divide en sus preguntas, cada una se busca por
+separado y la respuesta las trae agrupadas ([ADR 0014](../decisions/0014-several-questions-in-one-message.md)). Se corta
+en cada pieza que termina en `?` y, dentro de una pregunta, solo antes de una palabra interrogativa precedida de un enlace
+(«y», «además») o de una coma, cuando las dos mitades tienen contenido propio. Las interrogativas y los enlaces están en
+el paquete de idioma (`varias_preguntas`); sin paquete solo cuentan los signos de interrogación. Un mensaje con una sola
+pregunta no cambia.
+
+`/ask` añade `question_groups` (por grupo: `index`, `question`, `status`, `fragments`, `has_more`, `continuation`,
+`result_shape` y `media`), `question_index` en cada fuente y `unsearched_questions` (las que pasaron del tope).
+`fragments` sigue listando todas las fuentes en orden de grupo, y `has_more`/`continuation` del mensaje no se usan. Para
+ampliar una pregunta se envía `question` con el texto del grupo y su `continuation`: para el servicio es una continuación
+ordinaria de una sola pregunta.
+
 ## Configuración
 
 ```yaml
@@ -40,6 +55,11 @@ v2:
   reranker_max_tokens: 256
   presentation:
     enabled: true
+  multi_question:
+    enabled: true             # false: el mensaje se busca entero, como antes
+    max_questions: 3          # 2 a 6; las demás se devuelven en unsearched_questions
+    results_per_question: 2   # fuentes por pregunta en la primera página
+    split_on_interrogatives: true  # false: solo los signos de interrogación
 ```
 
 Los proyectos nuevos ya incluyen estas opciones; los existentes reciben sus

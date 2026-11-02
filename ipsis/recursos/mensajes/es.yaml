@@ -186,6 +186,8 @@ ask:
 
     Citas:'
   citation: '  - {title} > {section} (offsets {start}-{end}, score={score:.3f})'
+  group: 'Pregunta {n}: {question}'
+  unsearched: 'Sin buscar (envíalas por separado): {questions}'
   not_ready: 'El motor no está listo: {error}'
   engine_failed: 'No se pudo ejecutar el motor del proyecto: {error}'
   rule: '
