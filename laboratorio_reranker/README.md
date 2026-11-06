@@ -8,6 +8,10 @@ banco real, 10 son de formulación o del modelo (D + E) y 5 de la tubería o la 
 el modelo ONNX del motor, pero **no modifica `ipsis/`**: solo importa. No entra al paquete (`pyproject.toml`
 empaqueta `ipsis*`) ni al sdist.
 
+> **Rama `lab061126` (2026-11-06):** el conjunto v2 ([`conjunto_v2.md`](conjunto_v2.md)) reemplaza al de la
+> etapa 3 y lo comparten dos experimentos contrastables: afinado con LoRA ([`experimento1_afinado.md`](experimento1_afinado.md))
+> y edición directa de pesos por GPT-6 Astra ([`experimento2_edicion.md`](experimento2_edicion.md)).
+
 ## 1. Pregunta
 
 En español, `medium` usa `onnx-community/bge-reranker-v2-m3-ONNX`: int8, 10 candidatos, 256 tokens y lotes de 2.
@@ -67,6 +71,9 @@ la presentación.
 | `sintetico_prueba.yaml` | 4 | Prueba sintética **congelada** (4 dominios, 52 preguntas); hash en la bitácora |
 | `diagnostico.py` | 0–1 | Controles por caso. Implementado: `cuantizacion` (C1) |
 | `interior.py` | 2 | Oclusión por palabra y sondas lineales por capa (pendiente) |
+| `conjunto.py` | v2 | Conjunto v2 por etapas (recolectar → congelar) y evaluador común antes y después |
+| `conjunto_v2.md`, `experimento1_afinado.md`, `experimento2_edicion.md` | v2 | Metodología del conjunto y protocolos de los dos experimentos |
+| `guia_parafrasis.md` | v2 | Guía de los redactores de paráfrasis informales (etapa 6) |
 | `afinar.py` | 4 | Entrena una **copia** del modelo (el original de la caché no se toca y su hash se verifica), la exporta a ONNX int8 y comprueba la paridad (pendiente) |
 
 Las salidas, los datos descargados y el entorno van a `.cache/laboratorio-reranker/`, que git ignora. En esta
