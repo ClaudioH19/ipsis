@@ -365,7 +365,7 @@ def armar_candidatos(args) -> None:
 # ---------------------------------------------------------------------------
 # Etapa 3: puntuar con el modelo base (bge int8 del motor, lote 2, 256 tokens)
 # ---------------------------------------------------------------------------
-def _puntuar_archivo(scorer, origen: Path, destino: Path, etiqueta: str) -> dict:
+def _puntuar_archivo(scorer, origen: Path, destino: Path, etiqueta: str, lote: int = 2) -> dict:
     """Agrega ``puntajes`` y ``tokens`` por candidato. Reanudable: salta las preguntas ya puntuadas."""
     hechas = {f["id"] for f in _leer(destino)} if destino.exists() else set()
     filas = [f for f in _leer(origen) if f["id"] not in hechas]
@@ -373,7 +373,7 @@ def _puntuar_archivo(scorer, origen: Path, destino: Path, etiqueta: str) -> dict
     with destino.open("a", encoding="utf-8") as salida:
         for f in filas:
             textos = [c["texto"] for c in f["candidatos"]]
-            puntajes = scorer.puntuar(f["query"], textos)
+            puntajes = scorer.puntuar(f["query"], textos, lote=lote)
             for c, s in zip(f["candidatos"], puntajes, strict=True):
                 c["base"] = round(float(s), 5)
             salida.write(json.dumps(f, ensure_ascii=False) + "\n")
@@ -403,10 +403,40 @@ def puntuar_base(args) -> None:
     resumen = {"etapa": "3-puntuar-base", "lote": 2, "max_tokens": cpu.max_tokens, "entorno": entorno(args.hilos),
                "archivos": {}}
     for nombre in orden:
-        scorer = gpu if gpu and nombre in ENTRENAMIENTO else cpu
-        resumen["archivos"][nombre] = {"modelo": scorer.nombre, **_puntuar_archivo(
-            scorer, origen / f"{nombre}.jsonl", destino / f"{nombre}.jsonl", nombre)}
+        # El int8 va con lote 2, como el motor (su cuantización dinámica depende del lote). En la GPU (PyTorch, sin
+        # cuantización) el lote no cambia los logits: se puntúan todos los candidatos de una pregunta juntos.
+        scorer, lote = (gpu, 32) if gpu and nombre in ENTRENAMIENTO else (cpu, 2)
+        resumen["archivos"][nombre] = {"modelo": scorer.nombre, "lote": lote, **_puntuar_archivo(
+            scorer, origen / f"{nombre}.jsonl", destino / f"{nombre}.jsonl", nombre, lote)}
     _resumen(destino, resumen)
+
+
+def probar_gpu(_args) -> None:
+    """Diagnóstico: ¿torch ve la GPU, el modelo queda en ella y cuánto tarda por pregunta en GPU y en CPU int8?"""
+    import torch
+
+    from comun import ScorerOnnx, crear_scorer
+
+    print(f"torch {torch.__version__}  cuda compilado: {torch.version.cuda}  disponible: {torch.cuda.is_available()}")
+    if not torch.cuda.is_available():
+        raise SystemExit("torch no ve la GPU: reinstalar torch desde el índice cu126 (README de conjunto_v2.md)")
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+    f = _leer(RAIZ / "2-candidatos" / "miracl-train.jsonl")[0]
+    textos = [c["texto"] for c in f["candidatos"]]
+    cpu = ScorerOnnx("int8")
+    gpu = crear_scorer("torch-fp16-cuda", base=cpu)
+    print(f"modelo en: {next(gpu.modelo.parameters()).device}  tipo: {next(gpu.modelo.parameters()).dtype}")
+    for nombre, scorer, lote in (("gpu fp16, lote 32", gpu, 32), ("gpu fp16, lote 2", gpu, 2),
+                                 ("cpu int8, lote 2", cpu, 2)):
+        scorer.puntuar(f["query"], textos, lote=lote)  # calentamiento
+        if scorer is gpu:
+            torch.cuda.synchronize()
+        inicio = time.time()
+        for _ in range(3):
+            scorer.puntuar(f["query"], textos, lote=lote)
+        if scorer is gpu:
+            torch.cuda.synchronize()
+        print(f"{nombre}: {(time.time() - inicio) / 3:.2f} s por pregunta ({len(textos)} candidatos)")
 
 
 def rango_mejor_positivo(f: dict, clave: str = "base") -> int:
@@ -798,6 +828,7 @@ def main() -> None:
     p.add_argument("--gpu", choices=["fp32", "fp16"], default=None,
                    help="puntúa los conjuntos de entrenamiento en la GPU (fp16 en GPU de 4 GB)")
     p.add_argument("--hilos", type=int, default=None)
+    sub.add_parser("probar-gpu")
     sub.add_parser("descartar-dudosas")
     p = sub.add_parser("separar-particiones")
     p.add_argument("--negativas", type=int, default=7)
@@ -820,7 +851,7 @@ def main() -> None:
     p.add_argument("--solo-muestra-capas", action="store_true")
     p.add_argument("--hilos", type=int, default=None)
     args = parser.parse_args()
-    {"recolectar": recolectar, "armar-candidatos": armar_candidatos, "puntuar-base": puntuar_base,
+    {"probar-gpu": probar_gpu, "recolectar": recolectar, "armar-candidatos": armar_candidatos, "puntuar-base": puntuar_base,
      "descartar-dudosas": descartar_dudosas, "separar-particiones": separar_particiones,
      "exportar-parafrasis": exportar_parafrasis, "importar-parafrasis": importar_parafrasis,
      "versionar-parafrasis": versionar_parafrasis, "congelar": congelar, "evaluar": evaluar}[args.etapa](args)
