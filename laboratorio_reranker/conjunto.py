@@ -385,19 +385,27 @@ def _puntuar_archivo(scorer, origen: Path, destino: Path, etiqueta: str) -> dict
     return {"nuevas": n, "ya_hechas": len(hechas), "segundos": round(time.time() - inicio, 1)}
 
 
-def puntuar_base(args) -> None:
-    from comun import ScorerOnnx, entorno
+EVALUACION = ["nomiracl-test", "nomiracl-dev", "xquad-test", "sqac-test", "sqac-dev"]
+ENTRENAMIENTO = ["mlqa-dev", "miracl-train", "mlqa-test", "sqac-train"]
 
-    scorer = ScorerOnnx("int8", hilos=args.hilos)
+
+def puntuar_base(args) -> None:
+    """Desarrollo y prueba siempre con el int8 del motor en CPU: es la línea base del «antes». Los conjuntos de
+    entrenamiento pueden puntuarse en GPU (``--gpu``, PyTorch): ahí el puntaje solo **ordena** negativas y marca la
+    dificultad, y queda anotado qué modelo lo produjo."""
+    from comun import ScorerOnnx, crear_scorer, entorno
+
     origen, destino = RAIZ / "2-candidatos", RAIZ / "3-puntuados"
     destino.mkdir(parents=True, exist_ok=True)
-    orden = args.solo or ["nomiracl-test", "nomiracl-dev", "xquad-test", "sqac-test", "sqac-dev", "mlqa-dev",
-                          "miracl-train", "mlqa-test", "sqac-train"]
-    resumen = {"etapa": "3-puntuar-base", "modelo": scorer.nombre, "lote": 2, "max_tokens": scorer.max_tokens,
-               "entorno": entorno(args.hilos), "archivos": {}}
+    orden = args.solo or EVALUACION + ENTRENAMIENTO
+    cpu = ScorerOnnx("int8", hilos=args.hilos)
+    gpu = crear_scorer(f"torch-{args.gpu}-cuda", base=cpu) if args.gpu else None
+    resumen = {"etapa": "3-puntuar-base", "lote": 2, "max_tokens": cpu.max_tokens, "entorno": entorno(args.hilos),
+               "archivos": {}}
     for nombre in orden:
-        resumen["archivos"][nombre] = _puntuar_archivo(scorer, origen / f"{nombre}.jsonl",
-                                                       destino / f"{nombre}.jsonl", nombre)
+        scorer = gpu if gpu and nombre in ENTRENAMIENTO else cpu
+        resumen["archivos"][nombre] = {"modelo": scorer.nombre, **_puntuar_archivo(
+            scorer, origen / f"{nombre}.jsonl", destino / f"{nombre}.jsonl", nombre)}
     _resumen(destino, resumen)
 
 
@@ -603,8 +611,40 @@ def validar_parafrasis(original: str, nueva: str, respuestas: list[str]) -> str 
     return None
 
 
+VERSIONADAS = Path(__file__).parent  # parafrasis_<parte>.jsonl: lo que escribieron los redactores, versionado
+
+
+def _restaurar_versionadas(carpeta: Path) -> None:
+    """Si otra máquina ya redactó una parte, sus pedidos y respuestas viajan en ``parafrasis_<parte>.jsonl``."""
+    for ruta in sorted(VERSIONADAS.glob("parafrasis_*.jsonl")):
+        parte = ruta.stem.removeprefix("parafrasis_")
+        filas = _leer(ruta)
+        for k in (1, 2):
+            mitad = [f for f in filas if f["mitad"] == k]
+            if not (carpeta / f"respuesta-{parte}-{k}.jsonl").exists():
+                _escribir(carpeta / f"pedido-{parte}-{k}.jsonl",
+                          [{"id": f["id"], "particion": f["particion"], "pregunta": f["pregunta"]} for f in mitad])
+                _escribir(carpeta / f"respuesta-{parte}-{k}.jsonl",
+                          [{"id": f["id"], "informal": f["informal"], "redactor": f["redactor"]} for f in mitad])
+
+
+def versionar_parafrasis(args) -> None:
+    """Guarda pedidos y respuestas de una parte en ``laboratorio_reranker/parafrasis_<parte>.jsonl`` (texto propio:
+    las preguntas originales vienen de NoMIRACL o del entrenamiento, y la reescritura es de los redactores)."""
+    carpeta, filas = RAIZ / "6-parafrasis", []
+    for k in (1, 2):
+        pedidos = {f["id"]: f for f in _leer(carpeta / f"pedido-{args.parte}-{k}.jsonl")}
+        for r in _leer(carpeta / f"respuesta-{args.parte}-{k}.jsonl"):
+            if r["id"] in pedidos:
+                filas.append({**pedidos[r["id"]], "informal": r["informal"], "redactor": r["redactor"], "mitad": k})
+    sha = _escribir(VERSIONADAS / f"parafrasis_{args.parte}.jsonl", sorted(filas, key=lambda f: f["id"]))
+    print(f"{len(filas)} paráfrasis -> parafrasis_{args.parte}.jsonl ({sha[:16]})")
+
+
 def importar_parafrasis(_args) -> None:
     carpeta = RAIZ / "6-parafrasis"
+    carpeta.mkdir(parents=True, exist_ok=True)
+    _restaurar_versionadas(carpeta)
     pedidos = {f["id"]: f for ruta in sorted(carpeta.glob("pedido-*.jsonl")) for f in _leer(ruta)}
     respuestas = {}
     for ruta in sorted((RAIZ / "2-candidatos").glob("*.jsonl")):
@@ -755,6 +795,8 @@ def main() -> None:
     p.add_argument("--limite-sqac", type=int, default=6000, help="preguntas de SQAC train (CPU de la etapa 3)")
     p = sub.add_parser("puntuar-base")
     p.add_argument("--solo", nargs="*")
+    p.add_argument("--gpu", choices=["fp32", "fp16"], default=None,
+                   help="puntúa los conjuntos de entrenamiento en la GPU (fp16 en GPU de 4 GB)")
     p.add_argument("--hilos", type=int, default=None)
     sub.add_parser("descartar-dudosas")
     p = sub.add_parser("separar-particiones")
@@ -768,6 +810,8 @@ def main() -> None:
     p.add_argument("--desarrollo", type=int, default=200)
     p.add_argument("--prueba", type=int, default=500)
     sub.add_parser("importar-parafrasis")
+    p = sub.add_parser("versionar-parafrasis")
+    p.add_argument("--parte", choices=["evaluacion", "entrenamiento"], required=True)
     sub.add_parser("congelar")
     p = sub.add_parser("evaluar")
     p.add_argument("--modelo", required=True, help="onnx-int8 (base), onnx-fp32, torch-fp32 o local:<carpeta>")
@@ -779,7 +823,7 @@ def main() -> None:
     {"recolectar": recolectar, "armar-candidatos": armar_candidatos, "puntuar-base": puntuar_base,
      "descartar-dudosas": descartar_dudosas, "separar-particiones": separar_particiones,
      "exportar-parafrasis": exportar_parafrasis, "importar-parafrasis": importar_parafrasis,
-     "congelar": congelar, "evaluar": evaluar}[args.etapa](args)
+     "versionar-parafrasis": versionar_parafrasis, "congelar": congelar, "evaluar": evaluar}[args.etapa](args)
 
 
 if __name__ == "__main__":

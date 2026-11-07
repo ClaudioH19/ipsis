@@ -91,25 +91,31 @@ class ScorerOnnx:
 
 
 class ScorerTorch:
-    """El modelo original en PyTorch fp32, alimentado con los ids del tokenizador del motor."""
+    """El modelo original en PyTorch, alimentado con los ids del tokenizador del motor.
 
-    def __init__(self, tokenizador_motor: ScorerOnnx, hilos: int | None = None):
+    ``dispositivo="cuda"`` corre en la GPU (fp32, o fp16 con ``precision="fp16"`` para GPU de 4 GB)."""
+
+    def __init__(self, tokenizador_motor: ScorerOnnx, hilos: int | None = None, dispositivo: str = "cpu",
+                 precision: str = "fp32"):
         import torch
         from transformers import AutoModelForSequenceClassification
 
         if hilos:
             torch.set_num_threads(hilos)
-        self.torch, self.motor = torch, tokenizador_motor
-        self.nombre, self.precision, self.max_tokens = "torch-fp32", "fp32", tokenizador_motor.max_tokens
+        self.torch, self.motor, self.dispositivo = torch, tokenizador_motor, dispositivo
+        self.nombre = f"torch-{precision}" + ("-cuda" if dispositivo == "cuda" else "")
+        self.precision, self.max_tokens = precision, tokenizador_motor.max_tokens
+        tipo = torch.float16 if precision == "fp16" else torch.float32
         self.modelo = AutoModelForSequenceClassification.from_pretrained(
-            TORCH_ID, revision=TORCH_REV, dtype=torch.float32).eval()
+            TORCH_ID, revision=TORCH_REV, dtype=tipo).to(dispositivo).eval()
 
     def puntuar(self, pregunta: str, pasajes: list[str], lote: int = LOTE_MOTOR) -> list[float]:
         salida = []
         for i in range(0, len(pasajes), lote):
             cod = self.motor.codificar(pregunta, pasajes[i:i + lote])
-            ids = self.torch.tensor([c.ids for c in cod], dtype=self.torch.long)
-            mascara = self.torch.tensor([c.attention_mask for c in cod], dtype=self.torch.long)
+            ids = self.torch.tensor([c.ids for c in cod], dtype=self.torch.long, device=self.dispositivo)
+            mascara = self.torch.tensor([c.attention_mask for c in cod], dtype=self.torch.long,
+                                        device=self.dispositivo)
             with self.torch.inference_mode():
                 logits = self.modelo(input_ids=ids, attention_mask=mascara).logits
             salida.extend(float(x) for x in logits[:, 0])
@@ -135,8 +141,9 @@ def crear_scorer(nombre: str, max_tokens: int = MAX_TOKENS_MOTOR, hilos: int | N
         return ScorerOnnxLocal(nombre.removeprefix("local:"), max_tokens, hilos)
     if nombre.startswith("onnx-"):
         return ScorerOnnx(nombre.removeprefix("onnx-"), max_tokens, hilos)
-    if nombre == "torch-fp32":
-        return ScorerTorch(base or ScorerOnnx("int8", max_tokens, hilos), hilos)
+    if nombre in ("torch-fp32", "torch-fp32-cuda", "torch-fp16-cuda"):
+        _, precision, *gpu = nombre.split("-")
+        return ScorerTorch(base or ScorerOnnx("int8", max_tokens, hilos), hilos, "cuda" if gpu else "cpu", precision)
     raise ValueError(f"scorer desconocido: {nombre}")
 
 

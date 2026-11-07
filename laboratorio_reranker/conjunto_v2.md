@@ -65,6 +65,25 @@ revisiones fijadas, orden estable) y registra conteos y SHA-256.
 **Advertencia.** La versión `es-triplet-all` de sentence-transformers trae 100 negativas por pregunta, pero son
 **minadas, no juzgadas**. Por eso se usan los qrels originales.
 
+### Ejecutar en otra máquina
+
+Las etapas 1 y 2 son deterministas. En otra máquina deben dar los mismos SHA-256 (los 16 primeros caracteres):
+
+| Archivo de `2-candidatos/` | SHA-256 |
+|---|---|
+| miracl-train | `08e4b8c6ea2a80aa` |
+| nomiracl-dev | `10aa93bd55ec44d5` |
+| nomiracl-test | `79d23d879582ca0c` |
+| sqac-train | `6aeaf59b403af23a` |
+| sqac-dev | `214fe7bbf8c6728b` |
+| sqac-test | `4269ee9f8431aa1a` |
+| mlqa-dev | `84bcd03ab0864fce` |
+| mlqa-test | `4d6ca5601718c6c2` |
+| xquad-test | `f9fa2a9a2b9d30f8` |
+
+Si un hash no coincide, revisar la versión de scikit-learn (TF-IDF) antes de seguir. Las paráfrasis ya redactadas
+viajan versionadas en `parafrasis_<parte>.jsonl`, y `importar-parafrasis` las restaura.
+
 ### 2. `armar-candidatos`: pasajes y candidatos etiquetados
 
 **Qué hace.** Por pregunta, arma una lista de candidatos con su etiqueta, su `tipo` y su `verificacion`, y la
@@ -99,6 +118,15 @@ hash, para acotar el costo de CPU de la etapa 3.
 y 256 tokens, igual que en producción) y guarda el logit en `base`. Es la **línea base del «antes»** de los dos
 experimentos y define qué grupos son difíciles. Se puede reanudar: salta las preguntas ya puntuadas. En el
 contenedor de 4 CPU cuesta unos 115 ms por par con pasajes reales (≈ 8 h en total, en tramos de 2 h que se reanudan).
+
+**En una máquina con GPU** (p. ej. GTX 1650 de 4 GB), `--gpu fp16` puntúa los conjuntos de **entrenamiento** con
+PyTorch en la GPU. Desarrollo y prueba se puntúan siempre con el int8 del motor en CPU, porque esa es la línea
+base. `3-puntuados/resumen.json` anota qué modelo puntuó cada archivo. En entrenamiento el puntaje solo ordena las
+negativas y marca la dificultad, así que fp16 frente a int8 no cambia ninguna etiqueta.
+
+**Misma máquina para el antes y el después.** El int8 dinámico puede dar logits algo distintos según la CPU
+(instrucciones VNNI o AVX). Por eso la etapa 3 de desarrollo y prueba y todas las corridas de `evaluar` se hacen
+en **la misma máquina**.
 
 ### 4. `descartar-dudosas`: quitar negativas que podrían responder (solo reglas)
 
