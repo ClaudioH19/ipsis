@@ -124,6 +124,16 @@ PyTorch en la GPU. Desarrollo y prueba se puntúan siempre con el int8 del motor
 base. `3-puntuados/resumen.json` anota qué modelo puntuó cada archivo. En entrenamiento el puntaje solo ordena las
 negativas y marca la dificultad, así que fp16 frente a int8 no cambia ninguna etiqueta.
 
+**Si la GPU no rinde**, los conjuntos de entrenamiento se pueden puntuar en otra máquina y traer solo los
+números:
+
+- en la máquina que puntúa, `exportar-puntajes` escribe `puntajes_base.json.gz` (sin textos) con el SHA-256 de cada
+  archivo de candidatos;
+- en la otra, `importar-puntajes` rearma `3-puntuados/` y se niega si los candidatos locales difieren.
+
+En la GTX 1650 de portátil del usuario, bge fp16 tardó unos 4,6 s por pregunta, lo mismo que el int8 en su CPU. Por
+eso el entrenamiento se puntuó en int8 en el contenedor de 4 CPU (unos 1,2 s por pregunta).
+
 **Misma máquina para el antes y el después.** El int8 dinámico puede dar logits algo distintos según la CPU
 (instrucciones VNNI o AVX). Por eso la etapa 3 de desarrollo y prueba y todas las corridas de `evaluar` se hacen
 en **la misma máquina**.

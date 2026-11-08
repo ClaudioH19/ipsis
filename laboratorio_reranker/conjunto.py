@@ -411,6 +411,53 @@ def puntuar_base(args) -> None:
     _resumen(destino, resumen)
 
 
+PUNTAJES_VERSIONADOS = Path(__file__).with_name("puntajes_base.json.gz")
+
+
+def exportar_puntajes(args) -> None:
+    """Guarda en el repo solo los **números** de la etapa 3 (sin textos, que tienen licencias propias), con el
+    SHA-256 de cada archivo de candidatos: otra máquina los importa sin volver a puntuar."""
+    from comun import entorno
+
+    ruta3 = RAIZ / "3-puntuados" / "resumen.json"  # puede faltar si la etapa se cortó antes de escribirlo
+    resumen3 = json.loads(ruta3.read_text(encoding="utf-8")) if ruta3.exists() else {"archivos": {}}
+    salida = {"etapa": "3-puntuar-base (exportado)", "entorno": entorno(None), "archivos": {}}
+    for nombre in args.solo:
+        candidatos = RAIZ / "2-candidatos" / f"{nombre}.jsonl"
+        filas = _leer(RAIZ / "3-puntuados" / f"{nombre}.jsonl")
+        esperadas = sum(1 for _ in candidatos.open(encoding="utf-8"))
+        if len(filas) != esperadas:
+            raise SystemExit(f"{nombre}: {len(filas)} de {esperadas} preguntas puntuadas; terminar la etapa 3 antes")
+        salida["archivos"][nombre] = {
+            "sha256_candidatos": _sha(candidatos),
+            "modelo": resumen3["archivos"].get(nombre, {}).get("modelo", "onnx-int8"),
+            "puntajes": {f["id"]: [c["base"] for c in f["candidatos"]] for f in filas}}
+    with gzip.open(PUNTAJES_VERSIONADOS, "wt", encoding="utf-8") as f:
+        json.dump(salida, f)
+    print(f"{', '.join(args.solo)} -> {PUNTAJES_VERSIONADOS.name} ({_sha(PUNTAJES_VERSIONADOS)[:16]})")
+
+
+def importar_puntajes(_args) -> None:
+    """Arma ``3-puntuados/<archivo>.jsonl`` desde ``puntajes_base.json.gz``. Se niega si los candidatos locales no
+    son idénticos (SHA-256) a los que se puntuaron en la otra máquina."""
+    with gzip.open(PUNTAJES_VERSIONADOS, "rt", encoding="utf-8") as f:
+        datos = json.load(f)
+    destino = RAIZ / "3-puntuados"
+    resumen = {"etapa": "3-puntuar-base (importado)", "origen": datos["entorno"], "archivos": {}}
+    for nombre, meta in datos["archivos"].items():
+        candidatos = RAIZ / "2-candidatos" / f"{nombre}.jsonl"
+        if _sha(candidatos) != meta["sha256_candidatos"]:
+            raise SystemExit(f"{nombre}: los candidatos locales difieren de los puntuados (SHA-256); "
+                             "revisar la etapa 2 (versión de scikit-learn) antes de importar")
+        filas = _leer(candidatos)
+        for fila in filas:
+            for c, s in zip(fila["candidatos"], meta["puntajes"][fila["id"]], strict=True):
+                c["base"] = s
+        resumen["archivos"][nombre] = {"modelo": f"{meta['modelo']} (importado)", "preguntas": len(filas),
+                                       "sha256": _escribir(destino / f"{nombre}.jsonl", filas)}
+    _resumen(destino, resumen)
+
+
 def probar_gpu(_args) -> None:
     """Diagnóstico: ¿torch ve la GPU, el modelo queda en ella y cuánto tarda por pregunta en GPU y en CPU int8?"""
     import torch
@@ -829,6 +876,9 @@ def main() -> None:
                    help="puntúa los conjuntos de entrenamiento en la GPU (fp16 en GPU de 4 GB)")
     p.add_argument("--hilos", type=int, default=None)
     sub.add_parser("probar-gpu")
+    p = sub.add_parser("exportar-puntajes")
+    p.add_argument("--solo", nargs="+", default=ENTRENAMIENTO)
+    sub.add_parser("importar-puntajes")
     sub.add_parser("descartar-dudosas")
     p = sub.add_parser("separar-particiones")
     p.add_argument("--negativas", type=int, default=7)
@@ -851,7 +901,7 @@ def main() -> None:
     p.add_argument("--solo-muestra-capas", action="store_true")
     p.add_argument("--hilos", type=int, default=None)
     args = parser.parse_args()
-    {"probar-gpu": probar_gpu, "recolectar": recolectar, "armar-candidatos": armar_candidatos, "puntuar-base": puntuar_base,
+    {"probar-gpu": probar_gpu, "exportar-puntajes": exportar_puntajes, "importar-puntajes": importar_puntajes, "recolectar": recolectar, "armar-candidatos": armar_candidatos, "puntuar-base": puntuar_base,
      "descartar-dudosas": descartar_dudosas, "separar-particiones": separar_particiones,
      "exportar-parafrasis": exportar_parafrasis, "importar-parafrasis": importar_parafrasis,
      "versionar-parafrasis": versionar_parafrasis, "congelar": congelar, "evaluar": evaluar}[args.etapa](args)
