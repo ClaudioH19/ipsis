@@ -134,6 +134,13 @@ números:
 En la GTX 1650 de portátil del usuario, bge fp16 tardó unos 4,6 s por pregunta, lo mismo que el int8 en su CPU. Por
 eso el entrenamiento se puntuó en int8 en el contenedor de 4 CPU (unos 1,2 s por pregunta).
 
+**Diferencia observada entre Windows y Linux (2026-11-08).** Al importar en el PC del usuario, `miracl-train`,
+`mlqa-test` y `sqac-train` coincidieron pregunta por pregunta. En `mlqa-dev`, 15 de 495 preguntas cambiaron 57
+negativas `otro_documento`: son empates de TF-IDF que se ordenan distinto según la plataforma. Las etiquetas y los
+demás tipos de candidato son idénticos. Ese archivo se puntuó en la propia máquina (int8) y se conservó con
+`importar-puntajes --conservar-locales`. Por eso los hashes de las etapas 2 a 7 **no** son iguales entre
+plataformas. La referencia del experimento es el manifiesto congelado en la máquina que evalúa.
+
 **Misma máquina para el antes y el después.** El int8 dinámico puede dar logits algo distintos según la CPU
 (instrucciones VNNI o AVX). Por eso la etapa 3 de desarrollo y prueba y todas las corridas de `evaluar` se hacen
 en **la misma máquina**.

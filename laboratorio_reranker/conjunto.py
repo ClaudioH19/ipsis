@@ -449,7 +449,7 @@ def exportar_puntajes(args) -> None:
     print(f"{', '.join(args.solo)} -> {PUNTAJES_VERSIONADOS.name} ({_sha(PUNTAJES_VERSIONADOS)[:16]})")
 
 
-def importar_puntajes(_args) -> None:
+def importar_puntajes(args) -> None:
     """Arma ``3-puntuados/<archivo>.jsonl`` desde ``puntajes_base.json.gz``, emparejando cada candidato local con el
     puntuado por la huella de su texto. Si el archivo de candidatos no es idéntico (SHA-256) pero cada pregunta tiene
     el mismo conjunto de textos, solo cambió el orden y se importa igual. Si algún conjunto difiere, informa qué
@@ -482,15 +482,24 @@ def importar_puntajes(_args) -> None:
                 c["base"] = remotos[h]
         diferencias["preguntas_sin_origen"] = len(set(meta["puntajes"]) - {f["id"] for f in filas})
         if diferencias["preguntas_distintas"] or diferencias["pregunta_ausente_en_el_origen"]:
-            problemas[nombre] = {"preguntas": len(filas), **{k: v for k, v in diferencias.items() if v}}
+            detalle = {"preguntas": len(filas), **{k: v for k, v in diferencias.items() if v}}
+            local = destino / f"{nombre}.jsonl"
+            # Con --conservar-locales se usa la puntuación hecha en esta máquina, si está completa.
+            if getattr(args, "conservar_locales", False) and local.exists() and \
+                    {f["id"] for f in _leer(local)} == {f["id"] for f in filas}:
+                resumen["archivos"][nombre] = {"modelo": "puntuado en esta máquina (no importado)",
+                                               "candidatos_distintos": detalle, "sha256": _sha(local)}
+            else:
+                problemas[nombre] = detalle
             continue
         resumen["archivos"][nombre] = {"modelo": f"{meta['modelo']} (importado)", "preguntas": len(filas),
                                        "identico": identico, **{k: v for k, v in diferencias.items() if v},
                                        "sha256": _escribir(destino / f"{nombre}.jsonl", filas)}
+    _resumen(destino, resumen)
     if problemas:
         print(json.dumps({"candidatos_distintos": problemas}, ensure_ascii=False, indent=2))
-        raise SystemExit("hay preguntas con candidatos distintos entre máquinas: no se importó nada de esos archivos")
-    _resumen(destino, resumen)
+        raise SystemExit("hay preguntas con candidatos distintos entre máquinas: esos archivos no se importaron. "
+                         "Puntuarlos aquí (puntuar-base --solo …) y repetir con --conservar-locales")
 
 
 def probar_gpu(_args) -> None:
@@ -913,7 +922,9 @@ def main() -> None:
     sub.add_parser("probar-gpu")
     p = sub.add_parser("exportar-puntajes")
     p.add_argument("--solo", nargs="+", default=ENTRENAMIENTO)
-    sub.add_parser("importar-puntajes")
+    p = sub.add_parser("importar-puntajes")
+    p.add_argument("--conservar-locales", action="store_true",
+                   help="para los archivos con candidatos distintos, usar la puntuación completa hecha en esta máquina")
     sub.add_parser("descartar-dudosas")
     p = sub.add_parser("separar-particiones")
     p.add_argument("--negativas", type=int, default=7)
