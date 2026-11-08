@@ -359,3 +359,23 @@ Plantilla:
   investigó); (2) las líneas de encabezado y las filas vecinas de una tabla compiten con la fila que responde.
 - Siguiente control: vectores de línea calculados al indexar; acuerdo entre denso y lector sobre la línea de mayor margen.
 - Estado: aislada (una corrida, n = 64, preguntas escritas por Claude). **Queda apagada por defecto.**
+
+### OBS-0016: conjunto v2 congelado; bge base pierde unos 5 puntos de hit@1 con la pregunta informal
+- Etapa / control: conjunto v2 (`conjunto_v2.md`), etapa 7, `congelar`
+- Casos y run_id: manifiesto congelado en el PC del usuario (Windows, int8 en CPU, 2026-11-08). La comparación
+  formal/informal es preliminar: viene de una corrida de prueba en el contenedor de 4 CPU (Linux), porque el
+  primer `congelar` del PC copiaba en los archivos informales el puntaje de la pregunta formal (corregido: se
+  repuntúan con la pregunta informal).
+- Resultado observable:
+  - entrenamiento: 10 230 grupos, 9 282 formales y 948 copias informales, con 40 % de difíciles;
+  - línea base en el PC del usuario: NoMIRACL test hit@1 0,813 (n = 1 408), hit@3 0,949; NoMIRACL dev 0,812;
+    SQAC dev 0,846; SQAC test 0,862; XQuAD 0,918;
+  - registro, mismas preguntas y mismos pasajes (contenedor): NoMIRACL test informal hit@1 0,771 frente a 0,820
+    formal (n = 489), y hit@3 0,920 frente a 0,941. NoMIRACL dev informal 0,817 frente a 0,843 (n = 197);
+  - entre plataformas, las etapas 2 a 7 no son bit a bit iguales (empates de TF-IDF en 15 preguntas de
+    `mlqa-dev`); la línea base de NoMIRACL test difiere en 0,0007 entre int8 en Linux y en Windows.
+- ¿Esperable?: sí; la brecha informal ya aparecía en el banco real (OBS-0009, causa D).
+- Explicaciones posibles: las paráfrasis cambian palabras de contenido (brecha léxica) y bge pondera el
+  solapamiento léxico (OBS-0010); parte de la caída puede venir de paráfrasis que se alejan de la intención.
+- Siguiente control: repetir `congelar` en el PC (línea base informal con su CPU) y empezar el experimento 1.
+- Estado: formal congelada; informal pendiente de repetirse en el PC del usuario.

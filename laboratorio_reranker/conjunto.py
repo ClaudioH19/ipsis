@@ -812,6 +812,29 @@ def _a_volcado(f: dict, particion: str, conjunto: str, query: str | None = None,
                          "tipo": c["tipo"], "base": c["base"]} for c in f["candidatos"]]}
 
 
+def _puntuar_informales(filas: list[dict]) -> None:
+    """Reemplaza ``base`` por el puntaje del int8 del motor (lote 2) con la pregunta informal. Reanudable: guarda cada
+    pregunta en ``6-parafrasis/base-informal.jsonl``."""
+    cache_ruta = RAIZ / "6-parafrasis" / "base-informal.jsonl"
+    cache = {f["id"]: f["base"] for f in _leer(cache_ruta)} if cache_ruta.exists() else {}
+    faltan = [f for f in filas if f["id"] not in cache]
+    if faltan:
+        from comun import ScorerOnnx
+
+        scorer, inicio = ScorerOnnx("int8"), time.time()
+        with cache_ruta.open("ab") as salida:
+            for k, f in enumerate(faltan, 1):
+                puntajes = [round(float(x), 5) for x in scorer.puntuar(f["pregunta"], [p["texto"] for p in f["pasajes"]])]
+                cache[f["id"]] = puntajes
+                salida.write((json.dumps({"id": f["id"], "base": puntajes}) + "\n").encode("utf-8"))
+                if k % 50 == 0:
+                    print(f"[informales] {k}/{len(faltan)}  {(time.time() - inicio) / k:.2f} s/pregunta",
+                          file=sys.stderr, flush=True)
+    for f in filas:
+        for p, s in zip(f["pasajes"], cache[f["id"]], strict=True):
+            p["base"] = s
+
+
 def congelar(_args) -> None:
     origen, destino = RAIZ / "5-particiones", RAIZ / "7-congelado"
     parafrasis = {}
@@ -824,8 +847,9 @@ def congelar(_args) -> None:
                   "archivos": {}, "linea_base": {}}
     # Entrenamiento: grupos formales + una copia informal de los que tienen paráfrasis (mismos pasajes).
     grupos = _leer(origen / "entrenamiento.jsonl")
-    informales = [{**g, "id": g["id"] + "#informal", "query": parafrasis[g["id"]], "registro": "informal_redactada"}
-                  for g in grupos if g["id"] in parafrasis]
+    # ``base`` de la copia informal describe la pregunta formal (solo ordenó las negativas al elegirlas).
+    informales = [{**g, "id": g["id"] + "#informal", "query": parafrasis[g["id"]], "registro": "informal_redactada",
+                   "base": {**g["base"], "medido_con": "pregunta formal"}} for g in grupos if g["id"] in parafrasis]
     entrenamiento = sorted(grupos + informales, key=lambda g: g["id"])
     manifiesto["archivos"]["entrenamiento.jsonl"] = {
         "grupos": len(entrenamiento), "informales": len(informales), "sha256": _escribir(
@@ -841,8 +865,14 @@ def congelar(_args) -> None:
             inf = [_a_volcado(f, particion, f"{n}-informal", parafrasis[f["id"]], "#informal", "informal_redactada")
                    for f in filas if f["id"] in parafrasis]
             if inf:
+                _puntuar_informales(inf)  # la línea base informal se mide con la pregunta informal, no la formal
                 manifiesto["archivos"][f"{n}-informal.jsonl"] = {
                     "preguntas": len(inf), "sha256": _escribir(destino / f"{n}-informal.jsonl", inf)}
+                manifiesto["linea_base"][f"{n}-informal"] = medir([r["pasajes"] for r in inf], "base")
+                # La misma pregunta en registro formal, para comparar formal frente a informal sobre los mismos casos.
+                ids = {r["id"].removesuffix("#informal") for r in inf}
+                manifiesto["linea_base"][f"{n}-formal-pareada"] = medir(
+                    [r["pasajes"] for r in volcado if r["id"] in ids], "base")
     (destino / "manifiesto.json").write_text(json.dumps(manifiesto, ensure_ascii=False, indent=2) + "\n",
                                              encoding="utf-8")
     print(json.dumps(manifiesto, ensure_ascii=False, indent=2))
