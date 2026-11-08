@@ -108,9 +108,16 @@ def _leer(ruta: Path) -> list[dict]:
 
 
 def _escribir(ruta: Path, filas) -> str:
+    """Siempre con finales LF: en Windows ``write_text`` escribiría CRLF y el SHA-256 no coincidiría entre
+    máquinas."""
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text("".join(json.dumps(f, ensure_ascii=False) + "\n" for f in filas), encoding="utf-8")
+    ruta.write_bytes("".join(json.dumps(f, ensure_ascii=False) + "\n" for f in filas).encode("utf-8"))
     return _sha(ruta)
+
+
+def _sha_lf(ruta: Path) -> str:
+    """SHA-256 con los finales de línea normalizados a LF (archivos escritos en Windows antes de la corrección)."""
+    return hashlib.sha256(ruta.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _resumen(carpeta: Path, datos: dict) -> None:
@@ -429,7 +436,7 @@ def exportar_puntajes(args) -> None:
         if len(filas) != esperadas:
             raise SystemExit(f"{nombre}: {len(filas)} de {esperadas} preguntas puntuadas; terminar la etapa 3 antes")
         salida["archivos"][nombre] = {
-            "sha256_candidatos": _sha(candidatos),
+            "sha256_candidatos": _sha_lf(candidatos),
             "modelo": resumen3["archivos"].get(nombre, {}).get("modelo", "onnx-int8"),
             "puntajes": {f["id"]: [c["base"] for c in f["candidatos"]] for f in filas}}
     with gzip.open(PUNTAJES_VERSIONADOS, "wt", encoding="utf-8") as f:
@@ -446,7 +453,7 @@ def importar_puntajes(_args) -> None:
     resumen = {"etapa": "3-puntuar-base (importado)", "origen": datos["entorno"], "archivos": {}}
     for nombre, meta in datos["archivos"].items():
         candidatos = RAIZ / "2-candidatos" / f"{nombre}.jsonl"
-        if _sha(candidatos) != meta["sha256_candidatos"]:
+        if _sha_lf(candidatos) != meta["sha256_candidatos"]:
             raise SystemExit(f"{nombre}: los candidatos locales difieren de los puntuados (SHA-256); "
                              "revisar la etapa 2 (versión de scikit-learn) antes de importar")
         filas = _leer(candidatos)
