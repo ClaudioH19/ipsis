@@ -60,51 +60,61 @@ for nombre in ("entrenamiento.jsonl", "nomiracl-dev.jsonl", "nomiracl-dev-inform
 ### Celda 3: medir la velocidad (20 pasos)
 
 ```python
-D = "/kaggle/input/ipsis-conjunto-v2"
-!python laboratorio_reranker/afinar.py entrenar --metodo lora --lr 1e-4 --acumulacion 16 \
-    --grupos {D}/entrenamiento.jsonl --desarrollo {D}/nomiracl-dev.jsonl --n-desarrollo 0 --pasos-prueba 20
+D = "/kaggle/input/ipsis-conjunto-v2"   # la ruta de tu dataset en Kaggle
+for por_pasada in (1, 2, 4):
+    !python laboratorio_reranker/afinar.py entrenar --metodo lora --lr 1e-4 --acumulacion 16 --no-checkpointing \
+        --grupos-por-pasada {por_pasada} --grupos {D}/entrenamiento.jsonl --desarrollo {D}/nomiracl-dev.jsonl \
+        --n-desarrollo 0 --pasos-prueba 20
 ```
 
-Imprime los s/grupo, la memoria pico y una estimación de las horas restantes. Con 10 230 grupos por época:
+Hay que elegir el `--grupos-por-pasada` con menos s/grupo que no se quede sin memoria («CUDA out of memory»).
+`--no-checkpointing` ya bajó de 0,38 a 0,25 s/grupo con 6,7 GB de memoria pico, y la pérdida fue idéntica.
+Agrupar no cambia la pérdida: probado sin dropout, con la misma pérdida por grupo hasta el quinto decimal.
 
-- si una época de LoRA cabe holgada en 12 h, se corren 2 épocas por sesión;
-- si no, se usa `--epocas 1`.
-
-### Celda 4: una corrida (un brazo y una semilla)
-
-Las variables `METODO` y `SEMILLA` se cambian en cada corrida:
+### Celda 4: dos corridas en paralelo, una por GPU (T4 x2)
 
 ```python
-METODO, SEMILLA = "lora", 13          # brazos: "lora" (B2) y "parcial" (B1); semillas: 13, 17, 23
-LR = "1e-4" if METODO == "lora" else "1e-5"
-!python laboratorio_reranker/afinar.py entrenar --metodo {METODO} --desde-capa 12 --lr {LR} --semilla {SEMILLA} \
-    --acumulacion 16 --epocas 2 --evaluar-cada 160 \
-    --grupos {D}/entrenamiento.jsonl --desarrollo {D}/nomiracl-dev.jsonl --n-desarrollo 0
+import os, subprocess
+POR_PASADA = 2   # el que ganó en la celda 3
+
+def correr(gpu, metodo, semilla):
+    lr = "1e-4" if metodo == "lora" else "1e-5"
+    cmd = (f"python laboratorio_reranker/afinar.py entrenar --metodo {metodo} --desde-capa 12 --lr {lr} "
+           f"--semilla {semilla} --acumulacion 16 --grupos-por-pasada {POR_PASADA} --epocas 2 --evaluar-cada 160 "
+           f"--no-checkpointing --grupos {D}/entrenamiento.jsonl --desarrollo {D}/nomiracl-dev.jsonl --n-desarrollo 0")
+    log = open(f"/kaggle/working/log-{metodo}-s{semilla}.txt", "w")
+    return subprocess.Popen(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT,
+                            env=dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu)))
+
+procesos = [correr(0, "lora", 13), correr(1, "parcial", 13)]   # cambiar la semilla en cada sesión: 13, 17, 23
+print([p.wait() for p in procesos])   # 0 y 0 = terminaron bien; el avance queda en /kaggle/working/log-*.txt
 ```
 
-- **Parada temprana:** evalúa hit@1 en `nomiracl-dev` (617 preguntas, fp16) cada 160 pasos, que son ≈ ¼ de época,
-  y guarda la copia del mejor punto.
-- **Corridas:** son 6 (2 brazos × 3 semillas). Conviene una sesión por corrida, con **Save Version → Save & Run
-  All**: corre en segundo plano y deja la salida guardada.
+Tres sesiones, una por semilla, cubren los 6 entrenamientos (B1 y B2 × 3 semillas). Antes de su primera
+corrida, B1 (`parcial`) se prueba con la celda 3 cambiando `--metodo parcial --lr 1e-5`, porque entrena 150 M
+parámetros y usa otra cantidad de memoria.
 
 ### Celda 5: exportar a ONNX int8 y dejar solo lo necesario
 
 ```python
-import glob, os, shutil
-run = sorted(glob.glob(".cache/laboratorio-reranker/*-e4-afinado-*"))[-1]
-!python laboratorio_reranker/afinar.py exportar {run} --paridad {D}/nomiracl-dev.jsonl --n-paridad 50
-nombre = f"{METODO}-s{SEMILLA}"
-destino = f"/kaggle/working/salidas/{nombre}"
-os.makedirs(f"{destino}/onnx", exist_ok=True)
-shutil.copy(f"{run}/onnx/onnx/model_int8.onnx", f"{destino}/onnx/")
-for archivo in ("tokenizer.json", "config.json", "exportacion.json"):
-    shutil.copy(f"{run}/onnx/{archivo}", destino)
-shutil.copy(f"{run}/run.json", destino)
-print(open(f"{destino}/exportacion.json").read())
+import glob, json, os, shutil
+for run in sorted(glob.glob(".cache/laboratorio-reranker/*-e4-afinado-*")):
+    datos = json.load(open(f"{run}/run.json"))
+    nombre = f"{datos['config']['metodo']}-s{datos['config']['semilla']}"
+    destino = f"/kaggle/working/salidas/{nombre}"
+    if os.path.exists(f"{destino}/onnx/model_int8.onnx"):
+        continue
+    !python laboratorio_reranker/afinar.py exportar {run} --paridad {D}/nomiracl-dev.jsonl --n-paridad 50
+    os.makedirs(f"{destino}/onnx", exist_ok=True)
+    shutil.copy(f"{run}/onnx/onnx/model_int8.onnx", f"{destino}/onnx/")
+    for archivo in ("tokenizer.json", "config.json", "exportacion.json"):
+        shutil.copy(f"{run}/onnx/{archivo}", destino)
+    shutil.copy(f"{run}/run.json", destino)
+    shutil.rmtree(f"{run}/onnx"); shutil.rmtree(f"{run}/copia")   # libera ~5 GB de los 20 GB de /kaggle/working
+    print(nombre, open(f"{destino}/exportacion.json").read())
 ```
 
-Se descarga solo `salidas/<nombre>/`, unos 570 MB por modelo. La copia fp32 y el ONNX fp32 (≈ 4,5 GB) se quedan
-fuera.
+Se descarga solo `salidas/<metodo>-s<semilla>/`, unos 570 MB por modelo.
 
 ### Celda 6 (una sola vez): salidas por capa del modelo base para Astra
 

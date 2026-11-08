@@ -271,13 +271,30 @@ def entrenar(args) -> None:
     orden = orden[:int(len(grupos) * args.epocas)]
     if dispositivo == "cuda":
         torch.cuda.reset_peak_memory_stats()
-    for k, g in enumerate(orden, 1):
+    # ``--grupos-por-pasada`` grupos van juntos en una sola pasada (más pares por lote: mejor uso de la GPU). La
+    # pérdida es la misma: una entropía cruzada por grupo, sumada, y ``--acumulacion`` grupos por paso.
+    por_pasada = args.grupos_por_pasada
+    if args.acumulacion % por_pasada:
+        raise SystemExit("--acumulacion debe ser múltiplo de --grupos-por-pasada")
+    cero = torch.zeros(1, dtype=torch.long, device=dispositivo)
+    k = 0
+    for i in range(0, len(orden), por_pasada):
+        lote = orden[i:i + por_pasada]
+        consultas, pasajes, tamanos = [], [], []
+        for g in lote:
+            propios = g["pos"][:1] + g["neg"]
+            consultas += [g["query"]] * len(propios)
+            pasajes += propios
+            tamanos.append(len(propios))
         with torch.autocast("cuda", dtype=torch.float16, enabled=amp):
-            s = puntuar_grupo(tokenizador, modelo, g["query"], g["pos"][:1] + g["neg"], dispositivo, args.max_tokens)
-        perdida = torch.nn.functional.cross_entropy(s[None], torch.zeros(1, dtype=torch.long, device=s.device))
-        escalador.scale(perdida / args.acumulacion).backward()
-        perdidas.append(perdida.detach().item())
-        if k % args.acumulacion:
+            cod = tokenizador(consultas, pasajes, truncation="longest_first", max_length=args.max_tokens,
+                              padding=True, return_tensors="pt").to(dispositivo)
+            logits = modelo(**cod).logits[:, 0].float()
+        por_grupo = [torch.nn.functional.cross_entropy(s[None], cero) for s in torch.split(logits, tamanos)]
+        escalador.scale(torch.stack(por_grupo).sum() / args.acumulacion).backward()
+        perdidas.extend(x.detach().item() for x in por_grupo)
+        k += len(lote)
+        if k % args.acumulacion and k < len(orden):
             continue
         escalador.unscale_(optimizador)
         torch.nn.utils.clip_grad_norm_(parametros, 1.0)
@@ -476,6 +493,8 @@ def main() -> None:
     p.add_argument("--lora-r", type=int, default=16)
     p.add_argument("--lora-alfa", type=int, default=32)
     p.add_argument("--lora-dropout", type=float, default=0.1)
+    p.add_argument("--grupos-por-pasada", type=int, default=1,
+                   help="grupos procesados juntos en una pasada (4 en una T4); no cambia la pérdida")
     p.add_argument("--amp", action=argparse.BooleanOptionalAction, default=None,
                    help="precisión mixta fp16 con pesos en fp32 (por defecto en CUDA)")
     p.set_defaults(func=entrenar)
