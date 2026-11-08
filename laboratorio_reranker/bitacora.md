@@ -362,20 +362,25 @@ Plantilla:
 
 ### OBS-0016: conjunto v2 congelado; bge base pierde unos 5 puntos de hit@1 con la pregunta informal
 - Etapa / control: conjunto v2 (`conjunto_v2.md`), etapa 7, `congelar`
-- Casos y run_id: manifiesto congelado en el PC del usuario (Windows, int8 en CPU, 2026-11-08). La comparación
-  formal/informal es preliminar: viene de una corrida de prueba en el contenedor de 4 CPU (Linux), porque el
-  primer `congelar` del PC copiaba en los archivos informales el puntaje de la pregunta formal (corregido: se
-  repuntúan con la pregunta informal).
+- Casos y run_id: manifiesto congelado en el PC del usuario (Windows, int8 del motor en CPU, lote 2, 2026-11-08):
+  `7-congelado/manifiesto.json`, con `entrenamiento.jsonl` `4feb38fc…` y `nomiracl-test.jsonl` `aa6bff8c…`. **Es la
+  referencia de los dos experimentos**: todas las evaluaciones se hacen en esa máquina.
 - Resultado observable:
   - entrenamiento: 10 230 grupos, 9 282 formales y 948 copias informales, con 40 % de difíciles;
-  - línea base en el PC del usuario: NoMIRACL test hit@1 0,813 (n = 1 408), hit@3 0,949; NoMIRACL dev 0,812;
-    SQAC dev 0,846; SQAC test 0,862; XQuAD 0,918;
-  - registro, mismas preguntas y mismos pasajes (contenedor): NoMIRACL test informal hit@1 0,771 frente a 0,820
-    formal (n = 489), y hit@3 0,920 frente a 0,941. NoMIRACL dev informal 0,817 frente a 0,843 (n = 197);
-  - entre plataformas, las etapas 2 a 7 no son bit a bit iguales (empates de TF-IDF en 15 preguntas de
-    `mlqa-dev`); la línea base de NoMIRACL test difiere en 0,0007 entre int8 en Linux y en Windows.
+  - línea base formal: NoMIRACL test hit@1 0,813 (n = 1 408) y hit@3 0,949; NoMIRACL dev 0,812; SQAC dev 0,846;
+    SQAC test 0,862; XQuAD 0,918;
+  - registro, mismas preguntas y mismos pasajes:
+
+    | Conjunto | n | hit@1 formal | hit@1 informal | hit@3 formal | hit@3 informal |
+    |---|---|---|---|---|---|
+    | NoMIRACL test | 489 | 0,828 | **0,775** | 0,943 | 0,916 |
+    | NoMIRACL dev | 197 | 0,827 | 0,822 | 0,970 | 0,949 |
+
+  - una corrida de prueba en el contenedor Linux dio lo mismo con ±0,01 (0,820 frente a 0,771 en test). Las
+    etapas 2 a 7 no son bit a bit iguales entre plataformas: empates de TF-IDF en 15 preguntas de `mlqa-dev`.
 - ¿Esperable?: sí; la brecha informal ya aparecía en el banco real (OBS-0009, causa D).
 - Explicaciones posibles: las paráfrasis cambian palabras de contenido (brecha léxica) y bge pondera el
-  solapamiento léxico (OBS-0010); parte de la caída puede venir de paráfrasis que se alejan de la intención.
-- Siguiente control: repetir `congelar` en el PC (línea base informal con su CPU) y empezar el experimento 1.
-- Estado: formal congelada; informal pendiente de repetirse en el PC del usuario.
+  solapamiento léxico (OBS-0010); parte de la caída puede venir de paráfrasis que se alejan de la intención. En dev
+  la brecha es casi nula (n = 197, poca potencia).
+- Siguiente control: experimento 1 (LoRA) y experimento 2 (Astra) sobre este manifiesto.
+- Estado: **congelado.**

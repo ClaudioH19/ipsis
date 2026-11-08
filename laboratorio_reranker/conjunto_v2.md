@@ -1,7 +1,6 @@
 # Conjunto v2: datos compartidos por los experimentos 1 y 2
 
-Estado: **en construcción (2026-11-06).** Las etapas 1 y 2 están hechas; la 3 está corriendo; la 6 está en curso
-para desarrollo y prueba. Código: `conjunto.py`. Salidas: `.cache/laboratorio-reranker/conjunto-v2/<etapa>/`, cada
+Estado: **congelado (2026-11-08)** en el PC del usuario; ver OBS-0016 en la bitácora. Código: `conjunto.py`. Salidas: `.cache/laboratorio-reranker/conjunto-v2/<etapa>/`, cada
 una con su `resumen.json`.
 
 Reemplaza al conjunto de la etapa 3 del laboratorio (OBS-0012) para los dos experimentos de la rama `lab061126`:
