@@ -234,6 +234,14 @@ def entrenar(args) -> None:
     hash_antes = sha256(original)
 
     grupos = leer_grupos(Path(args.grupos), args.negativos)
+    # ``--repetir-fuente miracl=3``: cambia la mezcla sin tocar el archivo congelado (cada grupo de esa fuente se
+    # repite N veces por época). Se registra en ``run.json`` con el resto de la configuración.
+    for regla in args.repetir_fuente or []:
+        fuente, veces = regla.split("=")
+        extra = [g for g in grupos if g.get("fuente") == fuente]
+        if not extra:
+            raise SystemExit(f"--repetir-fuente: no hay grupos de la fuente {fuente!r}")
+        grupos += extra * (int(veces) - 1)
     desarrollo = leer_grupos(Path(args.desarrollo), args.negativos)
     desarrollo = desarrollo[:args.n_desarrollo] if args.n_desarrollo else desarrollo
     config = {k: v for k, v in vars(args).items() if k != "func"} | {
@@ -467,6 +475,80 @@ def volcar_capas(args) -> None:
     print(json.dumps(informe, ensure_ascii=False, indent=1))
 
 
+# ---------------------------------------------------------------------------
+# Diagnóstico en desarrollo: varias copias contra el base, pareado por pregunta
+# ---------------------------------------------------------------------------
+def _mcnemar(ganados: int, perdidos: int) -> float:
+    n = ganados + perdidos
+    if n == 0:
+        return 1.0
+    cola = sum(math.comb(n, i) for i in range(min(ganados, perdidos) + 1)) / 2 ** n
+    return min(1.0, 2 * cola)
+
+
+def evaluar_dev(args) -> None:
+    """Mide el base y cada ``--copia`` (carpeta ``copia/`` de un entrenamiento) sobre archivos de **desarrollo** del
+    conjunto v2, en la GPU (fp16, igual que la parada temprana). Por archivo: hit@1, hit@3, MRR@10 y, frente al
+    base, preguntas ganadas y perdidas en hit@1 con McNemar exacto. Nunca recibe archivos de prueba."""
+    import torch
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+    for ruta in args.desarrollo:
+        if "test" in Path(ruta).name:
+            raise SystemExit(f"{ruta}: evaluar-dev no mide archivos de prueba (se miden una vez, al final)")
+    dispositivo = "cuda" if torch.cuda.is_available() else "cpu"
+    tokenizador = AutoTokenizer.from_pretrained(TORCH_ID, revision=TORCH_REV)
+    archivos = {Path(r).stem: leer_grupos(Path(r), 7) for r in args.desarrollo}
+
+    def aciertos(modelo) -> dict:
+        salida = {}
+        with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16, enabled=dispositivo == "cuda"):
+            for nombre, filas in archivos.items():
+                rangos = []
+                for f in filas:
+                    s = puntuar_grupo(tokenizador, modelo, f["query"], f["candidatos"], dispositivo,
+                                      args.max_tokens).tolist()
+                    orden = sorted(range(len(s)), key=lambda i: (-s[i], i))
+                    rangos.append(next(r for r, i in enumerate(orden, 1) if f["correctos"][i]))
+                salida[nombre] = rangos
+        return salida
+
+    def cargar(origen, **extra):
+        return AutoModelForSequenceClassification.from_pretrained(origen, dtype=torch.float32,
+                                                                  **extra).to(dispositivo).eval()
+
+    modelos = [("base", lambda: cargar(TORCH_ID, revision=TORCH_REV))]
+    for copia in args.copia:
+        carpeta = Path(copia) / "copia" if (Path(copia) / "copia").is_dir() else Path(copia)
+        nombre = carpeta.parent.name if carpeta.name == "copia" else carpeta.name
+        modelos.append((nombre, lambda c=carpeta: cargar(c)))
+    rangos, informe = {}, {}
+    for nombre, crear in modelos:
+        modelo = crear()
+        rangos[nombre] = aciertos(modelo)
+        del modelo
+        if dispositivo == "cuda":
+            torch.cuda.empty_cache()
+        informe[nombre] = {}
+        for archivo, r in rangos[nombre].items():
+            n = len(r)
+            fila = {"n": n, "hit@1": round(sum(x == 1 for x in r) / n, 4), "hit@3": round(sum(x <= 3 for x in r) / n, 4),
+                    "mrr@10": round(sum(1 / x for x in r if x <= 10) / n, 4)}
+            if nombre != "base":
+                b = rangos["base"][archivo]
+                gan = sum(x == 1 and y != 1 for x, y in zip(r, b, strict=True))
+                per = sum(x != 1 and y == 1 for x, y in zip(r, b, strict=True))
+                fila |= {"hit@1_ganados": gan, "hit@1_perdidos": per, "mcnemar_p": round(_mcnemar(gan, per), 4)}
+            informe[nombre][archivo] = fila
+        print(nombre, json.dumps(informe[nombre], ensure_ascii=False), flush=True)
+    destino = Path(args.salida)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(json.dumps({"dispositivo": dispositivo, "precision": "fp16" if dispositivo == "cuda" else "fp32",
+                                   "archivos": {Path(r).stem: huella(r) for r in args.desarrollo},
+                                   "resultados": informe}, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"-> {destino}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="accion", required=True)
@@ -493,6 +575,8 @@ def main() -> None:
     p.add_argument("--lora-r", type=int, default=16)
     p.add_argument("--lora-alfa", type=int, default=32)
     p.add_argument("--lora-dropout", type=float, default=0.1)
+    p.add_argument("--repetir-fuente", nargs="*", default=[], metavar="FUENTE=N",
+                   help="repite N veces por época los grupos de una fuente (p. ej. miracl=3); no toca el archivo")
     p.add_argument("--grupos-por-pasada", type=int, default=1,
                    help="grupos procesados juntos en una pasada (4 en una T4); no cambia la pérdida")
     p.add_argument("--amp", action=argparse.BooleanOptionalAction, default=None,
@@ -503,6 +587,12 @@ def main() -> None:
     p.add_argument("--paridad", default=None, help="archivo de desarrollo para la paridad (p. ej. nomiracl-dev.jsonl)")
     p.add_argument("--n-paridad", type=int, default=20)
     p.set_defaults(func=exportar)
+    p = sub.add_parser("evaluar-dev", help="diagnóstico: el base y varias copias en archivos de desarrollo (GPU)")
+    p.add_argument("--copia", nargs="*", default=[], help="carpetas de ejecución de entrenamiento (o su copia/)")
+    p.add_argument("--desarrollo", nargs="+", required=True, help="archivos de desarrollo congelados del v2")
+    p.add_argument("--max-tokens", type=int, default=MAX_TOKENS_MOTOR)
+    p.add_argument("--salida", default=str(SALIDA / "evaluar-dev.json"))
+    p.set_defaults(func=evaluar_dev)
     p = sub.add_parser("volcar-capas", help="experimento 2: salidas por capa del modelo base (muestra de Astra)")
     p.add_argument("--grupos", required=True, help="entrenamiento.jsonl congelado del conjunto v2")
     p.add_argument("--destino", default=str(SALIDA / "astra"))

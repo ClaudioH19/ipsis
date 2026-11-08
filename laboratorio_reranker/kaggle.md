@@ -110,11 +110,25 @@ for run in sorted(glob.glob(".cache/laboratorio-reranker/*-e4-afinado-*")):
     for archivo in ("tokenizer.json", "config.json", "exportacion.json"):
         shutil.copy(f"{run}/onnx/{archivo}", destino)
     shutil.copy(f"{run}/run.json", destino)
-    shutil.rmtree(f"{run}/onnx"); shutil.rmtree(f"{run}/copia")   # libera ~5 GB de los 20 GB de /kaggle/working
+    shutil.rmtree(f"{run}/onnx")   # libera ~2,3 GB; copia/ se conserva para evaluar-dev (celda 7)
     print(nombre, open(f"{destino}/exportacion.json").read())
 ```
 
 Se descarga solo `salidas/<metodo>-s<semilla>/`, unos 570 MB por modelo.
+
+### Celda 7: diagnóstico en desarrollo (antes de decidir la siguiente configuración)
+
+```python
+import glob
+runs = " ".join(sorted(glob.glob(".cache/laboratorio-reranker/*-e4-afinado-*")))
+!python laboratorio_reranker/afinar.py evaluar-dev --copia {runs} \
+    --desarrollo {D}/nomiracl-dev.jsonl {D}/nomiracl-dev-informal.jsonl {D}/sqac-dev.jsonl \
+    --salida /kaggle/working/salidas/evaluar-dev.json
+```
+
+Mide el base y cada copia (la del mejor paso de desarrollo) en fp16, con hit@1 ganado y perdido frente al base y
+McNemar exacto por archivo. Necesita `sqac-dev.jsonl` en el dataset (es de desarrollo). Se niega a medir
+archivos de prueba.
 
 ### Celda 6 (una sola vez): salidas por capa del modelo base para Astra
 

@@ -384,3 +384,28 @@ Plantilla:
   la brecha es casi nula (n = 197, poca potencia).
 - Siguiente control: experimento 1 (LoRA) y experimento 2 (Astra) sobre este manifiesto.
 - Estado: **congelado.**
+
+### OBS-0017: primera sesión del experimento 1 (semilla 13): la pérdida baja pero hit@1 en desarrollo casi no se mueve
+- Etapa / control: experimento 1, B1 (parcial, capas 12–23, lr 1e-5) y B2 (LoRA r 16, lr 1e-4), 2 épocas,
+  16 grupos por paso, `--no-checkpointing`; Kaggle, 2 × T4 en paralelo. Desarrollo: `nomiracl-dev` (617), fp16.
+- Resultado observable:
+
+  | Paso | 0 | 160 | 320 | 480 | 640 | 800 | 960 | 1120 |
+  |---|---|---|---|---|---|---|---|---|
+  | B2 LoRA hit@1 | 0,809 | **0,825** | 0,812 | 0,810 | 0,820 | 0,799 | 0,802 | 0,810 |
+  | B1 parcial hit@1 | 0,809 | **0,819** | 0,815 | 0,815 | 0,817 | 0,814 | 0,815 | 0,815 |
+
+  - pérdida de entrenamiento: de 1,14 a 0,79 (LoRA) y a 0,61 (parcial);
+  - hit@3 en desarrollo baja de 0,963 a 0,955–0,956;
+  - 0,25 y 0,16 s por grupo; 6,7 y 4,7 GB pico.
+- ¿Esperable?: en parte; el v1 tampoco fue significativo.
+- Explicaciones posibles:
+  1. el error estándar de hit@1 con n = 617 es ≈ 0,016, y el máximo se eligió entre 8 evaluaciones (optimista);
+  2. desajuste de distribución: el 80 % del entrenamiento es SQAC/MLQA (tramo de respuesta, pasajes de 2
+     oraciones) y la prueba principal es NoMIRACL (juicios humanos, pasajes de Wikipedia);
+  3. lr demasiado alto en LoRA: el máximo aparece en ¼ de época y después oscila.
+- Siguiente control (decidido solo con desarrollo): `afinar.py evaluar-dev` del base y de las dos copias en
+  `nomiracl-dev`, `nomiracl-dev-informal` y `sqac-dev`. Si mejora en SQAC y no en NoMIRACL, se prueba una mezcla
+  con más MIRACL (`--repetir-fuente miracl=3`), lr menor en LoRA y evaluación cada 40 pasos, con una semilla, antes
+  de las semillas 17 y 23.
+- Estado: aislada (1 semilla).
