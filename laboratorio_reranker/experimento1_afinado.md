@@ -89,9 +89,15 @@ registra en `run.json`:
 Si B1 cumple y B2 no lo supera, la mejora la explicaban los datos y no el método. Si ninguno cumple, se registra
 como resultado negativo.
 
-## Pendiente de implementar
+## Cómo se corre
 
-`afinar.py` lee hoy el formato de grupos del v1, que es compatible con el v2 (`query`, `pos`, `neg`), pero falta:
+En Kaggle con GPU, paso a paso en [`kaggle.md`](kaggle.md). La evaluación final en int8 se hace en el PC del
+usuario.
 
-- `--metodo lora` (dependencia `peft`), con la fusión antes de exportar;
-- la evaluación de parada sobre `7-congelado/nomiracl-dev.jsonl` en lugar de `grupos-desarrollo.jsonl`.
+## Implementado (2026-11-08)
+
+- `afinar.py entrenar --metodo lora|parcial`: LoRA (peft) con la fusión al guardar, precisión mixta en CUDA, y
+  parada por hit@1 sobre `nomiracl-dev.jsonl` congelado.
+- `afinar.py exportar --paridad <nomiracl-dev.jsonl>`.
+- Probado en CPU con 6 grupos: 8,1 M parámetros entrenables, 148 tensores cambiados tras la fusión, int8 de
+  570,7 MB y top-1 igual en 5/5 preguntas de paridad.

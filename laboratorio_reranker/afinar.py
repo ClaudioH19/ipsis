@@ -22,6 +22,16 @@ acumulación de gradientes.
     python laboratorio_reranker/afinar.py exportar .cache/laboratorio-reranker/modelos/<run_id>
 
 Para la máquina con GPU, ver README § 3 («Entrenar en otra máquina»).
+
+**Conjunto v2 y LoRA (rama ``lab061126``, ``experimento1_afinado.md``).** ``--metodo lora`` entrena adaptadores LoRA
+en las 24 capas y la cabeza completa, y al guardar los **fusiona**: la copia tiene la arquitectura y el costo de bge.
+``--grupos`` y ``--desarrollo`` aceptan los archivos congelados del conjunto v2 (``entrenamiento.jsonl`` y
+``nomiracl-dev.jsonl``, formato de volcado); con este último la parada se decide por hit@1. En CUDA, ``--amp`` (por
+defecto) usa precisión mixta fp16 con pesos maestros en fp32. Para entrenar en Kaggle, ver ``kaggle.md``.
+
+    python laboratorio_reranker/afinar.py entrenar --metodo lora --grupos <entrenamiento.jsonl> \
+        --desarrollo <nomiracl-dev.jsonl> --semilla 13
+    python laboratorio_reranker/afinar.py volcar-capas --grupos <entrenamiento.jsonl>   # experimento 2
 """
 from __future__ import annotations
 
@@ -67,14 +77,35 @@ def entrenables(nombre: str, desde_capa: int) -> bool:
     return desde_capa == 0  # embeddings: solo en el afinado completo
 
 
-def cargar_modelo(desde_capa: int, dispositivo: str, checkpointing: bool, mixto: bool | None = None):
-    """``mixto`` (por defecto, solo en CUDA): lo congelado en fp16 y lo entrenable en fp32."""
+# Módulos con LoRA en cada capa: Q, K, V y la salida de la atención, y las dos matrices del MLP.
+LORA_MODULOS = r".*encoder\.layer\.\d+\.(attention\.self\.(query|key|value)|attention\.output\.dense|intermediate\.dense|output\.dense)"
+
+
+def aplicar_lora(modelo, rango: int, alfa: int, dropout: float):
+    from peft import LoraConfig, get_peft_model
+
+    config = LoraConfig(r=rango, lora_alpha=alfa, lora_dropout=dropout, target_modules=LORA_MODULOS,
+                        modules_to_save=["classifier"], bias="none")
+    return get_peft_model(modelo, config)
+
+
+def cargar_modelo(desde_capa: int, dispositivo: str, checkpointing: bool, mixto: bool | None = None,
+                  metodo: str = "parcial", lora: tuple[int, int, float] = (16, 32, 0.1)):
+    """``mixto`` (por defecto, solo en CUDA sin ``--amp``): lo congelado en fp16 y lo entrenable en fp32.
+    ``metodo="lora"``: todo el modelo base congelado en fp32 y adaptadores LoRA entrenables."""
     import torch
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
     tokenizador = AutoTokenizer.from_pretrained(TORCH_ID, revision=TORCH_REV)
     modelo = AutoModelForSequenceClassification.from_pretrained(
         TORCH_ID, revision=TORCH_REV, dtype=torch.float32, attn_implementation="eager")
+    if metodo == "lora":
+        if checkpointing:
+            modelo.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+            modelo.enable_input_require_grads()
+        modelo = aplicar_lora(modelo, *lora)
+        modelo.to(dispositivo)
+        return tokenizador, modelo
     for nombre, parametro in modelo.named_parameters():
         parametro.requires_grad = entrenables(nombre, desde_capa)
     if mixto if mixto is not None else dispositivo == "cuda":
@@ -105,9 +136,16 @@ def puntuar_grupo(tokenizador, modelo, consulta: str, pasajes: list[str], dispos
 
 
 def leer_grupos(ruta: Path, negativos: int) -> list[dict]:
+    """Grupos ``{query, pos, neg}`` (v1 y ``entrenamiento.jsonl`` del v2) o volcados ``{pregunta, pasajes}`` del v2
+    (``nomiracl-dev.jsonl``): estos se evalúan por hit@1 con **todos** sus candidatos, como ``conjunto.py evaluar``."""
     grupos = [json.loads(l) for l in ruta.read_text(encoding="utf-8").splitlines() if l.strip()]
     for g in grupos:
-        g["neg"] = g["neg"][:negativos]
+        if "pasajes" in g:
+            g["query"] = g["pregunta"]
+            g["candidatos"] = [p["texto"] for p in g["pasajes"]]
+            g["correctos"] = [bool(p["correcto"]) for p in g["pasajes"]]
+        else:
+            g["neg"] = g["neg"][:negativos]
     return grupos
 
 
@@ -115,6 +153,8 @@ def evaluar(tokenizador, modelo, grupos: list[dict], dispositivo: str, max_token
     import torch
 
     modelo.eval()
+    if grupos and "candidatos" in grupos[0]:
+        return evaluar_volcado(tokenizador, modelo, grupos, dispositivo, max_tokens)
     perdida, aciertos = 0.0, 0
     with torch.no_grad():
         for g in grupos:
@@ -126,11 +166,44 @@ def evaluar(tokenizador, modelo, grupos: list[dict], dispositivo: str, max_token
     return {"perdida": round(perdida / len(grupos), 4), "acierto_top1": round(aciertos / len(grupos), 4)}
 
 
+def evaluar_volcado(tokenizador, modelo, filas: list[dict], dispositivo: str, max_tokens: int) -> dict:
+    """hit@1, hit@3 y MRR@10 sobre listas con varios correctos (mismo criterio que ``conjunto.py medir``)."""
+    import torch
+
+    rangos = []
+    with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16, enabled=dispositivo == "cuda"):
+        for f in filas:
+            s = puntuar_grupo(tokenizador, modelo, f["query"], f["candidatos"], dispositivo, max_tokens).tolist()
+            orden = sorted(range(len(s)), key=lambda i: (-s[i], i))
+            rangos.append(next(r for r, i in enumerate(orden, 1) if f["correctos"][i]))
+    modelo.train()
+    n = len(rangos)
+    return {"hit@1": round(sum(r == 1 for r in rangos) / n, 4), "hit@3": round(sum(r <= 3 for r in rangos) / n, 4),
+            "mrr@10": round(sum(1 / r for r in rangos if r <= 10) / n, 4), "n": n}
+
+
+def _mejor(dev: dict, actual) -> bool:
+    """Criterio de parada: hit@1 en desarrollo (volcados v2) o la pérdida (grupos del v1)."""
+    if actual is None:
+        return True
+    if "hit@1" in dev:
+        return (dev["hit@1"], dev["mrr@10"]) > (actual[1]["hit@1"], actual[1]["mrr@10"])
+    return dev["perdida"] < actual[1]["perdida"]
+
+
 def guardar_copia(modelo, tokenizador, destino: Path, desde_capa: int) -> None:
     """Original completo en fp32 + solo los parámetros entrenados: lo congelado no pasa por fp16 al guardar."""
     import torch
     from transformers import AutoModelForSequenceClassification
 
+    if hasattr(modelo, "merge_and_unload"):  # LoRA: se fusiona una copia en CPU; el modelo en entrenamiento sigue igual
+        import copy
+
+        fusionado = copy.deepcopy(modelo).to("cpu").float().merge_and_unload()
+        destino.mkdir(parents=True, exist_ok=True)
+        fusionado.save_pretrained(destino, safe_serialization=True)
+        tokenizador.save_pretrained(destino)
+        return
     limpio = AutoModelForSequenceClassification.from_pretrained(TORCH_ID, revision=TORCH_REV,
                                                                 dtype=torch.float32)
     entrenados = {n: p.detach().float().cpu() for n, p in modelo.named_parameters() if entrenables(n, desde_capa)}
@@ -150,7 +223,7 @@ def entrenar(args) -> None:
     from transformers.optimization import Adafactor, get_linear_schedule_with_warmup
 
     dispositivo = args.dispositivo if args.dispositivo != "auto" else ("cuda" if torch.cuda.is_available() else "cpu")
-    if dispositivo == "cuda" and args.desde_capa < 8:
+    if dispositivo == "cuda" and args.desde_capa < 8 and args.metodo == "parcial":
         props = torch.cuda.get_device_properties(0)
         if props.total_memory < 8 * 1024 ** 3:
             raise SystemExit(f"--desde-capa {args.desde_capa} no cabe en {props.name} "
@@ -161,7 +234,8 @@ def entrenar(args) -> None:
     hash_antes = sha256(original)
 
     grupos = leer_grupos(Path(args.grupos), args.negativos)
-    desarrollo = leer_grupos(Path(args.desarrollo), args.negativos)[:args.n_desarrollo]
+    desarrollo = leer_grupos(Path(args.desarrollo), args.negativos)
+    desarrollo = desarrollo[:args.n_desarrollo] if args.n_desarrollo else desarrollo
     config = {k: v for k, v in vars(args).items() if k != "func"} | {
         "dispositivo": dispositivo, "base": f"{TORCH_ID}@{TORCH_REV}", "grupos_sha": huella(args.grupos),
         "desarrollo_sha": huella(args.desarrollo), "original_sha256": hash_antes}
@@ -169,16 +243,24 @@ def entrenar(args) -> None:
     if args.hilos:
         torch.set_num_threads(args.hilos)
 
-    tokenizador, modelo = cargar_modelo(args.desde_capa, dispositivo, args.checkpointing, args.mixto)
+    amp = args.amp if args.amp is not None else dispositivo == "cuda"
+    tokenizador, modelo = cargar_modelo(args.desde_capa, dispositivo, args.checkpointing,
+                                        False if amp else args.mixto, args.metodo,
+                                        (args.lora_r, args.lora_alfa, args.lora_dropout))
     parametros = [p for p in modelo.parameters() if p.requires_grad]
     n_entrenables = sum(p.numel() for p in parametros)
-    optimizador = Adafactor(parametros, lr=args.lr, scale_parameter=False, relative_step=False, warmup_init=False,
-                            weight_decay=0.01)
+    if args.metodo == "lora":
+        optimizador = torch.optim.AdamW(parametros, lr=args.lr, weight_decay=0.01)
+    else:
+        optimizador = Adafactor(parametros, lr=args.lr, scale_parameter=False, relative_step=False,
+                                warmup_init=False, weight_decay=0.01)
+    escalador = torch.amp.GradScaler("cuda", enabled=amp)
     pasos_totales = math.ceil(len(grupos) * args.epocas / args.acumulacion)
     if args.pasos_prueba:
         pasos_totales = args.pasos_prueba
     programador = get_linear_schedule_with_warmup(optimizador, int(0.1 * pasos_totales), pasos_totales)
-    print(f"{dispositivo}: {n_entrenables / 1e6:.0f} M parámetros entrenables (capas {args.desde_capa}–23 y cabeza); "
+    que = "LoRA en las 24 capas y cabeza" if args.metodo == "lora" else f"capas {args.desde_capa}–23 y cabeza"
+    print(f"{dispositivo}{' (amp fp16)' if amp else ''}: {n_entrenables / 1e6:.1f} M parámetros entrenables ({que}); "
           f"{len(grupos)} grupos, {pasos_totales} pasos de optimización", flush=True)
 
     historia = {"inicial": evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)}
@@ -190,14 +272,17 @@ def entrenar(args) -> None:
     if dispositivo == "cuda":
         torch.cuda.reset_peak_memory_stats()
     for k, g in enumerate(orden, 1):
-        s = puntuar_grupo(tokenizador, modelo, g["query"], g["pos"][:1] + g["neg"], dispositivo, args.max_tokens)
+        with torch.autocast("cuda", dtype=torch.float16, enabled=amp):
+            s = puntuar_grupo(tokenizador, modelo, g["query"], g["pos"][:1] + g["neg"], dispositivo, args.max_tokens)
         perdida = torch.nn.functional.cross_entropy(s[None], torch.zeros(1, dtype=torch.long, device=s.device))
-        (perdida / args.acumulacion).backward()
+        escalador.scale(perdida / args.acumulacion).backward()
         perdidas.append(perdida.detach().item())
         if k % args.acumulacion:
             continue
+        escalador.unscale_(optimizador)
         torch.nn.utils.clip_grad_norm_(parametros, 1.0)
-        optimizador.step()
+        escalador.step(optimizador)
+        escalador.update()
         programador.step()
         optimizador.zero_grad(set_to_none=True)
         paso += 1
@@ -214,7 +299,7 @@ def entrenar(args) -> None:
             dev = evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)
             historia[f"paso_{paso}"] = dev
             print(f"  desarrollo paso {paso}: {dev}", flush=True)
-            if mejor is None or dev["perdida"] < mejor[1]["perdida"]:
+            if _mejor(dev, mejor):
                 mejor = (paso, dev)
                 guardar_copia(modelo, tokenizador, ejecucion.carpeta / "copia", args.desde_capa)
 
@@ -226,7 +311,7 @@ def entrenar(args) -> None:
     if not args.pasos_prueba:
         final = evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)
         historia["final"] = final
-        if mejor is None or final["perdida"] < mejor[1]["perdida"]:
+        if _mejor(final, mejor):
             mejor = (paso, final)
             guardar_copia(modelo, tokenizador, ejecucion.carpeta / "copia", args.desde_capa)
         resumen["mejor"] = {"paso": mejor[0], **mejor[1]}
@@ -294,11 +379,11 @@ def exportar(args) -> None:
         Path(destino / archivo).write_bytes(Path(hf_hub_download(ONNX_ID, archivo, revision=ONNX_REV)).read_bytes())
 
     # Paridad: la copia en PyTorch frente a su int8 en 20 pares del desarrollo.
-    grupos = leer_grupos(AFINADO / "grupos-desarrollo.jsonl", 3)[:5]
+    grupos = leer_grupos(Path(args.paridad) if args.paridad else AFINADO / "grupos-desarrollo.jsonl", 3)[:args.n_paridad]
     sesion = ort.InferenceSession(str(int8), providers=["CPUExecutionProvider"])
     deltas, acuerdos = [], 0
     for g in grupos:
-        pasajes = g["pos"][:1] + g["neg"]
+        pasajes = g["candidatos"] if "candidatos" in g else g["pos"][:1] + g["neg"]
         cod = tokenizador([g["query"]] * len(pasajes), pasajes, truncation=True, max_length=MAX_TOKENS_MOTOR,
                           padding=True, return_tensors="pt")
         with torch.no_grad():
@@ -310,6 +395,58 @@ def exportar(args) -> None:
     informe = {"onnx_fp32": str(fp32), "onnx_int8": str(int8), "int8_mb": round(int8.stat().st_size / 1e6, 1),
                "paridad_dlogit_max": round(max(deltas), 4), "paridad_top1_igual": f"{acuerdos}/{len(grupos)}"}
     (destino / "exportacion.json").write_text(json.dumps(informe, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(informe, ensure_ascii=False, indent=1))
+
+
+# ---------------------------------------------------------------------------
+# Experimento 2: salidas por capa del modelo BASE para la muestra de Astra
+# ---------------------------------------------------------------------------
+def volcar_capas(args) -> None:
+    """Para cada grupo con ``muestra_capas`` (10 % fijo del entrenamiento v2) y cada uno de sus 8 pasajes: el vector
+    ``<s>`` de las 25 salidas (embeddings y capas 1–24) en fp16, el logit final y la etiqueta. Siempre del modelo
+    **base** fp32 (``BAAI/bge-reranker-v2-m3`` con revisión fijada): es lo que Astra lee y edita."""
+    import numpy as np
+    import torch
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+    dispositivo = "cuda" if torch.cuda.is_available() else "cpu"
+    tokenizador = AutoTokenizer.from_pretrained(TORCH_ID, revision=TORCH_REV)
+    # ``--copia``: las mismas salidas de un modelo afinado, para análisis humano posterior. **No se entregan a
+    # Astra**: le darían la solución del experimento 1 y romperían el contraste (experimento2_edicion.md).
+    origen = (Path(args.copia), {}) if args.copia else (TORCH_ID, {"revision": TORCH_REV})
+    nombre = f"capas_{Path(args.copia).parent.name}" if args.copia else "capas_base"
+    modelo = AutoModelForSequenceClassification.from_pretrained(origen[0], dtype=torch.float32,
+                                                                **origen[1]).to(dispositivo).eval()
+    grupos = [g for g in leer_grupos(Path(args.grupos), 7) if g.get("muestra_capas")]
+    if args.limite:
+        grupos = grupos[:args.limite]
+    vectores, logits, etiquetas, indice = [], [], [], []
+    inicio = time.time()
+    with torch.no_grad():
+        for k, g in enumerate(grupos, 1):
+            pasajes = g["pos"][:1] + g["neg"]
+            cod = tokenizador([g["query"]] * len(pasajes), pasajes, truncation="longest_first",
+                              max_length=args.max_tokens, padding=True, return_tensors="pt").to(dispositivo)
+            salida = modelo(**cod, output_hidden_states=True)
+            vectores.append(torch.stack([h[:, 0] for h in salida.hidden_states], 1).half().cpu().numpy())
+            logits.extend(salida.logits[:, 0].float().cpu().tolist())
+            etiquetas.extend([1] + [0] * len(g["neg"]))
+            for j, tipo in enumerate(["positivo"] + g.get("neg_tipo", ["negativa"] * len(g["neg"]))):
+                indice.append({"grupo": g["id"], "pasaje": j, "tipo": tipo, "registro": g.get("registro", "formal"),
+                               "fuente": g.get("fuente", "")})
+            if k % 100 == 0:
+                print(f"  {k}/{len(grupos)} grupos, {(time.time() - inicio) / k:.2f} s/grupo", flush=True)
+    destino = Path(args.destino)
+    destino.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(destino / f"{nombre}.npz", cls=np.concatenate(vectores), logit=np.array(logits, np.float32),
+                        etiqueta=np.array(etiquetas, np.int8))
+    (destino / f"{nombre}_indice.jsonl").write_text(
+        "".join(json.dumps(x, ensure_ascii=False) + "\n" for x in indice), encoding="utf-8")
+    informe = {"modelo": str(args.copia) if args.copia else f"{TORCH_ID}@{TORCH_REV}", "precision": "fp32 (vectores guardados en fp16)",
+               "grupos": len(grupos), "pares": len(indice), "capas": int(vectores[0].shape[1]) if vectores else 0,
+               "dim": int(vectores[0].shape[2]) if vectores else 0, "grupos_sha": huella(args.grupos),
+               "npz_sha256": sha256(destino / f"{nombre}.npz"), "max_tokens": args.max_tokens}
+    (destino / f"{nombre}.json").write_text(json.dumps(informe, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(informe, ensure_ascii=False, indent=1))
 
 
@@ -334,10 +471,26 @@ def main() -> None:
                    help="congelado en fp16 y entrenable en fp32 (por defecto solo en CUDA; en CPU sirve para probar)")
     p.add_argument("--semilla", type=int, default=13)
     p.add_argument("--hilos", type=int, default=None)
+    p.add_argument("--metodo", choices=["parcial", "lora"], default="parcial",
+                   help="parcial: capas --desde-capa..23 y cabeza (v1); lora: adaptadores en 24 capas, fusionados")
+    p.add_argument("--lora-r", type=int, default=16)
+    p.add_argument("--lora-alfa", type=int, default=32)
+    p.add_argument("--lora-dropout", type=float, default=0.1)
+    p.add_argument("--amp", action=argparse.BooleanOptionalAction, default=None,
+                   help="precisión mixta fp16 con pesos en fp32 (por defecto en CUDA)")
     p.set_defaults(func=entrenar)
     p = sub.add_parser("exportar")
     p.add_argument("copia", help="carpeta de la ejecución de entrenamiento (o su subcarpeta copia/)")
+    p.add_argument("--paridad", default=None, help="archivo de desarrollo para la paridad (p. ej. nomiracl-dev.jsonl)")
+    p.add_argument("--n-paridad", type=int, default=20)
     p.set_defaults(func=exportar)
+    p = sub.add_parser("volcar-capas", help="experimento 2: salidas por capa del modelo base (muestra de Astra)")
+    p.add_argument("--grupos", required=True, help="entrenamiento.jsonl congelado del conjunto v2")
+    p.add_argument("--destino", default=str(SALIDA / "astra"))
+    p.add_argument("--max-tokens", type=int, default=MAX_TOKENS_MOTOR)
+    p.add_argument("--limite", type=int, default=0)
+    p.add_argument("--copia", default=None, help="carpeta copia/ de un modelo afinado (solo análisis, no para Astra)")
+    p.set_defaults(func=volcar_capas)
     args = parser.parse_args()
     args.func(args)
 

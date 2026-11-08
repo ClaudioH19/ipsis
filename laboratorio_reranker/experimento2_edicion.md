@@ -57,7 +57,11 @@ Para cada grupo `muestra_capas` (≈ 10 % del entrenamiento, el mismo en cualqui
 - el logit final;
 - la etiqueta.
 
-Se guardan en un `.npz` con su SHA-256 en el registro de la corrida. Es lo que la bitácora usó para las sondas por
+Se generan una sola vez en Kaggle, en la misma sesión de GPU del experimento 1 (`afinar.py volcar-capas`,
+`kaggle.md`, celda 6), y se guardan en `capas_base.npz` con su SHA-256. **Solo se entregan las del modelo base.**
+Las del modelo afinado (`volcar-capas --copia`) y el diff de LoRA no van a Astra, porque le darían la solución del
+experimento 1 y romperían el contraste. Sirven solo para el análisis humano posterior: dónde difieren el afinado y
+la edición. Es lo que la bitácora usó para las sondas por
 capa (OBS-0011), así que Astra parte del mismo material que el diagnóstico humano.
 
 ## Línea base sin Astra: ablación de una dirección hecha a mano
