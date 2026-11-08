@@ -478,8 +478,10 @@ def importar_puntajes(args) -> None:
                 continue
             if [_huella_texto(c["texto"]) for c in fila["candidatos"]] != list(remotos):
                 diferencias["solo_cambia_el_orden"] += 1
-            for h, c in locales.items():
-                c["base"] = remotos[h]
+            # Por candidato, no por huella única: una pregunta puede repetir el mismo texto en dos candidatos
+            # (pasajes duplicados del corpus), y el diccionario ``locales`` solo guarda uno de ellos.
+            for c in fila["candidatos"]:
+                c["base"] = remotos[_huella_texto(c["texto"])]
         diferencias["preguntas_sin_origen"] = len(set(meta["puntajes"]) - {f["id"] for f in filas})
         if diferencias["preguntas_distintas"] or diferencias["pregunta_ausente_en_el_origen"]:
             detalle = {"preguntas": len(filas), **{k: v for k, v in diferencias.items() if v}}
@@ -574,9 +576,12 @@ def descartar_dudosas(_args) -> None:
     for ruta in sorted(origen.glob("*.jsonl")):
         motivos, filas = Counter(), []
         for f in _leer(ruta):
-            quedan = []
+            quedan, vistos = [], set()
             for c in f["candidatos"]:
                 m = None if c["correcto"] else motivo_dudosa(f, c)
+                if m is None and not c["correcto"] and c["texto"] in vistos:
+                    m = "negativa_repetida"  # el mismo pasaje dos veces en la lista (duplicados del corpus)
+                vistos.add(c["texto"])
                 if m:
                     motivos[m] += 1
                 else:
