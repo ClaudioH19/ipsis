@@ -177,9 +177,18 @@ def evaluar_volcado(tokenizador, modelo, filas: list[dict], dispositivo: str, ma
             orden = sorted(range(len(s)), key=lambda i: (-s[i], i))
             rangos.append(next(r for r, i in enumerate(orden, 1) if f["correctos"][i]))
     modelo.train()
-    n = len(rangos)
-    return {"hit@1": round(sum(r == 1 for r in rangos) / n, 4), "hit@3": round(sum(r <= 3 for r in rangos) / n, 4),
-            "mrr@10": round(sum(1 / r for r in rangos if r <= 10) / n, 4), "n": n}
+
+    def resumen(rs: list[int]) -> dict:
+        n = len(rs)
+        return {"hit@1": round(sum(r == 1 for r in rs) / n, 4), "hit@3": round(sum(r <= 3 for r in rs) / n, 4),
+                "mrr@10": round(sum(1 / r for r in rs if r <= 10) / n, 4), "n": n}
+
+    salida = resumen(rangos)
+    conjuntos = sorted({f.get("conjunto", "") for f in filas})
+    if len(conjuntos) > 1:  # varios archivos de desarrollo: desglose por archivo en la misma pasada
+        salida["por_archivo"] = {c: resumen([r for r, f in zip(rangos, filas, strict=True)
+                                             if f.get("conjunto", "") == c]) for c in conjuntos}
+    return salida
 
 
 def _mejor(dev: dict, actual) -> bool:
@@ -242,11 +251,17 @@ def entrenar(args) -> None:
         if not extra:
             raise SystemExit(f"--repetir-fuente: no hay grupos de la fuente {fuente!r}")
         grupos += extra * (int(veces) - 1)
-    desarrollo = leer_grupos(Path(args.desarrollo), args.negativos)
-    desarrollo = desarrollo[:args.n_desarrollo] if args.n_desarrollo else desarrollo
+    # Varios archivos de desarrollo: la parada se decide con todos juntos (hit@1 sobre la unión), que tiene menos
+    # ruido que uno solo (OBS-0017). Cada uno se puede reportar aparte con --desarrollo-extra.
+    desarrollo = []
+    for ruta in args.desarrollo:
+        if "test" in Path(ruta).name:
+            raise SystemExit(f"{ruta}: la prueba no se usa para elegir el punto de parada")
+        filas = leer_grupos(Path(ruta), args.negativos)
+        desarrollo += filas[:args.n_desarrollo] if args.n_desarrollo else filas
     config = {k: v for k, v in vars(args).items() if k != "func"} | {
         "dispositivo": dispositivo, "base": f"{TORCH_ID}@{TORCH_REV}", "grupos_sha": huella(args.grupos),
-        "desarrollo_sha": huella(args.desarrollo), "original_sha256": hash_antes}
+        "desarrollo_sha": {Path(r).stem: huella(r) for r in args.desarrollo}, "original_sha256": hash_antes}
     ejecucion = Ejecucion("e4-afinado" if not args.pasos_prueba else "e4-prueba-velocidad", config, args.hilos)
     if args.hilos:
         torch.set_num_threads(args.hilos)
@@ -271,8 +286,23 @@ def entrenar(args) -> None:
     print(f"{dispositivo}{' (amp fp16)' if amp else ''}: {n_entrenables / 1e6:.1f} M parámetros entrenables ({que}); "
           f"{len(grupos)} grupos, {pasos_totales} pasos de optimización", flush=True)
 
+    # ``--desarrollo-extra``: otros archivos de desarrollo que solo se reportan (no deciden la parada).
+    extras = {}
+    for ruta in args.desarrollo_extra or []:
+        if "test" in Path(ruta).name:
+            raise SystemExit(f"{ruta}: los archivos de prueba no se miden durante el entrenamiento")
+        filas = leer_grupos(Path(ruta), args.negativos)
+        extras[Path(ruta).stem] = filas[:args.n_extra] if args.n_extra else filas
+
+    def reportar_extras(etiqueta: str) -> None:
+        for nombre, filas in extras.items():
+            r = evaluar(tokenizador, modelo, filas, dispositivo, args.max_tokens)
+            historia[f"{etiqueta}:{nombre}"] = r
+            print(f"    {nombre} {etiqueta}: {r}", flush=True)
+
     historia = {"inicial": evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)}
     print(f"  desarrollo inicial: {historia['inicial']}", flush=True)
+    reportar_extras("inicial")
     mejor, paso, inicio, perdidas = None, 0, time.time(), []
     modelo.train()
     orden = [g for _ in range(math.ceil(args.epocas)) for g in random.sample(grupos, len(grupos))]
@@ -324,6 +354,7 @@ def entrenar(args) -> None:
             dev = evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)
             historia[f"paso_{paso}"] = dev
             print(f"  desarrollo paso {paso}: {dev}", flush=True)
+            reportar_extras(f"paso_{paso}")
             if _mejor(dev, mejor):
                 mejor = (paso, dev)
                 guardar_copia(modelo, tokenizador, ejecucion.carpeta / "copia", args.desde_capa)
@@ -336,6 +367,8 @@ def entrenar(args) -> None:
     if not args.pasos_prueba:
         final = evaluar(tokenizador, modelo, desarrollo, dispositivo, args.max_tokens)
         historia["final"] = final
+        print(f"  desarrollo final: {final}", flush=True)
+        reportar_extras("final")
         if _mejor(final, mejor):
             mejor = (paso, final)
             guardar_copia(modelo, tokenizador, ejecucion.carpeta / "copia", args.desde_capa)
@@ -554,7 +587,8 @@ def main() -> None:
     sub = parser.add_subparsers(dest="accion", required=True)
     p = sub.add_parser("entrenar")
     p.add_argument("--grupos", default=str(AFINADO / "grupos-entrenamiento.jsonl"))
-    p.add_argument("--desarrollo", default=str(AFINADO / "grupos-desarrollo.jsonl"))
+    p.add_argument("--desarrollo", nargs="+", default=[str(AFINADO / "grupos-desarrollo.jsonl")],
+                   help="uno o más archivos de desarrollo; la parada usa hit@1 sobre todos juntos")
     p.add_argument("--n-desarrollo", type=int, default=100)
     p.add_argument("--desde-capa", type=int, default=12, help="primera capa que se entrena (0 = completo)")
     p.add_argument("--lr", type=float, default=1e-5)
@@ -575,6 +609,9 @@ def main() -> None:
     p.add_argument("--lora-r", type=int, default=16)
     p.add_argument("--lora-alfa", type=int, default=32)
     p.add_argument("--lora-dropout", type=float, default=0.1)
+    p.add_argument("--desarrollo-extra", nargs="*", default=[],
+                   help="archivos de desarrollo que solo se reportan en cada evaluación (no deciden la parada)")
+    p.add_argument("--n-extra", type=int, default=0, help="preguntas por archivo extra (0 = todas)")
     p.add_argument("--repetir-fuente", nargs="*", default=[], metavar="FUENTE=N",
                    help="repite N veces por época los grupos de una fuente (p. ej. miracl=3); no toca el archivo")
     p.add_argument("--grupos-por-pasada", type=int, default=1,

@@ -89,6 +89,19 @@ registra en `run.json`:
 Si B1 cumple y B2 no lo supera, la mejora la explicaban los datos y no el método. Si ninguno cumple, se registra
 como resultado negativo.
 
+## Cambios decididos con desarrollo (2026-11-08, OBS-0017)
+
+Tras la semilla 13, la pérdida bajó pero hit@1 en `nomiracl-dev` quedó dentro del ruido (±0,016 con n = 617).
+Sin mirar la prueba, se cambia:
+
+- **Parada:** hit@1 sobre **todo** el desarrollo junto (`nomiracl-dev`, `nomiracl-dev-informal` y `sqac-dev`,
+  unas 2 700 preguntas). El log reporta el desglose por archivo. La prueba primaria **no cambia**: hit@1 en
+  `nomiracl-test`.
+- **Sesión de diagnóstico, con una semilla:** LoRA con la configuración original (lr 1e-4) frente a LoRA con
+  lr 5e-5 y MIRACL repetido ×3 (`--repetir-fuente miracl=3`). Las dos con 1 época y evaluación cada 80 pasos.
+  El entrenamiento siempre usa la mezcla completa; la repetición solo cambia el peso de MIRACL.
+- Las semillas 17 y 23 se corren con la configuración que gane en desarrollo.
+
 ## Cómo se corre
 
 En Kaggle con GPU, paso a paso en [`kaggle.md`](kaggle.md). La evaluación final en int8 se hace en el PC del

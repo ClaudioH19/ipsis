@@ -73,26 +73,30 @@ Agrupar no cambia la pérdida: probado sin dropout, con la misma pérdida por gr
 
 ### Celda 4: dos corridas en paralelo, una por GPU (T4 x2)
 
+La parada se decide con **todo el desarrollo junto**: `nomiracl-dev`, `nomiracl-dev-informal` y `sqac-dev`, unas
+2 700 preguntas, con menos ruido que `nomiracl-dev` solo (OBS-0017). El log muestra además el desglose por archivo.
+
 ```python
 import os, subprocess
-POR_PASADA = 2   # el que ganó en la celda 3
+D = "/kaggle/input/datasets/claudioag/ipsis-private"   # la ruta de tu dataset
+DEV = f"{D}/nomiracl-dev.jsonl {D}/nomiracl-dev-informal.jsonl {D}/sqac-dev.jsonl"
 
-def correr(gpu, metodo, semilla):
-    lr = "1e-4" if metodo == "lora" else "1e-5"
-    cmd = (f"python laboratorio_reranker/afinar.py entrenar --metodo {metodo} --desde-capa 12 --lr {lr} "
-           f"--semilla {semilla} --acumulacion 16 --grupos-por-pasada {POR_PASADA} --epocas 2 --evaluar-cada 160 "
-           f"--no-checkpointing --grupos {D}/entrenamiento.jsonl --desarrollo {D}/nomiracl-dev.jsonl --n-desarrollo 0")
-    log = open(f"/kaggle/working/log-{metodo}-s{semilla}.txt", "w")
-    return subprocess.Popen(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT,
+def correr(gpu, nombre, extra):
+    cmd = (f"python laboratorio_reranker/afinar.py entrenar --desde-capa 12 --acumulacion 16 --no-checkpointing "
+           f"--evaluar-cada 80 --grupos {D}/entrenamiento.jsonl --desarrollo {DEV} --n-desarrollo 0 {extra}")
+    log = open(f"/kaggle/working/log-{nombre}.txt", "w")
+    return subprocess.Popen(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT, cwd="/kaggle/working/ipsis",
                             env=dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu)))
 
-procesos = [correr(0, "lora", 13), correr(1, "parcial", 13)]   # cambiar la semilla en cada sesión: 13, 17, 23
-print([p.wait() for p in procesos])   # 0 y 0 = terminaron bien; el avance queda en /kaggle/working/log-*.txt
+procesos = [
+    correr(0, "lora-lr1e4-s13", "--metodo lora --lr 1e-4 --epocas 1 --semilla 13"),
+    correr(1, "lora-lr5e5-miracl3-s13", "--metodo lora --lr 5e-5 --epocas 1 --semilla 13 --repetir-fuente miracl=3"),
+]
+print([p.wait() for p in procesos])   # [0, 0] = terminaron bien
 ```
 
-Tres sesiones, una por semilla, cubren los 6 entrenamientos (B1 y B2 × 3 semillas). Antes de su primera
-corrida, B1 (`parcial`) se prueba con la celda 3 cambiando `--metodo parcial --lr 1e-5`, porque entrena 150 M
-parámetros y usa otra cantidad de memoria.
+Para ver el avance sin detener nada, desde otra celda:
+`!grep desarrollo /kaggle/working/log-*.txt | tail -n 4`.
 
 ### Celda 5: exportar a ONNX int8 y dejar solo lo necesario
 
@@ -100,7 +104,8 @@ parámetros y usa otra cantidad de memoria.
 import glob, json, os, shutil
 for run in sorted(glob.glob(".cache/laboratorio-reranker/*-e4-afinado-*")):
     datos = json.load(open(f"{run}/run.json"))
-    nombre = f"{datos['config']['metodo']}-s{datos['config']['semilla']}"
+    c = datos["config"]
+    nombre = f"{c['metodo']}-lr{c['lr']}-{'-'.join(c.get('repetir_fuente') or ['mezcla'])}-s{c['semilla']}"
     destino = f"/kaggle/working/salidas/{nombre}"
     if os.path.exists(f"{destino}/onnx/model_int8.onnx"):
         continue
