@@ -421,9 +421,13 @@ def puntuar_base(args) -> None:
 PUNTAJES_VERSIONADOS = Path(__file__).with_name("puntajes_base.json.gz")
 
 
+def _huella_texto(texto: str) -> str:
+    return hashlib.sha1(texto.replace("\r\n", "\n").encode("utf-8")).hexdigest()[:12]
+
+
 def exportar_puntajes(args) -> None:
-    """Guarda en el repo solo los **números** de la etapa 3 (sin textos, que tienen licencias propias), con el
-    SHA-256 de cada archivo de candidatos: otra máquina los importa sin volver a puntuar."""
+    """Guarda en el repo solo los **números** de la etapa 3 (sin textos, que tienen licencias propias): por pregunta,
+    la huella (SHA-1 corto) de cada candidato y su puntaje. Otra máquina los importa emparejando por huella."""
     from comun import entorno
 
     ruta3 = RAIZ / "3-puntuados" / "resumen.json"  # puede faltar si la etapa se cortó antes de escribirlo
@@ -438,30 +442,54 @@ def exportar_puntajes(args) -> None:
         salida["archivos"][nombre] = {
             "sha256_candidatos": _sha_lf(candidatos),
             "modelo": resumen3["archivos"].get(nombre, {}).get("modelo", "onnx-int8"),
-            "puntajes": {f["id"]: [c["base"] for c in f["candidatos"]] for f in filas}}
+            "puntajes": {f["id"]: {_huella_texto(c["texto"]): c["base"] for c in f["candidatos"]} for f in filas},
+            "tipos": {f["id"]: {_huella_texto(c["texto"]): c["tipo"] for c in f["candidatos"]} for f in filas}}
     with gzip.open(PUNTAJES_VERSIONADOS, "wt", encoding="utf-8") as f:
         json.dump(salida, f)
     print(f"{', '.join(args.solo)} -> {PUNTAJES_VERSIONADOS.name} ({_sha(PUNTAJES_VERSIONADOS)[:16]})")
 
 
 def importar_puntajes(_args) -> None:
-    """Arma ``3-puntuados/<archivo>.jsonl`` desde ``puntajes_base.json.gz``. Se niega si los candidatos locales no
-    son idénticos (SHA-256) a los que se puntuaron en la otra máquina."""
+    """Arma ``3-puntuados/<archivo>.jsonl`` desde ``puntajes_base.json.gz``, emparejando cada candidato local con el
+    puntuado por la huella de su texto. Si el archivo de candidatos no es idéntico (SHA-256) pero cada pregunta tiene
+    el mismo conjunto de textos, solo cambió el orden y se importa igual. Si algún conjunto difiere, informa qué
+    tipos de candidato difieren y no escribe nada."""
     with gzip.open(PUNTAJES_VERSIONADOS, "rt", encoding="utf-8") as f:
         datos = json.load(f)
     destino = RAIZ / "3-puntuados"
     resumen = {"etapa": "3-puntuar-base (importado)", "origen": datos["entorno"], "archivos": {}}
+    problemas = {}
     for nombre, meta in datos["archivos"].items():
         candidatos = RAIZ / "2-candidatos" / f"{nombre}.jsonl"
-        if _sha_lf(candidatos) != meta["sha256_candidatos"]:
-            raise SystemExit(f"{nombre}: los candidatos locales difieren de los puntuados (SHA-256); "
-                             "revisar la etapa 2 (versión de scikit-learn) antes de importar")
-        filas = _leer(candidatos)
+        identico = _sha_lf(candidatos) == meta["sha256_candidatos"]
+        filas, diferencias = _leer(candidatos), Counter()
         for fila in filas:
-            for c, s in zip(fila["candidatos"], meta["puntajes"][fila["id"]], strict=True):
-                c["base"] = s
+            remotos = meta["puntajes"].get(fila["id"])
+            if remotos is None:
+                diferencias["pregunta_ausente_en_el_origen"] += 1
+                continue
+            locales = {_huella_texto(c["texto"]): c for c in fila["candidatos"]}
+            if set(locales) != set(remotos):
+                for h in set(locales) - set(remotos):
+                    diferencias[f"solo_local:{locales[h]['tipo']}"] += 1
+                for h in set(remotos) - set(locales):
+                    diferencias[f"solo_origen:{meta['tipos'][fila['id']][h]}"] += 1
+                diferencias["preguntas_distintas"] += 1
+                continue
+            if [_huella_texto(c["texto"]) for c in fila["candidatos"]] != list(remotos):
+                diferencias["solo_cambia_el_orden"] += 1
+            for h, c in locales.items():
+                c["base"] = remotos[h]
+        diferencias["preguntas_sin_origen"] = len(set(meta["puntajes"]) - {f["id"] for f in filas})
+        if diferencias["preguntas_distintas"] or diferencias["pregunta_ausente_en_el_origen"]:
+            problemas[nombre] = {"preguntas": len(filas), **{k: v for k, v in diferencias.items() if v}}
+            continue
         resumen["archivos"][nombre] = {"modelo": f"{meta['modelo']} (importado)", "preguntas": len(filas),
+                                       "identico": identico, **{k: v for k, v in diferencias.items() if v},
                                        "sha256": _escribir(destino / f"{nombre}.jsonl", filas)}
+    if problemas:
+        print(json.dumps({"candidatos_distintos": problemas}, ensure_ascii=False, indent=2))
+        raise SystemExit("hay preguntas con candidatos distintos entre máquinas: no se importó nada de esos archivos")
     _resumen(destino, resumen)
 
 
